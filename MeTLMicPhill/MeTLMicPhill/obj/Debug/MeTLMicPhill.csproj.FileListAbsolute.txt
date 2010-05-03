@@ -1,0 +1,12 @@
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\obj\Debug\ResolveAssemblyReference.cache
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\obj\Debug\Window1.baml
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\obj\Debug\Window1.g.cs
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\obj\Debug\App.g.cs
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\obj\Debug\MeTLMicPhill.Properties.Resources.resources
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\obj\Debug\MeTLMicPhill.csproj.GenerateResource.Cache
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\bin\Debug\SandRibbon.exe
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\bin\Debug\SandRibbon.pdb
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\obj\Debug\SandRibbon_MarkupCompile.cache
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\obj\Debug\SandRibbon.g.resources
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\obj\Debug\SandRibbon.exe
+C:\specialMeTL\MeTLMicPhill\MeTLMicPhill\obj\Debug\SandRibbon.pdb

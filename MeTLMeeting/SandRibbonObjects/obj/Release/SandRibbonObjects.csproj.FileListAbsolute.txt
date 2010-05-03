@@ -1,0 +1,8 @@
+C:\sandRibbon\SandRibbonObjects\bin\Release\SandRibbonObjects.dll
+C:\sandRibbon\SandRibbonObjects\bin\Release\SandRibbonObjects.pdb
+C:\sandRibbon\SandRibbonObjects\bin\Release\agsXMPP.dll
+C:\sandRibbon\SandRibbonObjects\bin\Release\Divan.dll
+C:\sandRibbon\SandRibbonObjects\bin\Release\Newtonsoft.Json.dll
+C:\sandRibbon\SandRibbonObjects\obj\Release\ResolveAssemblyReference.cache
+C:\sandRibbon\SandRibbonObjects\obj\Release\SandRibbonObjects.dll
+C:\sandRibbon\SandRibbonObjects\obj\Release\SandRibbonObjects.pdb

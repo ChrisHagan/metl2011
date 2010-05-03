@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="SandRibbon.Components.SimpleTextTools"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:my="clr-namespace:SandRibbon"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    Loaded="setUpTools">
+    <UserControl.Resources>
+        <ResourceDictionary Source="..\ToolTips\ToolTips.xaml"/>
+    </UserControl.Resources>
+    <StackPanel Orientation="Horizontal" x:Name="LayoutRoot">
+        <SandRibbonInterop:RibbonPanel>
+            <SandRibbonInterop:Button ToolTip="{StaticResource CutToolTip}" Icon="..\..\Resources\cut.png" Text="Cut" Command="ApplicationCommands.Cut" />
+            <SandRibbonInterop:Button ToolTip="{StaticResource PasteToolTip}" Icon="..\..\Resources\paste.png" Text="Paste" Command="ApplicationCommands.Paste" />
+            <SandRibbonInterop:Button ToolTip="{StaticResource CopyToolTip}" Icon="..\..\Resources\copy.png" Text="Copy" Command="ApplicationCommands.Copy" />
+        </SandRibbonInterop:RibbonPanel>
+        <StackPanel>
+            <StackPanel Height="30" Orientation="Horizontal">
+                <ComboBox ToolTip="{StaticResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily"  SelectionChanged="fontFamilySelected"/>
+                <ComboBox ToolTip="{StaticResource FontSizeToolTip}" Text="Font size" Width="40" x:Name="fontSize"  SelectionChanged="fontSizeSelected"/>
+            </StackPanel>
+            <StackPanel Height="30" Orientation="Horizontal">
+                <SandRibbonInterop:CheckBox x:Name="TextBoldButton" Icon="..\..\Resources\bold.png" Text="B" ToolTip="{StaticResource BoldToolTip}" Command ="{x:Static api:Commands.ToggleBold}" InternalButtonSize="Small"/>
+                <SandRibbonInterop:CheckBox x:Name="TextItalicButton" Icon="..\..\Resources\italic.png" Text="I" ToolTip="{StaticResource ItalicToolTip}" Command ="{x:Static api:Commands.ToggleItalic}" InternalButtonSize="Small"/>
+                <SandRibbonInterop:CheckBox x:Name="TextUnderlineButton" Icon="..\..\Resources\underline.png" Text="U" ToolTip="{StaticResource UnderlineToolTip}" Command ="{x:Static api:Commands.ToggleUnderline}" InternalButtonSize="Small"/>
+                <SandRibbonInterop:CheckBox x:Name="TextStrikethroughButton" Icon="..\..\Resources\strikethrough.png" Text="S" ToolTip="{StaticResource StrikeThroughToolTip}" Command ="{x:Static api:Commands.ToggleStrikethrough}" InternalButtonSize="Small"/>
+                <SandRibbonInterop:Button ToolTip="{StaticResource ClearFormattingToolTip}" Icon="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Text="Clear Formatting" Command="{x:Static api:Commands.RestoreTextDefaults}" InternalButtonSize="Small"/>
+                <Border x:Name="ColourPickerBorder" BorderBrush="Black" BorderThickness="2">
+                    <SandRibbonInterop:DoubleButton Click="ShowColourSelector"  x:Name="FontColourButton" Icon="..\..\Resources\changeFontColour.png" Text="C" ToolTip="{StaticResource FontColourToolTip}" InternalButtonSize="Small">
+                        <SandRibbonInterop:DoubleButton.Popup>
+                            <Border x:Name="ColourSelection"  Background="{StaticResource BackgroundBlueGradient}" Padding="2">
+                                <StackPanel>
+                                    <Label Content="Font Colour"/>
+                                    <sr:ColorPicker ColorPicked="textColorSelected" >
+                                        <Color A="255" R="255" G="255" B="255" />
+                                        <Color A="255" R="0" G="0" B="0" />
+                                        <Color A="255" R="255" G="0" B="0" />
+                                        <Color A="255" R="0" G="255" B="0" />
+                                        <Color A="255" R="0" G="0" B="255" />
+                                    </sr:ColorPicker>
+                                </StackPanel>
+                            </Border>
+                        </SandRibbonInterop:DoubleButton.Popup>
+                    </SandRibbonInterop:DoubleButton>
+                </Border>
+                <!--<components:DoubleButton x:Name="HighLightColourButton" Text="H" ButtonSize="Large" ToolTip="HighLight">
+            <components:DoubleButton.Popup>
+                <Border Background="{StaticResource BackgroundBlueGradient}" Padding="2">
+                    <StackPanel Orientation="Vertical" Width="100" >
+                        <RadioButton Content="K" />
+                        <RadioButton Content="L" />
+                        <RadioButton Content="M" />
+                        <RadioButton Content="N" />
+                        <RadioButton Content="O" />
+                    </StackPanel>
+                </Border>
+            </components:DoubleButton.Popup>
+        </components:DoubleButton>-->
+            </StackPanel>
+        </StackPanel>
+        <SandRibbonInterop:RibbonPanel >
+            <SandRibbonInterop:Button ToolTip="{StaticResource IncreaseFontSizeToolTip}" Icon="..\..\Resources\increaseFontSize.png" x:Name="IncreaseFontSizeButton" Text="Increase" Click="increaseFont"/>
+            <SandRibbonInterop:Button ToolTip="{StaticResource DecreaseFontSizeToolTip}" Icon="..\..\Resources\decreaseFontSize.png" x:Name="DecreaseFontSizeButton" Text="Decrease" Click="decreaseFont"/>
+        </SandRibbonInterop:RibbonPanel>
+    </StackPanel>
+</UserControl>

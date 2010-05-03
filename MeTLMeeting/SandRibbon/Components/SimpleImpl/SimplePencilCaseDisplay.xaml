@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="SandRibbon.Components.SimplePencilCaseDisplay"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ribbon="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    >
+    <StackPanel x:Name="LayoutRoot" Orientation="Horizontal">
+        <ribbon:ColorPicker x:Name="colors" ColorPicked="colors_ColorPicked">
+            <Color A="255" R="255" G="255" B="255" />
+            <Color A="255" R="0" G="0" B="0" />
+            <Color A="255" R="255" G="0" B="0" />
+            <Color A="255" R="0" G="255" B="0" />
+            <Color A="255" R="0" G="0" B="255" />
+        </ribbon:ColorPicker>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <!--Command="{x:Static api:Commands.SetHighlighterMode}" -->
+            <Button x:Name="ToggleHighlighterModeButton" Click="pressHighlighterButton" Grid.Row="0" Height="20" >Highlighter</Button>
+            <Label HorizontalAlignment="Center" Grid.Row="1">Pen Thickness</Label>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <!--Command="{x:Static api:Commands.IncreasePenSize}" -->
+                <Button x:Name="IncreasePenSizeButton" Click="pressIncreasePenSizeButton" Grid.Column="0" Height="20" Width="20">+</Button>
+                <!--Command="{x:Static api:Commands.RestorePenSize}" -->
+                <Button x:Name="RestorePenSizeButton" Click="pressDefaultPenSizeButton" Grid.Column="1" Height="20" Width="60">Default</Button>
+                <!-- Command="{x:Static api:Commands.DecreasePenSize}" -->
+                <Button x:Name="DecreasePenSizeButton" Click="pressDecreasePenSizeButton" Grid.Column="2" Height="20" Width="20">-</Button>
+            </Grid>
+        </Grid>
+    </StackPanel>
+</UserControl>

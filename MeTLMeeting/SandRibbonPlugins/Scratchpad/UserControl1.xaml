@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="Scratchpad.PluginMain"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:my="clr-namespace:Scratchpad" 
+    Height="60"
+    Width="200"
+    >
+
+    <UserControl.CommandBindings>
+        <CommandBinding Command="{x:Static my:PluginMain.LoginToScratchPad}" Executed="LoginExecuted" CanExecute="canLogin" />
+        <CommandBinding Command="{x:Static my:PluginMain.LogoutFromScratchPad}" Executed="LogoutExecuted" CanExecute="canLogout" />
+    </UserControl.CommandBindings>
+    <UniformGrid Rows="3" Columns="1">
+        <TextBox x:Name="scratchpadUsername">Enter your username here</TextBox>
+        <PasswordBox x:Name="scratchpadPassword"></PasswordBox>
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{x:Static my:PluginMain.LoginToScratchPad}">Login</Button>
+            <Button Command="{x:Static my:PluginMain.LogoutFromScratchPad}">Logout</Button>
+        </StackPanel>
+    </UniformGrid>
+</UserControl>

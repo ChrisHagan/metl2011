@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--<xml xmlns="metl.monash">-->
+  <eligibleConversationGroups>
+    <user name="eecrole">
+      <eligibleGroup type="initials">"E"</eligibleGroup>
+      <eligibleGroup type="ou">"Office of the Deputy Vice-Chancellor (Education)"</eligibleGroup>
+      <eligibleGroup type="ou">"Administration"</eligibleGroup>
+      <eligibleGroup type="ou">"Staff"</eligibleGroup>
+      <eligibleGroup type="sn">"Role"</eligibleGroup>
+    </user>
+  </eligibleConversationGroups>

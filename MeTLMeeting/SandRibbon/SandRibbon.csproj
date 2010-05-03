@@ -1,0 +1,741 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0213D150-6485-4F40-AF80-5AC5E8BB10CC}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SandRibbon</RootNamespace>
+    <AssemblyName>MeTL</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <ManifestCertificateThumbprint>CB1B2F76CC558B9B92312620BA732668FEDBD586</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SandRibbon_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>true</GenerateManifests>
+    <SignManifests>true</SignManifests>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <TargetZone>LocalIntranet</TargetZone>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+    <ApplicationIcon>Resources\MeTL.ico</ApplicationIcon>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>SandRibbon_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://drawkward.adm.monash.edu/MeTLStaging/</InstallUrl>
+    <UpdateUrl>http://drawkward.adm.monash.edu/MeTLStaging/</UpdateUrl>
+    <ProductName>MeTL Staging</ProductName>
+    <PublisherName>Monash University eEducation Center</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>index.html</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <TrustUrlParameters>true</TrustUrlParameters>
+    <ApplicationRevision>306</ApplicationRevision>
+    <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
+    <UseApplicationTrust>true</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="agsXMPP, Version=1.1.0.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\agsXMPP.dll</HintPath>
+    </Reference>
+    <Reference Include="Divan, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Divan.dll</HintPath>
+    </Reference>
+    <Reference Include="Divelements.SandRibbon, Version=1.1.7.2, Culture=neutral, PublicKeyToken=75b7ec17dd7c14c3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Divelements.SandRibbon.dll</HintPath>
+    </Reference>
+    <Reference Include="HTMLparserLibDotNet20, Version=3.1.3.35483, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\HTMLparserLibDotNet20.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.1, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Composite, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Microsoft.Practices.Composite.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Composite.Presentation, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Microsoft.Practices.Composite.Presentation.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="UIAutomationTypes">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="Components\App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Automation\MultipleClientLauncher.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Automation\StrokeHarvester.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConversationSearchBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\DPad.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Drawer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Friends.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Login.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\PresentationSpace.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\PrintingHost.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\PrivacyTools.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Projector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ProviderMonitor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ScrollBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SimpleImpl\SimpleConversationEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\SimpleImpl\FeatureListing.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SimpleImpl\SimpleConversationCreator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SimpleImpl\SimpleConversationFilterer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SimpleImpl\SimpleConversationSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SimpleImpl\SimpleFriendsListing.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SimpleImpl\SimpleModeSwitcher.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SimpleImpl\SimplePencilCaseDisplay.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\SimpleImpl\SimplePenTools.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Scratchpad.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SimpleImpl\SimpleSlideDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SimpleImpl\SimpleTextTools.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\SimpleImpl\SimpleToolBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SyncDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ToolTips\ToolTips.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Tutorial.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\UserCanvasStack.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\LoadProgress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Window1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Quizzing\AnswerAQuiz.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\AnswerAQuizControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\AuthorAQuiz.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\AuthorAQuizControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\AuthorAQuizInstructions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\AuthorAQuizSampleAnswers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\BarGraph.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\PollIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Quizzing\PollListing.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\QuizAnswers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\QuizControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\RatingControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\Worm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="Components\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Components\Window1.xaml.cs">
+      <DependentUpon>Window1.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Automation\AutomationPeers\ConversationListingAutomationPeer.cs" />
+    <Compile Include="Automation\MultipleClientLauncher.xaml.cs">
+      <DependentUpon>MultipleClientLauncher.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\StrokeHarvester.xaml.cs">
+      <DependentUpon>StrokeHarvester.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Canvas\AbstractCanvas.cs" />
+    <Compile Include="Components\Canvas\HandWriting.cs" />
+    <Compile Include="Components\Canvas\Image.cs" />
+    <Compile Include="Components\Canvas\Text.cs" />
+    <Compile Include="Components\ConversationSearchBox.xaml.cs">
+      <DependentUpon>ConversationSearchBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\DPad.xaml.cs">
+      <DependentUpon>DPad.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Drawer.xaml.cs">
+      <DependentUpon>Drawer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Friends.xaml.cs">
+      <DependentUpon>Friends.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Login.xaml.cs">
+      <DependentUpon>Login.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\PresentationSpace.xaml.cs">
+      <DependentUpon>PresentationSpace.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\PrintingHost.xaml.cs">
+      <DependentUpon>PrintingHost.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\PrivacyTools.xaml.cs">
+      <DependentUpon>PrivacyTools.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Projector.xaml.cs">
+      <DependentUpon>Projector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ProviderMonitor.xaml.cs">
+      <DependentUpon>ProviderMonitor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ScrollBar.xaml.cs">
+      <DependentUpon>ScrollBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SimpleImpl\SimpleConversationEditor.xaml.cs">
+      <DependentUpon>SimpleConversationEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SimpleImpl\FeatureListing.xaml.cs">
+      <DependentUpon>FeatureListing.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SimpleImpl\SimpleConversationCreator.xaml.cs">
+      <DependentUpon>SimpleConversationCreator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SimpleImpl\SimpleConversationFilterer.xaml.cs">
+      <DependentUpon>SimpleConversationFilterer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SimpleImpl\SimpleConversationSelector.xaml.cs">
+      <DependentUpon>SimpleConversationSelector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SimpleImpl\SimpleFriendsListing.xaml.cs">
+      <DependentUpon>SimpleFriendsListing.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SimpleImpl\SimpleModeSwitcher.xaml.cs">
+      <DependentUpon>SimpleModeSwitcher.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SimpleImpl\SimplePencilCaseDisplay.xaml.cs">
+      <DependentUpon>SimplePencilCaseDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SimpleImpl\SimplePenTools.xaml.cs">
+      <DependentUpon>SimplePenTools.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Scratchpad.xaml.cs">
+      <DependentUpon>Scratchpad.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SimpleImpl\SimpleSlideDisplay.xaml.cs">
+      <DependentUpon>SimpleSlideDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SimpleImpl\SimpleTextTools.xaml.cs" />
+    <Compile Include="Components\SimpleImpl\SimpleToolBox.xaml.cs">
+      <DependentUpon>SimpleToolBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SyncDisplay.xaml.cs">
+      <DependentUpon>SyncDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Tutorial.xaml.cs">
+      <DependentUpon>Tutorial.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UserCanvasStack.xaml.cs">
+      <DependentUpon>UserCanvasStack.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\LoadProgress.xaml.cs">
+      <DependentUpon>LoadProgress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Utility\GlobalTimers.cs" />
+    <Compile Include="Components\Utility\RadialPanel.cs" />
+    <Compile Include="Components\Utility\UIAdorner.cs" />
+    <Compile Include="Providers\AuthorisationProvider.cs" />
+    <Compile Include="Providers\ConfigurationProvider.cs" />
+    <Compile Include="Providers\HistoryProvider.cs" />
+    <Compile Include="Providers\HttpResourceProvider.cs" />
+    <Compile Include="Providers\RecentConversationProvider.cs" />
+    <Compile Include="Providers\Structure\ConversationDetailsProviderFactory.cs" />
+    <Compile Include="Providers\Structure\FileConversationDetailsProvider.cs" />
+    <Compile Include="Quizzing\AnswerAQuizControl.xaml.cs">
+      <DependentUpon>AnswerAQuizControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\AuthorAQuizControls.xaml.cs">
+      <DependentUpon>AuthorAQuizControls.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\AuthorAQuizInstructions.xaml.cs">
+      <DependentUpon>AuthorAQuizInstructions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\AuthorAQuizSampleAnswers.xaml.cs">
+      <DependentUpon>AuthorAQuizSampleAnswers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\QuizAnswers.xaml.cs">
+      <DependentUpon>QuizAnswers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\BackDoor.cs" />
+    <Compile Include="Utils\Crypto.cs" />
+    <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">
+      <DependentUpon>AnswerAQuiz.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\AuthorAQuiz.xaml.cs">
+      <DependentUpon>AuthorAQuiz.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\BarGraph.xaml.cs">
+      <DependentUpon>BarGraph.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\PollIcon.xaml.cs">
+      <DependentUpon>PollIcon.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\PollListing.xaml.cs">
+      <DependentUpon>PollListing.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\PollProvider.cs" />
+    <Compile Include="Quizzing\QuizControls.xaml.cs">
+      <DependentUpon>QuizControls.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\QuizParser.cs" />
+    <Compile Include="Quizzing\RatingControls.xaml.cs">
+      <DependentUpon>RatingControls.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\Worm.xaml.cs">
+      <DependentUpon>Worm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\Connection\Jabber\JabberWire.cs" />
+    <Compile Include="Utils\Connection\PreParser.cs" />
+    <Compile Include="Utils\Connection\Printer.cs" />
+    <Compile Include="Utils\Logger.cs" />
+    <Compile Include="Utils\OverlayAdorner.cs" />
+    <Compile Include="Utils\PowerPointLoader.cs" />
+    <Compile Include="Providers\ResourceUploader.cs" />
+    <Compile Include="Effects.cs" />
+    <Compile Include="Providers\Structure\IConversationDetailsProvider.cs" />
+    <Compile Include="Utils\ColorLookup.cs" />
+    <Compile Include="Converters.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Utils\PluginManager.cs" />
+    <Compile Include="Utils\UndoHistory.cs" />
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="SandRibbon_TemporaryKey.pfx" />
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SandRibbonInterop\SandRibbonInterop.csproj">
+      <Project>{936C46AC-5A2F-4476-A89C-52537260DBE4}</Project>
+      <Name>SandRibbonInterop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SandRibbonObjects\SandRibbonObjects.csproj">
+      <Project>{87F30CE0-8265-4934-8E1E-CF90B26B2562}</Project>
+      <Name>SandRibbonObjects</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\close.png" />
+    <Resource Include="Resources\HighlighterShiny.png" />
+    <Resource Include="Resources\NewSlide.png" />
+    <Resource Include="Resources\Next.png" />
+    <Resource Include="Resources\Previous.png" />
+    <Resource Include="Resources\RedPenShiny.png" />
+    <Resource Include="Resources\ShinyEraser.png" />
+    <Resource Include="Resources\RedoShiny.png" />
+    <Resource Include="Resources\logo.png" />
+    <Resource Include="Resources\friendsplaceholder.png" />
+    <Resource Include="Resources\scratchpadplaceholderyellownotepad.png" />
+    <Resource Include="Resources\MagnifyingGlassShiny.png" />
+    <Resource Include="Resources\AnonHead.png" />
+    <Resource Include="Resources\homeloo_gear_clock_2.jpg" />
+    <Resource Include="Resources\SelectShiny.png" />
+    <Resource Include="Resources\ShinyRefresh.png" />
+    <Resource Include="Resources\bold.png" />
+    <Resource Include="Resources\changeFontColour.png" />
+    <Resource Include="Resources\clearFormatting.png" />
+    <Resource Include="Resources\decreaseFontSize.png" />
+    <Resource Include="Resources\increaseFontSize.png" />
+    <Resource Include="Resources\italic.png" />
+    <Resource Include="Resources\copy.png" />
+    <Resource Include="Resources\cut.png" />
+    <Resource Include="Resources\decreaseIndent.png" />
+    <Resource Include="Resources\increaseIndent.png" />
+    <Resource Include="Resources\paste.png" />
+    <Resource Include="Resources\fontFamily.png" />
+    <Resource Include="Resources\fontSize.png" />
+    <Resource Include="Resources\Ribbon-ApplicationButton.png" />
+    <Resource Include="Resources\MeTL.ico" />
+    <Resource Include="Resources\Ribbon-Lecture.png" />
+    <Resource Include="Resources\Ribbon-Meeting.png" />
+    <Resource Include="Resources\Ribbon-Tutorial.png" />
+    <Resource Include="Resources\AddImage.png" />
+    <Resource Include="Resources\ImageMode.png" />
+    <Resource Include="Resources\Inking.png" />
+    <Resource Include="Resources\PlaceTextBox.png" />
+    <Resource Include="Resources\Ribbon-ExpandDown.png" />
+    <Resource Include="Resources\Ribbon-ExpandRight.png" />
+    <Resource Include="Resources\Ribbon-FitCanvas.png" />
+    <Resource Include="Resources\Ribbon-ZoomIn.png" />
+    <Resource Include="Resources\Ribbon-ZoomOut.png" />
+    <Resource Include="Resources\AddQuiz.png" />
+    <Resource Include="Resources\Ribbon-LivePreviewDraft02.png" />
+    <Resource Include="Resources\Ribbon-Quiz.png" />
+    <Resource Include="Resources\ArrowDown.png" />
+    <Resource Include="Resources\ArrowUp.png" />
+    <Resource Include="AGReturned.xml" />
+    <Content Include="plugins\ArtistPalette\ArtistPalette.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\ArtistPalette\pluginDown.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\PluginInterfaceManager\pluginDown.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\PluginInterfaceManager\PluginInterfaceManager.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\RubyRepl\lib\IronRuby.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\RubyRepl\lib\IronRuby.Libraries.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\RubyRepl\lib\Microsoft.Scripting.Core.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\RubyRepl\lib\Microsoft.Scripting.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\RubyRepl\lib\Microsoft.Scripting.ExtensionAttribute.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\RubyRepl\lib\Org.TechA.Wpf.UserControls.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\RubyRepl\lib\Org.TechA.Wpf.UserControls.dll.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\RubyRepl\lib\Org.TechA.Wpf.UserControls.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\RubyRepl\pluginDown.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\RubyRepl\RubyRepl.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Resources\Ribbon-Private.png" />
+    <Resource Include="Resources\Ribbon-Public.png" />
+    <Resource Include="Resources\MonashLogo.jpg" />
+    <Resource Include="Resources\CrudeMeTLMockup.png" />
+    <Content Include="Resources\Slide_Not_Loaded.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Resources\strikethrough.png" />
+    <Resource Include="Resources\subscript.png" />
+    <Resource Include="Resources\superscript.png" />
+    <Content Include="Resources\SyncGreen.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\SyncRed.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Resources\underline.png" />
+    <Resource Include="Resources\UndoShiny.png" />
+    <Resource Include="Resources\SyncShiny.png" />
+    <Resource Include="Resources\LewHandGlassesHead.png" />
+    <Resource Include="Resources\LewMouthOpenHead.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="Microsoft.Vbe.Interop">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>Assembly</FileType>
+    </PublishFile>
+    <PublishFile Include="stdole">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>Assembly</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>4</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.PowerPoint">
+      <Guid>{91493440-5A91-11CF-8700-00AA0060263B}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>9</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="plugins\ArtistPalette\lib\" />
+    <Folder Include="plugins\PluginInterfaceManager\lib\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+</Project>

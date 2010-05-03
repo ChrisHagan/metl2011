@@ -1,0 +1,267 @@
+﻿<sr:RibbonWindow x:Class="SandRibbon.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:my="clr-namespace:SandRibbon"
+    xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    Loaded="RibbonWindow_Loaded"
+    AllowDrop="True"
+    Title="MeTL"
+    x:Name="ribbonWindow"
+    WindowState="Maximized"
+    Icon="..\Resources\MeTL.ico">
+    <sr:RibbonWindow.CommandBindings>
+        <CommandBinding Command="{x:Static api:Commands.HighlightUser}" Executed="HighlightUser" />
+        <CommandBinding Command="{x:Static api:Commands.HighlightFriend}" Executed="HighlightFriend" />
+        <CommandBinding Command="{x:Static api:Commands.ZoomIn}" CanExecute="canZoomIn" Executed="doZoomIn" />
+        <CommandBinding Command="{x:Static api:Commands.ZoomOut}" CanExecute="canZoomOut" Executed="doZoomOut" />
+        <CommandBinding Command="{x:Static api:Commands.RetrievedHistoryPortion}" Executed="receivedHistoryPortion" />
+        <CommandBinding Command="{x:Static api:Commands.CloseApplication}" Executed="closeApplication" CanExecute="canCloseApplication"/>
+        <CommandBinding Command="{x:Static api:Commands.ProgressReported}" Executed="progressReported" />
+    </sr:RibbonWindow.CommandBindings>
+    <sr:RibbonWindow.InputBindings>
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
+        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
+        <KeyBinding Key="C" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Copy}" />
+        <KeyBinding Key="X" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Cut}" />
+        <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Paste}" />
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{x:Static api:Commands.PrintConversation}"/>
+        <KeyBinding Key="B" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleBold}"/>
+        <KeyBinding Key="I" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleItalic}"/>
+        <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
+        <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
+        <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
+    </sr:RibbonWindow.InputBindings>
+    <sr:RibbonWindow.Resources>
+        <ResourceDictionary Source="ToolTips\ToolTips.xaml"/>
+    </sr:RibbonWindow.Resources>
+    <sr:RibbonWindow.Ribbon>
+        <sr:Ribbon  x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" ShowHelp="false" ApplicationButtonImage="\Resources\Ribbon-ApplicationButton.png">
+            <sr:Ribbon.ApplicationPopup>
+                <sr:ApplicationPopup x:Name="ApplicationButtonPopup" OptionsText="Resume" ExitText="Quit MeTL">
+                    <sr:ApplicationPopup.RecentDocumentsControl>
+                        <StackPanel Width="350">
+                            <TextBlock Text="Recent conversations" />
+                            <components:SimpleConversationSelector x:Name="recentDocuments" />
+                        </StackPanel>
+                    </sr:ApplicationPopup.RecentDocumentsControl>
+                    <sr:MenuItem Text="Recommended conversations" ToolTip="{StaticResource ConversationListingToolTip}" >
+                        <sr:RibbonPopup x:Name="ConversationListing"></sr:RibbonPopup>
+                    </sr:MenuItem>
+                    <sr:MenuItem Text="Search all conversations" ToolTip="{StaticResource ConversationListingToolTip}" >
+                        <sr:RibbonPopup Opened="SearchOpened"  x:Name="ConversationFilterer">
+                            <simple:SimpleConversationFilterer x:Name="Search"/>
+                        </sr:RibbonPopup>
+                    </sr:MenuItem>
+                    <sr:MenuItem Text="Advanced search" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}"/>
+                    <sr:MenuItem Text="Create new conversation" ToolTip="{StaticResource CreateConversationToolTip}">
+                        <sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationCreator" Opened="CreateOpened">
+                            <simple:SimpleConversationCreator ActionDescriptor="Create" x:Name="Create" CreateAction="{x:Static api:Commands.CreateConversation}"/>
+                        </sr:RibbonPopup>
+                    </sr:MenuItem>
+                    <sr:MenuItem Text="Edit current conversation" ToolTip="{StaticResource EditConversationToolTip}">
+                        <sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationEditor" Opened="EditOpened">
+                            <simple:SimpleConversationEditor x:Name="Edit"/>
+                        </sr:RibbonPopup>
+                    </sr:MenuItem>
+                    <sr:MenuItem Text="Import conversation" ToolTip="{StaticResource ImportConversationToolTip}">
+                        <sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationCreator" Opened="ImportOpened" >
+                            <simple:SimpleConversationCreator ActionDescriptor="Create" x:Name="Import"  CreateAction="{x:Static api:Commands.StartPowerPointLoad}"/>
+                        </sr:RibbonPopup>
+                    </sr:MenuItem>
+                    <!--sr:MenuItem Text="Export conversation" ToolTip="{StaticResource ExportConversationToolTip}" Command="{x:Static api:Commands.NotImplementedYet}" ></sr:MenuItem-->
+                    <sr:MenuItem Text="Print conversation with notes" ToolTip="{StaticResource PrintConversationToolTip}" Command="{x:Static api:Commands.PrintConversation}"></sr:MenuItem>
+                    <sr:MenuItem Text="Print conversation as handout" ToolTip="{StaticResource PrintHandoutToolTip}" Command="{x:Static api:Commands.PrintConversationHandout}"></sr:MenuItem>
+                    <sr:MenuItem Text="Help" ToolTip="{StaticResource HelpToolTip}" >
+                        <sr:RibbonPopup>
+                            <MenuItem ToolTip="{StaticResource AboutToolTip}" FontSize="12" Width="Auto" Height="Auto" Header="About Monash MeTL" Click="OpenAboutMeTLBrowser" />
+                            <MenuItem ToolTip="{StaticResource ReportBugToolTip}" FontSize="12" Width="Auto" Height="Auto" Header="Report Bug" Click="OpenReportBugBrowser" />
+                            <MenuItem ToolTip="{StaticResource EULAToolTip}" FontSize="12" Header="Usage Conditions" Click="OpenEULABrowser" />
+                            <MenuItem ToolTip="{StaticResource TutorialToolTip}"  FontSize="12" Click="OpenTutorialBrowser" Header="Tutorial"/>
+                        </sr:RibbonPopup>
+                    </sr:MenuItem>
+                </sr:ApplicationPopup>
+            </sr:Ribbon.ApplicationPopup>
+            <sr:Ribbon.ToolBar>
+                <sr:ToolBar>
+                    <sr:Button ToolTip="{StaticResource UndoToolTip}" Text="Undo" Image="\Resources\UndoShiny.png" Command="{x:Static api:Commands.Undo}" />
+                    <sr:Button ToolTip="{StaticResource RedoToolTip}" Text="Redo" Image="\Resources\RedoShiny.png" Command="{x:Static api:Commands.Redo}" />
+                    <sr:Button ToolTip="{StaticResource FriendsToolTip}" Text="Friends" Image="\Resources\friendsplaceholder.png" Command="{x:Static api:Commands.ToggleFriendsVisibility}" CommandParameter="True" />
+                    <sr:Button ToolTip="{StaticResource NotesToolTip}" Text="Notes" Image="\Resources\scratchpadplaceholderyellownotepad.png" Command="{x:Static api:Commands.ToggleScratchPadVisibility}" />
+                    <sr:Button x:Name="quickLaunchTutorial" ToolTip="{StaticResource CreateTutorialToolTip}" Text="Tutorial Style" Image="\Resources\Ribbon-Tutorial.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="tutorial" />
+                    <sr:Button x:Name="quickLaunchLecture" ToolTip="{StaticResource CreateLectureToolTip}" Text="Lecture Style" Image="\Resources\Ribbon-Lecture.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="lecture" />
+                </sr:ToolBar>
+            </sr:Ribbon.ToolBar>
+            <sr:RibbonTab sr:KeyboardAccess.Keys="H" Text="Home" x:Name="Sketch">
+                <sr:RibbonGroup ShowDialogLauncher="False" Header="Editing Modes" Image="\Resources\Inking.png">
+                    <sr:RibbonGroup.Variants>
+                        <sr:GroupVariant Variant="Small" Priority="2"/>
+                        <sr:GroupVariant Variant="Medium" Priority="1"/>
+                        <sr:GroupVariant Variant="Collapsed" Priority="5"/>
+                    </sr:RibbonGroup.Variants>
+                    <simple:SimpleModeSwitcher x:Name="modes"/>
+                </sr:RibbonGroup>
+                <sr:RibbonGroup ShowDialogLauncher="False" x:Name="ModalToolsGroup" Image="\Resources\selectShiny.png">
+                    <sr:RibbonGroup.Variants>
+                        <sr:GroupVariant Variant="Small" Priority="4"/>
+                        <sr:GroupVariant Variant="Medium" Priority="3"/>
+                        <sr:GroupVariant Variant="Collapsed" Priority="5"/>
+                    </sr:RibbonGroup.Variants>
+                    <SandRibbonInterop:RibbonPanel x:Name="StableTools">
+                        <simple:SimpleToolBox x:Name="toolbox"/>
+                    </SandRibbonInterop:RibbonPanel>
+                </sr:RibbonGroup>
+                <sr:RibbonGroup ShowDialogLauncher="False" x:Name="Friends" Header="Friends" Image="\Resources\friendsplaceholder.png">
+                    <sr:RibbonGroup.Variants>
+                        <sr:GroupVariant Variant="Small" Priority="2"/>
+                        <sr:GroupVariant Variant="Medium" Priority="1"/>
+                        <sr:GroupVariant Variant="Collapsed" Priority="3"/>
+                    </sr:RibbonGroup.Variants>
+                    <SandRibbonInterop:RibbonPanel>
+                        <SandRibbonInterop:Button x:Name="ShowFriendsButton" ToolTip="{StaticResource FriendsToolTip}" Text="Friends" Icon="\Resources\friendsplaceholder.png" Command="{x:Static api:Commands.ToggleFriendsVisibility}" />
+                    </SandRibbonInterop:RibbonPanel>
+                </sr:RibbonGroup>
+                <sr:RibbonGroup ShowDialogLauncher="False" x:Name="Private" Header="Private" Image="\Resources\scratchpadplaceholderyellownotepad.png">
+                    <sr:RibbonGroup.Variants>
+                        <sr:GroupVariant Variant="Collapsed" Priority="4"/>
+                        <sr:GroupVariant Variant="Small" Priority="2"/>
+                        <sr:GroupVariant Variant="Medium" Priority="1"/>
+                    </sr:RibbonGroup.Variants>
+                    <SandRibbonInterop:RibbonPanel>
+                        <SandRibbonInterop:Button Text="Notes" Icon="\Resources\scratchpadplaceholderyellownotepad.png" Command="{x:Static api:Commands.ToggleScratchPadVisibility}" ToolTip="{StaticResource NotesToolTip}"/>
+                        <!--Remove these comments to put the privacy buttons on the ribbon.
+                        <SandRibbonInterop:Button Text="Become Private" Icon="\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>
+                        <SandRibbonInterop:Button Text="Become Public" Icon="\Resources\Ribbon-Public.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public"/>
+                    -->
+                    </SandRibbonInterop:RibbonPanel>
+                </sr:RibbonGroup>
+                <sr:RibbonGroup ShowDialogLauncher="False" x:Name="Navigate" Header="Navigate">
+                    <sr:RibbonGroup.Variants>
+                        <sr:GroupVariant Variant="Small" Priority="5"/>
+                        <sr:GroupVariant Variant="Medium" Priority="4"/>
+                        <sr:GroupVariant Variant="Collapsed" Priority="6"/>
+                    </sr:RibbonGroup.Variants>
+                </sr:RibbonGroup>
+                <sr:RibbonGroup ShowDialogLauncher="False" sr:KeyboardAccess.Keys="M" x:Name="Minimap" Header="View">
+                    <sr:RibbonGroup.Variants>
+                        <sr:GroupVariant Variant="Collapsed" Priority="5"/>
+                    </sr:RibbonGroup.Variants>
+                    <StackPanel Orientation="Horizontal">
+                        <Viewbox Height="65" Width="100" DataContext="{Binding ElementName=scroll}" MouseDown="Viewbox_MouseDown" MouseMove="Viewbox_MouseMove">
+                            <Grid>
+                                <Rectangle Width="{Binding Content.ActualWidth}" Height="{Binding Content.ActualHeight}" x:Name="minimap">
+                                    <Rectangle.Fill>
+                                        <VisualBrush Visual="{Binding Content}" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <Border BorderThickness="1" BorderBrush="Black" 
+                                Background="{StaticResource MiniMapSelectionBox}"
+                                Width="{Binding ViewportWidth}"
+                                Height="{Binding ViewportHeight}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top">
+                                    <Border.RenderTransform>
+                                        <TranslateTransform X="{Binding HorizontalOffset}" Y="{Binding VerticalOffset}" x:Name="mapRegion"/>
+                                    </Border.RenderTransform>
+                                </Border>
+                            </Grid>
+                        </Viewbox>
+                    </StackPanel>
+                </sr:RibbonGroup>
+            </sr:RibbonTab>
+            <sr:RibbonTab sr:KeyboardAccess.Keys="P" Text="Plugins" x:Name="pluginRoot">
+            </sr:RibbonTab>
+            <sr:RibbonTab sr:KeyboardAccess.Keys="Q" Text="Quizzes" x:Name="quizRoot">
+                <sr:RibbonGroup Header="Multiple Choice Quiz" ShowDialogLauncher="False" Image="\Resources\Ribbon-Quiz.png">
+                    <sr:RibbonGroup.Variants>
+                        <sr:GroupVariant Variant="Collapsed" Priority="9"/>
+                    </sr:RibbonGroup.Variants>
+                    <quiz:QuizControls />
+                </sr:RibbonGroup>
+            </sr:RibbonTab>
+            <sr:RibbonTab sr:KeyboardAccess.Keys="A" Text="Analytics" x:Name="analyticsRoot">
+                <sr:RibbonGroup Header="Worm" ShowDialogLauncher="False">
+                    <sr:RibbonGroup.Variants>
+                        <sr:GroupVariant Variant="Collapsed" Priority="9"/>
+                    </sr:RibbonGroup.Variants>
+                    <quiz:Worm />
+                </sr:RibbonGroup>
+            </sr:RibbonTab>
+        </sr:Ribbon>
+    </sr:RibbonWindow.Ribbon>
+    <sr:RibbonWindow.StatusBar>
+        <sr:StatusBar x:Name="status">
+            <Grid Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}">
+                <StackPanel x:Name="StatusLeft" Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+                    <sr:Label x:Name="StatusLabel" ToolTip="currentMode" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel x:Name="StatusRight" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,50,0">
+                    <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="..\Resources\Ribbon-ZoomOut.png" ToolTip="{StaticResource ZoomOutToolTip}" InternalButtonSize="Small" />
+                    <SandRibbonInterop:Button Click="RestoreView" Icon="..\Resources\Ribbon-FitCanvas.png" Text="Restore Canvas" ToolTip="{StaticResource RestoreCanvasToolTip}" InternalButtonSize="Small"/>
+                    <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="..\Resources\Ribbon-ZoomIn.png" ToolTip="{StaticResource ZoomInToolTip}" InternalButtonSize="Small"/>
+                </StackPanel>
+                <components:PrintingHost Height="25" Width="25" HorizontalAlignment="Right"/>
+            </Grid>
+        </sr:StatusBar>
+    </sr:RibbonWindow.StatusBar>
+    <Grid>
+        <Grid x:Name="EffectRoot">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="friendContent" Width="0"/>
+                    <ColumnDefinition x:Name="friendSplitter" Width="10"/>
+                    <ColumnDefinition x:Name="canvasContent" />
+                    <ColumnDefinition x:Name="gridSplitter" Width="10"/>
+                    <ColumnDefinition x:Name="scratchPadContent" Width ="auto" />
+                </Grid.ColumnDefinitions>
+                <components:Friends Grid.Column="0" Height="auto" Width="auto" x:Name="friends" Visibility="Collapsed" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                <GridSplitter x:Name="friendGridSplitter" Grid.Column="1"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Stretch"
+              ShowsPreview="True"
+              Width="10"
+              Visibility="{Binding ElementName=friends, Path=Visibility}"
+              />
+                <Grid Grid.Column="2">
+                    <Grid x:Name="adornerGrid" Margin="0,0,27,27" SizeChanged="adornerGrid_SizeChanged">
+                        <InkCanvas EditingMode="None" Background="Transparent" x:Name="adorner"/>
+                        <Viewbox x:Name="canvasViewBox">
+                            <ScrollViewer x:Name="scroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
+                            </ScrollViewer>
+                        </Viewbox>
+                        <Grid  x:Name="dynamicContent" />
+                        <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" Background="{StaticResource BackgroundGrayGradient}">
+                        </Grid>
+                        <Canvas Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">
+                            <StackPanel x:Name="ProgressDisplay" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Canvas>
+                        <components:ProviderMonitor x:Name="monitor" Visibility="Collapsed" />
+                    </Grid>
+                    <components:ScrollBar x:Name="adornerScroll"/>
+                </Grid>
+                <GridSplitter x:Name="notesGridSplitter"
+              Grid.Column="3"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Stretch"
+              ShowsPreview="True"
+              Width="10"
+              Visibility="{Binding ElementName=drawer, Path=Visibility}"
+              />
+                <components:Drawer Grid.Column="4"  Width="auto" x:Name="drawer" Visibility="Collapsed"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="auto"/>
+                <components:LoadProgress x:Name="progress" Visibility="Collapsed" />
+            </Grid>
+            <Grid x:Name="TutorialLayer" Visibility="Collapsed" IsHitTestVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-90,0,0" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" >
+                <components:Tutorial/>
+            </Grid>
+        </Grid>
+        <Grid x:Name="loginParent">
+            <components:ConversationSearchBox x:Name="currentConversationSearchBox" Visibility="Collapsed"/>
+            <components:Login x:Name="login"/>
+        </Grid>
+    </Grid>
+</sr:RibbonWindow>

@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="SandRibbon.Quizzing.Worm"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Black">
+    <UserControl.Resources>
+        <DrawingBrush Viewport="0,0,10,10" 
+                      ViewportUnits="Absolute"
+                      TileMode="Tile" x:Key="grid">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Geometry="M0,0 L1,0 1,0.1, 0,0.1Z" Brush="Green" />
+                    <GeometryDrawing Geometry="M0,0 L0,1 0.1,1, 0.1,0Z" Brush="Green" />
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+    </UserControl.Resources>
+    <StackPanel Orientation="Horizontal">
+        <quiz:RatingControls />
+        <Canvas Width="200" x:Name="trail" Background="{StaticResource grid}" /> 
+    </StackPanel>
+</UserControl>

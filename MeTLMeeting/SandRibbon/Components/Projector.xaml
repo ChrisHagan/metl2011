@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="SandRibbon.Components.Projector"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    x:Name="parent"
+    Background="{StaticResource BackgroundBlueGradient}"
+    > 
+    <UserControl.Resources>
+        <core:String x:Key="defaultPrivacy">public</core:String>
+        <core:String x:Key="target">presentationSpace</core:String>
+    </UserControl.Resources>
+    <Viewbox>
+        <ScrollViewer x:Name="scroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" CanContentScroll="True">
+            <ScrollViewer.Width>
+                <MultiBinding Converter="{x:Static components:Projector.WidthCorrector}">
+                    <Binding Path="ActualWidth" />    
+                    <Binding Path="ActualHeight" />    
+                    <Binding ElementName="parent"  Path="ActualWidth" />    
+                    <Binding ElementName="parent" Path="ActualHeight" />    
+                </MultiBinding> 
+            </ScrollViewer.Width>
+            <ScrollViewer.Height>
+                <MultiBinding Converter="{x:Static components:Projector.HeightCorrector}">
+                    <Binding Path="ActualWidth" />    
+                    <Binding Path="ActualHeight" />    
+                    <Binding ElementName="parent" Path="ActualWidth" />    
+                    <Binding ElementName="parent" Path="ActualHeight" />    
+                </MultiBinding> 
+            </ScrollViewer.Height>
+            <Grid>
+                <components:UserCanvasStack x:Name="stack"/>
+                <InkPresenter x:Name="liveInk" Width="{Binding ElementName=stack, Path=ActualWidth}"
+                                Height="{Binding ElementName=stack, Path=ActualHeight}" />
+            </Grid>
+        </ScrollViewer>
+    </Viewbox>
+</UserControl>

@@ -1,0 +1,12 @@
+C:\sandRibbon\SandRibbonPlugins\Print\bin\Debug\Print.dll
+C:\sandRibbon\SandRibbonPlugins\Print\bin\Debug\Print.pdb
+C:\sandRibbon\SandRibbonPlugins\Print\obj\Debug\ResolveAssemblyReference.cache
+C:\sandRibbon\SandRibbonPlugins\Print\obj\Debug\UserControl1.g.cs
+C:\sandRibbon\SandRibbonPlugins\Print\obj\Debug\Print_MarkupCompile.cache
+C:\sandRibbon\SandRibbonPlugins\Print\obj\Debug\Print_MarkupCompile.lref
+C:\sandRibbon\SandRibbonPlugins\Print\obj\Debug\UserControl1.baml
+C:\sandRibbon\SandRibbonPlugins\Print\obj\Debug\Print.g.resources
+C:\sandRibbon\SandRibbonPlugins\Print\obj\Debug\Print.csproj.GenerateResource.Cache
+C:\sandRibbon\SandRibbonPlugins\Print\obj\Debug\Print.dll
+C:\sandRibbon\SandRibbonPlugins\Print\obj\Debug\Print.pdb
+C:\sandRibbon\SandRibbonPlugins\Print\obj\Debug\Print.Properties.Resources.resources

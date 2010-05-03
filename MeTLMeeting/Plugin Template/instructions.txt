@@ -1,0 +1,2 @@
+Place this file in:
+{$HOME DIRECTORY}\My Documents\Visual Studio 2008\Templates\Project Templates\

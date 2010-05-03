@@ -1,0 +1,54 @@
+New MeTL stimuli and responses:
+
+Students
+-Want more colors.
+--Pluggable color picker options.
+-Slides are hard to use.
+--Fix synch so that opt in slide usage is unusual.
+-Crashes too much.
+--Disable crashing functionality - safe modes, restricted usage.
+-Draw much more than they type.
+--Emphasize drawing in each of the input areas, separate drawing from typing.  Many of the issues with previous MeTL's interactivity were textbox sharing space with ink specific.
+-Why can't I see what he wrote?  Can he see what I wrote?
+--Cleanly separate public and private regions.  Clear ground rules.
+-I want to make a little group and talk to them only.
+--Where?  In the private book?  In a new book?  On the public space?
+
+Teachers
+-Printing fails a lot.
+--Move it to a server mode, queue requests even if the functionality is broken; we'll email you the copy when it's done.
+-Presentation mode is separate to my personal screen.
+--Automatic login of the second user in the same subnet to be a presentation slave?  Automatic assignment of extra user for teachers?
+-Want simple unambiguous controls.
+--Pluggable three color pen options.
+
+Content builders
+-Powerpoint is core.
+--Background stratum is distinct from image stratum.
+--Visually faithful, movable but not editable elements from existing powerpoint.  Still client based ATM.  Should probably be server based.
+-Type much more than they draw.
+--Rich text options exist in their own mode, separate from lightweight text options which are default?  How rich is rich?
+-Rename conversations, overwrite existing versions of conversations.  I want to change the conversation in powerpoint and have it update in MeTL.
+--We'll think about it :)  Maybe it automatically flushes the background stratum but leaves the others.
+
+Supporters
+-Students mostly fail by not being on the internet (anymore).
+--Precheck internet on startup.
+--Notify cleanly when internet fails.  This is key to an impression of reliability; be able to fingerpoint and continue.
+-I want logs of conditions up to failure.
+--??  Not really a public issue, just flagging that there is a significant need for dev time to be spent on non customer facing tasks.
+
+Devs
+-Want to be able to be responsive to constantly changing requests.
+--Pluggability.
+-Want to be notified of intended prod usage, and for it to be independent of specific intensive support.
+--??
+-Want to be able to remote any user's computer.
+--Erlang is Big Brother; successful slaving techniques invented and proved at high density wireless tests.
+
+Designers
+-Want to be able to rapidly prototype new ideas.
+--Pluggability.
+-Want reliable information on current, actual usage. 
+--Ties back into logging, but implies that logging should be server based instead of client based, which got us into a lot of trouble previously.  We'll think about it.  Separate Erlang slaving to report logs?
+0

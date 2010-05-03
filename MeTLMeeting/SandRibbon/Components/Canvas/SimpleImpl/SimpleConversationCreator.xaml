@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="SandRibbon.Components.SimpleImpl.SimpleConversationCreator"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:my="clr-namespace:SandRibbon.Components.SimpleImpl"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    x:Name="parent">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\ToolTips\ToolTips.xaml"/>
+                <ResourceDictionary>
+                    <my:TitleHydrator x:Key="conversationBuilder"/>
+                    <my:LabelConverter x:Key="labelConverter" />
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <StackPanel>
+        <Border  BorderThickness="2">
+            <StackPanel>
+                <Label Content="Conversation Name(*)"/>
+                <TextBox x:Name="conversationName" Height="20" TextChanged="checkCanSubmit"/>
+                <Label Content="Tag"/>
+                <TextBox x:Name="conversationTag" Height="20"/>
+                <Label Content="Subject"/>
+                <ComboBox x:Name="subjectList" Height="20"/>
+                <SandRibbonInterop:Button Command="{Binding Path=CreateAction}"
+                                   Text="{Binding Path=ActionDescriptor, Converter={StaticResource labelConverter}, ConverterParameter=Lecture}" 
+                                   Tag="Lecture"
+                                   x:Name="CreateLectureButton" 
+                                   Width="Auto" HorizontalAlignment="Stretch"
+                                   ToolTip="{StaticResource CreateLectureToolTip}">
+                    <SandRibbonInterop:Button.CommandParameter>
+                        <MultiBinding Converter="{StaticResource conversationBuilder}">
+                            <Binding ElementName="conversationName" Path="Text" />
+                            <Binding ElementName="conversationTag" Path="Text" />
+                            <Binding ElementName="subjectList" Path="Text" /> <!-- ST*** -->
+                            <Binding Source="{x:Static my:SimpleConversationCreator.LECTURE_PERMISSIONS}" />
+                        </MultiBinding>
+                    </SandRibbonInterop:Button.CommandParameter>
+                </SandRibbonInterop:Button>
+                <SandRibbonInterop:Button Command="{Binding Path=CreateAction}" 
+                                   Text="{Binding Path=ActionDescriptor, Converter={StaticResource labelConverter}, ConverterParameter=Tutorial}" 
+                                   Tag="Tutorial" 
+                                   x:Name="CreateTutorialButton" 
+                                   Width="Auto" HorizontalAlignment="Stretch"
+                                   ToolTip="{StaticResource CreateTutorialToolTip}">
+                    <SandRibbonInterop:Button.CommandParameter>
+                        <MultiBinding Converter="{StaticResource conversationBuilder}">
+                            <Binding ElementName="conversationName" Path="Text" />
+                            <Binding ElementName="conversationTag" Path="Text" />
+                            <Binding ElementName="subjectList" Path="Text" /> <!-- ST*** -->
+                            <Binding Source="{x:Static my:SimpleConversationCreator.TUTORIAL_PERMISSIONS}" />
+                        </MultiBinding>
+                    </SandRibbonInterop:Button.CommandParameter>
+                </SandRibbonInterop:Button>
+                <SandRibbonInterop:Button Command="{x:Static api:Commands.NotImplementedYet}" 
+                                   Text="{Binding Path=ActionDescriptor, Converter={StaticResource labelConverter}, ConverterParameter=Meeting}" 
+                                   Tag="Meeting" 
+                                   x:Name="CreateMeetingButton" 
+                                   Width="Auto" HorizontalAlignment="Stretch"
+                                   ToolTip="{StaticResource CreateMeetingToolTip}">
+                    <SandRibbonInterop:Button.CommandParameter>
+                        <MultiBinding Converter="{StaticResource conversationBuilder}">
+                            <Binding ElementName="conversationName" Path="Text" />
+                            <Binding ElementName="conversationTag" Path="Text" />
+                            <Binding ElementName="subjectList" Path="Text" /> <!-- ST*** -->
+                            <Binding Source="{x:Static my:SimpleConversationCreator.MEETING_PERMISSIONS}" />
+                        </MultiBinding>
+                    </SandRibbonInterop:Button.CommandParameter>
+                </SandRibbonInterop:Button>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

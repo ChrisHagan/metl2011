@@ -1,0 +1,10 @@
+﻿<Window x:Class="Sandbox.Xmpp"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Xmpp" Height="300" Width="300">
+    <Grid>
+        <Button Click="Button_Click">
+            Xmpp
+        </Button>
+    </Grid>
+</Window>

@@ -1,0 +1,2 @@
+﻿This is the template for the message that a user should read when the plugin cannot load.  Please see the example below.
+If you are seeing this message, it means that the plugin could not be loaded.

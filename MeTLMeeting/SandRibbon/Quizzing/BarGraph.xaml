@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="SandRibbon.Quizzing.BarGraph"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:my="clr-namespace:SandRibbon" 
+    Background="White" 
+    Width="200">
+    <Grid>
+        <TextBlock Text="Results" />
+        <ItemsControl x:Name="bars" >
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid VerticalAlignment="Bottom">
+                        <TextBlock Text="{Binding Path=label}" Background="{Binding Path=label, Converter={x:Static quiz:QuizControls.OptionToColor}}" >
+                            <TextBlock.Width>
+                                <MultiBinding Converter="{x:Static my:Converters.divide}">
+                                   <Binding RelativeSource="{RelativeSource FindAncestor, 
+                                       AncestorType={x:Type quiz:BarGraph}}" Path="ActualWidth" />
+                                   <Binding RelativeSource="{RelativeSource FindAncestor, 
+                                       AncestorType={x:Type ItemsControl}}" Path="ItemsSource.Count" />
+                                </MultiBinding>
+                            </TextBlock.Width>
+                            <TextBlock.Height>
+                                <MultiBinding Converter="{x:Static my:Converters.multiply}">
+                                   <Binding RelativeSource="{RelativeSource FindAncestor, 
+                                       AncestorType={x:Type quiz:BarGraph}}" Path="ActualHeight" />
+                                   <Binding Path="proportion"/> 
+                                </MultiBinding>
+                            </TextBlock.Height>
+                        </TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

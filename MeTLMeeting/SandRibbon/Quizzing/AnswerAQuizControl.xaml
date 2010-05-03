@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="SandRibbon.Quizzing.AnswerAQuizControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    HorizontalAlignment="Right"
+    VerticalAlignment="Bottom">
+    <StackPanel Orientation="Horizontal"> 
+        <Button x:Name="quizSubmit" Click="submit">
+            Answer This Quiz
+        </Button>
+        <Button Click="cancel">Leave the quiz</Button>
+    </StackPanel>
+</UserControl>

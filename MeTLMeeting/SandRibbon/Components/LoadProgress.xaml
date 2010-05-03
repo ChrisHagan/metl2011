@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="SandRibbon.Components.LoadProgress"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:util="clr-namespace:Components.Utility"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:sr="clr-namespace:SandRibbon"
+    Opacity="0.5"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid x:Name="total">
+        <Grid>
+            <ItemsControl x:Name="progress" RenderTransformOrigin="0.5,0.5">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Rectangle Fill="{Binding Path=Done, Converter={x:Static sr:Converters.progressColor}}" 
+                                       VerticalAlignment="Stretch" Height="Auto">
+                                <Rectangle.Width>
+                                    <MultiBinding Converter="{x:Static sr:Converters.multiply}">
+                                        <Binding ElementName="total" Path="ActualWidth" />
+                                        <Binding Path="Proportion" />
+                                    </MultiBinding>
+                                </Rectangle.Width>
+                            </Rectangle>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock>Loading content.  Please wait...</TextBlock>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pedal", "Pedal\Pedal.csproj", "{95DC50E8-9F2F-4CD1-AAD6-58A1079AEFAA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95DC50E8-9F2F-4CD1-AAD6-58A1079AEFAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95DC50E8-9F2F-4CD1-AAD6-58A1079AEFAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95DC50E8-9F2F-4CD1-AAD6-58A1079AEFAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95DC50E8-9F2F-4CD1-AAD6-58A1079AEFAA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

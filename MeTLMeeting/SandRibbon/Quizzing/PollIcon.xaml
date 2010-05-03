@@ -1,0 +1,11 @@
+﻿<UserControl x:Class="SandRibbon.Quizzing.PollIcon"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:interop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:my="clr-namespace:SandRibbon"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <interop:Button Text="Quiz" Icon="..\Resources\Ribbon-Quiz.png"
+                    x:Name="button"
+                    Command="{x:Static api:Commands.MoveToQuiz}" >
+    </interop:Button>
+</UserControl>

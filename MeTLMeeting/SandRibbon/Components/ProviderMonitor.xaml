@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="SandRibbon.Components.ProviderMonitor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:components="clr-namespace:SandRibbon.Components" 
+    Background="White" >
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+        <ItemsControl x:Name="status" ItemsSource="{x:Static components:ProviderMonitor.SERVERS}" >
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Path=ok}" Value="False">
+                                <Setter Property="TextBlock.Foreground" Value="Red"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=ok}" Value="True">
+                                <Setter Property="TextBlock.Foreground" Value="Green"/>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    <TextBlock Text="{Binding Path=label}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock>Checking servers...</TextBlock>
+            <Border x:Name="abortOptions" Visibility="Collapsed">
+                <Button>Quit</Button> 
+            </Border>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

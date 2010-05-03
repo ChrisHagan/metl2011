@@ -1,0 +1,20 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PublishUrlHistory>publish\</PublishUrlHistory>
+    <InstallUrlHistory>http://drawkward.adm.monash.edu/MeTLStaging/|http://drawkward.adm.monash.edu/MeTL/|http://drawkward.adm.monash.edu/MeTLDev/|http://drawkward.adm.monash.edu/MeTLProd/</InstallUrlHistory>
+    <SupportUrlHistory>http://drawkward.adm.monash.edu/MeTL</SupportUrlHistory>
+    <UpdateUrlHistory>http://drawkward.adm.monash.edu/MeTL/|http://drawkward.adm.monash.edu/MeTLStaging/|http://drawkward.adm.monash.edu/MeTLDev/</UpdateUrlHistory>
+    <BootstrapperUrlHistory>
+    </BootstrapperUrlHistory>
+    <ErrorReportUrlHistory>
+    </ErrorReportUrlHistory>
+    <FallbackCulture>en-US</FallbackCulture>
+    <VerifyUploadedFiles>false</VerifyUploadedFiles>
+    <EnableSecurityDebugging>false</EnableSecurityDebugging>
+    <ProjectView>ProjectFiles</ProjectView>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <StartArguments>
+    </StartArguments>
+  </PropertyGroup>
+</Project>

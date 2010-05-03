@@ -1,0 +1,10 @@
+﻿<Window x:Class="StrokeBotHost.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:strokeBot="clr-namespace:StrokeBot;assembly=StrokeBot" 
+    Title="Window1" Height="300" Width="300">
+    <Grid>
+        <strokeBot:PluginMain Width="50" Height="30"/>
+        <InkCanvas x:Name="ink" Background="Red"/>
+    </Grid>
+</Window>

@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="SandRibbon.Components.SimplePenTools"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    >
+    <UserControl.Resources>
+        <ResourceDictionary Source="..\ToolTips\ToolTips.xaml"/>
+    </UserControl.Resources>
+    <SandRibbonInterop:RibbonPanel Tag="inkModes">
+        <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectToolTip}"  Icon="\Resources\SelectShiny.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
+        <SandRibbonInterop:RadioButton ToolTip="{StaticResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
+    </SandRibbonInterop:RibbonPanel>
+</UserControl>

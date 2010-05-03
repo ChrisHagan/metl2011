@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2B5FFAF9-C3A3-459F-9E24-D0F42586E1FE}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HeadfulClassRoom</RootNamespace>
+    <AssemblyName>HeadlessClassRoom</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <ManifestCertificateThumbprint>D5D96B1FB8073EB7552F54DADE88126E28F5B4F3</ManifestCertificateThumbprint>
+    <ManifestKeyFile>HeadfulClassRoom_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>true</GenerateManifests>
+    <SignManifests>true</SignManifests>
+    <NoWin32Manifest>true</NoWin32Manifest>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>false</MapFileExtensions>
+    <InstallUrl>http://drawkward.adm.monash.edu/MeTLHeadfulClassroom/</InstallUrl>
+    <ProductName>Headful Classroom Simulator</ProductName>
+    <PublisherName>Monash University eEducation Center</PublisherName>
+    <SuiteName>MeTL Tools</SuiteName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>index.html</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <ApplicationRevision>59</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SandRibbon\lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationClient">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="UIAutomationClientsideProviders">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="UIAutomationTypes">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Telnet.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Functional\Functional.csproj">
+      <Project>{EEA9F528-4885-4D7E-8BDC-914FA52370C7}</Project>
+      <Name>Functional</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SandRibbon\SandRibbon.csproj">
+      <Project>{0213D150-6485-4F40-AF80-5AC5E8BB10CC}</Project>
+      <Name>SandRibbon</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="availableStrokes.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\AddImage.png" />
+    <Content Include="Resources\AddQuiz.png" />
+    <Content Include="Resources\AnonHead.png" />
+    <Content Include="Resources\ArrowDown.png" />
+    <Content Include="Resources\ArrowUp.png" />
+    <Content Include="Resources\availableStrokes.txt" />
+    <Content Include="Resources\BenHead.png" />
+    <Content Include="Resources\BlackPenShiny.png" />
+    <Content Include="Resources\BluePenShiny.png" />
+    <Content Include="Resources\bold.png" />
+    <Content Include="Resources\changeFontColour.png" />
+    <Content Include="Resources\clearFormatting.png" />
+    <Content Include="Resources\close.png" />
+    <Content Include="Resources\copy.png" />
+    <Content Include="Resources\cut.png" />
+    <Content Include="Resources\decreaseFontSize.png" />
+    <Content Include="Resources\decreaseIndent.png" />
+    <Content Include="Resources\fontFamily.png" />
+    <Content Include="Resources\fontSize.png" />
+    <Content Include="Resources\friendsplaceholder.png" />
+    <Content Include="Resources\HighlighterShiny.png" />
+    <Content Include="Resources\homeloo_gear_clock_2.jpg" />
+    <Content Include="Resources\ImageMode.png" />
+    <Content Include="Resources\increaseFontSize.png" />
+    <Content Include="Resources\increaseIndent.png" />
+    <Content Include="Resources\Inking.png" />
+    <Content Include="Resources\italic.png" />
+    <Content Include="Resources\LewHandGlassesHead.png" />
+    <Content Include="Resources\LewMouthOpenHead.png" />
+    <Content Include="Resources\logo.png" />
+    <Content Include="Resources\MagnifyingGlassShiny.png" />
+    <Content Include="Resources\MeTL.ico" />
+    <Content Include="Resources\NewSlide.png" />
+    <Content Include="Resources\Next.png" />
+    <Content Include="Resources\paste.png" />
+    <Content Include="Resources\PlaceTextBox.png" />
+    <Content Include="Resources\Previous.png" />
+    <Content Include="Resources\RedoShiny.png" />
+    <Content Include="Resources\RedPenShiny.png" />
+    <Content Include="Resources\Ribbon-ApplicationButton.png" />
+    <Content Include="Resources\Ribbon-ExpandDown.png" />
+    <Content Include="Resources\Ribbon-ExpandRight.png" />
+    <Content Include="Resources\Ribbon-FitCanvas.png" />
+    <Content Include="Resources\Ribbon-Lecture.png" />
+    <Content Include="Resources\Ribbon-LivePreviewDraft02.png" />
+    <Content Include="Resources\Ribbon-Meeting.png" />
+    <Content Include="Resources\Ribbon-Private.png" />
+    <Content Include="Resources\Ribbon-Public.png" />
+    <Content Include="Resources\Ribbon-Quiz.png" />
+    <Content Include="Resources\Ribbon-SlideStack.png" />
+    <Content Include="Resources\Ribbon-Tutorial.png" />
+    <Content Include="Resources\Ribbon-ZoomIn.png" />
+    <Content Include="Resources\Ribbon-ZoomOut.png" />
+    <Content Include="Resources\scratchpadplaceholderyellownotepad.png" />
+    <Content Include="Resources\SelectShiny.png" />
+    <Content Include="Resources\ShinyEraser.png" />
+    <Content Include="Resources\ShinyRefresh.png" />
+    <Content Include="Resources\Slide_Not_Loaded.png" />
+    <Content Include="Resources\strikethrough.png" />
+    <Content Include="Resources\subscript.png" />
+    <Content Include="Resources\superscript.png" />
+    <Content Include="Resources\SyncGreen.png" />
+    <Content Include="Resources\SyncRed.png" />
+    <Content Include="Resources\SyncShiny.png" />
+    <Content Include="Resources\underline.png" />
+    <Content Include="Resources\UndoShiny.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HeadfulClassRoom_TemporaryKey.pfx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

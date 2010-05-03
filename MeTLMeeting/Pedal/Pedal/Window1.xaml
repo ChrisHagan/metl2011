@@ -1,0 +1,23 @@
+﻿<Window x:Class="Pedal.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Topmost="True"
+    Title="Vroom vroom!">
+    <Grid>
+        <Image Source="raceman.jpg" />
+        <StackPanel VerticalAlignment="Center">
+            <Label Background="Wheat" Width="100">Pick a username</Label>
+            <TextBox x:Name="username" Background="Wheat" Width="120"></TextBox>
+            <Button Click="Button_Click" Width="100" Height="40">Begin</Button>        
+            <Button Click="Help" Width="100" Height="40">Click here for help</Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+            <Label Background="Wheat">Target slide (1001)</Label>
+            <TextBox x:Name="optionalSlide" Width="60"></TextBox>
+            <Label Background="Wheat">Milis between strokes (150)</Label>
+            <TextBox x:Name="optionalSpeed" Width="60"></TextBox>
+            <Label Background="Wheat">xOffset (0) (pageWidth:2000)</Label>
+            <TextBox x:Name="optionalXOffset" Width="60"></TextBox>
+        </StackPanel>
+    </Grid>
+</Window>

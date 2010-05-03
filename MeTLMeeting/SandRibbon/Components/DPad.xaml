@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="SandRibbon.Components.DPad"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:components="clr-namespace:SandRibbon.Components" >
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ToolTips\ToolTips.xaml"/>
+                <ResourceDictionary>
+                    <Style TargetType="Button">
+                        <Setter Property="Height" Value="30" />
+                        <Setter Property="Width" Value="30" />
+                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                        <EventSetter Event="Click" Handler="directionSelected" />
+                        <Setter Property="RenderTransform">
+                            <Setter.Value>
+                                <RotateTransform Angle="{Binding}" />
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Name="border" BorderBrush="LightGray" BorderThickness="1" CornerRadius="2" Background="Transparent">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Name="content"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="{StaticResource MouseOverGradient}"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="{StaticResource PressedGradient}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <Polygon Points="{x:Static components:DPad.POINTS}" Stroke="LightGray" Fill="{StaticResource BackgroundBlueGradient}" />
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+        </UserControl.Resources>
+    <Grid>
+        <Button x:Name="Button270" VerticalAlignment="Center" ToolTip="{StaticResource ExtendCanvasToolTip}" HorizontalAlignment="Left" DataContext="270" />
+        <Button x:Name="Button0"  VerticalAlignment="Top" ToolTip="{StaticResource ExtendCanvasToolTip}" HorizontalAlignment="Center" DataContext="0" />
+        <Button x:Name="Button90"  VerticalAlignment="Center" ToolTip="{StaticResource ExtendCanvasToolTip}" HorizontalAlignment="Right" DataContext="90"/>
+        <Button x:Name="Button180"  VerticalAlignment="Bottom" ToolTip="{StaticResource ExtendCanvasToolTip}" HorizontalAlignment="Center" DataContext="180"/>
+    </Grid>
+</UserControl>

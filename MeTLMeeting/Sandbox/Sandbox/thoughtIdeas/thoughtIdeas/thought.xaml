@@ -1,0 +1,13 @@
+﻿<UserControl x:Class="ThoughtIdeas.Thought"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    >
+    <StackPanel Orientation="Horizontal">
+        <Button Height="50" Width="50" Click="pushpinClicked" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Image Source="pushPin.jpg"/>
+        </Button>
+        <Grid Height="auto" x:Name="thoughtControls" Visibility="Collapsed">
+            <TextBox  Width="100" AcceptsReturn="true" TextWrapping="Wrap"/>
+        </Grid>
+    </StackPanel>
+</UserControl>

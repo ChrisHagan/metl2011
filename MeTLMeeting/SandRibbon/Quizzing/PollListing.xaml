@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="SandRibbon.Quizzing.PollListing"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:interop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:my="clr-namespace:SandRibbon"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ItemsControl x:Name="polls">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <interop:Button Text="Quiz" Icon="..\Resources\Ribbon-Quiz.png" Click="GoToAnyQuiz"/>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

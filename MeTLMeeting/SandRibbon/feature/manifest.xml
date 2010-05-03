@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<features>
+  <Conversation_Screen_Listing Finalized="true" />
+  <Conversation_Screen_LIsting_is_sortable Finalized="false" />
+  <Powerpoint_Import Finalized="true" />
+  <Rich_Ink Finalized="true" />
+  <Rich_Text Finalized="false" />
+  <Powerpoint_Import Finalized="true" />
+  <Sync_to_Teacher Finalized="false" />
+  <Private_strokes_on_main_canvas Finalized="false" />
+  <ScratchPad Finalized="false" />
+  <chat Finalized="true" />
+  <Friend_Subscription Finalized="false" />
+  <Print Finalized="false" />
+  <ExtendCanvas Finalized="true" />
+  <Help_Options Finalized="true" />
+  <Create_Conversation Finalized="true" />
+  <Create_Slide Finalized="true" />
+  <Quicklaunch_Buttons Finalized="true" />
+  <Image_Drop Finalized="true" />
+  <Image_Manipulation Finalized="false" />
+  <Minimap Finalized="true" />
+  <Updating_Thumbnails Finalized="false" />
+</features>

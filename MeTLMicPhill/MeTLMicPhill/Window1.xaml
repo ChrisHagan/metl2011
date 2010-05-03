@@ -1,0 +1,13 @@
+﻿<Window x:Class="MeTLMicPhill.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    WindowState="Maximized"
+    WindowStyle="None"
+    Title="Window1">
+    <Grid>
+        <Viewbox Stretch="Fill">
+            <Image Source="metl.PNG" MouseLeftButtonUp="Image_MouseLeftButtonUp"/>
+        </Viewbox>
+        <TextBlock x:Name="text" Background="Transparent" Foreground="Red" FontSize="26" IsHitTestVisible="False" />
+    </Grid>
+</Window>

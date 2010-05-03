@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="2dcc703b-2abc-4fa1-9f31-7799f56212af" name="monash@EED-2710-DEV 2010-02-24 22:57:21" runUser="eEd-2710-dev\monash" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
+  <TestRunConfiguration name="Local Test Run" id="eef31c20-bbef-4958-a7ce-d6984143827b">
+    <Description>This is a default test run configuration for a local test run.</Description>
+    <Deployment runDeploymentRoot="C:\sandRibbon\TestResults\monash_EED-2710-DEV 2010-02-24 22_57_21">
+      <DeploymentItem filename="C:\sandRibbon\SandRibbon\lib\agsXMPP.dll" />
+      <DeploymentItem filename="C:\sandRibbon\SandRibbonInterop\bin\Release\SandRibbonInterop.dll" />
+      <DeploymentItem filename="C:\sandRibbon\SandRibbon\bin\Debug\MeTL.exe" />
+      <DeploymentItem filename="C:\sandRibbon\SandRibbon\lib\Divelements.SandRibbon.dll" />
+    </Deployment>
+    <TestTypeSpecific />
+  </TestRunConfiguration>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" error="0" failed="1" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" passed="0" completed="0" inProgress="0" pending="0" />
+    <RunInfos>
+      <RunInfo computerName="EED-2710-DEV" outcome="Warning" timestamp="2010-02-24T22:57:23.7002144+11:00">
+        <Text>Warning: Test Run deployment issue: The assembly or module 'nunit.framework' directly or indirectly referenced by the test container 'c:\sandribbon\functional\bin\release\functional.dll' was not found.</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+  <Times creation="2010-02-24T22:57:21.5120893+11:00" queuing="2010-02-24T22:57:23.7072148+11:00" start="2010-02-24T22:57:24.3102493+11:00" finish="2010-02-24T22:57:26.6243817+11:00" />
+  <TestDefinitions>
+    <UnitTest name="BillModifiesBensConversation" storage="c:\sandribbon\functional\bin\release\functional.dll" id="90202b7c-a698-66c4-2037-feb7327acdd1">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="a9ea770e-e253-494a-8bc5-846325b2f117" />
+      <TestMethod codeBase="C:\sandRibbon\Functional\bin\Release\Functional.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="Functional.ConversationEditingInMultipleUserSpace, Functional" name="BillModifiesBensConversation" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="90202b7c-a698-66c4-2037-feb7327acdd1" executionId="a9ea770e-e253-494a-8bc5-846325b2f117" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="a9ea770e-e253-494a-8bc5-846325b2f117" testId="90202b7c-a698-66c4-2037-feb7327acdd1" testName="BillModifiesBensConversation" computerName="EED-2710-DEV" duration="00:00:00.0636891" startTime="2010-02-24T22:57:24.5912654+11:00" endTime="2010-02-24T22:57:26.3773676+11:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+        <ErrorInfo>
+          <Message>Test method Functional.ConversationEditingInMultipleUserSpace.BillModifiesBensConversation threw exception:  System.Collections.Generic.KeyNotFoundException: The given key was not present in the dictionary..</Message>
+          <StackTrace>    at System.ThrowHelper.ThrowKeyNotFoundException()
+   at System.Collections.Generic.Dictionary`2.get_Item(TKey key)
+   at Functional.ConversationEditingInMultipleUserSpace.BillModifiesBensConversation() in C:\sandRibbon\Functional\ConversationEditingInMultipleUserSpace.cs:line 55
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+</TestRun>
