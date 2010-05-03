@@ -135,7 +135,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>JQVlIZ4/N9GC7gbUa7AJiXasaY4=</dsig:DigestValue>
+        <dsig:DigestValue>wC4zarWZ+motixY1qrD2z4/QAmI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -200,14 +200,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SandRibbonInterop.dll" size="53248">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SandRibbonInterop.dll" size="53760">
       <assemblyIdentity name="SandRibbonInterop" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>Mk4DfOCXOBw//zRb9g6MUsqrZW8=</dsig:DigestValue>
+        <dsig:DigestValue>AIB80tdVqK+5h6flAPBN2A3zcG8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -219,7 +219,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>tyZf0S2zfSQXznMYa08ZU2CzktQ=</dsig:DigestValue>
+        <dsig:DigestValue>KSN+Df2PWJChs3as4SBlfKsCjBA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

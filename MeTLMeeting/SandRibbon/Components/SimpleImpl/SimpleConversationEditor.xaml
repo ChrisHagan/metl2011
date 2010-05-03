@@ -60,10 +60,9 @@
                         </MultiBinding>
                     </SandRibbonInterop:NonRibbonButton.CommandParameter>
                 </SandRibbonInterop:NonRibbonButton>
-                <SandRibbonInterop:NonRibbonButton Command="{x:Static api:Commands.NotImplementedYet}" 
-                                   Visibility="Collapsed"
+                <SandRibbonInterop:NonRibbonButton Command="{x:Static my:SimpleConversationEditor.ProxyUpdateConversationDetails}" 
                                    IsEnabled="{Binding Path=Permissions, Converter={x:Static my:SimpleConversationEditor.IsActivePermissionConverter}, ConverterParameter=meeting}"
-                                   Text="Become Meeting" 
+                                   Text="Continue in meeting style" 
                                    Tag="Meeting" 
                                    x:Name="CreateMeetingButton" 
                                    Width="Auto" HorizontalAlignment="Stretch"

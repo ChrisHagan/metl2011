@@ -15,6 +15,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Utils;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
+using SandRibbonObjects;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -335,6 +336,7 @@ namespace SandRibbon.Components.Canvas
         #region utilityFunctions
         private StrokeCollection filter(IEnumerable<Stroke> from, string author)
         {
+            if(inMeeting()) return new StrokeCollection(from);
             return new StrokeCollection(from.Where(s => s.tag().author == author));
         }
         public void doMyStrokeAdded(Stroke stroke)

@@ -349,6 +349,7 @@ namespace SandRibbon.Components.Canvas
         }
         private IEnumerable<UIElement> filterMyImages(IEnumerable<UIElement> elements)
         {
+            if (inMeeting()) return elements;
             var myImages = new List<UIElement>();
             foreach (UIElement image in elements)
             {

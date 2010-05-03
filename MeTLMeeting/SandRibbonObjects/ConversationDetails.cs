@@ -194,7 +194,7 @@ namespace SandRibbonObjects
             Label="meeting",
             studentCanPublish = true,
             studentCanOpenFriends = true,
-            usersAreCompulsorilySynced = false
+            usersAreCompulsorilySynced = true
         };
         private static readonly Permissions[] OPTIONS = new[]{
             LECTURE_PERMISSIONS,

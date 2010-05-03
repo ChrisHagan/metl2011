@@ -160,6 +160,7 @@ namespace SandRibbon.Components.Canvas
         }
         private IEnumerable<UIElement> filterMyText(IEnumerable<UIElement> elements)
         {
+            if (inMeeting()) return elements;
             var myText = new List<UIElement>();
             foreach (TextBox text in elements)
             {

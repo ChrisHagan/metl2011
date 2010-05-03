@@ -33,7 +33,7 @@ namespace SandRibbon.Components.Canvas
     {
         private string defaultPrivacy;
         public string actualPrivacy;
-        private ConversationDetails currentDetails;
+        protected ConversationDetails currentDetails;
         public string target;
         public string me;
         public int currentSlideId;
@@ -162,10 +162,12 @@ namespace SandRibbon.Components.Canvas
         }
         public void SetCanEdit(bool canEdit)
         {
-
             this.canEdit = canEdit;
             AllowDrop = canEdit;
             CanEditChanged();
+        }
+        protected bool inMeeting() {
+            return Permissions.InferredTypeOf(currentDetails.Permissions) == Permissions.MEETING_PERMISSIONS;
         }
         protected override void  OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
         {

@@ -57,8 +57,7 @@
                         </MultiBinding>
                     </SandRibbonInterop:NonRibbonButton.CommandParameter>
                 </SandRibbonInterop:NonRibbonButton>
-                <SandRibbonInterop:NonRibbonButton Command="{x:Static api:Commands.NotImplementedYet}" 
-                                   Visibility="Collapsed"
+                <SandRibbonInterop:NonRibbonButton Command="{Binding Path=CreateAction}"
                                    Text="{Binding Path=ActionDescriptor, Converter={StaticResource labelConverter}, ConverterParameter=Meeting}" 
                                    Tag="Meeting" 
                                    x:Name="CreateMeetingButton" 
