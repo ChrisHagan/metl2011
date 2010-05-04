@@ -6,6 +6,7 @@
     xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     Loaded="RibbonWindow_Loaded"
@@ -174,6 +175,9 @@
                 </sr:RibbonGroup>
             </sr:RibbonTab>
             <sr:RibbonTab sr:KeyboardAccess.Keys="P" Text="Plugins" x:Name="pluginRoot">
+                <sr:RibbonGroup Header="S15 Board Manager">
+                    <sandpit:S15Boards />
+                </sr:RibbonGroup>
             </sr:RibbonTab>
             <sr:RibbonTab sr:KeyboardAccess.Keys="Q" Text="Quizzes" x:Name="quizRoot">
                 <sr:RibbonGroup Header="Multiple Choice Quiz" ShowDialogLauncher="False" Image="\Resources\Ribbon-Quiz.png">

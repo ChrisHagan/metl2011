@@ -392,3 +392,5 @@ C:\specialMeTL\MeTLMeeting\SandRibbon\obj\Debug\MeTL.TrustInfo.xml
 C:\specialMeTL\MeTLMeeting\SandRibbon\obj\Debug\MeTL.exe.manifest
 C:\specialMeTL\MeTLMeeting\SandRibbon\obj\Debug\MeTL.application
 C:\specialMeTL\MeTLMeeting\SandRibbon\obj\Debug\MeTL.exe
+C:\specialMeTL\MeTLMeeting\SandRibbon\obj\Debug\Components\Sandpit\S15Boards.baml
+C:\specialMeTL\MeTLMeeting\SandRibbon\obj\Debug\Components\Sandpit\S15Boards.g.cs

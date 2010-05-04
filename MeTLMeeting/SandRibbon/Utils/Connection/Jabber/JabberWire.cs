@@ -15,15 +15,17 @@ using SandRibbon.Quizzing;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
+using SandRibbon.Components.Sandpit;
 
 namespace SandRibbon.Utils.Connection
-{
+{/*SPECIAL METL*/
     public partial class JabberWire
     {
         private const string WORM = "/WORM_MOVES";
         private const string UPDATE_CONVERSATION_DETAILS = "/UPDATE_CONVERSATION_DETAILS";
         private const string SYNC_MOVE = "/SYNC_MOVE";
         private const string GO_TO_CONVERSATION = "/GO_TO_CONVERSATION";
+        private const string GO_TO_SLIDE = "/GO_TO_SLIDE";
 
         public class Credentials
         {
@@ -177,6 +179,8 @@ namespace SandRibbon.Utils.Connection
             Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(sendQuizAnswer));
             Commands.SendQuizStatus.RegisterCommand(new DelegateCommand<QuizStatusDetails>(sendQuizStatus));
             Commands.SendWormMove.RegisterCommand(new DelegateCommand<WormMove>(SendWormMove));
+            Commands.WakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp));
+            Commands.GoToSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
         }
         private void setUpWire()
         {
@@ -216,7 +220,7 @@ namespace SandRibbon.Utils.Connection
                 throw new AuthenticationException(error.ToString());
             }
         }
-        private void openConnection(string username)
+        protected virtual void openConnection(string username)
         {
             conn.Open(jid.User, "examplePassword", DateTime.Now.Ticks.ToString(),1);
         }
@@ -385,6 +389,9 @@ namespace SandRibbon.Utils.Connection
         {
             send("global", message);
         }
+        private void directCommand(string target, string message) { 
+            conn.Send(new Message(new Jid(target + "@" + Constants.JabberWire.SERVER), jid, MessageType.chat, message));
+        }
         private void onStart()
         {
             Worm.heart.Interval = TimeSpan.FromMilliseconds(15000);
@@ -488,6 +495,21 @@ namespace SandRibbon.Utils.Connection
         {
             command(UPDATE_CONVERSATION_DETAILS + " " + (jid));
         }
+        public void WakeUp(string room) {
+            foreach (var board in BoardManager.boards[room])
+            {
+                directCommand(board, "/wakeUp");
+                CommandBoardToMoveTo(board, location.activeConversation.ToString());
+            }
+        }
+        public void CommandBoardToMoveTo(string board, string location) {
+            //directCommand(board, string.Format("{0} {1}",GO_TO_CONVERSATION, location));
+            command(string.Format("{0} {1}",GO_TO_CONVERSATION, location));
+        }
+        public void GoToSleep(string room) {
+            foreach (var board in BoardManager.boards[room])
+                directCommand(room, "/sleep");
+        }
         public void sendDirtyStroke(TargettedDirtyElement element)
         {
             stanza(new MeTLStanzas.DirtyInk(element));
@@ -510,6 +532,9 @@ namespace SandRibbon.Utils.Connection
                 case GO_TO_CONVERSATION:
                     handleGoToConversation(parts);
                     break;
+                case GO_TO_SLIDE:
+                    handleGoToSlide(parts);
+                    break;
                 default:
                     handleUnknownMessage(message);
                     break;
@@ -520,6 +545,12 @@ namespace SandRibbon.Utils.Connection
             Application.Current.Dispatcher.Invoke((Action)delegate
             {
                 Commands.JoinConversation.Execute(parts[1]);
+            });
+        }
+        public virtual void handleGoToSlide(string[] parts)
+        {
+            Application.Current.Dispatcher.Invoke((Action)delegate{
+                Commands.MoveTo.Execute(parts[1]);
             });
         }
         public virtual void handleWormMoved(string[] parts)

@@ -7,6 +7,10 @@ namespace SandRibbon
 {
     public class Commands
     {
+        #region Sandpit
+        public static CompositeCommand WakeUp = new CompositeCommand();
+        public static CompositeCommand GoToSleep = new CompositeCommand();
+        #endregion
         public static CompositeCommand ShowConversationSearchBox = new CompositeCommand();
         public static CompositeCommand HideConversationSearchBox = new CompositeCommand();
         public static CompositeCommand AddWindowEffect = new CompositeCommand();
