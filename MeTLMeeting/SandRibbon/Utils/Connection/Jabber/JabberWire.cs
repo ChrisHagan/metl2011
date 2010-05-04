@@ -92,7 +92,7 @@ namespace SandRibbon.Utils.Connection
         public Credentials credentials;
         public Location location;
         private static string privacy = "PUBLIC";
-        XmppClientConnection conn;
+        protected XmppClientConnection conn;
         private Jid jid;
 #if DEBUG
         protected bool Debug = true;
