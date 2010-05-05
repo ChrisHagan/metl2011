@@ -43,6 +43,11 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Divelements.SandRibbon" version="1.1.7.2" publicKeyToken="75B7EC17DD7C14C3" language="neutral" processorArchitecture="msil" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
       <assemblyIdentity name="Microsoft.Office.Interop.PowerPoint" version="12.0.0.0" publicKeyToken="71E9BCE111E9429C" language="neutral" />
     </dependentAssembly>
   </dependency>
@@ -101,14 +106,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Divelements.SandRibbon.dll" size="466944">
-      <assemblyIdentity name="Divelements.SandRibbon" version="1.1.7.2" publicKeyToken="75B7EC17DD7C14C3" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Divelements.SandRibbon.dll" size="456704">
+      <assemblyIdentity name="Divelements.SandRibbon" version="1.1.8.2" publicKeyToken="75B7EC17DD7C14C3" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>+OOlxq/RAtIO8Q9XmS1wWHoOuco=</dsig:DigestValue>
+        <dsig:DigestValue>ONrmu3AE1BHiycViayTCz0r66P4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -120,7 +125,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>zF8TeLGcMDtzgdzRODq50UiEh2Q=</dsig:DigestValue>
+        <dsig:DigestValue>GANXjnyErXAC/8O67n89wuY7Mdg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -132,7 +137,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>Nm6yVsqPWdYJShcKTcJ5UtWGckI=</dsig:DigestValue>
+        <dsig:DigestValue>i0EPRHU2XUfxYsqUmVJgHxfr6ws=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -149,14 +154,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL.exe" size="2305024">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL.exe" size="2273280">
       <assemblyIdentity name="MeTL" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>G2aV1Lfp+BP7Wj5QEGTg+BTxjME=</dsig:DigestValue>
+        <dsig:DigestValue>j2hga4+Twi9SJcoGJ6t+3Emg9ks=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -228,7 +233,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>3GmHA0+MAYCHPHGtJvkz/giApd8=</dsig:DigestValue>
+        <dsig:DigestValue>5PEQ2HCa5rAw96h+WUb+6vY/OKw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
