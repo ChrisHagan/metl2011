@@ -25,11 +25,6 @@ namespace SandRibbon.Components.Sandpit
                 new Board{name="S15Teacher",x=149-45,y=374-10}
                 }
             }
-            /*{"S15",Enumerable.Range(1,7).Select(i=>new Board{
-                name=string.Format("S15{0}",i),
-                x=i*20,
-                y=i*20
-            }).ToList()}*/
         };
     }
 }

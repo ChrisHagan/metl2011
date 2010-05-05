@@ -52,20 +52,12 @@ namespace SandRibbon.Components
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(
                 _credentials =>
                 {
-                    //((Divelements.SandRibbon.RibbonWindow)(Window.GetWindow(this))).Effect = null;
                     Commands.RemoveWindowEffect.Execute(null);
                     Commands.ShowConversationSearchBox.Execute(null);
-                    //var currentConversationSearchBox = new ConversationSearchBox();
-                    //((Grid)this.Parent).Children.Add(currentConversationSearchBox);
-                    /*
-                    currentConversationSearchBox.Width = this.ActualWidth;
-                    currentConversationSearchBox.Height = this.ActualHeight; 
-                    */
                     ((Grid)this.Parent).Children.Remove(this);
                 }
                 ));
         }
-
         private static string getMetlVersion()
         {
             var doc = XDocument.Load("MeTL.exe.manifest");
@@ -82,7 +74,6 @@ namespace SandRibbon.Components
             }
             return "Unknown";
         }
-
         public bool isAuthenticatedAgainstLDAP(string username, string password)
         {
             if (username.StartsWith(BackDoor.USERNAME_PREFIX)) return true;
