@@ -11,17 +11,21 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace SandRibbon.Components.Sandpit
 {
-    /// <summary>
-    /// Interaction logic for S15Boards.xaml
-    /// </summary>
     public partial class S15Boards : UserControl
     {
         public S15Boards()
         {
             InitializeComponent();
+            boardDisplay.ItemsSource = BoardManager.boards["S15"];
+            Commands.WakeUp.RegisterCommand(new DelegateCommand<object>(_nothing=>boardSelector.IsOpen = true));
+        }
+        private void ClosePopup(object sender, RoutedEventArgs e)
+        {
+            boardSelector.IsOpen = false;
         }
     }
 }

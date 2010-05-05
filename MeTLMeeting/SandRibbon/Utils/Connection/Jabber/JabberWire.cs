@@ -21,11 +21,13 @@ namespace SandRibbon.Utils.Connection
 {/*SPECIAL METL*/
     public partial class JabberWire
     {
-        private const string WORM = "/WORM_MOVES";
-        private const string UPDATE_CONVERSATION_DETAILS = "/UPDATE_CONVERSATION_DETAILS";
-        private const string SYNC_MOVE = "/SYNC_MOVE";
-        private const string GO_TO_CONVERSATION = "/GO_TO_CONVERSATION";
-        private const string GO_TO_SLIDE = "/GO_TO_SLIDE";
+        protected const string WORM = "/WORM_MOVES";
+        protected const string UPDATE_CONVERSATION_DETAILS = "/UPDATE_CONVERSATION_DETAILS";
+        protected const string SYNC_MOVE = "/SYNC_MOVE";
+        protected const string GO_TO_CONVERSATION = "/GO_TO_CONVERSATION";
+        protected const string GO_TO_SLIDE = "/GO_TO_SLIDE";
+        protected const string WAKEUP = "/wakeup";
+        protected const string SLEEP = "/sleep";
 
         public class Credentials
         {
@@ -179,7 +181,7 @@ namespace SandRibbon.Utils.Connection
             Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(sendQuizAnswer));
             Commands.SendQuizStatus.RegisterCommand(new DelegateCommand<QuizStatusDetails>(sendQuizStatus));
             Commands.SendWormMove.RegisterCommand(new DelegateCommand<WormMove>(SendWormMove));
-            Commands.WakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp));
+            Commands.WakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
             Commands.GoToSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
         }
         private void setUpWire()
@@ -222,7 +224,7 @@ namespace SandRibbon.Utils.Connection
         }
         protected virtual void openConnection(string username)
         {
-            conn.Open(jid.User, "examplePassword", DateTime.Now.Ticks.ToString(),1);
+            conn.Open(username, "examplePassword", DateTime.Now.Ticks.ToString(),1);
         }
         private void OnLogin(object o)
         {
@@ -243,12 +245,14 @@ namespace SandRibbon.Utils.Connection
             Logger.Log(string.Format("Element error: {0}",element.ToString()));
             Reset("Element");
         }
-        private void ReadXml(object sender, string xml)
+        //private void ReadXml(object sender, string xml)
+        protected virtual void ReadXml(object sender, string xml)
         {
             if(!xml.Contains("/WORM_MOVES"))
                 log("IN:" + xml);
         }
-        private void WriteXml(object sender, string xml)
+        //private void WriteXml(object sender, string xml)
+        protected virtual void WriteXml(object sender, string xml)
         {
             if(!xml.Contains("/WORM_MOVES"))
                 log("OUT:" + xml);
@@ -495,20 +499,28 @@ namespace SandRibbon.Utils.Connection
         {
             command(UPDATE_CONVERSATION_DETAILS + " " + (jid));
         }
+        public bool CanWakeUp(string _param) {
+            return location != null && location.activeConversation != null;
+        }
         public void WakeUp(string room) {
             foreach (var board in BoardManager.boards[room])
             {
-                directCommand(board, "/wakeUp");
-                CommandBoardToMoveTo(board, location.activeConversation.ToString());
+                directCommand(board.name, WAKEUP);
+                CommandBoardToJoinConversation(board.name, location.activeConversation.ToString());
+                CommandBoardToMoveTo(board.name, location.currentSlide.ToString());
             }
         }
-        public void CommandBoardToMoveTo(string board, string location) {
-            //directCommand(board, string.Format("{0} {1}",GO_TO_CONVERSATION, location));
-            command(string.Format("{0} {1}",GO_TO_CONVERSATION, location));
+        public void CommandBoardToJoinConversation(string board, string conversation)
+        {
+            directCommand(board, string.Format("{0} {1}",GO_TO_CONVERSATION, conversation));
+        }
+        public void CommandBoardToMoveTo(string board, string slide) 
+        {
+            directCommand(board, string.Format("{0} {1}",GO_TO_SLIDE, slide));
         }
         public void GoToSleep(string room) {
             foreach (var board in BoardManager.boards[room])
-                directCommand(room, "/sleep");
+                directCommand(room, SLEEP);
         }
         public void sendDirtyStroke(TargettedDirtyElement element)
         {
@@ -550,7 +562,7 @@ namespace SandRibbon.Utils.Connection
         public virtual void handleGoToSlide(string[] parts)
         {
             Application.Current.Dispatcher.Invoke((Action)delegate{
-                Commands.MoveTo.Execute(parts[1]);
+                Commands.MoveTo.Execute(Int32.Parse(parts[1]));
             });
         }
         public virtual void handleWormMoved(string[] parts)
@@ -560,6 +572,10 @@ namespace SandRibbon.Utils.Connection
         public virtual void ReceivedMessage(object obj)
         {
             var message = (Element)obj;
+            if (message.GetAttribute("type") == "error") {
+                Logger.Log(message.ToString());
+                return;
+            }
             foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
                 actOnStrokeReceived(ink.Stroke);
             if (Application.Current == null) return;
