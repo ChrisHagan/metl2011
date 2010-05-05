@@ -990,5 +990,71 @@ namespace SandRibbon
         {
             return details != null && userInformation.credentials.name == details.Author;
         }
+        /*taskbar management*/
+        private System.Windows.Forms.NotifyIcon m_notifyIcon;
+        private void sleep(string obj)
+        {
+            var doHide = (Action)Hide;
+            if (Thread.CurrentThread != Dispatcher.Thread)
+                Dispatcher.BeginInvoke(doHide);
+            else
+                doHide();
+        }
+        private void wakeUp(string message)
+        {
+            var doShow = (Action)delegate
+            {
+                Commands.JoinConversation.Execute("927400");
+                Show();
+                WindowState = m_storedWindowState;
+                Commands.MoveTo.Execute(927401);
+                Commands.SetPrivacy.Execute("public");
+            };
+            if (Thread.CurrentThread != Dispatcher.Thread)
+                Dispatcher.BeginInvoke(doShow);
+            else
+                doShow();
+        }
+        void OnClose(object sender, CancelEventArgs args)
+        {
+            Hide();
+            args.Cancel = true;
+        }
+
+        private WindowState m_storedWindowState = WindowState.Normal;
+        void OnStateChanged(object sender, EventArgs args)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                minimizeWindow();
+            }
+            else
+                m_storedWindowState = WindowState;
+        }
+        private void minimizeWindow()
+        {
+            Hide();
+            if (m_notifyIcon != null)
+                m_notifyIcon.ShowBalloonTip(2000);
+        }
+
+        void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs args)
+        {
+            CheckTrayIcon();
+        }
+        void CheckTrayIcon()
+        {
+            ShowTrayIcon(!IsVisible);
+        }
+
+        void ShowTrayIcon(bool show)
+        {
+            if (m_notifyIcon != null)
+                m_notifyIcon.Visible = show;
+        }
+        private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            WindowState = WindowState.Maximized;
+        }
     }
 }

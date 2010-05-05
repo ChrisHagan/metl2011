@@ -547,6 +547,13 @@ namespace SandRibbon.Utils.Connection
                 case GO_TO_SLIDE:
                     handleGoToSlide(parts);
                     break;
+                case WAKEUP:
+                    handleWakeUp(parts);
+                    break;
+                case SLEEP:
+                    handleSleep(parts);
+                    break;
+
                 default:
                     handleUnknownMessage(message);
                     break;
@@ -564,6 +571,15 @@ namespace SandRibbon.Utils.Connection
             Application.Current.Dispatcher.Invoke((Action)delegate{
                 Commands.MoveTo.Execute(Int32.Parse(parts[1]));
             });
+        }
+
+        public virtual void handleWakeUp(string[] parts)
+        {
+            //stuff happens here
+        }
+        public virtual void handleSleep(string[] parts)
+        {
+            //stuff happens here
         }
         public virtual void handleWormMoved(string[] parts)
         {
