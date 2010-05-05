@@ -987,7 +987,6 @@ namespace SandRibbon
         }
         /*taskbar management*/
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
-        private WindowState m_storedWindowState = WindowState.Normal;
         private void sleep(object _obj)
         {
             var doHide = (Action)Hide;
@@ -1001,31 +1000,18 @@ namespace SandRibbon
             var doShow = (Action)delegate
             {
                 Show();
-                WindowState = m_storedWindowState;
+                WindowState = System.Windows.WindowState.Maximized;
             };
             if (Thread.CurrentThread != Dispatcher.Thread)
                 Dispatcher.BeginInvoke(doShow);
             else
                 doShow();
         }
-        void OnStateChanged(object sender, EventArgs args)
-        {
-            if (WindowState == WindowState.Minimized)
-            {
-                minimizeWindow();
-            }
-            else
-                m_storedWindowState = WindowState;
-        }
         private void minimizeWindow()
         {
             Hide();
             if (m_notifyIcon != null)
                 m_notifyIcon.ShowBalloonTip(2000);
-        }
-        void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs args)
-        {
-            CheckTrayIcon();
         }
         void CheckTrayIcon()
         {
