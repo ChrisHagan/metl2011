@@ -13,6 +13,8 @@
     AllowDrop="True"
     Title="MeTL"
     x:Name="ribbonWindow"
+    StateChanged="OnStateChanged" 
+    IsVisibleChanged="OnIsVisibleChanged"  
     WindowState="Maximized"
     Icon="..\Resources\MeTL.ico">
     <sr:RibbonWindow.CommandBindings>

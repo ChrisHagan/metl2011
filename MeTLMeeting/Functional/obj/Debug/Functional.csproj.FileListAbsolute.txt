@@ -21,7 +21,6 @@ C:\specialMeTL\MeTLMeeting\Functional\bin\Debug\Functional.dll
 C:\specialMeTL\MeTLMeeting\Functional\bin\Debug\Functional.pdb
 C:\specialMeTL\MeTLMeeting\Functional\bin\Debug\agsXMPP.dll
 C:\specialMeTL\MeTLMeeting\Functional\bin\Debug\Divelements.SandRibbon.dll
-C:\specialMeTL\MeTLMeeting\Functional\bin\Debug\MeTL.exe
 C:\specialMeTL\MeTLMeeting\Functional\bin\Debug\SandRibbonInterop.dll
 C:\specialMeTL\MeTLMeeting\Functional\bin\Debug\Newtonsoft.Json.dll
 C:\specialMeTL\MeTLMeeting\Functional\bin\Debug\Ionic.Zip.dll

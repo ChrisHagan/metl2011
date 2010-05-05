@@ -26,8 +26,8 @@ namespace SandRibbon.Utils.Connection
         protected const string SYNC_MOVE = "/SYNC_MOVE";
         protected const string GO_TO_CONVERSATION = "/GO_TO_CONVERSATION";
         protected const string GO_TO_SLIDE = "/GO_TO_SLIDE";
-        protected const string WAKEUP = "/wakeup";
-        protected const string SLEEP = "/sleep";
+        protected const string WAKEUP = "/WAKEUP";
+        protected const string SLEEP = "/SLEEP";
 
         public class Credentials
         {
@@ -181,8 +181,8 @@ namespace SandRibbon.Utils.Connection
             Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(sendQuizAnswer));
             Commands.SendQuizStatus.RegisterCommand(new DelegateCommand<QuizStatusDetails>(sendQuizStatus));
             Commands.SendWormMove.RegisterCommand(new DelegateCommand<WormMove>(SendWormMove));
-            Commands.WakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
-            Commands.GoToSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
+            Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
+            Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
         }
         private void setUpWire()
         {
@@ -506,8 +506,6 @@ namespace SandRibbon.Utils.Connection
             foreach (var board in BoardManager.boards[room])
             {
                 directCommand(board.name, WAKEUP);
-                CommandBoardToJoinConversation(board.name, location.activeConversation.ToString());
-                CommandBoardToMoveTo(board.name, location.currentSlide.ToString());
             }
         }
         public void CommandBoardToJoinConversation(string board, string conversation)
@@ -572,14 +570,17 @@ namespace SandRibbon.Utils.Connection
                 Commands.MoveTo.Execute(Int32.Parse(parts[1]));
             });
         }
-
         public virtual void handleWakeUp(string[] parts)
         {
-            //stuff happens here
+             Application.Current.Dispatcher.Invoke((Action)delegate{
+                Commands.ReceiveWakeUp.Execute(null);
+             }); 
         }
         public virtual void handleSleep(string[] parts)
         {
-            //stuff happens here
+             Application.Current.Dispatcher.Invoke((Action)delegate{
+                Commands.ReceiveSleep.Execute(null);
+             });
         }
         public virtual void handleWormMoved(string[] parts)
         {

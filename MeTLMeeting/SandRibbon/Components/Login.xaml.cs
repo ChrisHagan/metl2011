@@ -128,7 +128,7 @@ namespace SandRibbon.Components
             string TempUsername = username.Text;
             string AuthcateUsername = username.Text;
 #if DEBUG
-            MessageBox.Show("Debug");
+            MessageBox.Show("Debug: Special MeTL");
             JabberWire.SwitchServer("staging");
 #else
             ConfigurationProvider.instance.isStaging = false;
@@ -148,8 +148,11 @@ namespace SandRibbon.Components
             }
             else
                 AuthcateUsername = TempUsername;
+           
+ 
             string AuthcatePassword = password.Password;
             SecureString secureAuthcatePassword = password.SecurePassword;
+            
             if (authenticateAgainstFailoverSystem(AuthcateUsername, AuthcatePassword, secureAuthcatePassword))
             {
                 var eligibleGroups = new AuthorisationProvider().getEligibleGroups(AuthcateUsername, AuthcatePassword);

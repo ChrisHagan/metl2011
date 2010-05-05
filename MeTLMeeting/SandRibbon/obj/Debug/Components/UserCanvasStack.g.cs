@@ -12,6 +12,7 @@
 using SandRibbon;
 using SandRibbon.Components;
 using SandRibbon.Components.Canvas;
+using SandRibbon.Components.SimpleImpl;
 using System;
 using System.Diagnostics;
 using System.Windows;

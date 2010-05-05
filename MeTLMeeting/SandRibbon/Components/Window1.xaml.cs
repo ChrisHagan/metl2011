@@ -159,13 +159,9 @@ namespace SandRibbon
         {
             get { return Logger.log; }
         }
-        /*End clunky (for now)*/
         public Window1()
         {
-            ProviderMonitor.HealthCheck(() =>
-            {
-                DoConstructor();
-            });
+            ProviderMonitor.HealthCheck(DoConstructor);
         }
         private void DoConstructor()
         {
@@ -189,12 +185,9 @@ namespace SandRibbon
             setIdentity = new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(author =>
             {
                 connect(author.name, author.password, 0, null);
+                if (author.name.Contains("S15")) sleep(null);
                 var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
                 conversationSelector.List(conversations);
-                /*
-                startupConversations.Visibility = Visibility.Visible;
-                startupConversations.ListStartupConversations();
-                 */
                 recentDocuments.ListRecentConversations();
                 Commands.RequerySuggested();
             });
@@ -241,6 +234,8 @@ namespace SandRibbon
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<string>(SetConversationPermissions, CanSetConversationPermissions));
             Commands.AddWindowEffect.RegisterCommand(new DelegateCommand<object>(AddWindowEffect));
             Commands.RemoveWindowEffect.RegisterCommand(new DelegateCommand<object>(RemoveWindowEffect));
+            Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
+            Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -992,7 +987,8 @@ namespace SandRibbon
         }
         /*taskbar management*/
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
-        private void sleep(string obj)
+        private WindowState m_storedWindowState = WindowState.Normal;
+        private void sleep(object _obj)
         {
             var doHide = (Action)Hide;
             if (Thread.CurrentThread != Dispatcher.Thread)
@@ -1000,28 +996,18 @@ namespace SandRibbon
             else
                 doHide();
         }
-        private void wakeUp(string message)
+        private void wakeUp(object _obj)
         {
             var doShow = (Action)delegate
             {
-                Commands.JoinConversation.Execute("927400");
                 Show();
                 WindowState = m_storedWindowState;
-                Commands.MoveTo.Execute(927401);
-                Commands.SetPrivacy.Execute("public");
             };
             if (Thread.CurrentThread != Dispatcher.Thread)
                 Dispatcher.BeginInvoke(doShow);
             else
                 doShow();
         }
-        void OnClose(object sender, CancelEventArgs args)
-        {
-            Hide();
-            args.Cancel = true;
-        }
-
-        private WindowState m_storedWindowState = WindowState.Normal;
         void OnStateChanged(object sender, EventArgs args)
         {
             if (WindowState == WindowState.Minimized)
@@ -1037,7 +1023,6 @@ namespace SandRibbon
             if (m_notifyIcon != null)
                 m_notifyIcon.ShowBalloonTip(2000);
         }
-
         void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs args)
         {
             CheckTrayIcon();
@@ -1046,15 +1031,10 @@ namespace SandRibbon
         {
             ShowTrayIcon(!IsVisible);
         }
-
         void ShowTrayIcon(bool show)
         {
             if (m_notifyIcon != null)
                 m_notifyIcon.Visible = show;
-        }
-        private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            WindowState = WindowState.Maximized;
         }
     }
 }

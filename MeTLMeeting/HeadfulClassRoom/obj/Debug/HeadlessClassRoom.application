@@ -11,14 +11,14 @@
     <deploymentProvider codebase="http://drawkward.adm.monash.edu/MeTLHeadfulClassroom/HeadlessClassRoom.application" />
   </deployment>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="HeadlessClassRoom.exe.manifest" size="39725">
+    <dependentAssembly dependencyType="install" codebase="HeadlessClassRoom.exe.manifest" size="39426">
       <assemblyIdentity name="HeadlessClassRoom.exe" version="1.0.0.59" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>QTggbVePQGADy5K8pgw8j7OkiVs=</dsig:DigestValue>
+        <dsig:DigestValue>WKrL0FI1ztoUULC0h2+81iSOAkQ=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

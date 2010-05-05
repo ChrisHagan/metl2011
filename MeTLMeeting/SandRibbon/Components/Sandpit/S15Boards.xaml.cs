@@ -21,7 +21,7 @@ namespace SandRibbon.Components.Sandpit
         {
             InitializeComponent();
             boardDisplay.ItemsSource = BoardManager.boards["S15"];
-            Commands.WakeUp.RegisterCommand(new DelegateCommand<object>(_nothing=>boardSelector.IsOpen = true));
+            Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(_nothing=>boardSelector.IsOpen = true));
         }
         private void ClosePopup(object sender, RoutedEventArgs e)
         {
