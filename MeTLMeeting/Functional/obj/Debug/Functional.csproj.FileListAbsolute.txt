@@ -35,3 +35,4 @@ C:\specialMeTL\MeTLMeeting\Functional\bin\Debug\SandRibbonObjects.pdb
 C:\specialMeTL\MeTLMeeting\Functional\obj\Debug\ResolveAssemblyReference.cache
 C:\specialMeTL\MeTLMeeting\Functional\obj\Debug\Functional.dll
 C:\specialMeTL\MeTLMeeting\Functional\obj\Debug\Functional.pdb
+C:\specialMeTL\MeTLMeeting\Functional\bin\Debug\MeTL.exe
