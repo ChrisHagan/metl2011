@@ -1,0 +1,8 @@
+﻿<UserControl x:Class="SandRibbon.Components.Sandpit.BoardManagerLauncher"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Button Command="{x:Static api:Commands.SendWakeUp}" CommandParameter="S15">
+        <TextBlock Text="Wake up!" />
+    </Button>
+</UserControl>
