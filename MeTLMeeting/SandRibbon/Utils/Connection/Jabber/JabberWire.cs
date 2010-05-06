@@ -24,7 +24,6 @@ namespace SandRibbon.Utils.Connection
         protected const string WORM = "/WORM_MOVES";
         protected const string UPDATE_CONVERSATION_DETAILS = "/UPDATE_CONVERSATION_DETAILS";
         protected const string SYNC_MOVE = "/SYNC_MOVE";
-        protected const string GO_TO_CONVERSATION = "/GO_TO_CONVERSATION";
         protected const string GO_TO_SLIDE = "/GO_TO_SLIDE";
         protected const string WAKEUP = "/WAKEUP";
         protected const string SLEEP = "/SLEEP";
@@ -90,6 +89,10 @@ namespace SandRibbon.Utils.Connection
             public Credentials credentials;
             public Location location;
             public Policy policy;
+        }
+        public class BoardMove {
+            public string boardUsername;
+            public int roomJid;
         }
         public Credentials credentials;
         public Location location;
@@ -508,10 +511,6 @@ namespace SandRibbon.Utils.Connection
                 directCommand(board.name, WAKEUP);
             }
         }
-        public void CommandBoardToJoinConversation(string board, string conversation)
-        {
-            directCommand(board, string.Format("{0} {1}",GO_TO_CONVERSATION, conversation));
-        }
         public void CommandBoardToMoveTo(string board, string slide) 
         {
             directCommand(board, string.Format("{0} {1}",GO_TO_SLIDE, slide));
@@ -539,9 +538,6 @@ namespace SandRibbon.Utils.Connection
                 case WORM:
                     handleWormMoved(parts);
                     break;
-                case GO_TO_CONVERSATION:
-                    handleGoToConversation(parts);
-                    break;
                 case GO_TO_SLIDE:
                     handleGoToSlide(parts);
                     break;
@@ -551,7 +547,6 @@ namespace SandRibbon.Utils.Connection
                 case SLEEP:
                     handleSleep(parts);
                     break;
-
                 default:
                     handleUnknownMessage(message);
                     break;
@@ -566,9 +561,31 @@ namespace SandRibbon.Utils.Connection
         }
         public virtual void handleGoToSlide(string[] parts)
         {
-            Application.Current.Dispatcher.Invoke((Action)delegate{
-                Commands.MoveTo.Execute(Int32.Parse(parts[1]));
-            });
+            var id = Int32.Parse(parts[1]);
+            var desiredConversation = Slide.conversationFor(id).ToString();
+            if (desiredConversation != location.activeConversation)
+            {
+                DelegateCommand<string> joinedConversation = null;
+                joinedConversation = new DelegateCommand<string>(
+                    _conversationJid =>
+                    {
+                        Commands.UpdateConversationDetails.UnregisterCommand(joinedConversation);
+                        Application.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            Commands.MoveTo.Execute(id);
+                            Commands.ReceiveMoveBoardToSlide.Execute(id);
+                        });
+                    });
+                Commands.UpdateConversationDetails.RegisterCommand(joinedConversation);
+                Commands.JoinConversation.Execute(desiredConversation);
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    Commands.MoveTo.Execute(id);
+                });
+            }
         }
         public virtual void handleWakeUp(string[] parts)
         {

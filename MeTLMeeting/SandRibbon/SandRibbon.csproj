@@ -188,6 +188,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Sandpit\BoardManagerLauncher.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Sandpit\S15Boards.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -376,6 +380,9 @@
       <DependentUpon>ProviderMonitor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Sandpit\BoardManager.cs" />
+    <Compile Include="Components\Sandpit\BoardManagerLauncher.xaml.cs">
+      <DependentUpon>BoardManagerLauncher.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Sandpit\S15Boards.xaml.cs">
       <DependentUpon>S15Boards.xaml</DependentUpon>
     </Compile>

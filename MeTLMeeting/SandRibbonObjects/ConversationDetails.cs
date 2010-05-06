@@ -253,11 +253,16 @@ namespace SandRibbonObjects
     public class Slide : CouchDocument
     {/*This is a CouchDocument for the convenience of object serialization, not because we need Ids or Revisions.  
       * The parent will take care of revisioning the entire tree.*/
+        public static int conversationFor(int id) {
+            var sId = id.ToString();
+            return Int32.Parse(string.Format("{0}00",sId.Substring(0,sId.Length-3)));
+        }
         public enum TYPE { SLIDE, POLL };
         public string author;
         public int id;
         public int index;
         public TYPE type;
+        
         public override void ReadJson(JObject obj)
         {
             author = obj["author"].Value<string>();

@@ -12,6 +12,9 @@ namespace SandRibbon
         public static CompositeCommand SendSleep = new CompositeCommand();
         public static CompositeCommand ReceiveWakeUp = new CompositeCommand();
         public static CompositeCommand ReceiveSleep = new CompositeCommand();
+        public static CompositeCommand SendMoveBoardToSlide = new CompositeCommand();
+        public static CompositeCommand ReceiveMoveBoardToSlide = new CompositeCommand();
+        public static CompositeCommand CloseBoardManager = new CompositeCommand();
         #endregion
         public static CompositeCommand ShowConversationSearchBox = new CompositeCommand();
         public static CompositeCommand HideConversationSearchBox = new CompositeCommand();
