@@ -346,8 +346,8 @@ namespace SandRibbon
             if (details == null || privacy == null) return;
             var doDetails = (Action)delegate
                                          {
-                                             StatusLabel.Text = string.Format("You are working {0}ly in {1} style, in a conversation whose participants are {2}",
-                                                     privacy, Permissions.InferredTypeOf(details.Permissions).Label, details.Subject);
+                                             StatusLabel.Text = string.Format("{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
+                                                     privacy, Permissions.InferredTypeOf(details.Permissions).Label, details.Subject, userInformation.credentials.name);
                                              Title = messageFor(details);
                                          };
             if (Thread.CurrentThread != Dispatcher.Thread)
@@ -358,7 +358,7 @@ namespace SandRibbon
         private string messageFor(ConversationDetails details)
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
-            return string.Format("{0}'s \"{1}\", currently in {2} style", details.Author, details.Title, permissionLabel);
+            return string.Format("{3} is in {0}'s \"{1}\", currently in {2} style", details.Author, details.Title, permissionLabel, userInformation.credentials.name);
         }
         private void ClearDynamicContent(object obj)
         {

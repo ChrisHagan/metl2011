@@ -28,9 +28,11 @@ namespace SandRibbon.Components.Sandpit
                 Commands.ToggleFriendsVisibility.Execute(null);
                 for (int i = 0; i < BoardManager.DEFAULT_CONVERSATION.Slides.Count;i++)
                 {
+                    var user = boards[i].name;
+                    Commands.SendPing.Execute(user);
                     Commands.SendMoveBoardToSlide.Execute(
                         new SandRibbon.Utils.Connection.JabberWire.BoardMove{
-                            boardUsername=boards[i].name,
+                            boardUsername=user,
                             roomJid = BoardManager.DEFAULT_CONVERSATION.Slides[i].id
                     });
                 }

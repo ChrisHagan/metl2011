@@ -27,6 +27,8 @@ namespace SandRibbon.Utils.Connection
         protected const string GO_TO_SLIDE = "/GO_TO_SLIDE";
         protected const string WAKEUP = "/WAKEUP";
         protected const string SLEEP = "/SLEEP";
+        protected const string PING = "/PING";
+        protected const string PONG = "/PONG";
 
         public class Credentials
         {
@@ -186,6 +188,8 @@ namespace SandRibbon.Utils.Connection
             Commands.SendWormMove.RegisterCommand(new DelegateCommand<WormMove>(SendWormMove));
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
             Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
+            Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
+            Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
         }
         private void setUpWire()
         {
@@ -196,6 +200,9 @@ namespace SandRibbon.Utils.Connection
                 conn.UseSSL = false;
                 conn.AutoAgents = false;
             }
+        }
+        private void SendPing(string who) {
+            directCommand(who,string.Format(PING, credentials.name));
         }
         private Jid createJid(string username)
         {
@@ -212,6 +219,10 @@ namespace SandRibbon.Utils.Connection
         public void SendDirtyLiveWindow(TargettedDirtyElement dirty)
         {
             stanza(new MeTLStanzas.DirtyLiveWindow(dirty));
+        }
+        public void SendMoveBoardToSlide(BoardMove boardMove) 
+        {
+            directCommand(boardMove.boardUsername, string.Format("{0} {1}", GO_TO_SLIDE, boardMove.roomJid));
         }
         private void OnAuthError(object _sender, Element error)
         {
@@ -547,10 +558,22 @@ namespace SandRibbon.Utils.Connection
                 case SLEEP:
                     handleSleep(parts);
                     break;
+                case PING:
+                    handlePing(parts);
+                    break;
+                case PONG:
+                    handlePong(parts);
+                    break;
                 default:
                     handleUnknownMessage(message);
                     break;
             }
+        }
+        public virtual void handlePing(string[] parts) {
+            directCommand(parts[1], string.Format("{0} {1}",PONG,credentials.name));
+        }
+        public virtual void handlePong(string[] parts) {
+            Commands.ReceivePong.Execute(parts[1]);
         }
         public virtual void handleGoToConversation(string[] parts)
         {
@@ -565,8 +588,8 @@ namespace SandRibbon.Utils.Connection
             var desiredConversation = Slide.conversationFor(id).ToString();
             if (desiredConversation != location.activeConversation)
             {
-                DelegateCommand<string> joinedConversation = null;
-                joinedConversation = new DelegateCommand<string>(
+                DelegateCommand<ConversationDetails> joinedConversation = null;
+                joinedConversation = new DelegateCommand<ConversationDetails>(
                     _conversationJid =>
                     {
                         Commands.UpdateConversationDetails.UnregisterCommand(joinedConversation);
@@ -577,7 +600,10 @@ namespace SandRibbon.Utils.Connection
                         });
                     });
                 Commands.UpdateConversationDetails.RegisterCommand(joinedConversation);
-                Commands.JoinConversation.Execute(desiredConversation);
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    Commands.JoinConversation.Execute(desiredConversation);
+                });
             }
             else
             {

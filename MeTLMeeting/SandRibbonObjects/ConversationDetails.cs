@@ -33,7 +33,7 @@ namespace SandRibbonObjects
         public System.DateTime Created;
         public System.DateTime LastAccessed;
         public string Tag { get; set; }
-        public string Subject { get; set; } //ST***
+        public string Subject { get; set; }
         public List<Slide> Slides = new List<Slide>();
         public byte[] GetBytes()
         {
@@ -62,7 +62,7 @@ namespace SandRibbonObjects
         private static readonly string AUTHOR_TAG = "author";
         private static readonly string CREATED_TAG = "created";
         private static readonly string TAG_TAG = "tag";
-        private static readonly string SUBJECT_TAG = "subject"; // ST***
+        private static readonly string SUBJECT_TAG = "subject";
         private static readonly string JID_TAG = "jid";
         private static readonly string ID_TAG = "id";
         private static readonly string INDEX_TAG = "index";
@@ -77,10 +77,9 @@ namespace SandRibbonObjects
             if (doc.Element(SUBJECT_TAG) == null)
                 Subject = "";
             else
-                Subject = doc.Element(SUBJECT_TAG).Value; // ST***
+                Subject = doc.Element(SUBJECT_TAG).Value;
             Jid = doc.Element(JID_TAG).Value;
             Permissions = new Permissions().ReadXml(doc.Element(Permissions.PERMISSIONS_TAG));
-            //Subject = Permissions.conversationGroup;
             Slides = doc.Descendants(SLIDE_TAG).Select(d => new Slide
             {
                 author = d.Element(AUTHOR_TAG).Value,
@@ -98,10 +97,9 @@ namespace SandRibbonObjects
                 new XElement(AUTHOR_TAG, Author),
                 new XElement(CREATED_TAG, Created.ToString()),
                 new XElement(TAG_TAG, Tag),
-                new XElement(SUBJECT_TAG, Subject), // ST***
+                new XElement(SUBJECT_TAG, Subject),
                 new XElement(JID_TAG, Jid),
                 Permissions.WriteXml(),
-                //Permissions.conversationGroup = Subject,
                 Slides.Select(s=>new XElement(SLIDE_TAG, 
                     new XElement(AUTHOR_TAG, s.author),
                     new XElement(ID_TAG, s.id.ToString()),
@@ -115,7 +113,7 @@ namespace SandRibbonObjects
             Author = obj["Author"].Value<string>();
             Created = obj["Created"].Value<System.DateTime>();
             Tag = obj["Tag"].Value<string>();
-            Subject = obj["Subject"].Value<string>(); // ST***
+            Subject = obj["Subject"].Value<string>();
             Jid = obj["Jid"].Value<string>();
             var slideArray = obj["Slides"].Value<JArray>();
             Slides = slideArray.Select<JToken, Slide>(o => {
@@ -255,7 +253,7 @@ namespace SandRibbonObjects
       * The parent will take care of revisioning the entire tree.*/
         public static int conversationFor(int id) {
             var sId = id.ToString();
-            return Int32.Parse(string.Format("{0}00",sId.Substring(0,sId.Length-3)));
+            return Int32.Parse(string.Format("{0}00",sId.Substring(0,sId.Length-2)));
         }
         public enum TYPE { SLIDE, POLL };
         public string author;
@@ -269,7 +267,7 @@ namespace SandRibbonObjects
             id = obj["id"].Value<int>();
             index = obj["index"].Value<int>();
             JToken dummy = null;
-            type = obj.TryGetValue("type", out dummy) ? // ST I thought TryGet returned a bool = success/failure ?
+            type = obj.TryGetValue("type", out dummy) ?
                 (TYPE)Enum.Parse(typeof(TYPE), 
                 obj["type"].Value<string>()) : TYPE.SLIDE;
         }

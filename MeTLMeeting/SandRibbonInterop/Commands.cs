@@ -15,6 +15,8 @@ namespace SandRibbon
         public static CompositeCommand SendMoveBoardToSlide = new CompositeCommand();
         public static CompositeCommand ReceiveMoveBoardToSlide = new CompositeCommand();
         public static CompositeCommand CloseBoardManager = new CompositeCommand();
+        public static CompositeCommand SendPing = new CompositeCommand();
+        public static CompositeCommand ReceivePong = new CompositeCommand();
         #endregion
         public static CompositeCommand ShowConversationSearchBox = new CompositeCommand();
         public static CompositeCommand HideConversationSearchBox = new CompositeCommand();
