@@ -1,1 +1,0 @@
-﻿This is an automation plugin intended to participate in grid hosted load testing.  It is not intended for public or production use and will not produce interesting or satisfying results if activated.  Use of this plugin in a production environment will result in your being banned for spamming.

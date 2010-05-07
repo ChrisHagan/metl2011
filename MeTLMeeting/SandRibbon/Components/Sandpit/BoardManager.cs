@@ -36,11 +36,11 @@ namespace SandRibbon.Components.Sandpit
         { 
         //This is hardcoded for the demo - get the real data from "http://metl.adm.monash.edu.au:1234/S15.xml"
             {"S15",new List<Board>{
-                new Board{name="S15_1",x=44-20,y=138-10},
-                new Board{name="S15_2",x=51-20,y=225-10},
-                new Board{name="S15_3",x=274-20,y=287-10},
-                new Board{name="S15_4",x=338-20,y=109-10},
-                new Board{name="S15_5",x=199-20,y=24-10}
+                new Board{name="S15-1",x=44-20,y=138-10},
+                new Board{name="S15-2",x=51-20,y=225-10},
+                new Board{name="S15-3",x=274-20,y=287-10},
+                new Board{name="S15-4",x=338-20,y=109-10},
+                new Board{name="S15-5",x=199-20,y=24-10}
                 }
             }
         };
