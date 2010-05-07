@@ -5,30 +5,33 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border BorderBrush="DarkGray" Background="{StaticResource BackgroundBlueGradient}" Padding="4" CornerRadius="4">
         <Grid Height="420" Width="400">
-                <Button HorizontalAlignment="Right" VerticalAlignment="Top" Command="api:Commands.CloseBoardManager">Close BoardManager</Button>
-                    <Image x:Name="RoomBackground" Source="../../Resources/S15.png" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="400" Width="400"/>
+            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Command="api:Commands.CloseBoardManager">Close BoardManager</Button>
+            <Image x:Name="RoomBackground" Source="../../Resources/S15.png" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="400" Width="400"/>
             <ItemsControl x:Name="boardDisplay">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas Width="400" Height="400" IsItemsHost="True" />
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Width="400" Height="400" IsItemsHost="True" />
                     </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="ContentPresenter">
-                    <Setter Property="Canvas.Left" Value="{Binding Path=x, Converter={x:Static sandpit:S15Boards.BOARD_PLACEMENT_CONVERTER}}" />
-                    <Setter Property="Canvas.Top" Value="{Binding Path=y}" />
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border Background="White" Width="{x:Static sandpit:BoardManager.DISPLAY_WIDTH}" Height="{x:Static sandpit:BoardManager.DISPLAY_HEIGHT}" BorderBrush="Black" BorderThickness="2" CornerRadius="2" Padding="2">
-                        <Button><!---Show context radial menu-->
-                            <TextBlock Text="{Binding Path=name}" />
-                        </Button>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-            </Grid>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding Path=x, Converter={x:Static sandpit:S15Boards.BOARD_PLACEMENT_CONVERTER}}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Path=y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{Binding Path=online, Converter={x:Static sandpit:S15Boards.ONLINE_COLOR_CONVERTER}}" Width="{x:Static sandpit:BoardManager.DISPLAY_WIDTH}" Height="{x:Static sandpit:BoardManager.DISPLAY_HEIGHT}" BorderBrush="Black" BorderThickness="2" CornerRadius="2" Padding="2">
+                            <Button Click="boardClicked"><!---Show context radial menu-->
+                                <TextBlock Text="{Binding Path=name}" />
+                            </Button>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Canvas>
+                <Image x:Name="avatar" Width="{x:Static sandpit:BoardManager.AVATAR_WIDTH}" Height="{x:Static sandpit:BoardManager.AVATAR_HEIGHT}" Source="../../Resources/avatar.png" />
+            </Canvas>
+        </Grid>
     </Border>
 </UserControl>

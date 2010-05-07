@@ -19,6 +19,8 @@ namespace SandRibbon.Components.Sandpit
     {
         public static double DISPLAY_WIDTH { get { return 130; } }
         public static double DISPLAY_HEIGHT { get { return 100; } }
+        public static double AVATAR_HEIGHT { get { return 120; } }
+        public static double AVATAR_WIDTH { get { return 60; } }
         static BoardManager() {
             Commands.ReceivePong.RegisterCommand(new DelegateCommand<string>(ReceivePong));
         }

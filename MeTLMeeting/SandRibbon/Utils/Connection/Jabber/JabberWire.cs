@@ -259,13 +259,11 @@ namespace SandRibbon.Utils.Connection
             Logger.Log(string.Format("Element error: {0}",element.ToString()));
             Reset("Element");
         }
-        //private void ReadXml(object sender, string xml)
         protected virtual void ReadXml(object sender, string xml)
         {
             if(!xml.Contains("/WORM_MOVES"))
                 log("IN:" + xml);
         }
-        //private void WriteXml(object sender, string xml)
         protected virtual void WriteXml(object sender, string xml)
         {
             if(!xml.Contains("/WORM_MOVES"))
@@ -536,37 +534,43 @@ namespace SandRibbon.Utils.Connection
         }
         public void ReceiveCommand(string message)
         {
-            if (message.Length == 0) return;
-            var parts = message.Split(new[] { " " }, 2, StringSplitOptions.RemoveEmptyEntries);
-            switch (parts[0].ToUpper())
+            try
             {
-                case SYNC_MOVE:
-                    handleSyncMoveReceived(parts);
-                    break;
-                case UPDATE_CONVERSATION_DETAILS:
-                    handleConversationDetailsUpdated(parts);
-                    break;
-                case WORM:
-                    handleWormMoved(parts);
-                    break;
-                case GO_TO_SLIDE:
-                    handleGoToSlide(parts);
-                    break;
-                case WAKEUP:
-                    handleWakeUp(parts);
-                    break;
-                case SLEEP:
-                    handleSleep(parts);
-                    break;
-                case PING:
-                    handlePing(parts);
-                    break;
-                case PONG:
-                    handlePong(parts);
-                    break;
-                default:
-                    handleUnknownMessage(message);
-                    break;
+                if (message.Length == 0) return;
+                var parts = message.Split(new[] { " " }, 2, StringSplitOptions.RemoveEmptyEntries);
+                switch (parts[0].ToUpper())
+                {
+                    case SYNC_MOVE:
+                        handleSyncMoveReceived(parts);
+                        break;
+                    case UPDATE_CONVERSATION_DETAILS:
+                        handleConversationDetailsUpdated(parts);
+                        break;
+                    case WORM:
+                        handleWormMoved(parts);
+                        break;
+                    case GO_TO_SLIDE:
+                        handleGoToSlide(parts);
+                        break;
+                    case WAKEUP:
+                        handleWakeUp(parts);
+                        break;
+                    case SLEEP:
+                        handleSleep(parts);
+                        break;
+                    case PING:
+                        handlePing(parts);
+                        break;
+                    case PONG:
+                        handlePong(parts);
+                        break;
+                    default:
+                        handleUnknownMessage(message);
+                        break;
+                }
+            }
+            catch (Exception e) {
+                Logger.Log(string.Format("Uncaught exception in ReceivedMessage: {0}", e.Message));
             }
         }
         public virtual void handlePing(string[] parts) {
