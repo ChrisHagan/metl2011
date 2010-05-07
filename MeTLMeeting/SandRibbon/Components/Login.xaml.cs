@@ -54,7 +54,8 @@ namespace SandRibbon.Components
                 {
                     Commands.RemoveWindowEffect.Execute(null);
                     Commands.ShowConversationSearchBox.Execute(null);
-                    ((Grid)this.Parent).Children.Remove(this);
+                    this.Visibility = Visibility.Collapsed;
+                    //((Grid)this.Parent).Children.Remove(this);
                 }
                 ));
         }

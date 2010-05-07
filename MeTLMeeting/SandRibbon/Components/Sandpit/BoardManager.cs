@@ -19,6 +19,8 @@ namespace SandRibbon.Components.Sandpit
     {
         public static double DISPLAY_WIDTH { get { return 130; } }
         public static double DISPLAY_HEIGHT { get { return 100; } }
+        public static double AVATAR_HEIGHT { get { return 120; } }
+        public static double AVATAR_WIDTH { get { return 60; } }
         static BoardManager() {
             Commands.ReceivePong.RegisterCommand(new DelegateCommand<string>(ReceivePong));
         }
@@ -26,6 +28,11 @@ namespace SandRibbon.Components.Sandpit
             foreach(var room in boards.Values){
                 foreach (var user in room.Where(b => b.name == who))
                     user.online = true;
+            }
+        }
+        public static void ClearBoards(string room){
+            foreach(var board in boards[room]){
+                board.online = false;
             }
         }
         public static ConversationDetails DEFAULT_CONVERSATION
@@ -36,11 +43,11 @@ namespace SandRibbon.Components.Sandpit
         { 
         //This is hardcoded for the demo - get the real data from "http://metl.adm.monash.edu.au:1234/S15.xml"
             {"S15",new List<Board>{
-                new Board{name="S15_1",x=44-20,y=138-10},
-                new Board{name="S15_2",x=51-20,y=225-10},
-                new Board{name="S15_3",x=274-20,y=287-10},
-                new Board{name="S15_4",x=338-20,y=109-10},
-                new Board{name="S15_5",x=199-20,y=24-10}
+                new Board{name="S15-1",x=44-20,y=138-10},
+                new Board{name="S15-2",x=51-20,y=225-10},
+                new Board{name="S15-3",x=274-20,y=287-10},
+                new Board{name="S15-4",x=338-20,y=109-10},
+                new Board{name="S15-5",x=199-20,y=24-10}
                 }
             }
         };

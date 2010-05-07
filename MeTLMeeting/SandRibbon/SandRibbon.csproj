@@ -670,6 +670,7 @@
     <Resource Include="Resources\MonashLogo.jpg" />
     <Resource Include="Resources\CrudeMeTLMockup.png" />
     <Resource Include="Resources\S15.png" />
+    <Resource Include="Resources\avatar.png" />
     <Content Include="Resources\Slide_Not_Loaded.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
