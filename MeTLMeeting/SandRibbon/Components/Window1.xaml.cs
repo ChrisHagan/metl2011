@@ -248,10 +248,10 @@ namespace SandRibbon
         {
             var path = "C:\\Program Files\\MeTL\\boardIdentity.txt";
             if (!File.Exists(path)) return;
-            MessageBox.Show("logging in as S15");
-            JabberWire.SwitchServer("staging");
             var myFile = new StreamReader(path);
             var username = myFile.ReadToEnd();
+            MessageBox.Show("logging in as {0}", username);
+            JabberWire.SwitchServer("staging");
             Commands.SetIdentity.Execute(new JabberWire.Credentials{authorizedGroups = new List<JabberWire.AuthorizedGroup>(), name= username, password ="examplePassword"});
         }
 
