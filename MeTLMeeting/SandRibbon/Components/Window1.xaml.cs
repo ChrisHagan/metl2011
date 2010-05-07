@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -241,6 +242,17 @@ namespace SandRibbon
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
         }
+
+        private void checkIfS15()
+        {
+            var path = "C:\\Users\\monash\\s15UserId.txt";
+            if (!File.Exists(path)) return;
+            var myFile = new System.IO.StreamReader(path);
+            var username = myFile.ReadToEnd();
+            Commands.SetIdentity.Execute(new JabberWire.Credentials{authorizedGroups = new List<JabberWire.AuthorizedGroup>(), name= username, password ="examplePassword"});
+            sleep(new object()); 
+        }
+
         private static object reconnectionLock = new object();
         private static bool reconnecting = false;
         private void AddWindowEffect(object _o)
@@ -601,6 +613,7 @@ namespace SandRibbon
             recentDocuments.ListRecentConversations();
             ApplicationButtonPopup.Opened += ApplicationButtonPopup_Opened;
             ApplicationButtonPopup.Closed += ApplicationButtonPopup_Closed;
+            checkIfS15();
         }
         private void addRecentDocument(ConversationDetails document)
         {
