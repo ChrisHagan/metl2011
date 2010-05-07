@@ -34,16 +34,17 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://drawkward.adm.monash.edu/MeTLStaging/</InstallUrl>
-    <UpdateUrl>http://drawkward.adm.monash.edu/MeTLStaging/</UpdateUrl>
-    <ProductName>MeTL Staging</ProductName>
+    <InstallUrl>http://metl.adm.monash.edu.au/SpecialMeTL/</InstallUrl>
+    <UpdateUrl>http://metl.adm.monash.edu/SpecialMeTL/</UpdateUrl>
+    <ProductName>Special MeTL</ProductName>
     <PublisherName>Monash University eEducation Center</PublisherName>
+    <SuiteName>MeTL Tools</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>306</ApplicationRevision>
-    <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>0.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>

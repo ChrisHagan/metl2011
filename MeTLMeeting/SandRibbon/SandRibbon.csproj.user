@@ -1,9 +1,9 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <PublishUrlHistory>publish\</PublishUrlHistory>
-    <InstallUrlHistory>http://drawkward.adm.monash.edu/MeTLStaging/|http://drawkward.adm.monash.edu/MeTL/|http://drawkward.adm.monash.edu/MeTLDev/|http://drawkward.adm.monash.edu/MeTLProd/</InstallUrlHistory>
+    <InstallUrlHistory>http://metl.adm.monash.edu.au/SpecialMeTL/|http://metl.adm.monash.edu.au/specialMeTL/|http://drawkward.adm.monash.edu/MeTLStaging/|http://drawkward.adm.monash.edu/MeTL/|http://drawkward.adm.monash.edu/MeTLDev/</InstallUrlHistory>
     <SupportUrlHistory>http://drawkward.adm.monash.edu/MeTL</SupportUrlHistory>
-    <UpdateUrlHistory>http://drawkward.adm.monash.edu/MeTL/|http://drawkward.adm.monash.edu/MeTLStaging/|http://drawkward.adm.monash.edu/MeTLDev/</UpdateUrlHistory>
+    <UpdateUrlHistory>http://metl.adm.monash.edu/SpecialMeTL/|http://drawkward.adm.monash.edu/MeTLStaging/|http://drawkward.adm.monash.edu/MeTL/|http://drawkward.adm.monash.edu/MeTLDev/</UpdateUrlHistory>
     <BootstrapperUrlHistory>
     </BootstrapperUrlHistory>
     <ErrorReportUrlHistory>
