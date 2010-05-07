@@ -30,6 +30,11 @@ namespace SandRibbon.Components.Sandpit
                     user.online = true;
             }
         }
+        public static void ClearBoards(string room){
+            foreach(var board in boards[room]){
+                board.online = false;
+            }
+        }
         public static ConversationDetails DEFAULT_CONVERSATION
         {
             get { return ConversationDetailsProviderFactory.Provider.DetailsOf("20400"); }

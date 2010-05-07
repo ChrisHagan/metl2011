@@ -25,6 +25,7 @@ namespace SandRibbon.Components.Sandpit
         {
             InitializeComponent();
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(_nothing=>{
+                BoardManager.ClearBoards("S15");
                 var boards = BoardManager.boards["S15"].ToList();
                 boardDisplay.ItemsSource = boards;
                 Commands.ToggleFriendsVisibility.Execute(null);
@@ -47,7 +48,7 @@ namespace SandRibbon.Components.Sandpit
             var board = (Board)((FrameworkElement)sender).DataContext;
             if (board.online)
             {
-                System.Windows.Controls.Canvas.SetTop(avatar, (board.y - BoardManager.AVATAR_HEIGHT / 2)+60);
+                System.Windows.Controls.Canvas.SetTop(avatar, (board.y - BoardManager.AVATAR_HEIGHT / 2)+40);
                 System.Windows.Controls.Canvas.SetLeft(avatar, (board.x - BoardManager.AVATAR_WIDTH / 2)+60);
                 Commands.MoveTo.Execute(
                     BoardManager.DEFAULT_CONVERSATION.Slides[((List<Board>)BoardManager.boards["S15"]).IndexOf(board)].id);
