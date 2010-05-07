@@ -958,6 +958,12 @@ namespace SandRibbon
                 details.Permissions.studentCanOpenFriends = false;
                 details.Permissions.usersAreCompulsorilySynced = true;
             }
+            else
+            {
+                details.Permissions.studentCanPublish = true;
+                details.Permissions.studentCanOpenFriends = true;
+                details.Permissions.usersAreCompulsorilySynced = true;
+            }
             ConversationDetailsProviderFactory.Provider.Update(details);
         }
         private bool CanSetConversationPermissions(string _style)

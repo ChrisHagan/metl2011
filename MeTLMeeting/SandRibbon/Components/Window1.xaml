@@ -95,6 +95,7 @@
                     <sr:Button ToolTip="{StaticResource NotesToolTip}" Text="Notes" Image="\Resources\scratchpadplaceholderyellownotepad.png" Command="{x:Static api:Commands.ToggleScratchPadVisibility}" />
                     <sr:Button x:Name="quickLaunchTutorial" ToolTip="{StaticResource CreateTutorialToolTip}" Text="Tutorial Style" Image="\Resources\Ribbon-Tutorial.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="tutorial" />
                     <sr:Button x:Name="quickLaunchLecture" ToolTip="{StaticResource CreateLectureToolTip}" Text="Lecture Style" Image="\Resources\Ribbon-Lecture.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="lecture" />
+                    <sr:Button x:Name="quickLaunchMeeting" ToolTip="{StaticResource CreateMeetingToolTip}" Text="Meeting Style" Image="\Resources\Ribbon-Meeting.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="meeting" />
                 </sr:ToolBar>
             </sr:Ribbon.ToolBar>
             <sr:RibbonTab sr:KeyboardAccess.Keys="H" Text="Home" x:Name="Sketch">
