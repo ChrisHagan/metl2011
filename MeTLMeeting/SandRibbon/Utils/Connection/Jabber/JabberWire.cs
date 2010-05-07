@@ -202,7 +202,7 @@ namespace SandRibbon.Utils.Connection
             }
         }
         private void SendPing(string who) {
-            directCommand(who,string.Format(PING, credentials.name));
+            directCommand(who,string.Format("{0} {1}",PING, credentials.name));
         }
         private Jid createJid(string username)
         {
