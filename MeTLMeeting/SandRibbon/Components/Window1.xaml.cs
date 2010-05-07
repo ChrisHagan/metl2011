@@ -176,13 +176,6 @@ namespace SandRibbon
                     if (((RibbonTab)tab).Text == text)
                         ribbon.SelectedTab = (RibbonTab)tab;
             }));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
-            Commands.SetLayer.Execute("Sketch");
-            powerPointFinished = new DelegateCommand<string>((_whatever) => Dispatcher.BeginInvoke((Action)(finishedPowerpoint)));
-            Commands.PowerPointLoadFinished.RegisterCommand(powerPointFinished);
-            powerpointProgress = new DelegateCommand<string>(
-                (progress) => Dispatcher.BeginInvoke((Action)(() => showPowerPointProgress(progress))));
-            Commands.PowerPointProgress.RegisterCommand(powerpointProgress);
             setIdentity = new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(author =>
             {
                 connect(author.name, author.password, 0, null);
@@ -193,6 +186,14 @@ namespace SandRibbon
                 Commands.RequerySuggested();
             });
             Commands.SetIdentity.RegisterCommand(setIdentity);
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
+            Commands.SetLayer.Execute("Sketch");
+            powerPointFinished = new DelegateCommand<string>((_whatever) => Dispatcher.BeginInvoke((Action)(finishedPowerpoint)));
+            Commands.PowerPointLoadFinished.RegisterCommand(powerPointFinished);
+            powerpointProgress = new DelegateCommand<string>(
+                (progress) => Dispatcher.BeginInvoke((Action)(() => showPowerPointProgress(progress))));
+            Commands.PowerPointProgress.RegisterCommand(powerpointProgress);
+
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(setPrivacy));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.ClearDynamicContent.RegisterCommand(new DelegateCommand<object>(ClearDynamicContent));
@@ -241,61 +242,27 @@ namespace SandRibbon
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
+            checkIfSmartboard();
         }
-
-        private void checkIfS15()
+        public void checkIfSmartboard()
         {
-            var path = "C:\\Users\\monash\\s15UserId.txt";
+            var path = "C:\\Program Files\\MeTL\\boardIdentity.txt";
             if (!File.Exists(path)) return;
-            var myFile = new System.IO.StreamReader(path);
+            MessageBox.Show("logging in as S15");
+            JabberWire.SwitchServer("staging");
+            var myFile = new StreamReader(path);
             var username = myFile.ReadToEnd();
             Commands.SetIdentity.Execute(new JabberWire.Credentials{authorizedGroups = new List<JabberWire.AuthorizedGroup>(), name= username, password ="examplePassword"});
-            sleep(new object()); 
         }
 
         private static object reconnectionLock = new object();
         private static bool reconnecting = false;
         private void AddWindowEffect(object _o)
         {
-            //var Grayscale = new GrayscaleEffect.GrayscaleEffect();
-            //Grayscale.DesaturationFactor = 0.0;
-            /*var gradientStops = new GradientStopCollection(3);
-            gradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#FFBABABA"), (double)0));
-            gradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#FF848484"), (double)0.7));
-            gradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#FF959595"), (double)1));
-            var gradientBrush = new LinearGradientBrush(gradientStops);
-            */
             CanvasBlocker.Visibility = Visibility.Visible;
-            //CanvasBlocker.Background = gradientBrush;
-            //CanvasBlocker.Effect = Grayscale;
-            /*
-            foreach (var item in ApplicationButtonPopup.Items)
-            ((UIElement)item).Effect = Grayscale;
-            (((Divelements.SandRibbon.ApplicationPopup)((Divelements.SandRibbon.RibbonWindow)this).Ribbon.ApplicationPopup).Effect) = Grayscale;
-                        ((Divelements.SandRibbon.StatusBar)((Divelements.SandRibbon.RibbonWindow)this).StatusBar).Effect = Grayscale;
-                        ((Divelements.SandRibbon.Ribbon)((Divelements.SandRibbon.RibbonWindow)this).Ribbon).Effect = Grayscale;
-                        ((Divelements.SandRibbon.RibbonWindow)this).Background = Brushes.Gray;
-                        adornerGrid.Effect = Grayscale;
-                        EffectRoot.Effect = Grayscale;
-             */
         }
         private void RemoveWindowEffect(object _o)
         {
-            /*
-            var gradientStops = new GradientStopCollection(3);
-            gradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#FFA3C2EA"),(double)0));
-            gradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#FF567DB0"),(double)0.7));
-            gradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#FF6591CD"),(double)1));
-            var gradientBrush = new LinearGradientBrush(gradientStops);
-            adornerGrid.Effect = null;
-            ((Divelements.SandRibbon.RibbonWindow)this).Background = gradientBrush;
-            foreach (var item in ApplicationButtonPopup.Items)
-                ((UIElement)item).Effect = null;
-            (((Divelements.SandRibbon.ApplicationPopup)((Divelements.SandRibbon.RibbonWindow)this).Ribbon.ApplicationPopup).Background) = gradientBrush;
-            ((Divelements.SandRibbon.StatusBar)((Divelements.SandRibbon.RibbonWindow)this).StatusBar).Effect = null;
-            ((Divelements.SandRibbon.Ribbon)((Divelements.SandRibbon.RibbonWindow)this).Ribbon).Effect = null;
-            EffectRoot.Effect = null;
-            */
             CanvasBlocker.Visibility = Visibility.Collapsed;
         }
         private void ReceiveWormMove(string _move)
@@ -613,7 +580,6 @@ namespace SandRibbon
             recentDocuments.ListRecentConversations();
             ApplicationButtonPopup.Opened += ApplicationButtonPopup_Opened;
             ApplicationButtonPopup.Closed += ApplicationButtonPopup_Closed;
-            checkIfS15();
         }
         private void addRecentDocument(ConversationDetails document)
         {
