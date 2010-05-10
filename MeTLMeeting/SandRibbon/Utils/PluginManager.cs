@@ -18,7 +18,7 @@ namespace SandRibbon.Utils
             {
                 return Manifest.Load().Select(plugin => plugin.Load(pluginRoot, defaultPluginRoot)).ToList();
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return new List<FrameworkElement>();
             }

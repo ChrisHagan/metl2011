@@ -78,9 +78,6 @@ namespace SandRibbon
                 pencilCaseDisplayProperty = value;
                 if (pencilCaseDisplayProperty is UserControl && ((UserControl)pencilCaseDisplayProperty).Parent == null)
                 {
-                    //var parent = new RibbonGroup();
-                    //parent.Items.Add(pencilCaseDisplayProperty);
-                    //StableTools.Items.Add(parent);
                     StableTools.Children.Add((UIElement)pencilCaseDisplayProperty);
                 }
             }
