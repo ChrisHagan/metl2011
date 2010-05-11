@@ -28,12 +28,14 @@ namespace SandRibbon.Components.Sandpit
         public static OnlineColorConverter ONLINE_COLOR_CONVERTER = new OnlineColorConverter();
         private static ConversationDetails currentConversation;
         private static ThumbnailInformation draggingSlide;
+        private static int currentSlide;
         public S15Boards()
         {
             InitializeComponent();
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(_nothing=>{
                 Commands.HideConversationSearchBox.Execute(null);
                 Commands.ToggleFriendsVisibility.Execute(null);
+                Commands.ChangeTab.Execute("Home");
                 BoardManager.ClearBoards("S15");
                 var boards = BoardManager.boards["S15"].ToList();
                 boardDisplay.ItemsSource = boards;
@@ -61,14 +63,19 @@ namespace SandRibbon.Components.Sandpit
         }
         private void MoveTo(int where) 
         {
+            currentSlide = where;
+            moveAvatar(where);    
+        }
+        private void moveAvatar(int slide)
+        {
             try
             {
-                var selectedBoard = ((IEnumerable<Board>)boardDisplay.ItemsSource).Where(b => b.slide == where).FirstOrDefault();
+                var selectedBoard = ((IEnumerable<Board>)boardDisplay.ItemsSource).Where(b => b.slide == slide).FirstOrDefault();
                 if (selectedBoard != null && selectedBoard.online)
                     moveTo(selectedBoard);
                 else
                 {
-                    moveTo(100, 170);
+                    moveTo(80, 170);
                 }
             }
             catch (Exception e) {
@@ -89,6 +96,8 @@ namespace SandRibbon.Components.Sandpit
             {
                 if (draggingSlide != null)
                 {
+                    if (board.slide == currentSlide)//Respond to the fact that the board under our feet has changed location
+                        moveAvatar(draggingSlide.slideId);
                     board.slide = draggingSlide.slideId;
                     draggingSlide = null;
                     stopPulsing();
@@ -151,7 +160,11 @@ namespace SandRibbon.Components.Sandpit
             {
                 pulse((FrameworkElement)slides.ItemContainerGenerator.ContainerFromItem(selectedSlide));
                 foreach (var board in boardDisplay.ItemsSource)
-                    pulse((FrameworkElement)boardDisplay.ItemContainerGenerator.ContainerFromItem(board));
+                {
+                    var container = (FrameworkElement)boardDisplay.ItemContainerGenerator.ContainerFromItem(board);
+                    if(((Board)container.DataContext).online)
+                        pulse(container);
+                }
                 draggingSlide = selectedSlide;
             }
             else 
