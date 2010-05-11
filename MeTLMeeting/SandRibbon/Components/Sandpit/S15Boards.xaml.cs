@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -137,6 +138,16 @@ namespace SandRibbon.Components.Sandpit
             }
         }
         private void pulse(FrameworkElement sender) { //Noop 
+
+            var animationPulse = new DoubleAnimation
+                                     {
+                                         From = .3,
+                                         To = 1,
+                                         Duration = new Duration(TimeSpan.FromSeconds(1)),
+                                         AutoReverse = true,
+                                         RepeatBehavior = RepeatBehavior.Forever
+                                     };
+            sender.BeginAnimation(OpacityProperty, animationPulse); 
         }
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
