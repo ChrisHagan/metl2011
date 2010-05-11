@@ -92,6 +92,12 @@ namespace SandRibbon.Components.Sandpit
                     board.slide = draggingSlide.slideId;
                     draggingSlide = null;
                     stopPulsing();
+                    Commands.SendMoveBoardToSlide.Execute(
+                        new SandRibbon.Utils.Connection.JabberWire.BoardMove
+                        {
+                            roomJid = board.slide,
+                            boardUsername = board.name
+                        });
                 }
                 else
                 {
