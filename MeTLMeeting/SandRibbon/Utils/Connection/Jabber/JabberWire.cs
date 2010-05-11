@@ -512,7 +512,8 @@ namespace SandRibbon.Utils.Connection
             command(UPDATE_CONVERSATION_DETAILS + " " + (jid));
         }
         public bool CanWakeUp(string _param) {
-            return location != null && location.activeConversation != null;
+            return true;
+            //return location != null && location.activeConversation != null;
         }
         public void WakeUp(string room) {
             foreach (var board in BoardManager.boards[room])

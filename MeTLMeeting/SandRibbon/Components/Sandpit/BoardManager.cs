@@ -14,6 +14,7 @@ namespace SandRibbon.Components.Sandpit
         public int x { get; set; }
         public int y { get; set; }
         public bool online { get; set; }
+        public int slide { get; set; }
     }
     public class BoardManager
     {
@@ -39,15 +40,19 @@ namespace SandRibbon.Components.Sandpit
         {
             get { return ConversationDetailsProviderFactory.Provider.DetailsOf("20400"); }
         }
+        public static int slide(int index) {
+            var slides = DEFAULT_CONVERSATION.Slides;
+            return slides[index].id;
+        }
         public static Dictionary<string, IEnumerable<Board>> boards = new Dictionary<string,IEnumerable<Board>>
         { 
         //This is hardcoded for the demo - get the real data from "http://metl.adm.monash.edu.au:1234/S15.xml"
             {"S15",new List<Board>{
-                new Board{name="S15-1",x=44-20,y=138-10},
-                new Board{name="S15-2",x=51-20,y=225-10},
-                new Board{name="S15-3",x=274-20,y=287-10},
-                new Board{name="S15-4",x=338-20,y=109-10},
-                new Board{name="S15-5",x=199-20,y=24-10}
+                new Board{name="S15-1",x=44-20,y=138-10, slide=slide(0)},
+                new Board{name="S15-2",x=51-20,y=225-10, slide=slide(1)},
+                new Board{name="S15-3",x=274-20,y=287-10, slide=slide(2)},
+                new Board{name="S15-4",x=338-20,y=109-10, slide=slide(3)},
+                new Board{name="S15-5",x=199-20,y=24-10, slide=slide(4)}
                 }
             }
         };

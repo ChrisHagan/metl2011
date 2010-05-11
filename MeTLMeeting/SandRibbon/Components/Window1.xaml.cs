@@ -24,6 +24,7 @@ using SandRibbonInterop;
 using SandRibbonInterop.Interfaces;
 using SandRibbonObjects;
 using System.Windows.Automation.Peers;
+using System.Diagnostics;
 
 namespace SandRibbon
 {
@@ -233,14 +234,31 @@ namespace SandRibbon
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<string>(SetConversationPermissions, CanSetConversationPermissions));
             Commands.AddWindowEffect.RegisterCommand(new DelegateCommand<object>(AddWindowEffect));
             Commands.RemoveWindowEffect.RegisterCommand(new DelegateCommand<object>(RemoveWindowEffect));
+            Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(_nil => { }, mustBeLoggedIn));
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
+            if (SmartBoardMeTLAlreadyLoaded)
             checkIfSmartboard();
         }
+        private bool SmartBoardMeTLAlreadyLoaded
+        {
+            get
+            {
+                bool isSmartboardMeTL = true;
+                var thisProcess = Process.GetCurrentProcess();
+                foreach (Process p in Process.GetProcessesByName("MeTL"))
+                {
+                    if ((p.MainWindowTitle.StartsWith("S15") || p.MainWindowTitle.Equals("")) && p.Id != thisProcess.Id)
+                        isSmartboardMeTL = false;
+                }
+                return isSmartboardMeTL;
+            }
+        }
+
         public void checkIfSmartboard()
         {
             var path = "C:\\Program Files\\MeTL\\boardIdentity.txt";

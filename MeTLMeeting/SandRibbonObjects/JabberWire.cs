@@ -15,7 +15,8 @@ namespace Constants
         {
             get
             {
-                return server_property;
+                return "madam.adm.monash.edu.au";
+                //return server_property;
             }
             set{
                 server_property=value;
