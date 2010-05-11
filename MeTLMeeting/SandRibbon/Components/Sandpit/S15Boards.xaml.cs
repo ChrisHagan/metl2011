@@ -29,9 +29,17 @@ namespace SandRibbon.Components.Sandpit
         private static ConversationDetails currentConversation;
         private static ThumbnailInformation draggingSlide;
         private static int currentSlide;
+        private static Board NO_BOARD = new Board { 
+            name = "S15-0",
+            online = true,
+            slide = 0,
+            x = 80,
+            y = 170
+        };
         public S15Boards()
         {
             InitializeComponent();
+            moveTo(NO_BOARD);
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(_nothing=>{
                 Commands.HideConversationSearchBox.Execute(null);
                 Commands.ToggleFriendsVisibility.Execute(null);
@@ -51,6 +59,7 @@ namespace SandRibbon.Components.Sandpit
                         });
                 }
             }));
+            Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.BoardMove>(SendMoveBoardToSlide));
             Commands.CloseBoardManager.RegisterCommand(new DelegateCommand<object>(
                 _obj => Commands.ToggleFriendsVisibility.Execute(null)
             ));
@@ -61,22 +70,28 @@ namespace SandRibbon.Components.Sandpit
             }));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
         }
-        private void MoveTo(int where) 
+        private void SendMoveBoardToSlide(SandRibbon.Utils.Connection.JabberWire.BoardMove where) 
         {
-            currentSlide = where;
-            moveAvatar(where);    
+            if(where.boardUsername == ((Board)avatar.DataContext).name){
+                if (currentSlide != where.roomJid)
+                    moveTo(NO_BOARD);
+            }
+            else if (currentSlide == where.roomJid) { 
+                var targetBoard = ((IEnumerable<Board>)boardDisplay.ItemsSource).Where(b => b.name == where.boardUsername).FirstOrDefault();
+                if (targetBoard != null)
+                    moveTo(targetBoard);
+            }
         }
-        private void moveAvatar(int slide)
+        private void MoveTo(int where) 
         {
             try
             {
-                var selectedBoard = ((IEnumerable<Board>)boardDisplay.ItemsSource).Where(b => b.slide == slide).FirstOrDefault();
+                currentSlide = where;
+                var selectedBoard = ((IEnumerable<Board>)boardDisplay.ItemsSource).Where(b => b.slide == where).FirstOrDefault();
                 if (selectedBoard != null && selectedBoard.online)
                     moveTo(selectedBoard);
                 else
-                {
-                    moveTo(80, 170);
-                }
+                    moveTo(NO_BOARD);
             }
             catch (Exception e) {
                 Logger.Log(string.Format("Attempted to move avatar on S15 display excepted : {0}", e.Message));
@@ -85,6 +100,7 @@ namespace SandRibbon.Components.Sandpit
         private void moveTo(Board board)
         {
             moveTo((board.y - BoardManager.AVATAR_HEIGHT / 2) + 40, (board.x - BoardManager.AVATAR_WIDTH / 2) + 60);
+            avatar.DataContext = board;
         }
         private void moveTo(double x, double y) {
             System.Windows.Controls.Canvas.SetTop(avatar, x);
@@ -96,8 +112,6 @@ namespace SandRibbon.Components.Sandpit
             {
                 if (draggingSlide != null)
                 {
-                    if (board.slide == currentSlide)//Respond to the fact that the board under our feet has changed location
-                        moveAvatar(draggingSlide.slideId);
                     board.slide = draggingSlide.slideId;
                     draggingSlide = null;
                     stopPulsing();

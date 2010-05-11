@@ -18,8 +18,8 @@ namespace SandRibbon.Components.Sandpit
     }
     public class BoardManager
     {
-        public static double DISPLAY_WIDTH { get { return 130; } }
-        public static double DISPLAY_HEIGHT { get { return 100; } }
+        public static double DISPLAY_WIDTH { get { return 80; } }
+        public static double DISPLAY_HEIGHT { get { return 60; } }
         public static double AVATAR_HEIGHT { get { return 120; } }
         public static double AVATAR_WIDTH { get { return 60; } }
         static BoardManager() {
@@ -48,11 +48,11 @@ namespace SandRibbon.Components.Sandpit
         { 
         //This is hardcoded for the demo - get the real data from "http://metl.adm.monash.edu.au:1234/S15.xml"
             {"S15",new List<Board>{
-                new Board{name="S15-1",x=44-20,y=138-10, slide=slide(0)},
-                new Board{name="S15-2",x=51-20,y=225-10, slide=slide(1)},
-                new Board{name="S15-3",x=274-20,y=287-10, slide=slide(2)},
-                new Board{name="S15-4",x=338-20,y=109-10, slide=slide(3)},
-                new Board{name="S15-5",x=199-20,y=24-10, slide=slide(4)}
+                new Board{name="S15-1",x=40-20,y=100-10, slide=slide(0)},
+                new Board{name="S15-2",x=40-20,y=200-10, slide=slide(1)},
+                new Board{name="S15-3",x=260-20,y=200-10, slide=slide(2)},
+                new Board{name="S15-4",x=260-20,y=100-10, slide=slide(3)},
+                new Board{name="S15-5",x=150-20,y=280-10, slide=slide(4)}
                 }
             }
         };

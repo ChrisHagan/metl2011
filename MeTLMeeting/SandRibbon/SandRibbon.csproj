@@ -197,6 +197,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Sandpit\ThoughtBubbleLauncher.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ScrollBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -386,6 +390,9 @@
     </Compile>
     <Compile Include="Components\Sandpit\S15Boards.xaml.cs">
       <DependentUpon>S15Boards.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Sandpit\ThoughtBubbleLauncher.xaml.cs">
+      <DependentUpon>ThoughtBubbleLauncher.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\ScrollBar.xaml.cs">
       <DependentUpon>ScrollBar.xaml</DependentUpon>

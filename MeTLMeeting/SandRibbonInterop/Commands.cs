@@ -17,6 +17,10 @@ namespace SandRibbon
         public static CompositeCommand CloseBoardManager = new CompositeCommand();
         public static CompositeCommand SendPing = new CompositeCommand();
         public static CompositeCommand ReceivePong = new CompositeCommand();
+        public static CompositeCommand BubbleCurrentSelection = new CompositeCommand();
+        public static CompositeCommand DoWithCurrentSelection = new CompositeCommand();
+        public static CompositeCommand SendNewBubble = new CompositeCommand();
+        public static CompositeCommand ReceiveNewBubble = new CompositeCommand();
         #endregion
         public static CompositeCommand ShowConversationSearchBox = new CompositeCommand();
         public static CompositeCommand HideConversationSearchBox = new CompositeCommand();

@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using agsXMPP.Xml.Dom;
 using SandRibbonObjects;
 using Constants;
+using System.Collections.Generic;
 
 namespace SandRibbonInterop.MeTLStanzas
 {
@@ -30,6 +31,9 @@ namespace SandRibbonInterop.MeTLStanzas
     public class TargettedStroke : TargettedElement
     {
         public Stroke stroke;
+    }
+    public class TargettedBubbleContext : TargettedElement {
+        public IEnumerable<SelectedIdentity> context;
     }
     public class TargettedImage : TargettedElement
     {
@@ -98,6 +102,12 @@ namespace SandRibbonInterop.MeTLStanzas
     {
         public string identifier;
     }
+    public abstract class SelectedIdentity { 
+        public string id; 
+        public string target; 
+    }
+    public class SelectedInk : SelectedIdentity{}
+    public class SelectedElement : SelectedIdentity {}
     public class MeTLStanzas
     {
         public static string METL_NS = "monash:metl";
@@ -368,6 +378,26 @@ namespace SandRibbonInterop.MeTLStanzas
                 get { return Double.Parse(GetTag(heightTag)); }
                 set { SetTag(heightTag, value.ToString()); }
             }
+        }
+        public class Bubble : Element 
+        {
+            static Bubble() { 
+                agsXMPP.Factory.ElementFactory.AddElementType(Bubble.TAG, METL_NS, typeof(Bubble));
+            }
+            public readonly static string TAG = "bubble";
+            public Bubble() {
+                this.Namespace = METL_NS;
+                this.TagName = TAG;
+            }
+            public Bubble(TargettedBubbleContext context) : this() {
+                //this.context = context;
+            }
+            /*
+            private TargettedBubbleContext context {
+                get {}
+                set { }
+            }
+             */
         }
         public class Ink : Element
         {

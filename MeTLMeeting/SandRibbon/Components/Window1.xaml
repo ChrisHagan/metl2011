@@ -179,6 +179,9 @@
                 <sr:RibbonGroup Header="S15 Board Manager">
                     <sandpit:BoardManagerLauncher />
                 </sr:RibbonGroup>
+                <sr:RibbonGroup Header="Bubbles">
+                    <sandpit:ThoughtBubbleLauncher />
+                </sr:RibbonGroup>
             </sr:RibbonTab>
             <sr:RibbonTab sr:KeyboardAccess.Keys="Q" Text="Quizzes" x:Name="quizRoot">
                 <sr:RibbonGroup Header="Multiple Choice Quiz" ShowDialogLauncher="False" Image="\Resources\Ribbon-Quiz.png">

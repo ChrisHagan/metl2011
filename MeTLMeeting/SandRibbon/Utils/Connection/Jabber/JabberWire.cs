@@ -190,6 +190,10 @@ namespace SandRibbon.Utils.Connection
             Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
             Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
             Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
+            Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(SendNewBubble));
+        }
+        private void SendNewBubble(TargettedBubbleContext selection){
+            //send(selection);
         }
         private void setUpWire()
         {

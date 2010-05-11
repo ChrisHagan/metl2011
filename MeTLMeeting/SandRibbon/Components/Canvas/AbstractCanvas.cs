@@ -13,6 +13,8 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbonObjects;
 using SandRibbonInterop;
 using System.Windows.Media;
+using SandRibbon.Components.Sandpit;
+using SandRibbonInterop.MeTLStanzas;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -63,8 +65,21 @@ namespace SandRibbon.Components.Canvas
                                                                       actualPrivacy = defaultPrivacy;
                                                                       context = getContext();
                                                                 });
+            Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
         }
-
+        public void DoWithCurrentSelection(Action<SelectedIdentity> todo)
+        {
+            foreach (var stroke in GetSelectedStrokes())
+                todo(new SelectedInk{
+                    id=stroke.sum().checksum.ToString(),
+                    target = this.target
+                });
+            foreach (var element in GetSelectedElements())
+                todo(new SelectedElement {
+                    id=(string)((FrameworkElement)element).Tag,
+                    target = this.target
+                });
+        }
         public Rect GetContentBounds()
         {
             return VisualTreeHelper.GetDescendantBounds(this);

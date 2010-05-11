@@ -6,14 +6,14 @@
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop">
     <Border BorderBrush="DarkGray" Background="{StaticResource BackgroundBlueGradient}" Padding="4" CornerRadius="4">
-        <StackPanel>
-            <Grid Height="420" Width="400">
+        <Grid>
+            <Grid Height="360" Width="300" VerticalAlignment="Top" HorizontalAlignment="Left" >
                 <Button HorizontalAlignment="Right" VerticalAlignment="Top" Command="api:Commands.CloseBoardManager">Close BoardManager</Button>
-                <Image x:Name="RoomBackground" Source="../../Resources/S15.png" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="400" Width="400"/>
+                <Image x:Name="RoomBackground" Source="../../Resources/S15.png" HorizontalAlignment="Left" VerticalAlignment="Top" Height="300" Width="300"/>
                 <ItemsControl x:Name="boardDisplay">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <Canvas Width="400" Height="400" IsItemsHost="True" />
+                            <Canvas HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Height="300" IsItemsHost="True" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemContainerStyle>
@@ -36,12 +36,16 @@
                     <Image x:Name="avatar" Width="{x:Static sandpit:BoardManager.AVATAR_WIDTH}" Height="{x:Static sandpit:BoardManager.AVATAR_HEIGHT}" Source="../../Resources/avatar.png" />
                 </Canvas>
             </Grid>
-            <Canvas>
+            <Border BorderBrush="DarkGray" BorderThickness="1" Padding="1">
                 <SandRibbonInterop:SlideViewingListBox
-                         ScrollViewer.HorizontalScrollBarVisibility="Visible" 
-                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                         ScrollViewer.VerticalScrollBarVisibility="Visible"
+                         Margin="0,360,0,0"
                          OverridesDefaultStyle="False"
                          ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
+                         Height="Auto"
+                         Width="Auto"
+                         HorizontalAlignment="Stretch"
                          VerticalAlignment="Top" x:Name="slides" >
                     <SandRibbonInterop:SlideViewingListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type SandRibbonInterop:ThumbnailInformation}">
@@ -55,38 +59,11 @@
                     </SandRibbonInterop:SlideViewingListBox.ItemTemplate>
                     <SandRibbonInterop:SlideViewingListBox.Template>
                         <ControlTemplate>
-                            <Border BorderBrush="DarkGray" BorderThickness="1" Padding="1">
-                                <ScrollViewer Name="Scroller" Background="White" Foreground="DarkGray" >
-                                    <StackPanel Name="slideStack" Orientation="Horizontal" IsItemsHost="True"/>
-                                </ScrollViewer>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="SandRibbonInterop:SlideViewingListBox.ParentActiveVariant" Value="Small">
-                                    <Setter TargetName="Scroller" Property="Width" Value="62"/>
-                                    <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                                    <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible"/>
-                                    <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-                                    <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Vertical"/>
-                                </Trigger>
-                                <Trigger Property="SandRibbonInterop:SlideViewingListBox.ParentActiveVariant" Value="Medium">
-                                    <Setter TargetName="Scroller" Property="Width" Value="150"/>
-                                    <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                                    <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-                                    <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
-                                    <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
-                                </Trigger>
-                                <Trigger Property="SandRibbonInterop:SlideViewingListBox.ParentActiveVariant" Value="Large">
-                                    <Setter TargetName="Scroller" Property="Width" Value="250"/>
-                                    <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                                    <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-                                    <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
-                                    <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
+                                <WrapPanel Name="slideStack" Orientation="Horizontal" IsItemsHost="True"/>
                         </ControlTemplate>
                     </SandRibbonInterop:SlideViewingListBox.Template>
                 </SandRibbonInterop:SlideViewingListBox>
-            </Canvas>
-        </StackPanel>
+            </Border>
+        </Grid>
     </Border>
 </UserControl>
