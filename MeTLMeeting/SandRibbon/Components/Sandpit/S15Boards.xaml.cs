@@ -37,7 +37,7 @@ namespace SandRibbon.Components.Sandpit
                 BoardManager.ClearBoards("S15");
                 var boards = BoardManager.boards["S15"].ToList();
                 boardDisplay.ItemsSource = boards;
-                for (int i = 0; i < BoardManager.DEFAULT_CONVERSATION.Slides.Count; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     var user = boards[i].name;
                     Commands.SendPing.Execute(user);
@@ -87,20 +87,29 @@ namespace SandRibbon.Components.Sandpit
             var board = (Board)((FrameworkElement)sender).DataContext;
             if (board.online)
             {
-                moveTo(board);
-                var targetSlide = BoardManager.DEFAULT_CONVERSATION.Slides[((List<Board>)BoardManager.boards["S15"]).IndexOf(board)];
-                DelegateCommand<int> onConversationJoined = null;
-                onConversationJoined = new DelegateCommand<int>(_nothing=>
+                if (draggingSlide != null)
                 {
-                    Commands.MoveTo.Execute(
-                        targetSlide.id);
-                    Commands.JoinConversation.UnregisterCommand(onConversationJoined);
-                });
-                var desiredConversation = Slide.conversationFor(targetSlide.id).ToString();
-                if (currentConversation == null || currentConversation.Jid != desiredConversation)
-                    Commands.JoinConversation.Execute(desiredConversation);
+                    board.slide = draggingSlide.slideId;
+                    draggingSlide = null;
+                    stopPulsing();
+                }
                 else
-                    onConversationJoined.Execute(0);
+                {
+                    moveTo(board);
+                    var targetSlide = board.slide;
+                    DelegateCommand<int> onConversationJoined = null;
+                    onConversationJoined = new DelegateCommand<int>(_nothing =>
+                    {
+                        Commands.MoveTo.Execute(
+                            targetSlide);
+                        Commands.JoinConversation.UnregisterCommand(onConversationJoined);
+                    });
+                    var desiredConversation = Slide.conversationFor(targetSlide).ToString();
+                    if (currentConversation == null || currentConversation.Jid != desiredConversation)
+                        Commands.JoinConversation.Execute(desiredConversation);
+                    else
+                        onConversationJoined.Execute(0);
+                }
             }
         }
         public void Display()
@@ -132,25 +141,42 @@ namespace SandRibbon.Components.Sandpit
         private void slideItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var selectedSlide = (ThumbnailInformation)((FrameworkElement)sender).DataContext;
-            if (draggingSlide != null && draggingSlide != selectedSlide)
+            if (draggingSlide == null || draggingSlide != selectedSlide)
             {
-                pulse((FrameworkElement)sender); 
+                pulse((FrameworkElement)slides.ItemContainerGenerator.ContainerFromItem(selectedSlide));
+                foreach (var board in boardDisplay.ItemsSource)
+                    pulse((FrameworkElement)boardDisplay.ItemContainerGenerator.ContainerFromItem(board));
+                draggingSlide = selectedSlide;
+            }
+            else 
+            {
+                stopPulsing();
             }
         }
-        private void pulse(FrameworkElement sender) { //Noop 
-
+        private void pulse(FrameworkElement sender){ 
             var animationPulse = new DoubleAnimation
                                      {
                                          From = .3,
                                          To = 1,
-                                         Duration = new Duration(TimeSpan.FromSeconds(1)),
+                                         Duration = new Duration(TimeSpan.FromMilliseconds(400)),
                                          AutoReverse = true,
                                          RepeatBehavior = RepeatBehavior.Forever
                                      };
             sender.BeginAnimation(OpacityProperty, animationPulse); 
         }
-        private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void stopPulsing() 
         {
+            foreach (var slide in slides.ItemsSource)
+            {
+                var container = ((FrameworkElement)slides.ItemContainerGenerator.ContainerFromItem(slide));
+                container.BeginAnimation(OpacityProperty, null);
+                container.Opacity = 1;
+            }
+            foreach (var board in boardDisplay.ItemsSource){
+                var container = ((FrameworkElement)boardDisplay.ItemContainerGenerator.ContainerFromItem(board));
+                container.BeginAnimation(OpacityProperty,null);
+                container.Opacity = 1;
+            }
         }
     }
     public class OnlineColorConverter : IValueConverter

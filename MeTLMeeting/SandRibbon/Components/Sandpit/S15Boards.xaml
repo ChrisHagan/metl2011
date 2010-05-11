@@ -36,19 +36,18 @@
                     <Image x:Name="avatar" Width="{x:Static sandpit:BoardManager.AVATAR_WIDTH}" Height="{x:Static sandpit:BoardManager.AVATAR_HEIGHT}" Source="../../Resources/avatar.png" />
                 </Canvas>
             </Grid>
-            <Canvas Visibility="Collapsed">
+            <Canvas>
                 <SandRibbonInterop:SlideViewingListBox
                          ScrollViewer.HorizontalScrollBarVisibility="Visible" 
                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
                          OverridesDefaultStyle="False"
-                         SelectionChanged="slides_SelectionChanged"
                          ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
                          VerticalAlignment="Top" x:Name="slides" >
                     <SandRibbonInterop:SlideViewingListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type SandRibbonInterop:ThumbnailInformation}">
                             <Grid Name="slideItem" Width="40" Height="35" MouseLeftButtonDown="slideItem_MouseLeftButtonDown">
                                 <Rectangle Width="40" Height="35" Fill="{StaticResource BackgroundBlueGradient}" />
-                                <Rectangle Width="40" Height="35" Fill="{Binding Path=thumbnail}"/>
+                                <Rectangle Width="40" Height="35" Fill="{Binding Path=thumbnail}" />
                                 <Rectangle Fill="DarkBlue" HorizontalAlignment="Right" VerticalAlignment="Bottom" RadiusX="9" RadiusY="9" Height="18" Width="18"/>
                                 <Label FontSize="10" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="{Binding Path=slideNumber}"/>
                             </Grid>
