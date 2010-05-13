@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Documents;
+using WpfCanvas = System.Windows.Controls.Canvas;
+using System.Windows.Media;
 
 namespace SandRibbon.Components.Utility
 {
@@ -11,6 +13,15 @@ namespace SandRibbon.Components.Utility
         public Type contentType
         {
             get { return content.GetType(); }
+        }
+        public static UIAdorner InCanvas(FrameworkElement adornee, FrameworkElement content, Point initialPosition) 
+        {
+            var canvas = new WpfCanvas {};
+            var adorner = new UIAdorner(adornee, canvas);
+            canvas.Children.Add(content);
+            WpfCanvas.SetTop(content, initialPosition.Y);
+            WpfCanvas.SetLeft(content, initialPosition.X);
+            return adorner;
         }
         public UIAdorner(FrameworkElement adornee, FrameworkElement content)
             : base(adornee)

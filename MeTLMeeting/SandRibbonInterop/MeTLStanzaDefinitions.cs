@@ -102,12 +102,10 @@ namespace SandRibbonInterop.MeTLStanzas
     {
         public string identifier;
     }
-    public abstract class SelectedIdentity { 
+    public class SelectedIdentity { 
         public string id; 
         public string target; 
     }
-    public class SelectedInk : SelectedIdentity{}
-    public class SelectedElement : SelectedIdentity {}
     public class MeTLStanzas
     {
         public static string METL_NS = "monash:metl";
@@ -240,8 +238,6 @@ namespace SandRibbonInterop.MeTLStanzas
                 set { SetTag(heightTag, value.ToString()); }
             }
         }
-
-
         public class AutoShape : Element
         {
             static AutoShape()
@@ -390,14 +386,50 @@ namespace SandRibbonInterop.MeTLStanzas
                 this.TagName = TAG;
             }
             public Bubble(TargettedBubbleContext context) : this() {
-                //this.context = context;
+                this.context = context;
             }
-            /*
-            private TargettedBubbleContext context {
-                get {}
-                set { }
+            private string idsTag = "IDS";
+            private string entityIdTag = "ENTITY";
+            private string idAttribute = "ID";
+            public TargettedBubbleContext context {
+                get 
+                {
+                    var target = GetTag(targetTag);
+                    var context = new TargettedBubbleContext
+                    {
+                        slide = Int32.Parse(GetTag(slideTag)),
+                        target = target,
+                        privacy = GetTag(privacyTag),
+                        author = GetTag("author")
+                    };
+                    var ids = SelectSingleElement(idsTag).SelectElements(entityIdTag);
+                    var identityList = new List<SelectedIdentity>();
+                    foreach(var element in ids){
+                        identityList.Add(new SelectedIdentity
+                        {
+                            target = target,
+                            id = ((Element)element).GetAttribute(idAttribute)
+                        });
+                    }
+                    context.context = identityList;
+                    return context;
+                }
+                set 
+                {
+                    this.SetTag(authorTag, value.author);
+                    this.SetTag(targetTag, value.target);
+                    this.SetTag(privacyTag, value.privacy);
+                    this.SetTag(slideTag, value.slide);
+                    var ids = new Element(idsTag);
+                    SetTag(targetTag, value.context.First().target);
+                    foreach(var selectedIdentity in value.context){
+                        var id = new Element(entityIdTag);
+                        id.SetAttribute(idAttribute, selectedIdentity.id);
+                        ids.AddChild(id);
+                    }
+                    AddChild(ids);
+                }
             }
-             */
         }
         public class Ink : Element
         {

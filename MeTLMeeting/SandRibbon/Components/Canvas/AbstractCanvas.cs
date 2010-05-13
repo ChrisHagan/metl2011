@@ -15,6 +15,8 @@ using SandRibbonInterop;
 using System.Windows.Media;
 using SandRibbon.Components.Sandpit;
 using SandRibbonInterop.MeTLStanzas;
+using SandRibbon.Components.Utility;
+using System.Windows.Ink;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -66,16 +68,50 @@ namespace SandRibbon.Components.Canvas
                                                                       context = getContext();
                                                                 });
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
+            Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(
+                ReceiveNewBubble));
+        }
+        public void ReceiveNewBubble(TargettedBubbleContext context) {
+            if(context.target != target) return;
+            var bubble = getBubble(context.context); 
+            if(bubble != null){
+                var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                adornerLayer.Add(UIAdorner.InCanvas(this, new ThoughtBubble(), bubble.position));
+            }
+        }
+        private ThoughtBubble getBubble(IEnumerable<SelectedIdentity> context)
+        {
+            var ids = context.Select(c => c.id);
+            var relevantStrokes = getStrokesRelevantTo(ids);
+            var relevantChildren = getChildrenRelevantTo(ids);
+            if (relevantStrokes.Count > 0 || relevantStrokes.Count > 0)
+                return new ThoughtBubble
+                {
+                    childContext = relevantChildren,
+                    strokeContext = relevantStrokes,
+                    parent = currentSlideId
+                }.relocate();
+            return null;
+        }
+        private List<Stroke> getStrokesRelevantTo(IEnumerable<String> ids)
+        {
+            return Strokes.Where(s=>ids.Contains(s.sum().checksum.ToString())).ToList();
+        }
+        private List<FrameworkElement> getChildrenRelevantTo(IEnumerable<String> ids)
+        {
+            return Children.ToList().Select(c => ((FrameworkElement)c))
+                .Where(c => c.Tag != null && ids.Contains(((ImageTag)c.Tag).id.ToString()))
+                .ToList();
         }
         public void DoWithCurrentSelection(Action<SelectedIdentity> todo)
         {
             foreach (var stroke in GetSelectedStrokes())
-                todo(new SelectedInk{
+                todo(new SelectedIdentity{
                     id=stroke.sum().checksum.ToString(),
                     target = this.target
                 });
             foreach (var element in GetSelectedElements())
-                todo(new SelectedElement {
+                todo(new SelectedIdentity {
                     id=(string)((FrameworkElement)element).Tag,
                     target = this.target
                 });

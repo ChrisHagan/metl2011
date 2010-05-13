@@ -22,6 +22,7 @@ namespace SandRibbon
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Quiz();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Image();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Answer();
+                new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Bubble();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.TextBox();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyInk();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyText();
@@ -39,8 +40,6 @@ namespace SandRibbon
             }
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
         }
-
-
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             Logger.Log(e.Exception.Message);

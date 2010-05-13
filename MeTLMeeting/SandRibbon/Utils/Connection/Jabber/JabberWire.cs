@@ -193,7 +193,7 @@ namespace SandRibbon.Utils.Connection
             Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(SendNewBubble));
         }
         private void SendNewBubble(TargettedBubbleContext selection){
-            //send(selection);
+            stanza(new MeTLStanzas.Bubble(selection));
         }
         private void setUpWire()
         {
@@ -674,6 +674,8 @@ namespace SandRibbon.Utils.Connection
                     actOnDirtyImageReceived(dirtyImage);
                 foreach (var dirtyAutoShape in message.SelectElements<MeTLStanzas.DirtyAutoshape>(true))
                     actOnDirtyAutoshapeReceived(dirtyAutoShape);
+                foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
+                    actOnBubbleReceived(bubble.context);
             };
             if (Application.Current.Dispatcher.Thread != Thread.CurrentThread)
                 Application.Current.Dispatcher.BeginInvoke(action);
@@ -681,6 +683,10 @@ namespace SandRibbon.Utils.Connection
                 action();
             if (message.SelectSingleElement("body") != null)
                 ReceiveCommand(message.SelectSingleElement("body").InnerXml);
+        }
+        public virtual void actOnBubbleReceived(TargettedBubbleContext bubble)
+        {
+            Commands.ReceiveNewBubble.Execute(bubble);
         }
         public virtual void actOnQuizStatus(QuizStatusDetails status)
         {
