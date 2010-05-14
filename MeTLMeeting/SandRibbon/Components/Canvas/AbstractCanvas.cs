@@ -70,14 +70,25 @@ namespace SandRibbon.Components.Canvas
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
             Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(
                 ReceiveNewBubble));
+            Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(exploreBubble));
         }
+
         public void ReceiveNewBubble(TargettedBubbleContext context) {
             if(context.target != target) return;
-            var bubble = getBubble(context); 
-            if(bubble != null){
-                var adornerLayer = AdornerLayer.GetAdornerLayer(this);
-                adornerLayer.Add(UIAdorner.InCanvas(this, new ThoughtBubble(), bubble.position));
-            }
+            var bubble = getBubble(context);
+            Dispatcher.BeginInvoke((Action) delegate
+                                    {
+                                        if (bubble != null)
+                                        {
+                                            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                                            adornerLayer.Add(UIAdorner.InCanvas(this, bubble, bubble.position)); 
+                                        }
+                                    });
+        }
+        private void exploreBubble(ThoughtBubble bubble)
+        {
+            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+            if(adornerLayer == null) return;
         }
         private ThoughtBubble getBubble(TargettedBubbleContext bubble)
         {

@@ -92,6 +92,7 @@ namespace SandRibbon.Components.Sandpit
                 Height = 40;
             }
             move(position);
+            Commands.ExploreBubble.Execute(this);
             opened = !opened;
         }
     }
