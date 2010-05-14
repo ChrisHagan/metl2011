@@ -73,24 +73,32 @@ namespace SandRibbon.Components.Canvas
         }
         public void ReceiveNewBubble(TargettedBubbleContext context) {
             if(context.target != target) return;
-            var bubble = getBubble(context.context); 
+            var bubble = getBubble(context); 
             if(bubble != null){
                 var adornerLayer = AdornerLayer.GetAdornerLayer(this);
                 adornerLayer.Add(UIAdorner.InCanvas(this, new ThoughtBubble(), bubble.position));
             }
         }
-        private ThoughtBubble getBubble(IEnumerable<SelectedIdentity> context)
+        private ThoughtBubble getBubble(TargettedBubbleContext bubble)
         {
-            var ids = context.Select(c => c.id);
+            var ids = bubble.context.Select(c => c.id);
             var relevantStrokes = getStrokesRelevantTo(ids);
             var relevantChildren = getChildrenRelevantTo(ids);
             if (relevantStrokes.Count > 0 || relevantStrokes.Count > 0)
-                return new ThoughtBubble
-                {
-                    childContext = relevantChildren,
-                    strokeContext = relevantStrokes,
-                    parent = currentSlideId
-                }.relocate();
+            {
+                var thoughtBubble = new ThoughtBubble
+                                        {
+                                            childContext = relevantChildren,
+                                            strokeContext = relevantStrokes,
+                                            parent = bubble.slide,
+                                            conversation = currentDetails.Jid,
+                                            room = bubble.thoughtSlide
+                                        };
+                thoughtBubble.relocate();
+                thoughtBubble.enterBubble();
+                return thoughtBubble;
+
+            }
             return null;
         }
         private List<Stroke> getStrokesRelevantTo(IEnumerable<String> ids)

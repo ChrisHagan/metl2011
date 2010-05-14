@@ -255,7 +255,7 @@ namespace SandRibbonObjects
             var sId = id.ToString();
             return Int32.Parse(string.Format("{0}00",sId.Substring(0,sId.Length-2)));
         }
-        public enum TYPE { SLIDE, POLL };
+        public enum TYPE { SLIDE, POLL, THOUGHT };
         public string author;
         public int id;
         public int index;

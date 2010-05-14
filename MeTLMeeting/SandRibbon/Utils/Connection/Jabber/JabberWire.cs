@@ -191,6 +191,7 @@ namespace SandRibbon.Utils.Connection
             Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
             Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
             Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(SendNewBubble));
+            Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
         }
         private void SendNewBubble(TargettedBubbleContext selection){
             stanza(new MeTLStanzas.Bubble(selection));

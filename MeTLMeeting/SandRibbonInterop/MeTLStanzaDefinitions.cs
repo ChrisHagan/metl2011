@@ -34,6 +34,7 @@ namespace SandRibbonInterop.MeTLStanzas
     }
     public class TargettedBubbleContext : TargettedElement {
         public IEnumerable<SelectedIdentity> context;
+        public int thoughtSlide;
     }
     public class TargettedImage : TargettedElement
     {
@@ -389,6 +390,7 @@ namespace SandRibbonInterop.MeTLStanzas
                 this.context = context;
             }
             private string idsTag = "IDS";
+            private string thoughtTag = "THOUGHTSLIDE";
             private string entityIdTag = "ENTITY";
             private string idAttribute = "ID";
             public TargettedBubbleContext context {
@@ -398,6 +400,7 @@ namespace SandRibbonInterop.MeTLStanzas
                     var context = new TargettedBubbleContext
                     {
                         slide = Int32.Parse(GetTag(slideTag)),
+                        thoughtSlide = Int32.Parse(GetTag(thoughtTag)),
                         target = target,
                         privacy = GetTag(privacyTag),
                         author = GetTag("author")
@@ -420,6 +423,7 @@ namespace SandRibbonInterop.MeTLStanzas
                     this.SetTag(targetTag, value.target);
                     this.SetTag(privacyTag, value.privacy);
                     this.SetTag(slideTag, value.slide);
+                    this.SetTag(thoughtTag, value.thoughtSlide);
                     var ids = new Element(idsTag);
                     SetTag(targetTag, value.context.First().target);
                     foreach(var selectedIdentity in value.context){

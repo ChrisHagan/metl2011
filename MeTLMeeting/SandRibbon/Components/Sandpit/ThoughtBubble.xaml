@@ -1,7 +1,14 @@
 ﻿<UserControl x:Class="SandRibbon.Components.Sandpit.ThoughtBubble"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:Components="clr-namespace:SandRibbon.Components"
+    xmlns:Sandpit="clr-namespace:SandRibbon.Components.Sandpit" >
     <Grid>
-        <TextBlock Text="TEXT GOES HERE"></TextBlock>      
+        <Border BorderBrush="Black" BorderThickness="1" Background="White">
+            <Viewbox x:Name="thoughtView" Height="40" Width="40">
+                <Sandpit:ThoughtBubbleSpace MouseDown="ThoughtBubbleSpace_MouseDown"/>
+            </Viewbox> 
+        </Border>
     </Grid>
 </UserControl>

@@ -135,6 +135,7 @@ namespace SandRibbon
         public static CompositeCommand SendSyncMove = new CompositeCommand();
         public static CompositeCommand MoveToQuiz = new CompositeCommand();
         public static CompositeCommand MoveTo = new CompositeCommand();
+        public static CompositeCommand SneakInto = new CompositeCommand();
         public static CompositeCommand ClearDynamicContent = new CompositeCommand();
         public static CompositeCommand PreParserAvailable = new CompositeCommand();
         public static CompositeCommand MoveToPrevious = new CompositeCommand();
