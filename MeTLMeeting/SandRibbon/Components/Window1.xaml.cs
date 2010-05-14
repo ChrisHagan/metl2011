@@ -120,7 +120,7 @@ namespace SandRibbon
                 conversationSelectorProperty = value;
                 if (conversationSelectorProperty is UserControl && ((UserControl)conversationSelectorProperty).Parent == null)
                 {
-                    ConversationListing.Items.Add(conversationSelectorProperty);
+                    //ConversationListing.Items.Add(conversationSelectorProperty);
                 }
             }
         }
@@ -202,16 +202,14 @@ namespace SandRibbon
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>((_arg) => { }, mustBeInConversation));
             Commands.PrintCompleted.RegisterCommand(new DelegateCommand<object>(_obj => HideProgressBlocker()));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(
-                _obj => 
-                    { 
-                        ShowPowerpointBlocker("Starting Powerpoint Import");
-                        Commands.PostImportPowerpoint.Execute(null);
-                    },mustBeLoggedIn));
+                _obj =>
+                {
+                    ShowPowerpointBlocker("Starting Powerpoint Import");
+                    Commands.PostImportPowerpoint.Execute(null);
+                }, mustBeLoggedIn));
             Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(
                 (conversationDetails) =>
                 {
-                    Import.Clear();
-                    //Import.Clear();
                     ShowPowerpointBlocker("Starting Powerpoint Import");
                     Commands.PostStartPowerPointLoad.Execute(conversationDetails);
                 },
@@ -219,10 +217,10 @@ namespace SandRibbon
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(
                 _obj =>
-                    {
-                        ShowPowerpointBlocker("Creating Conversation Dialog Open");
-                        Commands.PostCreateConversation.Execute(null);
-                    }, 
+                {
+                    ShowPowerpointBlocker("Creating Conversation Dialog Open");
+                    Commands.PostCreateConversation.Execute(null);
+                },
                     mustBeLoggedIn));
             Commands.PreEditCurrentConversation.RegisterCommand(new DelegateCommand<object>(
                 _obj =>
@@ -231,7 +229,7 @@ namespace SandRibbon
                     ShowPowerpointBlocker("Editing Conversation Dialog Open");
                     Commands.PostEditConversation.Execute(details);
                 },
-                    mustBeInConversation));
+                    CanEditConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(_obj => setLayer("Sketch"), mustBeInConversation));
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(ToggleNotePadVisibility, mustBeLoggedIn));
@@ -264,7 +262,13 @@ namespace SandRibbon
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
             if (SmartBoardMeTLAlreadyLoaded)
-            checkIfSmartboard();
+                checkIfSmartboard();
+        }
+        private bool CanEditConversation(object _arg)
+        {
+            if (userInformation != null && userInformation.location != null)
+                return (mustBeInConversation(userInformation.location.currentSlide) && amAuthor(null));
+            return false;
         }
         private bool SmartBoardMeTLAlreadyLoaded
         {
@@ -584,8 +588,8 @@ namespace SandRibbon
                                           {"Sketch", Sketch},
                                           {"PenTools", StableTools},
                                           {"Type", Sketch},
-                                          {"Navigate", Navigate},
-                                          {"ListConversations", ConversationListing}
+                                          {"Navigate", Navigate}
+                                          //{"ListConversations", ConversationListing}
                                       };
                 var loadedPlugins = PluginManager.LoadPlugins(pluginRoots, pluginRoot);
                 foreach (var loadedPlugin in loadedPlugins)
@@ -983,7 +987,7 @@ namespace SandRibbon
         }
         private void SearchOpened(object sender, EventArgs e)
         {
-            Search.FocusSearch();
+            //Search.FocusSearch();
         }
         private void ImportOpened(object sender, EventArgs e)
         {

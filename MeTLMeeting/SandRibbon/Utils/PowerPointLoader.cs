@@ -117,9 +117,7 @@ namespace SandRibbon.Utils
             pptChoice.credentials = credentials;
             pptChoice.authorizedGroups = authorizedGroups;
             pptChoice.ShowDialog();
-            var details = pptChoice.details;
-            Commands.CreateConversation.Execute(details);
-            Commands.PowerPointLoadFinished.Execute(null);
+            handleConversationDialogueCompletion();
         }
         private void startEditConversation(SandRibbonObjects.ConversationDetails details)
         {
@@ -129,9 +127,7 @@ namespace SandRibbon.Utils
             pptChoice.details = details;
             pptChoice.authorizedGroups = authorizedGroups;
             pptChoice.ShowDialog();
-            var newDetails = pptChoice.details;
-
-            Commands.PowerPointLoadFinished.Execute(null);
+            handleConversationDialogueCompletion();
         }
         private void startPowerpointImport()
         {
@@ -140,47 +136,73 @@ namespace SandRibbon.Utils
             pptChoice.credentials = credentials;
             pptChoice.authorizedGroups = authorizedGroups;
             pptChoice.ShowDialog();
+            handleConversationDialogueCompletion();
+        }
+        private void handleConversationDialogueCompletion()
+        {
             var details = pptChoice.details;
-            if (pptChoice.CreateConversation && (!String.IsNullOrEmpty(pptChoice.importFile)) && pptChoice.importFile.Contains(".ppt"))
+            if (pptChoice.isComplete)
             {
-                try
+                switch (pptChoice.action)
                 {
-                    switch (pptChoice.importType)
-                    {
-                        case "Slides":
-                            LoadPowerpointAsFlatSlides(pptChoice.importFile, details, 1);
-                            break;
-                        case "Slides-HighDef":
-                            LoadPowerpointAsFlatSlides(pptChoice.importFile, details, pptChoice.magnification);
-                            break;
-                        case "Shapes":
-                            LoadPowerpoint(pptChoice.importFile, details);
-                            break;
-                        case "Videos":
-                            LoadPowerpointAsVideoSlides(pptChoice.importFile, details);
-                            break;
-                        case "cancel":
+                    case "import":
+                        if ((!String.IsNullOrEmpty(pptChoice.importFile)) && pptChoice.importFile.Contains(".ppt"))
+                        {
+                            try
+                            {
+                                switch (pptChoice.importType)
+                                {
+                                    case "Slides":
+                                        LoadPowerpointAsFlatSlides(pptChoice.importFile, details, 1);
+                                        break;
+                                    case "Slides-HighDef":
+                                        LoadPowerpointAsFlatSlides(pptChoice.importFile, details, pptChoice.magnification);
+                                        break;
+                                    case "Shapes":
+                                        LoadPowerpoint(pptChoice.importFile, details);
+                                        break;
+                                    case "Videos":
+                                        LoadPowerpointAsVideoSlides(pptChoice.importFile, details);
+                                        break;
+                                    case "cancel":
+                                        return;
+                                    default:
+                                        LoadPowerpointAsFlatSlides(pptChoice.importFile, details, 1);
+                                        break;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your powerpoint.  If the conversation was created, please check whether it has imported correctly.");
+                                throw e;
+                            }
+                            finally
+                            {
+                                Commands.PowerPointLoadFinished.Execute(null);
+                            }
                             return;
-                        default:
-                            LoadPowerpointAsFlatSlides(pptChoice.importFile, details, 1);
-                            break;
-                    }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Sorry. I do not know what to do with that file format");
+                        }
+                        break;
+                    case "create":
+                        Commands.CreateConversation.Execute(details);
+                        Commands.PowerPointLoadFinished.Execute(null);
+                        break;
+                    case "edit":
+                        MessageBox.Show("Editing conversations is not yet implemented");
+                        Commands.PowerPointLoadFinished.Execute(null);
+                        break;
+                    case "delete":
+                        Commands.PowerPointLoadFinished.Execute(null);
+                        MessageBox.Show("Deleting conversations is neither implemented nor allowed");
+                        break;
                 }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your powerpoint.  If the conversation was created, please check whether it has imported correctly.");
-                    throw e;
-                }
-                finally
-                {
-                    Commands.PowerPointLoadFinished.Execute(null);
-                }
-                return;
             }
             else
-            {
-                MessageBox.Show("Sorry. I do not know what to do with that file format");
-            }
+            Commands.PowerPointLoadFinished.Execute(null);
         }
         private void startPowerpointImport(ConversationDetails details)
         {

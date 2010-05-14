@@ -50,16 +50,16 @@
                             <components:SimpleConversationSelector x:Name="recentDocuments" />
                         </StackPanel>
                     </sr:ApplicationPopup.RecentDocumentsControl>
-                    <sr:MenuItem Text="Recommended conversations" ToolTip="{StaticResource ConversationListingToolTip}" >
+                    <!--<sr:MenuItem Text="Recommended conversations" ToolTip="{StaticResource ConversationListingToolTip}" >
                         <sr:RibbonPopup x:Name="ConversationListing"></sr:RibbonPopup>
                     </sr:MenuItem>
                     <sr:MenuItem Text="Search all conversations" ToolTip="{StaticResource ConversationListingToolTip}" >
                         <sr:RibbonPopup Opened="SearchOpened"  x:Name="ConversationFilterer">
                             <simple:SimpleConversationFilterer x:Name="Search"/>
                         </sr:RibbonPopup>
-                    </sr:MenuItem>
-                    <sr:MenuItem Text="Advanced search" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}"/>
-                    <sr:MenuItem Text="Create new conversation" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.PreCreateConversation}">
+                    </sr:MenuItem>-->
+                    <sr:MenuItem Text="Open conversation" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}"/>
+                    <sr:MenuItem Text="New conversation" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.PreCreateConversation}">
                         <!--<sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationCreator" Opened="CreateOpened">
                             <simple:SimpleConversationCreator ActionDescriptor="Create" x:Name="Create" CreateAction="{x:Static api:Commands.CreateConversation}"/>
                         </sr:RibbonPopup>-->
@@ -69,11 +69,11 @@
                             <simple:SimpleConversationEditor x:Name="Edit"/>
                         </sr:RibbonPopup>-->
                     </sr:MenuItem>
-                    <sr:MenuItem Text="Import conversation" ToolTip="{StaticResource ImportConversationToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}">
-                        <!--<sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationCreator" Opened="ImportOpened" >
+                    <!--<sr:MenuItem Text="Import conversation" ToolTip="{StaticResource ImportConversationToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}">
+                        <sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationCreator" Opened="ImportOpened" >
                             <simple:SimpleConversationCreator ActionDescriptor="Create" x:Name="Import"  CreateAction="{x:Static api:Commands.StartPowerPointLoad}"/>
-                        </sr:RibbonPopup>-->
-                    </sr:MenuItem>
+                        </sr:RibbonPopup>
+                    </sr:MenuItem>-->
                     <!--sr:MenuItem Text="Export conversation" ToolTip="{StaticResource ExportConversationToolTip}" Command="{x:Static api:Commands.NotImplementedYet}" ></sr:MenuItem-->
                     <sr:MenuItem Text="Print conversation with notes" ToolTip="{StaticResource PrintConversationToolTip}" Command="{x:Static api:Commands.PrintConversation}"></sr:MenuItem>
                     <sr:MenuItem Text="Print conversation as handout" ToolTip="{StaticResource PrintHandoutToolTip}" Command="{x:Static api:Commands.PrintConversationHandout}"></sr:MenuItem>

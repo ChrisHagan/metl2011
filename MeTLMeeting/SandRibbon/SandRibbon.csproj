@@ -709,6 +709,7 @@
     <Content Include="plugins\SMARTboard\SMARTboard.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Ribbon-SlideStack.png" />
     <Content Include="Resources\Slide_Not_Loaded.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

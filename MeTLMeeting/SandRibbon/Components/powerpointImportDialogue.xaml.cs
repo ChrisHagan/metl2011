@@ -31,8 +31,7 @@ namespace SandRibbon.Components
         private string currentJid;
         public ConversationDetails details;
         public string me;
-        public bool CreateConversation = false;
-
+        
         private ConversationConfigurationMode DialogMode;
         private enum ConversationConfigurationMode { Create, Edit, Import, Delete }
 
@@ -40,6 +39,8 @@ namespace SandRibbon.Components
         public int magnification = 4;
         public string importType;
         public string importFile;
+        public string action;
+        public bool isComplete;
 
         public powerpointImportDialogue(string mode)
         {
@@ -92,12 +93,22 @@ namespace SandRibbon.Components
             switch (DialogMode)
             {
                 case ConversationConfigurationMode.Create:
+                    createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Collapsed;
+                    CommitButton.Content = "Create Conversation";
+                    Height = 400;
+                    Width = 800;
+                    action = "create";
                     if (details == null)
                         details = new ConversationDetails { Author = me, Created = DateTime.Now, Subject = "Unrestricted", Title = "", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
                 case ConversationConfigurationMode.Edit:
+                    createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
+                    CommitButton.Content = "Update Conversation";
+                    action = "edit";
+                    Height = 400;
+                    Width = 380;
                     if (details == null)
                     {
                         MessageBox.Show("No valid conversation currently selected.  Please ensure you are in a conversation you own when editing a conversation.");
@@ -105,13 +116,23 @@ namespace SandRibbon.Components
                     }
                     break;
                 case ConversationConfigurationMode.Import:
+                    createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Visible;
+                    CommitButton.Content = "Import powerpoint into Conversation";
                     importSelector.SelectedItem = importSelector.Items[0];
+                    action = "import";
+                    Height = 400;
+                    Width = 800;
                     if (details == null)
                         details = new ConversationDetails { Author = me, Created = DateTime.Now, Subject = "Unrestricted", Title = "", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
                 case ConversationConfigurationMode.Delete:
+                    createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
+                    CommitButton.Content = "Delete Conversation";
+                    action = "delete";
+                    Height = 400;
+                    Width = 380;
                     if (details == null)
                     {
                         MessageBox.Show("No valid conversation currently selected.  Please ensure you are in a conversation you own when deleting a conversation.");
@@ -163,7 +184,8 @@ namespace SandRibbon.Components
             var currentDetails = details;
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
             var thisTitleIsNotTaken = (extantConversations.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).Count() == 0);
-            return thisIsAValidTitle && thisTitleIsNotTaken;
+            var IAmTheAuthor = (details.Author == me);
+            return thisIsAValidTitle && thisTitleIsNotTaken && IAmTheAuthor;
         }
 
 
@@ -180,13 +202,29 @@ namespace SandRibbon.Components
         private void Create(object sender, RoutedEventArgs e)
         {
             if ((!String.IsNullOrEmpty(importType)) && checkConversation(details))
-                this.CreateConversation = true;
-            this.Close();
+            {
+                this.isComplete = true;
+                this.Close();
+            }
         }
         private void Close(object sender, RoutedEventArgs e)
         {
             importType = "cancel";
             this.Close();
+        }
+        private void startingContentListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (((ListBoxItem)(((ListBox)sender).SelectedItem)).Tag.ToString())
+            {
+                case "whiteboard":
+                    DialogMode = ConversationConfigurationMode.Create;
+                    UpdateDialogBoxAppearance();
+                    break;
+                case "powerpoint":
+                    DialogMode = ConversationConfigurationMode.Import;
+                    UpdateDialogBoxAppearance();
+                    break;
+            }
         }
 
         private void conversationStyleListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -227,6 +265,7 @@ namespace SandRibbon.Components
         {
             conversationSubjectListBox.SelectionChanged += conversationSubjectListBox_SelectionChanged;
             conversationStyleListBox.SelectionChanged += conversationStyleListBox_SelectionChanged;
+            startingContentSelector.SelectionChanged += startingContentListBox_SelectionChanged;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
