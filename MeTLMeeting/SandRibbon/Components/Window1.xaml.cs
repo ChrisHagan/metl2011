@@ -201,15 +201,37 @@ namespace SandRibbon
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>((_arg) => { }, mustBeInConversation));
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>((_arg) => { }, mustBeInConversation));
             Commands.PrintCompleted.RegisterCommand(new DelegateCommand<object>(_obj => HideProgressBlocker()));
+            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(
+                _obj => 
+                    { 
+                        ShowPowerpointBlocker("Starting Powerpoint Import");
+                        Commands.PostImportPowerpoint.Execute(null);
+                    },mustBeLoggedIn));
             Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(
                 (conversationDetails) =>
                 {
                     Import.Clear();
+                    //Import.Clear();
                     ShowPowerpointBlocker("Starting Powerpoint Import");
                     Commands.PostStartPowerPointLoad.Execute(conversationDetails);
                 },
                 mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(
+                _obj =>
+                    {
+                        ShowPowerpointBlocker("Creating Conversation Dialog Open");
+                        Commands.PostCreateConversation.Execute(null);
+                    }, 
+                    mustBeLoggedIn));
+            Commands.PreEditCurrentConversation.RegisterCommand(new DelegateCommand<object>(
+                _obj =>
+                {
+                    var details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
+                    ShowPowerpointBlocker("Editing Conversation Dialog Open");
+                    Commands.PostEditConversation.Execute(details);
+                },
+                    mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(_obj => setLayer("Sketch"), mustBeInConversation));
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(ToggleNotePadVisibility, mustBeLoggedIn));
@@ -267,7 +289,15 @@ namespace SandRibbon
             var username = myFile.ReadToEnd();
             MessageBox.Show("logging in as {0}", username);
             JabberWire.SwitchServer("staging");
-            Commands.SetIdentity.Execute(new JabberWire.Credentials{authorizedGroups = new List<JabberWire.AuthorizedGroup>(), name= username, password ="examplePassword"});
+            var doDetails = (Action)delegate
+            {
+                Title = username + " MeTL waiting for wakeup";
+            };
+            if (Thread.CurrentThread != Dispatcher.Thread)
+                Dispatcher.BeginInvoke(doDetails);
+            else
+                doDetails();
+            Commands.SetIdentity.Execute(new JabberWire.Credentials { authorizedGroups = new List<JabberWire.AuthorizedGroup>(), name = username, password = "examplePassword" });
         }
 
         private static object reconnectionLock = new object();
@@ -538,7 +568,7 @@ namespace SandRibbon
                 details.Author = userInformation.credentials.name;
                 details = ConversationDetailsProviderFactory.Provider.Create(details);
                 CommandManager.InvalidateRequerySuggested();
-                Create.Clear();
+                //Create.Clear();
                 if (Commands.JoinConversation.CanExecute(details.Jid))
                 {
                     Commands.JoinConversation.Execute(details.Jid);
@@ -945,11 +975,11 @@ namespace SandRibbon
         }
         private void CreateOpened(object sender, EventArgs e)
         {
-            Create.FocusCreate();
+            //Create.FocusCreate();
         }
         private void EditOpened(object sender, EventArgs e)
         {
-            Edit.FocusEdit();
+            //Edit.FocusEdit();
         }
         private void SearchOpened(object sender, EventArgs e)
         {
@@ -957,7 +987,7 @@ namespace SandRibbon
         }
         private void ImportOpened(object sender, EventArgs e)
         {
-            Import.FocusCreate();
+            //Import.FocusCreate();
         }
         private void SetConversationPermissions(string style)
         {

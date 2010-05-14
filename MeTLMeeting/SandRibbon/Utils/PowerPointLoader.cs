@@ -19,6 +19,9 @@ using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using MessageBox = System.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
+using System.Windows;
+using SandRibbon.Components;
+using System.Collections.ObjectModel;
 
 namespace SandRibbon.Utils
 {
@@ -57,17 +60,127 @@ namespace SandRibbon.Utils
         static MsoTriState TRUE = MsoTriState.msoTrue;
         static int resource = 1;
         private static string me;
+        public static IEnumerable<ConversationDetails> extantConversations = new List<ConversationDetails>();
+        private SandRibbon.Utils.Connection.JabberWire.Credentials credentials;
+        public ObservableCollection<string> authorizedGroups = new ObservableCollection<string>();
         public JabberWire wire;
         public DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials> setAuthor;
         private string parsedTitle;
+        public enum PowerpointImportType
+        {
+            Video,
+            Image,
+            Shapes
+        }
+        private powerpointImportDialogue pptChoice;
+        private void SetIdentity(JabberWire.Credentials credentials)
+        {
+            this.credentials = credentials;
+            authorizedGroups.Clear();
+            foreach (var group in credentials.authorizedGroups)
+                authorizedGroups.Add(group.groupKey);
+        }
         public PowerPointLoader()
         {
             setAuthor = new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(
                 author => me = author.name);
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<JabberWire.Credentials>(SetIdentity));
             Commands.SetIdentity.RegisterCommand(setAuthor);
             Commands.PostStartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(
                 (conversationDetails) => { startPowerpointImport((ConversationDetails)conversationDetails); }
             ));
+            Commands.PostImportPowerpoint.RegisterCommand(new DelegateCommand<object>(
+                _obj =>
+                {
+                    startPowerpointImport();
+                }));
+            Commands.PostEditConversation.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(
+                conversationDetails =>
+                {
+                    startEditConversation(conversationDetails);
+                }));
+            /*Commands.PostDeleteConversation.RegisterCommand(new DelegateCommand<object>(
+                conversationDetails =>
+                {
+                    startDeleteConversation();
+                }));*/
+            Commands.PostCreateConversation.RegisterCommand(new DelegateCommand<object>(
+                _obj =>
+                {
+                    startCreateConversation();
+                }));
+        }
+        private void startCreateConversation()
+        {
+            pptChoice = new powerpointImportDialogue("create");
+            pptChoice.me = me;
+            pptChoice.credentials = credentials;
+            pptChoice.authorizedGroups = authorizedGroups;
+            pptChoice.ShowDialog();
+            var details = pptChoice.details;
+            Commands.CreateConversation.Execute(details);
+            Commands.PowerPointLoadFinished.Execute(null);
+        }
+        private void startEditConversation(SandRibbonObjects.ConversationDetails details)
+        {
+            pptChoice = new powerpointImportDialogue("edit");
+            pptChoice.me = me;
+            pptChoice.credentials = credentials;
+            pptChoice.details = details;
+            pptChoice.authorizedGroups = authorizedGroups;
+            pptChoice.ShowDialog();
+            var newDetails = pptChoice.details;
+
+            Commands.PowerPointLoadFinished.Execute(null);
+        }
+        private void startPowerpointImport()
+        {
+            pptChoice = new powerpointImportDialogue("import");
+            pptChoice.me = me;
+            pptChoice.credentials = credentials;
+            pptChoice.authorizedGroups = authorizedGroups;
+            pptChoice.ShowDialog();
+            var details = pptChoice.details;
+            if (pptChoice.CreateConversation && (!String.IsNullOrEmpty(pptChoice.importFile)) && pptChoice.importFile.Contains(".ppt"))
+            {
+                try
+                {
+                    switch (pptChoice.importType)
+                    {
+                        case "Slides":
+                            LoadPowerpointAsFlatSlides(pptChoice.importFile, details, 1);
+                            break;
+                        case "Slides-HighDef":
+                            LoadPowerpointAsFlatSlides(pptChoice.importFile, details, pptChoice.magnification);
+                            break;
+                        case "Shapes":
+                            LoadPowerpoint(pptChoice.importFile, details);
+                            break;
+                        case "Videos":
+                            LoadPowerpointAsVideoSlides(pptChoice.importFile, details);
+                            break;
+                        case "cancel":
+                            return;
+                        default:
+                            LoadPowerpointAsFlatSlides(pptChoice.importFile, details, 1);
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your powerpoint.  If the conversation was created, please check whether it has imported correctly.");
+                    throw e;
+                }
+                finally
+                {
+                    Commands.PowerPointLoadFinished.Execute(null);
+                }
+                return;
+            }
+            else
+            {
+                MessageBox.Show("Sorry. I do not know what to do with that file format");
+            }
         }
         private void startPowerpointImport(ConversationDetails details)
         {
@@ -80,33 +193,52 @@ namespace SandRibbon.Utils
                                              };
 
             var dialogResult = fileBrowser.ShowDialog();
-            if (dialogResult == DialogResult.OK)
-                foreach (var file in fileBrowser.FileNames)
-                    if (file.Contains(".ppt"))
+            powerpointImportDialogue pptChoice = new powerpointImportDialogue("import");
+            pptChoice.ShowDialog();
+            foreach (var file in fileBrowser.FileNames)
+                if (file.Contains(".ppt"))
+                {
+                    try
                     {
-                        try
+                        switch (pptChoice.importType)
                         {
-                            LoadPowerpoint(file, details);
-                            //LoadPowerpointAsVideoSlides(file, details);
-                            //LoadPowerpointAsFlatSlides(file, details);
+                            case "Slides":
+                                LoadPowerpointAsFlatSlides(file, details, 1);
+                                break;
+                            case "Slides-HighDef":
+                                LoadPowerpointAsFlatSlides(file, details, pptChoice.magnification);
+                                break;
+                            case "Shapes":
+                                LoadPowerpoint(file, details);
+                                break;
+                            case "Videos":
+                                LoadPowerpointAsVideoSlides(file, details);
+                                break;
+                            case "cancel":
+                                return;
+                                break;
+                            default:
+                                LoadPowerpointAsFlatSlides(file, details, 1);
+                                break;
                         }
-                        catch (Exception e)
-                        {
-                            MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your powerpoint and has to close.");
-                            throw e;
-                        }
-                        finally
-                        {
-                            Commands.PowerPointLoadFinished.Execute(null);
-                        }
-                        return;
                     }
-                    else
+                    catch (Exception e)
                     {
-                        MessageBox.Show("Sorry. I do not know what to do with that file format");
+                        MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your powerpoint and has to close.");
+                        throw e;
                     }
+                    finally
+                    {
+                        Commands.PowerPointLoadFinished.Execute(null);
+                    }
+                    return;
+                }
+                else
+                {
+                    MessageBox.Show("Sorry. I do not know what to do with that file format");
+                }
         }
-        public void LoadPowerpointAsFlatSlides(string file, ConversationDetails details)
+        public void LoadPowerpointAsFlatSlides(string file, ConversationDetails details, int MagnificationRating)
         {
             var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
             try
@@ -114,7 +246,6 @@ namespace SandRibbon.Utils
                 var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
                 if (!Directory.Exists(currentWorkingDirectory))
                     Directory.CreateDirectory(currentWorkingDirectory);
-                ppt.SaveAs(currentWorkingDirectory + "\\pptImport", PpSaveAsFileType.ppSaveAsPNG, FALSE);
                 var provider = ConversationDetailsProviderFactory.Provider;
                 var xml = new XElement("presentation");
                 xml.Add(new XAttribute("name", details.Title));
@@ -123,12 +254,26 @@ namespace SandRibbon.Utils
                 var conversation = provider.Create(details);
                 conversation.Author = me;
                 Commands.PowerPointProgress.Execute("Starting to parse powerpoint file");
+                var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
+                var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
                 foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
                 {
                     int slideNumber = slide.SlideIndex;
+                    var slidePath = currentWorkingDirectory + "\\pptImportSlide" + slideNumber.ToString() + ".PNG";
+                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
+                    {
+                        shape.Visible = MsoTriState.msoFalse;
+                    }
+                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
+                    {
+                        if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
+                            shape.Visible = MsoTriState.msoFalse;
+                        else shape.Visible = MsoTriState.msoTrue;
+                    }
+                    slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
+
                     var xSlide = new XElement("slide");
                     xSlide.Add(new XAttribute("index", slide.SlideIndex));
-                    var slidePath = currentWorkingDirectory + "\\pptImport\\Slide" + slideNumber.ToString() + ".PNG";
                     xSlide.Add(new XElement("shape",
                     new XAttribute("x", 0),
                     new XAttribute("y", 0),
@@ -166,48 +311,48 @@ namespace SandRibbon.Utils
                 Commands.PowerPointLoadFinished.Execute(null);
             }
         }
-/*
         public void LoadPowerpointAsVideoSlides(string file, ConversationDetails details)
         {
-            var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
-            try
-            {
-                var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
-                if (!Directory.Exists(currentWorkingDirectory))
-                    Directory.CreateDirectory(currentWorkingDirectory);
-                ppt.SaveAs(currentWorkingDirectory + "\\pptImport.wmv", PpSaveAsFileType.ppSaveAsWMV, FALSE);
-                
-                //I'm not sure how to do this type of callback properly yet in Dot.NET.  I rather suspect that this while loop will never be reached.
-                while (ppt.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusInProgress)
-                    if (ppt.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusDone)
-                        MessageBox.Show("ExportAsVideo finished");
-                Thread.Sleep(100);
-                if (ppt.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusFailed)
-                    MessageBox.Show("ExportAsVideo failed");
-
-                var presentationAdvanceTime = ppt.SlideMaster.SlideShowTransition.AdvanceTime;
-                foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
-                {
-                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
-                    {
-                        var UnsortedTimeLine = new Dictionary<int, float>();
-                        var AS = shape.AnimationSettings;
-                        if (AS.Animate == MsoTriState.msoTrue)
+            /*
+                        var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
+                        try
                         {
-                            if (AS.AdvanceMode == PpAdvanceMode.ppAdvanceOnClick)
-                                UnsortedTimeLine.Add(AS.AnimationOrder, presentationAdvanceTime);
-                            else UnsortedTimeLine.Add(AS.AnimationOrder, AS.AdvanceTime);
+                            var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
+                            if (!Directory.Exists(currentWorkingDirectory))
+                                Directory.CreateDirectory(currentWorkingDirectory);
+                            ppt.SaveAs(currentWorkingDirectory + "\\pptImport.wmv", PpSaveAsFileType.ppSaveAsWMV, FALSE);
+                
+                            //I'm not sure how to do this type of callback properly yet in Dot.NET.  I rather suspect that this while loop will never be reached.
+                            while (ppt.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusInProgress)
+                                if (ppt.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusDone)
+                                    MessageBox.Show("ExportAsVideo finished");
+                            Thread.Sleep(100);
+                            if (ppt.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusFailed)
+                                MessageBox.Show("ExportAsVideo failed");
+
+                            var presentationAdvanceTime = ppt.SlideMaster.SlideShowTransition.AdvanceTime;
+                            foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
+                            {
+                                foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
+                                {
+                                    var UnsortedTimeLine = new Dictionary<int, float>();
+                                    var AS = shape.AnimationSettings;
+                                    if (AS.Animate == MsoTriState.msoTrue)
+                                    {
+                                        if (AS.AdvanceMode == PpAdvanceMode.ppAdvanceOnClick)
+                                            UnsortedTimeLine.Add(AS.AnimationOrder, presentationAdvanceTime);
+                                        else UnsortedTimeLine.Add(AS.AnimationOrder, AS.AdvanceTime);
+                                    }
+                                    var sortedTimeLine = from k in UnsortedTimeLine.Keys orderby UnsortedTimeLine[k] ascending select k;
+                                }
+                            }
                         }
-                        var sortedTimeLine = from k in UnsortedTimeLine.Keys orderby UnsortedTimeLine[k] ascending select k;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("LoadPowerpointVideoAsSlides error: " + ex.Message);
-            }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("LoadPowerpointVideoAsSlides error: " + ex.Message);
+                        }
+            */
         }
-*/
         public void LoadPowerpoint(string file, ConversationDetails details)
         {
             var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);

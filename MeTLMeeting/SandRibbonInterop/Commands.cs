@@ -149,7 +149,13 @@ namespace SandRibbon
         public static CompositeCommand PostRetrievedHistoryPortion = new CompositeCommand();
         public static CompositeCommand SetSync = new CompositeCommand();
         public static CompositeCommand AddSlide = new CompositeCommand();
+        public static CompositeCommand PreCreateConversation = new CompositeCommand();
+        public static CompositeCommand PreEditCurrentConversation = new CompositeCommand();
         public static CompositeCommand CreateConversation = new CompositeCommand();
+        public static CompositeCommand ImportPowerpoint = new CompositeCommand();
+        public static CompositeCommand PostImportPowerpoint = new CompositeCommand();
+        public static CompositeCommand PostCreateConversation = new CompositeCommand();
+        public static CompositeCommand PostEditConversation = new CompositeCommand();
         public static CompositeCommand StartPowerPointLoad = new CompositeCommand();
         public static CompositeCommand PostStartPowerPointLoad = new CompositeCommand();
         public static CompositeCommand PowerPointLoadFinished = new CompositeCommand();

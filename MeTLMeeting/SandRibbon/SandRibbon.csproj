@@ -169,6 +169,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\powerpointImportDialogue.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\PresentationSpace.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -376,6 +380,9 @@
     </Compile>
     <Compile Include="Components\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\powerpointImportDialogue.xaml.cs">
+      <DependentUpon>powerpointImportDialogue.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\PresentationSpace.xaml.cs">
       <DependentUpon>PresentationSpace.xaml</DependentUpon>
