@@ -2,22 +2,98 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:plugin="clr-namespace:PowerpointJabber"
-        ShowInTaskbar="True" WindowStartupLocation="CenterScreen" Topmost="True"
-        Closing="Window_Closing">
-        <WrapPanel Orientation="Horizontal">
-            <Button Click="MoveToNextSlide">NextSlide</Button>
-            <Button Click="MoveToPrevSlide">PrevSlide</Button>
-            <Button Click="MoveToNextBuild">NextBuild</Button>
-            <Button Click="MoveToPrevBuild">PrevBuild</Button>
-            <Button Click="Pen" Tag="black">BlackPen</Button>
-            <Button Click="Pen" Tag="red">RedPen</Button>
-            <Button Click="Pen" Tag="blue">BluePen</Button>
-            <Button Click="Pen" Tag="yellow">YellowPen</Button>
-            <Button Click="Eraser">Eraser</Button>
-            <Button Click="Selector">Selector</Button>
-            <Button Click="hideSlide" Tag="white">WhiteScreen</Button>
-            <Button Click="hideSlide" Tag="black">BlackScreen</Button>
-            <Button Click="hideSlide" Tag="">NormalScreen</Button>
-            <Button Click="EndSlideShow">EndSlideShow</Button>
+        ShowInTaskbar="True" WindowStartupLocation="Manual" Height="800" Width="1280" Topmost="True" Top="0" Left="0" 
+        Closing="Window_Closing" WindowStyle="None" AllowsTransparency="True" Background="Transparent">
+    <Grid Background="Transparent">
+        <ScrollViewer HorizontalAlignment="Left" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="SlideViewer">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Click="moveToSelectedSlide" Tag="{Binding Path=slideNumber}" Height="50" Width="50">
+                            <Image Source="{Binding Path=thumbnail}"/>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
+        <WrapPanel Orientation="Vertical" HorizontalAlignment="Right">
+            <Button Click="MoveToPrevBuild" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptBuildPrevious.png"/>
+                    <Label HorizontalAlignment="Center">Prev</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="MoveToNextBuild" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptBuildNext.png"/>
+                    <Label HorizontalAlignment="Center">Next</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="Pen" Tag="black" Background="Black" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptPaintbrush.png"/>
+                    <Label HorizontalAlignment="Center">Black</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="Pen" Tag="red" Background="Red" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptPaintbrush.png"/>
+                    <Label HorizontalAlignment="Center">Red</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="Pen" Tag="blue" Background="Blue" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptPaintbrush.png"/>
+                    <Label HorizontalAlignment="Center">Blue</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="Pen" Tag="yellow" Background="Yellow" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptPaintbrush.png"/>
+                    <Label HorizontalAlignment="Center">Yellow</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="Eraser" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptEraser.png"/>
+                    <Label HorizontalAlignment="Center">Erase</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="Selector" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptSelect.png"/>
+                    <Label HorizontalAlignment="Center">Select</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="hideSlide" Tag="white" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptWhiteScreen.png"/>
+                    <Label HorizontalAlignment="Center">White</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="hideSlide" Tag="black" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source=".\Resources\pptBlackScreen.png"/>
+                    <Label HorizontalAlignment="Center">Black</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="hideSlide" Tag="" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source=".\Resources\pptNormalScreen.png"/>
+                    <Label HorizontalAlignment="Center">Norm</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="EndSlideShow" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptCloseSlideshow.png"/>
+                    <Label>Exit</Label>
+                </StackPanel>
+            </Button>
         </WrapPanel>
+    </Grid>
 </Window>

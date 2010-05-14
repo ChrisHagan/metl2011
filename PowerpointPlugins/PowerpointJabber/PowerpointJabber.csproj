@@ -228,6 +228,25 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\pptBlackScreen.png">
+    </Resource>
+    <Resource Include="Resources\pptBuildNext.png">
+    </Resource>
+    <Resource Include="Resources\pptBuildPrevious.png">
+    </Resource>
+    <Resource Include="Resources\pptNormalScreen.png">
+    </Resource>
+    <Resource Include="Resources\pptPaintbrush.png">
+    </Resource>
+    <Resource Include="Resources\pptWhiteScreen.png">
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\pptCloseSlideshow.png" />
+    <Resource Include="Resources\pptEraser.png" />
+    <Resource Include="Resources\pptSelect.png" />
+  </ItemGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- Include additional build rules for an Office application add-in. -->

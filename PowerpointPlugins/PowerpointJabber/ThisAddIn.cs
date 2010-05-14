@@ -11,66 +11,6 @@ using Microsoft.Office.Core;
 
 namespace PowerpointJabber
 {
-    public class SimpleSlideShowViewer : PowerPoint.SlideShowWindow
-    {
-        public SimpleSlideShowWindow SSSW; 
-        public SimpleSlideShowViewer()
-        {
-            SSSW = new SimpleSlideShowWindow();
-            SSSW.Show();
-        }
-        public void Activate()
-        {
-        }
-        public MsoTriState Active
-        {
-            get { return MsoTriState.msoTrue; }
-        }
-        public Microsoft.Office.Interop.PowerPoint.Application Application
-        {
-            get { return ThisAddIn.instance.Application; }
-        }
-        public float Height
-        {
-            get { return ThisAddIn.instance.Application.Height; }
-            set { }
-        }
-        public int HWND
-        {
-            get { return ThisAddIn.instance.Application.HWND; }
-        }
-        public MsoTriState IsFullScreen
-        {
-            get { return MsoTriState.msoTrue; }
-        }
-        public float Left
-        {
-            get { return 0; }
-            set { }
-        }
-        public object Parent
-        {
-            get { return null; }
-        }
-        public Presentation Presentation
-        {
-            get { return ThisAddIn.instance.Application.ActivePresentation; }
-        }
-        public float Top
-        {
-            get { return 0; }
-            set { }
-        }
-        public SlideShowView View
-        {
-            get {return ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View;}
-        }
-        public float Width
-        {
-            get { return ThisAddIn.instance.Application.Width; }
-            set { }
-        }
-    }
     public partial class ThisAddIn
     {
         public Wire wire;
@@ -86,16 +26,7 @@ namespace PowerpointJabber
         }
         private void onSlideShowBegin(object sender)
         {
-            try
-            {
-                //This is where I'm going to try and set it to Presenter View and set the correct windows.
-            }
-            catch (Exception Ex)
-            {
-                MessageBox.Show("Exception: "+Ex.Message.ToString());
-            }
             SSSW = new SimpleSlideShowWindow();
-            //SSSW.Owner = (this.Application.HWND);
             SSSW.Show();
         }
         private void onSlideShowEnd(object sender)

@@ -14,15 +14,52 @@ using System.Windows.Shapes;
 using Microsoft.Office.Interop.PowerPoint;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Collections.ObjectModel;
 
 namespace PowerpointJabber
 {
+    public class SlideThumbnail
+    {
+        public SlideThumbnail()
+        {
+        }
+        public ImageSource thumbnail { get; set; }
+        public int slideNumber { get; set; }
+    }
     public partial class SimpleSlideShowWindow : Window
     {
+        public ObservableCollection<SlideThumbnail> slideThumbs;
         public SimpleSlideShowWindow()
         {
             InitializeComponent();
             DisableClickAdvance();
+            slideThumbs = new ObservableCollection<SlideThumbnail>();
+            GenerateThumbnails();
+            SlideViewer.Items.Clear();
+            SlideViewer.ItemsSource = slideThumbs;
+        }
+        private void moveToSelectedSlide(object sender, RoutedEventArgs e)
+        {
+            var origin = ((FrameworkElement)sender);
+            if (origin.Tag != null)
+                ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide((int)(Int32.Parse(origin.Tag.ToString())), Microsoft.Office.Core.MsoTriState.msoTrue);
+        }
+        private void GenerateThumbnails()
+        {
+            foreach (Slide slide in ThisAddIn.instance.Application.ActivePresentation.Slides)
+            {
+
+                var filename = System.IO.Directory.GetCurrentDirectory().ToString() + "\\pptSlideThumbnail" + slide.SlideNumber + ".png";
+                try
+                {
+                    slide.Export(filename, "PNG", 100, 100);
+                }
+                catch (Exception ex)
+                {
+                }
+                var image = ((ImageSource)new ImageSourceConverter().ConvertFromString(filename));
+                slideThumbs.Add(new SlideThumbnail { thumbnail = image, slideNumber = slide.SlideNumber });
+            }
         }
         private void DisableClickAdvance()
         {
@@ -42,13 +79,13 @@ namespace PowerpointJabber
         {
             var currentSlide = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition;
             if (currentSlide < ThisAddIn.instance.Application.ActivePresentation.Slides.Count)
-            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(currentSlide + 1,Microsoft.Office.Core.MsoTriState.msoTrue);
+                ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(currentSlide + 1, Microsoft.Office.Core.MsoTriState.msoTrue);
         }
         private void MoveToPrevSlide(object sender, RoutedEventArgs e)
         {
             var currentSlide = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition;
             if (currentSlide > 1)
-            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(currentSlide - 1, Microsoft.Office.Core.MsoTriState.msoTrue);
+                ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(currentSlide - 1, Microsoft.Office.Core.MsoTriState.msoTrue);
         }
         private void MoveToNextBuild(object sender, RoutedEventArgs e)
         {
@@ -120,6 +157,7 @@ namespace PowerpointJabber
         {
             try
             {
+                slideThumbs.Clear();
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Exit();
             }
             catch (Exception ex)
