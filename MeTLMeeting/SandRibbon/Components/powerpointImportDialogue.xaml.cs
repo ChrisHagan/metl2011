@@ -15,7 +15,6 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Utils.Connection;
 using SandRibbon.Providers.Structure;
 using SandRibbonObjects;
-using System.Linq;
 using MessageBox = System.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
 using ListBox = System.Windows.Controls.ListBox;
@@ -28,10 +27,9 @@ namespace SandRibbon.Components
         public static IEnumerable<ConversationDetails> extantConversations = new List<ConversationDetails>();
         public SandRibbon.Utils.Connection.JabberWire.Credentials credentials;
         public ObservableCollection<string> authorizedGroups = new ObservableCollection<string>();
-        private string currentJid;
         public ConversationDetails details;
         public string me;
-        
+
         private ConversationConfigurationMode DialogMode;
         private enum ConversationConfigurationMode { Create, Edit, Import, Delete }
 
@@ -41,6 +39,8 @@ namespace SandRibbon.Components
         public string importFile;
         public string action;
         public bool isComplete;
+
+        public static RoutedCommand CompleteConversationDialog = new RoutedCommand();
 
         public powerpointImportDialogue(string mode)
         {
@@ -62,6 +62,8 @@ namespace SandRibbon.Components
             }
             extantConversations = ConversationDetailsProviderFactory.Provider.ListConversations();
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            this.CommandBindings.Add(new CommandBinding(CompleteConversationDialog, Create, CanCompleteDialog));
+            //CompleteConversationDialog. RegisterCommand(new DelegateCommand<object>(Create, CanCompleteDialog));
         }
         private void PopulateFields()
         {
@@ -100,7 +102,7 @@ namespace SandRibbon.Components
                     Width = 800;
                     action = "create";
                     if (details == null)
-                        details = new ConversationDetails { Author = me, Created = DateTime.Now, Subject = "Unrestricted", Title = "", Permissions = Permissions.LECTURE_PERMISSIONS };
+                        details = new ConversationDetails { Author = me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
                 case ConversationConfigurationMode.Edit:
                     createGroup.Visibility = Visibility.Collapsed;
@@ -124,7 +126,7 @@ namespace SandRibbon.Components
                     Height = 400;
                     Width = 800;
                     if (details == null)
-                        details = new ConversationDetails { Author = me, Created = DateTime.Now, Subject = "Unrestricted", Title = "", Permissions = Permissions.LECTURE_PERMISSIONS };
+                        details = new ConversationDetails { Author = me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
                 case ConversationConfigurationMode.Delete:
                     createGroup.Visibility = Visibility.Collapsed;
@@ -179,6 +181,7 @@ namespace SandRibbon.Components
         }
         private bool checkConversation(ConversationDetails proposedDetails)
         {
+            if (proposedDetails == null) return false;
             if (extantConversations == null) return false;
             proposedDetails.Title = proposedDetails.Title.Trim();
             var currentDetails = details;
@@ -193,13 +196,13 @@ namespace SandRibbon.Components
         {
             var choice = ((FrameworkElement)sender).Tag;
             importType = choice.ToString();
-        }
+ }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (String.IsNullOrEmpty(importType) || (!(checkConversation(details))))
                 importType = "cancel";
         }
-        private void Create(object sender, RoutedEventArgs e)
+        private void Create(object sender, ExecutedRoutedEventArgs e)
         {
             if ((!String.IsNullOrEmpty(importType)) && checkConversation(details))
             {
@@ -225,7 +228,7 @@ namespace SandRibbon.Components
                     UpdateDialogBoxAppearance();
                     break;
             }
-        }
+ }
 
         private void conversationStyleListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -252,6 +255,7 @@ namespace SandRibbon.Components
             }
             if (details != null)
                 details.Permissions = newPermissions;
+ 
         }
 
         private void conversationSubjectListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -266,6 +270,7 @@ namespace SandRibbon.Components
             conversationSubjectListBox.SelectionChanged += conversationSubjectListBox_SelectionChanged;
             conversationStyleListBox.SelectionChanged += conversationStyleListBox_SelectionChanged;
             startingContentSelector.SelectionChanged += startingContentListBox_SelectionChanged;
+            CommitButton.Command = CompleteConversationDialog;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -275,6 +280,32 @@ namespace SandRibbon.Components
             UpdateDialogBoxAppearance();
             PopulateFields();
             AttachHandlers();
+        }
+
+        private void CanCompleteDialog(object sender, CanExecuteRoutedEventArgs e)
+        {
+            bool canExecute = false;
+            if (details != null)
+            {
+                switch (DialogMode)
+                {
+                    case ConversationConfigurationMode.Import:
+                        if (checkConversation(details) && (!String.IsNullOrEmpty(importFile)) && (!String.IsNullOrEmpty(importFile)))
+                            canExecute = true;
+                        break;
+                    case ConversationConfigurationMode.Edit:
+                        if (checkConversation(details))
+                            canExecute = true; 
+                            break;
+                    case ConversationConfigurationMode.Create:
+                        if (checkConversation(details))
+                            canExecute = true; 
+                            break;
+                    default:
+                            break;
+                }
+            }
+            e.CanExecute = canExecute;
         }
     }
 }

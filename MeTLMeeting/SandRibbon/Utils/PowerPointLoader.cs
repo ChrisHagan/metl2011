@@ -192,7 +192,7 @@ namespace SandRibbon.Utils
                         Commands.PowerPointLoadFinished.Execute(null);
                         break;
                     case "edit":
-                        MessageBox.Show("Editing conversations is not yet implemented");
+                        ConversationDetailsProviderFactory.Provider.Update(details);
                         Commands.PowerPointLoadFinished.Execute(null);
                         break;
                     case "delete":

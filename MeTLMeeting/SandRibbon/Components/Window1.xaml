@@ -58,14 +58,13 @@
                             <simple:SimpleConversationFilterer x:Name="Search"/>
                         </sr:RibbonPopup>
                     </sr:MenuItem>-->
+                    <sr:MenuItem Text="New conversation" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.PreCreateConversation}"/>
                     <sr:MenuItem Text="Open conversation" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}"/>
-                    <sr:MenuItem Text="New conversation" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.PreCreateConversation}">
-                        <!--<sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationCreator" Opened="CreateOpened">
+                    <!--<sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationCreator" Opened="CreateOpened">
                             <simple:SimpleConversationCreator ActionDescriptor="Create" x:Name="Create" CreateAction="{x:Static api:Commands.CreateConversation}"/>
                         </sr:RibbonPopup>-->
-                    </sr:MenuItem>
                     <sr:MenuItem Text="Edit current conversation" ToolTip="{StaticResource EditConversationToolTip}" Command="{x:Static api:Commands.PreEditCurrentConversation}">
-                    <!--    <sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationEditor" Opened="EditOpened">
+                        <!--    <sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationEditor" Opened="EditOpened">
                             <simple:SimpleConversationEditor x:Name="Edit"/>
                         </sr:RibbonPopup>-->
                     </sr:MenuItem>
