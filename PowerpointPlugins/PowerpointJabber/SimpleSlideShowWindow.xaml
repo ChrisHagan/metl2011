@@ -1,0 +1,23 @@
+﻿<Window x:Class="PowerpointJabber.SimpleSlideShowWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:plugin="clr-namespace:PowerpointJabber"
+        ShowInTaskbar="True" WindowStartupLocation="CenterScreen" Topmost="True"
+        Closing="Window_Closing">
+        <WrapPanel Orientation="Horizontal">
+            <Button Click="MoveToNextSlide">NextSlide</Button>
+            <Button Click="MoveToPrevSlide">PrevSlide</Button>
+            <Button Click="MoveToNextBuild">NextBuild</Button>
+            <Button Click="MoveToPrevBuild">PrevBuild</Button>
+            <Button Click="Pen" Tag="black">BlackPen</Button>
+            <Button Click="Pen" Tag="red">RedPen</Button>
+            <Button Click="Pen" Tag="blue">BluePen</Button>
+            <Button Click="Pen" Tag="yellow">YellowPen</Button>
+            <Button Click="Eraser">Eraser</Button>
+            <Button Click="Selector">Selector</Button>
+            <Button Click="hideSlide" Tag="white">WhiteScreen</Button>
+            <Button Click="hideSlide" Tag="black">BlackScreen</Button>
+            <Button Click="hideSlide" Tag="">NormalScreen</Button>
+            <Button Click="EndSlideShow">EndSlideShow</Button>
+        </WrapPanel>
+</Window>
