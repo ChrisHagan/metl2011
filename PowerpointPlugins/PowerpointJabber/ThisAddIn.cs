@@ -15,8 +15,8 @@ namespace PowerpointJabber
     {
         public Wire wire;
         public static ThisAddIn instance;
-        public SimpleSlideShowWindow SSSW; 
-  
+        public SimpleSlideShowWindow SSSW;
+
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
             wire = new Wire();
@@ -28,6 +28,27 @@ namespace PowerpointJabber
         {
             SSSW = new SimpleSlideShowWindow();
             SSSW.Show();
+            //FireUpMultipleSlideShows(100, 100, 400, 250);
+            //FireUpMultipleSlideShows(500, 400, 400, 250);
+        }
+        private void FireUpMultipleSlideShows(int left, int top, int width, int height)
+        {
+            var newWindow = ThisAddIn.instance.Application.ActivePresentation;
+            //var saSlides = new int[newWindow.Slides.Count];
+            //for (int i = 0; i < newWindow.Slides.Count; i++)
+            //    saSlides[i] = newWindow.Slides[i + 1].SlideID;
+            //newWindow.SlideShowSettings.NamedSlideShows.Add(name, saSlides);
+            //ewWindow.SlideShowSettings.SlideShowName = name;
+            //var oldSlideShowWindow = newWindow.SlideShowWindow;
+            PowerPoint.SlideShowSettings newSettings = newWindow.SlideShowSettings; 
+            newSettings.StartingSlide = 1;
+            newSettings.EndingSlide = newWindow.Slides.Count;
+            var newSlideShowWindow = newSettings.Run();
+            newSlideShowWindow.Left = left;
+            newSlideShowWindow.Top = top;
+            newSlideShowWindow.Height = height;
+            newSlideShowWindow.Width = width;
+            newSlideShowWindow.Activate();
         }
         private void onSlideShowEnd(object sender)
         {

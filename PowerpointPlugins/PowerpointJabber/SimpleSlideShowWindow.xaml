@@ -5,11 +5,65 @@
         ShowInTaskbar="True" WindowStartupLocation="Manual" Height="800" Width="1280" Topmost="True" Top="0" Left="0" 
         Closing="Window_Closing" WindowStyle="None" AllowsTransparency="True" Background="Transparent">
     <Grid Background="Transparent">
-        <ScrollViewer HorizontalAlignment="Left" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="SlideViewerSection" Width="95" MinWidth="95"/>
+            <ColumnDefinition Width="6"/>
+            <ColumnDefinition x:Name="SlideShowSection" Width="800"/>
+            <ColumnDefinition Width="6"/>
+            <ColumnDefinition x:Name="MeTLSection"/>
+            <ColumnDefinition Width="6"/>
+            <ColumnDefinition x:Name="ButtonSection" Width="100" MinWidth="100"/>
+        </Grid.ColumnDefinitions>
+        <GridSplitter Background="AliceBlue" Grid.Column="1" 
+                      ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" 
+                      ShowsPreview="True" Height="Auto" Width="Auto"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <GridSplitter Background="AliceBlue" Grid.Column="3" 
+                      ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" 
+                      ShowsPreview="True" Height="Auto" Width="Auto"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <GridSplitter Background="AliceBlue" Grid.Column="5" 
+                      ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" 
+                      ShowsPreview="True" Height="Auto" Width="Auto"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition MinHeight="100" Height="600"/>
+                <RowDefinition Height="6"/>
+                <RowDefinition MinHeight="20"/>
+            </Grid.RowDefinitions>
+            <Border Padding="10" CornerRadius="5" BorderThickness="2" BorderBrush="DarkGray" 
+                Background="LightGray">
+                <Viewbox Grid.Row="0" VerticalAlignment="Top">
+                    <Grid>
+                        <Image x:Name="BackgroundOfCanvas"/>
+                        <InkCanvas x:Name="StrokeCanvas" 
+                           StrokeCollected="InkCanvas_StrokeCollected" 
+                           Background="Transparent" 
+                           EditingMode="Ink"
+                           Width="{Binding ElementName=BackgroundOfCanvas, Path=Width}"
+                           Height="{Binding ElementName=BackgroundOfCanvas, Path=Height}"/>
+                    </Grid>
+                </Viewbox>
+            </Border>
+            <GridSplitter Background="AliceBlue" Grid.Row="1" 
+                      ResizeBehavior="PreviousAndNext" ResizeDirection="Rows" 
+                      ShowsPreview="True" Height="Auto" Width="Auto"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Border Grid.Row="2" Padding="10" CornerRadius="5" BorderThickness="2" BorderBrush="DarkGray" 
+                Background="LightGray">
+                <TextBlock x:Name="NotesBlock" VerticalAlignment="Stretch" TextWrapping="Wrap" HorizontalAlignment="Stretch"/>
+            </Border>
+        </Grid>
+        <Border Grid.Column="4" Padding="10" CornerRadius="5" BorderThickness="2" BorderBrush="DarkGray" 
+                Background="LightGray">
+            <TextBlock x:Name="MeTLBlock" VerticalAlignment="Top" TextWrapping="Wrap" Text="MeTL Section"/>
+        </Border>
+        <ScrollViewer Grid.Column="0" HorizontalAlignment="Left" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" >
             <ItemsControl x:Name="SlideViewer">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Click="moveToSelectedSlide" Tag="{Binding Path=slideNumber}" Height="50" Width="50">
+                        <Button Click="moveToSelectedSlide" Tag="{Binding Path=slideNumber}" Width="{Binding ElementName=SlideScrollViewer, Path=Width}">
                             <Image Source="{Binding Path=thumbnail}"/>
                         </Button>
                     </DataTemplate>
@@ -21,43 +75,24 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
         </ScrollViewer>
-        <WrapPanel Orientation="Vertical" HorizontalAlignment="Right">
-            <Button Click="MoveToPrevBuild" Height="75" Width="50">
-                <StackPanel>
-                    <Image Source="Resources\pptBuildPrevious.png"/>
-                    <Label HorizontalAlignment="Center">Prev</Label>
-                </StackPanel>
-            </Button>
-            <Button Click="MoveToNextBuild" Height="75" Width="50">
-                <StackPanel>
-                    <Image Source="Resources\pptBuildNext.png"/>
-                    <Label HorizontalAlignment="Center">Next</Label>
-                </StackPanel>
-            </Button>
-            <Button Click="Pen" Tag="black" Background="Black" Height="75" Width="50">
-                <StackPanel>
-                    <Image Source="Resources\pptPaintbrush.png"/>
-                    <Label HorizontalAlignment="Center">Black</Label>
-                </StackPanel>
-            </Button>
-            <Button Click="Pen" Tag="red" Background="Red" Height="75" Width="50">
-                <StackPanel>
-                    <Image Source="Resources\pptPaintbrush.png"/>
-                    <Label HorizontalAlignment="Center">Red</Label>
-                </StackPanel>
-            </Button>
-            <Button Click="Pen" Tag="blue" Background="Blue" Height="75" Width="50">
-                <StackPanel>
-                    <Image Source="Resources\pptPaintbrush.png"/>
-                    <Label HorizontalAlignment="Center">Blue</Label>
-                </StackPanel>
-            </Button>
-            <Button Click="Pen" Tag="yellow" Background="Yellow" Height="75" Width="50">
-                <StackPanel>
-                    <Image Source="Resources\pptPaintbrush.png"/>
-                    <Label HorizontalAlignment="Center">Yellow</Label>
-                </StackPanel>
-            </Button>
+        <WrapPanel Grid.Column="6" Orientation="Vertical" HorizontalAlignment="Right">
+            <ItemsControl x:Name="PensControl">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Click="Pen" Tag="{Binding Path=penName}" Background="{Binding Path=penColour}" Height="75" Width="50">
+                            <StackPanel>
+                                <Image Source="Resources\pptPaintbrush.png"/>
+                                <Label HorizontalAlignment="Center" Content="{Binding Path=penName}"/>
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
             <Button Click="Eraser" Height="75" Width="50">
                 <StackPanel>
                     <Image Source="Resources\pptEraser.png"/>
@@ -68,6 +103,18 @@
                 <StackPanel>
                     <Image Source="Resources\pptSelect.png"/>
                     <Label HorizontalAlignment="Center">Select</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="MoveToPrevBuild" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptBuildPrevious.png"/>
+                    <Label HorizontalAlignment="Center">Prev</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="MoveToNextBuild" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptBuildNext.png"/>
+                    <Label HorizontalAlignment="Center">Next</Label>
                 </StackPanel>
             </Button>
             <Button Click="hideSlide" Tag="white" Height="75" Width="50">
