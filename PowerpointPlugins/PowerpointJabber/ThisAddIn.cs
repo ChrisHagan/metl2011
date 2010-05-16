@@ -30,11 +30,7 @@ namespace PowerpointJabber
             SSSW.Show();
             if (System.Windows.Forms.Screen.AllScreens.Length > 1)
             {
-                var SecondaryScreen = System.Windows.Forms.Screen.AllScreens[1];
-                Application.ActivePresentation.SlideShowWindow.Left = SecondaryScreen.Bounds.Left;
-                Application.ActivePresentation.SlideShowWindow.Top = SecondaryScreen.Bounds.Top;
-                Application.ActivePresentation.SlideShowWindow.Width = SecondaryScreen.Bounds.Width;
-                Application.ActivePresentation.SlideShowWindow.Height = SecondaryScreen.Bounds.Height;
+                SSSW.isExtendedDesktopMode = true;
             }
             //FireUpMultipleSlideShows(100, 100, 400, 250);
             //FireUpMultipleSlideShows(500, 400, 400, 250);

@@ -53,6 +53,59 @@ namespace PowerpointJabber
             PensControl.ItemsSource = pens;
             PostSlideMoved();
         }
+        private void switchDisplayMode(object sender, RoutedEventArgs e)
+        {
+            if (isExtendedDesktopMode)
+                isExtendedDesktopMode = false;
+            else
+                isExtendedDesktopMode = true;
+        }
+        public bool isExtendedDesktopMode
+        {
+            get
+            {
+                if (SlideShowGridContainer.Visibility == Visibility.Visible)
+                    return true;
+                else
+                    return false;
+            }
+            set
+            {
+                var currentWidthOfButtons = ButtonSection.Width;
+                var currentWidthOfSlideViewer = SlideViewerSection.Width;
+                switch (value)
+                {
+                    case true:
+                        SlideShowGridContainer.Visibility = Visibility.Visible;
+                        MeTLGridContainer.Visibility = Visibility.Visible;
+                        BetweenSlideShowAndMeTL.Visibility = Visibility.Visible;
+                        this.Background = System.Windows.Media.Brushes.Black;
+                        SlideViewerSection.Width = currentWidthOfSlideViewer;
+                        ButtonSection.Width = currentWidthOfButtons;
+                        var SecondaryScreen = System.Windows.Forms.Screen.AllScreens[1];
+                        //I'm not sure why there's a natural zoom on all slideshow windows, but there is.  It's very annoying.
+                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Left = ((SecondaryScreen.Bounds.Left) / 4) * 3;
+                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Top = ((SecondaryScreen.Bounds.Top) / 4) * 3;
+                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Width = ((SecondaryScreen.Bounds.Width) / 4) * 3;
+                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Height = ((SecondaryScreen.Bounds.Height) / 4) * 3;
+                        break;
+                    case false:
+                        SlideShowGridContainer.Visibility = Visibility.Collapsed;
+                        MeTLGridContainer.Visibility = Visibility.Collapsed;
+                        BetweenSlideShowAndMeTL.Visibility = Visibility.Collapsed;
+                        this.Background = System.Windows.Media.Brushes.Transparent;
+                        SlideViewerSection.Width = currentWidthOfSlideViewer;
+                        ButtonSection.Width = currentWidthOfButtons;
+                        var PrimaryScreen = System.Windows.Forms.Screen.AllScreens[0];
+                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Left = ((PrimaryScreen.Bounds.Left) / 4) * 3;
+                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Top = ((PrimaryScreen.Bounds.Top) / 4) * 3;
+                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Width = ((PrimaryScreen.Bounds.Width) / 4) * 3;
+                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Height = ((PrimaryScreen.Bounds.Height)/4)*3;
+                        break;
+                }
+            }
+        }
+
         private void PreSlideMoved()
         {
             //GenerateThumbnail(ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide);

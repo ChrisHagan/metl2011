@@ -14,19 +14,19 @@
             <ColumnDefinition Width="6"/>
             <ColumnDefinition x:Name="ButtonSection" Width="100" MinWidth="100"/>
         </Grid.ColumnDefinitions>
-        <GridSplitter Background="AliceBlue" Grid.Column="1" 
+        <GridSplitter x:Name="BetweenSlideViewerAndSlideShow" Background="AliceBlue" Grid.Column="1" 
                       ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" 
                       ShowsPreview="True" Height="Auto" Width="Auto"
                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        <GridSplitter Background="AliceBlue" Grid.Column="3" 
+        <GridSplitter x:Name="BetweenSlideShowAndMeTL" Background="AliceBlue" Grid.Column="3" 
                       ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" 
                       ShowsPreview="True" Height="Auto" Width="Auto"
                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        <GridSplitter Background="AliceBlue" Grid.Column="5" 
+        <GridSplitter x:Name="BetweenNotesAndButtons" Background="AliceBlue" Grid.Column="5" 
                       ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" 
                       ShowsPreview="True" Height="Auto" Width="Auto"
                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        <Grid Grid.Column="2">
+        <Grid Grid.Column="2" x:Name="SlideShowGridContainer">
             <Grid.RowDefinitions>
                 <RowDefinition MinHeight="100" Height="600"/>
                 <RowDefinition Height="6"/>
@@ -55,7 +55,7 @@
                 <TextBlock x:Name="NotesBlock" VerticalAlignment="Stretch" TextWrapping="Wrap" HorizontalAlignment="Stretch"/>
             </Border>
         </Grid>
-        <Border Grid.Column="4" Padding="10" CornerRadius="5" BorderThickness="2" BorderBrush="DarkGray" 
+        <Border x:Name="MeTLGridContainer" Grid.Column="4" Padding="10" CornerRadius="5" BorderThickness="2" BorderBrush="DarkGray" 
                 Background="LightGray">
             <TextBlock x:Name="MeTLBlock" VerticalAlignment="Top" TextWrapping="Wrap" Text="MeTL Section"/>
         </Border>
@@ -133,6 +133,12 @@
                 <StackPanel>
                     <Image Source=".\Resources\pptNormalScreen.png"/>
                     <Label HorizontalAlignment="Center">Norm</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="switchDisplayMode" Tag="" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source=".\Resources\pptNormalScreen.png"/>
+                    <Label HorizontalAlignment="Center">ScreenMode</Label>
                 </StackPanel>
             </Button>
             <Button Click="EndSlideShow" Height="75" Width="50">
