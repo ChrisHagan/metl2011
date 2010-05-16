@@ -28,6 +28,14 @@ namespace PowerpointJabber
         {
             SSSW = new SimpleSlideShowWindow();
             SSSW.Show();
+            if (System.Windows.Forms.Screen.AllScreens.Length > 1)
+            {
+                var SecondaryScreen = System.Windows.Forms.Screen.AllScreens[1];
+                Application.ActivePresentation.SlideShowWindow.Left = SecondaryScreen.Bounds.Left;
+                Application.ActivePresentation.SlideShowWindow.Top = SecondaryScreen.Bounds.Top;
+                Application.ActivePresentation.SlideShowWindow.Width = SecondaryScreen.Bounds.Width;
+                Application.ActivePresentation.SlideShowWindow.Height = SecondaryScreen.Bounds.Height;
+            }
             //FireUpMultipleSlideShows(100, 100, 400, 250);
             //FireUpMultipleSlideShows(500, 400, 400, 250);
         }
@@ -40,7 +48,7 @@ namespace PowerpointJabber
             //newWindow.SlideShowSettings.NamedSlideShows.Add(name, saSlides);
             //ewWindow.SlideShowSettings.SlideShowName = name;
             //var oldSlideShowWindow = newWindow.SlideShowWindow;
-            PowerPoint.SlideShowSettings newSettings = newWindow.SlideShowSettings; 
+            PowerPoint.SlideShowSettings newSettings = newWindow.SlideShowSettings;
             newSettings.StartingSlide = 1;
             newSettings.EndingSlide = newWindow.Slides.Count;
             var newSlideShowWindow = newSettings.Run();

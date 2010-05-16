@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:plugin="clr-namespace:PowerpointJabber"
         ShowInTaskbar="True" WindowStartupLocation="Manual" Height="800" Width="1280" Topmost="True" Top="0" Left="0" 
-        Closing="Window_Closing" WindowStyle="None" AllowsTransparency="True" Background="Transparent">
+        Closing="Window_Closing" WindowStyle="None" AllowsTransparency="True" Background="Black">
     <Grid Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="SlideViewerSection" Width="95" MinWidth="95"/>
