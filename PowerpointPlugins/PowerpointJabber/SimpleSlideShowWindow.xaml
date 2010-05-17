@@ -137,7 +137,7 @@
             </Button>
             <Button Click="switchDisplayMode" Tag="" Height="75" Width="50">
                 <StackPanel>
-                    <Image Source=".\Resources\pptNormalScreen.png"/>
+                    <Image Source=".\Resources\pptSwitchDisplay.png"/>
                     <Label HorizontalAlignment="Center">ScreenMode</Label>
                 </StackPanel>
             </Button>

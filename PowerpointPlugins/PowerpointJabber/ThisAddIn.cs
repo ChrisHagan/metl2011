@@ -28,10 +28,8 @@ namespace PowerpointJabber
         {
             SSSW = new SimpleSlideShowWindow();
             SSSW.Show();
-            if (System.Windows.Forms.Screen.AllScreens.Length > 1)
-            {
-                SSSW.isExtendedDesktopMode = true;
-            }
+            SSSW.isExtendedDesktopMode = true;
+     
             //FireUpMultipleSlideShows(100, 100, 400, 250);
             //FireUpMultipleSlideShows(500, 400, 400, 250);
         }

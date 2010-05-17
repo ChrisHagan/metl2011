@@ -30,6 +30,8 @@ namespace PowerpointJabber
         {
             InitializeComponent();
             DisableClickAdvance();
+            isExtendedDesktopMode = false;
+            isExtendedDesktopMode = true;
             slideThumbs = new ObservableCollection<SlideThumbnail>();
             pens = new List<UbiquitousPen> 
                 {
@@ -76,18 +78,21 @@ namespace PowerpointJabber
                 switch (value)
                 {
                     case true:
-                        SlideShowGridContainer.Visibility = Visibility.Visible;
-                        MeTLGridContainer.Visibility = Visibility.Visible;
-                        BetweenSlideShowAndMeTL.Visibility = Visibility.Visible;
-                        this.Background = System.Windows.Media.Brushes.Black;
-                        SlideViewerSection.Width = currentWidthOfSlideViewer;
-                        ButtonSection.Width = currentWidthOfButtons;
-                        var SecondaryScreen = System.Windows.Forms.Screen.AllScreens[1];
-                        //I'm not sure why there's a natural zoom on all slideshow windows, but there is.  It's very annoying.
-                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Left = ((SecondaryScreen.Bounds.Left) / 4) * 3;
-                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Top = ((SecondaryScreen.Bounds.Top) / 4) * 3;
-                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Width = ((SecondaryScreen.Bounds.Width) / 4) * 3;
-                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Height = ((SecondaryScreen.Bounds.Height) / 4) * 3;
+                        if (System.Windows.Forms.Screen.AllScreens.Length > 1)
+                        {
+                            SlideShowGridContainer.Visibility = Visibility.Visible;
+                            MeTLGridContainer.Visibility = Visibility.Visible;
+                            BetweenSlideShowAndMeTL.Visibility = Visibility.Visible;
+                            this.Background = System.Windows.Media.Brushes.Black;
+                            SlideViewerSection.Width = currentWidthOfSlideViewer;
+                            ButtonSection.Width = currentWidthOfButtons;
+                            var SecondaryScreen = System.Windows.Forms.Screen.AllScreens[1];
+                            //I'm not sure why there's a natural zoom on all slideshow windows, but there is.  It's very annoying.
+                            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Left = ((SecondaryScreen.Bounds.Left) / 4) * 3;
+                            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Top = ((SecondaryScreen.Bounds.Top) / 4) * 3;
+                            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Width = ((SecondaryScreen.Bounds.Width) / 4) * 3;
+                            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Height = ((SecondaryScreen.Bounds.Height) / 4) * 3;
+                        }
                         break;
                     case false:
                         SlideShowGridContainer.Visibility = Visibility.Collapsed;
@@ -100,7 +105,7 @@ namespace PowerpointJabber
                         ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Left = ((PrimaryScreen.Bounds.Left) / 4) * 3;
                         ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Top = ((PrimaryScreen.Bounds.Top) / 4) * 3;
                         ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Width = ((PrimaryScreen.Bounds.Width) / 4) * 3;
-                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Height = ((PrimaryScreen.Bounds.Height)/4)*3;
+                        ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Height = ((PrimaryScreen.Bounds.Height) / 4) * 3;
                         break;
                 }
             }

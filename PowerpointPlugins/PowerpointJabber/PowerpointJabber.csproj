@@ -247,6 +247,9 @@
     <Resource Include="Resources\pptEraser.png" />
     <Resource Include="Resources\pptSelect.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\pptSwitchDisplay.png" />
+  </ItemGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- Include additional build rules for an Office application add-in. -->
