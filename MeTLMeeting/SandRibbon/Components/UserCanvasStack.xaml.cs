@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Documents;
+using System.Windows.Ink;
 using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Components.Sandpit;
+using SandRibbon.Components.Utility;
+using SandRibbonInterop;
+using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using System.Windows.Controls;
 
@@ -28,6 +35,69 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetLayer.Execute("Sketch");
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(
+                ReceiveNewBubble));
+            Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(exploreBubble));
+        }
+        public void ReceiveNewBubble(TargettedBubbleContext context) {
+            if(context.target != handwriting.target) return;
+            var bubble = getBubble(context);
+            Dispatcher.BeginInvoke((Action) delegate
+                                    {
+                                        if (bubble != null)
+                                        {
+                                            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                                            adornerLayer.Add(UIAdorner.InCanvas(this, bubble, bubble.position));
+                                        }
+                                    });
+        }
+        private void exploreBubble(ThoughtBubble bubble)
+        {
+            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+            if(adornerLayer == null) return;
+            adornerLayer.IsHitTestVisible = true;
+        }
+        private ThoughtBubble getBubble(TargettedBubbleContext bubble)
+        {
+            if (details == null && me != "projector") return null;
+            var thoughtBubble = new ThoughtBubble();
+            Dispatcher.Invoke((Action) delegate
+               {
+                        var ids = bubble.context.Select(c => c.id);
+                        var relevantStrokes = getStrokesRelevantTo(ids);
+                        var relevantChildren = getChildrenRelevantTo(ids);
+                        if (relevantStrokes.Count > 0 || relevantStrokes.Count > 0)
+                        {
+                            thoughtBubble = new ThoughtBubble
+                                                    {
+                                                        childContext = relevantChildren,
+                                                        strokeContext = relevantStrokes,
+                                                        parent = bubble.slide,
+                                                        conversation = details.Jid,
+                                                        room = bubble.thoughtSlide,
+                                                        me = me
+                                                    };
+                            thoughtBubble.relocate();
+                            thoughtBubble.enterBubble();
+
+                        }
+               });
+            if (thoughtBubble.me != null)
+                return thoughtBubble;
+            else
+                return null;
+        }
+        private List<Stroke> getStrokesRelevantTo(IEnumerable<String> ids)
+        {
+            return handwriting.Strokes.Where(s=>ids.Contains(s.sum().checksum.ToString())).ToList();
+        }
+        private List<FrameworkElement> getChildrenRelevantTo(IEnumerable<String> ids)
+        {
+            var elements = images.Children.ToList();
+            elements.AddRange(text.Children.ToList());
+            return elements.ToList().Select(c => ((FrameworkElement)c))
+                .Where(c => c.Tag != null && ids.Contains(((ImageTag)c.Tag).id.ToString()))
+                .ToList();
         }
         private void JoinConversation(string jid)
         {

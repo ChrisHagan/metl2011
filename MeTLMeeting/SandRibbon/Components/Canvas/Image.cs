@@ -54,7 +54,7 @@ namespace SandRibbon.Components.Canvas
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(addImageFromDisk));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<ImageDrop>((drop) =>
             {
-                if (drop.target.Equals(target) && me != "Projector")
+                if (drop.target.Equals(target) && me != null && me != "Projector")
                     dropImageOnCanvas(drop.filename, drop.point, drop.position);
             }));
             Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyLiveWindow));

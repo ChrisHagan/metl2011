@@ -11,11 +11,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Utils.Connection;
+using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using System.Windows.Ink;
 using SandRibbonObjects;
+using SandRibbon.Quizzing;
 
 namespace SandRibbon.Components.Sandpit
 {
@@ -27,6 +30,7 @@ namespace SandRibbon.Components.Sandpit
         public List<Stroke> strokeContext;
         private bool opened = false;
         public int room;
+        public string me;
         public List<FrameworkElement> childContext;
 
         public ThoughtBubble()
@@ -34,7 +38,43 @@ namespace SandRibbon.Components.Sandpit
             InitializeComponent();
             strokeContext = new List<Stroke>();
             childContext = new List<FrameworkElement>();
+            Commands.ThoughtLiveWindow.RegisterCommand(new DelegateCommand<Rectangle>(mainSlideLiveWindow));
+            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
         }
+        private void PreParserAvailable(PreParser parser)
+        {
+            thought.stack.handwriting.ReceiveStrokes(parser.ink);
+            thought.stack.images.ReceiveImages(parser.images.Values);
+            foreach (var text in parser.text.Values)
+                thought.stack.text.doText(text);
+            Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
+        }
+        private void setIdentities()
+        {
+            thought.stack.handwriting.me = me;
+            thought.stack.text.me = me;
+            thought.stack.images.me = me;
+            thought.stack.handwriting.currentSlideId = room;
+            thought.stack.text.currentSlideId = room;
+            thought.stack.images.currentSlideId = room;
+        }
+        private void mainSlideLiveWindow(Rectangle liveWindow)
+        {
+            Dispatcher.Invoke((Action) delegate
+                                           {
+                                               var RLW = new RenderedLiveWindow()
+                                               {
+                                                   Rectangle = liveWindow,
+                                                   Height = liveWindow.Height,
+                                                   Width = liveWindow.Width
+                                               };
+                                               RLWViewBox.Child = RLW;
+                                               RLW.MouseUp += ThoughtBubbleSpace_MouseDown;
+                                               System.Windows.Controls.Canvas.SetLeft(RLWViewBox, 0);
+                                               System.Windows.Controls.Canvas.SetTop(RLWViewBox, 0);
+                                           });
+        }
+
         public ThoughtBubble relocate() 
         {
             var bounds = getBounds();
@@ -56,10 +96,10 @@ namespace SandRibbon.Components.Sandpit
             listY.Add(strokes.GetBounds().Y + strokes.GetBounds().Height); 
             foreach (var child in childContext)
             {
-                listX.Add(InkCanvas.GetLeft(child));
-                listX.Add(InkCanvas.GetLeft(child) + child.Width);
-                listY.Add(InkCanvas.GetTop(child));
-                listY.Add(InkCanvas.GetTop(child) + child.Height);
+                listX.Add(System.Windows.Controls.Canvas.GetLeft(child));
+                listX.Add(System.Windows.Controls.Canvas.GetLeft(child) + child.Width);
+                listY.Add(System.Windows.Controls.Canvas.GetTop(child));
+                listY.Add(System.Windows.Controls.Canvas.GetTop(child) + child.Height);
             }
             if (listX.Count > 0)
                 return new Rect
@@ -74,25 +114,42 @@ namespace SandRibbon.Components.Sandpit
         }
         private void move(Point point)
         {
-            InkCanvas.SetLeft(this, point.X);
-            InkCanvas.SetTop(this, point.Y);
+            System.Windows.Controls.Canvas.SetLeft(this, point.X);
+            System.Windows.Controls.Canvas.SetTop(this, point.Y);
+        }
+        private void setThoughtAccess(bool access)
+        {
+            thought.stack.handwriting.SetCanEdit(access);
+            thought.stack.text.SetCanEdit(access);
+            thought.stack.images.SetCanEdit(access);
         }
         private void ThoughtBubbleSpace_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if(!opened)
             {
                 position = new Point(0, 0);
-                Width = Window.GetWindow(this).ActualWidth;
-                Height = Window.GetWindow(this).ActualHeight; 
+                thoughtView.Width = ((System.Windows.Controls.Canvas)Parent).ActualWidth;
+                thoughtView.Height = ((System.Windows.Controls.Canvas)Parent).ActualHeight;
+                thought.MouseLeftButtonUp -= ThoughtBubbleSpace_MouseDown;
+                RLWViewBox.Visibility = Visibility.Visible;
+                setIdentities();
+                Dispatcher.BeginInvoke((Action) delegate
+                {
+                    setThoughtAccess(true);
+                });
+                Commands.ExploreBubble.Execute(this);
             }
             else
             {
                 relocate();
-                Width = 40;
-                Height = 40;
+                thought.MouseLeftButtonUp += ThoughtBubbleSpace_MouseDown;
+                RLWViewBox.Visibility = Visibility.Collapsed;
+                thoughtView.Width = 40;
+                thoughtView.Height = 40;
+                setThoughtAccess(false);
+            
             }
             move(position);
-            Commands.ExploreBubble.Execute(this);
             opened = !opened;
         }
     }

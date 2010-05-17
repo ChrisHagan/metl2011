@@ -748,6 +748,15 @@ namespace SandRibbon.Utils.Connection
         {
             var muc = new MucManager(conn);
             joinRoom(new Jid(room + "@" + Constants.JabberWire.MUC));
+
+            HistoryProviderFactory.provider.Retrieve<PreParser>(
+                onStart,
+                onProgress,
+                finishedParser =>{
+                    Logger.Log(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
+                    Commands.PreParserAvailable.Execute(finishedParser);
+                },
+                room);
         }
         public void SneakOutOf(string room)
         {

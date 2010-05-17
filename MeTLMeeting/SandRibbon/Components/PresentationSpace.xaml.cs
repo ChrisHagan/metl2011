@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Utility;
 using SandRibbon.Quizzing;
 using SandRibbon.Utils.Connection;
@@ -46,9 +47,53 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
+            Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(exploreBubble));
             Loaded += presentationSpaceLoaded;
         
         }
+
+        private void exploreBubble(ThoughtBubble obj)
+        {
+            var origin = new Point(0, 0);
+            var marquee = new Rectangle();
+            marquee.Width = this.ActualWidth;
+            marquee.Height = this.ActualHeight;
+
+            var setup =new LiveWindowSetup
+                {
+                    frame = marquee,
+                    origin = origin,
+                    target = new Point(0, 0),
+                    snapshotAtTimeOfCreation = ResourceUploader.uploadResourceToPath(
+                        toByteArray(this, marquee, origin),
+                        "Resource/" + currentLocation.currentSlide.ToString(),
+                        "quizSnapshot.png",
+                        false),
+                    author = me,
+                    slide = currentLocation.currentSlide,
+                    visualSource = stack
+                };
+
+            var view = new Rect(setup.origin, new Size(setup.frame.Width, setup.frame.Height));
+            var liveWindow = new Rectangle
+            {
+                Width = setup.frame.Width,
+                Height = setup.frame.Height,
+                Fill = new VisualBrush
+                {
+                    Visual = setup.visualSource,
+                    TileMode = TileMode.None,
+                    Stretch = Stretch.None,
+                    AlignmentX = AlignmentX.Left,
+                    AlignmentY = AlignmentY.Top,
+                    ViewboxUnits = BrushMappingMode.Absolute,
+                    Viewbox = view
+                },
+                Tag = setup.snapshotAtTimeOfCreation
+            };
+            Commands.ThoughtLiveWindow.Execute(liveWindow);
+        }
+
         private void presentationSpaceLoaded(object sender, RoutedEventArgs e)
         {
             //remove these if you want the on-canvas privacy buttons to disappear.  If you do that, you MUST uncomment the static declaration of currentPrivacyTools
@@ -81,7 +126,7 @@ namespace SandRibbon.Components
             else
                 Commands.SetPrivacy.Execute("private");
         }
-        private FrameworkElement GetAdorner()
+        public FrameworkElement GetAdorner()
         {
             var element = (FrameworkElement)this;
             while(element.Parent != null && !(element.Name == "adornerGrid"))

@@ -42,6 +42,7 @@ namespace SandRibbon.Components.Canvas
         public string me;
         public int currentSlideId;
         public bool canEdit;
+        
         private bool affectedByPrivacy { get { return target == "presentationSpace"; } }
         public string privacy{get{return affectedByPrivacy?actualPrivacy:defaultPrivacy;}}
         public delegate void ChildrenChangedHandler(DependencyObject visualAdded, DependencyObject visualRemoved);
@@ -68,60 +69,9 @@ namespace SandRibbon.Components.Canvas
                                                                       context = getContext();
                                                                 });
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
-            Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(
-                ReceiveNewBubble));
-            Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(exploreBubble));
+
         }
 
-        public void ReceiveNewBubble(TargettedBubbleContext context) {
-            if(context.target != target) return;
-            var bubble = getBubble(context);
-            Dispatcher.BeginInvoke((Action) delegate
-                                    {
-                                        if (bubble != null)
-                                        {
-                                            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
-                                            adornerLayer.Add(UIAdorner.InCanvas(this, bubble, bubble.position)); 
-                                        }
-                                    });
-        }
-        private void exploreBubble(ThoughtBubble bubble)
-        {
-            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
-            if(adornerLayer == null) return;
-        }
-        private ThoughtBubble getBubble(TargettedBubbleContext bubble)
-        {
-            var ids = bubble.context.Select(c => c.id);
-            var relevantStrokes = getStrokesRelevantTo(ids);
-            var relevantChildren = getChildrenRelevantTo(ids);
-            if (relevantStrokes.Count > 0 || relevantStrokes.Count > 0)
-            {
-                var thoughtBubble = new ThoughtBubble
-                                        {
-                                            childContext = relevantChildren,
-                                            strokeContext = relevantStrokes,
-                                            parent = bubble.slide,
-                                            conversation = currentDetails.Jid,
-                                            room = bubble.thoughtSlide
-                                        };
-                thoughtBubble.relocate();
-                thoughtBubble.enterBubble();
-                return thoughtBubble;
-
-            }
-            return null;
-        }
-        private List<Stroke> getStrokesRelevantTo(IEnumerable<String> ids)
-        {
-            return Strokes.Where(s=>ids.Contains(s.sum().checksum.ToString())).ToList();
-        }
-        private List<FrameworkElement> getChildrenRelevantTo(IEnumerable<String> ids)
-        {
-            return Children.ToList().Select(c => ((FrameworkElement)c))
-                .Where(c => c.Tag != null && ids.Contains(((ImageTag)c.Tag).id.ToString()))
-                .ToList();
-        }
         public void DoWithCurrentSelection(Action<SelectedIdentity> todo)
         {
             foreach (var stroke in GetSelectedStrokes())

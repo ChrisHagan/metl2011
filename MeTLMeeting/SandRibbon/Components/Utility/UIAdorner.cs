@@ -9,7 +9,7 @@ namespace SandRibbon.Components.Utility
     public class UIAdorner : Adorner
     {
         private FrameworkElement adornee;
-        private FrameworkElement content;
+        public FrameworkElement content;
         public Type contentType
         {
             get { return content.GetType(); }
