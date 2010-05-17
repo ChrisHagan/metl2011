@@ -202,11 +202,11 @@ namespace SandRibbon
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>((_arg) => { }, mustBeInConversation));
             Commands.PrintCompleted.RegisterCommand(new DelegateCommand<object>(_obj => HideProgressBlocker()));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(
-                _obj =>
-                {
-                    ShowPowerpointBlocker("Starting Powerpoint Import");
-                    Commands.PostImportPowerpoint.Execute(null);
-                }, mustBeLoggedIn));
+                _obj => 
+                    { 
+                        ShowPowerpointBlocker("Starting Powerpoint Import");
+                        Commands.PostImportPowerpoint.Execute(null);
+                    },mustBeLoggedIn));
             Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(
                 (conversationDetails) =>
                 {
@@ -217,10 +217,10 @@ namespace SandRibbon
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(
                 _obj =>
-                {
-                    ShowPowerpointBlocker("Creating Conversation Dialog Open");
-                    Commands.PostCreateConversation.Execute(null);
-                },
+                    {
+                        ShowPowerpointBlocker("Creating Conversation Dialog Open");
+                        Commands.PostCreateConversation.Execute(null);
+                    }, 
                     mustBeLoggedIn));
             Commands.PreEditCurrentConversation.RegisterCommand(new DelegateCommand<object>(
                 _obj =>
@@ -229,7 +229,7 @@ namespace SandRibbon
                     ShowPowerpointBlocker("Editing Conversation Dialog Open");
                     Commands.PostEditConversation.Execute(details);
                 },
-                    CanEditConversation));
+                    mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(_obj => setLayer("Sketch"), mustBeInConversation));
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(ToggleNotePadVisibility, mustBeLoggedIn));
@@ -257,18 +257,18 @@ namespace SandRibbon
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(_nil => { }, mustBeLoggedIn));
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
+            Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
+            Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
+            Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
             if (SmartBoardMeTLAlreadyLoaded)
-                checkIfSmartboard();
+            checkIfSmartboard();
         }
-        private bool CanEditConversation(object _arg)
-        {
-            if (userInformation != null && userInformation.location != null)
-                return (mustBeInConversation(userInformation.location.currentSlide) && amAuthor(null));
-            return false;
+        private void InitiateGrabZoom(object _unused) { 
+            //Nothing happens here yet
         }
         private bool SmartBoardMeTLAlreadyLoaded
         {
@@ -589,7 +589,6 @@ namespace SandRibbon
                                           {"PenTools", StableTools},
                                           {"Type", Sketch},
                                           {"Navigate", Navigate}
-                                          //{"ListConversations", ConversationListing}
                                       };
                 var loadedPlugins = PluginManager.LoadPlugins(pluginRoots, pluginRoot);
                 foreach (var loadedPlugin in loadedPlugins)
@@ -698,7 +697,7 @@ namespace SandRibbon
             var report = (int[])e.Parameter;
             progress.Show(report[0], report[1]);
         }
-        private void RestoreView(object sender, RoutedEventArgs e)
+        private void FitToView(object _unused)
         {
             if (scroll != null && scroll.Height > 0 && scroll.Width > 0)
             {
@@ -707,7 +706,14 @@ namespace SandRibbon
                 scroll.Height = double.NaN;
                 scroll.Width = double.NaN;
             }
-
+        }
+        private void FitToPageWidth(object _unused) {
+            if (scroll != null)
+            {
+                var ratio = adornerGrid.ActualWidth / adornerGrid.ActualHeight;
+                scroll.Height = canvas.ActualWidth / ratio;
+                scroll.Width = canvas.ActualWidth;
+            }
         }
         private void ShowPowerpointBlocker(string explanation)
         {
@@ -984,10 +990,6 @@ namespace SandRibbon
         private void EditOpened(object sender, EventArgs e)
         {
             //Edit.FocusEdit();
-        }
-        private void SearchOpened(object sender, EventArgs e)
-        {
-            //Search.FocusSearch();
         }
         private void ImportOpened(object sender, EventArgs e)
         {

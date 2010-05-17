@@ -197,6 +197,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Sandpit\Pedagogicometer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Sandpit\S15Boards.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -292,6 +296,10 @@
     <Page Include="Components\Window1.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\ZoomControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Quizzing\AnswerAQuiz.xaml">
       <SubType>Designer</SubType>
@@ -403,6 +411,9 @@
     <Compile Include="Components\Sandpit\BoardManagerLauncher.xaml.cs">
       <DependentUpon>BoardManagerLauncher.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Sandpit\Pedagogicometer.xaml.cs">
+      <DependentUpon>Pedagogicometer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Sandpit\S15Boards.xaml.cs">
       <DependentUpon>S15Boards.xaml</DependentUpon>
     </Compile>
@@ -470,6 +481,9 @@
     <Compile Include="Components\Utility\GlobalTimers.cs" />
     <Compile Include="Components\Utility\RadialPanel.cs" />
     <Compile Include="Components\Utility\UIAdorner.cs" />
+    <Compile Include="Components\ZoomControls.xaml.cs">
+      <DependentUpon>ZoomControls.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Providers\AuthorisationProvider.cs" />
     <Compile Include="Providers\ConfigurationProvider.cs" />
     <Compile Include="Providers\HistoryProvider.cs" />
@@ -710,6 +724,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\Ribbon-SlideStack.png" />
+    <Resource Include="Resources\FitToPage.png" />
+    <Resource Include="Resources\FitToView.png" />
     <Content Include="Resources\Slide_Not_Loaded.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -204,12 +204,9 @@
         <sr:StatusBar x:Name="status">
             <Grid Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}">
                 <StackPanel x:Name="StatusLeft" Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+                    <sandpit:Pedagogicometer />
+                    <components:ZoomControls />
                     <sr:Label x:Name="StatusLabel" ToolTip="currentMode" VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel x:Name="StatusRight" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,50,0">
-                    <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="..\Resources\Ribbon-ZoomOut.png" ToolTip="{StaticResource ZoomOutToolTip}" InternalButtonSize="Small" />
-                    <SandRibbonInterop:Button Click="RestoreView" Icon="..\Resources\Ribbon-FitCanvas.png" Text="Restore Canvas" ToolTip="{StaticResource RestoreCanvasToolTip}" InternalButtonSize="Small"/>
-                    <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="..\Resources\Ribbon-ZoomIn.png" ToolTip="{StaticResource ZoomInToolTip}" InternalButtonSize="Small"/>
                 </StackPanel>
                 <components:PrintingHost Height="25" Width="25" HorizontalAlignment="Right"/>
             </Grid>

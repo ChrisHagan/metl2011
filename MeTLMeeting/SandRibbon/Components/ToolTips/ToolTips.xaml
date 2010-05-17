@@ -768,7 +768,42 @@
             </Grid>
         </Border>
     </ToolTip>
-
+    <ToolTip x:Key="GrabZoomToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\subscript.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                           Text="Subscript" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Draw a rectangle to zoom in on" />
+            </Grid>
+        </Border>
+    </ToolTip>
+    <ToolTip x:Key="FitToViewToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\subscript.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                           Text="Subscript" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Fit the entire page on the screen"/>
+            </Grid>
+        </Border>
+    </ToolTip>
+    <ToolTip x:Key="FitToPageToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\subscript.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                           Text="Subscript" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Fit the width of the page to the screen"/>
+            </Grid>
+        </Border>
+    </ToolTip>
     <ToolTip x:Key="FontColourToolTip" >
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">

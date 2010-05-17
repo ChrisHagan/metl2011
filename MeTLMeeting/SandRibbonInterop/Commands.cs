@@ -113,7 +113,9 @@ namespace SandRibbon
         public static CompositeCommand FontChanged = new CompositeCommand();
         public static CompositeCommand FontSizeChanged = new CompositeCommand();
         public static CompositeCommand NewTextCursorPosition = new CompositeCommand();
-
+        public static CompositeCommand InitiateGrabZoom = new CompositeCommand();
+        public static CompositeCommand FitToView = new CompositeCommand();
+        public static CompositeCommand FitToPageWidth= new CompositeCommand();
         #endregion
         #region AppLevel
         public static CompositeCommand SetIdentity = new CompositeCommand();
@@ -139,7 +141,6 @@ namespace SandRibbon
         public static CompositeCommand MoveToQuiz = new CompositeCommand();
         public static CompositeCommand MoveTo = new CompositeCommand();
         public static CompositeCommand SneakInto = new CompositeCommand();
-        public static CompositeCommand SneakIntodeleteme = new CompositeCommand();
         public static CompositeCommand ClearDynamicContent = new CompositeCommand();
         public static CompositeCommand PreParserAvailable = new CompositeCommand();
         public static CompositeCommand MoveToPrevious = new CompositeCommand();
