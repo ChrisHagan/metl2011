@@ -41,7 +41,7 @@ namespace SandRibbon.Components.Canvas
         public string target;
         public string me;
         public int currentSlideId;
-        public bool canEdit; //delete this comment
+        public bool canEdit; 
         
         private bool affectedByPrivacy { get { return target == "presentationSpace"; } }
         public string privacy{get{return affectedByPrivacy?actualPrivacy:defaultPrivacy;}}
