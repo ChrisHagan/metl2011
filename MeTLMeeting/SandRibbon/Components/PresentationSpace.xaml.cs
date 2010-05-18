@@ -19,6 +19,7 @@ using SandRibbonObjects;
 using SandRibbon.Utils;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
+using SandRibbonInterop.MeTLStanzas;
 
 namespace SandRibbon.Components
 {
@@ -98,7 +99,6 @@ namespace SandRibbon.Components
             var adorner = GetAdorner();
             AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyTools()));
         }
-
         private void setSync(object obj)
         {
             synced = !synced;
@@ -167,6 +167,8 @@ namespace SandRibbon.Components
                 stack.text.doText(text);
             foreach(var quizDetails in parser.quizs)
                 receiveQuiz(quizDetails);
+            foreach (var video in parser.videos)
+                stack.images.AddVideo(((TargettedVideo)video.Value).video);
             foreach(var bubble in parser.bubbleList)
                 stack.ReceiveNewBubble(bubble);
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);

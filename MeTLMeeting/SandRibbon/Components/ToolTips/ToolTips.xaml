@@ -78,6 +78,18 @@
             </Grid>
         </Border>
     </ToolTip>
+    <ToolTip x:Key="AddVideoToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\AddVideo.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                           Text="Add Video"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Add a video from your computer into MeTL, on the presentation space."/>
+            </Grid>
+        </Border>
+    </ToolTip>
     <ToolTip x:Key="AddImageToolTip" >
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">

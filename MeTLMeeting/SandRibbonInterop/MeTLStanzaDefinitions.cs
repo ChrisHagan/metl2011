@@ -56,6 +56,23 @@ namespace SandRibbonInterop.MeTLStanzas
             }
         }
     }
+    public class TargettedVideo : TargettedElement 
+    {
+        public MediaElement videoProperty;
+        public MeTLStanzas.Video videoSpecification;
+        public string id;
+        public MediaElement video { 
+            get{
+                var reified = videoSpecification.forceEvaluation();
+                id = reified.tag().id;
+                return reified;
+            }
+            set {
+                id = value.tag().id;
+                videoProperty = value;
+            }
+        }
+    }
     public class TargettedPowerpointBackgroundVideo : TargettedElement
     {
         public MediaElement videoProperty;
@@ -898,6 +915,67 @@ namespace SandRibbonInterop.MeTLStanzas
                     SetTag(authorTag, value.author);
                     SetTag(slideTag, value.slide.ToString());
                 }
+            }
+        }
+        public class Video : Element {
+            static Video() { 
+                agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Video));
+            }
+            public static string TAG = "video";
+            public Video()
+            {
+                this.Namespace = METL_NS;
+                this.TagName = TAG;
+            }
+            public Video(TargettedVideo video) : this() {
+                this.Vid = video;
+            }
+            public MediaElement forceEvaluation() {
+                var video = new MediaElement { 
+                    Tag = this.tag,
+                    Source = new Uri(this.source, UriKind.RelativeOrAbsolute)
+                };
+                return video;
+            }
+            public TargettedVideo Vid
+            {
+                get
+                {
+                    var targettedVideo = new TargettedVideo
+                    {
+                        videoSpecification = this,
+                        slide = Int32.Parse(GetTag(slideTag)),
+                        target = GetTag(targetTag),
+                        privacy = GetTag(privacyTag),
+                        author = GetTag("author"),
+                        id = GetTag(identityTag)
+                    };
+                    return targettedVideo;
+                }
+                set
+                {
+                    var absolutePath = value.videoProperty.Source.ToString();
+                    SetTag(tagTag, value.videoProperty.Tag.ToString());
+                    SetTag(sourceTag, absolutePath);
+                    SetTag(xTag, InkCanvas.GetLeft(value.videoProperty).ToString());
+                    SetTag(yTag, InkCanvas.GetTop(value.videoProperty).ToString());
+                    SetTag(authorTag, value.author);
+                    SetTag(targetTag, value.target);
+                    SetTag(privacyTag, value.privacy);
+                    SetTag(slideTag, value.slide);
+                    SetTag(identityTag, value.id);
+                }
+            }
+            private static readonly string sourceTag = "source";
+            public string tag
+            {
+                get { return GetTag(tagTag); }
+                set { SetTag(tagTag, value); }
+            }
+            public string source
+            {
+                get { return GetTag(sourceTag); }
+                set { SetTag(sourceTag, value); }
             }
         }
         public class Image : Element

@@ -84,6 +84,11 @@ namespace SandRibbon
         #endregion
         #region ImageCanvas
         public static CompositeCommand ImageDropped = new CompositeCommand();
+        public static CompositeCommand AddVideo = new CompositeCommand();
+        public static CompositeCommand SendVideo = new CompositeCommand();
+        public static CompositeCommand ReceiveVideo = new CompositeCommand();
+        public static CompositeCommand SendDirtyVideo = new CompositeCommand();
+        public static CompositeCommand ReceiveDirtyVideo = new CompositeCommand();
         public static CompositeCommand AddImage = new CompositeCommand();
         public static CompositeCommand SendImage = new CompositeCommand();
         public static CompositeCommand ReceiveImage = new CompositeCommand();

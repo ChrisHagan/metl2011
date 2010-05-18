@@ -174,6 +174,7 @@ namespace SandRibbon.Utils.Connection
             Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
             Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(sendDirtyStroke));
             Commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(SendImage));
+            Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(SendVideo));
             Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
             Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoShape));
             Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoShape));
@@ -495,6 +496,11 @@ namespace SandRibbon.Utils.Connection
         {
             stanza(image.slide.ToString(), new MeTLStanzas.Image(image));
         }
+        public void SendVideo(TargettedVideo video) 
+        { 
+            stanza(video.slide.ToString(), new MeTLStanzas.Video(video));
+            var a = 1;
+        }
         public void SendAutoShape(TargettedAutoShape autoshape)
         {
             stanza(autoshape.slide.ToString(), new MeTLStanzas.AutoShape(autoshape));
@@ -677,6 +683,8 @@ namespace SandRibbon.Utils.Connection
                     actOnDirtyAutoshapeReceived(dirtyAutoShape);
                 foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
                     actOnBubbleReceived(bubble.context);
+                foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
+                    actOnVideoReceived(video.Vid);
             };
             if (Application.Current.Dispatcher.Thread != Thread.CurrentThread)
                 Application.Current.Dispatcher.BeginInvoke(action);
@@ -684,6 +692,10 @@ namespace SandRibbon.Utils.Connection
                 action();
             if (message.SelectSingleElement("body") != null)
                 ReceiveCommand(message.SelectSingleElement("body").InnerXml);
+        }
+        public virtual void actOnVideoReceived(TargettedVideo video) 
+        {
+            Commands.ReceiveVideo.Execute(video);
         }
         public virtual void actOnBubbleReceived(TargettedBubbleContext bubble)
         {

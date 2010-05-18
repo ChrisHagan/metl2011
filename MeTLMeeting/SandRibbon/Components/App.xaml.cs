@@ -21,6 +21,7 @@ namespace SandRibbon
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Ink();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Quiz();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Image();
+                new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Video();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Answer();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Bubble();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.TextBox();

@@ -55,6 +55,26 @@ namespace SandRibbonInterop
             return tag;
         }
     }
+    public static class VideoExtensions 
+    { 
+        public static ImageTag tag(this MediaElement image )
+        {
+            var imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
+            return new ImageTag 
+            {
+                author = imageInfo.author,
+                id = imageInfo.id,
+                privacy = imageInfo.privacy,
+                isBackground = imageInfo.isBackground,
+                zIndex = imageInfo.zIndex
+            };
+        }
+        public static ImageTag tag(this MediaElement image, ImageTag tag)
+        {
+            image.Tag = JsonConvert.SerializeObject(tag);  
+            return tag;
+        }
+    }
     public static class ImageExtensions
     {
         public static ImageTag tag(this Image image )

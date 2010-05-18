@@ -726,6 +726,9 @@
     <Resource Include="Resources\Ribbon-SlideStack.png" />
     <Resource Include="Resources\FitToPage.png" />
     <Resource Include="Resources\FitToView.png" />
+    <Content Include="Resources\AddVideo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Slide_Not_Loaded.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

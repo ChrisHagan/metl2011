@@ -13,6 +13,7 @@ namespace SandRibbon.Utils.Connection
     public class PreParser : JabberWire
     {
         public Dictionary<string, TargettedImage> images = new Dictionary<string, TargettedImage>();
+        public Dictionary<string, TargettedVideo> videos = new Dictionary<string, TargettedVideo>();
         public Dictionary<string, TargettedAutoShape> autoshapes = new Dictionary<string, TargettedAutoShape>();
         public List<TargettedStroke> ink = new List<TargettedStroke>();
         public List<QuizStatusDetails> quizStatus = new List<QuizStatusDetails>();
@@ -57,6 +58,8 @@ namespace SandRibbon.Utils.Connection
                     returnParser.autoshapes.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.liveWindows)
                     returnParser.liveWindows.Add(kv.Key, kv.Value);
+                foreach (var kv in parser.videos)
+                    returnParser.videos.Add(kv.Key, kv.Value);
             }
             return returnParser;
         }
@@ -75,6 +78,8 @@ namespace SandRibbon.Utils.Connection
                 Commands.ReceiveQuizStatus.Execute(status);
             foreach (var window in liveWindows.Values)
                 Commands.ReceiveLiveWindow.Execute(window);
+            foreach (var video in videos.Values)
+                Commands.ReceiveVideo.Execute(video);
             Commands.AllContentSent.Execute(location.currentSlide);
             Logger.Log(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
@@ -174,9 +179,9 @@ namespace SandRibbon.Utils.Connection
         {
             quizStatus.Add(status);
         }
-        public override void actOnBubbleReceived(TargettedBubbleContext bubble)
+        public override void actOnVideoReceived(TargettedVideo video)
         {
-            bubbleList.Add(bubble);
+            videos[video.id]=video;
         }
         public static int ParentRoom(string room)
         {

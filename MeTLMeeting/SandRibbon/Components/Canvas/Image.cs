@@ -47,6 +47,7 @@ namespace SandRibbon.Components.Canvas
             SelectionResizing += dirtyImage;
             SelectionResized += transmitImageAltered;
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<IEnumerable<TargettedImage>>(ReceiveImages));
+            Commands.ReceiveVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(ReceiveVideo));
             Commands.ReceiveAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(ReceiveAutoShape));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
             Commands.ReceiveDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyAutoShape));
@@ -55,7 +56,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<ImageDrop>((drop) =>
             {
                 if (drop.target.Equals(target) && me != null && me != "Projector")
-                    dropImageOnCanvas(drop.filename, drop.point, drop.position);
+                    handleDrop(drop.filename, drop.point, drop.position);
             }));
             Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyLiveWindow));
             Commands.DugPublicSpace.RegisterCommand(new DelegateCommand<LiveWindowSetup>(DugPublicSpace));
@@ -167,6 +168,17 @@ namespace SandRibbon.Components.Canvas
                 Dispatcher.BeginInvoke(doAdd);
             else
                 doAdd();
+        }
+        private void ReceiveVideo(TargettedVideo video){
+            Action doAdd = () => AddVideo(video.video);
+            if (Thread.CurrentThread != Dispatcher.Thread)
+                Dispatcher.BeginInvoke(doAdd);
+            else
+                doAdd();
+        }
+        public void AddVideo(MediaElement element) 
+        {
+            Children.Add(element);
         }
         private void ensureAllImagesHaveCorrectPrivacy()
         {
@@ -547,6 +559,14 @@ namespace SandRibbon.Components.Canvas
         #region ImageImport
         private void addImageFromDisk(object obj)
         {
+            addResourceFromDisk((files)=>{
+                int i = 0;
+                foreach (var file in files)
+                    handleDrop(file, new Point(0, 0), i++);
+            });
+        }
+        private void addResourceFromDisk(Action<IEnumerable<string>> withResources) 
+        { 
             if (target == "presentationSpace" && canEdit && me != "Projector")
             {
                 var fileBrowser = new OpenFileDialog
@@ -558,38 +578,21 @@ namespace SandRibbon.Components.Canvas
                                                  };
                 var dialogResult = fileBrowser.ShowDialog();
                 if (dialogResult == true)
-                {
-                    for (var i = 0; i < fileBrowser.FileNames.Count(); i++)
-                    {
-                        var file = fileBrowser.FileNames[i];
-                        if (file.ToLower().Contains(".png") || file.ToLower().Contains(".jpg") || file.ToLower().Contains(".jpeg"))
-                            dropImageOnCanvas(file, new Point(0, 0), i);
-                        else
-                            MessageBox.Show("Cannot open this file: " + file.ToString());
-                    }
-                }
-            }
+                    withResources(fileBrowser.FileNames);
+            } 
         }
-        public void dropImageOnCanvas(string fileName, Point pos, int count)
+        public void dropVideoOnCanvas(string fileName, Point pos, int count)
         {
             FileType type = GetFileType(fileName);
-            if (type == FileType.Image)
+            if (type == FileType.Video)
             {
-                System.Windows.Controls.Image image;
-                try
-                {
-                    image = createImageFromUri(new Uri(fileName, UriKind.RelativeOrAbsolute));
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Sorry could not create an image from this file :" + fileName + "\n Error: " + e.Message);
-                    return;
-                }
-
-                // Add the image to the Media Panel
-                InkCanvas.SetLeft(image, pos.X);
-                InkCanvas.SetTop(image, pos.Y);
-                Children.Add(image);
+                var placeHolder = new MediaElement{
+                    Source=new Uri(fileName, UriKind.RelativeOrAbsolute),
+                    Width=200,
+                    Height=200};
+                InkCanvas.SetLeft(placeHolder, pos.X);
+                InkCanvas.SetTop(placeHolder, pos.Y);
+                Children.Add(placeHolder);
                 var animationPulse = new DoubleAnimation
                                          {
                                              From = .3,
@@ -598,71 +601,145 @@ namespace SandRibbon.Components.Canvas
                                              AutoReverse = true,
                                              RepeatBehavior = RepeatBehavior.Forever
                                          };
-                image.BeginAnimation(OpacityProperty, animationPulse);
+                placeHolder.BeginAnimation(OpacityProperty, animationPulse);
 
                 var hostedFileName = ResourceUploader.uploadResource(currentSlideId.ToString(), fileName);
                 if (hostedFileName == "failed") return;
-                var uri = new Uri(hostedFileName, UriKind.Absolute);
-                var hostedImage = new System.Windows.Controls.Image();
-                try
-                {
-                    var bitmap = new BitmapImage(uri);
-                    hostedImage.Source = bitmap;
-                }
-                catch (Exception e1)
-                {
-                    MessageBox.Show("Cannot create image: " + e1.Message);
-                }
-                hostedImage.Height = image.Height;
-                hostedImage.Width = image.Width;
-                Children.Remove(image);
-                InkCanvas.SetLeft(hostedImage, pos.X);
-                InkCanvas.SetTop(hostedImage, pos.Y);
-                hostedImage.tag(new ImageTag
+                var video = new MediaElement{Source=new Uri(hostedFileName, UriKind.Absolute)};
+                Children.Remove(placeHolder);
+                InkCanvas.SetLeft(video, pos.X);
+                InkCanvas.SetTop(video, pos.Y);
+                video.tag(new ImageTag
                                   {
                                       author = me,
                                       id =  string.Format("{0}:{1}:{2}", me, SandRibbonObjects.DateTimeFactory.Now(), count),
                                       privacy = privacy,
                                       zIndex = -1
                                   });
-
-
                 UndoHistory.Queue(
-
                     ()=> 
                         {
-                            Children.Remove(hostedImage);
+                            Children.Remove(video);
                             Commands.SendDirtyImage.Execute(new TargettedDirtyElement
                                                                 {
-                                                                    identifier = hostedImage.tag().id,
+                                                                    identifier = video.tag().id,
                                                                     target = target,
-                                                                    privacy = hostedImage.tag().privacy,
-                                                                    author = hostedImage.tag().author,
+                                                                    privacy = video.tag().privacy,
+                                                                    author = video.tag().author,
                                                                     slide = currentSlideId
                                                                 });
                         },
                     ()=>
                         {
-                            AddImage(hostedImage);
-                            Commands.SendImage.Execute(new TargettedImage
-                                                           {
-                                                               author = me,
-                                                               slide = currentSlideId,
-                                                               privacy = privacy,
-                                                               target = target,
-                                                               image = hostedImage
-                                                           });
                         });
-
-                Commands.SendImage.Execute(new TargettedImage
+                Commands.SendVideo.Execute(new TargettedVideo
                 {
                     author = me,
                     slide = currentSlideId,
                     privacy = privacy,
                     target = target,
-                    image = hostedImage
+                    video = video
                 });
             }
+        }
+        public void handleDrop(string fileName, Point pos, int count)
+        {
+            FileType type = GetFileType(fileName);
+            switch (type)
+            {
+                case FileType.Image:
+                    dropImageOnCanvas(fileName, pos, count);
+                    break;
+                case FileType.Video:
+                    dropVideoOnCanvas(fileName, pos, count);
+                    break;
+            }
+        }
+        public void dropImageOnCanvas(string fileName, Point pos, int count)
+        {
+            System.Windows.Controls.Image image;
+            try
+            {
+                image = createImageFromUri(new Uri(fileName, UriKind.RelativeOrAbsolute));
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Sorry could not create an image from this file :" + fileName + "\n Error: " + e.Message);
+                return;
+            }
+
+            // Add the image to the Media Panel
+            InkCanvas.SetLeft(image, pos.X);
+            InkCanvas.SetTop(image, pos.Y);
+            Children.Add(image);
+            var animationPulse = new DoubleAnimation
+                                     {
+                                         From = .3,
+                                         To = 1,
+                                         Duration = new Duration(TimeSpan.FromSeconds(1)),
+                                         AutoReverse = true,
+                                         RepeatBehavior = RepeatBehavior.Forever
+                                     };
+            image.BeginAnimation(OpacityProperty, animationPulse);
+
+            var hostedFileName = ResourceUploader.uploadResource(currentSlideId.ToString(), fileName);
+            if (hostedFileName == "failed") return;
+            var uri = new Uri(hostedFileName, UriKind.Absolute);
+            var hostedImage = new System.Windows.Controls.Image();
+            try
+            {
+                var bitmap = new BitmapImage(uri);
+                hostedImage.Source = bitmap;
+            }
+            catch (Exception e1)
+            {
+                MessageBox.Show("Cannot create image: " + e1.Message);
+            }
+            hostedImage.Height = image.Height;
+            hostedImage.Width = image.Width;
+            Children.Remove(image);
+            InkCanvas.SetLeft(hostedImage, pos.X);
+            InkCanvas.SetTop(hostedImage, pos.Y);
+            hostedImage.tag(new ImageTag
+                              {
+                                  author = me,
+                                  id = string.Format("{0}:{1}:{2}", me, SandRibbonObjects.DateTimeFactory.Now(), count),
+                                  privacy = privacy,
+                                  zIndex = -1
+                              });
+            UndoHistory.Queue(
+                () =>
+                {
+                    Children.Remove(hostedImage);
+                    Commands.SendDirtyImage.Execute(new TargettedDirtyElement
+                                                        {
+                                                            identifier = hostedImage.tag().id,
+                                                            target = target,
+                                                            privacy = hostedImage.tag().privacy,
+                                                            author = hostedImage.tag().author,
+                                                            slide = currentSlideId
+                                                        });
+                },
+                () =>
+                {
+                    AddImage(hostedImage);
+                    Commands.SendImage.Execute(new TargettedImage
+                                                   {
+                                                       author = me,
+                                                       slide = currentSlideId,
+                                                       privacy = privacy,
+                                                       target = target,
+                                                       image = hostedImage
+                                                   });
+                });
+            Commands.SendImage.Execute(new TargettedImage
+            {
+                author = me,
+                slide = currentSlideId,
+                privacy = privacy,
+                target = target,
+                image = hostedImage
+            });
         }
         public void tagAutoShape(SandRibbonInterop.AutoShape autoshape, int count)
         {
