@@ -205,9 +205,9 @@
             <Grid Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}">
                 <StackPanel x:Name="StatusLeft" Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
                     <sandpit:Pedagogicometer />
-                    <components:ZoomControls />
                     <sr:Label x:Name="StatusLabel" ToolTip="currentMode" VerticalAlignment="Center"/>
                 </StackPanel>
+                <components:ZoomControls HorizontalAlignment="Right" Margin="0,0,50,0" />
                 <components:PrintingHost Height="25" Width="25" HorizontalAlignment="Right"/>
             </Grid>
         </sr:StatusBar>
@@ -240,7 +240,7 @@
                                 <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
                             </ScrollViewer>
                         </Viewbox>
-                        <Grid  x:Name="dynamicContent" />
+                        <Grid x:Name="dynamicContent" />
                         <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" Background="{StaticResource BackgroundGrayGradient}">
                         </Grid>
                         <Canvas Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">

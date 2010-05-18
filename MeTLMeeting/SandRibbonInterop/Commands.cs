@@ -23,6 +23,7 @@ namespace SandRibbon
         public static CompositeCommand ReceiveNewBubble = new CompositeCommand();
         public static CompositeCommand ExploreBubble = new CompositeCommand();
         public static CompositeCommand ThoughtLiveWindow = new CompositeCommand();
+        public static CompositeCommand SetZoomRect = new CompositeCommand();
 
         #endregion
         public static CompositeCommand ShowConversationSearchBox = new CompositeCommand();

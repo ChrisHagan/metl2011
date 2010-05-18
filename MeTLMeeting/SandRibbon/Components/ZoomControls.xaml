@@ -3,7 +3,7 @@
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-        <StackPanel x:Name="StatusRight" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,50,0">
+        <StackPanel x:Name="StatusRight" Orientation="Horizontal">
             <SandRibbonInterop:Button Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="..\Resources\MagnifyingGlassShiny.png" ToolTip="{DynamicResource GrabZoomToolTip}" InternalButtonSize="Small" />
             <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="..\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}" InternalButtonSize="Small" />
             <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToView}" Icon="..\Resources\FitToView.png" Text="Fit to view" ToolTip="{DynamicResource FitToViewToolTip}" InternalButtonSize="Small"/>

@@ -774,7 +774,7 @@
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="..\..\Resources\subscript.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           Text="Subscript" FontSize="14" FontWeight="Bold"/>
+                           Text="Grab zoom" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
                            Text="Draw a rectangle to zoom in on" />
             </Grid>
@@ -786,7 +786,7 @@
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="..\..\Resources\subscript.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           Text="Subscript" FontSize="14" FontWeight="Bold"/>
+                           Text="Fit to screen" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
                            Text="Fit the entire page on the screen"/>
             </Grid>
@@ -798,7 +798,7 @@
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="..\..\Resources\subscript.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           Text="Subscript" FontSize="14" FontWeight="Bold"/>
+                           Text="Fit to page" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
                            Text="Fit the width of the page to the screen"/>
             </Grid>

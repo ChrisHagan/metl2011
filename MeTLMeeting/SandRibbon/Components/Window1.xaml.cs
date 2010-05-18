@@ -25,6 +25,7 @@ using SandRibbonInterop.Interfaces;
 using SandRibbonObjects;
 using System.Windows.Automation.Peers;
 using System.Diagnostics;
+using System.Windows.Shapes;
 
 namespace SandRibbon
 {
@@ -259,16 +260,21 @@ namespace SandRibbon
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
-            Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
+            Commands.SetZoomRect.RegisterCommand(new DelegateCommand<Rectangle>(SetZoomRect));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
             if (SmartBoardMeTLAlreadyLoaded)
-            checkIfSmartboard();
+                checkIfSmartboard();
         }
-        private void InitiateGrabZoom(object _unused) { 
-            //Nothing happens here yet
+        private void SetZoomRect(Rectangle viewbox) 
+        {
+            var topleft = new Point(Canvas.GetLeft(viewbox), Canvas.GetTop(viewbox));
+            scroll.Width = viewbox.Width;
+            scroll.Height = viewbox.Height;
+            scroll.ScrollToHorizontalOffset(topleft.X);
+            scroll.ScrollToVerticalOffset(topleft.Y);
         }
         private bool SmartBoardMeTLAlreadyLoaded
         {
@@ -284,7 +290,6 @@ namespace SandRibbon
                 return isSmartboardMeTL;
             }
         }
-
         public void checkIfSmartboard()
         {
             var path = "C:\\Program Files\\MeTL\\boardIdentity.txt";

@@ -29,7 +29,6 @@ namespace SandRibbon.Components
         public ConversationDetails currentDetails;
         private bool synced = false;
         private bool joiningConversation;
-        //public static PrivacyTools currentPrivacyTools = new PrivacyTools();
         public PresentationSpace()
         {
             InitializeComponent();
@@ -48,10 +47,9 @@ namespace SandRibbon.Components
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
             Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(exploreBubble));
+            Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
             Loaded += presentationSpaceLoaded;
-        
         }
-
         private void exploreBubble(ThoughtBubble obj)
         {
             var origin = new Point(0, 0);
@@ -265,6 +263,16 @@ namespace SandRibbon.Components
         }
         private void InitiateDig(object _param)
         {
+            withDragMarquee(SendNewDig);
+        }
+        private void InitiateGrabZoom(object _param) 
+        {
+            withDragMarquee(marquee => {
+                Commands.SetZoomRect.Execute(marquee);
+            }); 
+        }
+        private void withDragMarquee(Action<Rectangle> doWithRect)
+        {
             var canvas = new System.Windows.Controls.Canvas();
             var adornerLayer = AdornerLayer.GetAdornerLayer(this);
             var adorners = adornerLayer.GetAdorners(this);
@@ -273,7 +281,6 @@ namespace SandRibbon.Components
                     if (a is UIAdorner && ((UIAdorner)a).contentType == typeof(System.Windows.Controls.Canvas))
                         return;
             var adorner = new UIAdorner(this, canvas);
-            var adornee = this;
             var marquee = new Rectangle { Fill = Brushes.Purple };
             canvas.Background = new SolidColorBrush { Color = Colors.Wheat, Opacity = 0.1 };
             canvas.Children.Add(marquee);
@@ -288,20 +295,9 @@ namespace SandRibbon.Components
             canvas.MouseUp += (sender, e)=>
             {
                 mouseDown = false;
-                var pos = e.GetPosition(adornee);
+                var pos = e.GetPosition(this);
                 var origin = new Point(pos.X - marquee.Width, pos.Y - marquee.Height);
-                Commands.SendLiveWindow.Execute(new LiveWindowSetup {
-                    frame=marquee,
-                    origin=origin,
-                    target=new Point(0,0), 
-                    snapshotAtTimeOfCreation = ResourceUploader.uploadResourceToPath(
-                        toByteArray(adornee, marquee, origin),
-                        "Resource/"+currentLocation.currentSlide.ToString(), 
-                        "quizSnapshot.png", 
-                        false),
-                    author=me,
-                    slide=currentLocation.currentSlide
-                });
+                doWithRect(marquee); 
                 adornerLayer.Remove(adorner);
             };
             canvas.MouseMove += (sender, e)=>
@@ -315,6 +311,25 @@ namespace SandRibbon.Components
             };
             canvas.MouseLeave += (_sender, _args) => adornerLayer.Remove(adorner);
             adornerLayer.Add(adorner);
+        }
+        private void SendNewDig(Rectangle marquee)
+        {
+            var origin = new Point(
+                System.Windows.Controls.Canvas.GetLeft(marquee),
+                System.Windows.Controls.Canvas.GetTop(marquee));
+            Commands.SendLiveWindow.Execute(new LiveWindowSetup
+            {
+                frame = marquee,
+                origin = origin,
+                target = new Point(0, 0),
+                snapshotAtTimeOfCreation = ResourceUploader.uploadResourceToPath(
+                    toByteArray(this, marquee, origin),
+                    "Resource/" + currentLocation.currentSlide.ToString(),
+                    "quizSnapshot.png",
+                    false),
+                author = me,
+                slide = currentLocation.currentSlide
+            });
         }
         private static byte[] toByteArray(Visual adornee, FrameworkElement marquee, Point origin)
         {
