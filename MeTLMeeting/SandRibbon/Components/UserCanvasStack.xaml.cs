@@ -79,13 +79,11 @@ namespace SandRibbon.Components
                                                     };
                             thoughtBubble.relocate();
                             thoughtBubble.enterBubble();
+                            thoughtBubble.setIdentities();
 
                         }
                });
-            if (thoughtBubble.me != null)
-                return thoughtBubble;
-            else
-                return null;
+            return thoughtBubble.me != null ? thoughtBubble : null;
         }
         private List<Stroke> getStrokesRelevantTo(IEnumerable<String> ids)
         {

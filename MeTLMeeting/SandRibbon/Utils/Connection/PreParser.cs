@@ -18,6 +18,7 @@ namespace SandRibbon.Utils.Connection
         public List<QuizStatusDetails> quizStatus = new List<QuizStatusDetails>();
         public List<QuizDetails> quizs = new List<QuizDetails>();
         public List<QuizAnswer> quizAnswers = new List<QuizAnswer>();
+        public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
         public PreParser(int slide):base()
@@ -172,6 +173,10 @@ namespace SandRibbon.Utils.Connection
         public override void actOnQuizStatus(QuizStatusDetails status)
         {
             quizStatus.Add(status);
+        }
+        public override void actOnBubbleReceived(TargettedBubbleContext bubble)
+        {
+            bubbleList.Add(bubble);
         }
         public static int ParentRoom(string room)
         {

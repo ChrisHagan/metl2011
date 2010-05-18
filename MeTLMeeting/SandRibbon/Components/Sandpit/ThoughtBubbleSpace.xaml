@@ -4,8 +4,8 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:components="clr-namespace:SandRibbon.Components">
     <UserControl.Resources>
-        <core:String x:Key="target">thoughtBubble</core:String>
         <core:String x:Key="defaultPrivacy">public</core:String>
+        <core:String x:Key="target">thoughtBubble</core:String>
     </UserControl.Resources>
     <components:UserCanvasStack x:Name="stack"></components:UserCanvasStack>
 </UserControl>

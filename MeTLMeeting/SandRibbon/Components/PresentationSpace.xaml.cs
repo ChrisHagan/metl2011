@@ -167,6 +167,8 @@ namespace SandRibbon.Components
                 stack.text.doText(text);
             foreach(var quizDetails in parser.quizs)
                 receiveQuiz(quizDetails);
+            foreach(var bubble in parser.bubbleList)
+                stack.ReceiveNewBubble(bubble);
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
         }
         private void MirrorPresentationSpace(Window1 parent)

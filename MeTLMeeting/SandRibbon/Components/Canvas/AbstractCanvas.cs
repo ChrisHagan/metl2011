@@ -35,7 +35,7 @@ namespace SandRibbon.Components.Canvas
     }
     public abstract class AbstractCanvas : InkCanvas
     {
-        private string defaultPrivacy;
+        public string defaultPrivacy;
         public string actualPrivacy;
         protected ConversationDetails currentDetails;
         public string target;
@@ -63,11 +63,14 @@ namespace SandRibbon.Components.Canvas
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) =>
                                                                             HandleCut()));
             Loaded += (_sender, _args) => this.Dispatcher.BeginInvoke((Action)delegate{
-                                                                      target = (string)FindResource("target");
-                                                                      defaultPrivacy = (string)FindResource("defaultPrivacy");
-                                                                      actualPrivacy = defaultPrivacy;
-                                                                      context = getContext();
-                                                                });
+              if(target == null)
+                {
+                    target = (string) FindResource("target");
+                    defaultPrivacy = (string) FindResource("defaultPrivacy");
+                    actualPrivacy = defaultPrivacy;
+                    context = getContext();
+                }
+            });
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
 
         }

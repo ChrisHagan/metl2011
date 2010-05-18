@@ -38,6 +38,15 @@ namespace SandRibbon.Components.Sandpit
             InitializeComponent();
             strokeContext = new List<Stroke>();
             childContext = new List<FrameworkElement>();
+            thought.stack.handwriting.target = "thoughtBubble";
+            thought.stack.text.target = "thoughtBubble";
+            thought.stack.images.target = "thoughtBubble";
+            thought.stack.handwriting.actualPrivacy = "public";
+            thought.stack.text.actualPrivacy = "public";
+            thought.stack.images.actualPrivacy = "public";
+            thought.stack.handwriting.defaultPrivacy = "public";
+            thought.stack.text.defaultPrivacy = "public";
+            thought.stack.images.defaultPrivacy = "public";
             Commands.ThoughtLiveWindow.RegisterCommand(new DelegateCommand<Rectangle>(mainSlideLiveWindow));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
         }
@@ -49,7 +58,7 @@ namespace SandRibbon.Components.Sandpit
                 thought.stack.text.doText(text);
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
         }
-        private void setIdentities()
+        public void setIdentities()
         {
             thought.stack.handwriting.me = me;
             thought.stack.text.me = me;
