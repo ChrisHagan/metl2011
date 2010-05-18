@@ -27,7 +27,6 @@ namespace SandRibbon.Utils
 {
     public class PowerPointLoaderPrintRange : PrintRange
     {
-        //hey Chris, how do I "implement" an interface?
         private int start = 0;
         private int end = 0;
         private object parent;
@@ -37,23 +36,18 @@ namespace SandRibbon.Utils
         object Microsoft.Office.Interop.PowerPoint.PrintRange.Parent { get { return parent; } }
         Microsoft.Office.Interop.PowerPoint.Application Microsoft.Office.Interop.PowerPoint.PrintRange.Application { get { return app; } }
 
-
         public PowerPointLoaderPrintRange(Presentation ppt)
         {
             app = ppt.Application;
             parent = ppt.Parent;
             end = ppt.Slides.Count - 1;
         }
-
         public void Delete()
         {
             this.parent = null;
             this.app = null;
         }
     }
-
-
-
     public class PowerPointLoader
     {
         static MsoTriState FALSE = MsoTriState.msoFalse;
@@ -238,7 +232,6 @@ namespace SandRibbon.Utils
                                 break;
                             case "cancel":
                                 return;
-                                break;
                             default:
                                 LoadPowerpointAsFlatSlides(file, details, 1);
                                 break;
@@ -439,7 +432,7 @@ namespace SandRibbon.Utils
         private void sendSlide(int id, XElement slide)
         {
             sendShapes(id, slide.Descendants("shape"));
-            //sendPublicTextBoxes(id, slide.Descendants("publicText"));
+            sendPublicTextBoxes(id, slide.Descendants("publicText"));
             sendTextboxes(id, slide.Descendants("privateText"));
         }
         private void sendPublicTextBoxes(int id, IEnumerable<XElement> shapes)
@@ -451,12 +444,18 @@ namespace SandRibbon.Utils
                 newText.Text = text.Attribute("content").Value;
                 InkCanvas.SetLeft(newText, Double.Parse(text.Attribute("x").Value));
                 InkCanvas.SetTop(newText, Double.Parse(text.Attribute("y").Value));
-                newText.Tag = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + me;
+                var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + me;
                 var font = text.Descendants("font").ElementAt(0);
                 newText.FontFamily = new FontFamily(font.Attribute("family").Value);
                 newText.FontSize = Double.Parse(font.Attribute("size").Value);
                 newText.Foreground = (Brush)(new BrushConverter().ConvertFromString((font.Attribute("color").Value).ToString()));
-
+                newText.tag(
+                    new TextTag
+                    {
+                        author = me,
+                        id = textBoxIdentity,
+                        privacy = "public"
+                    });
                 wire.SendTextbox(new TargettedTextBox
                 {
                     slide = id,
@@ -637,12 +636,11 @@ namespace SandRibbon.Utils
                         shape.Visible = MsoTriState.msoTrue;
                         // Importing Powerpoint textboxes AS textboxes instead of pictures currently disabled.  
                         //Uncomment the following lines to re-enable.
-                        /*if (shape.HasTextFrame == MsoTriState.msoTrue &&
+                        if (shape.HasTextFrame == MsoTriState.msoTrue &&
                             shape.TextFrame.HasText == MsoTriState.msoTrue &&
                             !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))
                             addPublicText(xSlide, shape, "private");
                         else
-                        */
                         {
                             try
                             {
@@ -669,12 +667,11 @@ namespace SandRibbon.Utils
                     {
                         // Importing Powerpoint textboxes AS textboxes instead of pictures currently disabled.  
                         //Uncomment the following lines to re-enable.
-                        /*if (shape.HasTextFrame == MsoTriState.msoTrue &&
+                        if (shape.HasTextFrame == MsoTriState.msoTrue &&
                             shape.TextFrame.HasText == MsoTriState.msoTrue &&
                             !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))
                             addPublicText(xSlide, shape, "public");
                         else
-                        */
                         {
                             shape.Export(file, PpShapeFormat.ppShapeFormatPNG, backgroundWidth, backgroundHeight, exportMode);
                             xSlide.Add(new XElement("shape",
