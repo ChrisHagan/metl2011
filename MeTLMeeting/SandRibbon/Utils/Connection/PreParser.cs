@@ -83,28 +83,6 @@ namespace SandRibbon.Utils.Connection
             Commands.AllContentSent.Execute(location.currentSlide);
             Logger.Log(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
-        [Obsolete("Intended to handle compressed history for caching")]
-        public string RegurgitateToXml()
-        {    
-            StringBuilder builder = new StringBuilder("<logCollection>");
-            foreach (var stroke in ink)
-                builder.Append(new MeTLStanzas.Ink(stroke)).ToString();
-            foreach (var image in images.Values)
-                builder.Append(image.imageSpecification.ToString());
-            foreach (var autoshape in autoshapes.Values)
-                builder.Append(new MeTLStanzas.AutoShape(autoshape).ToString());
-            foreach (var box in text.Values)
-                builder.Append(box.boxSpecification.ToString());
-            foreach(var quiz in quizs)
-                builder.Append(new MeTLStanzas.Quiz(quiz).ToString());
-            foreach(var status in quizStatus)
-                builder.Append(new MeTLStanzas.QuizStatus(status).ToString());
-            /*
-            foreach (var window in liveWindows.Values)
-                builder.Append(new MeTLStanzas.LiveWindow(window).ToString());
-             */
-            return builder.ToString();
-        }
         public override void actOnDirtyImageReceived(SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyImage image)
         {
             if(images.ContainsKey(image.element.identifier))
