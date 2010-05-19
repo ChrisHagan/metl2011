@@ -1,1 +1,0 @@
-﻿This plugin is a stub emulating server specified conversation detail retrieval.  It hardcodes sample conversations and their constituent slides for exemplary navigation.  This plugin is not intended for production use.

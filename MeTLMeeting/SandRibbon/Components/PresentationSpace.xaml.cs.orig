@@ -97,7 +97,7 @@ namespace SandRibbon.Components
         {
             //remove these if you want the on-canvas privacy buttons to disappear.  If you do that, you MUST uncomment the static declaration of currentPrivacyTools
             var adorner = GetAdorner();
-            AdornerLayer.GetAdornerLayer(this).Add(new UIAdorner(adorner, new PrivacyTools()));
+            AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyTools()));
         }
         private void setSync(object obj)
         {
@@ -169,8 +169,6 @@ namespace SandRibbon.Components
                 receiveQuiz(quizDetails);
             foreach (var video in parser.videos)
                 stack.images.AddVideo(((TargettedVideo)video.Value).video);
-            foreach(var bubble in parser.bubbleList)
-                stack.ReceiveNewBubble(bubble);
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
         }
         private void MirrorPresentationSpace(Window1 parent)

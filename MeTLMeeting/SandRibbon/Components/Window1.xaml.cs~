@@ -25,7 +25,6 @@ using SandRibbonInterop.Interfaces;
 using SandRibbonObjects;
 using System.Windows.Automation.Peers;
 using System.Diagnostics;
-using System.Windows.Shapes;
 
 namespace SandRibbon
 {
@@ -33,6 +32,114 @@ namespace SandRibbon
     {
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
+        #endregion
+        #region CoreModules
+        private readonly Dictionary<Type, Func<FrameworkElement>> DEFAULT_COMPONENTS = new Dictionary<Type, Func<FrameworkElement>>
+        {//These are the default implementations of the core modules.  Plugins may override these implementations but each of them must be supplied for MeTL to function.
+            {typeof(ISlideDisplay), ()=>new SimpleSlideDisplay()},
+            {typeof(IPencilCaseDisplay), ()=>new SimplePencilCaseDisplay()},
+            {typeof(IFriendsDisplay), ()=>new SimpleFriendsListing()},
+            {typeof(IConversationSelector), ()=>new SimpleConversationSelector()},
+            {typeof(ITextTools), ()=>new SimpleTextTools()}
+        };
+        private ISlideDisplay slideDisplayProperty;
+        public ISlideDisplay slideDisplay
+        {//This is to ensure that the implementation of the module is always correctly housed.  If it is a plugin the PluginManager will have already housed it, otherwise it needs a RibbonGroup.
+            get { return slideDisplayProperty; }
+            set
+            {
+                slideDisplayProperty = value;
+                if (slideDisplayProperty is UserControl && ((UserControl)slideDisplayProperty).Parent == null)
+                {
+                    Navigate.Items.Add(slideDisplayProperty);
+                }
+            }
+        }
+        private IPencilCaseDisplay pencilCaseDisplayProperty;
+        public IPencilCaseDisplay pencilCaseDisplay
+        {
+            get
+            {
+                if (pencilCaseDisplayProperty == null)
+                {
+                    try
+                    {
+                        pencilCaseDisplay = (IPencilCaseDisplay)(new SimplePencilCaseDisplay());
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Exception Creating Default PencilCaseDisplay: " + ex);
+                    }
+                }
+                return pencilCaseDisplayProperty;
+            }
+            set
+            {
+                pencilCaseDisplayProperty = value;
+                if (pencilCaseDisplayProperty is UserControl && ((UserControl)pencilCaseDisplayProperty).Parent == null)
+                {
+                    StableTools.Children.Add((UIElement)pencilCaseDisplayProperty);
+                }
+            }
+        }
+        private IPenTools penToolsDisplayProperty;
+        public IPenTools penToolsDisplay
+        {
+            get { return penToolsDisplayProperty; }
+            set
+            {
+                penToolsDisplayProperty = value;
+                if (penToolsDisplayProperty is UserControl && ((UserControl)penToolsDisplayProperty).Parent == null)
+                {
+                    //var parent = new RibbonGroup();
+                    //parent.Items.Add(penToolsDisplayProperty);
+                    //Sketch.Items.Insert(0,parent);
+                }
+            }
+        }
+        private IFriendsDisplay friendDisplayProperty;
+        public IFriendsDisplay friendDisplay
+        {
+            get { return friendDisplayProperty; }
+            set
+            {
+                friendDisplayProperty = value;
+                if (friendDisplayProperty is UserControl && ((UserControl)friendDisplayProperty).Parent == null)
+                {
+                    // friends.friendScrollViewer.Content = friendDisplayProperty;
+                }
+            }
+        }
+        private IConversationSelector conversationSelectorProperty;
+        public IConversationSelector conversationSelector
+        {
+            get { return conversationSelectorProperty; }
+            set
+            {
+                conversationSelectorProperty = value;
+                if (conversationSelectorProperty is UserControl && ((UserControl)conversationSelectorProperty).Parent == null)
+                {
+                    //ConversationListing.Items.Add(conversationSelectorProperty);
+                }
+            }
+        }
+        private ITextTools textToolsProperty;
+        public ITextTools textTools
+        {
+            get { return textToolsProperty; }
+            set
+            {
+                textToolsProperty = value;
+                if (textToolsProperty is UserControl && ((UserControl)textToolsProperty).Parent == null)
+                {
+                    //var parent = new RibbonGroup { Header = "Font" };
+                    //parent.Items.Add(textToolsProperty);
+                    //Text.Items.Add(parent);
+                    StableTools.Children.Add((UIElement)textToolsProperty);
+                }
+            }
+        }
         #endregion
         public JabberWire.UserInformation userInformation = new JabberWire.UserInformation();
         private DelegateCommand<string> powerpointProgress;
@@ -58,6 +165,8 @@ namespace SandRibbon
         private void DoConstructor()
         {
             InitializeComponent();
+            loadPlugins();
+            loadRemainingCoreComponents();
             userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(text =>
             {
@@ -70,6 +179,7 @@ namespace SandRibbon
                 connect(author.name, author.password, 0, null);
                 if (author.name.Contains("S15")) sleep(null);
                 var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+                conversationSelector.List(conversations);
                 recentDocuments.ListRecentConversations();
                 Commands.RequerySuggested();
             });
@@ -100,6 +210,7 @@ namespace SandRibbon
             Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(
                 (conversationDetails) =>
                 {
+                    //Import.Clear();
                     ShowPowerpointBlocker("Starting Powerpoint Import");
                     Commands.PostStartPowerPointLoad.Execute(conversationDetails);
                 },
@@ -147,23 +258,12 @@ namespace SandRibbon
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(_nil => { }, mustBeLoggedIn));
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
-            Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
-            Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
-            Commands.SetZoomRect.RegisterCommand(new DelegateCommand<Rectangle>(SetZoomRect));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
             if (SmartBoardMeTLAlreadyLoaded)
-                checkIfSmartboard();
-        }
-        private void SetZoomRect(Rectangle viewbox) 
-        {
-            var topleft = new Point(Canvas.GetLeft(viewbox), Canvas.GetTop(viewbox));
-            scroll.Width = viewbox.Width;
-            scroll.Height = viewbox.Height;
-            scroll.ScrollToHorizontalOffset(topleft.X);
-            scroll.ScrollToVerticalOffset(topleft.Y);
+            checkIfSmartboard();
         }
         private bool SmartBoardMeTLAlreadyLoaded
         {
@@ -179,6 +279,7 @@ namespace SandRibbon
                 return isSmartboardMeTL;
             }
         }
+
         public void checkIfSmartboard()
         {
             var path = "C:\\Program Files\\MeTL\\boardIdentity.txt";
@@ -252,6 +353,7 @@ namespace SandRibbon
             {
                 Commands.LoggedIn.Execute(userInformation.credentials.name);
                 removeQuiz();
+                //startupConversations.Visibility = Visibility.Collapsed;
                 userInformation.location.activeConversation = title;
                 details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
                 showDetails(details);
@@ -305,6 +407,7 @@ namespace SandRibbon
                 moveTo();
             CommandManager.InvalidateRequerySuggested();
         }
+
         private void removeQuiz()
         {
             if (dynamicContent.Children.Count > 0)
@@ -464,8 +567,51 @@ namespace SandRibbon
                 details.Author = userInformation.credentials.name;
                 details = ConversationDetailsProviderFactory.Provider.Create(details);
                 CommandManager.InvalidateRequerySuggested();
+                //Create.Clear();
                 if (Commands.JoinConversation.CanExecute(details.Jid))
+                {
                     Commands.JoinConversation.Execute(details.Jid);
+                }
+            }
+        }
+        private void loadPlugins()
+        {
+            try
+            {
+                var pluginRoots = new Dictionary<string, IAddChild>
+                                      {
+                                          {"Sketch", Sketch},
+                                          {"PenTools", StableTools},
+                                          {"Type", Sketch},
+                                          {"Navigate", Navigate},
+                                          {"ListConversations", ConversationListing}
+                                      };
+                var loadedPlugins = PluginManager.LoadPlugins(pluginRoots, pluginRoot);
+                foreach (var loadedPlugin in loadedPlugins)
+                {
+                    FrameworkElement loadedPlugin1 = loadedPlugin;
+                    var coreModule = DEFAULT_COMPONENTS.Keys.FirstOrDefault(k => k.IsAssignableFrom(loadedPlugin1.GetType()));
+                    if (coreModule != null)
+                    {
+                        GetType().GetProperties().Single(f => f.PropertyType == coreModule).SetValue(this, loadedPlugin, new object[0]);
+                    }
+                }
+            }
+            catch (InvalidPluginFormatException e)
+            {
+                MessageBox.Show("Plugin loading has been aborted because of a bad plugin:\n" + e.Message);
+            }
+        }
+        private void loadRemainingCoreComponents()
+        {
+            foreach (var coreModuleSlot in DEFAULT_COMPONENTS.Keys)
+            {
+                Type coreModuleSlot1 = coreModuleSlot;
+                var slot = GetType().GetProperties().Single(f => f.PropertyType == coreModuleSlot1);
+                if (slot.GetValue(this, new object[0]) == null)
+                {
+                    slot.SetValue(this, DEFAULT_COMPONENTS[coreModuleSlot](), new object[0]);
+                }
             }
         }
         private void debugTrue(object sender, CanExecuteRoutedEventArgs e)
@@ -547,7 +693,7 @@ namespace SandRibbon
             var report = (int[])e.Parameter;
             progress.Show(report[0], report[1]);
         }
-        private void FitToView(object _unused)
+        private void RestoreView(object sender, RoutedEventArgs e)
         {
             if (scroll != null && scroll.Height > 0 && scroll.Width > 0)
             {
@@ -556,14 +702,7 @@ namespace SandRibbon
                 scroll.Height = double.NaN;
                 scroll.Width = double.NaN;
             }
-        }
-        private void FitToPageWidth(object _unused) {
-            if (scroll != null)
-            {
-                var ratio = adornerGrid.ActualWidth / adornerGrid.ActualHeight;
-                scroll.Height = canvas.ActualWidth / ratio;
-                scroll.Width = canvas.ActualWidth;
-            }
+
         }
         private void ShowPowerpointBlocker(string explanation)
         {
@@ -793,6 +932,14 @@ namespace SandRibbon
                 scroll.ScrollToVerticalOffset(finalY);
             }
         }
+        private void HighlightFriend(object sender, ExecutedRoutedEventArgs e)
+        {
+            Commands.PostHighlightFriend.Execute(e.Parameter, canvas);
+        }
+        private void HighlightUser(object sender, ExecutedRoutedEventArgs e)
+        {
+            Commands.PostHighlightUser.Execute(e.Parameter, (IInputElement)friendDisplay);
+        }
         public Visibility GetVisibilityOf(UIElement target)
         {
             return target.Visibility;
@@ -825,15 +972,42 @@ namespace SandRibbon
             ShowTutorial();
             Commands.RequerySuggested(Commands.MirrorPresentationSpace);
         }
+        private void CreateOpened(object sender, EventArgs e)
+        {
+            //Create.FocusCreate();
+        }
+        private void EditOpened(object sender, EventArgs e)
+        {
+            //Edit.FocusEdit();
+        }
+        private void SearchOpened(object sender, EventArgs e)
+        {
+            Search.FocusSearch();
+        }
+        private void ImportOpened(object sender, EventArgs e)
+        {
+            //Import.FocusCreate();
+        }
         private void SetConversationPermissions(string style)
         {
-            foreach (var s in new[]{
-                Permissions.LABORATORY_PERMISSIONS,
-                Permissions.TUTORIAL_PERMISSIONS,
-                Permissions.LECTURE_PERMISSIONS,
-                Permissions.MEETING_PERMISSIONS})
-                if (s.Label == style)
-                    details.Permissions = s;
+            if (style == "tutorial")
+            {
+                details.Permissions.studentCanPublish = true;
+                details.Permissions.studentCanOpenFriends = true;
+                details.Permissions.usersAreCompulsorilySynced = false;
+            }
+            else if (style == "lecture")
+            {
+                details.Permissions.studentCanPublish = false;
+                details.Permissions.studentCanOpenFriends = false;
+                details.Permissions.usersAreCompulsorilySynced = true;
+            }
+            else
+            {
+                details.Permissions.studentCanPublish = true;
+                details.Permissions.studentCanOpenFriends = true;
+                details.Permissions.usersAreCompulsorilySynced = true;
+            }
             ConversationDetailsProviderFactory.Provider.Update(details);
         }
         private bool CanSetConversationPermissions(string _style)

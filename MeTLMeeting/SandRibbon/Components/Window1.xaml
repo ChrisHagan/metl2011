@@ -16,8 +16,6 @@
     WindowState="Maximized"
     Icon="..\Resources\MeTL.ico">
     <sr:RibbonWindow.CommandBindings>
-        <CommandBinding Command="{x:Static api:Commands.HighlightUser}" Executed="HighlightUser" />
-        <CommandBinding Command="{x:Static api:Commands.HighlightFriend}" Executed="HighlightFriend" />
         <CommandBinding Command="{x:Static api:Commands.ZoomIn}" CanExecute="canZoomIn" Executed="doZoomIn" />
         <CommandBinding Command="{x:Static api:Commands.ZoomOut}" CanExecute="canZoomOut" Executed="doZoomOut" />
         <CommandBinding Command="{x:Static api:Commands.RetrievedHistoryPortion}" Executed="receivedHistoryPortion" />
@@ -50,30 +48,10 @@
                             <components:SimpleConversationSelector x:Name="recentDocuments" />
                         </StackPanel>
                     </sr:ApplicationPopup.RecentDocumentsControl>
-                    <!--<sr:MenuItem Text="Recommended conversations" ToolTip="{StaticResource ConversationListingToolTip}" >
-                        <sr:RibbonPopup x:Name="ConversationListing"></sr:RibbonPopup>
-                    </sr:MenuItem>
-                    <sr:MenuItem Text="Search all conversations" ToolTip="{StaticResource ConversationListingToolTip}" >
-                        <sr:RibbonPopup Opened="SearchOpened"  x:Name="ConversationFilterer">
-                            <simple:SimpleConversationFilterer x:Name="Search"/>
-                        </sr:RibbonPopup>
-                    </sr:MenuItem>-->
                     <sr:MenuItem Text="New conversation" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.PreCreateConversation}"/>
                     <sr:MenuItem Text="Open conversation" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}"/>
-                    <!--<sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationCreator" Opened="CreateOpened">
-                            <simple:SimpleConversationCreator ActionDescriptor="Create" x:Name="Create" CreateAction="{x:Static api:Commands.CreateConversation}"/>
-                        </sr:RibbonPopup>-->
                     <sr:MenuItem Text="Edit current conversation" ToolTip="{StaticResource EditConversationToolTip}" Command="{x:Static api:Commands.PreEditCurrentConversation}">
-                        <!--    <sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationEditor" Opened="EditOpened">
-                            <simple:SimpleConversationEditor x:Name="Edit"/>
-                        </sr:RibbonPopup>-->
                     </sr:MenuItem>
-                    <!--<sr:MenuItem Text="Import conversation" ToolTip="{StaticResource ImportConversationToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}">
-                        <sr:RibbonPopup BeforeOpen="RibbonPopup_BeforeOpenConversationCreator" Opened="ImportOpened" >
-                            <simple:SimpleConversationCreator ActionDescriptor="Create" x:Name="Import"  CreateAction="{x:Static api:Commands.StartPowerPointLoad}"/>
-                        </sr:RibbonPopup>
-                    </sr:MenuItem>-->
-                    <!--sr:MenuItem Text="Export conversation" ToolTip="{StaticResource ExportConversationToolTip}" Command="{x:Static api:Commands.NotImplementedYet}" ></sr:MenuItem-->
                     <sr:MenuItem Text="Print conversation with notes" ToolTip="{StaticResource PrintConversationToolTip}" Command="{x:Static api:Commands.PrintConversation}"></sr:MenuItem>
                     <sr:MenuItem Text="Print conversation as handout" ToolTip="{StaticResource PrintHandoutToolTip}" Command="{x:Static api:Commands.PrintConversationHandout}"></sr:MenuItem>
                     <sr:MenuItem Text="Help" ToolTip="{StaticResource HelpToolTip}" >
@@ -134,10 +112,6 @@
                     </sr:RibbonGroup.Variants>
                     <SandRibbonInterop:RibbonPanel>
                         <SandRibbonInterop:Button Text="Notes" Icon="\Resources\scratchpadplaceholderyellownotepad.png" Command="{x:Static api:Commands.ToggleScratchPadVisibility}" ToolTip="{StaticResource NotesToolTip}"/>
-                        <!--Remove these comments to put the privacy buttons on the ribbon.
-                        <SandRibbonInterop:Button Text="Become Private" Icon="\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>
-                        <SandRibbonInterop:Button Text="Become Public" Icon="\Resources\Ribbon-Public.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public"/>
-                    -->
                     </SandRibbonInterop:RibbonPanel>
                 </sr:RibbonGroup>
                 <sr:RibbonGroup ShowDialogLauncher="False" x:Name="Navigate" Header="Navigate">
@@ -146,6 +120,7 @@
                         <sr:GroupVariant Variant="Medium" Priority="4"/>
                         <sr:GroupVariant Variant="Collapsed" Priority="6"/>
                     </sr:RibbonGroup.Variants>
+                    <components:SimpleSlideDisplay />
                 </sr:RibbonGroup>
                 <sr:RibbonGroup ShowDialogLauncher="False" sr:KeyboardAccess.Keys="M" x:Name="Minimap" Header="View">
                     <sr:RibbonGroup.Variants>
@@ -180,6 +155,12 @@
                 </sr:RibbonGroup>
                 <sr:RibbonGroup Header="Bubbles">
                     <sandpit:ThoughtBubbleLauncher />
+                </sr:RibbonGroup>
+                <sr:RibbonGroup Header="Diagnostics">
+                    <components:RubyRepl /> 
+                </sr:RibbonGroup>
+                <sr:RibbonGroup Header="Integration">
+                    <components:SMARTboardControl /> 
                 </sr:RibbonGroup>
             </sr:RibbonTab>
             <sr:RibbonTab sr:KeyboardAccess.Keys="Q" Text="Quizzes" x:Name="quizRoot">
@@ -256,8 +237,7 @@
               VerticalAlignment="Stretch"
               ShowsPreview="True"
               Width="10"
-              Visibility="{Binding ElementName=drawer, Path=Visibility}"
-              />
+              Visibility="{Binding ElementName=drawer, Path=Visibility}" />
                 <components:Drawer Grid.Column="4"  Width="auto" x:Name="drawer" Visibility="Collapsed"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="auto"/>
                 <components:LoadProgress x:Name="progress" Visibility="Collapsed" />
             </Grid>

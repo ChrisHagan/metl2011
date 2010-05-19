@@ -10,7 +10,6 @@
         <ResourceDictionary Source="..\ToolTips\ToolTips.xaml"/>
     </UserControl.Resources>
     <SandRibbonInterop:RibbonPanel Tag="inkModes">
-        <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectToolTip}"  Icon="\Resources\SelectShiny.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
-        <SandRibbonInterop:RadioButton ToolTip="{StaticResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
+        <components:PenColors />
     </SandRibbonInterop:RibbonPanel>
 </UserControl>

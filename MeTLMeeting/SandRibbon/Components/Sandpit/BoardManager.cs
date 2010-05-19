@@ -38,7 +38,7 @@ namespace SandRibbon.Components.Sandpit
         }
         public static ConversationDetails DEFAULT_CONVERSATION
         {
-            get { return ConversationDetailsProviderFactory.Provider.DetailsOf("20400"); }
+            get { return ConversationDetailsProviderFactory.Provider.DetailsOf("34000"); }
         }
         public static int slide(int index) {
             var slides = DEFAULT_CONVERSATION.Slides;
