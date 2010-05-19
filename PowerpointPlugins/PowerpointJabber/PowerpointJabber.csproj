@@ -149,6 +149,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\agsXMPP.dll</HintPath>
     </Reference>
+    <Reference Include="Divan, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Divan.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.1, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="Office, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
       <Private>False</Private>
     </Reference>
@@ -161,9 +169,18 @@
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="SandRibbonInterop, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\SandRibbonInterop.dll</HintPath>
+    </Reference>
+    <Reference Include="SandRibbonObjects, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\SandRibbonObjects.dll</HintPath>
+    </Reference>
     <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="UIAutomationProvider">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -182,6 +199,13 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="FileConversationDetailsProvider.cs" />
+    <Compile Include="loginDialogBox.xaml.cs">
+      <DependentUpon>loginDialogBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MeTLControls.xaml.cs">
+      <DependentUpon>MeTLControls.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -223,6 +247,14 @@
     <EmbeddedResource Include="Ribbon1.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="loginDialogBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MeTLControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SimpleSlideShowWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -55,11 +55,22 @@ namespace PowerpointJabber
         }
         public void Ribbon_Connect(Office.IRibbonControl control)
         {
-            ThisAddIn.instance.wire.Connect("hagand", "examplePassword");
+            ThisAddIn.instance.wire.Connect();
         }
         public void Ribbon_Disconnect(Office.IRibbonControl control)
         {
             ThisAddIn.instance.wire.Disconnect();
+        }
+        public bool getSSPlusEnabled(Office.IRibbonControl control)
+        {
+            return ThisAddIn.instance.customPresenterIsEnabled;
+        }
+        public void DisplayPresentation(Office.IRibbonControl control, bool pressed)
+        {
+            if (ThisAddIn.instance.customPresenterIsEnabled)
+                ThisAddIn.instance.customPresenterIsEnabled = false;
+            else
+                ThisAddIn.instance.customPresenterIsEnabled = true;
         }
         #endregion
 

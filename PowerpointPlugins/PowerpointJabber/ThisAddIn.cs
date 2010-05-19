@@ -16,6 +16,7 @@ namespace PowerpointJabber
         public Wire wire;
         public static ThisAddIn instance;
         public SimpleSlideShowWindow SSSW;
+        public bool customPresenterIsEnabled = true;
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
@@ -23,39 +24,57 @@ namespace PowerpointJabber
             instance = this;
             this.Application.SlideShowBegin += onSlideShowBegin;
             this.Application.SlideShowEnd += onSlideShowEnd;
+            this.Application.SlideSelectionChanged += onSlideChanged;
+            this.Application.SlideShowOnNext += onSlideShowOnNext;
+            this.Application.SlideShowOnPrevious += onSlideShowOnPrevious;
+            this.Application.SlideShowNextBuild += onSlideShowNextBuild;
+            this.Application.SlideShowNextClick += onSlideShowNextClick;
+            this.Application.SlideShowNextSlide += onSlideShowNextSlide;
+        }
+        private void onSlideChanged(object sender)
+        {
+            if (SSSW != null)
+                SSSW.OnSlideChanged();
+        }
+        private void onSlideShowOnNext(object sender)
+        {
+            if (SSSW != null)
+                SSSW.OnSlideChanged();
+        }
+        private void onSlideShowOnPrevious(object sender)
+        {
+            if (SSSW != null)
+                SSSW.OnSlideChanged();
+        }
+        private void onSlideShowNextBuild(object sender)
+        {
+            if (SSSW != null)
+                SSSW.OnSlideChanged();
+        }
+        private void onSlideShowNextClick(object sender, Effect e)
+        {
+            if (SSSW != null)
+                SSSW.OnSlideChanged();
+        }
+        private void onSlideShowNextSlide(object sender)
+        {
+            if (SSSW != null)
+                SSSW.OnSlideChanged();
         }
         private void onSlideShowBegin(object sender)
         {
-            SSSW = new SimpleSlideShowWindow();
-            SSSW.Show();
-            SSSW.isExtendedDesktopMode = true;
-     
-            //FireUpMultipleSlideShows(100, 100, 400, 250);
-            //FireUpMultipleSlideShows(500, 400, 400, 250);
-        }
-        private void FireUpMultipleSlideShows(int left, int top, int width, int height)
-        {
-            var newWindow = ThisAddIn.instance.Application.ActivePresentation;
-            //var saSlides = new int[newWindow.Slides.Count];
-            //for (int i = 0; i < newWindow.Slides.Count; i++)
-            //    saSlides[i] = newWindow.Slides[i + 1].SlideID;
-            //newWindow.SlideShowSettings.NamedSlideShows.Add(name, saSlides);
-            //ewWindow.SlideShowSettings.SlideShowName = name;
-            //var oldSlideShowWindow = newWindow.SlideShowWindow;
-            PowerPoint.SlideShowSettings newSettings = newWindow.SlideShowSettings;
-            newSettings.StartingSlide = 1;
-            newSettings.EndingSlide = newWindow.Slides.Count;
-            var newSlideShowWindow = newSettings.Run();
-            newSlideShowWindow.Left = left;
-            newSlideShowWindow.Top = top;
-            newSlideShowWindow.Height = height;
-            newSlideShowWindow.Width = width;
-            newSlideShowWindow.Activate();
+            if (customPresenterIsEnabled)
+            {
+                SSSW = new SimpleSlideShowWindow();
+                SSSW.Show();
+                SSSW.isExtendedDesktopMode = true;
+            }
         }
         private void onSlideShowEnd(object sender)
         {
             if (SSSW != null)
             {
+                SSSW.saveAllStrokesToPresentation();
                 SSSW.Close();
                 SSSW = null;
             }
