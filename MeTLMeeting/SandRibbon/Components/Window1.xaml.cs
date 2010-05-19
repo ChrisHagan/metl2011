@@ -26,10 +26,11 @@ using SandRibbonObjects;
 using System.Windows.Automation.Peers;
 using System.Diagnostics;
 using System.Windows.Shapes;
+using SandRibbon.Components.Sandpit;
 
 namespace SandRibbon
 {
-    public partial class Window1
+    public partial class Window1 : PedagogicallyVariable
     {
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
@@ -154,6 +155,7 @@ namespace SandRibbon
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
+            Pedagogicometer.RegisterVariant(this);
             if (SmartBoardMeTLAlreadyLoaded)
                 checkIfSmartboard();
         }

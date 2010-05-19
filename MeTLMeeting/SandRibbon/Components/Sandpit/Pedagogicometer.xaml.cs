@@ -14,14 +14,18 @@ using System.Windows.Shapes;
 
 namespace SandRibbon.Components.Sandpit
 {
-    /// <summary>
-    /// Interaction logic for Pedagogicometer.xaml
-    /// </summary>
+    public class PedagogyLevel { }
+    public interface PedagogicallyVariable {
+        bool CanSetLevel(PedagogyLevel level);
+        bool SetLevel(PedagogyLevel level);
+    }
     public partial class Pedagogicometer : UserControl
     {
         public Pedagogicometer()
         {
             InitializeComponent();
+        }
+        public static void RegisterVariant(PedagogicallyVariable variant) { 
         }
     }
 }

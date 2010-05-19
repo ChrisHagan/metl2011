@@ -2,11 +2,16 @@
 using System.Reflection;
 using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 
 namespace SandRibbon
 {
     public class Commands
     {
+        static Commands()
+        {
+            var justSettingItUpOk = CommandParameterProvider.provider();
+        }
         #region Sandpit
         public static CompositeCommand SendWakeUp = new CompositeCommand();
         public static CompositeCommand SendSleep = new CompositeCommand();
