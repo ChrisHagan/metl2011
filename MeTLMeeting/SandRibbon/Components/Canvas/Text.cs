@@ -562,6 +562,8 @@ namespace SandRibbon.Components.Canvas
             if(targettedBox.author == me && alreadyHaveThisTextBox(targettedBox.box)) return;//I never want my live text to collide with me.
             if (targettedBox.slide == currentSlideId && (targettedBox.privacy == "public" || targettedBox.author == me))
             {
+
+                Console.WriteLine("Received textbox");
                 var box = targettedBox.box;
                 removeDoomedTextBoxes(targettedBox);
                 Children.Add(applyDefaultAttributes(box));

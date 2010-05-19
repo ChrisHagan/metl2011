@@ -41,6 +41,7 @@ namespace SandRibbon.Components
         }
         public void ReceiveNewBubble(TargettedBubbleContext context) {
             if(context.target != handwriting.target) return;
+            Console.WriteLine("Received Bubble");
             var bubble = getBubble(context);
             Dispatcher.BeginInvoke((Action) delegate
                                     {
@@ -59,14 +60,14 @@ namespace SandRibbon.Components
         }
         private ThoughtBubble getBubble(TargettedBubbleContext bubble)
         {
-            if (details == null && me != "projector") return null;
+            if (details == null) return null;
             var thoughtBubble = new ThoughtBubble();
             Dispatcher.Invoke((Action) delegate
                {
                         var ids = bubble.context.Select(c => c.id);
                         var relevantStrokes = getStrokesRelevantTo(ids);
                         var relevantChildren = getChildrenRelevantTo(ids);
-                        if (relevantStrokes.Count > 0 || relevantStrokes.Count > 0)
+                        if (relevantChildren.Count > 0 || relevantStrokes.Count > 0)
                         {
                             thoughtBubble = new ThoughtBubble
                                                     {
@@ -93,8 +94,8 @@ namespace SandRibbon.Components
         {
             var elements = images.Children.ToList();
             elements.AddRange(text.Children.ToList());
-            return elements.ToList().Select(c => ((FrameworkElement)c))
-                .Where(c => c.Tag != null && ids.Contains(((ImageTag)c.Tag).id.ToString()))
+            return elements.ToList().Select(c => 
+                ((FrameworkElement)c)).Where(c => c.Tag != null && ids.Contains(c.Tag.ToString()))
                 .ToList();
         }
         private void JoinConversation(string jid)

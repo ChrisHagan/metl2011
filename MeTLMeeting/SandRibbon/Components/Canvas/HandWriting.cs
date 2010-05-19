@@ -176,6 +176,7 @@ namespace SandRibbon.Components.Canvas
             var doStrokes = (Action)delegate
             {
                 var count = receivedStrokes.Count();
+                Console.WriteLine("Received Stroke(s)");
                 var start = SandRibbonObjects.DateTimeFactory.Now();
                 var newStrokes = new StrokeCollection(
                     receivedStrokes.Where(ts=> ts.target == strokeTarget)

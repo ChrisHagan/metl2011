@@ -99,16 +99,19 @@ namespace SandRibbon.Components.Sandpit
             var listX = new List<Double>();
             var listY = new List<Double>();
             var strokes = new StrokeCollection(strokeContext);
-            listX.Add(strokes.GetBounds().X); 
-            listX.Add(strokes.GetBounds().X + strokes.GetBounds().Width); 
-            listY.Add(strokes.GetBounds().Y); 
-            listY.Add(strokes.GetBounds().Y + strokes.GetBounds().Height); 
+            if (strokes.Count > 0)
+            {
+                listX.Add(strokes.GetBounds().X);
+                listX.Add(strokes.GetBounds().X + strokes.GetBounds().Width);
+                listY.Add(strokes.GetBounds().Y);
+                listY.Add(strokes.GetBounds().Y + strokes.GetBounds().Height);
+            }
             foreach (var child in childContext)
             {
-                listX.Add(System.Windows.Controls.Canvas.GetLeft(child));
-                listX.Add(System.Windows.Controls.Canvas.GetLeft(child) + child.Width);
-                listY.Add(System.Windows.Controls.Canvas.GetTop(child));
-                listY.Add(System.Windows.Controls.Canvas.GetTop(child) + child.Height);
+                listX.Add(InkCanvas.GetLeft(child));
+                listX.Add(InkCanvas.GetLeft(child) + child.ActualWidth);
+                listY.Add(InkCanvas.GetTop(child));
+                listY.Add(InkCanvas.GetTop(child) + child.ActualHeight);
             }
             if (listX.Count > 0)
                 return new Rect

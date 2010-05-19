@@ -161,6 +161,10 @@ namespace SandRibbon.Utils.Connection
         {
             videos[video.id]=video;
         }
+        public override void actOnBubbleReceived(TargettedBubbleContext bubble)
+        {
+            bubbleList.Add(bubble);
+        }
         public static int ParentRoom(string room)
         {
             var regex = new Regex(@"(\d+).*");

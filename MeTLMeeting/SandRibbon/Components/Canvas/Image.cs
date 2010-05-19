@@ -178,6 +178,7 @@ namespace SandRibbon.Components.Canvas
         }
         public void AddVideo(MediaElement element) 
         {
+            Console.WriteLine("Received Media Element");
             Children.Add(element);
         }
         private void ensureAllImagesHaveCorrectPrivacy()
