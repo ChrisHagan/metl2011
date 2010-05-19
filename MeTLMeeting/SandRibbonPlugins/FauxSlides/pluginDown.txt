@@ -1,1 +1,0 @@
-﻿This is a simulation of the slides window, interacting with the server realistically but not really looking the slide numbers of the desired conversation up from the structure server.  It is not intended to be run in production.

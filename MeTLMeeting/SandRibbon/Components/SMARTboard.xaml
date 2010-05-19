@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="SandRibbon.Components.SMARTboardControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    Height="100"
+    Width="350"
+    Loaded="Main_Loaded">
+    <UserControl.CommandBindings>
+        <CommandBinding Command="{x:Static components:SMARTboardControl.ConnectToSmartboard}" Executed="ConnectToSmartboardExecuted" CanExecute="canConnectToSmartboard" />
+        <CommandBinding Command="{x:Static components:SMARTboardControl.DisconnectFromSmartboard}" Executed="DisconnectFromSmartboardExecuted" CanExecute="canDisconnectFromSmartboard" />
+    </UserControl.CommandBindings>
+    <StackPanel>
+        <StackPanel Orientation="Horizontal" MaxHeight="25">
+            <Button Command="{x:Static components:SMARTboardControl.ConnectToSmartboard}">Connect</Button>
+            <Button Command="{x:Static components:SMARTboardControl.DisconnectFromSmartboard}">Disconnect</Button>
+        </StackPanel>
+        <ListView x:Name="SMARTboardDiagnosticOutput" MaxHeight="40" MaxWidth="400" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Disabled" FontSize="10"/>
+    </StackPanel>
+</UserControl>

@@ -14,13 +14,15 @@
             <SandRibbonInterop:RadioButton x:Name="Draw" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
             <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectToolTip}"  Icon="\Resources\SelectShiny.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
             <SandRibbonInterop:RadioButton ToolTip="{StaticResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
+            <components:SimplePenTools />
         </SandRibbonInterop:RibbonPanel>
         <SandRibbonInterop:RibbonPanel x:Name="TextOptions" >
             <SandRibbonInterop:RadioButton ToolTip="{StaticResource TextBoxToolTip}" Icon="\Resources\PlaceTextBox.png" Text="Cursor" Command="api:Commands.SetTextCanvasMode" CommandParameter="None"  IsChecked="True"/>
             <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectTextBoxToolTip}" Icon="\Resources\SelectShiny.png" Text="Select" Command="api:Commands.SetTextCanvasMode" CommandParameter="Select" />
+            <components:SimpleTextTools />
         </SandRibbonInterop:RibbonPanel>
         <SandRibbonInterop:RibbonPanel x:Name="ImageOptions">
-            <SandRibbonInterop:Button ToolTip="{StaticResource AddImageToolTip}"  Icon="\Resources\AddImage.png" Text="Add Image" Command="api:Commands.AddImage"/>
+            <SandRibbonInterop:Button ToolTip="{StaticResource AddImageToolTip}"  Icon="\Resources\AddImage.png" Text="Add Media" Command="api:Commands.AddImage"/>
             <SandRibbonInterop:Button ToolTip="{StaticResource AddLiveWindowToolTip}" Text="Live View" Icon="\Resources\Ribbon-LivePreviewDraft02.png" Command="{x:Static api:Commands.InitiateDig}" />
         </SandRibbonInterop:RibbonPanel>
     </StackPanel>

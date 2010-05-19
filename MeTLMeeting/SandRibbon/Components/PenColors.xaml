@@ -1,0 +1,349 @@
+﻿<UserControl x:Class="SandRibbon.Components.PenColors"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:core="clr-namespace:System;assembly=mscorlib">
+    <UserControl.Resources>
+        <ToolTip x:Key="ArtistPaletteToolTip" >
+            <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+                <Grid Margin="2">
+                    <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="\Resources\Ribbon-Palette.png"/>
+                    <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                           Text="Artist's palette"/>
+                    <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Open the custom colour palette.  You can alter your colour by changing the Red, Green and Blue values, by changing the Hue, Saturation or Value values or by selecting a colour directly from the swatch.  Also, you can change the thickness of the pen, or change the pen into a highlighter."/>
+                </Grid>
+            </Border>
+        </ToolTip>
+        <ToolTip x:Key="ClosePopupToolTip" >
+            <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+                <Grid Margin="2">
+                    <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" Foreground="Black" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                           Text="Close Palette"/>
+                    <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Foreground="Black"
+                           Text="Close the custom colour palette."/>
+                </Grid>
+            </Border>
+        </ToolTip>
+        <ToolTip x:Key="StickyPopupToolTip" >
+            <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+                <Grid Margin="2">
+                    <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="PenOut.png"/>
+                    <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                           Text="Sticky Popup"/>
+                    <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Change the palette so that it stays open.  When the drawing pin is pushed in, the palette will remain open.  When the drawing pin is pulled out, the palette will close whenever you click your mouse or stylus outside the palette."/>
+                </Grid>
+            </Border>
+        </ToolTip>
+        <Style x:Key="ThicknessButton" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" Background="Transparent" CornerRadius="0" Padding="0" BorderThickness="0">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource MouseOverGradient}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource PressedGradient}"/>
+                            </Trigger>
+                            <!--<Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource CheckedBorderBrush}"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>-->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.2" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <components:AttributesToStringConverter x:Key="AttributesToStringConverter"/>
+        <components:IntTextConverter x:Key="IntTextConverter"/>
+        <components:HueTextConverter x:Key="HueSliderTextConverter"/>
+        <components:DoubleTextConverter x:Key="DoubleSliderTextConverter"/>
+        <components:RoundingConverter x:Key="RoundingConverter"/>
+        <components:HueSliderConverter x:Key="HueSliderConverter"/>
+        <components:DoubleSliderConverter x:Key="DoubleSliderConverter"/>
+        <components:ReverseBoolToVisibilityConverter x:Key="reverseBoolToVisibilityConverter"/>
+        <components:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+        <components:HexToColourConverter x:Key="HexToColourConverter"/>
+
+        <core:Int32 x:Key="ToolTipDelay">400</core:Int32>
+        <LinearGradientBrush x:Key="BackgroundBlueGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#FFF5FAFF" Offset="0"/>
+            <GradientStop Color="#FFD0DEEF" Offset="0.39"/>
+            <GradientStop Color="#FFCADAED" Offset="0.40"/>
+            <GradientStop Color="#FFE7F2FF" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush Color="LightGray" x:Key="MouseOverBorderBrush"/>
+        <SolidColorBrush Color="Black" x:Key="MouseOverContentBrush"/>
+        <LinearGradientBrush x:Key="MouseOverGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#FFFFFDED" Offset="0"/>
+            <GradientStop Color="#FFFFEBAC" Offset="0.39"/>
+            <GradientStop Color="#FFFFD45F" Offset="0.40"/>
+            <GradientStop Color="#FFFFD45F" Offset="1"/>
+        </LinearGradientBrush>
+
+        <SolidColorBrush Color="DarkGray" x:Key="CheckedBorderBrush"/>
+        <SolidColorBrush Color="Black" x:Key="CheckedContentBrush"/>
+        <LinearGradientBrush x:Key="CheckedGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#FFFED7A9" Offset="0"/>
+            <GradientStop Color="#FFFBB565" Offset="0.39"/>
+            <GradientStop Color="#FFFA9831" Offset="0.40"/>
+            <GradientStop Color="#FFFDECA6" Offset="1"/>
+        </LinearGradientBrush>
+        <ImageBrush ImageSource="\Resources\Ribbon-Palette.png" x:Key="SpectrumBrush"/>
+        <SolidColorBrush Color="DarkGray" x:Key="PressedBorderBrush"/>
+        <SolidColorBrush Color="Black" x:Key="PressedContentBrush"/>
+        <LinearGradientBrush x:Key="PressedGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#FFFED7A9" Offset="0"/>
+            <GradientStop Color="#FFFBB565" Offset="0.45"/>
+            <GradientStop Color="#FFFA9831" Offset="0.46"/>
+            <GradientStop Color="#FFFDECA6" Offset="1"/>
+        </LinearGradientBrush>
+    </UserControl.Resources>
+    <StackPanel x:Name="LayoutRoot" Orientation="Horizontal">
+        <ItemsControl x:Name="previousColors" IsEnabled="False" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Tag="{Binding Path=ColorName}" IsEnabled="{Binding ElementName=previousColors, Path=IsEnabled}" BorderBrush="Transparent" BorderThickness="0" Click="ChangeColor" Margin="0">
+                        <Button.ToolTip>
+                            <ToolTip>
+                                <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+                                    <Grid Margin="2">
+                                        <Rectangle Name="BackgroundColour" RadiusX="10" RadiusY="10" Fill="{Binding Path=XAMLColorName}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" />
+                                        <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" Name="buttonHighlighterGlyph" Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}" Source="\Resources\Highlighter.png"/>
+                                        <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" Name="buttonPenGlyph" Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}" Source="\Resources\Pen.png"/>
+                                        <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                           Text="{Binding Path=XAMLColorName}"/>
+                                        <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="{Binding Path=., Converter={StaticResource AttributesToStringConverter}}"/>
+                                    </Grid>
+                                </Border>
+                            </ToolTip>
+                        </Button.ToolTip>
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Border Padding="2" BorderBrush="Transparent" Name="buttonBorder" BorderThickness="1" Height="65" Width="50">
+                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
+                                        <Rectangle Name="BackgroundColour" RadiusX="10" RadiusY="10" Fill="{Binding Path=XAMLColorName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
+                                        <Label Name="buttonSizeShadow" Visibility="Collapsed" Content="{Binding Path=PenSize}" FontSize="10" Margin="1,0,0,-1" Foreground="Black" VerticalAlignment="Bottom"/>
+                                        <Label Name="buttonSize" Visibility="Collapsed" Content="{Binding Path=PenSize}" FontSize="10" Foreground="White" VerticalAlignment="Bottom"/>
+                                        <Image Name="buttonHighlighterGlyph" Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}" Source="\Resources\Highlighter.png" Height="30" Width="30" VerticalAlignment="Top"/>
+                                        <Image Name="buttonPenGlyph" Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}" Source="\Resources\Pen.png" Height="30" Width="30" VerticalAlignment="Top"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="true" >
+                                        <Setter Property="BorderBrush" Value="{StaticResource MouseOverGradient}" TargetName="buttonBorder"/>
+                                        <Setter Property="Background" Value="{StaticResource MouseOverGradient}" TargetName="buttonBorder"/>
+                                        <Setter Property="Visibility" Value="Visible" TargetName="buttonSize"/>
+                                        <Setter Property="Visibility" Value="Visible" TargetName="buttonSizeShadow"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="false" >
+                                        <Setter Property="Visibility" Value="Collapsed" TargetName="buttonSize"/>
+                                        <Setter Property="Visibility" Value="Collapsed" TargetName="buttonSizeShadow"/>
+                                        <Setter Property="Visibility" TargetName="buttonHighlighterGlyph" Value="Collapsed"/>
+                                        <Setter Property="Visibility" TargetName="buttonPenGlyph" Value="Collapsed"/>
+                                    </Trigger>
+
+                                    <Trigger Property="Button.IsEnabled" Value="False">
+                                        <Setter TargetName="BackgroundColour" Property="Opacity" Value="0.2"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Button x:Name="PopupOpenButton" ToolTip="{StaticResource ArtistPaletteToolTip}" IsEnabled="False" Click="OpenPopup" Content="Custom">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
+                    <Setter Property="ToolTipService.ShowDuration" Value="30000"/>
+                    <Setter Property="Control.Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border Name="border" Background="Transparent" Margin="1" BorderBrush="Transparent" Padding="2" CornerRadius="2" BorderThickness="1">
+                                    <Border Name="buttonbackground" CornerRadius="10" Height="59" Width="44" Background="{StaticResource SpectrumBrush}" BorderBrush="Transparent" Padding="0">
+                                        <Grid Name="bg" Background="Transparent">
+                                            <TextBlock Visibility="Collapsed" Name="textShadow" Margin="1,0,0,-1" Text="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                                            <TextBlock Visibility="Collapsed" Name="text" Foreground="White" Text="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                                        </Grid>
+                                    </Border>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="Button.IsPressed" Value="True"/>
+                                            <Condition Property="Button.IsMouseOver" Value="False"/>
+                                        </MultiTrigger.Conditions>
+                                        <Setter TargetName="border" Property="Background" Value="{StaticResource PressedGradient}" />
+                                        <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PressedBorderBrush}"/>
+                                        <Setter TargetName="text" Property="Visibility" Value="Visible"/>
+                                        <Setter TargetName="textShadow" Property="Visibility" Value="Visible"/>
+                                    </MultiTrigger>
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="Button.IsPressed" Value="False"/>
+                                            <Condition Property="Button.IsMouseOver" Value="True"/>
+                                        </MultiTrigger.Conditions>
+                                        <Setter TargetName="border" Property="Background" Value="{StaticResource MouseOverGradient}" />
+                                        <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource MouseOverBorderBrush}"/>
+                                        <Setter TargetName="text" Property="Visibility" Value="Visible"/>
+                                        <Setter TargetName="textShadow" Property="Visibility" Value="Visible"/>
+                                    </MultiTrigger>
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="Button.IsPressed" Value="True"/>
+                                            <Condition Property="Button.IsMouseOver" Value="True"/>
+                                        </MultiTrigger.Conditions>
+                                        <Setter TargetName="border" Property="Background" Value="{StaticResource PressedGradient}" />
+                                        <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PressedBorderBrush}"/>
+                                        <Setter TargetName="text" Property="Visibility" Value="Visible"/>
+                                        <Setter TargetName="textShadow" Property="Visibility" Value="Visible"/>
+                                    </MultiTrigger>
+                                    <Trigger Property="Button.IsEnabled" Value="false">
+                                        <Setter TargetName="bg" Property="Opacity" Value="0.2" />
+                                        <Setter TargetName="buttonbackground" Property="Opacity" Value="0.2" />
+                                        <Setter TargetName="border" Property="Opacity" Value="0.2"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+        <Popup x:Name="RichInkOptionsPopup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+            <Border BorderThickness="1" BorderBrush="LightGray" CornerRadius="2" Padding="2" Background="{StaticResource BackgroundBlueGradient}">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <UniformGrid Rows="1">
+                            <Button Click="SwitchImage" Content="Spectrum" Tag="Spectrum"/>
+                            <Button Click="SwitchImage" Content="ColorBars" Tag="ColourBars"/>
+                            <Button Click="SwitchImage" Content="Custom Image" Tag="Custom"/>
+                        </UniformGrid>
+                        <Grid>
+                            <Image Visibility="Visible" x:Name="ColourPicker" MaxHeight="352" MaxWidth="352" Source="\Resources\Spectrum.png" PreviewMouseDown="ColourPickerMouseDown" PreviewMouseMove="ColourPickerMouseMove" PreviewMouseUp="ColourPickerMouseUp"/>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="25">
+                            <Button x:Name="StickyButton" Click="StickyPopup" ToolTip="{StaticResource StickyPopupToolTip}">
+                                <Grid>
+                                    <Image x:Name="PinOut" Source="PenOut.png" Visibility="Visible"/>
+                                    <Image x:Name="PinIn" Source="PenIn.png" Visibility="Collapsed"/>
+                                </Grid>
+                            </Button>
+                            <Button x:Name="CloseButton" Click="ClosePopup" Content="X" Width="25" Foreground="White" Background="Red" ToolTip="{StaticResource ClosePopupToolTip}"/>
+                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="65"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="65"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" Content="Red"/>
+                            <Label Grid.Row="1" Grid.Column="0" Content="Green"/>
+                            <Label Grid.Row="2" Grid.Column="0" Content="Blue"/>
+                            <Label Grid.Row="3" Grid.Column="0" Content="Alpha"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="RedTextBox" Text="{Binding Path=CurrentR, Mode=TwoWay, Converter={StaticResource IntTextConverter}, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" x:Name="GreenTextBox" Text="{Binding Path=CurrentG, Mode=TwoWay, Converter={StaticResource IntTextConverter}}"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="BlueTextBox" Text="{Binding Path=CurrentB, Mode=TwoWay, Converter={StaticResource IntTextConverter}}"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" x:Name="AlphaTextBox" Text="{Binding Path=CurrentA, Mode=TwoWay, Converter={StaticResource IntTextConverter}}"/>
+                            <Slider Grid.Row="0" Grid.Column="2" x:Name="RedSlider" Value="{Binding Path=CurrentR, Mode=TwoWay, Converter={StaticResource RoundingConverter}}" TickFrequency="25" TickPlacement="BottomRight" Maximum="255" Minimum="0" Interval="1"/>
+                            <Slider Grid.Row="1" Grid.Column="2" x:Name="GreenSlider" Value="{Binding Path=CurrentG, Mode=TwoWay, Converter={StaticResource RoundingConverter}}" TickFrequency="25" TickPlacement="BottomRight" Maximum="255" Minimum="0" Interval="1"/>
+                            <Slider Grid.Row="2" Grid.Column="2" x:Name="BlueSlider" Value="{Binding Path=CurrentB, Mode=TwoWay, Converter={StaticResource RoundingConverter}}" TickFrequency="25" TickPlacement="BottomRight" Maximum="255" Minimum="0" Interval="1"/>
+                            <Slider Grid.Row="3" Grid.Column="2" x:Name="AlphaSlider" Value="{Binding Path=CurrentA, Mode=TwoWay, Converter={StaticResource RoundingConverter}}" TickFrequency="25" TickPlacement="BottomRight" Maximum="255" Minimum="0" Interval="1"/>
+                            <Label Grid.Row="4" Grid.Column="0" Content="Hue"/>
+                            <Label Grid.Row="5" Grid.Column="0" Content="Saturation"/>
+                            <Label Grid.Row="6" Grid.Column="0" Content="Value"/>
+                            <Label Grid.Row="7" Grid.Column="0" Content="Hex"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" x:Name="HueTextBox" Text="{Binding Path=CurrentH, Mode=TwoWay, Converter={StaticResource HueSliderTextConverter}}"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" x:Name="SaturationTextBox" Text="{Binding Path=CurrentS, Mode=TwoWay, Converter={StaticResource DoubleSliderTextConverter}}"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" x:Name="ValueTextBox" Text="{Binding Path=CurrentV, Mode=TwoWay, Converter={StaticResource DoubleSliderTextConverter}}"/>
+                            <Slider Grid.Row="4" Grid.Column="2" x:Name="HueSlider" Value="{Binding Path=CurrentH, Mode=TwoWay, Converter={StaticResource HueSliderConverter}}" TickFrequency="36" TickPlacement="BottomRight" Maximum="360" Minimum="0" Interval="1" />
+                            <Slider Grid.Row="5" Grid.Column="2" x:Name="SaturationSlider" Value="{Binding Path=CurrentS, Mode=TwoWay, Converter={StaticResource DoubleSliderConverter}}" TickFrequency=".1" TickPlacement="BottomRight" Maximum="1" Minimum="0" Interval="1"/>
+                            <Slider Grid.Row="6" Grid.Column="2" x:Name="ValueSlider" TickFrequency=".1" Value="{Binding Path=CurrentV, Mode=TwoWay, Converter={StaticResource DoubleSliderConverter}}" TickPlacement="BottomRight" Maximum="1" Minimum="0" Interval="1"/>
+                            <Label Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ColorHexValue" Content="{Binding Path=CurrentHex}"/>
+                            <Label Grid.Row="8" Grid.Column="0" Content="Thickness"/>
+                            <TextBox Grid.Row="8" Grid.Column="1" x:Name="PenSizeTextBox" Text="{Binding Path=CurrentPenSize, Mode=TwoWay, Converter={StaticResource DoubleSliderTextConverter}}"/>
+                            <Slider Grid.Row="8" Grid.Column="2" x:Name="PenSizeSlider" Minimum="0.01" Maximum="50" Value="{Binding Path=CurrentPenSize, Mode=TwoWay}"/>
+                            <UniformGrid Rows="1" Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="3">
+                                <Button Tag="0.5" Click="SetPenSizeByButton" Style="{StaticResource ThicknessButton}">
+                                    <Rectangle StrokeThickness="1" Stroke="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Fill="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Height="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Button}}, Path=Tag}" 
+                                        Width="Auto" HorizontalAlignment="Stretch"/>
+                                </Button>
+                                <Button Tag="1" Click="SetPenSizeByButton" Style="{StaticResource ThicknessButton}">
+                                    <Rectangle StrokeThickness="1" Stroke="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Fill="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Height="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Button}}, Path=Tag}" 
+                                        Width="Auto" HorizontalAlignment="Stretch"/>
+                                </Button>
+                                <Button Tag="3" Click="SetPenSizeByButton" Style="{StaticResource ThicknessButton}">
+                                    <Rectangle StrokeThickness="1" Stroke="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Fill="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Height="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Button}}, Path=Tag}" 
+                                        Width="Auto" HorizontalAlignment="Stretch"/>
+                                </Button>
+                                <Button Tag="10" Click="SetPenSizeByButton" Style="{StaticResource ThicknessButton}">
+                                    <Rectangle StrokeThickness="1" Stroke="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Fill="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Height="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Button}}, Path=Tag}" 
+                                        Width="Auto" HorizontalAlignment="Stretch"/>
+                                </Button>
+                                <Button Tag="25" Click="SetPenSizeByButton" Style="{StaticResource ThicknessButton}">
+                                    <Rectangle StrokeThickness="1" Stroke="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Fill="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Height="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Button}}, Path=Tag}" 
+                                        Width="Auto" HorizontalAlignment="Stretch"/>
+                                </Button>
+                                <Button Tag="50" Click="SetPenSizeByButton" Style="{StaticResource ThicknessButton}">
+                                    <Rectangle StrokeThickness="1" Stroke="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Fill="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" 
+                                        Height="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Button}}, Path=Tag}" 
+                                        Width="Auto" HorizontalAlignment="Stretch"/>
+                                </Button>
+                            </UniformGrid>
+                        </Grid>
+                        <ToggleButton x:Name="HighlighterButton" IsChecked="{Binding Path=CurrentlyIsHighlighter}" ClickMode="Press" Click="SetHighlighter" Content="Highlighter"/>
+                        <Grid Height="50">
+                            <Rectangle VerticalAlignment="Center" Height="{Binding Path=CurrentPenSize}" x:Name="ColourPreview" Fill="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" Width="Auto" HorizontalAlignment="Stretch"/>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Popup>
+    </StackPanel>
+</UserControl>

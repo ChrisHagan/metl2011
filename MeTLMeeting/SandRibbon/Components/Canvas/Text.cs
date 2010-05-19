@@ -414,7 +414,6 @@ namespace SandRibbon.Components.Canvas
             updateTools();
             textBoxSelected = true;
         }
-
         private void updateTools()
         {
             bool strikethrough = false;
@@ -440,7 +439,6 @@ namespace SandRibbon.Components.Canvas
         public static Timer typingTimer = null;
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
-
             if (typingTimer == null)
             {
                 typingTimer = new Timer(delegate

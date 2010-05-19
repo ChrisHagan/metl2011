@@ -84,9 +84,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\HTMLparserLibDotNet20.dll</HintPath>
     </Reference>
+    <Reference Include="Interop.SBSDKComWrapperLib, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Interop.SBSDKComWrapperLib.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.1, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="IronRuby, Version=1.0.0.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\IronRuby.dll</HintPath>
+    </Reference>
+    <Reference Include="IronRuby.Libraries, Version=1.0.0.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\IronRuby.Libraries.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Composite, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -96,9 +108,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Microsoft.Practices.Composite.Presentation.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.0.0.5001, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.ExtensionAttribute, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Microsoft.Scripting.ExtensionAttribute.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Org.TechA.Wpf.UserControls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Org.TechA.Wpf.UserControls.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -169,6 +193,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\PenColors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Components\powerpointImportDialogue.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -192,6 +220,10 @@
     <Page Include="Components\ProviderMonitor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\RubyRepl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Sandpit\BoardManagerLauncher.xaml">
       <SubType>Designer</SubType>
@@ -272,6 +304,10 @@
     <Page Include="Components\SimpleImpl\SimpleToolBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SMARTboard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SyncDisplay.xaml">
       <SubType>Designer</SubType>
@@ -389,6 +425,7 @@
     <Compile Include="Components\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\PenColors.xaml.cs" />
     <Compile Include="Components\powerpointImportDialogue.xaml.cs">
       <DependentUpon>powerpointImportDialogue.xaml</DependentUpon>
     </Compile>
@@ -407,6 +444,7 @@
     <Compile Include="Components\ProviderMonitor.xaml.cs">
       <DependentUpon>ProviderMonitor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\RubyRepl.xaml.cs" />
     <Compile Include="Components\Sandpit\BoardManager.cs" />
     <Compile Include="Components\Sandpit\BoardManagerLauncher.xaml.cs">
       <DependentUpon>BoardManagerLauncher.xaml</DependentUpon>
@@ -466,6 +504,7 @@
     <Compile Include="Components\SimpleImpl\SimpleToolBox.xaml.cs">
       <DependentUpon>SimpleToolBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\SMARTboard.xaml.cs" />
     <Compile Include="Components\SyncDisplay.xaml.cs">
       <DependentUpon>SyncDisplay.xaml</DependentUpon>
     </Compile>
@@ -558,7 +597,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Utils\PluginManager.cs" />
     <Compile Include="Utils\UndoHistory.cs" />
     <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -665,68 +703,25 @@
     <Resource Include="Resources\Ribbon-Quiz.png" />
     <Resource Include="Resources\ArrowDown.png" />
     <Resource Include="Resources\ArrowUp.png" />
-    <Resource Include="AGReturned.xml" />
-    <Content Include="plugins\ArtistPalette\ArtistPalette.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\ArtistPalette\pluginDown.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\PluginInterfaceManager\pluginDown.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\PluginInterfaceManager\PluginInterfaceManager.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\RubyRepl\lib\IronRuby.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\RubyRepl\lib\IronRuby.Libraries.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\RubyRepl\lib\Microsoft.Scripting.Core.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\RubyRepl\lib\Microsoft.Scripting.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\RubyRepl\lib\Microsoft.Scripting.ExtensionAttribute.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\RubyRepl\lib\Org.TechA.Wpf.UserControls.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\RubyRepl\lib\Org.TechA.Wpf.UserControls.dll.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\RubyRepl\lib\Org.TechA.Wpf.UserControls.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\RubyRepl\pluginDown.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\RubyRepl\RubyRepl.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Resource Include="Resources\Ribbon-Private.png" />
     <Resource Include="Resources\Ribbon-Public.png" />
     <Resource Include="Resources\MonashLogo.jpg" />
     <Resource Include="Resources\CrudeMeTLMockup.png" />
     <Resource Include="Resources\S15.png" />
     <Resource Include="Resources\avatar.png" />
-    <Content Include="plugins\SMARTboard\pluginDown.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\SMARTboard\lib\Interop.SBSDKComWrapperLib.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="plugins\SMARTboard\SMARTboard.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Resource Include="Resources\Ribbon-SlideStack.png" />
     <Resource Include="Resources\FitToPage.png" />
     <Resource Include="Resources\FitToView.png" />
     <Content Include="Resources\AddVideo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Highlighter.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Pen.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Ribbon-Palette.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Slide_Not_Loaded.png">
@@ -735,6 +730,9 @@
     <Resource Include="Resources\strikethrough.png" />
     <Resource Include="Resources\subscript.png" />
     <Resource Include="Resources\superscript.png" />
+    <Content Include="Resources\Spectrum.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\SyncGreen.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -794,10 +792,6 @@
       <WrapperTool>primary</WrapperTool>
       <Isolated>False</Isolated>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="plugins\ArtistPalette\lib\" />
-    <Folder Include="plugins\PluginInterfaceManager\lib\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
