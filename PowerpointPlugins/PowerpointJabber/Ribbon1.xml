@@ -7,7 +7,7 @@
                label="XMPP">
           <button id="ConnectButton" label="Connect" onAction="Ribbon_Connect"/>
           <button id="DicconnectButton" label="Disconnect" onAction="Ribbon_Disconnect"/>
-          <button id="SlideShowButton" label="Show" onAction="DisplayPresentation"/>        
+          <checkBox id="ToggleCustomSlideShow" label="SlideShow+ enabled" getPressed="getSSPlusEnabled" onAction="DisplayPresentation"/>
         </group>
       </tab>
     </tabs>

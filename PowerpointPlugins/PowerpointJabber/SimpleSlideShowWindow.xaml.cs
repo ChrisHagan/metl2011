@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Windows.Ink;
 
 namespace PowerpointJabber
 {
@@ -25,6 +26,8 @@ namespace PowerpointJabber
         public ObservableCollection<SlideThumbnail> slideThumbs;
         public List<UbiquitousPen> pens;
         private UbiquitousPen currentPen;
+        private Dictionary<int, StrokeCollection> strokeCollectionsForSlides;
+        private int lastSlide;
 
         public SimpleSlideShowWindow()
         {
@@ -33,6 +36,7 @@ namespace PowerpointJabber
             isExtendedDesktopMode = false;
             isExtendedDesktopMode = true;
             slideThumbs = new ObservableCollection<SlideThumbnail>();
+            strokeCollectionsForSlides = new Dictionary<int, StrokeCollection>();
             pens = new List<UbiquitousPen> 
                 {
                     new UbiquitousPen{penName="thinBlack",penColour=System.Windows.Media.Brushes.Black,penWeight=1.5f},
@@ -53,7 +57,8 @@ namespace PowerpointJabber
             SlideViewer.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("slideNumber", System.ComponentModel.ListSortDirection.Ascending));
             PensControl.Items.Clear();
             PensControl.ItemsSource = pens;
-            PostSlideMoved();
+            lastSlide = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide.SlideID;
+            SlideMoved();
         }
         private void switchDisplayMode(object sender, RoutedEventArgs e)
         {
@@ -110,18 +115,54 @@ namespace PowerpointJabber
                 }
             }
         }
-
-        private void PreSlideMoved()
+        public void saveAllStrokesToPresentation()
         {
-            //GenerateThumbnail(ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide);
+            if (!(strokeCollectionsForSlides.Any(s => s.Value.Count > 0)))
+                return;
+            SlideMoved();
+            var result = MessageBox.Show("Would you like to save the ink from this presentation?",
+                "Save ink?", MessageBoxButton.YesNo);
+            if (new[] { MessageBoxResult.Cancel, MessageBoxResult.No, MessageBoxResult.None }.Any(s => s == result))
+                return;
+            foreach (KeyValuePair<int, StrokeCollection> entry in strokeCollectionsForSlides)
+            {
+                var slideID = entry.Key;
+                var slideNumber = ThisAddIn.instance.Application.ActivePresentation.Slides.FindBySlideID(slideID).SlideNumber;
+                foreach (Stroke s in entry.Value)
+                {
+                    addStrokeToPowerpointPresentation(s, slideNumber);
+                }
+            }
         }
-        private void PostSlideMoved()
+        public void OnSlideChanged()
         {
+            SlideMoved();
+        }
+
+        private void SlideMoved()
+        {
+            var AP = ThisAddIn.instance.Application.ActivePresentation;
+            if (strokeCollectionsForSlides.Any(s => s.Key == lastSlide))
+            {
+                var strokesForCurrentSlide = strokeCollectionsForSlides[lastSlide];
+                strokesForCurrentSlide.Clear();
+                foreach (Stroke stroke in StrokeCanvas.Strokes)
+                    strokesForCurrentSlide.Add(stroke.Clone());
+            }
+            else
+            {
+                strokeCollectionsForSlides.Add(lastSlide, StrokeCanvas.Strokes.Clone());
+            }
             if (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.State == PpSlideShowState.ppSlideShowRunning)
             {
-
                 SetCanvasBackground();
                 StrokeCanvas.Strokes.Clear();
+                if (strokeCollectionsForSlides.Any(s => s.Key == ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide.SlideID))
+                {
+                    var strokesForCurrentSlide = strokeCollectionsForSlides[ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide.SlideID];
+                    foreach (Stroke stroke in strokesForCurrentSlide)
+                        StrokeCanvas.Strokes.Add(stroke.Clone());
+                }
                 string CommentsText = "Notes: \r\n";
                 foreach (Microsoft.Office.Interop.PowerPoint.Shape s in ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide.NotesPage.Shapes)
                 {
@@ -129,24 +170,20 @@ namespace PowerpointJabber
                         CommentsText += s.TextFrame.TextRange.Text + "\r\n";
                 }
                 NotesBlock.Text = CommentsText;
+                lastSlide = AP.SlideShowWindow.View.Slide.SlideID;
             }
         }
         private void SetCanvasBackground()
         {
             if (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.State == PpSlideShowState.ppSlideShowRunning)
-            {
-                //GenerateThumbnail(ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide);
                 BackgroundOfCanvas.Source = slideThumbs.Where(c => c.slideNumber == ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide.SlideNumber).First().thumbnail;
-            }
         }
         private void moveToSelectedSlide(object sender, RoutedEventArgs e)
         {
             var origin = ((FrameworkElement)sender);
             if (origin.Tag != null)
             {
-                PreSlideMoved();
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide((int)(Int32.Parse(origin.Tag.ToString())), Microsoft.Office.Core.MsoTriState.msoTrue);
-                PostSlideMoved();
             }
         }
         private void GenerateThumbnails()
@@ -195,33 +232,21 @@ namespace PowerpointJabber
         {
             var currentSlide = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition;
             if (currentSlide < ThisAddIn.instance.Application.ActivePresentation.Slides.Count)
-            {
-                PreSlideMoved();
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(currentSlide + 1, Microsoft.Office.Core.MsoTriState.msoTrue);
-                PostSlideMoved();
-            }
         }
         private void MoveToPrevSlide(object sender, RoutedEventArgs e)
         {
             var currentSlide = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition;
             if (currentSlide > 1)
-            {
-                PreSlideMoved();
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(currentSlide - 1, Microsoft.Office.Core.MsoTriState.msoTrue);
-                PostSlideMoved();
-            }
         }
         private void MoveToNextBuild(object sender, RoutedEventArgs e)
         {
-            PreSlideMoved();
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Next();
-            PostSlideMoved();
         }
         private void MoveToPrevBuild(object sender, RoutedEventArgs e)
         {
-            PreSlideMoved();
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Previous();
-            PostSlideMoved();
         }
         private void ReFocusPresenter()
         {
@@ -263,19 +288,27 @@ namespace PowerpointJabber
         }
         private void EndSlideShow(object sender, RoutedEventArgs e)
         {
-            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Exit();
+            if (ThisAddIn.instance.Application.SlideShowWindows.Count > 0)
+                ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Exit();
+            if (this != null)
+            {
+                this.Close();
+            }
         }
         private void hideSlide(object sender, RoutedEventArgs e)
         {
             var newState = PpSlideShowState.ppSlideShowRunning;
-            switch (((FrameworkElement)sender).Tag.ToString())
+            if (!String.IsNullOrEmpty(((FrameworkElement)sender).Tag.ToString()))
             {
-                case "white":
-                    newState = PpSlideShowState.ppSlideShowWhiteScreen;
-                    break;
-                case "black":
-                    newState = PpSlideShowState.ppSlideShowBlackScreen;
-                    break;
+                switch (((FrameworkElement)sender).Tag.ToString())
+                {
+                    case "white":
+                        newState = PpSlideShowState.ppSlideShowWhiteScreen;
+                        break;
+                    case "black":
+                        newState = PpSlideShowState.ppSlideShowBlackScreen;
+                        break;
+                }
             }
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.State = newState;
         }
@@ -283,6 +316,7 @@ namespace PowerpointJabber
         {
             try
             {
+                saveAllStrokesToPresentation();
                 slideThumbs.Clear();
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Exit();
             }
@@ -290,36 +324,69 @@ namespace PowerpointJabber
             {
             }
         }
-
-        private void InkCanvas_StrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
+        private void addStrokeToPowerpointPresentation(System.Windows.Ink.Stroke stroke, int SlideNumber)
         {
-            //To put the stroke onto the powerpoint document:
             try
             {
-                Single[,] arrayOfPoints = new Single[e.Stroke.StylusPoints.Count, 2];
+                Single[,] arrayOfPoints = new Single[stroke.StylusPoints.Count, 2];
                 var AP = ThisAddIn.instance.Application.ActivePresentation;
-                for (int i = 0; i < e.Stroke.StylusPoints.Count; i++)
+                for (int i = 0; i < stroke.StylusPoints.Count; i++)
                 {
-                    arrayOfPoints[i, 0] = (float)e.Stroke.StylusPoints[i].X;
-                    arrayOfPoints[i, 1] = (float)e.Stroke.StylusPoints[i].Y;
+                    arrayOfPoints[i, 0] = (float)stroke.StylusPoints[i].X;
+                    arrayOfPoints[i, 1] = (float)stroke.StylusPoints[i].Y;
                 }
-                var newShape = AP.Slides[AP.SlideShowWindow.View.Slide.SlideNumber].Shapes.AddPolyline(arrayOfPoints);
-                newShape.Line.Weight = currentPen.penWeight;
-                newShape.Line.ForeColor.RGB = currentPen.RGBAasInt;
-                newShape.Line.BackColor.RGB = currentPen.RGBAasInt;
-                //I'm not sure whether the canvas should clear after every stroke yet.
-                //StrokeCanvas.Strokes.Clear();
-
-                //Update the slideViewer with the new stroke!
-                GenerateThumbnail(ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide);
+                var strokeColor = new SolidColorBrush(new System.Windows.Media.Color
+                {
+                    A = stroke.DrawingAttributes.Color.A,
+                    R = stroke.DrawingAttributes.Color.R,
+                    G = stroke.DrawingAttributes.Color.G,
+                    B = stroke.DrawingAttributes.Color.B
+                });
+                UbiquitousPen currentStrokeAttributes = new UbiquitousPen
+                {
+                    penColour = strokeColor,
+                    penWeight = (float)stroke.DrawingAttributes.Height,
+                    penName = "temporaryBrush"
+                };
+                var currentSlide = AP.Slides[SlideNumber];
+                var newShape = currentSlide.Shapes.AddPolyline(arrayOfPoints);
+                newShape.Line.Weight = currentStrokeAttributes.penWeight;
+                newShape.Line.ForeColor.RGB = currentStrokeAttributes.RGBAasInt;
+                newShape.Line.BackColor.RGB = currentStrokeAttributes.RGBAasInt;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("failed to add stroke: " + ex.Message);
             }
-            //We should also send the stroke to the server here:
+
+        }
+
+        private void InkCanvas_StrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
+        {
+            if (ThisAddIn.instance.wire.isConnected && ThisAddIn.instance.wire.isInConversation)
+                ThisAddIn.instance.wire.sendRawStroke(e.Stroke);
+        }
+        private void InkCanvas_StrokeErased(object sender, InkCanvasStrokeErasingEventArgs e)
+        {
+            if (ThisAddIn.instance.wire.isConnected && ThisAddIn.instance.wire.isInConversation)
+                ThisAddIn.instance.wire.sendRawDirtyStroke(e.Stroke);
+        }
+        private void InkCanvas_StrokeReplaced(object sender, InkCanvasStrokesReplacedEventArgs e)
+        {
+            if (ThisAddIn.instance.wire.isConnected && ThisAddIn.instance.wire.isInConversation)
+            {
+                foreach (Stroke droppedStroke in (e.PreviousStrokes.Where(s => !e.NewStrokes.Contains(s)).ToList()))
+                {
+                    ThisAddIn.instance.wire.sendRawDirtyStroke(droppedStroke);
+                }
+                foreach (Stroke newStroke in (e.NewStrokes.Where(s => !e.NewStrokes.Contains(s)).ToList()))
+                {
+                    ThisAddIn.instance.wire.sendRawStroke(newStroke);
+                }
+            }
         }
     }
+
     public class SlideThumbnail
     {
         public SlideThumbnail()
