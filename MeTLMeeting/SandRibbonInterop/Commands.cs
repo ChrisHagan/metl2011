@@ -3,15 +3,23 @@ using System.Reflection;
 using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
+using System;
 
 namespace SandRibbon
 {
+    public static class CompositeCommandExtensions
+    {
+        public static object lastValue(this CompositeCommand command)
+        {
+            if (CommandParameterProvider.parameters.ContainsKey(command))
+                return CommandParameterProvider.parameters[command];
+            throw new NotSetException();
+        }
+    }
+    public class NotSetException : Exception { 
+    }
     public class Commands
     {
-        static Commands()
-        {
-            var justSettingItUpOk = CommandParameterProvider.provider();
-        }
         #region Sandpit
         public static CompositeCommand SendWakeUp = new CompositeCommand();
         public static CompositeCommand SendSleep = new CompositeCommand();

@@ -7,6 +7,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbonObjects;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
@@ -15,8 +16,6 @@ namespace SandRibbon.Components
         public static readonly DependencyProperty PrivateProperty =
             DependencyProperty.Register("Private", typeof(string), typeof(PrivacyTools), new UIPropertyMetadata("public"));
         public static PrivacyEnablementChecker PrivacySetterIsEnabled = new PrivacyEnablementChecker();
-        private ConversationDetails currentDetails;
-
         public PrivacyTools()
         {
             InitializeComponent();
@@ -25,7 +24,15 @@ namespace SandRibbon.Components
         }
         private bool canSetPrivacy(string privacy)
         {
-            return privacy != (string)GetValue(PrivateProperty);
+            try
+            {
+                return privacy != (string)GetValue(PrivateProperty)
+                && (Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.Author == Globals.me);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
         private void SetPrivacy(string p)
         {

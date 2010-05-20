@@ -126,14 +126,8 @@ namespace SandRibbon.Components
             Flush();
             currentSlide = slide;
         }
-        public void SetIdentity(SandRibbon.Utils.Connection.JabberWire.UserInformation info, bool canEdit)
+        public void SetEditable(bool canEdit)
         {
-            me = info.credentials.name;
-            if (info.location == null)
-                info.location = new SandRibbon.Utils.Connection.JabberWire.Location { currentSlide = currentSlide };
-            handwriting.SetIdentity(info);
-            images.SetIdentity(info);
-            text.SetIdentity(info);
             handwriting.SetCanEdit(canEdit);
             images.SetCanEdit(canEdit);
             text.SetCanEdit(canEdit);

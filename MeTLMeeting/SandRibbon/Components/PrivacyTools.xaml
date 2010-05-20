@@ -6,6 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     VerticalAlignment="Top"
     HorizontalAlignment="Right"
+    Margin="0 0 30 0"
     AutomationProperties.AutomationId="privacyTools"
     >
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

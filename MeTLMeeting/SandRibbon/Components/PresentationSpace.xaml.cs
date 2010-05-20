@@ -20,13 +20,13 @@ using SandRibbon.Utils;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using SandRibbonInterop.MeTLStanzas;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
     public partial class PresentationSpace
     {
         public JabberWire.Location currentLocation = new JabberWire.Location();
-        private string me;
         public ConversationDetails currentDetails;
         private bool synced = false;
         private bool joiningConversation;
@@ -34,15 +34,12 @@ namespace SandRibbon.Components
         {
             privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
             InitializeComponent();
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<JabberWire.Credentials>( who => me = who.name));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveSlide));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
             Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<QuizDetails>(receiveQuiz));
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<Window1>( MirrorPresentationSpace, CanMirrorPresentationSpace));
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(p => { }, CanSetPrivacy));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.CreateThumbnail.RegisterCommand(new DelegateCommand<int>(CreateThumbnail));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
@@ -54,8 +51,6 @@ namespace SandRibbon.Components
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
             Loaded += presentationSpaceLoaded;
         }
-
-
         private void exploreBubble(ThoughtBubble thoughtBubble)
         {
             var origin = new Point(0, 0);
@@ -73,7 +68,7 @@ namespace SandRibbon.Components
                         "Resource/" + currentLocation.currentSlide.ToString(),
                         "quizSnapshot.png",
                         false),
-                    author = me,
+                    author = Globals.me,
                     slide = currentLocation.currentSlide,
                     visualSource = stack
                 };
@@ -116,7 +111,7 @@ namespace SandRibbon.Components
         {
             if(!synced) return;
             if(currentDetails == null) return;
-            if (currentDetails.Author == me) return;
+            if (currentDetails.Author == Globals.me) return;
             if(currentDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0)return;
             Dispatcher.BeginInvoke((Action) delegate
                         {
@@ -128,10 +123,18 @@ namespace SandRibbon.Components
         {
             currentDetails = details;
             joiningConversation = false;
-            if(currentDetails.Author == me || currentDetails.Permissions.studentCanPublish)
-                Commands.SetPrivacy.Execute(stack.handwriting.actualPrivacy);
-            else
+            try
+            {
+                if (currentDetails.Author == Globals.me || currentDetails.Permissions.studentCanPublish)
+                    Commands.SetPrivacy.Execute(stack.handwriting.actualPrivacy);
+            }
+            catch (NotSetException) 
+            {
+            }
+            finally
+            {
                 Commands.SetPrivacy.Execute("private");
+            }
         }
         public FrameworkElement GetAdorner()
         {
@@ -143,12 +146,6 @@ namespace SandRibbon.Components
                 if(((FrameworkElement)child).Name == "adorner")
                    return (FrameworkElement)child;
             return null;
-        }
-        private bool CanSetPrivacy(string s)
-        {
-            if(currentDetails == null)
-                return false;
-            return (currentDetails.Permissions.studentCanPublish || currentDetails.Author == me);
         }
         private void CreateThumbnail(int id)
         {
@@ -184,18 +181,24 @@ namespace SandRibbon.Components
         }
         private void MirrorPresentationSpace(Window1 parent)
         {
-            var currentAttributes = stack.handwriting.DefaultDrawingAttributes;
-            var mirror = new Window { Content = new Projector { viewConstraint = parent.scroll} };
-            Projector.Window = mirror;
-            parent.Closed += (_sender, _args) => mirror.Close();
-            mirror.WindowStyle = WindowStyle.None;
-            mirror.AllowsTransparency = true;
-            setSecondaryWindowBounds( mirror);
-            mirror.Show();
-            Commands.SetDrawingAttributes.Execute(currentAttributes);
-            Commands.SetPrivacy.Execute(stack.handwriting.privacy);
-            //We rerequest the current slide data because we're not storing it in reusable form - it's in thread affine objects in the logical tree.
-            Commands.MoveTo.Execute(currentLocation.currentSlide);
+            try
+            {
+                var currentAttributes = stack.handwriting.DefaultDrawingAttributes;
+                var mirror = new Window { Content = new Projector { viewConstraint = parent.scroll } };
+                Projector.Window = mirror;
+                parent.Closed += (_sender, _args) => mirror.Close();
+                mirror.WindowStyle = WindowStyle.None;
+                mirror.AllowsTransparency = true;
+                setSecondaryWindowBounds(mirror);
+                mirror.Show();
+                Commands.SetDrawingAttributes.Execute(currentAttributes);
+                Commands.SetPrivacy.Execute(stack.handwriting.privacy);
+                //We rerequest the current slide data because we're not storing it in reusable form - it's in thread affine objects in the logical tree.
+                Commands.MoveTo.Execute(Globals.slide);
+            }
+            catch (NotSetException) { 
+                //Fine it's not time yet anyway.  I don't care.
+            }
         }
         private static bool CanMirrorPresentationSpace(object _param)
         {
@@ -223,20 +226,18 @@ namespace SandRibbon.Components
            w.Width = r.Width;
            w.Height = r.Height;
         }
-        private void MoveSlide(int slide)
+        private void MoveTo(int slide)
         {
-            if(currentDetails == null) return;
-            currentLocation.currentSlide = slide;
             ClearAdorners();
         }
         private void ClearAdorners()
         {
             var doClear = (Action)delegate
-                                      {
-                                          removeAdornerItems(this);
-                                          ClearPrivacy();
-                                          removeSyncDisplay();
-                                      };
+                          {
+                              removeAdornerItems(this);
+                              ClearPrivacy();
+                              removeSyncDisplay();
+                          };
             if (Thread.CurrentThread != Dispatcher.Thread)
                 Dispatcher.BeginInvoke(doClear);
             else
@@ -262,15 +263,9 @@ namespace SandRibbon.Components
                 foreach (var adorner in adorners)
                     adornerLayer.Remove(adorner);
         }
-        private void JoinConversation(string jid)
-        {
-            joiningConversation = true;
-            currentLocation.activeConversation = jid;
-
-        }
         private void ReceiveLiveWindow(LiveWindowSetup window)
         {
-            if (window.slide != currentLocation.currentSlide || window.author != me) return;
+            if (window.slide != currentLocation.currentSlide || window.author != Globals.me) return;
             window.visualSource = stack;
             Commands.DugPublicSpace.Execute(window);
         }
@@ -340,7 +335,7 @@ namespace SandRibbon.Components
                     "Resource/" + currentLocation.currentSlide.ToString(),
                     "quizSnapshot.png",
                     false),
-                author = me,
+                author = Globals.me,
                 slide = currentLocation.currentSlide
             });
         }
@@ -466,14 +461,15 @@ namespace SandRibbon.Components
                 height,
                 width,
                 height);
-            var hostedFileName = ResourceUploader.uploadResource(me, path);
+            var hostedFileName = ResourceUploader.uploadResource(Globals.me, path);
+            var location = Globals.location;
             Commands.SendQuiz.Execute(new QuizDetails
             {
-                author = me,
+                author = Globals.me,
                 optionCount = options,
                 quizPath = hostedFileName,
-                returnSlide = currentLocation.currentSlide,
-                targetSlide = currentLocation.currentSlide,
+                returnSlide = location.currentSlide,
+                targetSlide = location.currentSlide,
                 target = "presentationSpace"
             });
         }

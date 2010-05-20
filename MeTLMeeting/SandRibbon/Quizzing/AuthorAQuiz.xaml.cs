@@ -20,7 +20,7 @@ namespace SandRibbon.Quizzing
             InitializeComponent();
             this.info = info;
             this.quizSlide = quizSlide;
-            canvasStack.SetIdentity(info, true);
+            canvasStack.SetEditable(true);
             Loaded += loaded;
         }
         public void Submit()

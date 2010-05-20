@@ -49,8 +49,6 @@ namespace SandRibbon.Components.Canvas
         public event ChildrenChangedHandler ChildrenChanged;
         public AbstractCanvas():base()
         {
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(
-                name => me = name.name));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));

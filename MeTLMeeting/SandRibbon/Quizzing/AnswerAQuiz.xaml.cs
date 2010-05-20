@@ -27,7 +27,7 @@ namespace SandRibbon.Quizzing
             InitializeComponent();
             info = userInfo;
             Quiz = quiz;
-            canvasStack.SetIdentity(info, true);
+            canvasStack.SetEditable(true);
             barGraph.setQuiz(quiz.targetSlide);
             SetBarGraphVisibility();
             Loaded += loaded;

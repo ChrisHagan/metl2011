@@ -1,29 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media;
 using Divelements.SandRibbon;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
-using SandRibbon.Components.Interfaces;
 using SandRibbon.Components.SimpleImpl;
-using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Quizzing;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
-using SandRibbonInterop.Interfaces;
 using SandRibbonObjects;
-using System.Windows.Automation.Peers;
 using System.Diagnostics;
 using System.Windows.Shapes;
 using SandRibbon.Components.Sandpit;
@@ -38,7 +32,6 @@ namespace SandRibbon
         public JabberWire.UserInformation userInformation = new JabberWire.UserInformation();
         private DelegateCommand<string> powerpointProgress;
         private DelegateCommand<string> powerPointFinished;
-        private DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials> setIdentity;
         private PowerPointLoader loader = new PowerPointLoader();
         private UndoHistory history = new UndoHistory();
         public ConversationDetails details;
@@ -66,15 +59,7 @@ namespace SandRibbon
                     if (((RibbonTab)tab).Text == text)
                         ribbon.SelectedTab = (RibbonTab)tab;
             }));
-            setIdentity = new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(author =>
-            {
-                connect(author.name, author.password, 0, null);
-                if (author.name.Contains("S15")) sleep(null);
-                var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
-                recentDocuments.ListRecentConversations();
-                Commands.RequerySuggested();
-            });
-            Commands.SetIdentity.RegisterCommand(setIdentity);
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(SetIdentity));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
             Commands.SetLayer.Execute("Sketch");
             powerPointFinished = new DelegateCommand<string>((_whatever) => Dispatcher.BeginInvoke((Action)(finishedPowerpoint)));
@@ -157,6 +142,14 @@ namespace SandRibbon
             AddWindowEffect(null);
             if (SmartBoardMeTLAlreadyLoaded)
                 checkIfSmartboard();
+        }
+        private void SetIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
+        {
+            connect(credentials.name, credentials.password, 0, null);
+            if (credentials.name.Contains("S15")) sleep(null);
+            var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+            recentDocuments.ListRecentConversations();
+            Commands.RequerySuggested();
         }
         private void SetZoomRect(Rectangle viewbox) 
         {
@@ -391,11 +384,23 @@ namespace SandRibbon
         }
         private bool mustBeLoggedIn(object _arg)
         {
-            return userInformation.location != null;
+            try
+            {
+                return Globals.credentials != null;
+            }
+            catch (NotSetException) {
+                return false;
+            }
         }
         private bool mustBeInConversation(object _arg)
         {
-            return mustBeLoggedIn(_arg) && userInformation.location != null && userInformation.location.activeConversation != null;
+            try
+            {
+                return Globals.location.activeConversation != null;
+            }
+            catch (NotSetException) {
+                return false;
+            }
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
@@ -877,6 +882,14 @@ namespace SandRibbon
         {
             if (m_notifyIcon != null)
                 m_notifyIcon.Visible = show;
+        }
+        public bool CanSetLevel(PedagogyLevel level)
+        {
+            return true;
+        }
+        public bool SetLevel(PedagogyLevel level)
+        {
+            return true;
         }
     }
 }

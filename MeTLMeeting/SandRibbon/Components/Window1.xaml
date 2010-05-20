@@ -230,6 +230,9 @@
                         <components:ProviderMonitor x:Name="monitor" Visibility="Collapsed" />
                     </Grid>
                     <components:ScrollBar x:Name="adornerScroll"/>
+                    <AdornerDecorator>
+                        <components:PrivacyTools />
+                    </AdornerDecorator>
                 </Grid>
                 <GridSplitter x:Name="notesGridSplitter"
               Grid.Column="3"

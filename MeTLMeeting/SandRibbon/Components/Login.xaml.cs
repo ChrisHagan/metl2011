@@ -149,8 +149,7 @@ namespace SandRibbon.Components
             }
             else
                 AuthcateUsername = TempUsername;
-           
- 
+
             string AuthcatePassword = password.Password;
             SecureString secureAuthcatePassword = password.SecurePassword;
             
@@ -166,7 +165,7 @@ namespace SandRibbon.Components
             }
             else
             {
-                MessageBox.Show("Failed to Login.  Please check that your password is correct.");
+                MessageBox.Show("Failed to Login.  Please check your details and try again.");
                 password.Clear();
                 password.Focus();
             }

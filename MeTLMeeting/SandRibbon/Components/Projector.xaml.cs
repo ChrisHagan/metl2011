@@ -61,12 +61,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             instance = this;
             Loaded += Projector_Loaded;
-            stack.SetIdentity(
-                new JabberWire.UserInformation
-                {
-                    credentials = new JabberWire.Credentials { name = "Projector" },
-                    policy = new JabberWire.Policy()
-                }, false);
+            stack.SetEditable(false);
             this.MouseLeave += new MouseEventHandler(Projector_MouseLeave);
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));

@@ -4,12 +4,12 @@
     <StackPanel Orientation="Horizontal">
         <TextBlock Text="Pedagogicometer" Padding="0 0 10 0"/>
         <Slider 
+            x:Name="slider"
             Width="100" 
-            TickFrequency="20" 
             TickPlacement="Both" 
             Minimum="0"
-            Maximum="100"
-            IsSnapToTickEnabled="True"
+            IsSnapToTickEnabled="True" 
+            ValueChanged="PedagogicometerValueChanged"
             />
     </StackPanel>
 </UserControl>
