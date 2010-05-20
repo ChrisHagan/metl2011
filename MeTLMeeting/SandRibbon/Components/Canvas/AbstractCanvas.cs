@@ -9,6 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using agsXMPP.Xml;
 using agsXMPP.Xml.Dom;
+using Microsoft.Office.Interop.PowerPoint;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbonObjects;
 using SandRibbonInterop;
@@ -17,6 +18,8 @@ using SandRibbon.Components.Sandpit;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbon.Components.Utility;
 using System.Windows.Ink;
+using Point=System.Windows.Point;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -37,10 +40,7 @@ namespace SandRibbon.Components.Canvas
     {
         public string defaultPrivacy;
         public string actualPrivacy;
-        protected ConversationDetails currentDetails;
         public string target;
-        public string me;
-        public int currentSlideId;
         public bool canEdit; 
         
         private bool affectedByPrivacy { get { return target == "presentationSpace"; } }
@@ -49,8 +49,6 @@ namespace SandRibbon.Components.Canvas
         public event ChildrenChangedHandler ChildrenChanged;
         public AbstractCanvas():base()
         {
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             DragOver+=ImageDragOver;
             Drop+=ImagesDrop;
@@ -90,21 +88,22 @@ namespace SandRibbon.Components.Canvas
         {
             return VisualTreeHelper.GetDescendantBounds(this);
         }
-        private void UpdateConversationDetails(ConversationDetails details)
-        {
-            currentDetails = details;
-        }
         private void SetPrivacy(string p)
         {
             var doPrivacy = (Action) delegate
                                          {
                                              actualPrivacy = p;
-
-                                             if (currentDetails == null) return;
-                                             var canEdit = actualPrivacy == "private" ||
-                                                           currentDetails.Permissions.studentCanPublish ||
-                                                           currentDetails.Author == me;
-                                             SetCanEdit(canEdit);
+                                             try
+                                             {
+                                                 var canEdit = actualPrivacy == "private" ||
+                                                               Globals.conversationDetails.Permissions.studentCanPublish ||
+                                                               Globals.conversationDetails.Author == Globals.me;
+                                                 SetCanEdit(canEdit);
+                                             }
+                                             catch(NotSetException e)
+                                             {
+                                                 //YAY
+                                             }
                                          };
             if (Thread.CurrentThread != Dispatcher.Thread)
                 Dispatcher.BeginInvoke(doPrivacy);
@@ -140,16 +139,6 @@ namespace SandRibbon.Components.Canvas
                     foreach (var adorner in adorners)
                         adornerLayer.Remove(adorner);
             });
-        }
-        private void MoveTo(int slide)
-        {
-            ClearAdorners();
-            currentSlideId = slide;
-        }
-        public void SetIdentity(SandRibbon.Utils.Connection.JabberWire.UserInformation newIdentity)
-        {
-            me = newIdentity.credentials.name;
-            MoveTo(newIdentity.location.currentSlide);
         }
         void ImageDragOver(object sender, DragEventArgs e)
         {
@@ -188,7 +177,7 @@ namespace SandRibbon.Components.Canvas
             CanEditChanged();
         }
         protected bool inMeeting() {
-            return Permissions.InferredTypeOf(currentDetails.Permissions) == Permissions.MEETING_PERMISSIONS;
+            return Permissions.InferredTypeOf(Globals.conversationDetails.Permissions) == Permissions.MEETING_PERMISSIONS;
         }
         protected override void  OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
         {

@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Utility;
+using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
@@ -80,7 +81,7 @@ namespace SandRibbon.Components.Canvas
                 if (box.GetType() == typeof(TextBox))
                 {
                     TextTag tag = ((TextBox) box).tag();
-                    ((TextBox) box).Focusable = focusable && (tag.author == me);
+                    ((TextBox) box).Focusable = focusable && (tag.author == Globals.me);
                 }
             }
         }
@@ -108,15 +109,15 @@ namespace SandRibbon.Components.Canvas
                 identifier = box.tag().id,
                 target = target,
                 privacy = box.tag().privacy,
-                author = me,
-                slide = currentSlideId
+                author = Globals.me,
+                slide = Globals.slide
             });
         }
         
         private void receiveDirtyText(TargettedDirtyElement element)
         {
             if (!(element.target.Equals(target))) return;
-            if (!(element.slide == currentSlideId)) return;
+            if (!(element.slide == Globals.slide)) return;
             var doDirtyText = (Action)delegate
             {
                 for (int i = 0; i < Children.Count; i++)
@@ -164,7 +165,7 @@ namespace SandRibbon.Components.Canvas
             var myText = new List<UIElement>();
             foreach (TextBox text in elements)
             {
-                if (text.tag().author == me)
+                if (text.tag().author == Globals.me)
                     myText.Add(text);
             }
             return myText;
@@ -349,9 +350,9 @@ namespace SandRibbon.Components.Canvas
             var box = new TextBox();
             box.tag(new TextTag
                         {
-                            author = me, 
+                            author = Globals.me, 
                             privacy = privacy,
-                            id =string.Format("{0}:{1}", me, SandRibbonObjects.DateTimeFactory.Now())
+                            id =string.Format("{0}:{1}", Globals.me, SandRibbonObjects.DateTimeFactory.Now())
                         });
             box.FontFamily = currentFamily;
             box.FontSize = currentSize;
@@ -387,17 +388,17 @@ namespace SandRibbon.Components.Canvas
                                                        identifier = currentTag.id,
                                                        target = target,
                                                        privacy = currentTag.privacy,
-                                                       author = me,
-                                                       slide = currentSlideId
+                                                       author = Globals.me,
+                                                       slide = Globals.slide
                                                    });
                 currentTag.privacy = privacy;
                 box.tag(currentTag);
                 Commands.SendTextBox.Execute(new TargettedTextBox
                                                  {
                                                      box = box,
-                                                     author = me,
+                                                     author = Globals.me,
                                                      privacy = currentTag.privacy,
-                                                     slide = currentSlideId,
+                                                     slide = Globals.slide,
                                                      target = target,
                                                  });
             }
@@ -474,9 +475,9 @@ namespace SandRibbon.Components.Canvas
             Commands.SendTextBox.Execute(new TargettedTextBox
             {
                 box = box,
-                author = me,
+                author = Globals.me,
                 privacy = thisPrivacy,
-                slide = currentSlideId,
+                slide = Globals.slide,
                 target = target,
             });
         }
@@ -509,8 +510,8 @@ namespace SandRibbon.Components.Canvas
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
             if(targettedBox.target != target) return;
-            if(targettedBox.author == me && alreadyHaveThisTextBox(targettedBox.box)) return;//I never want my live text to collide with me.
-            if (targettedBox.slide == currentSlideId && (targettedBox.privacy == "private" && me == "Projector"))
+            if(targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box)) return;//I never want my live text to collide with me.
+            if (targettedBox.slide == Globals.slide && (targettedBox.privacy == "private" && Globals.me == "Projector"))
             {
                 var doProjector = (Action) delegate
                                                {
@@ -522,7 +523,7 @@ namespace SandRibbon.Components.Canvas
                     doProjector();
             }
 
-            if (targettedBox.slide == currentSlideId &&(targettedBox.privacy == "public" || targettedBox.author == me))
+            if (targettedBox.slide == Globals.slide &&(targettedBox.privacy == "public" || targettedBox.author == Globals.me))
             {
                 if (Thread.CurrentThread != Dispatcher.Thread)
                     Dispatcher.BeginInvoke((Action)delegate { doText(targettedBox); });
@@ -557,15 +558,15 @@ namespace SandRibbon.Components.Canvas
         public void doText(TargettedTextBox targettedBox)
         {
             if(targettedBox.target != target) return;
-            if(targettedBox.author == me && alreadyHaveThisTextBox(targettedBox.box)) return;//I never want my live text to collide with me.
-            if (targettedBox.slide == currentSlideId && (targettedBox.privacy == "public" || targettedBox.author == me))
+            if(targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box)) return;//I never want my live text to collide with me.
+            if (targettedBox.slide == Globals.slide && (targettedBox.privacy == "public" || targettedBox.author == Globals.me))
             {
 
                 Console.WriteLine("Received textbox");
                 var box = targettedBox.box;
                 removeDoomedTextBoxes(targettedBox);
                 Children.Add(applyDefaultAttributes(box));
-                if (!(targettedBox.author == me && focusable))
+                if (!(targettedBox.author == Globals.me && focusable))
                     box.Focusable = false;
                 if (targettedBox.privacy == "private" && targettedBox.target == target)
                     addPrivateRegion(box);
@@ -624,8 +625,8 @@ namespace SandRibbon.Components.Canvas
                                       identifier = box.tag().id,
                                       target = target,
                                       privacy = box.tag().privacy,
-                                      author = me,
-                                      slide = currentSlideId
+                                      author = Globals.me,
+                                      slide = Globals.slide
                                   });
             }
             foreach(var element in listToCut)
@@ -688,9 +689,9 @@ namespace SandRibbon.Components.Canvas
                 foreach(var toString in from UIElement box in text.Children
                     select new MeTLStanzas.TextBox(new TargettedTextBox
                     {
-                        author = text.me,
+                        author = Globals.me,
                         privacy = text.privacy,
-                        slide = text.currentSlideId,
+                        slide = Globals.slide,
                         box = (TextBox) box, 
                         target = text.target
                     }).ToString())

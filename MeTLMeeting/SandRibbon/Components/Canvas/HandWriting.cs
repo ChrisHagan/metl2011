@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Input.StylusPlugIns;
 using System.Windows.Media;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
@@ -98,9 +99,6 @@ namespace SandRibbon.Components.Canvas
                 DefaultDrawingAttributes = newAttributes;
             });
             Commands.SetPenColor.RegisterCommand(colorChangedCommand);
-            setAuthor = new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(
-                author => me = author.name);
-            Commands.SetIdentity.RegisterCommand(setAuthor);
             Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.ReceiveStrokes.RegisterCommand(
                 new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
@@ -171,7 +169,7 @@ namespace SandRibbon.Components.Canvas
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
         {
             if (receivedStrokes.Count() == 0) return;
-            if (receivedStrokes.First().slide != currentSlideId) return;
+            if (receivedStrokes.First().slide != Globals.slide) return;
             var strokeTarget = target;
             var doStrokes = (Action)delegate
             {
@@ -180,7 +178,7 @@ namespace SandRibbon.Components.Canvas
                 var start = SandRibbonObjects.DateTimeFactory.Now();
                 var newStrokes = new StrokeCollection(
                     receivedStrokes.Where(ts=> ts.target == strokeTarget)
-                    .Where(s=>s.privacy == "public" || s.author == me)
+                    .Where(s=>s.privacy == "public" || s.author == Globals.me)
                     .Select(s=>s.stroke)
                     .Where(s=>!(this.strokes.Contains(s.sum()))));
                         Strokes.Add(newStrokes);
@@ -213,12 +211,12 @@ namespace SandRibbon.Components.Canvas
         }
         public StrokeCollection GetSelectedStrokes()
         {
-            return filter(base.GetSelectedStrokes(), me);
+            return filter(base.GetSelectedStrokes(), Globals.me);
         }
         private void selectingStrokes(object sender, InkCanvasSelectionChangingEventArgs e)
         {
             var selectedStrokes = e.GetSelectedStrokes();
-            var myStrokes = filter(selectedStrokes, me);
+            var myStrokes = filter(selectedStrokes, Globals.me);
             e.SetSelectedStrokes(myStrokes);
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
@@ -238,7 +236,7 @@ namespace SandRibbon.Components.Canvas
         {
             try
             {
-                if (!(filter(Strokes, me).Contains(e.Stroke)))
+                if (!(filter(Strokes, Globals.me).Contains(e.Stroke)))
                 {
                     e.Cancel = true;
                     return;
@@ -282,8 +280,8 @@ namespace SandRibbon.Components.Canvas
             Commands.SendDirtyStroke.Execute(new TargettedDirtyElement
             {
                 identifier = sum, 
-                author = me,
-                slide = currentSlideId,
+                author = Globals.me,
+                slide = Globals.slide,
                 privacy = stroke.tag().privacy,
                 target = target
             });
@@ -307,10 +305,6 @@ namespace SandRibbon.Components.Canvas
         private void alwaysTrue(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
-        }
-        private void setAuthorIdentity(object sender, ExecutedRoutedEventArgs e)
-        {
-            me = e.Parameter.ToString();
         }
         #endregion
         #region utilityFunctions
@@ -342,7 +336,7 @@ namespace SandRibbon.Components.Canvas
         {
             if(!strokes.Contains(stroke.sum()))
                 strokes.Add(stroke.sum());
-            stroke.tag(new StrokeTag { author = me, privacy=thisPrivacy });
+            stroke.tag(new StrokeTag { author = Globals.me, privacy=thisPrivacy });
             SendTargettedStroke(stroke, thisPrivacy);
         }
         public void SendTargettedStroke(Stroke stroke, string thisPrivacy)
@@ -351,9 +345,9 @@ namespace SandRibbon.Components.Canvas
             {
                 stroke = stroke,
                 target = target,
-                author = me,
+                author = Globals.me,
                 privacy = thisPrivacy,
-                slide = currentSlideId
+                slide = Globals.slide
             });
         }
         public void FlushStrokes()
@@ -402,8 +396,8 @@ namespace SandRibbon.Components.Canvas
                 listToCut.Add(new TargettedDirtyElement
                 {
                     identifier = stroke.sum().checksum.ToString(),
-                    author = me,
-                    slide = currentSlideId,
+                    author = Globals.me,
+                    slide = Globals.slide,
                     privacy = stroke.tag().privacy,
                     target = target
                 });
@@ -414,7 +408,7 @@ namespace SandRibbon.Components.Canvas
         public void ReceiveDirtyStrokes(IEnumerable<TargettedDirtyElement> targettedDirtyStrokes)
         {
             if (targettedDirtyStrokes.Count() == 0) return;
-            if (!(targettedDirtyStrokes.First().target.Equals(target)) || targettedDirtyStrokes.First().slide != currentSlideId) return;
+            if (!(targettedDirtyStrokes.First().target.Equals(target)) || targettedDirtyStrokes.First().slide != Globals.slide) return;
             var doReceiveDirty = (Action)delegate
             {
                 var dirtyChecksums = targettedDirtyStrokes.Select(t => t.identifier);
@@ -479,9 +473,9 @@ namespace SandRibbon.Components.Canvas
                 foreach(var toString in from stroke in hw.Strokes
                     select new MeTLStanzas.Ink(new TargettedStroke
                     {
-                        author = hw.me,
+                        author = Globals.me,
                         privacy = hw.privacy,
-                        slide = hw.currentSlideId,
+                        slide = Globals.slide,
                         stroke = stroke,
                         target = hw.target
                     }).ToString())

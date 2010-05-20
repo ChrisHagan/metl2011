@@ -10,6 +10,7 @@ using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Utility;
+using SandRibbon.Providers;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
@@ -19,10 +20,6 @@ namespace SandRibbon.Components
 {
     public partial class UserCanvasStack
     {
-        private string me;
-        private int currentSlide;
-        private string currentConversation;
-        private ConversationDetails details;
         public Grid stack;
         public UserCanvasStack()
         {
@@ -34,7 +31,6 @@ namespace SandRibbon.Components
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetLayer.Execute("Sketch");
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(
                 ReceiveNewBubble));
         }
@@ -53,7 +49,7 @@ namespace SandRibbon.Components
         }
         private ThoughtBubble getBubble(TargettedBubbleContext bubble)
         {
-            if (details == null) return null;
+            if (Globals.conversationDetails == null) return null;
             var thoughtBubble = new ThoughtBubble();
             Dispatcher.Invoke((Action) delegate
                {
@@ -67,17 +63,15 @@ namespace SandRibbon.Components
                                                         childContext = relevantChildren,
                                                         strokeContext = relevantStrokes,
                                                         parent = bubble.slide,
-                                                        conversation = details.Jid,
-                                                        room = bubble.thoughtSlide,
-                                                        me = me
+                                                        conversation = Globals.conversationDetails.Jid,
+                                                        room = bubble.thoughtSlide
                                                     };
                             thoughtBubble.relocate();
                             thoughtBubble.enterBubble();
-                            thoughtBubble.setIdentities();
 
                         }
                });
-            return thoughtBubble.me != null ? thoughtBubble : null;
+            return thoughtBubble.conversation != null ? thoughtBubble : null;
         }
         private List<Stroke> getStrokesRelevantTo(IEnumerable<String> ids)
         {
@@ -91,20 +85,13 @@ namespace SandRibbon.Components
                 ((FrameworkElement)c)).Where(c => c.Tag != null && ids.Contains(c.Tag.ToString()))
                 .ToList();
         }
-        private void JoinConversation(string jid)
-        {
-            currentConversation = jid;
-        }
         private void loggedIn(SandRibbon.Utils.Connection.JabberWire.Credentials identity)
         {
-            me = identity.name;
             handwriting.Enable();
             Commands.SetTutorialVisibility.Execute(System.Windows.Visibility.Visible);
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-           if (details.Jid != currentConversation) return;
-           this.details = details;
            Dispatcher.BeginInvoke((Action) delegate
            {
                var editingMode = isAuthor(details) || canStudentPublish(details);
@@ -115,7 +102,7 @@ namespace SandRibbon.Components
         }
         private bool isAuthor(ConversationDetails details)
         {
-            return details.Author == me ? true : false;
+            return details.Author == Globals.me ? true : false;
         }
         private bool canStudentPublish(ConversationDetails details)
         {
@@ -124,7 +111,6 @@ namespace SandRibbon.Components
         public void MoveTo(int slide)
         {
             Flush();
-            currentSlide = slide;
         }
         public void SetEditable(bool canEdit)
         {

@@ -33,7 +33,6 @@ namespace SandRibbon.Components.Sandpit
         public List<Stroke> strokeContext;
         private bool opened = false;
         public int room;
-        public string me;
         public List<FrameworkElement> childContext;
 
         public ThoughtBubble()
@@ -71,15 +70,6 @@ namespace SandRibbon.Components.Sandpit
             foreach (var text in parser.text.Values)
                 thought.stack.text.doText(text);
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
-        }
-        public void setIdentities()
-        {
-            thought.stack.handwriting.me = me;
-            thought.stack.text.me = me;
-            thought.stack.images.me = me;
-            thought.stack.handwriting.currentSlideId = room;
-            thought.stack.text.currentSlideId = room;
-            thought.stack.images.currentSlideId = room;
         }
         private void mainSlideLiveWindow(ThoughtBubbleLiveWindow thoughtBubbleLiveWindow)
         {
@@ -156,7 +146,6 @@ namespace SandRibbon.Components.Sandpit
                 thoughtView.Width = ((System.Windows.Controls.Canvas)Parent).ActualWidth;
                 thoughtView.Height = ((System.Windows.Controls.Canvas)Parent).ActualHeight;
                 RLWViewBox.Visibility = Visibility.Visible;
-                setIdentities();
                 Dispatcher.BeginInvoke((Action) delegate
                 {
                     setThoughtAccess(true);
