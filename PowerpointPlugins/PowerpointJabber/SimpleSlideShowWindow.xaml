@@ -38,7 +38,6 @@
                     <Grid>
                         <Image x:Name="BackgroundOfCanvas"/>
                         <InkCanvas x:Name="StrokeCanvas" 
-                           StrokeCollected="InkCanvas_StrokeCollected" 
                            Background="Transparent" 
                            EditingMode="Ink"
                            Width="{Binding ElementName=BackgroundOfCanvas, Path=Width}"
@@ -58,6 +57,16 @@
         <Border x:Name="MeTLGridContainer" Grid.Column="4" Padding="10" CornerRadius="5" BorderThickness="2" BorderBrush="DarkGray" 
                 Background="LightGray">
             <StackPanel>
+                <Viewbox>
+                    <Grid>
+                        <Image x:Name="BackgroundOfCanvas2"/>
+                        <InkCanvas x:Name="StrokeCanvas2" 
+                           Background="Transparent" 
+                           EditingMode="Ink"
+                           Width="{Binding ElementName=BackgroundOfCanvas, Path=Width}"
+                           Height="{Binding ElementName=BackgroundOfCanvas, Path=Height}"/>
+                    </Grid>
+                </Viewbox>
                 <plugin:MeTLControls />
             </StackPanel>
         </Border>
