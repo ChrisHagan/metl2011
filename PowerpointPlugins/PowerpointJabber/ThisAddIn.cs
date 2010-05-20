@@ -75,6 +75,7 @@ namespace PowerpointJabber
             if (SSSW != null)
             {
                 SSSW.saveAllStrokesToPresentation();
+                SSSW.slideshowMembrane.Close();
                 SSSW.Close();
                 SSSW = null;
             }

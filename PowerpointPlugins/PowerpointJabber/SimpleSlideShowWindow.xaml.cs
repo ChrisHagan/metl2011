@@ -27,11 +27,15 @@ namespace PowerpointJabber
         public List<UbiquitousPen> pens;
         private UbiquitousPen currentPen;
         private Dictionary<int, StrokeCollection> strokeCollectionsForSlides;
+        private List<InkCanvas> ActiveCanvasses;
         private int lastSlide;
+        public Window slideshowMembrane;
+        private Grid slideshowMembraneBounds;
 
         public SimpleSlideShowWindow()
         {
             InitializeComponent();
+            SetUpCanvasses();
             DisableClickAdvance();
             isExtendedDesktopMode = false;
             isExtendedDesktopMode = true;
@@ -67,6 +71,50 @@ namespace PowerpointJabber
             else
                 isExtendedDesktopMode = true;
         }
+        private void SetUpCanvasses()
+        {
+            slideshowMembraneBounds = new Grid();
+            var SlideShowMembraneCanvas = new InkCanvas
+            {
+                Name = "slideShowMembraneCanvas",
+                Background = new SolidColorBrush { Color = new System.Windows.Media.Color {A=1,R=255,G=255,B=255 } },
+                EditingMode = InkCanvasEditingMode.Ink,
+                IsHitTestVisible = true,
+                Height = double.NaN,
+                Width = double.NaN,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch
+            };
+            slideshowMembraneBounds.Children.Add(SlideShowMembraneCanvas);
+            var viewbox = new Viewbox { Child = slideshowMembraneBounds };
+            slideshowMembrane = new Window
+            {
+                Content = viewbox,
+                Topmost = true,
+                AllowsTransparency = true,
+                Background = System.Windows.Media.Brushes.Transparent,
+                WindowStyle = WindowStyle.None
+            };
+            slideshowMembrane.Show();
+            ActiveCanvasses = new List<InkCanvas> { StrokeCanvas, StrokeCanvas2, SlideShowMembraneCanvas };
+            foreach (InkCanvas canvas in ActiveCanvasses)
+            {
+                canvas.StrokesReplaced += InkCanvas_StrokesReplaced;
+                attachInkCanvasHandlers(canvas);
+            }
+        }
+        private void attachInkCanvasHandlers(InkCanvas canvas)
+        {
+            canvas.StrokeCollected += InkCanvas_StrokeCollected;
+            canvas.StrokeErasing += InkCanvas_StrokeErasing;
+            canvas.SelectionMoved += InkCanvas_SelectionMoved;
+        }
+        private void detachInkCanvasHandlers(InkCanvas canvas)
+        {
+            canvas.StrokeCollected -= InkCanvas_StrokeCollected;
+            canvas.StrokeErasing -= InkCanvas_StrokeErasing;
+            canvas.SelectionMoved -= InkCanvas_SelectionMoved;
+        }
         public bool isExtendedDesktopMode
         {
             get
@@ -97,6 +145,7 @@ namespace PowerpointJabber
                             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Top = ((SecondaryScreen.Bounds.Top) / 4) * 3;
                             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Width = ((SecondaryScreen.Bounds.Width) / 4) * 3;
                             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Height = ((SecondaryScreen.Bounds.Height) / 4) * 3;
+                            attachSlideShowMembraneToSlideShow(SecondaryScreen);
                         }
                         break;
                     case false:
@@ -111,9 +160,19 @@ namespace PowerpointJabber
                         ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Top = ((PrimaryScreen.Bounds.Top) / 4) * 3;
                         ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Width = ((PrimaryScreen.Bounds.Width) / 4) * 3;
                         ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Height = ((PrimaryScreen.Bounds.Height) / 4) * 3;
+                        attachSlideShowMembraneToSlideShow(PrimaryScreen);
                         break;
                 }
             }
+        }
+        public void attachSlideShowMembraneToSlideShow(System.Windows.Forms.Screen PrimaryScreen)
+        {
+            slideshowMembraneBounds.Width = ThisAddIn.instance.Application.ActivePresentation.SlideMaster.Width;
+            slideshowMembraneBounds.Height = ThisAddIn.instance.Application.ActivePresentation.SlideMaster.Height;
+            slideshowMembrane.Top = PrimaryScreen.Bounds.Top;
+            slideshowMembrane.Left = PrimaryScreen.Bounds.Left;
+            slideshowMembrane.Height = PrimaryScreen.Bounds.Height;
+            slideshowMembrane.Width = PrimaryScreen.Bounds.Width;
         }
         public void saveAllStrokesToPresentation()
         {
@@ -138,7 +197,6 @@ namespace PowerpointJabber
         {
             SlideMoved();
         }
-
         private void SlideMoved()
         {
             var AP = ThisAddIn.instance.Application.ActivePresentation;
@@ -146,22 +204,28 @@ namespace PowerpointJabber
             {
                 var strokesForCurrentSlide = strokeCollectionsForSlides[lastSlide];
                 strokesForCurrentSlide.Clear();
-                foreach (Stroke stroke in StrokeCanvas.Strokes)
-                    strokesForCurrentSlide.Add(stroke.Clone());
+                foreach (InkCanvas canvas in ActiveCanvasses)
+                    foreach (Stroke stroke in canvas.Strokes)
+                        if (strokesForCurrentSlide.Count(s => stroke.sum().checksum.ToString().Equals(s.sum().checksum.ToString())) == 0)
+                            strokesForCurrentSlide.Add(stroke.Clone());
             }
             else
             {
-                strokeCollectionsForSlides.Add(lastSlide, StrokeCanvas.Strokes.Clone());
+                strokeCollectionsForSlides.Add(lastSlide, new StrokeCollection());
+                foreach (InkCanvas canvas in ActiveCanvasses)
+                    strokeCollectionsForSlides[lastSlide].Add(canvas.Strokes.Clone());
             }
             if (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.State == PpSlideShowState.ppSlideShowRunning)
             {
                 SetCanvasBackground();
-                StrokeCanvas.Strokes.Clear();
+                foreach (InkCanvas canvas in ActiveCanvasses)
+                    canvas.Strokes.Clear();
                 if (strokeCollectionsForSlides.Any(s => s.Key == ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide.SlideID))
                 {
                     var strokesForCurrentSlide = strokeCollectionsForSlides[ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide.SlideID];
                     foreach (Stroke stroke in strokesForCurrentSlide)
-                        StrokeCanvas.Strokes.Add(stroke.Clone());
+                        foreach (InkCanvas canvas in ActiveCanvasses)
+                            canvas.Strokes.Add(stroke.Clone());
                 }
                 string CommentsText = "Notes: \r\n";
                 foreach (Microsoft.Office.Interop.PowerPoint.Shape s in ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide.NotesPage.Shapes)
@@ -250,7 +314,9 @@ namespace PowerpointJabber
         }
         private void ReFocusPresenter()
         {
-            ThisAddIn.instance.Application.SlideShowWindows[1].Activate();
+            slideshowMembrane.Focus();
+            this.Focus();
+            //ThisAddIn.instance.Application.SlideShowWindows[1].Activate();
         }
         private void Pen(object sender, RoutedEventArgs e)
         {
@@ -258,32 +324,42 @@ namespace PowerpointJabber
             currentPen = pens.Where(c => c.penName.Equals(((FrameworkElement)sender).Tag.ToString())).First();
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB = currentPen.RGBAasInt;
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerPen;
-            StrokeCanvas.DefaultDrawingAttributes = new System.Windows.Ink.DrawingAttributes
+            foreach (InkCanvas canvas in ActiveCanvasses)
             {
-                Width = currentPen.penWeight,
-                Height = currentPen.penWeight,
-                Color = new System.Windows.Media.Color
-                {
-                    A = (byte)currentPen.A,
-                    R = (byte)currentPen.R,
-                    G = (byte)currentPen.G,
-                    B = (byte)currentPen.B
-                }
-            };
-            StrokeCanvas.EditingMode = InkCanvasEditingMode.Ink;
-
+                canvas.DefaultDrawingAttributes = new System.Windows.Ink.DrawingAttributes
+                    {
+                        Width = currentPen.penWeight,
+                        Height = currentPen.penWeight,
+                        Color = new System.Windows.Media.Color
+                        {
+                            A = (byte)currentPen.A,
+                            R = (byte)currentPen.R,
+                            G = (byte)currentPen.G,
+                            B = (byte)currentPen.B
+                        }
+                    };
+                canvas.EditingMode = InkCanvasEditingMode.Ink;
+            }
             ReFocusPresenter();
         }
         private void Eraser(object sender, RoutedEventArgs e)
         {
             DisableClickAdvance();
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerEraser;
+            foreach (InkCanvas canvas in ActiveCanvasses)
+            {
+                canvas.EditingMode = InkCanvasEditingMode.EraseByStroke;
+            }
             ReFocusPresenter();
         }
         private void Selector(object sender, RoutedEventArgs e)
         {
             EnableClickAdvance();
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerAutoArrow;
+            foreach (InkCanvas canvas in ActiveCanvasses)
+            {
+                canvas.EditingMode = InkCanvasEditingMode.Select;
+            }
             ReFocusPresenter();
         }
         private void EndSlideShow(object sender, RoutedEventArgs e)
@@ -360,29 +436,67 @@ namespace PowerpointJabber
             }
 
         }
-
         private void InkCanvas_StrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
             if (ThisAddIn.instance.wire.isConnected && ThisAddIn.instance.wire.isInConversation)
                 ThisAddIn.instance.wire.sendRawStroke(e.Stroke);
+            InkCanvas source = (InkCanvas)sender;
+            foreach (InkCanvas canvas in ActiveCanvasses)
+                if (canvas != source)
+                {
+                    detachInkCanvasHandlers(canvas);
+                    if (canvas.Strokes.Count(s => s.sum().checksum.ToString().Equals(e.Stroke.sum().checksum.ToString())) == 0)
+                        canvas.Strokes.Add(e.Stroke);
+                    attachInkCanvasHandlers(canvas);
+                }
         }
-        private void InkCanvas_StrokeErased(object sender, InkCanvasStrokeErasingEventArgs e)
+        private void InkCanvas_StrokeErasing(object sender, InkCanvasStrokeErasingEventArgs e)
         {
             if (ThisAddIn.instance.wire.isConnected && ThisAddIn.instance.wire.isInConversation)
                 ThisAddIn.instance.wire.sendRawDirtyStroke(e.Stroke);
+            InkCanvas source = (InkCanvas)sender;
+            foreach (InkCanvas canvas in ActiveCanvasses)
+                if (canvas != source)
+                {
+                    detachInkCanvasHandlers(canvas);
+                    var StrokesToRemove = new StrokeCollection();
+                    foreach (Stroke s in canvas.Strokes)
+                        if (e.Stroke.sum().checksum.ToString().Equals(s.sum().checksum.ToString()))
+                            StrokesToRemove.Add(s);
+                    canvas.Strokes.Remove(StrokesToRemove);
+                    attachInkCanvasHandlers(canvas);
+                }
         }
-        private void InkCanvas_StrokeReplaced(object sender, InkCanvasStrokesReplacedEventArgs e)
+        private void InkCanvas_SelectionMoved(object sender, EventArgs e)
         {
-            if (ThisAddIn.instance.wire.isConnected && ThisAddIn.instance.wire.isInConversation)
+            InkCanvas source = (InkCanvas)sender;
+            foreach (InkCanvas canvas in ActiveCanvasses)
             {
-                foreach (Stroke droppedStroke in (e.PreviousStrokes.Where(s => !e.NewStrokes.Contains(s)).ToList()))
+                if (canvas != source)
                 {
+                    detachInkCanvasHandlers(canvas);
+                    canvas.Strokes = source.Strokes.Clone();
+                    attachInkCanvasHandlers(canvas);
+                }
+            }
+        }
+        private void InkCanvas_StrokesReplaced(object sender, InkCanvasStrokesReplacedEventArgs e)
+        {
+            foreach (Stroke droppedStroke in (e.PreviousStrokes.Where(s => !e.NewStrokes.Contains(s)).ToList()))
+            {
+                if (ThisAddIn.instance.wire.isConnected && ThisAddIn.instance.wire.isInConversation)
                     ThisAddIn.instance.wire.sendRawDirtyStroke(droppedStroke);
-                }
-                foreach (Stroke newStroke in (e.NewStrokes.Where(s => !e.NewStrokes.Contains(s)).ToList()))
-                {
+                foreach (InkCanvas canvas in ActiveCanvasses)
+                    if (canvas.Strokes.Contains(droppedStroke))
+                        canvas.Strokes.Remove(droppedStroke);
+            }
+            foreach (Stroke newStroke in (e.NewStrokes.Where(s => !e.NewStrokes.Contains(s)).ToList()))
+            {
+                if (ThisAddIn.instance.wire.isConnected && ThisAddIn.instance.wire.isInConversation)
                     ThisAddIn.instance.wire.sendRawStroke(newStroke);
-                }
+                foreach (InkCanvas canvas in ActiveCanvasses)
+                    if (!canvas.Strokes.Contains(newStroke))
+                        canvas.Strokes.Add(newStroke);
             }
         }
     }
