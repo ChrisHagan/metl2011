@@ -29,6 +29,8 @@ namespace SandRibbon
         public static CompositeCommand ExploreBubble = new CompositeCommand();
         public static CompositeCommand ThoughtLiveWindow = new CompositeCommand();
         public static CompositeCommand SetZoomRect = new CompositeCommand();
+        public static CompositeCommand Highlight = new CompositeCommand();
+        public static CompositeCommand RemoveHighlight = new CompositeCommand();
 
         #endregion
         public static CompositeCommand ShowConversationSearchBox = new CompositeCommand();
@@ -49,6 +51,7 @@ namespace SandRibbon
         public static CompositeCommand ReceiveDirtyLiveWindow = new CompositeCommand();
         public static CompositeCommand Relogin = new CompositeCommand();
         public static CompositeCommand HideInputBlocker = new CompositeCommand();
+
 
         #region Quizzing
         public static CompositeCommand SendWormMove = new CompositeCommand(); 
@@ -152,6 +155,7 @@ namespace SandRibbon
         public static CompositeCommand MoveToQuiz = new CompositeCommand();
         public static CompositeCommand MoveTo = new CompositeCommand();
         public static CompositeCommand SneakInto = new CompositeCommand();
+        public static CompositeCommand SneakOutOf = new CompositeCommand();
         public static CompositeCommand ClearDynamicContent = new CompositeCommand();
         public static CompositeCommand PreParserAvailable = new CompositeCommand();
         public static CompositeCommand MoveToPrevious = new CompositeCommand();

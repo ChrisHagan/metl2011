@@ -219,27 +219,6 @@ namespace SandRibbon.Components.Canvas
         {
             var selectedStrokes = e.GetSelectedStrokes();
             var myStrokes = filter(selectedStrokes, me);
-            
-            /*
-             * This is the heat graph proof of concept code
-            var theirStrokes = selectedStrokes.Except(myStrokes);
-            var strokesByUser = theirStrokes.GroupBy(s=>s.tag().author);
-            var colorIndex = 0;
-            var availableColors = new[] { Colors.Red, Colors.Yellow, Colors.Blue, Colors.Green, Colors.Wheat, Colors.Honeydew };
-            foreach (var group in strokesByUser)
-            {
-                foreach(var stroke in group)
-                    highlight(stroke, availableColors[colorIndex]);
-                colorIndex++;
-            }
-            var iter = availableColors.GetEnumerator();
-            Commands.HighlightUser.Execute(strokesByUser.Select(group =>
-            {
-                iter.MoveNext();
-                var result = new UserHighlight { color = (Color)iter.Current, user = group.Key };
-                return result;
-            }).ToList(), this);
-            */
             e.SetSelectedStrokes(myStrokes);
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)

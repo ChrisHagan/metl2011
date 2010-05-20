@@ -579,7 +579,7 @@ namespace SandRibbon.Components.Canvas
         {
             removePrivateRegion(getTextPoints(text));
         }
-        private IEnumerable<Point> getTextPoints(TextBox text)
+        public static IEnumerable<Point> getTextPoints(TextBox text)
         {
             if(text == null) return null;
             var y = InkCanvas.GetTop(text);

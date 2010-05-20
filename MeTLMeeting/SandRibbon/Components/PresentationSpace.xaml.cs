@@ -32,6 +32,7 @@ namespace SandRibbon.Components
         private bool joiningConversation;
         public PresentationSpace()
         {
+            privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
             InitializeComponent();
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<JabberWire.Credentials>( who => me = who.name));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
@@ -49,9 +50,13 @@ namespace SandRibbon.Components
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
             Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(exploreBubble));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
+            Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
+            Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
             Loaded += presentationSpaceLoaded;
         }
-        private void exploreBubble(ThoughtBubble obj)
+
+
+        private void exploreBubble(ThoughtBubble thoughtBubble)
         {
             var origin = new Point(0, 0);
             var marquee = new Rectangle();
@@ -90,7 +95,11 @@ namespace SandRibbon.Components
                 },
                 Tag = setup.snapshotAtTimeOfCreation
             };
-            Commands.ThoughtLiveWindow.Execute(liveWindow);
+            Commands.ThoughtLiveWindow.Execute(new ThoughtBubbleLiveWindow
+                                                   {
+                                                       LiveWindow = liveWindow,
+                                                       Bubble = thoughtBubble
+                                                   });
         }
 
         private void presentationSpaceLoaded(object sender, RoutedEventArgs e)
@@ -397,7 +406,7 @@ namespace SandRibbon.Components
                 doReceive();
         }
         private System.Windows.Shapes.Path privacyAdorner = new System.Windows.Shapes.Path();
-        private readonly Brush privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
+        public Brush privacyOverlay;
         public void ClearPrivacy()
         {
             var geometry = new PathGeometry();
@@ -409,17 +418,34 @@ namespace SandRibbon.Components
             privacyAdorner.IsHitTestVisible = false;
             adornerLayer.Add(new UIAdorner(this, privacyAdorner));
         }
-        public void AddPrivateRegion(IEnumerable<Point> vertices)
+
+        private void removeHighlight(HighlightParameters param)
         {
+            RemovePrivateRegion(param.verticies);
+        }
+        private void highlight(HighlightParameters param)
+        {
+            AddPrivateRegion(param.verticies, param.color);
+        }
+        public void AddPrivateRegion(IEnumerable<Point> vertices, Color color)
+        {
+            privacyOverlay = new SolidColorBrush {Color = color, Opacity = 0.2};
+            privacyAdorner.Fill = privacyOverlay;
             RemovePrivateRegion(vertices);
             var segments = vertices.Select(v => (PathSegment)new LineSegment(v, true));
+            if((PathGeometry)privacyAdorner.Data == null) return;
             ((PathGeometry)privacyAdorner.Data).Figures.Add(new PathFigure(vertices.First(), segments, true));
+        }
+        public void AddPrivateRegion(IEnumerable<Point> vertices)
+        {
+            AddPrivateRegion(vertices, Colors.Red);
         }
         public void RemovePrivateRegion(IEnumerable<Point> vertices)
         {
             if(vertices == null) return;
             var sum = vertices.Aggregate(0.0, (acc, v) => acc + v.X + v.Y);
             var geometry = (PathGeometry)privacyAdorner.Data;
+            if (geometry == null) return;
             var regionToRemove = geometry.Figures.Where(
                 f=>{
                     var figureSum = f.Segments.Select(s => ((LineSegment)s).Point).Aggregate(0.0, (acc, p) => acc + p.X + p.Y);
@@ -486,5 +512,10 @@ namespace SandRibbon.Components
     {
         public int id;
         public RenderTargetBitmap data;
+    }
+    public class HighlightParameters
+    {
+        public IEnumerable<Point> verticies;
+        public Color color;
     }
 }

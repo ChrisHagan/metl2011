@@ -193,6 +193,7 @@ namespace SandRibbon.Utils.Connection
             Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
             Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(SendNewBubble));
             Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
+            Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
         }
         private void SendNewBubble(TargettedBubbleContext selection){
             stanza(new MeTLStanzas.Bubble(selection));

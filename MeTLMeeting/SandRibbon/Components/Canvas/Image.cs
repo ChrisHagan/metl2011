@@ -199,7 +199,7 @@ namespace SandRibbon.Components.Canvas
         {
             removePrivateRegion(getImagePoints(image));
         }
-        private IEnumerable<Point> getImagePoints(System.Windows.Controls.Image image)
+        public static IEnumerable<Point> getImagePoints(System.Windows.Controls.Image image)
         {
             var x = InkCanvas.GetLeft(image) + PADDING;
             var y = InkCanvas.GetTop(image) + PADDING;
