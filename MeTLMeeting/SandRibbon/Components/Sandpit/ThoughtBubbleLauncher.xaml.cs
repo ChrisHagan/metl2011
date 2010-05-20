@@ -54,6 +54,7 @@ namespace SandRibbon.Components.Sandpit
             if (selection.Count() > 0)
             {
                 var details = ConversationDetailsProviderFactory.Provider.AppendSlideAfter(currentSlide, currentDetails.Jid, Slide.TYPE.THOUGHT);
+                var slide = details.Slides.Select(s => s.id).Max();
                 Commands.SendNewBubble.Execute(new TargettedBubbleContext
                                                    {
                                                        author = credentials.name,
@@ -61,7 +62,7 @@ namespace SandRibbon.Components.Sandpit
                                                        privacy = "public",
                                                        slide = currentSlide,
                                                        target = target,
-                                                       thoughtSlide = details.Slides.Select(s => s.id).Max()
+                                                       thoughtSlide =slide 
                                                    });
             }
         } 

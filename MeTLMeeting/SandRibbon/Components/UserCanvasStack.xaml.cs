@@ -37,7 +37,6 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(
                 ReceiveNewBubble));
-            Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(exploreBubble));
         }
         public void ReceiveNewBubble(TargettedBubbleContext context) {
             if(context.target != handwriting.target) return;
@@ -51,12 +50,6 @@ namespace SandRibbon.Components
                                             adornerLayer.Add(UIAdorner.InCanvas(this, bubble, bubble.position));
                                         }
                                     });
-        }
-        private void exploreBubble(ThoughtBubble bubble)
-        {
-            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
-            if(adornerLayer == null) return;
-            adornerLayer.IsHitTestVisible = true;
         }
         private ThoughtBubble getBubble(TargettedBubbleContext bubble)
         {
