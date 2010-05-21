@@ -45,7 +45,6 @@ namespace SandRibbon.Components.SimpleImpl
     public partial class SimpleConversationCreator : UserControl
     {
         public DelegateCommand<ConversationDetails> create;
-        private JabberWire.Credentials credentials;
         private ObservableCollection<string> groupNames = new ObservableCollection<string>();
         private CompositeCommand createActionProperty;
         public CompositeCommand CreateAction
@@ -95,7 +94,6 @@ namespace SandRibbon.Components.SimpleImpl
         }
         private void SetIdentity(JabberWire.Credentials credentials)
         {
-            this.credentials = credentials;
             groupNames.Clear();
             foreach (var groupName in credentials.authorizedGroups.Select(g => g.groupKey))
                 groupNames.Add(groupName);

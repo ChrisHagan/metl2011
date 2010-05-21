@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
@@ -20,7 +21,6 @@ namespace SandRibbon.Components.SimpleImpl
         public static IsActivePermissionConverter IsActivePermissionConverter = new IsActivePermissionConverter();
         public static RoutedCommand ProxyUpdateConversationDetails = new RoutedCommand();
         public DelegateCommand<ConversationDetails> update;
-        public JabberWire.Credentials credentials;
         public ObservableCollection<string> authorizedGroups = new ObservableCollection<string>();
         private string currentJid;
         public SimpleConversationEditor()
@@ -49,7 +49,6 @@ namespace SandRibbon.Components.SimpleImpl
         }
         private void SetIdentity(JabberWire.Credentials credentials)
         {
-            this.credentials = credentials;
             authorizedGroups.Clear();
             foreach(var group in credentials.authorizedGroups)
                 authorizedGroups.Add(group.groupKey);
@@ -93,7 +92,7 @@ namespace SandRibbon.Components.SimpleImpl
             if (extantConversations == null) return false;
             proposedDetails.Title = proposedDetails.Title.Trim();
             var currentDetails = (ConversationDetails)DataContext;
-            var iAmTheAuthor = credentials.name == (((ConversationDetails)DataContext).Author);
+            var iAmTheAuthor = Globals.me == (((ConversationDetails)DataContext).Author);
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
             var thisTitleIsNotTaken = (extantConversations.Where(c=> (c.Title != currentDetails.Title) && c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).Count() == 0);
             return iAmTheAuthor && thisIsAValidTitle && thisTitleIsNotTaken;
