@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
@@ -21,7 +22,6 @@ namespace SandRibbon.Components
     public partial class ConversationSearchBox : UserControl
     {
         public static RoutedCommand Search = new RoutedCommand();
-        private string username;
         private List<SandRibbon.Utils.Connection.JabberWire.AuthorizedGroup> authorizedGroups;
         private string lastSearch;
         private List<SandRibbonObjects.ConversationDetails> allConversations;
@@ -51,7 +51,6 @@ namespace SandRibbon.Components
         }
         private void StoreIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials identity)
         {
-            username = identity.name;
             authorizedGroups = identity.authorizedGroups;
             DoUpdateAllConversations();
         }
@@ -114,7 +113,7 @@ namespace SandRibbon.Components
             var list = new List<SandRibbonObjects.ConversationDetails>();
             var recentConversations = SandRibbon.Providers.RecentConversationProvider.loadRecentConversations().Where(c => c.IsValid
                 && allConversations.Contains(c)).Reverse().Take(10);
-            var recentAuthors = recentConversations.Select(c => c.Author).Where(c => c != username).Distinct().ToList();
+            var recentAuthors = recentConversations.Select(c => c.Author).Where(c => c != Globals.me).Distinct().ToList();
             foreach (var author in recentAuthors)
             {
                 var otherConversationsByThisAuthor = allConversations.Where(c => c.IsValid && !list.Contains(c) && c.Author == author).Reverse();
@@ -176,7 +175,7 @@ namespace SandRibbon.Components
         {
             if (allConversations.Count == 0)
                 DoUpdateAllConversations();
-            myOwnedConversationsSource = convertToSummaries(allConversations.Where(s => s.Author == username).ToList());
+            myOwnedConversationsSource = convertToSummaries(allConversations.Where(s => s.Author == Globals.me).ToList());
             myOwnedConversationsCount.Content = "(" + myOwnedConversationsSource.Count.ToString() + ")";
         }
         private void showMyOwnedConversations()
