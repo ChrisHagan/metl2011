@@ -19,7 +19,6 @@ namespace SandRibbon.Components
     public partial class SimpleConversationSelector : UserControl, IConversationSelector, IConversationListing
     {
         public static IEnumerable<ConversationDetails> rawConversationList = new List<ConversationDetails>();
-        private string me;
         public SimpleConversationSelector()
         {
             InitializeComponent();
@@ -31,8 +30,6 @@ namespace SandRibbon.Components
                     List(ConversationDetailsProviderFactory.Provider.ListConversations()),
                 details=>
                     rawConversationList.Where(c=>c.Title == details.Title || string.IsNullOrEmpty(details.Title)).Count() == 0));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(
-                author => me = author.name));
         }
         private bool doesConversationAlreadyExist(ConversationDetails details)
         {
@@ -80,7 +77,7 @@ namespace SandRibbon.Components
             {
                 rawConversationList = conversations.ToList();
                 var list = new List<ConversationDetails>();
-                var myConversations = conversations.Where(c => c.Author == me).OrderBy(c => c.LastAccessed.Date).Reverse().Take(2).ToList();
+                var myConversations = conversations.Where(c => c.Author == Globals.me).OrderBy(c => c.LastAccessed.Date).Reverse().Take(2).ToList();
                 if (myConversations.Count() > 0)
                 {
                     list.Add(new SeparatorConversation("My Conversations"));
@@ -89,7 +86,7 @@ namespace SandRibbon.Components
                 list.Add(new SeparatorConversation("Conversations I've worked in"));
                 var recentConversations = RecentConversationProvider.loadRecentConversations().Where(c => c.IsValid && conversations.Contains(c)).Reverse().Take(2);
                 list.AddRange(recentConversations);
-                var recentAuthors = list.Select(c => c.Author).Where(c => c != me).Distinct().ToList();
+                var recentAuthors = list.Select(c => c.Author).Where(c => c != Globals.me).Distinct().ToList();
                 foreach (var author in recentAuthors)
                 {
                     var otherConversationsByThisAuthor = conversations.Where(c => c.IsValid && !list.Contains(c) && c.Author == author).Reverse();
