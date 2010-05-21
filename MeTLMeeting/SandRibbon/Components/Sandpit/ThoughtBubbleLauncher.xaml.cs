@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
@@ -20,7 +21,6 @@ namespace SandRibbon.Components.Sandpit
 {
     public partial class ThoughtBubbleLauncher : UserControl
     {
-        private SandRibbon.Utils.Connection.JabberWire.Credentials credentials;
         private string privacy;
         private int currentSlide;
         private ConversationDetails currentDetails;
@@ -28,14 +28,11 @@ namespace SandRibbon.Components.Sandpit
         {
             InitializeComponent();
             Commands.BubbleCurrentSelection.RegisterCommand(new DelegateCommand<object>(BubbleCurrentSelection));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(SetIdentity));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(details => currentDetails = details));
         }
-        private void SetIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials credentials){
-            this.credentials = credentials;
-        }
+      
         private void SetPrivacy(string privacy){
             this.privacy = privacy;
         }
@@ -57,7 +54,7 @@ namespace SandRibbon.Components.Sandpit
                 var slide = details.Slides.Select(s => s.id).Max();
                 Commands.SendNewBubble.Execute(new TargettedBubbleContext
                                                    {
-                                                       author = credentials.name,
+                                                       author = Globals.me,
                                                        context = selection,
                                                        privacy = "public",
                                                        slide = currentSlide,

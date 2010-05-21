@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
@@ -13,17 +14,11 @@ namespace SandRibbon.Components
     {
         private int slideId;
         private static int ThumbnailSideSize = 96;
-        private static SandRibbon.Utils.Connection.JabberWire.Credentials credentials;
         public PrintingHost()
         {
             InitializeComponent();
             Commands.ThumbnailGenerated.RegisterCommand(new DelegateCommand<UnscaledThumbnailData>(ThumbnailGenerated));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(SetIdentity));
-        }
-        private void SetIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
-        {
-            PrintingHost.credentials = credentials;
         }
         private void ThumbnailGenerated(UnscaledThumbnailData thumbData)
         {
@@ -38,7 +33,7 @@ namespace SandRibbon.Components
         {
             if (!Directory.Exists("thumbs"))
                 Directory.CreateDirectory("thumbs");
-            var fullPath = string.Format("thumbs/{0}",credentials.name);
+            var fullPath = string.Format("thumbs/{0}", Globals.me);
             if (!Directory.Exists(fullPath))
                 Directory.CreateDirectory(fullPath);
             var path = string.Format("{0}/{1}.png", fullPath, id);

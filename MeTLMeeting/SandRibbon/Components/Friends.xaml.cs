@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 
@@ -11,13 +12,10 @@ namespace SandRibbon.Components
 {
     public partial class Friends
     {
-        private string me;
         public DelegateCommand<string> setAuthor;
         public Friends()
         {
             InitializeComponent();
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(
-                author => me = author.name));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(_obj => history.Children.Clear()));
             Commands.ReceiveChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(receiveChatMessage));
         }
@@ -40,17 +38,17 @@ namespace SandRibbon.Components
         public void SendMessage()
         {
             var message = messageField;
-            message.Text = SandRibbonObjects.DateTimeFactory.Now().ToString() + " " + me + ":\n" + message.Text;
+            message.Text = SandRibbonObjects.DateTimeFactory.Now().ToString() + " " + Globals.me + ":\n" + message.Text;
             message.tag(new TextTag
             {
-                author = me,
+                author = Globals.me,
                 privacy = "public",
-                id = string.Format("{0}:{1}", me, SandRibbonObjects.DateTimeFactory.Now())
+                id = string.Format("{0}:{1}", Globals.me, SandRibbonObjects.DateTimeFactory.Now())
             });
             Commands.SendChatMessage.Execute(new TargettedTextBox
                 {
                     box = message,
-                    author = me,
+                    author = Globals.me,
                     privacy = "public",
                     slide = 0,
                     target = "chat",
@@ -96,12 +94,12 @@ namespace SandRibbon.Components
             
             var target = parts[0];
             target = target.Remove(0, 1);
-            if (message[0].Contains(me))
+            if (message[0].Contains(Globals.me))
             {
                 box.Text = message[0] + ": (whisper " + target + ") " + ": " + parts[1];
                 return true;
             }
-            if (target == me)
+            if (target == Globals.me)
             {
                 box.Text = message[0] + ": (private message to me)" + ": " + parts[1];
                 return true;
