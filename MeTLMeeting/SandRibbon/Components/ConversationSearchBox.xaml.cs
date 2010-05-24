@@ -31,7 +31,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(UpdateAllConversations));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(UpdateAllConversations));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(CloseConversationSearchBox));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox, CanShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
             Loaded += new RoutedEventHandler(ConversationSearchBox_Loaded);
@@ -51,14 +51,16 @@ namespace SandRibbon.Components
         }
         private void HideConversationSearchBox(object o)
         {
-            CloseConversationSearchBox("000000");
+            CloseConversationSearchBox();
         }
-        private void CloseConversationSearchBox(string jid)
+        private void JoinConversation(object o)
+        {
+            CloseConversationSearchBox();
+        }
+        private void CloseConversationSearchBox()
         {
             HideConversationSearchBoxButton.Visibility = Visibility.Visible;
             this.Visibility = Visibility.Collapsed;
-            //unbindAllItemSources();
-            //((Grid)this.Parent).Children.Remove(this);
         }
         private void UpdateAllConversations(SandRibbonObjects.ConversationDetails details)
         {

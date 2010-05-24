@@ -180,6 +180,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Chrome\ToolBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConversationSearchBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -415,6 +419,9 @@
     </Compile>
     <Compile Include="Chrome\ApplicationPopup.xaml.cs">
       <DependentUpon>ApplicationPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Chrome\ToolBar.xaml.cs">
+      <DependentUpon>ToolBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Canvas\AbstractCanvas.cs" />
     <Compile Include="Components\Canvas\HandWriting.cs" />
