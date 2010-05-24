@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
@@ -53,12 +54,9 @@ namespace SandRibbon.Utils
         static MsoTriState FALSE = MsoTriState.msoFalse;
         static MsoTriState TRUE = MsoTriState.msoTrue;
         static int resource = 1;
-        private static string me;
         public static IEnumerable<ConversationDetails> extantConversations = new List<ConversationDetails>();
         private SandRibbon.Utils.Connection.JabberWire.Credentials credentials;
-        public ObservableCollection<string> authorizedGroups = new ObservableCollection<string>();
         public JabberWire wire;
-        public DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials> setAuthor;
         private string parsedTitle;
         public enum PowerpointImportType
         {
@@ -67,19 +65,8 @@ namespace SandRibbon.Utils
             Shapes
         }
         private powerpointImportDialogue pptChoice;
-        private void SetIdentity(JabberWire.Credentials credentials)
-        {
-            this.credentials = credentials;
-            authorizedGroups.Clear();
-            foreach (var group in credentials.authorizedGroups)
-                authorizedGroups.Add(group.groupKey);
-        }
         public PowerPointLoader()
         {
-            setAuthor = new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(
-                author => me = author.name);
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<JabberWire.Credentials>(SetIdentity));
-            Commands.SetIdentity.RegisterCommand(setAuthor);
             Commands.PostStartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(
                 (conversationDetails) => { startPowerpointImport((ConversationDetails)conversationDetails); }
             ));
@@ -258,7 +245,7 @@ namespace SandRibbon.Utils
                 if (details.Tag == null)
                     details.Tag = "unTagged";
                 var conversation = provider.Create(details);
-                conversation.Author = me;
+                conversation.Author = Globals.me;
                 Commands.PowerPointProgress.Execute("Starting to parse powerpoint file");
                 var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
                 var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
@@ -290,7 +277,7 @@ namespace SandRibbon.Utils
                 Commands.PowerPointProgress.Execute("Finished parsing powerpoint, Beginning data upload");
                 var startingId = conversation.Slides.First().id;
                 var index = 0;
-                conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide { author = me, id = startingId++, index = index++ }).ToList();
+                conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide { author = Globals.me, id = startingId++, index = index++ }).ToList();
                 provider.Update(conversation);
                 var xmlSlides = xml.Descendants("slide");
                 for (int i = 0; i < xmlSlides.Count(); i++)
@@ -370,7 +357,7 @@ namespace SandRibbon.Utils
                 if (details.Tag == null)
                     details.Tag = "unTagged";
                 var conversation = provider.Create(details);
-                conversation.Author = me;
+                conversation.Author = Globals.me;
                 Commands.PowerPointProgress.Execute("Starting to parse powerpoint file");
                 /*ppt.ExportAsFixedFormat(
                     "testExport.xps", 
@@ -396,7 +383,7 @@ namespace SandRibbon.Utils
                 Commands.PowerPointProgress.Execute("Finished parsing powerpoint, Beginning data upload");
                 var startingId = conversation.Slides.First().id;
                 var index = 0;
-                conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide { author = me, id = startingId++, index = index++ }).ToList();
+                conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide { author = Globals.me, id = startingId++, index = index++ }).ToList();
                 provider.Update(conversation);
                 var xmlSlides = xml.Descendants("slide");
                 for (int i = 0; i < xmlSlides.Count(); i++)
@@ -435,7 +422,7 @@ namespace SandRibbon.Utils
                 newText.Text = text.Attribute("content").Value;
                 InkCanvas.SetLeft(newText, Double.Parse(text.Attribute("x").Value));
                 InkCanvas.SetTop(newText, Double.Parse(text.Attribute("y").Value));
-                var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + me;
+                var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + Globals.me;
                 var font = text.Descendants("font").ElementAt(0);
                 newText.FontFamily = new FontFamily(font.Attribute("family").Value);
                 newText.FontSize = Double.Parse(font.Attribute("size").Value);
@@ -443,14 +430,14 @@ namespace SandRibbon.Utils
                 newText.tag(
                     new TextTag
                     {
-                        author = me,
+                        author = Globals.me,
                         id = textBoxIdentity,
                         privacy = "public"
                     });
                 wire.SendTextbox(new TargettedTextBox
                 {
                     slide = id,
-                    author = me,
+                    author = Globals.me,
                     privacy = "public",
                     target = "presentationSpace",
                     box = newText
@@ -472,8 +459,8 @@ namespace SandRibbon.Utils
                 InkCanvas.SetTop(hostedImage, Double.Parse(shape.Attribute("y").Value));
                 hostedImage.tag(new ImageTag
                                     {
-                                        id = string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now(), shapeCount++),
-                                        author = me,
+                                        id = string.Format("{0}:{1}:{2}", Globals.me, DateTimeFactory.Now(), shapeCount++),
+                                        author = Globals.me,
                                         privacy = shape.Attribute("privacy").Value,
                                         //isBackground = shapeCount == 1
                                         isBackground = false
@@ -481,7 +468,7 @@ namespace SandRibbon.Utils
                 wire.SendImage(new TargettedImage
                 {
                     target = "presentationSpace",
-                    author = me,
+                    author = Globals.me,
                     image = hostedImage,
                     slide = id,
                     privacy = shape.Attribute("privacy").Value
@@ -491,7 +478,7 @@ namespace SandRibbon.Utils
         }
         private void sendTextboxes(int id, System.Collections.Generic.IEnumerable<XElement> shapes)
         {
-            var privateRoom = id.ToString() + me;
+            var privateRoom = id.ToString() + Globals.me;
             wire.SneakInto(privateRoom);
             var shapeCount = 0;
             var height = 0;
@@ -508,15 +495,15 @@ namespace SandRibbon.Utils
                 shapeCount++;
                 newText.tag(new TextTag
                         {
-                            author = me,
+                            author = Globals.me,
                             privacy = "private",
-                            id = string.Format("{0}:{1}{2}", me, DateTimeFactory.Now(), shapeCount)
+                            id = string.Format("{0}:{1}{2}", Globals.me, DateTimeFactory.Now(), shapeCount)
                         });
                 ;
                 wire.SendTextbox(new TargettedTextBox
                 {
                     slide = id,
-                    author = me,
+                    author = Globals.me,
                     privacy = "private",
                     target = "notepad",
                     box = newText
