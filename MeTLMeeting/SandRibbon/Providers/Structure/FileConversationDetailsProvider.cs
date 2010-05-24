@@ -35,7 +35,6 @@ namespace SandRibbon.Providers.Structure
         }
         private static readonly string DETAILS = "details.xml";
         private static readonly string SUMMARY = "summary.xml";
-        private JabberWire.Credentials credentials;
         public SandRibbonObjects.ConversationDetails DetailsOf(string conversationJid)
         {
             try
@@ -57,12 +56,7 @@ namespace SandRibbon.Providers.Structure
         }
         public FileConversationDetailsProvider()
         {
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<JabberWire.Credentials>(SetIdentity));
             Commands.ReceiveDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(ReceiveDirtyConversationDetails));
-        }
-        private void SetIdentity(JabberWire.Credentials credentials)
-        {
-            this.credentials = credentials;
             ListConversations();
         }
         public ConversationDetails AppendSlideAfter(int currentSlide, string title)
@@ -128,21 +122,21 @@ namespace SandRibbon.Providers.Structure
         private void ReceiveDirtyConversationDetails(string jid)
         {
             var newDetails = DetailsOf(jid);
-            if (credentials.authorizedGroups.Select(g => g.groupKey).Contains("Superuser"))
+            if (Globals.authorizedGroups.Select(g => g.groupKey).Contains("Superuser"))
             {
                 conversationsCache = (conversationsCache.Where(c => c.Jid != jid).Union(new[] { newDetails })).ToList();
             }
             else
             {
-                conversationsCache = RestrictToAccessible(conversationsCache.Where(c => c.Jid != jid).Union(new[] { newDetails }), credentials.authorizedGroups.Select(g => g.groupKey)).ToList();
+                conversationsCache = RestrictToAccessible(conversationsCache.Where(c => c.Jid != jid).Union(new[] { newDetails }), Globals.authorizedGroups.Select(g => g.groupKey)).ToList();
             }
         }
-        public ConversationDetails Update(SandRibbonObjects.ConversationDetails details)
+        public ConversationDetails Update(ConversationDetails details)
         {
             try
             {
                 var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}&filename={4}", ROOT_ADDRESS, UPLOAD, STRUCTURE, details.Jid, DETAILS);
-                HttpResourceProvider.securePutData(url, details.GetBytes());
+                securePutData(url, details.GetBytes());
                 Commands.SendDirtyConversationDetails.Execute(details.Jid);
                 return details;
             }
@@ -167,38 +161,48 @@ namespace SandRibbon.Providers.Structure
         private List<ConversationDetails> conversationsCache;
         public IEnumerable<SandRibbonObjects.ConversationDetails> ListConversations()
         {
-            if (credentials == null) return new List<ConversationDetails>();
-            var myGroups = credentials.authorizedGroups.Select(g => g.groupKey);
-            if (conversationsCache != null && conversationsCache.Count() > 0)
+            try
             {
-                if (credentials.authorizedGroups.Select(g => g.groupKey).Contains("Superuser"))
+                var myGroups = Globals.authorizedGroups.Select(g => g.groupKey);
+                if (conversationsCache != null && conversationsCache.Count() > 0)
                 {
+                    if (Globals.authorizedGroups.Select(g => g.groupKey).Contains("Superuser"))
+                    {
+                        return conversationsCache;
+                    }
+                    conversationsCache = RestrictToAccessible(conversationsCache, myGroups);
                     return conversationsCache;
                 }
-                conversationsCache = RestrictToAccessible(conversationsCache, myGroups);
-                return conversationsCache;
-            }
-            var data = HttpResourceProvider.secureGetData(string.Format("http://{0}:1188/Structure/all.zip", Constants.JabberWire.SERVER));
-            using (var zip = ZipFile.Read(data))
-            {
-                var summary = zip
-                    .Entries
-                    .Where(e => e.FileName.Contains("details.xml"))
-                    .Select(e =>
-                    {
-                        using (var stream = new MemoryStream())
-                        {
-                            e.Extract(stream);
-                            return new ConversationDetails().ReadXml(XElement.Parse(Encoding.UTF8.GetString(stream.ToArray())));
-                        }
-                    }).ToList();
-                if (credentials.authorizedGroups.Select(g => g.groupKey).Contains("Superuser"))
+                var data =
+                    HttpResourceProvider.secureGetData(string.Format("http://{0}:1188/Structure/all.zip",
+                                                                     Constants.JabberWire.SERVER));
+                using (var zip = ZipFile.Read(data))
                 {
-                    conversationsCache = summary;
-                    return summary;
+                    var summary = zip
+                        .Entries
+                        .Where(e => e.FileName.Contains("details.xml"))
+                        .Select(e =>
+                                    {
+                                        using (var stream = new MemoryStream())
+                                        {
+                                            e.Extract(stream);
+                                            return
+                                                new ConversationDetails().ReadXml(
+                                                    XElement.Parse(Encoding.UTF8.GetString(stream.ToArray())));
+                                        }
+                                    }).ToList();
+                    if (Globals.authorizedGroups.Select(g => g.groupKey).Contains("Superuser"))
+                    {
+                        conversationsCache = summary;
+                        return summary;
+                    }
+                    conversationsCache = RestrictToAccessible(summary, myGroups);
+                    return conversationsCache;
                 }
-                conversationsCache = RestrictToAccessible(summary, myGroups);
-                return conversationsCache;
+            }
+            catch(NotSetException e)
+            {
+                return new List<ConversationDetails>(); 
             }
         }
         private List<ConversationDetails> RestrictToAccessible(IEnumerable<ConversationDetails> summary, IEnumerable<string> myGroups)
