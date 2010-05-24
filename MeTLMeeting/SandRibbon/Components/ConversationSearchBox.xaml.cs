@@ -22,7 +22,6 @@ namespace SandRibbon.Components
     public partial class ConversationSearchBox : UserControl
     {
         public static RoutedCommand Search = new RoutedCommand();
-        private List<SandRibbon.Utils.Connection.JabberWire.AuthorizedGroup> authorizedGroups;
         private string lastSearch;
         private List<SandRibbonObjects.ConversationDetails> allConversations;
         private List<ConversationSummary> myRecommendedConversationsSource;
@@ -36,9 +35,14 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(UpdateAllConversations));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(UpdateAllConversations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(CloseConversationSearchBox));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(StoreIdentity));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
+            Loaded += ConversationSearchBox_Loaded;
+        }
+
+        void ConversationSearchBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            DoUpdateAllConversations();
         }
         private void ShowConversationSearchBox(object o)
         {
@@ -49,17 +53,10 @@ namespace SandRibbon.Components
         {
             CloseConversationSearchBox("000000");
         }
-        private void StoreIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials identity)
-        {
-            authorizedGroups = identity.authorizedGroups;
-            DoUpdateAllConversations();
-        }
         private void CloseConversationSearchBox(string jid)
         {
             HideConversationSearchBoxButton.Visibility = Visibility.Visible;
             this.Visibility = Visibility.Collapsed;
-            //unbindAllItemSources();
-            //((Grid)this.Parent).Children.Remove(this);
         }
         private void UpdateAllConversations(SandRibbonObjects.ConversationDetails details)
         {
