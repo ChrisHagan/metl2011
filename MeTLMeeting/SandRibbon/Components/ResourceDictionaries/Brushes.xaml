@@ -1,0 +1,73 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--This area is for defining colours and gradients for use on other controls-->
+    <core:Int32 x:Key="ToolTipDelay">400</core:Int32>
+    <LinearGradientBrush x:Key="BackgroundGrayGradient" Opacity="1" StartPoint="0,0" EndPoint="1,.2">
+        <GradientStop Color="#FFBABABA" Offset="0"/>
+        <GradientStop Color="#FF848484" Offset="0.7"/>
+        <GradientStop Color="#FF959595" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BackgroundBlueGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFF5FAFF" Offset="0"/>
+        <GradientStop Color="#FFD0DEEF" Offset="0.39"/>
+        <GradientStop Color="#FFCADAED" Offset="0.40"/>
+        <GradientStop Color="#FFE7F2FF" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="MonashBlueGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFF5FAFF" Offset="0"/>
+        <GradientStop Color="#FFC5D5F6" Offset="0.2"/>
+        <GradientStop Color="#FF87ACF2" Offset="0.35"/>
+        <GradientStop Color="#FF7AA3F4" Offset="0.40"/>
+        <GradientStop Color="#FFC5D5F6" Offset="1"/>
+    </LinearGradientBrush>
+    <SandRibbonInterop:AutoShape x:Key="BlueAutoShape" Background="LightBlue" Foreground="DarkBlue">
+        <SandRibbonInterop:AutoShape.PathData>
+            <PathGeometry>
+                <PathGeometry.Figures>
+                    <PathFigureCollection>
+                        <PathFigure IsClosed="True" StartPoint="10,100">
+                            <PathFigure.Segments>
+                                <PathSegmentCollection>
+                                    <LineSegment Point="100,100" />
+                                    <LineSegment Point="100,50" />
+                                </PathSegmentCollection>
+                            </PathFigure.Segments>
+                        </PathFigure>
+                    </PathFigureCollection>
+                </PathGeometry.Figures>
+            </PathGeometry>
+        </SandRibbonInterop:AutoShape.PathData>
+    </SandRibbonInterop:AutoShape>
+
+    <SolidColorBrush x:Key="MiniMapSelectionBox" Color="#88FFFF00"/>
+
+    <SolidColorBrush Color="LightGray" x:Key="MouseOverBorderBrush"/>
+    <SolidColorBrush Color="Black" x:Key="MouseOverContentBrush"/>
+    <LinearGradientBrush x:Key="MouseOverGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFFFFDED" Offset="0"/>
+        <GradientStop Color="#FFFFEBAC" Offset="0.39"/>
+        <GradientStop Color="#FFFFD45F" Offset="0.40"/>
+        <GradientStop Color="#FFFFD45F" Offset="1"/>
+    </LinearGradientBrush>
+
+    <SolidColorBrush Color="DarkGray" x:Key="CheckedBorderBrush"/>
+    <SolidColorBrush Color="Black" x:Key="CheckedContentBrush"/>
+    <LinearGradientBrush x:Key="CheckedGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFFED7A9" Offset="0"/>
+        <GradientStop Color="#FFFBB565" Offset="0.39"/>
+        <GradientStop Color="#FFFA9831" Offset="0.40"/>
+        <GradientStop Color="#FFFDECA6" Offset="1"/>
+    </LinearGradientBrush>
+
+    <SolidColorBrush Color="DarkGray" x:Key="PressedBorderBrush"/>
+    <SolidColorBrush Color="Black" x:Key="PressedContentBrush"/>
+    <LinearGradientBrush x:Key="PressedGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFFED7A9" Offset="0"/>
+        <GradientStop Color="#FFFBB565" Offset="0.45"/>
+        <GradientStop Color="#FFFA9831" Offset="0.46"/>
+        <GradientStop Color="#FFFDECA6" Offset="1"/>
+    </LinearGradientBrush>
+</ResourceDictionary>
