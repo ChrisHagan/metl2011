@@ -77,10 +77,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ToggleHighlighterMode.RegisterCommand(new DelegateCommand<object>(_obj =>
             {
                 var newAttributes = DefaultDrawingAttributes.Clone();
-                if ( newAttributes.IsHighlighter)
-                    newAttributes.IsHighlighter = false;
-                else
-                    newAttributes.IsHighlighter = true;
+                newAttributes.IsHighlighter = !newAttributes.IsHighlighter;
                 DefaultDrawingAttributes = newAttributes;
             }));
             Commands.SetHighlighterMode.RegisterCommand(new DelegateCommand<bool>(newIsHighlighter =>
