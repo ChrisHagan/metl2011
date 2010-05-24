@@ -26,8 +26,6 @@ namespace SandRibbon.Components
 {
     public partial class PresentationSpace
     {
-        public JabberWire.Location currentLocation = new JabberWire.Location();
-        public ConversationDetails currentDetails;
         private bool synced = false;
         private bool joiningConversation;
         public PresentationSpace()
@@ -65,11 +63,11 @@ namespace SandRibbon.Components
                     target = new Point(0, 0),
                     snapshotAtTimeOfCreation = ResourceUploader.uploadResourceToPath(
                         toByteArray(this, marquee, origin),
-                        "Resource/" + currentLocation.currentSlide.ToString(),
+                        "Resource/" + Globals.location.currentSlide.ToString(),
                         "quizSnapshot.png",
                         false),
                     author = Globals.me,
-                    slide = currentLocation.currentSlide,
+                    slide = Globals.location.currentSlide,
                     visualSource = stack
                 };
 
@@ -110,28 +108,32 @@ namespace SandRibbon.Components
         private void setUpSyncDisplay(int slide)
         {
             if(!synced) return;
-            if(currentDetails == null) return;
-            if (currentDetails.Author == Globals.me) return;
-            if(currentDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0)return;
-            Dispatcher.BeginInvoke((Action) delegate
-                        {
-                            var adorner = GetAdorner();
-                            AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new SyncDisplay()));
-                        });
+            try
+            {
+                if (Globals.conversationDetails.Author == Globals.me) return;
+                if (Globals.conversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
+                Dispatcher.BeginInvoke((Action) delegate
+                            {
+                                var adorner = GetAdorner();
+                                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner,new SyncDisplay()));
+                            });
+            }
+            catch(NotSetException e)
+            {
+                //BOOOO
+            }
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            currentDetails = details;
             joiningConversation = false;
             try
             {
-                if (currentDetails.Author == Globals.me || currentDetails.Permissions.studentCanPublish)
+                if (Globals.conversationDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
                     Commands.SetPrivacy.Execute(stack.handwriting.actualPrivacy);
+                else
+                    Commands.SetPrivacy.Execute("private");
             }
             catch (NotSetException) 
-            {
-            }
-            finally
             {
                 Commands.SetPrivacy.Execute("private");
             }
@@ -158,7 +160,7 @@ namespace SandRibbon.Components
                 using (var context = dv.RenderOpen())
                     context.DrawRectangle(new VisualBrush(stack), null, new Rect(new Point(), new Size(side, side)));
                 bitmap.Render(dv);
-                Commands.ThumbnailGenerated.Execute(new UnscaledThumbnailData { id = currentLocation.currentSlide, data = bitmap });
+                Commands.ThumbnailGenerated.Execute(new UnscaledThumbnailData { id = Globals.location.currentSlide, data = bitmap });
             }
             catch (OverflowException)
             {
@@ -265,7 +267,7 @@ namespace SandRibbon.Components
         }
         private void ReceiveLiveWindow(LiveWindowSetup window)
         {
-            if (window.slide != currentLocation.currentSlide || window.author != Globals.me) return;
+            if (window.slide != Globals.slide|| window.author != Globals.me) return;
             window.visualSource = stack;
             Commands.DugPublicSpace.Execute(window);
         }
@@ -326,18 +328,18 @@ namespace SandRibbon.Components
                 System.Windows.Controls.Canvas.GetLeft(marquee),
                 System.Windows.Controls.Canvas.GetTop(marquee));
             Commands.SendLiveWindow.Execute(new LiveWindowSetup
-            {
-                frame = marquee,
-                origin = origin,
-                target = new Point(0, 0),
-                snapshotAtTimeOfCreation = ResourceUploader.uploadResourceToPath(
-                    toByteArray(this, marquee, origin),
-                    "Resource/" + currentLocation.currentSlide.ToString(),
-                    "quizSnapshot.png",
-                    false),
-                author = Globals.me,
-                slide = currentLocation.currentSlide
-            });
+                                    {
+                                        frame = marquee,
+                                        origin = origin,
+                                        target = new Point(0, 0),
+                                        snapshotAtTimeOfCreation = ResourceUploader.uploadResourceToPath(
+                                            toByteArray(this, marquee, origin),
+                                            "Resource/" + Globals.slide.ToString(),
+                                            "quizSnapshot.png",
+                                            false),
+                                        author = Globals.me,
+                                        slide = Globals.slide
+                                    });
         }
         private static byte[] toByteArray(Visual adornee, FrameworkElement marquee, Point origin)
         {
@@ -497,7 +499,7 @@ namespace SandRibbon.Components
         }
         public string Value
         {
-            get { return Permissions.InferredTypeOf(this.PresentationSpace.currentDetails.Permissions).Label; }
+            get { return Permissions.InferredTypeOf(Globals.conversationDetails.Permissions).Label; }
         }
         public void SetValue(string value)
         {

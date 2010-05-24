@@ -19,6 +19,11 @@ namespace SandRibbon.Providers
                 };
             }
         }
+        public static List<Slide> slides {
+            get {
+                return ((ConversationDetails)Commands.UpdateConversationDetails.lastValue()).Slides;
+            }
+        }
         public static ConversationDetails conversationDetails {
             get {
                 return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();

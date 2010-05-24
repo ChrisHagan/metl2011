@@ -26,6 +26,7 @@ namespace SandRibbonInterop
     {
         public string author;
         public string privacy;
+        public double startingSum;
     }
     public struct StrokeChecksum
     {
@@ -99,12 +100,13 @@ namespace SandRibbonInterop
     {
         private static Guid STROKE_TAG_GUID = Guid.NewGuid();
         private static Guid STROKE_PRIVACY_GUID = Guid.NewGuid();
+        private static Guid STARTINGCHECKSUM = Guid.NewGuid();
         public static StrokeTag tag(this Stroke stroke)
         {
             return new StrokeTag
-            {
-                author = (string)stroke.GetPropertyData(STROKE_TAG_GUID),
-                privacy = (string)stroke.GetPropertyData(STROKE_PRIVACY_GUID)
+                       {
+                           author = (string) stroke.GetPropertyData(STROKE_TAG_GUID),
+                           privacy = (string) stroke.GetPropertyData(STROKE_PRIVACY_GUID),
             };
         }
         public static StrokeTag tag(this Stroke stroke, StrokeTag tag)
@@ -117,6 +119,19 @@ namespace SandRibbonInterop
         public static Guid sumId(this Stroke stroke)
         {
             return StrokeExtensions.CHECKSUM;
+        }
+        public static Guid startingId(this Stroke stroke)
+        {
+            return STARTINGCHECKSUM;
+        }
+        public static double startingSum(this Stroke stroke)
+        {
+            return (double) stroke.GetPropertyData(STARTINGCHECKSUM);
+        }
+        public static double startingSum(this Stroke stroke, double startingSum)
+        {
+            stroke.AddPropertyData(STARTINGCHECKSUM, startingSum);
+            return startingSum;
         }
         public static StrokeChecksum sum(this Stroke stroke)
         {//Removed memoization because it makes moved strokes still think they are in the same place.

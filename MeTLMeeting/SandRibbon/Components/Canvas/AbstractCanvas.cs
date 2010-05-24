@@ -75,7 +75,7 @@ namespace SandRibbon.Components.Canvas
         {
             foreach (var stroke in GetSelectedStrokes())
                 todo(new SelectedIdentity{
-                    id=stroke.sum().checksum.ToString(),
+                    id=stroke.startingSum().ToString(),
                     target = this.target
                 });
             foreach (var element in GetSelectedElements())

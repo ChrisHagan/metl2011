@@ -50,30 +50,38 @@ namespace SandRibbon.Components
         {
             Application.Current.Dispatcher.BeginInvoke((Action)delegate
             {
-                foreach (var server in SERVERS)
-                    server.ok = false;
-                checkServers();
-                int attempts = 0;
-                const int MAX_RETRIES = 20;
-                const int MILIS_BETWEEN_TRIES = 500;
-                var timer = new DispatcherTimer(TimeSpan.FromMilliseconds(MILIS_BETWEEN_TRIES), DispatcherPriority.Normal,
-                (sender, args) =>
+                try
                 {
-                    var brokenServers = SERVERS.Where(s => !s.ok);
-                    attempts++;
-                    if (brokenServers.Count() == 0)
-                    {
-                        self.Visibility = Visibility.Collapsed;
-                        ((DispatcherTimer)sender).Stop();
-                        healthyBehaviour();
-                    }
-                    else if (attempts >= MAX_RETRIES)
-                    {
-                    //    self.Visibility = Visibility.Visible;
-                    //    self.abortOptions.Visibility = Visibility.Visible;
-                    }
-                }, Application.Current.Dispatcher);
-                timer.Start();
+                    foreach (var server in SERVERS)
+                        server.ok = false;
+                    checkServers();
+                    int attempts = 0;
+                    const int MAX_RETRIES = 20;
+                    const int MILIS_BETWEEN_TRIES = 500;
+                    var timer = new DispatcherTimer(TimeSpan.FromMilliseconds(MILIS_BETWEEN_TRIES),
+                                                    DispatcherPriority.Normal,
+                                                    (sender, args) =>
+                                                        {
+                                                            var brokenServers = SERVERS.Where(s => !s.ok);
+                                                            attempts++;
+                                                            if (brokenServers.Count() == 0)
+                                                            {
+                                                                self.Visibility = Visibility.Collapsed;
+                                                                ((DispatcherTimer) sender).Stop();
+                                                                healthyBehaviour();
+                                                            }
+                                                            else if (attempts >= MAX_RETRIES)
+                                                            {
+                                                                //    self.Visibility = Visibility.Visible;
+                                                                //    self.abortOptions.Visibility = Visibility.Visible;
+                                                            }
+                                                        }, Application.Current.Dispatcher);
+                    timer.Start();
+                }
+                catch(NotSetException e)
+                {
+                    //BOOOOOOURNS
+                }
             });
         }
         private static void checkServers()

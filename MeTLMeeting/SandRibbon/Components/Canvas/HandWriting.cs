@@ -230,6 +230,7 @@ namespace SandRibbon.Components.Canvas
             {
                //sadness 
             }
+            e.Stroke.startingSum(e.Stroke.sum().checksum);
             doMyStrokeAdded(e.Stroke);
         }
         private void erasingStrokes(object sender, InkCanvasStrokeErasingEventArgs e)

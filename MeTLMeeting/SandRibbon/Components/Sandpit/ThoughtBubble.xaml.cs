@@ -44,7 +44,14 @@ namespace SandRibbon.Components.Sandpit
             Commands.ThoughtLiveWindow.RegisterCommand(new DelegateCommand<ThoughtBubbleLiveWindow>(mainSlideLiveWindow));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(mainWindowMove));
+            Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(dirtyStroke));
         }
+
+        private void dirtyStroke(TargettedDirtyElement stroke)
+        {
+            var a = stroke.identifier;
+        }
+
         private void mainWindowMove(int newSlide)
         {
             if (newSlide != parent && room != 0)

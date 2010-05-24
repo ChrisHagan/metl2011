@@ -75,7 +75,7 @@ namespace SandRibbon.Components
         }
         private List<Stroke> getStrokesRelevantTo(IEnumerable<String> ids)
         {
-            return handwriting.Strokes.Where(s=>ids.Contains(s.sum().checksum.ToString())).ToList();
+            return handwriting.Strokes.Where(s=>ids.Contains(s.startingSum().ToString())).ToList();
         }
         private List<FrameworkElement> getChildrenRelevantTo(IEnumerable<String> ids)
         {

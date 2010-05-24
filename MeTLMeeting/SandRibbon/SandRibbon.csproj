@@ -260,10 +260,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\SimpleImpl\SimpleConversationFilterer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Components\SimpleImpl\SimpleConversationSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -464,9 +460,6 @@
     </Compile>
     <Compile Include="Components\SimpleImpl\FeatureListing.xaml.cs">
       <DependentUpon>FeatureListing.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\SimpleImpl\SimpleConversationFilterer.xaml.cs">
-      <DependentUpon>SimpleConversationFilterer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\SimpleImpl\SimpleConversationSelector.xaml.cs">
       <DependentUpon>SimpleConversationSelector.xaml</DependentUpon>

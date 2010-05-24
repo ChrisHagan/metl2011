@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using System.Windows.Controls.Primitives;
+using SandRibbon.Providers;
 using SandRibbonObjects;
 using System.Threading;
 using SandRibbonInterop;
@@ -26,7 +27,6 @@ namespace SandRibbon.Components.Sandpit
     {
         public static BoardPlacementConverter BOARD_PLACEMENT_CONVERTER = new BoardPlacementConverter();
         public static OnlineColorConverter ONLINE_COLOR_CONVERTER = new OnlineColorConverter();
-        private static ConversationDetails currentConversation;
         private static ThumbnailInformation draggingSlide;
         private static int currentSlide;
         private static Board NO_BOARD = new Board { 
@@ -63,11 +63,7 @@ namespace SandRibbon.Components.Sandpit
             Commands.CloseBoardManager.RegisterCommand(new DelegateCommand<object>(
                 _obj => Commands.ToggleFriendsVisibility.Execute(null)
             ));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(details =>
-            {
-                currentConversation = details;
-                Display();
-            }));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(details => Display()));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
         }
         private void SendMoveBoardToSlide(SandRibbon.Utils.Connection.JabberWire.BoardMove where) 
@@ -134,10 +130,16 @@ namespace SandRibbon.Components.Sandpit
                         Commands.JoinConversation.UnregisterCommand(onConversationJoined);
                     });
                     var desiredConversation = Slide.conversationFor(targetSlide).ToString();
-                    if (currentConversation == null || currentConversation.Jid != desiredConversation)
-                        Commands.JoinConversation.Execute(desiredConversation);
-                    else
-                        onConversationJoined.Execute(0);
+                    try
+                    {
+                        if (Globals.conversationDetails.Jid != desiredConversation)
+                            Commands.JoinConversation.Execute(desiredConversation);
+                        else
+                            onConversationJoined.Execute(0);
+                    }
+                    catch(NotSetException ex)
+                    {
+                    }
                 }
             }
         }
@@ -147,7 +149,7 @@ namespace SandRibbon.Components.Sandpit
             {
 
                 var thumbs = new ObservableCollection<SandRibbonInterop.ThumbnailInformation>();
-                foreach (var slide in currentConversation.Slides)
+                foreach (var slide in Globals.slides)
                 {
                     if (slide.type == Slide.TYPE.SLIDE)
                     {
@@ -155,7 +157,7 @@ namespace SandRibbon.Components.Sandpit
                             new SandRibbonInterop.ThumbnailInformation
                                 {
                                     slideId = slide.id,
-                                    slideNumber = currentConversation.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
+                                    slideNumber = Globals.slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
                                 });
                     }
                 }

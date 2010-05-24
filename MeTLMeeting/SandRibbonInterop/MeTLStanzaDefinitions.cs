@@ -31,6 +31,7 @@ namespace SandRibbonInterop.MeTLStanzas
     public class TargettedStroke : TargettedElement
     {
         public Stroke stroke;
+        public double startingChecksum;
     }
     public class TargettedBubbleContext : TargettedElement {
         public IEnumerable<SelectedIdentity> context;
@@ -474,6 +475,8 @@ namespace SandRibbonInterop.MeTLStanzas
             private string thicknessTag = "thickness";
             private string highlighterTag = "highlight";
             private string sumTag = "checksum";
+            private string startingSumTag = "startingSum";
+
             public TargettedStroke Stroke
             {
                 get
@@ -485,6 +488,11 @@ namespace SandRibbonInterop.MeTLStanzas
                     stroke.DrawingAttributes.Height = Double.Parse(GetTag(thicknessTag));
                     if (HasTag(sumTag))
                         stroke.AddPropertyData(stroke.sumId(), Double.Parse(GetTag(sumTag)));
+                    if (HasTag(startingSumTag))
+                        stroke.AddPropertyData(stroke.startingId(), Double.Parse(GetTag(startingSumTag)));
+                    else
+                        if(HasTag(sumTag)) 
+                            stroke.AddPropertyData(stroke.startingId(), Double.Parse(GetTag(sumTag)));
                     var targettedStroke = new TargettedStroke
                     {
                         slide = Int32.Parse(GetTag(slideTag)),
@@ -498,6 +506,7 @@ namespace SandRibbonInterop.MeTLStanzas
                 set
                 {
                     this.SetTag(sumTag, value.stroke.sum().checksum.ToString());
+                    this.SetTag(startingSumTag, value.stroke.startingSum());
                     this.SetTag(pointsTag, strokeToPoints(value.stroke));
                     this.SetTag(colorTag, strokeToColor(value.stroke));
                     this.SetTag(thicknessTag, value.stroke.DrawingAttributes.Width.ToString());

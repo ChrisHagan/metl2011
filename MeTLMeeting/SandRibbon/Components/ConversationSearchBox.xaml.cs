@@ -37,10 +37,10 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(CloseConversationSearchBox));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
-            Loaded += ConversationSearchBox_Loaded;
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
         }
 
-        void ConversationSearchBox_Loaded(object sender, RoutedEventArgs e)
+        private void SetIdentity(object obj)
         {
             DoUpdateAllConversations();
         }
