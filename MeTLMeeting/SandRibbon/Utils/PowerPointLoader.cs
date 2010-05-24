@@ -12,7 +12,6 @@ using System.Xml.Linq;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
@@ -23,213 +22,56 @@ using TextBox = System.Windows.Controls.TextBox;
 using System.Windows;
 using SandRibbon.Components;
 using System.Collections.ObjectModel;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Utils
 {
-    public class PowerPointLoaderPrintRange : PrintRange
-    {
-        private int start = 0;
-        private int end = 0;
-        private object parent;
-        private Microsoft.Office.Interop.PowerPoint.Application app;
-        int Microsoft.Office.Interop.PowerPoint.PrintRange.Start { get { return start; } }
-        int Microsoft.Office.Interop.PowerPoint.PrintRange.End { get { return end; } }
-        object Microsoft.Office.Interop.PowerPoint.PrintRange.Parent { get { return parent; } }
-        Microsoft.Office.Interop.PowerPoint.Application Microsoft.Office.Interop.PowerPoint.PrintRange.Application { get { return app; } }
-
-        public PowerPointLoaderPrintRange(Presentation ppt)
-        {
-            app = ppt.Application;
-            parent = ppt.Parent;
-            end = ppt.Slides.Count - 1;
-        }
-        public void Delete()
-        {
-            this.parent = null;
-            this.app = null;
-        }
+    public class PowerpointSpec {
+        public string File;
+        public ConversationDetails Details;
+        public PowerPointLoader.PowerpointImportType Type;
+        public int Magnification;
     }
     public class PowerPointLoader
     {
         static MsoTriState FALSE = MsoTriState.msoFalse;
         static MsoTriState TRUE = MsoTriState.msoTrue;
         static int resource = 1;
-        public static IEnumerable<ConversationDetails> extantConversations = new List<ConversationDetails>();
-        private SandRibbon.Utils.Connection.JabberWire.Credentials credentials;
         public JabberWire wire;
-        private string parsedTitle;
         public enum PowerpointImportType
         {
-            Video,
             Image,
             Shapes
         }
-        private powerpointImportDialogue pptChoice;
         public PowerPointLoader()
         {
-            Commands.PostStartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(
-                (conversationDetails) => { startPowerpointImport((ConversationDetails)conversationDetails); }
-            ));
-            Commands.PostImportPowerpoint.RegisterCommand(new DelegateCommand<object>(
-                _obj =>
-                {
-                    startPowerpointImport();
-                }));
-            Commands.PostEditConversation.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(
-                conversationDetails =>
-                {
-                    startEditConversation(conversationDetails);
-                }));
-            /*Commands.PostDeleteConversation.RegisterCommand(new DelegateCommand<object>(
-                conversationDetails =>
-                {
-                    startDeleteConversation();
-                }));*/
-            Commands.PostCreateConversation.RegisterCommand(new DelegateCommand<object>(
-                _obj =>
-                {
-                    startCreateConversation();
-                }));
+            Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation));
+            Commands.ShowCreateConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowCreateConversationDialog));
+            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
+            Commands.UploadPowerpoint.RegisterCommand(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
         }
-        private void startCreateConversation()
-        {
-            pptChoice = new powerpointImportDialogue("create");
-            pptChoice.ShowDialog();
-            handleConversationDialogueCompletion();
-        }
-        private void startEditConversation(SandRibbonObjects.ConversationDetails details)
-        {
-            pptChoice = new powerpointImportDialogue("edit");
-            pptChoice.details = details;
-            pptChoice.ShowDialog();
-            handleConversationDialogueCompletion();
-        }
-        private void startPowerpointImport()
-        {
-            pptChoice = new powerpointImportDialogue("import");
-            pptChoice.ShowDialog();
-            handleConversationDialogueCompletion();
-        }
-        private void handleConversationDialogueCompletion()
-        {
-            var details = pptChoice.details;
-            if (pptChoice.isComplete)
+        private void UploadPowerpoint(PowerpointSpec spec) {
+            switch (spec.Type)
             {
-                switch (pptChoice.action)
-                {
-                    case "import":
-                        if ((!String.IsNullOrEmpty(pptChoice.importFile)) && pptChoice.importFile.Contains(".ppt"))
-                        {
-                            try
-                            {
-                                switch (pptChoice.importType)
-                                {
-                                    case "Slides":
-                                        LoadPowerpointAsFlatSlides(pptChoice.importFile, details, 1);
-                                        break;
-                                    case "Slides-HighDef":
-                                        LoadPowerpointAsFlatSlides(pptChoice.importFile, details, pptChoice.magnification);
-                                        break;
-                                    case "Shapes":
-                                        LoadPowerpoint(pptChoice.importFile, details);
-                                        break;
-                                    case "Videos":
-                                        LoadPowerpointAsVideoSlides(pptChoice.importFile, details);
-                                        break;
-                                    case "cancel":
-                                        return;
-                                    default:
-                                        LoadPowerpointAsFlatSlides(pptChoice.importFile, details, 1);
-                                        break;
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your powerpoint.  If the conversation was created, please check whether it has imported correctly.");
-                                throw e;
-                            }
-                            finally
-                            {
-                                Commands.PowerPointLoadFinished.Execute(null);
-                            }
-                            return;
-                        }
-                        else
-                        {
-                            MessageBox.Show("Sorry. I do not know what to do with that file format");
-                        }
-                        break;
-                    case "create":
-                        Commands.CreateConversation.Execute(details);
-                        Commands.PowerPointLoadFinished.Execute(null);
-                        break;
-                    case "edit":
-                        ConversationDetailsProviderFactory.Provider.Update(details);
-                        Commands.PowerPointLoadFinished.Execute(null);
-                        break;
-                    case "delete":
-                        Commands.PowerPointLoadFinished.Execute(null);
-                        MessageBox.Show("Deleting conversations is neither implemented nor allowed");
-                        break;
-                }
+                case PowerpointImportType.Image:
+                    LoadPowerpointAsFlatSlides(spec.File,spec.Details,spec.Magnification);
+                    break;
+                case PowerpointImportType.Shapes:
+                    LoadPowerpoint(spec.File, spec.Details);
+                    break;
             }
-            else
-            Commands.PowerPointLoadFinished.Execute(null);
         }
-        private void startPowerpointImport(ConversationDetails details)
+        private void EditConversation(object o)
         {
-            var fileBrowser = new OpenFileDialog
-                                             {
-                                                 InitialDirectory = "c:\\",
-                                                 Filter = "PowerPoint files (*.ppt, *.pptx)|*.ppt; *.pptx|All files (*.*)|*.*",
-                                                 FilterIndex = 0,
-                                                 RestoreDirectory = true
-                                             };
-
-            var dialogResult = fileBrowser.ShowDialog();
-            powerpointImportDialogue pptChoice = new powerpointImportDialogue("import");
-            pptChoice.ShowDialog();
-            foreach (var file in fileBrowser.FileNames)
-                if (file.Contains(".ppt"))
-                {
-                    try
-                    {
-                        switch (pptChoice.importType)
-                        {
-                            case "Slides":
-                                LoadPowerpointAsFlatSlides(file, details, 1);
-                                break;
-                            case "Slides-HighDef":
-                                LoadPowerpointAsFlatSlides(file, details, pptChoice.magnification);
-                                break;
-                            case "Shapes":
-                                LoadPowerpoint(file, details);
-                                break;
-                            case "Videos":
-                                LoadPowerpointAsVideoSlides(file, details);
-                                break;
-                            case "cancel":
-                                return;
-                            default:
-                                LoadPowerpointAsFlatSlides(file, details, 1);
-                                break;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your powerpoint and has to close.");
-                        throw e;
-                    }
-                    finally
-                    {
-                        Commands.PowerPointLoadFinished.Execute(null);
-                    }
-                    return;
-                }
-                else
-                {
-                    MessageBox.Show("Sorry. I do not know what to do with that file format");
-                }
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.EDIT).ShowDialog();
+        }
+        private void ShowCreateConversationDialog(object o)
+        {
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.CREATE).ShowDialog();
+        }
+        private void ImportPowerpoint(object o)
+        {
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).ShowDialog();
         }
         public void LoadPowerpointAsFlatSlides(string file, ConversationDetails details, int MagnificationRating)
         {
@@ -304,48 +146,6 @@ namespace SandRibbon.Utils
                 Commands.PowerPointLoadFinished.Execute(null);
             }
         }
-        public void LoadPowerpointAsVideoSlides(string file, ConversationDetails details)
-        {
-            /*
-                        var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
-                        try
-                        {
-                            var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
-                            if (!Directory.Exists(currentWorkingDirectory))
-                                Directory.CreateDirectory(currentWorkingDirectory);
-                            ppt.SaveAs(currentWorkingDirectory + "\\pptImport.wmv", PpSaveAsFileType.ppSaveAsWMV, FALSE);
-                
-                            //I'm not sure how to do this type of callback properly yet in Dot.NET.  I rather suspect that this while loop will never be reached.
-                            while (ppt.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusInProgress)
-                                if (ppt.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusDone)
-                                    MessageBox.Show("ExportAsVideo finished");
-                            Thread.Sleep(100);
-                            if (ppt.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusFailed)
-                                MessageBox.Show("ExportAsVideo failed");
-
-                            var presentationAdvanceTime = ppt.SlideMaster.SlideShowTransition.AdvanceTime;
-                            foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
-                            {
-                                foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
-                                {
-                                    var UnsortedTimeLine = new Dictionary<int, float>();
-                                    var AS = shape.AnimationSettings;
-                                    if (AS.Animate == MsoTriState.msoTrue)
-                                    {
-                                        if (AS.AdvanceMode == PpAdvanceMode.ppAdvanceOnClick)
-                                            UnsortedTimeLine.Add(AS.AnimationOrder, presentationAdvanceTime);
-                                        else UnsortedTimeLine.Add(AS.AnimationOrder, AS.AdvanceTime);
-                                    }
-                                    var sortedTimeLine = from k in UnsortedTimeLine.Keys orderby UnsortedTimeLine[k] ascending select k;
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("LoadPowerpointVideoAsSlides error: " + ex.Message);
-                        }
-            */
-        }
         public void LoadPowerpoint(string file, ConversationDetails details)
         {
             var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
@@ -359,23 +159,6 @@ namespace SandRibbon.Utils
                 var conversation = provider.Create(details);
                 conversation.Author = Globals.me;
                 Commands.PowerPointProgress.Execute("Starting to parse powerpoint file");
-                /*ppt.ExportAsFixedFormat(
-                    "testExport.xps", 
-                    PpFixedFormatType.ppFixedFormatTypeXPS, 
-                    PpFixedFormatIntent.ppFixedFormatIntentPrint, 
-                    MsoTriState.msoTrue, 
-                    PpPrintHandoutOrder.ppPrintHandoutHorizontalFirst, 
-                    PpPrintOutputType.ppPrintOutputSlides, 
-                    MsoTriState.msoFalse, 
-                    new PowerPointLoaderPrintRange(ppt), 
-                    PpPrintRangeType.ppPrintAll, 
-                    "whatever", 
-                    true, 
-                    true, 
-                    true, 
-                    true, 
-                    false, 
-                    new object());*/
                 foreach (var slide in ppt.Slides)
                 {
                     importSlide(xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
@@ -449,6 +232,7 @@ namespace SandRibbon.Utils
         {
             wire.SneakInto(id.ToString());
             int shapeCount = 0;
+            var me = Globals.me;
             foreach (var shape in shapes)
             {
                 var uri = new Uri(shape.Attribute("uri").Value);
@@ -459,8 +243,8 @@ namespace SandRibbon.Utils
                 InkCanvas.SetTop(hostedImage, Double.Parse(shape.Attribute("y").Value));
                 hostedImage.tag(new ImageTag
                                     {
-                                        id = string.Format("{0}:{1}:{2}", Globals.me, DateTimeFactory.Now(), shapeCount++),
-                                        author = Globals.me,
+                                        id = string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now(), shapeCount++),
+                                        author = me,
                                         privacy = shape.Attribute("privacy").Value,
                                         //isBackground = shapeCount == 1
                                         isBackground = false
@@ -468,7 +252,7 @@ namespace SandRibbon.Utils
                 wire.SendImage(new TargettedImage
                 {
                     target = "presentationSpace",
-                    author = Globals.me,
+                    author = me,
                     image = hostedImage,
                     slide = id,
                     privacy = shape.Attribute("privacy").Value
@@ -478,7 +262,8 @@ namespace SandRibbon.Utils
         }
         private void sendTextboxes(int id, System.Collections.Generic.IEnumerable<XElement> shapes)
         {
-            var privateRoom = id.ToString() + Globals.me;
+            var me = Globals.me;
+            var privateRoom = id.ToString() + me;
             wire.SneakInto(privateRoom);
             var shapeCount = 0;
             var height = 0;
@@ -495,15 +280,15 @@ namespace SandRibbon.Utils
                 shapeCount++;
                 newText.tag(new TextTag
                         {
-                            author = Globals.me,
+                            author = me,
                             privacy = "private",
-                            id = string.Format("{0}:{1}{2}", Globals.me, DateTimeFactory.Now(), shapeCount)
+                            id = string.Format("{0}:{1}{2}", me, DateTimeFactory.Now(), shapeCount)
                         });
                 ;
                 wire.SendTextbox(new TargettedTextBox
                 {
                     slide = id,
-                    author = Globals.me,
+                    author = me,
                     privacy = "private",
                     target = "notepad",
                     box = newText
@@ -582,15 +367,6 @@ namespace SandRibbon.Utils
                 var file = currentWorkingDirectory + "\\background" + (++resource).ToString() + ".jpg";
                 var x = shape.Left;
                 var y = shape.Top;
-                /*if (shape.HasTextFrame == MsoTriState.msoTrue && shape.TextFrame.MarginLeft != 0)
-                    x = x + shape.TextFrame.MarginLeft;
-                if (shape.HasTextFrame == MsoTriState.msoTrue && shape.TextFrame2.MarginLeft != shape.TextFrame.MarginLeft)
-                    x = x - shape.TextFrame.MarginLeft + shape.TextFrame2.MarginLeft;
-                if (shape.HasTextFrame == MsoTriState.msoTrue && shape.TextFrame.MarginLeft != 0)
-                    y = y + shape.TextFrame.MarginTop;
-                if (shape.HasTextFrame == MsoTriState.msoTrue && shape.TextFrame2.MarginTop != shape.TextFrame.MarginTop)
-                    y = y - shape.TextFrame.MarginTop + shape.TextFrame2.MarginTop;
-                */
                 string tags;
                 if (shape.Type == MsoShapeType.msoInkComment)
                     tags = shape.Tags.ToString();
@@ -598,22 +374,12 @@ namespace SandRibbon.Utils
                 if (shape.Type == MsoShapeType.msoPlaceholder)
                     //there're two of these on my sample slide.  They become the textboxes that have text in them, if you use the template's textbox placeholders.  Otherwise they'd be textboxes instead.
                     tags = shape.Tags.ToString();
-                /*if (shape.HasDiagram == MsoTriState.msoTrue)
-                    MessageBox.Show("has diagram");*/
-                /*if (shape.HasChart == MsoTriState.msoTrue)
-                    MessageBox.Show("has chart");
-                if (shape.HasDiagram == MsoTriState.msoTrue && shape.HasDiagramNode == MsoTriState.msoTrue)
-                    MessageBox.Show("has diagramNode");
-                if (shape.HasTable == MsoTriState.msoTrue)
-                    MessageBox.Show("has Table");
-                */
                 if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
                 {
                     try
                     {
                         shape.Visible = MsoTriState.msoTrue;
                         // Importing Powerpoint textboxes AS textboxes instead of pictures currently disabled.  
-                        //Uncomment the following lines to re-enable.
                         if (shape.HasTextFrame == MsoTriState.msoTrue &&
                             shape.TextFrame.HasText == MsoTriState.msoTrue &&
                             !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))
@@ -643,8 +409,6 @@ namespace SandRibbon.Utils
                 else if (shape.Visible == MsoTriState.msoTrue)
                     if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "_")
                     {
-                        // Importing Powerpoint textboxes AS textboxes instead of pictures currently disabled.  
-                        //Uncomment the following lines to re-enable.
                         if (shape.HasTextFrame == MsoTriState.msoTrue &&
                             shape.TextFrame.HasText == MsoTriState.msoTrue &&
                             !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))

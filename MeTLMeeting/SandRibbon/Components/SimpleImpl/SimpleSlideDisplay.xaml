@@ -5,9 +5,6 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon">
-    <UserControl.Resources>
-        <ResourceDictionary Source="..\ToolTips\ToolTips.xaml"/>
-    </UserControl.Resources>
     <UserControl.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.PostRetrievedHistoryPortion}" Executed="showHistoryProgress" />
     </UserControl.CommandBindings>

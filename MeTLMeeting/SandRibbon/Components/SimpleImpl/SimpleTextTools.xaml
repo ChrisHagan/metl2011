@@ -7,9 +7,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     Loaded="setUpTools">
-    <UserControl.Resources>
-        <ResourceDictionary Source="..\ToolTips\ToolTips.xaml"/>
-    </UserControl.Resources>
     <StackPanel Orientation="Horizontal" x:Name="LayoutRoot">
         <SandRibbonInterop:RibbonPanel>
             <SandRibbonInterop:Button ToolTip="{StaticResource CutToolTip}" Icon="..\..\Resources\cut.png" Text="Cut" Command="ApplicationCommands.Cut" />

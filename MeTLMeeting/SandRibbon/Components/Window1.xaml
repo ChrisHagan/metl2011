@@ -5,11 +5,11 @@
     xmlns:my="clr-namespace:SandRibbon"
     xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl"
     xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:chrome="clr-namespace:SandRibbon.Chrome"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    Loaded="RibbonWindow_Loaded"
     AllowDrop="True"
     Title="MeTL"
     x:Name="ribbonWindow"
@@ -19,7 +19,7 @@
         <CommandBinding Command="{x:Static api:Commands.ZoomIn}" CanExecute="canZoomIn" Executed="doZoomIn" />
         <CommandBinding Command="{x:Static api:Commands.ZoomOut}" CanExecute="canZoomOut" Executed="doZoomOut" />
         <CommandBinding Command="{x:Static api:Commands.RetrievedHistoryPortion}" Executed="receivedHistoryPortion" />
-        <CommandBinding Command="{x:Static api:Commands.CloseApplication}" Executed="closeApplication" CanExecute="canCloseApplication"/>
+        <CommandBinding Command="{x:Static api:Commands.CloseApplication}" Executed="closeApplication" />
         <CommandBinding Command="{x:Static api:Commands.ProgressReported}" Executed="progressReported" />
     </sr:RibbonWindow.CommandBindings>
     <sr:RibbonWindow.InputBindings>
@@ -35,34 +35,10 @@
         <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
         <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
     </sr:RibbonWindow.InputBindings>
-    <sr:RibbonWindow.Resources>
-        <ResourceDictionary Source="ToolTips\ToolTips.xaml"/>
-    </sr:RibbonWindow.Resources>
     <sr:RibbonWindow.Ribbon>
         <sr:Ribbon  x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" ShowHelp="false" ApplicationButtonImage="\Resources\Ribbon-ApplicationButton.png">
             <sr:Ribbon.ApplicationPopup>
-                <sr:ApplicationPopup x:Name="ApplicationButtonPopup" OptionsText="Resume" ExitText="Quit MeTL">
-                    <sr:ApplicationPopup.RecentDocumentsControl>
-                        <StackPanel Width="350">
-                            <TextBlock Text="Recent conversations" />
-                            <components:SimpleConversationSelector x:Name="recentDocuments" />
-                        </StackPanel>
-                    </sr:ApplicationPopup.RecentDocumentsControl>
-                    <sr:MenuItem Text="New conversation" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.PreCreateConversation}"/>
-                    <sr:MenuItem Text="Open conversation" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}"/>
-                    <sr:MenuItem Text="Edit current conversation" ToolTip="{StaticResource EditConversationToolTip}" Command="{x:Static api:Commands.PreEditCurrentConversation}">
-                    </sr:MenuItem>
-                    <sr:MenuItem Text="Print conversation with notes" ToolTip="{StaticResource PrintConversationToolTip}" Command="{x:Static api:Commands.PrintConversation}"></sr:MenuItem>
-                    <sr:MenuItem Text="Print conversation as handout" ToolTip="{StaticResource PrintHandoutToolTip}" Command="{x:Static api:Commands.PrintConversationHandout}"></sr:MenuItem>
-                    <sr:MenuItem Text="Help" ToolTip="{StaticResource HelpToolTip}" >
-                        <sr:RibbonPopup>
-                            <MenuItem ToolTip="{StaticResource AboutToolTip}" FontSize="12" Width="Auto" Height="Auto" Header="About Monash MeTL" Click="OpenAboutMeTLBrowser" />
-                            <MenuItem ToolTip="{StaticResource ReportBugToolTip}" FontSize="12" Width="Auto" Height="Auto" Header="Report Bug" Click="OpenReportBugBrowser" />
-                            <MenuItem ToolTip="{StaticResource EULAToolTip}" FontSize="12" Header="Usage Conditions" Click="OpenEULABrowser" />
-                            <MenuItem ToolTip="{StaticResource TutorialToolTip}"  FontSize="12" Click="OpenTutorialBrowser" Header="Tutorial"/>
-                        </sr:RibbonPopup>
-                    </sr:MenuItem>
-                </sr:ApplicationPopup>
+                <chrome:ApplicationPopup />  
             </sr:Ribbon.ApplicationPopup>
             <sr:Ribbon.ToolBar>
                 <sr:ToolBar>

@@ -6,9 +6,6 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl" >
-    <UserControl.Resources>
-        <ResourceDictionary Source="..\ToolTips\ToolTips.xaml"/>
-    </UserControl.Resources>
     <StackPanel Orientation="Horizontal" x:Name="ToolBox">
         <SandRibbonInterop:RibbonPanel Tag="inkModes" x:Name="InkOptions" >
             <SandRibbonInterop:RadioButton x:Name="Draw" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>

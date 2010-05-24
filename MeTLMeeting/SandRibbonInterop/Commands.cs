@@ -59,8 +59,6 @@ namespace SandRibbon
         public static CompositeCommand ReceiveDirtyLiveWindow = new CompositeCommand();
         public static CompositeCommand Relogin = new CompositeCommand();
         public static CompositeCommand HideInputBlocker = new CompositeCommand();
-
-
         #region Quizzing
         public static CompositeCommand SendWormMove = new CompositeCommand(); 
         public static CompositeCommand ReceiveWormMove = new CompositeCommand(); 
@@ -177,13 +175,12 @@ namespace SandRibbon
         public static CompositeCommand PostRetrievedHistoryPortion = new CompositeCommand();
         public static CompositeCommand SetSync = new CompositeCommand();
         public static CompositeCommand AddSlide = new CompositeCommand();
-        public static CompositeCommand PreCreateConversation = new CompositeCommand();
-        public static CompositeCommand PreEditCurrentConversation = new CompositeCommand();
+        public static CompositeCommand ShowCreateConversationDialog = new CompositeCommand();
         public static CompositeCommand CreateConversation = new CompositeCommand();
+        public static CompositeCommand EditConversation = new CompositeCommand();
         public static CompositeCommand ImportPowerpoint = new CompositeCommand();
+        public static CompositeCommand UploadPowerpoint = new CompositeCommand();
         public static CompositeCommand PostImportPowerpoint = new CompositeCommand();
-        public static CompositeCommand PostCreateConversation = new CompositeCommand();
-        public static CompositeCommand PostEditConversation = new CompositeCommand();
         public static CompositeCommand StartPowerPointLoad = new CompositeCommand();
         public static CompositeCommand PostStartPowerPointLoad = new CompositeCommand();
         public static CompositeCommand PowerPointLoadFinished = new CompositeCommand();
@@ -191,6 +188,7 @@ namespace SandRibbon
         public static CompositeCommand AllContentSent = new CompositeCommand();
         public static CompositeCommand AllContentRetrieved = new CompositeCommand();
         public static CompositeCommand CanEdit = new CompositeCommand();
+        public static CompositeCommand ShowPrintConversationDialog = new CompositeCommand();
         public static CompositeCommand PrintConversation = new CompositeCommand();
         public static CompositeCommand PrintConversationHandout = new CompositeCommand();
         public static CompositeCommand PrintCompleted = new CompositeCommand();

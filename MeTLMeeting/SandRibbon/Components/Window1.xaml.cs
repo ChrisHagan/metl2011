@@ -72,7 +72,8 @@ namespace SandRibbon
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.ClearDynamicContent.RegisterCommand(new DelegateCommand<object>(ClearDynamicContent));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
-            Commands.CreateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>(createConversation, mustBeLoggedIn));
+            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(_obj => { }, mustBeLoggedIn));
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(toggleFriendsVisibility, mustBeLoggedIn));
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>((_arg) => { }, mustBeInConversation));
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>((_arg) => { }, mustBeInConversation));
@@ -91,32 +92,14 @@ namespace SandRibbon
                 },
                 mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(
-                _obj =>
-                    {
-                        ShowPowerpointBlocker("Creating Conversation Dialog Open");
-                        Commands.PostCreateConversation.Execute(null);
-                    }));
-            Commands.PreEditCurrentConversation.RegisterCommand(new DelegateCommand<object>(
-                _obj =>
-                {
-                    var details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
-                    ShowPowerpointBlocker("Editing Conversation Dialog Open");
-                    Commands.PostEditConversation.Execute(details);
-                },
-                    mustBeInConversation));
+            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(CreateConversation));
+            Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(_obj => setLayer("Sketch"), mustBeInConversation));
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(ToggleNotePadVisibility, mustBeLoggedIn));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(_obj => { }, mustBeInConversation));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(_obj => { }, mustBeLoggedIn));
-            Commands.SetTutorialVisibility.RegisterCommand(new DelegateCommand<object>(vis =>
-            {
-                if ((Visibility)vis == Visibility.Visible)
-                    ShowTutorial();
-                else
-                    HideTutorial();
-            }, mustBeInConversation));
+            Commands.SetTutorialVisibility.RegisterCommand(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
             Logger.Log("Started MeTL");
             Commands.CreateQuiz.RegisterCommand(new DelegateCommand<object>(CreateQuiz, canCreateQuiz));
             Commands.CreateQuiz.RegisterCommand(new DelegateCommand<object>(obj => { }, amAuthor));
@@ -142,12 +125,32 @@ namespace SandRibbon
             if (SmartBoardMeTLAlreadyLoaded)
                 checkIfSmartboard();
         }
+
+        private void SetTutorialVisibility(object visibilityObject)
+        {
+            var newVisibility = (Visibility)visibilityObject;
+            switch (newVisibility)
+            {
+                case Visibility.Visible:
+                    ShowTutorial();
+                    break;
+                default:
+                    HideTutorial();
+                    break;
+            }
+        }
+        private void CreateConversation(object _unused){
+            ShowPowerpointBlocker("Creating Conversation Dialog Open");
+        }
+        private void EditConversation(object _unused)
+        {
+            ShowPowerpointBlocker("Editing Conversation Dialog Open");
+        }
         private void SetIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
         {
             connect(credentials.name, credentials.password, 0, null);
             if (credentials.name.Contains("S15")) sleep(null);
             var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
-            recentDocuments.ListRecentConversations();
             Commands.RequerySuggested();
         }
         private void SetZoomRect(Rectangle viewbox) 
@@ -245,11 +248,9 @@ namespace SandRibbon
             {
                 Commands.LoggedIn.Execute(userInformation.credentials.name);
                 removeQuiz();
-                userInformation.location.activeConversation = title;
                 details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
                 showDetails(details);
                 applyPermissions(details.Permissions);
-                addRecentDocument(details);
                 Commands.UpdateConversationDetails.Execute(details);
                 Logger.Log("Joined conversation " + title);
                 Commands.RequerySuggested(Commands.SetConversationPermissions);
@@ -460,8 +461,10 @@ namespace SandRibbon
             }
             loader.wire = wire;
         }
-        private void createConversation(ConversationDetails details)
+        private void createConversation(object detailsObject)
         {
+            var details = (ConversationDetails)detailsObject;
+            if (details == null) return;
             if (Commands.CreateConversation.CanExecute(details))
             {
                 if (details.Tag == null)
@@ -477,21 +480,6 @@ namespace SandRibbon
         {
             e.CanExecute = true;
             Console.WriteLine(sender.GetType());
-        }
-        private void RibbonWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            recentDocuments.ListRecentConversations();
-            ApplicationButtonPopup.Opened += ApplicationButtonPopup_Opened;
-            ApplicationButtonPopup.Closed += ApplicationButtonPopup_Closed;
-        }
-        private void addRecentDocument(ConversationDetails document)
-        {
-            RecentConversationProvider.addRecentConversation(document, userInformation.credentials.name);
-            recentDocuments.ListRecentConversations();
-        }
-        private void canCloseApplication(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
         }
         private void closeApplication(object sender, ExecutedRoutedEventArgs e)
         {
@@ -582,24 +570,7 @@ namespace SandRibbon
             ProgressDisplay.Children.Clear();
             InputBlocker.Visibility = Visibility.Collapsed;
         }
-        #region helpLinks
-        private void OpenEULABrowser(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("http://metl.adm.monash.edu.au/MeTL/docs/tabletSupport/MLS_UserAgreement.html");
-        }
-        private void OpenTutorialBrowser(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("http://metl.adm.monash.edu.au/MeTL/docs/tabletSupport/MLS_Tutorials.html");
-        }
-        private void OpenReportBugBrowser(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("http://metl.adm.monash.edu.au/MeTL/docs/report_a_bug.html");
-        }
-        private void OpenAboutMeTLBrowser(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("http://www.monash.edu.au/eeducation/myls2010/students/resources/software/metl/");
-        }
-        #endregion
+        
         private void canZoomIn(object sender, CanExecuteRoutedEventArgs e)
         {
             if (scroll == null)
@@ -802,15 +773,7 @@ namespace SandRibbon
         {
             return target.Visibility;
         }
-        private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
-        {
-            HideTutorial();
-        }
-        private void ApplicationButtonPopup_Opened(object sender, EventArgs e)
-        {
-            ShowTutorial();
-            Commands.RequerySuggested(Commands.MirrorPresentationSpace);
-        }
+        
         private void SetConversationPermissions(string style)
         {
             foreach (var s in new[]{

@@ -176,6 +176,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Chrome\ApplicationPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConversationSearchBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -200,11 +204,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\PowerpointImportDialogue.xaml">
+    <Page Include="Components\ConversationConfigurationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\PresentationSpace.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\PrintDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -221,6 +229,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ProviderMonitor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ResourceDictionaries\Brushes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ResourceDictionaries\TypedControlStylings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -304,7 +320,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\ToolTips\ToolTips.xaml">
+    <Page Include="Components\ResourceDictionaries\ToolTips.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -397,6 +413,9 @@
     <Compile Include="Automation\StrokeHarvester.xaml.cs">
       <DependentUpon>StrokeHarvester.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Chrome\ApplicationPopup.xaml.cs">
+      <DependentUpon>ApplicationPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Canvas\AbstractCanvas.cs" />
     <Compile Include="Components\Canvas\HandWriting.cs" />
     <Compile Include="Components\Canvas\Image.cs" />
@@ -417,11 +436,14 @@
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\PenColors.xaml.cs" />
-    <Compile Include="Components\PowerpointImportDialogue.xaml.cs">
-      <DependentUpon>PowerpointImportDialogue.xaml</DependentUpon>
+    <Compile Include="Components\ConversationConfigurationDialog.xaml.cs">
+      <DependentUpon>ConversationConfigurationDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\PresentationSpace.xaml.cs">
       <DependentUpon>PresentationSpace.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\PrintDialog.xaml.cs">
+      <DependentUpon>PrintDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\PrintingHost.xaml.cs">
       <DependentUpon>PrintingHost.xaml</DependentUpon>

@@ -48,6 +48,7 @@ namespace SandRibbon.Components
                 };
         public static void HealthCheck(Action healthyBehaviour)
         {
+            var currentStack = new System.Diagnostics.StackTrace();
             Application.Current.Dispatcher.BeginInvoke((Action)delegate
             {
                 try
@@ -56,31 +57,24 @@ namespace SandRibbon.Components
                         server.ok = false;
                     checkServers();
                     int attempts = 0;
-                    const int MAX_RETRIES = 20;
                     const int MILIS_BETWEEN_TRIES = 500;
-                    var timer = new DispatcherTimer(TimeSpan.FromMilliseconds(MILIS_BETWEEN_TRIES),
-                                                    DispatcherPriority.Normal,
-                                                    (sender, args) =>
-                                                        {
-                                                            var brokenServers = SERVERS.Where(s => !s.ok);
-                                                            attempts++;
-                                                            if (brokenServers.Count() == 0)
-                                                            {
-                                                                self.Visibility = Visibility.Collapsed;
-                                                                ((DispatcherTimer) sender).Stop();
-                                                                healthyBehaviour();
-                                                            }
-                                                            else if (attempts >= MAX_RETRIES)
-                                                            {
-                                                                //    self.Visibility = Visibility.Visible;
-                                                                //    self.abortOptions.Visibility = Visibility.Visible;
-                                                            }
-                                                        }, Application.Current.Dispatcher);
+                    var timer = new DispatcherTimer(TimeSpan.FromMilliseconds(MILIS_BETWEEN_TRIES), DispatcherPriority.Normal,
+                    (sender, args) =>
+                    {
+                        var brokenServers = SERVERS.Where(s => !s.ok);
+                        attempts++;
+                        if (brokenServers.Count() == 0)
+                        {
+                            self.Visibility = Visibility.Collapsed;
+                            ((DispatcherTimer)sender).Stop();
+                            healthyBehaviour();
+                        }
+                    }, Application.Current.Dispatcher);
                     timer.Start();
                 }
-                catch(NotSetException e)
+                catch (Exception e)
                 {
-                    //BOOOOOOURNS
+                    throw new Exception(currentStack.ToString(), e);
                 }
             });
         }

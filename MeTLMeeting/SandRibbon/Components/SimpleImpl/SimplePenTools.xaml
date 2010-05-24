@@ -6,9 +6,6 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     >
-    <UserControl.Resources>
-        <ResourceDictionary Source="..\ToolTips\ToolTips.xaml"/>
-    </UserControl.Resources>
     <SandRibbonInterop:RibbonPanel Tag="inkModes">
         <components:PenColors />
     </SandRibbonInterop:RibbonPanel>

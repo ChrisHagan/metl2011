@@ -23,16 +23,21 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.conversations.ItemsSource = new List<SandRibbonObjects.ConversationDetails>();
-            Commands.CreateConversation.RegisterCommand(new DelegateCommand<ConversationDetails>((_details) => {}, doesConversationAlreadyExist));
+            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>((_details) => {}, doesConversationAlreadyExist));
             Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>((_details) => {}, (detailsObject)=>doesConversationAlreadyExist((ConversationDetails)detailsObject)));
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(
                 (_arg) => 
                     List(ConversationDetailsProviderFactory.Provider.ListConversations()),
                 details=>
                     rawConversationList.Where(c=>c.Title == details.Title || string.IsNullOrEmpty(details.Title)).Count() == 0));
         }
-        private bool doesConversationAlreadyExist(ConversationDetails details)
+        private bool doesConversationAlreadyExist(object obj)
         {
+            if (!(obj is ConversationDetails))
+                return true;
+            var details = (ConversationDetails)obj;
             if (details == null) 
                 return true;
             if (details.Title.Length == 0) 
@@ -48,19 +53,13 @@ namespace SandRibbon.Components
             var allConversation = ConversationDetailsProviderFactory.Provider.ListConversations();
             List(allConversation);
         }
-        public void ListRecentConversations()
-        {
-            var allConversation = ConversationDetailsProviderFactory.Provider.ListConversations();
-            ListRecent(allConversation);
-        }
-
-        private void ListRecent(IEnumerable<ConversationDetails> conversations)
+        private void JoinConversation(object _unused)
         {
             var doRecent = (Action) delegate
                 {
                     this.conversations.ItemsSource =
                         RecentConversationProvider.loadRecentConversations()
-                        .Where(c => c.IsValid && conversations.Contains(c))
+                        .Where(c => c.IsValid)
                         .Reverse()
                         .Take(6);
 
@@ -70,7 +69,6 @@ namespace SandRibbon.Components
             else
                 doRecent();
         }
-
         public void List(IEnumerable<SandRibbonObjects.ConversationDetails> conversations)
         {
             var doList = (Action)delegate

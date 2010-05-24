@@ -5,7 +5,6 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ToolTips\ToolTips.xaml"/>
                 <ResourceDictionary>
                     <Style TargetType="Button">
                         <Setter Property="Height" Value="30" />

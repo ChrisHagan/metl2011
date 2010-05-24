@@ -12,6 +12,7 @@ using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbonInterop;
 using SandRibbonObjects;
+using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace SandRibbon.Utils.Connection
 {
@@ -19,6 +20,12 @@ namespace SandRibbon.Utils.Connection
     {
         private static int targetPageCount;
         public PrinterInformation PrinterInfo = new PrinterInformation();
+        static Printer(){
+            Commands.ShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowPrintConversationDialog));
+        }
+        public static void ShowPrintConversationDialog(object o) {
+            new Components.PrintDialog().ShowDialog(); 
+        }
         public class PrintParser : PreParser
         {
             public List<object> history = new List<object>();

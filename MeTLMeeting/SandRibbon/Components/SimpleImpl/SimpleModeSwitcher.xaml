@@ -5,10 +5,6 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components">
-
-    <UserControl.Resources>
-        <ResourceDictionary Source="..\ToolTips\ToolTips.xaml"/>
-    </UserControl.Resources>
     <SandRibbonInterop:RibbonPanel>
         <SandRibbonInterop:RadioButton x:Name="Pen"  ToolTip="{StaticResource PenToolTip}" Icon="\Resources\RedPenShiny.png" Text="Ink" Command="api:Commands.SetLayer" CommandParameter="Sketch" IsChecked="True"/>
         <SandRibbonInterop:RadioButton x:Name="Text"  ToolTip="{StaticResource TextBoxToolTip}" Icon="\Resources\fontFamily.png" Text="Text" Command="api:Commands.SetLayer" CommandParameter="Text" />
