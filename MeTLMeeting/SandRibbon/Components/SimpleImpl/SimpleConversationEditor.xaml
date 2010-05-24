@@ -13,8 +13,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="..\ToolTips\ToolTips.xaml"/>
                 <ResourceDictionary>
-                    <my:TitleHydrator x:Key="conversationBuilder"/>
-                    <my:LabelConverter x:Key="labelConverter" />
+                    <sr:TitleHydrator x:Key="conversationBuilder"/>
+                    <sr:LabelConverter x:Key="labelConverter" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

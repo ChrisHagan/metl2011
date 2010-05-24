@@ -107,28 +107,19 @@ namespace SandRibbon.Utils
         private void startCreateConversation()
         {
             pptChoice = new powerpointImportDialogue("create");
-            pptChoice.me = me;
-            pptChoice.credentials = credentials;
-            pptChoice.authorizedGroups = authorizedGroups;
             pptChoice.ShowDialog();
             handleConversationDialogueCompletion();
         }
         private void startEditConversation(SandRibbonObjects.ConversationDetails details)
         {
             pptChoice = new powerpointImportDialogue("edit");
-            pptChoice.me = me;
-            pptChoice.credentials = credentials;
             pptChoice.details = details;
-            pptChoice.authorizedGroups = authorizedGroups;
             pptChoice.ShowDialog();
             handleConversationDialogueCompletion();
         }
         private void startPowerpointImport()
         {
             pptChoice = new powerpointImportDialogue("import");
-            pptChoice.me = me;
-            pptChoice.credentials = credentials;
-            pptChoice.authorizedGroups = authorizedGroups;
             pptChoice.ShowDialog();
             handleConversationDialogueCompletion();
         }

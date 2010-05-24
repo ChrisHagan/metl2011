@@ -197,7 +197,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\powerpointImportDialogue.xaml">
+    <Page Include="Components\PowerpointImportDialogue.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -253,15 +253,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\SimpleImpl\SimpleConversationEditor.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\SimpleImpl\FeatureListing.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\SimpleImpl\SimpleConversationCreator.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -426,8 +418,8 @@
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\PenColors.xaml.cs" />
-    <Compile Include="Components\powerpointImportDialogue.xaml.cs">
-      <DependentUpon>powerpointImportDialogue.xaml</DependentUpon>
+    <Compile Include="Components\PowerpointImportDialogue.xaml.cs">
+      <DependentUpon>PowerpointImportDialogue.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\PresentationSpace.xaml.cs">
       <DependentUpon>PresentationSpace.xaml</DependentUpon>
@@ -467,14 +459,8 @@
     <Compile Include="Components\ScrollBar.xaml.cs">
       <DependentUpon>ScrollBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\SimpleImpl\SimpleConversationEditor.xaml.cs">
-      <DependentUpon>SimpleConversationEditor.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\SimpleImpl\FeatureListing.xaml.cs">
       <DependentUpon>FeatureListing.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\SimpleImpl\SimpleConversationCreator.xaml.cs">
-      <DependentUpon>SimpleConversationCreator.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\SimpleImpl\SimpleConversationFilterer.xaml.cs">
       <DependentUpon>SimpleConversationFilterer.xaml</DependentUpon>

@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Interfaces;
 using SandRibbon.Components.Utility;
+using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbonInterop;
 using SandRibbonObjects;
@@ -20,12 +21,10 @@ namespace SandRibbon.Components
 {
     public partial class SimpleSlideDisplay : UserControl, ISlideDisplay
     {
-        public string me;
         public int currentSlideIndex = -1;
         public int currentSlideId = -1;
         public ObservableCollection<ThumbnailInformation> thumbnailList = new ObservableCollection<ThumbnailInformation>();
         private ConversationDetails conversationDetails;
-        public DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials> setAuthor;
         public bool synced = false;
         public bool isAuthor = false;
         private bool moveTo;
@@ -34,11 +33,6 @@ namespace SandRibbon.Components
         public SimpleSlideDisplay()
         {
             InitializeComponent();
-            setAuthor = new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(
-                author =>{
-                    me = author.name;
-                });
-            Commands.SetIdentity.RegisterCommand(setAuthor);
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher, _i=> synced));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
             Commands.MoveToQuiz.RegisterCommand(new DelegateCommand<QuizDetails>(d=>realLocation = d.targetSlide));
@@ -63,8 +57,15 @@ namespace SandRibbon.Components
         }
         private bool canAddSlide(object _slide)
         {
-            if(String.IsNullOrEmpty(me) || conversationDetails == null) return false;
-            return (conversationDetails.Permissions.studentCanPublish || conversationDetails.Author == me);
+            try
+            {
+                if (String.IsNullOrEmpty(Globals.me) || conversationDetails == null) return false;
+                return (conversationDetails.Permissions.studentCanPublish || conversationDetails.Author == Globals.me);
+            }
+            catch(NotSetException e)
+            {
+                return false;
+            }
         }
         private void addSlide(object _slide)
         {
@@ -140,7 +141,7 @@ namespace SandRibbon.Components
             var doDisplay = (Action)delegate
             {
                 conversationDetails = details;
-                if (me == details.Author)
+                if (Globals.me == details.Author)
                     isAuthor = true;
                 else
                     isAuthor = false;
@@ -219,7 +220,7 @@ namespace SandRibbon.Components
             {
                 var directory = Directory.GetCurrentDirectory();
                 var unknownSlidePath = directory + "\\Resources\\slide_Not_Loaded.png";
-                var path = string.Format(@"{0}\thumbs\{1}\{2}.png", directory, me, slideId);
+                var path = string.Format(@"{0}\thumbs\{1}\{2}.png", directory, Globals.me, slideId);
                 ImageSource thumbnailSource;
                 if (File.Exists(path))
                     thumbnailSource = loadedCachedImage(path);

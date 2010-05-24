@@ -30,6 +30,14 @@ namespace SandRibbon.Providers
                 return (SandRibbon.Utils.Connection.JabberWire.Credentials)credentials;
             }
         }
+        public static List<Utils.Connection.JabberWire.AuthorizedGroup> authorizedGroups
+        {
+            get
+            {
+                var credentials = Commands.SetIdentity.lastValue();
+                return ((Utils.Connection.JabberWire.Credentials) credentials).authorizedGroups;
+            }
+        }
         public static int slide 
         {
             get {

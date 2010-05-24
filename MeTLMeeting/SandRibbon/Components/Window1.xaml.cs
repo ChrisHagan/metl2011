@@ -96,8 +96,7 @@ namespace SandRibbon
                     {
                         ShowPowerpointBlocker("Creating Conversation Dialog Open");
                         Commands.PostCreateConversation.Execute(null);
-                    }, 
-                    mustBeLoggedIn));
+                    }));
             Commands.PreEditCurrentConversation.RegisterCommand(new DelegateCommand<object>(
                 _obj =>
                 {
@@ -802,25 +801,6 @@ namespace SandRibbon
         public Visibility GetVisibilityOf(UIElement target)
         {
             return target.Visibility;
-        }
-        private void RibbonPopup_BeforeOpenConversationCreator(object sender, BeforeOpenEventArgs e)
-        {
-            var creator = (SimpleConversationCreator)((RibbonPopup)sender).Items.GetItemAt(0);
-            creator.create.RaiseCanExecuteChanged();
-        }
-        private void RibbonPopup_BeforeOpenConversationEditor(object sender, BeforeOpenEventArgs e)
-        {
-            if (userInformation.location == null ||
-                userInformation.location.activeConversation == null ||
-                !userInformation.policy.isAuthor)
-                e.Cancel = true;
-            else
-            {
-                var editor = (SimpleConversationEditor)((RibbonPopup)sender).Items.GetItemAt(0);
-                var conversation = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
-                editor.DataContext = conversation;
-                conversation.Refresh();
-            }
         }
         private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
         {

@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 using SandRibbon.Utils.Connection;
 using SandRibbon.Providers.Structure;
 using SandRibbonObjects;
@@ -26,14 +27,11 @@ namespace SandRibbon.Components
     {
         public static IEnumerable<ConversationDetails> extantConversations = new List<ConversationDetails>();
         public SandRibbon.Utils.Connection.JabberWire.Credentials credentials;
-        public ObservableCollection<string> authorizedGroups = new ObservableCollection<string>();
         public ConversationDetails details;
-        public string me;
 
         private ConversationConfigurationMode DialogMode;
         private enum ConversationConfigurationMode { Create, Edit, Import, Delete }
 
-        //PowerpointImportOptions
         public int magnification = 4;
         public string importType;
         public string importFile;
@@ -45,6 +43,7 @@ namespace SandRibbon.Components
         public powerpointImportDialogue(string mode)
         {
             InitializeComponent();
+            conversationSubjectListBox.ItemsSource = Globals.authorizedGroups.Select(ag => ag.groupKey);
             switch (mode)
             {
                 case "import":
@@ -63,7 +62,6 @@ namespace SandRibbon.Components
             extantConversations = ConversationDetailsProviderFactory.Provider.ListConversations();
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             this.CommandBindings.Add(new CommandBinding(CompleteConversationDialog, Create, CanCompleteDialog));
-            //CompleteConversationDialog. RegisterCommand(new DelegateCommand<object>(Create, CanCompleteDialog));
         }
         private void PopulateFields()
         {
@@ -102,7 +100,7 @@ namespace SandRibbon.Components
                     Width = 800;
                     action = "create";
                     if (details == null)
-                        details = new ConversationDetails { Author = me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
+                        details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
                 case ConversationConfigurationMode.Edit:
                     createGroup.Visibility = Visibility.Collapsed;
@@ -126,7 +124,7 @@ namespace SandRibbon.Components
                     Height = 400;
                     Width = 800;
                     if (details == null)
-                        details = new ConversationDetails { Author = me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
+                        details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
                 case ConversationConfigurationMode.Delete:
                     createGroup.Visibility = Visibility.Collapsed;
@@ -187,7 +185,7 @@ namespace SandRibbon.Components
             var currentDetails = details;
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
             var thisTitleIsNotTaken = (extantConversations.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).Count() == 0);
-            var IAmTheAuthor = (details.Author == me);
+            var IAmTheAuthor = (details.Author == Globals.me);
             return thisIsAValidTitle && thisTitleIsNotTaken && IAmTheAuthor;
         }
 
@@ -275,8 +273,6 @@ namespace SandRibbon.Components
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            conversationSubjectListBox.ItemsSource = authorizedGroups;
-            conversationSubjectListBox.SelectedItem = conversationSubjectListBox.Items[0];
             UpdateDialogBoxAppearance();
             PopulateFields();
             AttachHandlers();
