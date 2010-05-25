@@ -9,9 +9,9 @@
     Loaded="setUpTools">
     <StackPanel Orientation="Horizontal" x:Name="LayoutRoot">
         <SandRibbonInterop:RibbonPanel>
-            <SandRibbonInterop:Button ToolTip="{StaticResource CutToolTip}" Icon="..\..\Resources\cut.png" Text="Cut" Command="ApplicationCommands.Cut" />
-            <SandRibbonInterop:Button ToolTip="{StaticResource PasteToolTip}" Icon="..\..\Resources\paste.png" Text="Paste" Command="ApplicationCommands.Paste" />
-            <SandRibbonInterop:Button ToolTip="{StaticResource CopyToolTip}" Icon="..\..\Resources\copy.png" Text="Copy" Command="ApplicationCommands.Copy" />
+            <SandRibbonInterop:Button ToolTip="{StaticResource CutToolTip}" Icon="..\..\Resources\cut.png" Text="Cut" Command="ApplicationCommands.Cut" InternalButtonSize="Small"/>
+            <SandRibbonInterop:Button ToolTip="{StaticResource PasteToolTip}" Icon="..\..\Resources\paste.png" Text="Paste" Command="ApplicationCommands.Paste" InternalButtonSize="Small"/>
+            <SandRibbonInterop:Button ToolTip="{StaticResource CopyToolTip}" Icon="..\..\Resources\copy.png" Text="Copy" Command="ApplicationCommands.Copy" InternalButtonSize="Small"/>
         </SandRibbonInterop:RibbonPanel>
         <StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">

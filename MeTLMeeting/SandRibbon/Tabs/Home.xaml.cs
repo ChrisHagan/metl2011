@@ -21,6 +21,7 @@ namespace SandRibbon.Tabs
         {
             InitializeComponent();
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
+            Commands.SetLayer.Execute("Sketch");
         }
         private void SetLayer(string layer)
         {

@@ -796,6 +796,7 @@ namespace SandRibbon
                         break;
                     case 1:
                         ribbon.Tabs.Add(new Tabs.Home { DataContext=scroll });
+                        ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
                         ribbon.ToolBar = new Chrome.ToolBar();
                         break;
                     case 2:
