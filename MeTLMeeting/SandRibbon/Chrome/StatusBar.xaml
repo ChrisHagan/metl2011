@@ -1,0 +1,14 @@
+﻿<sr:StatusBar x:Class="SandRibbon.Chrome.StatusBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel x:Name="StatusLeft" Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+        <sandpit:Pedagogicometer />
+        <sr:Label x:Name="StatusLabel" ToolTip="currentMode" VerticalAlignment="Center"/>
+    </StackPanel>
+    <components:ZoomControls HorizontalAlignment="Right" Margin="0,0,50,0" />
+    <components:PrintingHost Height="25" Width="25" HorizontalAlignment="Right"/>
+</sr:StatusBar>
