@@ -180,6 +180,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Chrome\StatusBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Chrome\ToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -203,6 +207,10 @@
     <Page Include="Components\Login.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Pedagogicometry\Pedagogicometer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\PenColors.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -249,10 +257,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Sandpit\BoardManagerLauncher.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Sandpit\Pedagogicometer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -400,6 +404,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Tabs\Analytics.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Home.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Plugins.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Quizzes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Compile Include="Components\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -419,6 +439,9 @@
     </Compile>
     <Compile Include="Chrome\ApplicationPopup.xaml.cs">
       <DependentUpon>ApplicationPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Chrome\StatusBar.xaml.cs">
+      <DependentUpon>StatusBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Chrome\ToolBar.xaml.cs">
       <DependentUpon>ToolBar.xaml</DependentUpon>
@@ -442,6 +465,10 @@
     <Compile Include="Components\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Pedagogicometry\Pedagogicometer.xaml.cs">
+      <DependentUpon>Pedagogicometer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
     <Compile Include="Components\PenColors.xaml.cs" />
     <Compile Include="Components\ConversationConfigurationDialog.xaml.cs">
       <DependentUpon>ConversationConfigurationDialog.xaml</DependentUpon>
@@ -468,9 +495,6 @@
     <Compile Include="Components\Sandpit\BoardManager.cs" />
     <Compile Include="Components\Sandpit\BoardManagerLauncher.xaml.cs">
       <DependentUpon>BoardManagerLauncher.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Sandpit\Pedagogicometer.xaml.cs">
-      <DependentUpon>Pedagogicometer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Sandpit\S15Boards.xaml.cs">
       <DependentUpon>S15Boards.xaml</DependentUpon>
@@ -556,6 +580,18 @@
     </Compile>
     <Compile Include="Quizzing\QuizAnswers.xaml.cs">
       <DependentUpon>QuizAnswers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Analytics.xaml.cs">
+      <DependentUpon>Analytics.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Home.xaml.cs">
+      <DependentUpon>Home.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Plugins.xaml.cs">
+      <DependentUpon>Plugins.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Quizzes.xaml.cs">
+      <DependentUpon>Quizzes.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\BackDoor.cs" />
     <Compile Include="Utils\Crypto.cs" />

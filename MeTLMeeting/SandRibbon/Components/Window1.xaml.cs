@@ -21,10 +21,11 @@ using SandRibbonObjects;
 using System.Diagnostics;
 using System.Windows.Shapes;
 using SandRibbon.Components.Sandpit;
+using SandRibbon.Components.Pedagogicometry;
 
 namespace SandRibbon
 {
-    public partial class Window1
+    public partial class Window1 : PedagogicallyVariable
     {
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
@@ -41,6 +42,7 @@ namespace SandRibbon
         /*Clunky - these are to be exposed to the debugging and support RePL, which has access to this
          * window instance through the visual hierarchy.*/
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
+        public static ScrollViewer MAIN_SCROLL;
         public string log
         {
             get { return Logger.log; }
@@ -60,15 +62,12 @@ namespace SandRibbon
                         ribbon.SelectedTab = (RibbonTab)tab;
             }));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(SetIdentity));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
             Commands.SetLayer.Execute("Sketch");
             powerPointFinished = new DelegateCommand<string>((_whatever) => Dispatcher.BeginInvoke((Action)(finishedPowerpoint)));
             Commands.PowerPointLoadFinished.RegisterCommand(powerPointFinished);
             powerpointProgress = new DelegateCommand<string>(
                 (progress) => Dispatcher.BeginInvoke((Action)(() => showPowerPointProgress(progress))));
             Commands.PowerPointProgress.RegisterCommand(powerpointProgress);
-
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(setPrivacy));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.ClearDynamicContent.RegisterCommand(new DelegateCommand<object>(ClearDynamicContent));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
@@ -79,11 +78,11 @@ namespace SandRibbon
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>((_arg) => { }, mustBeInConversation));
             Commands.PrintCompleted.RegisterCommand(new DelegateCommand<object>(_obj => HideProgressBlocker()));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(
-                _obj => 
-                    { 
-                        ShowPowerpointBlocker("Starting Powerpoint Import");
-                        Commands.PostImportPowerpoint.Execute(null);
-                    },mustBeLoggedIn));
+                _obj =>
+                {
+                    ShowPowerpointBlocker("Starting Powerpoint Import");
+                    Commands.PostImportPowerpoint.Execute(null);
+                }, mustBeLoggedIn));
             Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(
                 (conversationDetails) =>
                 {
@@ -109,7 +108,7 @@ namespace SandRibbon
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(_o => { }, mustBeInConversation));
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(_arg => Commands.MirrorPresentationSpace.Execute(this)));
             Commands.ReceiveWormMove.RegisterCommand(new DelegateCommand<string>(ReceiveWormMove));
-            Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<string>(SetConversationPermissions, CanSetConversationPermissions));
+            Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
             Commands.AddWindowEffect.RegisterCommand(new DelegateCommand<object>(AddWindowEffect));
             Commands.RemoveWindowEffect.RegisterCommand(new DelegateCommand<object>(RemoveWindowEffect));
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(_nil => { }, mustBeLoggedIn));
@@ -124,8 +123,8 @@ namespace SandRibbon
             AddWindowEffect(null);
             if (SmartBoardMeTLAlreadyLoaded)
                 checkIfSmartboard();
+            Pedagogicometer.RegisterVariant(this);
         }
-
         private void SetTutorialVisibility(object visibilityObject)
         {
             var newVisibility = (Visibility)visibilityObject;
@@ -139,7 +138,8 @@ namespace SandRibbon
                     break;
             }
         }
-        private void CreateConversation(object _unused){
+        private void CreateConversation(object _unused)
+        {
             ShowPowerpointBlocker("Creating Conversation Dialog Open");
         }
         private void EditConversation(object _unused)
@@ -152,8 +152,9 @@ namespace SandRibbon
             if (credentials.name.Contains("S15")) sleep(null);
             var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
             Commands.RequerySuggested();
+            Commands.AllStaticCommandsAreRegistered();
         }
-        private void SetZoomRect(Rectangle viewbox) 
+        private void SetZoomRect(Rectangle viewbox)
         {
             var topleft = new Point(Canvas.GetLeft(viewbox), Canvas.GetTop(viewbox));
             scroll.Width = viewbox.Width;
@@ -229,11 +230,6 @@ namespace SandRibbon
                 });
             }
         }
-        private void setPrivacy(string privacy)
-        {
-            this.privacy = privacy;
-            showDetails(details);
-        }
         private void ExecuteMoveTo(int slide)
         {
             ProviderMonitor.HealthCheck(() => MoveTo(slide));
@@ -249,26 +245,11 @@ namespace SandRibbon
                 Commands.LoggedIn.Execute(userInformation.credentials.name);
                 removeQuiz();
                 details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
-                showDetails(details);
                 applyPermissions(details.Permissions);
                 Commands.UpdateConversationDetails.Execute(details);
                 Logger.Log("Joined conversation " + title);
                 Commands.RequerySuggested(Commands.SetConversationPermissions);
             });
-        }
-        private void showDetails(ConversationDetails details)
-        {
-            if (details == null || privacy == null) return;
-            var doDetails = (Action)delegate
-                                         {
-                                             StatusLabel.Text = string.Format("{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
-                                                     privacy, Permissions.InferredTypeOf(details.Permissions).Label, details.Subject, userInformation.credentials.name);
-                                             Title = messageFor(details);
-                                         };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDetails);
-            else
-                doDetails();
         }
         private string messageFor(ConversationDetails details)
         {
@@ -373,22 +354,15 @@ namespace SandRibbon
             if (userInformation.location != null && !String.IsNullOrEmpty(userInformation.location.activeConversation))
                 TutorialLayer.Visibility = Visibility.Collapsed;
         }
-        private void updateToolBox(string layer)
-        {
-            if (layer == "Text")
-                ModalToolsGroup.Header = "Text Options";
-            else if (layer == "Insert")
-                ModalToolsGroup.Header = "Image Options";
-            else
-                ModalToolsGroup.Header = "Ink Options";
-        }
+
         private bool mustBeLoggedIn(object _arg)
         {
             try
             {
                 return Globals.credentials != null;
             }
-            catch (NotSetException) {
+            catch (NotSetException)
+            {
                 return false;
             }
         }
@@ -398,7 +372,8 @@ namespace SandRibbon
             {
                 return Globals.location.activeConversation != null;
             }
-            catch (NotSetException) {
+            catch (NotSetException)
+            {
                 return false;
             }
         }
@@ -407,18 +382,21 @@ namespace SandRibbon
             if (details.Jid != userInformation.location.activeConversation) return;
             var doUpdate = (Action)delegate
             {
-                this.details = details;
                 userInformation.location.availableSlides = details.Slides.Select(s => s.id).ToList();
                 HideTutorial();
+                UpdateTitle();
                 var isAuthor = (details.Author != null) && details.Author == userInformation.credentials.name;
                 userInformation.policy.isAuthor = isAuthor;
-                showDetails(details);
                 Commands.RequerySuggested();
             };
             if (Thread.CurrentThread != Dispatcher.Thread)
                 Dispatcher.BeginInvoke(doUpdate);
             else
                 doUpdate();
+        }
+        private void UpdateTitle()
+        {
+            Title = messageFor(Globals.conversationDetails);
         }
         private DelegateCommand<object> canOpenFriendsOverride;
         private void applyPermissions(Permissions permissions)
@@ -550,7 +528,8 @@ namespace SandRibbon
                 scroll.Width = double.NaN;
             }
         }
-        private void FitToPageWidth(object _unused) {
+        private void FitToPageWidth(object _unused)
+        {
             if (scroll != null)
             {
                 var ratio = adornerGrid.ActualWidth / adornerGrid.ActualHeight;
@@ -570,7 +549,7 @@ namespace SandRibbon
             ProgressDisplay.Children.Clear();
             InputBlocker.Visibility = Visibility.Collapsed;
         }
-        
+
         private void canZoomIn(object sender, CanExecuteRoutedEventArgs e)
         {
             if (scroll == null)
@@ -732,50 +711,15 @@ namespace SandRibbon
                 scroll.Width = newWidth;
             }
         }
-        private void Viewbox_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var pos = e.GetPosition(minimap);
-            var x = (pos.X / minimap.Width) * scroll.ExtentWidth;
-            var y = (pos.Y / minimap.Height) * scroll.ExtentHeight;
-            if (new[] { x, y }.Any(i => Double.IsNaN(i))) return;
-            var viewBoxXOffset = scroll.ViewportWidth / 2;
-            var viewBoxYOffset = scroll.ViewportHeight / 2;
-            var finalX = x - viewBoxXOffset;
-            if (!(finalX > 0))
-                finalX = 0;
-            scroll.ScrollToHorizontalOffset(finalX);
-            var finalY = y - viewBoxYOffset;
-            if (!(finalY > 0))
-                finalY = 0;
-            scroll.ScrollToVerticalOffset(finalY);
-        }
-        private void Viewbox_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed)
-            {
-                var pos = e.GetPosition(minimap);
-                var x = (pos.X / minimap.Width) * scroll.ExtentWidth;
-                var y = (pos.Y / minimap.Height) * scroll.ExtentHeight;
-                if (new[] { x, y }.Any(i => Double.IsNaN(i))) return;
-                var viewBoxXOffset = scroll.ViewportWidth / 2;
-                var viewBoxYOffset = scroll.ViewportHeight / 2;
-                var finalX = x - viewBoxXOffset;
-                if (!(finalX > 0))
-                    finalX = 0;
-                scroll.ScrollToHorizontalOffset(finalX);
-                var finalY = y - viewBoxYOffset;
-                if (!(finalY > 0))
-                    finalY = 0;
-                scroll.ScrollToVerticalOffset(finalY);
-            }
-        }
+
         public Visibility GetVisibilityOf(UIElement target)
         {
             return target.Visibility;
         }
-        
-        private void SetConversationPermissions(string style)
+
+        private void SetConversationPermissions(object obj)
         {
+            var style = (string)obj;
             foreach (var s in new[]{
                 Permissions.LABORATORY_PERMISSIONS,
                 Permissions.TUTORIAL_PERMISSIONS,
@@ -785,7 +729,7 @@ namespace SandRibbon
                     details.Permissions = s;
             ConversationDetailsProviderFactory.Provider.Update(details);
         }
-        private bool CanSetConversationPermissions(string _style)
+        private bool CanSetConversationPermissions(object _style)
         {
             return details != null && userInformation.credentials.name == details.Author;
         }
@@ -832,7 +776,36 @@ namespace SandRibbon
         }
         public bool SetLevel(PedagogyLevel level)
         {
+            SetupUI(level);
             return true;
+        }
+        public void ClearUI()
+        {
+            Commands.UnregisterAllCommands();
+            ribbon.Tabs.Clear();
+            ribbon.ToolBar = null;
+        }
+        public void SetupUI(PedagogyLevel level)
+        {
+            foreach (var i in Enumerable.Range(0, level.code+1))
+            {
+                switch (i)
+                {
+                    case 0:
+                        ClearUI();
+                        break;
+                    case 1:
+                        ribbon.Tabs.Add(new Tabs.Home { DataContext=scroll });
+                        ribbon.ToolBar = new Chrome.ToolBar();
+                        break;
+                    case 2:
+                        ribbon.Tabs.Add(new Tabs.Quizzes());
+                        ribbon.Tabs.Add(new Tabs.Analytics());
+                        break;
+                    default: 
+                        break;
+                }
+            }
         }
     }
 }

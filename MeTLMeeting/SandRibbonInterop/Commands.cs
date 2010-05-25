@@ -4,6 +4,8 @@ using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace SandRibbon
 {
@@ -41,6 +43,7 @@ namespace SandRibbon
         public static CompositeCommand RemoveHighlight = new CompositeCommand();
 
         #endregion
+        public static CompositeCommand GetMainScrollViewer = new CompositeCommand();
         public static CompositeCommand ShowConversationSearchBox = new CompositeCommand();
         public static CompositeCommand HideConversationSearchBox = new CompositeCommand();
         public static CompositeCommand AddWindowEffect = new CompositeCommand();
@@ -217,14 +220,35 @@ namespace SandRibbon
         {
             NotImplementedYet.RegisterCommand(new DelegateCommand<object>((_param) => { }, (_param) => { return false; }));
         }
+        public static int HandlerCount{
+            get {
+                return all.Aggregate(0, (acc, item) => acc += item.RegisteredCommands.Count());
+            }
+        }
+        private static List<ICommand> staticHandlers = new List<ICommand>();
+        public static void AllStaticCommandsAreRegistered() {
+            foreach (var command in all) {
+                foreach (var handler in command.RegisteredCommands)
+                    staticHandlers.Add(handler);
+            }
+        }
+        private static IEnumerable<CompositeCommand> all{
+            get
+            {
+                return typeof(Commands).GetFields()
+                    .Where(p => p.FieldType == typeof(CompositeCommand))
+                    .Select(f => (CompositeCommand)f.GetValue(null));
+            }
+        }
+        public static void UnregisterAllCommands() {
+            foreach (var command in all)
+                foreach (var handler in command.RegisteredCommands)
+                    if(!staticHandlers.Contains(handler))
+                        command.UnregisterCommand(handler);
+        }
         public static void RequerySuggested()
         {
-            foreach (var property in typeof(Commands).GetFields().Where(p =>
-                p.FieldType == typeof(CompositeCommand)))
-            {
-                var command = (CompositeCommand)property.GetValue(typeof(Commands));
-                Requery(command);
-            }
+            RequerySuggested(all.ToArray());
         }
         public static void RequerySuggested(params CompositeCommand[] commands)
         {

@@ -10,6 +10,10 @@ namespace SandRibbon.Providers
         public static Dictionary<CompositeCommand, object> parameters = new Dictionary<CompositeCommand, object>();
         static CommandParameterProvider() 
         {
+            RegisterToAllCommands();
+        }
+        public static void RegisterToAllCommands()
+        {
             var ignoreCommands = new[] {
                 Commands.ReceiveWormMove, 
                 Commands.SendWormMove

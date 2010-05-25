@@ -24,12 +24,10 @@ namespace SandRibbon.Components
         public int currentSlideIndex = -1;
         public int currentSlideId = -1;
         public ObservableCollection<ThumbnailInformation> thumbnailList = new ObservableCollection<ThumbnailInformation>();
-        private ConversationDetails conversationDetails;
         public bool synced = false;
         public bool isAuthor = false;
         private bool moveTo;
         private int realLocation;
-        private string currentJid;
         public SimpleSlideDisplay()
         {
             InitializeComponent();
@@ -41,7 +39,6 @@ namespace SandRibbon.Components
                 currentSlideIndex = 0;
                 slides.SelectedIndex = 0;
                 slides.ScrollIntoView(slides.SelectedIndex);
-                currentJid = jid;
             }));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(Display));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(syncChanded));
@@ -49,6 +46,14 @@ namespace SandRibbon.Components
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
+            try
+            {
+                Display(Globals.conversationDetails);
+            }
+            catch (NotSetException)
+            {
+                    //YAAAAAY
+            }
         }
         private void syncChanded(object obj)
         {
@@ -59,8 +64,9 @@ namespace SandRibbon.Components
         {
             try
             {
-                if (String.IsNullOrEmpty(Globals.me) || conversationDetails == null) return false;
-                return (conversationDetails.Permissions.studentCanPublish || conversationDetails.Author == Globals.me);
+                var details = Globals.conversationDetails;
+                if (String.IsNullOrEmpty(Globals.me) || details == null) return false;
+                return (details.Permissions.studentCanPublish || details.Author == Globals.me);
             }
             catch(NotSetException e)
             {
@@ -69,8 +75,8 @@ namespace SandRibbon.Components
         }
         private void addSlide(object _slide)
         {
-            Commands.CreateThumbnail.Execute(currentSlideId);
-            ConversationDetailsProviderFactory.Provider.AppendSlideAfter(currentSlideId, conversationDetails.Jid);
+            Commands.CreateThumbnail.Execute(Globals.slide);
+            ConversationDetailsProviderFactory.Provider.AppendSlideAfter(Globals.slide, Globals.conversationDetails.Jid);
             moveTo = true;
         }
         private void MoveTo(int slide)
@@ -80,7 +86,7 @@ namespace SandRibbon.Components
                                           //The real location may not be a displayable thumb
                                           realLocation = slide;
                                           var typeOfDestination =
-                                              conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
+                                              Globals.conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
                                                   FirstOrDefault();
                                           var currentSlide = (ThumbnailInformation) slides.SelectedItem;
                                           if (currentSlide == null || currentSlide.slideId != slide)
@@ -113,7 +119,7 @@ namespace SandRibbon.Components
         }
         private bool slideInConversation(int slide)
         {
-            var result = conversationDetails.Slides.Select(t => t.id).Contains(slide);
+            var result = Globals.conversationDetails.Slides.Select(t => t.id).Contains(slide);
             return result;
         }
         private bool isPrevious(object _object)
@@ -137,10 +143,8 @@ namespace SandRibbon.Components
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
-            if (details.Jid != currentJid) return;
             var doDisplay = (Action)delegate
             {
-                conversationDetails = details;
                 if (Globals.me == details.Author)
                     isAuthor = true;
                 else

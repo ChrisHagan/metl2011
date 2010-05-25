@@ -1,0 +1,20 @@
+﻿<sr:RibbonTab x:Class="SandRibbon.Tabs.Plugins"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    sr:KeyboardAccess.Keys="P" Text="Plugins" x:Name="pluginRoot">
+    <sr:RibbonGroup Header="S15 Board Manager">
+        <sandpit:BoardManagerLauncher />
+    </sr:RibbonGroup>
+    <sr:RibbonGroup Header="Bubbles">
+        <sandpit:ThoughtBubbleLauncher />
+    </sr:RibbonGroup>
+    <sr:RibbonGroup Header="Diagnostics">
+        <components:RubyRepl /> 
+    </sr:RibbonGroup>
+    <sr:RibbonGroup Header="Integration">
+        <components:SMARTboardControl /> 
+    </sr:RibbonGroup>
+</sr:RibbonTab>

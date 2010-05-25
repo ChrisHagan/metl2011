@@ -11,32 +11,29 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SandRibbon.Components.Pedagogicometry;
 
 namespace SandRibbon.Components.Sandpit
 {
-    public class PedagogyLevel { }
     public interface PedagogicallyVariable {
         bool CanSetLevel(PedagogyLevel level);
         bool SetLevel(PedagogyLevel level);
     }
-    public enum Pedagogies { 
-        INSTANT_WHITEBOARD=0,
-        SIMPLE_GROUP=1,
-        CP3=2,
-        METL=3,
-        EDGE_METL=4
-    }
     public partial class Pedagogicometer : UserControl
     {
         public static PedagogyLevel level;
-        private static Dictionary<Pedagogies, PedagogyLevel> pedagogyLevels = new Dictionary<Pedagogies, PedagogyLevel>();
         private static List<PedagogicallyVariable> variants = new List<PedagogicallyVariable>();
         public Pedagogicometer()
         {
             InitializeComponent();
-            foreach (var pedagogy in Enum.GetValues(typeof(Pedagogies)))
-                pedagogyLevels[(Pedagogies)pedagogy] = new PedagogyLevel();
-            slider.Maximum = Enum.GetValues(typeof(Pedagogies)).Length-1;
+            var i = 0;
+            pedagogies.ItemsSource = new[] { 
+                new PedagogyLevel{ code = i++, label= "Whiteboard" },
+                new PedagogyLevel{ code = i++, label= "Powerpoint" },
+                new PedagogyLevel{ code = i++, label= "CP3" },
+                new PedagogyLevel{ code = i++, label= "MeTL" },
+                new PedagogyLevel{ code = i++, label= "EdgeMeTL" }
+            };
         }
         public static void RegisterVariant(PedagogicallyVariable variant) {
             variants.Add(variant);
@@ -48,10 +45,10 @@ namespace SandRibbon.Components.Sandpit
                 if (variant.CanSetLevel(level))
                     variant.SetLevel(level);
         }
-        public void PedagogicometerValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) 
+        private void PedagogyLevelClicked(object sender, RoutedEventArgs e)
         {
-            var newLevel = (Pedagogies)Enum.GetValues(typeof(Pedagogies)).GetValue((int)e.NewValue);
-            SetPedagogyLevel(pedagogyLevels[newLevel]);
+            var desiredLevel = (PedagogyLevel)((FrameworkElement)sender).DataContext;
+            SetPedagogyLevel(desiredLevel);
         }
     }
 }

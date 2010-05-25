@@ -55,9 +55,7 @@ namespace SandRibbon.Components
                     Commands.RemoveWindowEffect.Execute(null);
                     Commands.ShowConversationSearchBox.Execute(null);
                     this.Visibility = Visibility.Collapsed;
-                    //((Grid)this.Parent).Children.Remove(this);
-                }
-                ));
+                }));
         }
         private static string getMetlVersion()
         {

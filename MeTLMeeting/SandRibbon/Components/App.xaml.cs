@@ -8,6 +8,7 @@ using SandRibbon.Utils;
 using System.Security.Permissions;
 using SandRibbon.Providers;
 using SandRibbon.Utils.Connection;
+using SandRibbon.Quizzing;
 
 [assembly:UIPermission(SecurityAction.RequestMinimum)]
 namespace SandRibbon
@@ -20,6 +21,7 @@ namespace SandRibbon
             base.OnStartup(e);
             try
             {
+                new Worm();
                 new Printer();
                 new CommandParameterProvider();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Ink();

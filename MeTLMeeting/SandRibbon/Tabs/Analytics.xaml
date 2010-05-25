@@ -1,0 +1,13 @@
+﻿<sr:RibbonTab x:Class="SandRibbon.Tabs.Analytics"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    sr:KeyboardAccess.Keys="A" Text="Analytics" x:Name="analyticsRoot">
+    <sr:RibbonGroup Header="Worm" ShowDialogLauncher="False">
+        <sr:RibbonGroup.Variants>
+            <sr:GroupVariant Variant="Collapsed" Priority="9"/>
+        </sr:RibbonGroup.Variants>
+        <quiz:Worm />
+    </sr:RibbonGroup>
+</sr:RibbonTab>           

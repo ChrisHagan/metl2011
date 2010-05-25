@@ -9,6 +9,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbon.Utils.Connection;
 using SandRibbon.Components;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Quizzing
 {
@@ -24,7 +25,6 @@ namespace SandRibbon.Quizzing
         private static readonly int GRID_COLUMNS = 10;
         private static readonly int HEARTBEAT_FAIL_THRESHOLD = 2;
         private int missedHeartbeats = 0;
-        private string conversation;
         public static DispatcherTimer heart;
         public Worm()
         {
@@ -44,7 +44,6 @@ namespace SandRibbon.Quizzing
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(receivedMessage));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(
                 title=>{
-                    conversation = title;
                     if (heart == null)
                         heart = new DispatcherTimer(TimeSpan.FromMilliseconds(2500), DispatcherPriority.ApplicationIdle, Render, Dispatcher);
                 }));
@@ -68,7 +67,7 @@ namespace SandRibbon.Quizzing
         }
         private void Render(object _sender, EventArgs _e)
         {
-            Commands.SendWormMove.Execute(new WormMove { conversation = conversation, direction = "=" });
+            Commands.SendWormMove.Execute(new WormMove { conversation = Globals.conversationDetails.Jid, direction = "=" });
             checkForExtendedDesktop();
             if (missedHeartbeats >= HEARTBEAT_FAIL_THRESHOLD)
             {
