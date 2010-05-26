@@ -1,0 +1,22 @@
+﻿<sr:RibbonGroup x:Class="SandRibbon.Tabs.Groups.Notes"
+    ShowDialogLauncher="False" x:Name="Private" Header="Private" 
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    Image="\Resources\scratchpadplaceholderyellownotepad.png"
+    xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl"
+    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <sr:RibbonGroup.Resources>
+        <core:String x:Key="preferredDisplayIndex">4</core:String>    
+    </sr:RibbonGroup.Resources>
+    <sr:RibbonGroup.Variants>
+        <sr:GroupVariant Variant="Small" Priority="2"/>
+        <sr:GroupVariant Variant="Medium" Priority="1"/>
+        <sr:GroupVariant Variant="Collapsed" Priority="4"/>
+    </sr:RibbonGroup.Variants>
+    <SandRibbonInterop:RibbonPanel>
+        <SandRibbonInterop:Button Text="Notes" Icon="\Resources\scratchpadplaceholderyellownotepad.png" Command="{x:Static api:Commands.ToggleScratchPadVisibility}" ToolTip="{StaticResource NotesToolTip}"/>
+    </SandRibbonInterop:RibbonPanel>
+</sr:RibbonGroup>           
