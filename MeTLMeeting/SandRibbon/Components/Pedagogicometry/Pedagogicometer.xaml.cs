@@ -22,41 +22,31 @@ namespace SandRibbon.Components.Sandpit
     }
     public partial class Pedagogicometer : UserControl
     {
+        private static IEnumerable<PedagogyLevel> allPedagogies = null;
         public static PedagogyLevel level;
         private static List<PedagogicallyVariable> variants = new List<PedagogicallyVariable>();
+        private static Pedagogicometer instance;
         public Pedagogicometer()
         {
             InitializeComponent();
+            instance = this;
             var i = 0;
-            pedagogies.ItemsSource = new[] { 
+            allPedagogies = new[] { 
                 new PedagogyLevel{ code = i++, label= "Whiteboard" },
                 new PedagogyLevel{ code = i++, label= "Powerpoint" },
                 new PedagogyLevel{ code = i++, label= "CP3" },
                 new PedagogyLevel{ code = i++, label= "MeTL" },
-                new PedagogyLevel{ code = i++, label= "EdgeMeTL" }
-            };
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
-            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>((_object) => { }, CanSetPedagogyLevel));
+                new PedagogyLevel{ code = i++, label= "EdgeMeTL" }};
+            pedagogies.ItemsSource = allPedagogies;
         }
-        public bool CanSetPedagogyLevel(object _level) { 
-            try
-            {
-                Commands.JoinConversation.lastValue();
-                return true;
-            }
-            catch (NotSetException) {
-                return false;
-            }
+        public static void SetDefaultPedagogyLevel() 
+        {
+            instance.pedagogies.SelectedItem = allPedagogies.ElementAt(0);
         }
         public static void RegisterVariant(PedagogicallyVariable variant) {
             variants.Add(variant);
         }
-        private void JoinConversation(object unused)
-        {
-            if(pedagogies.SelectedItem == null)
-                pedagogies.SelectedIndex = 0;
-        }
-        public static void SetPedagogyLevel(PedagogyLevel level) 
+        public void SetPedagogyLevel(PedagogyLevel level) 
         {
             Pedagogicometer.level = level;
             foreach (var variant in variants)

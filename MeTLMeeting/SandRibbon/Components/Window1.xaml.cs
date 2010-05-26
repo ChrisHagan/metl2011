@@ -120,6 +120,7 @@ namespace SandRibbon
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.SetZoomRect.RegisterCommand(new DelegateCommand<Rectangle>(SetZoomRect));
+            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>((_level) => { }, mustBeLoggedIn));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -156,6 +157,7 @@ namespace SandRibbon
             var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
             Commands.RequerySuggested();
             Commands.AllStaticCommandsAreRegistered();
+            Pedagogicometer.SetDefaultPedagogyLevel();
         }
         private void SetZoomRect(Rectangle viewbox)
         {
