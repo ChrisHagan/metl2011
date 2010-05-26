@@ -2,81 +2,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
-    xmlns:components="clr-namespace:SandRibbon.Components"
-    xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
-    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:groups="clr-namespace:SandRibbon.Tabs.Groups"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
     sr:KeyboardAccess.Keys="H" Text="Home" x:Name="Sketch">
-    <sr:RibbonGroup ShowDialogLauncher="False" Header="Editing Modes" Image="\Resources\Inking.png">
-        <sr:RibbonGroup.Variants>
-            <sr:GroupVariant Variant="Small" Priority="2"/>
-            <sr:GroupVariant Variant="Medium" Priority="1"/>
-            <sr:GroupVariant Variant="Collapsed" Priority="5"/>
-        </sr:RibbonGroup.Variants>
-        <simple:SimpleModeSwitcher x:Name="modes"/>
-    </sr:RibbonGroup>
-    <sr:RibbonGroup ShowDialogLauncher="False" x:Name="ModalToolsGroup" Image="\Resources\selectShiny.png">
-        <sr:RibbonGroup.Variants>
-            <sr:GroupVariant Variant="Small" Priority="4"/>
-            <sr:GroupVariant Variant="Medium" Priority="3"/>
-            <sr:GroupVariant Variant="Collapsed" Priority="5"/>
-        </sr:RibbonGroup.Variants>
-        <SandRibbonInterop:RibbonPanel x:Name="StableTools">
-            <simple:SimpleToolBox x:Name="toolbox"/>
-        </SandRibbonInterop:RibbonPanel>
-    </sr:RibbonGroup>
-    <sr:RibbonGroup ShowDialogLauncher="False" x:Name="Friends" Header="Friends" Image="\Resources\friendsplaceholder.png">
-        <sr:RibbonGroup.Variants>
-            <sr:GroupVariant Variant="Small" Priority="2"/>
-            <sr:GroupVariant Variant="Medium" Priority="1"/>
-            <sr:GroupVariant Variant="Collapsed" Priority="3"/>
-        </sr:RibbonGroup.Variants>
-        <SandRibbonInterop:RibbonPanel>
-            <SandRibbonInterop:Button x:Name="ShowFriendsButton" ToolTip="{StaticResource FriendsToolTip}" Text="Friends" Icon="\Resources\friendsplaceholder.png" Command="{x:Static api:Commands.ToggleFriendsVisibility}" />
-        </SandRibbonInterop:RibbonPanel>
-    </sr:RibbonGroup>
-    <sr:RibbonGroup ShowDialogLauncher="False" x:Name="Private" Header="Private" Image="\Resources\scratchpadplaceholderyellownotepad.png">
-        <sr:RibbonGroup.Variants>
-            <sr:GroupVariant Variant="Collapsed" Priority="4"/>
-            <sr:GroupVariant Variant="Small" Priority="2"/>
-            <sr:GroupVariant Variant="Medium" Priority="1"/>
-        </sr:RibbonGroup.Variants>
-        <SandRibbonInterop:RibbonPanel>
-            <SandRibbonInterop:Button Text="Notes" Icon="\Resources\scratchpadplaceholderyellownotepad.png" Command="{x:Static api:Commands.ToggleScratchPadVisibility}" ToolTip="{StaticResource NotesToolTip}"/>
-        </SandRibbonInterop:RibbonPanel>
-    </sr:RibbonGroup>
-    <sr:RibbonGroup ShowDialogLauncher="False" x:Name="Navigate" Header="Navigate">
-        <sr:RibbonGroup.Variants>
-            <sr:GroupVariant Variant="Small" Priority="5"/>
-            <sr:GroupVariant Variant="Medium" Priority="4"/>
-            <sr:GroupVariant Variant="Collapsed" Priority="6"/>
-        </sr:RibbonGroup.Variants>
-        <components:SimpleSlideDisplay />
-    </sr:RibbonGroup>
-    <sr:RibbonGroup ShowDialogLauncher="False" sr:KeyboardAccess.Keys="M" x:Name="Minimap" Header="View">
-        <sr:RibbonGroup.Variants>
-            <sr:GroupVariant Variant="Collapsed" Priority="5"/>
-        </sr:RibbonGroup.Variants>
-        <StackPanel Orientation="Horizontal">
-            <Viewbox x:Name="minimapContainer" Height="65" Width="100" MouseDown="Viewbox_MouseDown" MouseMove="Viewbox_MouseMove">
-                <Grid>
-                    <Rectangle Width="{Binding Content.ActualWidth}" Height="{Binding Content.ActualHeight}" x:Name="minimap">
-                        <Rectangle.Fill>
-                            <VisualBrush Visual="{Binding Content}" />
-                        </Rectangle.Fill>
-                    </Rectangle>
-                    <Border BorderThickness="1" BorderBrush="Black" 
-                    Background="{StaticResource MiniMapSelectionBox}"
-                    Width="{Binding ViewportWidth}"
-                    Height="{Binding ViewportHeight}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top">
-                        <Border.RenderTransform>
-                            <TranslateTransform X="{Binding HorizontalOffset}" Y="{Binding VerticalOffset}" x:Name="mapRegion"/>
-                        </Border.RenderTransform>
-                    </Border>
-                </Grid>
-            </Viewbox>
-        </StackPanel>
-    </sr:RibbonGroup>
+    <sr:RibbonTab.Resources>
+        <core:String x:Key="preferredDisplayIndex">0</core:String>    
+    </sr:RibbonTab.Resources>
 </sr:RibbonTab>

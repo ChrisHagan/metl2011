@@ -20,64 +20,8 @@ namespace SandRibbon.Tabs
         public Home()
         {
             InitializeComponent();
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
             Commands.SetLayer.Execute("Sketch");
         }
-        private void SetLayer(string layer)
-        {
-            switch (layer)
-            {
-                case "Text":
-                    ModalToolsGroup.Header = "Text Options";
-                    break;
-                case "Insert":
-                    ModalToolsGroup.Header = "Image Options";
-                    break;
-                default:
-                    ModalToolsGroup.Header = "Ink Options";
-                    break;
-            }
-        }
-        private void Viewbox_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var scroll = (ScrollViewer)DataContext;
-            if (scroll == null) return;
-            var pos = e.GetPosition(minimap);
-            var x = (pos.X / minimap.Width) * scroll.ExtentWidth;
-            var y = (pos.Y / minimap.Height) * scroll.ExtentHeight;
-            if (new[] { x, y }.Any(i => Double.IsNaN(i))) return;
-            var viewBoxXOffset = scroll.ViewportWidth / 2;
-            var viewBoxYOffset = scroll.ViewportHeight / 2;
-            var finalX = x - viewBoxXOffset;
-            if (!(finalX > 0))
-                finalX = 0;
-            scroll.ScrollToHorizontalOffset(finalX);
-            var finalY = y - viewBoxYOffset;
-            if (!(finalY > 0))
-                finalY = 0;
-            scroll.ScrollToVerticalOffset(finalY);
-        }
-        private void Viewbox_MouseMove(object sender, MouseEventArgs e)
-        {
-            var scroll = (ScrollViewer)((FrameworkElement)sender).DataContext;
-            if (scroll == null) return;
-            if (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed)
-            {
-                var pos = e.GetPosition(minimap);
-                var x = (pos.X / minimap.Width) * scroll.ExtentWidth;
-                var y = (pos.Y / minimap.Height) * scroll.ExtentHeight;
-                if (new[] { x, y }.Any(i => Double.IsNaN(i))) return;
-                var viewBoxXOffset = scroll.ViewportWidth / 2;
-                var viewBoxYOffset = scroll.ViewportHeight / 2;
-                var finalX = x - viewBoxXOffset;
-                if (!(finalX > 0))
-                    finalX = 0;
-                scroll.ScrollToHorizontalOffset(finalX);
-                var finalY = y - viewBoxYOffset;
-                if (!(finalY > 0))
-                    finalY = 0;
-                scroll.ScrollToVerticalOffset(finalY);
-            }
-        }
+        
     }
 }

@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel Orientation="Horizontal">
         <TextBlock Text="Pedagogicometer" Padding="0 0 10 0"/>
-        <ListBox x:Name="pedagogies">
+        <ListBox x:Name="pedagogies" SelectionChanged="pedagogies_SelectionChanged">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />
@@ -13,9 +13,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <Button Click="PedagogyLevelClicked">
-                            <TextBlock Text="{Binding Path=label}" />
-                        </Button>
+                        <TextBlock Text="{Binding Path=label}" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

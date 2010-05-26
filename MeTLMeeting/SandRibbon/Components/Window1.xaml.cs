@@ -22,6 +22,9 @@ using System.Diagnostics;
 using System.Windows.Shapes;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Pedagogicometry;
+using SandRibbon.Tabs;
+using SandRibbon.Tabs.Groups;
+using System.Collections;
 
 namespace SandRibbon
 {
@@ -787,25 +790,56 @@ namespace SandRibbon
         }
         public void SetupUI(PedagogyLevel level)
         {
+            List<FrameworkElement> homeGroups = new List<FrameworkElement>();
+            List<FrameworkElement> tabs = new List<FrameworkElement>();
+            SlideDisplay slideDisplay = null; 
             foreach (var i in Enumerable.Range(0, level.code+1))
             {
                 switch (i)
                 {
                     case 0:
                         ClearUI();
+                        slideDisplay = new SlideDisplay { Visibility = Visibility.Collapsed };
+                        homeGroups.Add(slideDisplay);
+                        homeGroups.Add(new PenColors());
+                        homeGroups.Add(new MiniMap());
                         break;
                     case 1:
-                        ribbon.Tabs.Add(new Tabs.Home { DataContext=scroll });
                         ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
+                        homeGroups.Add(new EditingModes());
+                        homeGroups.Add(new ToolBox());
+                        homeGroups.Add(new TextTools());
                         ribbon.ToolBar = new Chrome.ToolBar();
                         break;
                     case 2:
-                        ribbon.Tabs.Add(new Tabs.Quizzes());
-                        ribbon.Tabs.Add(new Tabs.Analytics());
+                        homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
+                        homeGroups.Add(new Notes());
+                        tabs.Add(new Tabs.Quizzes());
+                        tabs.Add(new Tabs.Analytics());
+                        slideDisplay.Visibility = Visibility.Visible;
                         break;
                     default: 
                         break;
                 }
+            }
+            var home = new Tabs.Home { DataContext = scroll };
+            homeGroups.Sort(new PreferredDisplayIndexComparer());
+            foreach (var group in homeGroups)
+                home.Items.Add((RibbonGroup)group);
+            tabs.Add(home);
+            tabs.Sort(new PreferredDisplayIndexComparer());
+            foreach(var tab in tabs)
+                ribbon.Tabs.Add((RibbonTab)tab);
+            ribbon.SelectedTab = home;
+            CommandManager.InvalidateRequerySuggested();
+            Commands.RequerySuggested();
+        }
+        private class PreferredDisplayIndexComparer : IComparer<FrameworkElement> {
+            public int Compare(FrameworkElement anX, FrameworkElement aY)
+            {
+                var x = Int32.Parse((string)anX.FindResource("preferredDisplayIndex"));
+                var y = Int32.Parse((string)aY.FindResource("preferredDisplayIndex"));
+                return x - y;
             }
         }
     }

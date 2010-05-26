@@ -212,7 +212,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\PenColors.xaml">
+    <Page Include="Tabs\Groups\PenColors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -308,15 +308,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\SimpleImpl\SimpleSlideDisplay.xaml">
+    <Page Include="Tabs\Groups\SlideDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\SimpleImpl\SimpleTextTools.xaml">
+    <Page Include="Tabs\Groups\TextTools.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\SimpleImpl\SimpleToolBox.xaml">
+    <Page Include="Tabs\Groups\ToolBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -408,6 +408,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Tabs\Groups\EditingModes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Groups\Friends.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Groups\MiniMap.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Groups\Notes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Tabs\Home.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -469,7 +485,7 @@
       <DependentUpon>Pedagogicometer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
-    <Compile Include="Components\PenColors.xaml.cs" />
+    <Compile Include="Tabs\Groups\PenColors.xaml.cs" />
     <Compile Include="Components\ConversationConfigurationDialog.xaml.cs">
       <DependentUpon>ConversationConfigurationDialog.xaml</DependentUpon>
     </Compile>
@@ -532,12 +548,12 @@
     <Compile Include="Components\Scratchpad.xaml.cs">
       <DependentUpon>Scratchpad.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\SimpleImpl\SimpleSlideDisplay.xaml.cs">
-      <DependentUpon>SimpleSlideDisplay.xaml</DependentUpon>
+    <Compile Include="Tabs\Groups\SlideDisplay.xaml.cs">
+      <DependentUpon>SlideDisplay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\SimpleImpl\SimpleTextTools.xaml.cs" />
-    <Compile Include="Components\SimpleImpl\SimpleToolBox.xaml.cs">
-      <DependentUpon>SimpleToolBox.xaml</DependentUpon>
+    <Compile Include="Tabs\Groups\TextTools.xaml.cs" />
+    <Compile Include="Tabs\Groups\ToolBox.xaml.cs">
+      <DependentUpon>ToolBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\SMARTboard.xaml.cs" />
     <Compile Include="Components\SyncDisplay.xaml.cs">
@@ -583,6 +599,18 @@
     </Compile>
     <Compile Include="Tabs\Analytics.xaml.cs">
       <DependentUpon>Analytics.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Groups\EditingModes.xaml.cs">
+      <DependentUpon>EditingModes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Groups\Friends.xaml.cs">
+      <DependentUpon>Friends.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Groups\MiniMap.xaml.cs">
+      <DependentUpon>MiniMap.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Groups\Notes.xaml.cs">
+      <DependentUpon>Notes.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>

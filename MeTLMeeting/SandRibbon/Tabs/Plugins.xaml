@@ -4,7 +4,11 @@
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
     xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
     sr:KeyboardAccess.Keys="P" Text="Plugins" x:Name="pluginRoot">
+    <sr:RibbonTab.Resources>
+        <core:String x:Key="preferredDisplayIndex">8</core:String>    
+    </sr:RibbonTab.Resources>
     <sr:RibbonGroup Header="S15 Board Manager">
         <sandpit:BoardManagerLauncher />
     </sr:RibbonGroup>

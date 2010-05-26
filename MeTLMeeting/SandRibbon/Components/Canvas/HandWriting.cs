@@ -22,7 +22,6 @@ namespace SandRibbon.Components.Canvas
 {
     public class HandWriting : AbstractCanvas
     {
-        private static string currentJid;
         public HandWriting()
         {
             Loaded += new System.Windows.RoutedEventHandler(HandWriting_Loaded);
@@ -100,7 +99,6 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveStrokes.RegisterCommand(
                 new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(jid=>currentJid=jid));
         }
         private void HandWriting_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -218,15 +216,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
-            if (currentJid == null) return;
-            try
-            {
-                ((DelegateCommand<object>) Commands.Undo.RegisteredCommands.First()).RaiseCanExecuteChanged();
-            }
-            catch(Exception error)
-            {
-               //sadness 
-            }
+            Commands.RequerySuggested(Commands.Undo);
             e.Stroke.startingSum(e.Stroke.sum().checksum);
             doMyStrokeAdded(e.Stroke);
         }

@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SandRibbon.Components.Pedagogicometry;
+using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace SandRibbon.Components.Sandpit
 {
@@ -34,9 +35,26 @@ namespace SandRibbon.Components.Sandpit
                 new PedagogyLevel{ code = i++, label= "MeTL" },
                 new PedagogyLevel{ code = i++, label= "EdgeMeTL" }
             };
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>((_object) => { }, CanSetPedagogyLevel));
+        }
+        public bool CanSetPedagogyLevel(object _level) { 
+            try
+            {
+                Commands.JoinConversation.lastValue();
+                return true;
+            }
+            catch (NotSetException) {
+                return false;
+            }
         }
         public static void RegisterVariant(PedagogicallyVariable variant) {
             variants.Add(variant);
+        }
+        private void JoinConversation(object unused)
+        {
+            if(pedagogies.SelectedItem == null)
+                pedagogies.SelectedIndex = 0;
         }
         public static void SetPedagogyLevel(PedagogyLevel level) 
         {
@@ -45,10 +63,11 @@ namespace SandRibbon.Components.Sandpit
                 if (variant.CanSetLevel(level))
                     variant.SetLevel(level);
         }
-        private void PedagogyLevelClicked(object sender, RoutedEventArgs e)
+        private void pedagogies_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var desiredLevel = (PedagogyLevel)((FrameworkElement)sender).DataContext;
-            SetPedagogyLevel(desiredLevel);
+            var level = (PedagogyLevel)e.AddedItems[0];
+            if (Commands.SetPedagogyLevel.CanExecute(level))
+                SetPedagogyLevel(level);
         }
     }
 }

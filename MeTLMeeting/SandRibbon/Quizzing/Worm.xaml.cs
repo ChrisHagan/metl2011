@@ -67,7 +67,14 @@ namespace SandRibbon.Quizzing
         }
         private void Render(object _sender, EventArgs _e)
         {
-            Commands.SendWormMove.Execute(new WormMove { conversation = Globals.conversationDetails.Jid, direction = "=" });
+            try
+            {
+                Commands.SendWormMove.Execute(new WormMove { conversation = Globals.conversationDetails.Jid, direction = "=" });
+            }
+            catch (NotSetException)
+            { 
+                //The worm is not intended to function pre conversation join
+            }
             checkForExtendedDesktop();
             if (missedHeartbeats >= HEARTBEAT_FAIL_THRESHOLD)
             {

@@ -4,9 +4,9 @@
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
-    >
+    xmlns:groups="clr-namespace:SandRibbon.Tabs.Groups"
+    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop" >
     <SandRibbonInterop:RibbonPanel Tag="inkModes">
-        <components:PenColors />
+        <groups:PenColors />
     </SandRibbonInterop:RibbonPanel>
 </UserControl>

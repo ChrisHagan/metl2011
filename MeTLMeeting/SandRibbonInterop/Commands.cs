@@ -43,6 +43,7 @@ namespace SandRibbon
         public static CompositeCommand RemoveHighlight = new CompositeCommand();
 
         #endregion
+        public static CompositeCommand SetPedagogyLevel = new CompositeCommand();
         public static CompositeCommand GetMainScrollViewer = new CompositeCommand();
         public static CompositeCommand ShowConversationSearchBox = new CompositeCommand();
         public static CompositeCommand HideConversationSearchBox = new CompositeCommand();
@@ -245,6 +246,12 @@ namespace SandRibbon
                 foreach (var handler in command.RegisteredCommands)
                     if(!staticHandlers.Contains(handler))
                         command.UnregisterCommand(handler);
+        }
+        public static string which(ICommand command) {
+            foreach (var field in typeof(Commands).GetFields())
+                if (field.GetValue(null) == command)
+                    return field.Name;
+            return "Not a member of commands";
         }
         public static void RequerySuggested()
         {

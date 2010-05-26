@@ -3,7 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
     sr:KeyboardAccess.Keys="A" Text="Analytics" x:Name="analyticsRoot">
+    <sr:RibbonTab.Resources>
+        <core:String x:Key="preferredDisplayIndex">9</core:String>    
+    </sr:RibbonTab.Resources>
     <sr:RibbonGroup Header="Worm" ShowDialogLauncher="False">
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Collapsed" Priority="9"/>

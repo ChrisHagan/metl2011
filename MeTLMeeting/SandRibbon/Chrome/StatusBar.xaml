@@ -4,7 +4,7 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Width="{Binding Source=Parent, Path=ActualWidth}">
     <StackPanel x:Name="StatusLeft" Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
         <sandpit:Pedagogicometer />
         <sr:Label x:Name="StatusLabel" ToolTip="currentMode" VerticalAlignment="Center"/>
