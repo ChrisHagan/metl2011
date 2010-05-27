@@ -43,6 +43,7 @@ namespace SandRibbon.Tabs.Groups
         private double PenSize;
         private bool isHighlighter;
 
+
         private bool internalUpdating = false;
 
         protected void OnPropertyChanged(string name)
@@ -64,7 +65,7 @@ namespace SandRibbon.Tabs.Groups
                 {
                     currentdrawingattributes = value;
                     Commands.SetDrawingAttributes.Execute(value);
-                } 
+                }
                 else currentdrawingattributes = value;
                 internalUpdating = true;
                 currentColor = value.Color;
@@ -309,7 +310,6 @@ namespace SandRibbon.Tabs.Groups
         public ObservableCollection<DrawingAttributesEntry> previouslySelectedDrawingAttributes = new ObservableCollection<DrawingAttributesEntry>();
         private int nextAvailableSpot;
         public string preferredTab = "PenTools";
-        public DelegateCommand<TargettedStroke> colorChanged;
         public bool ShouldNotUpdateHSV;
         public bool ShouldNotUpdateRGB;
         public CurrentColourValues currentColourValues = new CurrentColourValues();
@@ -335,10 +335,9 @@ namespace SandRibbon.Tabs.Groups
             PenSizeSlider.Value = 1;
             nextAvailableSpot = 0;
             previousColors.ItemsSource = previouslySelectedDrawingAttributes;
-            colorChanged = new DelegateCommand<TargettedStroke>((targettedStroke) => updatePreviousDrawingAttributes(targettedStroke.stroke.DrawingAttributes));
             Commands.EnablePens.RegisterCommand(new DelegateCommand<object>((_unused => Enable()), mustBeInConversation));
             Commands.DisablePens.RegisterCommand(new DelegateCommand<object>((_unused => Disable())));
-            Commands.SendStroke.RegisterCommand(colorChanged);
+            Commands.ReportStrokeAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((DrawingAttributes) => updatePreviousDrawingAttributes(DrawingAttributes)));
             Commands.ReportDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((drawingAttributes => receiveDrawingAttributesChanged(drawingAttributes))));
             SetupPreviousColoursWithDefaults();
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
@@ -389,7 +388,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void SetPenSizeByButton(object sender, RoutedEventArgs e)
         {
-            var newPenSize = ((SandRibbonInterop.Button)sender).Tag.ToString();
+            var newPenSize = ((System.Windows.Controls.Button)sender).Tag.ToString();
             currentColourValues.CurrentPenSize = Double.Parse(newPenSize);
         }
         private void SwitchImage(object sender, RoutedEventArgs e)

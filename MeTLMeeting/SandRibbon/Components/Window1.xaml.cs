@@ -125,6 +125,7 @@ namespace SandRibbon
             Commands.ChangePenSize.RegisterCommand(new DelegateCommand<object>(AdjustPenSizeAccordingToZoom));
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustDrawingAttributesAccordingToZoom));
             Commands.ActualReportDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedDrawingAttributesAccordingToZoom));
+            Commands.ActualReportStrokeAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedStrokeAttributesAccordingToZoom));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -139,17 +140,48 @@ namespace SandRibbon
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
             var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
-            zoomIndependentAttributes.Height = zoomIndependentAttributes.Height / currentZoom;
-            zoomIndependentAttributes.Width = zoomIndependentAttributes.Width / currentZoom;
+            var desiredZoom = zoomIndependentAttributes.Height / currentZoom;
+            zoomIndependentAttributes.Height = correctZoom(desiredZoom);
+            zoomIndependentAttributes.Width = correctZoom(desiredZoom);
             Commands.ReportDrawingAttributes.Execute(zoomIndependentAttributes);
+        }
+        private void AdjustReportedStrokeAttributesAccordingToZoom(object attributes)
+        {
+            var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
+            var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
+            var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
+            var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
+            var desiredZoom = zoomIndependentAttributes.Height / currentZoom;
+            zoomIndependentAttributes.Height = correctZoom(desiredZoom);
+            zoomIndependentAttributes.Width = correctZoom(desiredZoom);
+            Commands.ReportStrokeAttributes.Execute(zoomIndependentAttributes);
+        }
+        private double correctZoom(double desiredZoom)
+        {
+            double finalZoomWidth;
+            double finalZoomHeight;
+            if ((desiredZoom > DrawingAttributes.MinHeight) && (desiredZoom < DrawingAttributes.MaxHeight))
+                finalZoomHeight = desiredZoom;
+            else if (desiredZoom < DrawingAttributes.MaxHeight)
+                finalZoomHeight = DrawingAttributes.MinHeight;
+            else finalZoomHeight = DrawingAttributes.MaxHeight;
+            if (desiredZoom > DrawingAttributes.MinWidth)
+                finalZoomWidth = desiredZoom;
+            else if (desiredZoom < DrawingAttributes.MaxWidth)
+                finalZoomWidth = DrawingAttributes.MinWidth;
+            else finalZoomWidth = DrawingAttributes.MaxWidth;
+            if (Math.Max(finalZoomHeight, finalZoomWidth) == Math.Max(DrawingAttributes.MaxHeight, DrawingAttributes.MaxWidth))
+                return Math.Min(finalZoomHeight, finalZoomWidth);
+            else return Math.Max(finalZoomHeight, finalZoomWidth);
         }
         private void AdjustPenSizeAccordingToZoom(object pensize)
         {
             var zoomCorrectPenSize = ((double)pensize);
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
             var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
-            var currentZoom = Math.Max(currentZoomHeight,currentZoomWidth);
-            Commands.ActualChangePenSize.Execute(zoomCorrectPenSize * currentZoom);
+            var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
+            var desiredZoom = zoomCorrectPenSize * currentZoom;
+            Commands.ActualChangePenSize.Execute(correctZoom(desiredZoom));
         }
         private void AdjustDrawingAttributesAccordingToZoom(object attributes)
         {
@@ -157,8 +189,9 @@ namespace SandRibbon
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
             var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
-            zoomCorrectAttributes.Height = zoomCorrectAttributes.Height * currentZoom;
-            zoomCorrectAttributes.Width = zoomCorrectAttributes.Width * currentZoom;
+            var desiredZoom = zoomCorrectAttributes.Height * currentZoom;
+            zoomCorrectAttributes.Width = correctZoom(desiredZoom);
+            zoomCorrectAttributes.Height = correctZoom(desiredZoom);
             Commands.ActualSetDrawingAttributes.Execute(zoomCorrectAttributes);
         }
         private void SetTutorialVisibility(object visibilityObject)
@@ -831,8 +864,8 @@ namespace SandRibbon
         {
             List<FrameworkElement> homeGroups = new List<FrameworkElement>();
             List<FrameworkElement> tabs = new List<FrameworkElement>();
-            SlideDisplay slideDisplay = null; 
-            foreach (var i in Enumerable.Range(0, level.code+1))
+            SlideDisplay slideDisplay = null;
+            foreach (var i in Enumerable.Range(0, level.code + 1))
             {
                 switch (i)
                 {
@@ -857,7 +890,7 @@ namespace SandRibbon
                         tabs.Add(new Tabs.Analytics());
                         slideDisplay.Visibility = Visibility.Visible;
                         break;
-                    default: 
+                    default:
                         break;
                 }
             }
@@ -867,13 +900,14 @@ namespace SandRibbon
                 home.Items.Add((RibbonGroup)group);
             tabs.Add(home);
             tabs.Sort(new PreferredDisplayIndexComparer());
-            foreach(var tab in tabs)
+            foreach (var tab in tabs)
                 ribbon.Tabs.Add((RibbonTab)tab);
             ribbon.SelectedTab = home;
             CommandManager.InvalidateRequerySuggested();
             Commands.RequerySuggested();
         }
-        private class PreferredDisplayIndexComparer : IComparer<FrameworkElement> {
+        private class PreferredDisplayIndexComparer : IComparer<FrameworkElement>
+        {
             public int Compare(FrameworkElement anX, FrameworkElement aY)
             {
                 var x = Int32.Parse((string)anX.FindResource("preferredDisplayIndex"));

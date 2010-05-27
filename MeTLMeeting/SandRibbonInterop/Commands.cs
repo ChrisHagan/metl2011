@@ -92,6 +92,8 @@ namespace SandRibbon
         public static CompositeCommand SetDrawingAttributes = new CompositeCommand();
         public static CompositeCommand ReportDrawingAttributes = new CompositeCommand();
         public static CompositeCommand ActualReportDrawingAttributes = new CompositeCommand();
+        public static CompositeCommand ReportStrokeAttributes = new CompositeCommand();
+        public static CompositeCommand ActualReportStrokeAttributes = new CompositeCommand();
         public static CompositeCommand IncreasePenSize = new CompositeCommand();
         public static CompositeCommand ChangePenSize = new CompositeCommand();
         public static CompositeCommand DecreasePenSize = new CompositeCommand();

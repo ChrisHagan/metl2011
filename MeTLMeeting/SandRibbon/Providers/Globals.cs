@@ -9,14 +9,16 @@ namespace SandRibbon.Providers
 {
     public class Globals
     {
-        public static SandRibbon.Utils.Connection.JabberWire.Location location{
-            get{
+        public static SandRibbon.Utils.Connection.JabberWire.Location location
+        {
+            get
+            {
                 var conversationDetails = Globals.conversationDetails;
                 return new SandRibbon.Utils.Connection.JabberWire.Location
                 {
-                    activeConversation=conversationDetails.Jid,
-                    currentSlide=slide,
-                    availableSlides=conversationDetails.Slides.Select(s=>s.id).ToList()
+                    activeConversation = conversationDetails.Jid,
+                    currentSlide = slide,
+                    availableSlides = conversationDetails.Slides.Select(s => s.id).ToList()
                 };
             }
         }
@@ -24,21 +26,31 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return ((DrawingAttributes)Commands.ReportDrawingAttributes.lastValue());
+                try{return ((DrawingAttributes)Commands.ReportDrawingAttributes.lastValue());}
+                catch (NotSetException)
+                {
+                }
+                return new DrawingAttributes();
             }
         }
-        public static List<Slide> slides {
-            get {
+        public static List<Slide> slides
+        {
+            get
+            {
                 return ((ConversationDetails)Commands.UpdateConversationDetails.lastValue()).Slides;
             }
         }
-        public static ConversationDetails conversationDetails {
-            get {
+        public static ConversationDetails conversationDetails
+        {
+            get
+            {
                 return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
             }
         }
-        public static SandRibbon.Utils.Connection.JabberWire.Credentials credentials {
-            get {
+        public static SandRibbon.Utils.Connection.JabberWire.Credentials credentials
+        {
+            get
+            {
                 var credentials = Commands.SetIdentity.lastValue();
                 return (SandRibbon.Utils.Connection.JabberWire.Credentials)credentials;
             }
@@ -48,22 +60,27 @@ namespace SandRibbon.Providers
             get
             {
                 var credentials = Commands.SetIdentity.lastValue();
-                return ((Utils.Connection.JabberWire.Credentials) credentials).authorizedGroups;
+                return ((Utils.Connection.JabberWire.Credentials)credentials).authorizedGroups;
             }
         }
-        public static int slide 
+        public static int slide
         {
-            get {
-                return (int) Commands.MoveTo.lastValue();
+            get
+            {
+                return (int)Commands.MoveTo.lastValue();
             }
         }
-        public static string me{
-            get {
+        public static string me
+        {
+            get
+            {
                 return credentials.name;
             }
         }
-        public static string privacy {
-            get {
+        public static string privacy
+        {
+            get
+            {
                 return (string)Commands.SetPrivacy.lastValue();
             }
         }
