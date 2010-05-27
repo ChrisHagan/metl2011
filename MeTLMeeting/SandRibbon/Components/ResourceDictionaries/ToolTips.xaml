@@ -18,6 +18,40 @@
         </Border>
     </ToolTip>
     -->
+    <ToolTip x:Key="ArtistPaletteToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="\Resources\Ribbon-Palette.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                           Text="Artist's palette"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Open the custom colour palette.  You can alter your colour by changing the Red, Green and Blue values, by changing the Hue, Saturation or Value values or by selecting a colour directly from the swatch.  Also, you can change the thickness of the pen, or change the pen into a highlighter."/>
+            </Grid>
+        </Border>
+    </ToolTip>
+    <ToolTip x:Key="ClosePopupToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" Foreground="Black" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                           Text="Close Palette"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Foreground="Black"
+                           Text="Close the custom colour palette."/>
+            </Grid>
+        </Border>
+    </ToolTip>
+    <ToolTip x:Key="StickyPopupToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="PenOut.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                           Text="Sticky Popup"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Change the palette so that it stays open.  When the drawing pin is pushed in, the palette will remain open.  When the drawing pin is pulled out, the palette will close whenever you click your mouse or stylus outside the palette."/>
+            </Grid>
+        </Border>
+    </ToolTip>
     <ToolTip x:Key="NextSlideToolTip" >
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">

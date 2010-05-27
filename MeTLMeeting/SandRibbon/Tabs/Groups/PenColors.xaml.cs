@@ -42,8 +42,6 @@ namespace SandRibbon.Tabs.Groups
         private int Alpha;
         private double PenSize;
         private bool isHighlighter;
-
-
         private bool internalUpdating = false;
 
         protected void OnPropertyChanged(string name)
@@ -313,11 +311,24 @@ namespace SandRibbon.Tabs.Groups
         public bool ShouldNotUpdateHSV;
         public bool ShouldNotUpdateRGB;
         public CurrentColourValues currentColourValues = new CurrentColourValues();
+
+        public Brush[] simpleColourSet = new Brush[] {
+            Brushes.White,Brushes.LightPink,Brushes.PaleGreen,Brushes.PaleTurquoise,Brushes.PaleVioletRed,Brushes.LightYellow,
+            Brushes.LightGray,Brushes.Pink,Brushes.LightGreen,Brushes.LightBlue,Brushes.Violet,Brushes.Yellow,
+            Brushes.DarkGray,Brushes.Red,Brushes.Green,Brushes.Blue,Brushes.Purple,Brushes.Orange,
+            Brushes.Black,Brushes.DarkRed,Brushes.DarkGreen,Brushes.DarkBlue,Brushes.Maroon,Brushes.OrangeRed    
+        };
+        public double[] simpleSizeSet = new double[]{
+            1,2,3,25
+        };
+
         private DrawingAttributes[] defaultDrawingAttributes = new DrawingAttributes[] {
             new DrawingAttributes{Color = Colors.Black, IsHighlighter = false, Height = 2,Width = 2},
             new DrawingAttributes{Color = Colors.Red, IsHighlighter = false, Height = 2,Width = 2},
             new DrawingAttributes{Color = Colors.Blue, IsHighlighter = false, Height = 2,Width = 2},
-            new DrawingAttributes{Color = Colors.Green, IsHighlighter = false, Height = 2,Width = 2}
+            new DrawingAttributes{Color = Colors.Green, IsHighlighter = false, Height = 2,Width = 2},
+            new DrawingAttributes{Color = Colors.Yellow, IsHighlighter = true, Height = 20,Width = 20},
+            new DrawingAttributes{Color = Colors.Cyan, IsHighlighter = true, Height = 25,Width = 25}
         };
         private DrawingAttributes[] usefulDrawingAttributes = new DrawingAttributes[] {
             new DrawingAttributes{Color = Colors.Black, IsHighlighter = false, Height = 1,Width = 1},
@@ -362,6 +373,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void SetupPreviousColoursWithDefaults()
         {
+            int i = 0;
             foreach (DrawingAttributes color in defaultDrawingAttributes)
             {
                 updatePreviousDrawingAttributes(color);
@@ -372,8 +384,10 @@ namespace SandRibbon.Tabs.Groups
                     ColorValue = color.Color,
                     XAMLColorName = color.Color.ToString(),
                     IsHighlighter = color.IsHighlighter,
-                    PenSize = color.Width
+                    PenSize = color.Width,
+                    Index = i
                 });
+                i++;
             }
             foreach (DrawingAttributes color in usefulDrawingAttributes)
             {
@@ -482,6 +496,13 @@ namespace SandRibbon.Tabs.Groups
                                                this.Effect = null;
                                            });
         }
+        private void ChangeColorFromPreset(object sender, RoutedEventArgs e)
+        {
+            var IndexNumber = Int32.Parse(((System.Windows.Controls.Button)sender).Tag.ToString());
+            var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[IndexNumber])).Attributes);
+            Commands.SetDrawingAttributes.Execute(drawingAttributes);
+            e.Handled = true;
+        }
         private void ChangeColor(object sender, RoutedEventArgs e)
         {
             var colorName = ((System.Windows.Controls.Button)sender).Tag.ToString();
@@ -560,9 +581,52 @@ namespace SandRibbon.Tabs.Groups
             emptyColor.B = 0;
             return emptyColor;
         }
+        private void OpenColourSettingPopup(object sender, RoutedEventArgs e)
+        {
+            var newBrush = new SolidColorBrush();
+            ColourSettingPopup.Tag = ((System.Windows.Controls.Button)sender).Tag.ToString();
+            newBrush.Color = ((DrawingAttributes)defaultDrawingAttributes[Int32.Parse(((System.Windows.Controls.Button)sender).Tag.ToString())]).Color;
+            ColourSettingPopupDefaultColour.Background = newBrush;
+            ColourSettingPopup.IsOpen = true;
+            ColourChooser.ItemsSource = simpleColourSet;
+            SizeChooser.ItemsSource = simpleSizeSet;
+        }
+        private void ChangeColour(object sender, RoutedEventArgs e)
+        {
+            var Brush = ((Brush)((System.Windows.Controls.Button)sender).Background).ToString();
+            var Color = (Color)ColorConverter.ConvertFromString(Brush);
+            var PresetToUpdate = Int32.Parse(ColourSettingPopup.Tag.ToString());
+            ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).ColorValue = Color;
+            ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).XAMLColorName = Color.ToString();
+            defaultColours.Items.Refresh();
+            InvokeAlteredPreset(PresetToUpdate);
+        }
+        private void InvokeAlteredPreset(int index)
+        {
+            var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[index])).Attributes);
+            Commands.SetDrawingAttributes.Execute(drawingAttributes);
+            ColourSettingPopup.IsOpen = false;
+        }
+        private void ResetToDefault(object sender, RoutedEventArgs e)
+        {
+            var PresetToUpdate = Int32.Parse(ColourSettingPopup.Tag.ToString());
+            var DrawingAttributes = ((DrawingAttributes)defaultDrawingAttributes[PresetToUpdate]);
+            ((DrawingAttributesEntry)(defaultColours.Items[PresetToUpdate])).Attributes = DrawingAttributes;
+            defaultColours.Items.Refresh();
+            InvokeAlteredPreset(PresetToUpdate);
+        }
+        private void ChangeSize(object sender, RoutedEventArgs e)
+        {
+            var newSize = (double)Double.Parse(((System.Windows.Controls.Button)sender).Tag.ToString());
+            var PresetToUpdate = Int32.Parse(ColourSettingPopup.Tag.ToString());
+            ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).PenSize = newSize;
+            defaultColours.Items.Refresh();
+            InvokeAlteredPreset(PresetToUpdate);
+        }
 
         public class DrawingAttributesEntry
         {
+            public int Index { get; set; }
             private bool internalupdate = false;
             private DrawingAttributes attributes;
             public DrawingAttributes Attributes
