@@ -11,34 +11,32 @@ namespace SandRibbon.Tabs.Groups
         {
             InitializeComponent();
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(setDefaults));
-            Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(setDefaults));
             SetLayer((string)Commands.SetLayer.lastValue());
-        }
-        private void setDefaults(object obj)
-        {
-            Draw.IsChecked = true;
-            Commands.SetInkCanvasMode.Execute("Ink");
         }
         private void SetLayer(string layer)
         {
             hideAll();
+            this.Visibility = Visibility.Visible;
             switch (layer)
             {
                 case "Text":
                     TextOptions.Visibility = Visibility.Visible;
+                    Commands.DisablePens.Execute(null);
                     break;
                 case "Insert":
                     ImageOptions.Visibility = Visibility.Visible;
+                    Commands.DisablePens.Execute(null);
                     break;
                 default:
-                    InkOptions.Visibility = Visibility.Visible;
+                    this.Visibility = Visibility.Collapsed;
+                    Commands.EnablePens.Execute(null);
+                    //InkOptions.Visibility = Visibility.Visible;
                     break;
             }
         }
         private void hideAll()
         {
-            InkOptions.Visibility = Visibility.Collapsed;
+            //InkOptions.Visibility = Visibility.Collapsed;
             TextOptions.Visibility = Visibility.Collapsed;
             ImageOptions.Visibility = Visibility.Collapsed;
         }

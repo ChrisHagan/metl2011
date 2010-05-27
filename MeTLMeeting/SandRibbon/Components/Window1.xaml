@@ -40,7 +40,7 @@
         <sr:Ribbon x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" ShowHelp="false" ApplicationButtonImage="\Resources\Ribbon-ApplicationButton.png" />
     </sr:RibbonWindow.Ribbon>
     <sr:RibbonWindow.StatusBar>
-        <chrome:StatusBar />
+        <chrome:StatusBar Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}"/>
     </sr:RibbonWindow.StatusBar>
     <Grid>
         <Grid x:Name="EffectRoot">
@@ -64,8 +64,8 @@
                 <Grid Grid.Column="2">
                     <Grid x:Name="adornerGrid" Margin="0,0,27,27" SizeChanged="adornerGrid_SizeChanged">
                         <InkCanvas EditingMode="None" Background="Transparent" x:Name="adorner"/>
-                        <Viewbox x:Name="canvasViewBox">
-                            <ScrollViewer x:Name="scroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                        <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
+                            <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
                                 <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
                             </ScrollViewer>
                         </Viewbox>

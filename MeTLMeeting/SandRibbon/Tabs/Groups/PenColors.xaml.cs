@@ -23,6 +23,7 @@ using SandRibbon.Components.Interfaces;
 using SandRibbonInterop.MeTLStanzas;
 using System.ComponentModel;
 using Divelements.SandRibbon;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Tabs.Groups
 {
@@ -59,8 +60,12 @@ namespace SandRibbon.Tabs.Groups
             get { return currentdrawingattributes; }
             set
             {
-                currentdrawingattributes = value;
-                Commands.SetDrawingAttributes.Execute(value);
+                if (currentDrawingAttributes != null && currentDrawingAttributes.Color != value.Color)
+                {
+                    currentdrawingattributes = value;
+                    Commands.SetDrawingAttributes.Execute(value);
+                } 
+                else currentdrawingattributes = value;
                 internalUpdating = true;
                 currentColor = value.Color;
                 CurrentR = value.Color.R;
@@ -308,7 +313,19 @@ namespace SandRibbon.Tabs.Groups
         public bool ShouldNotUpdateHSV;
         public bool ShouldNotUpdateRGB;
         public CurrentColourValues currentColourValues = new CurrentColourValues();
-
+        private DrawingAttributes[] defaultDrawingAttributes = new DrawingAttributes[] {
+            new DrawingAttributes{Color = Colors.Black, IsHighlighter = false, Height = 2,Width = 2},
+            new DrawingAttributes{Color = Colors.Red, IsHighlighter = false, Height = 2,Width = 2},
+            new DrawingAttributes{Color = Colors.Blue, IsHighlighter = false, Height = 2,Width = 2},
+            new DrawingAttributes{Color = Colors.Green, IsHighlighter = false, Height = 2,Width = 2}
+        };
+        private DrawingAttributes[] usefulDrawingAttributes = new DrawingAttributes[] {
+            new DrawingAttributes{Color = Colors.Black, IsHighlighter = false, Height = 1,Width = 1},
+            new DrawingAttributes{Color = Colors.Red, IsHighlighter = false, Height = 1,Width = 1},
+            new DrawingAttributes{Color = Colors.Blue, IsHighlighter = false, Height = 1,Width = 1},
+            new DrawingAttributes{Color = Colors.Cyan, IsHighlighter = true, Height = 25,Width = 25},
+            new DrawingAttributes{Color = Colors.Yellow, IsHighlighter = true, Height = 25,Width = 25}
+        };
 
         public PenColors()
         {
@@ -319,11 +336,23 @@ namespace SandRibbon.Tabs.Groups
             nextAvailableSpot = 0;
             previousColors.ItemsSource = previouslySelectedDrawingAttributes;
             colorChanged = new DelegateCommand<TargettedStroke>((targettedStroke) => updatePreviousDrawingAttributes(targettedStroke.stroke.DrawingAttributes));
-            Commands.LoggedIn.RegisterCommand(new DelegateCommand<object>((_obj => Enable())));
+            Commands.EnablePens.RegisterCommand(new DelegateCommand<object>((_unused => Enable()), mustBeInConversation));
+            Commands.DisablePens.RegisterCommand(new DelegateCommand<object>((_unused => Disable())));
             Commands.SendStroke.RegisterCommand(colorChanged);
             Commands.ReportDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((drawingAttributes => receiveDrawingAttributesChanged(drawingAttributes))));
             SetupPreviousColoursWithDefaults();
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(setDefaults));
+            Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(setDefaults));
+        }
+        private void setDefaults(object obj)
+        {
+            Draw.IsChecked = true;
+            Commands.SetInkCanvasMode.Execute("Ink");
+        }
+        private bool mustBeInConversation(object _unused)
+        {
+            return Globals.location.activeConversation != null;
         }
         private void updateToolBox(string layer)
         {
@@ -334,41 +363,24 @@ namespace SandRibbon.Tabs.Groups
         }
         private void SetupPreviousColoursWithDefaults()
         {
-            currentColourValues.currentDrawingAttributes = new DrawingAttributes()
-                                                               {
-                                                                   Color = Colors.Black,
-                                                                   IsHighlighter = false,
-                                                                   Height = 1,
-                                                                   Width = 1
-                                                               };
-            updatePreviousDrawingAttributes(new DrawingAttributes()
-                                                {
-                                                    Color = Colors.Red,
-                                                    IsHighlighter = false,
-                                                    Height = 2,
-                                                    Width = 2
-                                                });
-            updatePreviousDrawingAttributes(new DrawingAttributes()
+            foreach (DrawingAttributes color in defaultDrawingAttributes)
             {
-                Color = Colors.Black,
-                IsHighlighter = false,
-                Height = 1,
-                Width = 1
-            });
-            updatePreviousDrawingAttributes(new DrawingAttributes()
+                updatePreviousDrawingAttributes(color);
+                defaultColours.Items.Add(new DrawingAttributesEntry
+                {
+                    Attributes = color,
+                    ColorName = color.Color.ToString() + ":" + color.Height.ToString() + ":" + color.IsHighlighter.ToString(),
+                    ColorValue = color.Color,
+                    XAMLColorName = color.Color.ToString(),
+                    IsHighlighter = color.IsHighlighter,
+                    PenSize = color.Width
+                });
+            }
+            foreach (DrawingAttributes color in usefulDrawingAttributes)
             {
-                Color = Colors.Blue,
-                IsHighlighter = false,
-                Height = 3,
-                Width = 3
-            });
-            updatePreviousDrawingAttributes(new DrawingAttributes()
-            {
-                Color = Colors.Yellow,
-                IsHighlighter = true,
-                Height = 25,
-                Width = 25
-            });
+                updatePreviousDrawingAttributes(color);
+            }
+            currentColourValues.currentDrawingAttributes = defaultDrawingAttributes[0];
         }
         private void receiveDrawingAttributesChanged(DrawingAttributes arrivingDrawingAttributes)
         {
@@ -382,7 +394,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void SwitchImage(object sender, RoutedEventArgs e)
         {
-            var newImageChoice = ((SandRibbonInterop.Button)sender).Tag.ToString();
+            var newImageChoice = ((System.Windows.Controls.Button)sender).Tag.ToString();
             Uri uri;
             switch (newImageChoice)
             {
@@ -436,12 +448,12 @@ namespace SandRibbon.Tabs.Groups
         {
             int nextAvailableSpot = 0;
             if (previouslySelectedDrawingAttributes.Select(c => c.Attributes).Contains(attributes)) return;
-            const int maxSizeOfQuickLaunchColors = 4;
+            /*const int maxSizeOfQuickLaunchColors = 10;
             if (previouslySelectedDrawingAttributes.Count >= maxSizeOfQuickLaunchColors)
             {
                 previouslySelectedDrawingAttributes.RemoveAt(maxSizeOfQuickLaunchColors - 1);
                 nextAvailableSpot = (nextAvailableSpot) % maxSizeOfQuickLaunchColors;
-            }
+            }*/
             previouslySelectedDrawingAttributes.Insert(nextAvailableSpot,
                 new DrawingAttributesEntry()
                     {
@@ -473,7 +485,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void ChangeColor(object sender, RoutedEventArgs e)
         {
-            var colorName = ((SandRibbonInterop.Button)sender).Tag.ToString();
+            var colorName = ((System.Windows.Controls.Button)sender).Tag.ToString();
             var drawingAttributes = (DrawingAttributes)previouslySelectedDrawingAttributes.Where(c => c.ColorName == colorName).Select(c => c.Attributes).Single();
             Commands.SetDrawingAttributes.Execute(drawingAttributes);
             e.Handled = true;
@@ -822,6 +834,28 @@ namespace SandRibbon.Tabs.Groups
             return ((Brush)value).ToString();
         }
     }
+    public class colourContrastConverter : IValueConverter
+    {
+        public ColorConverter bc;
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                var nc = (Color)(ColorConverter.ConvertFromString(value.ToString()));
+                if (nc.R + nc.G + nc.B > 381)
+                    return Brushes.Black;
+                //var newColor = (Brush)(new BrushConverter().ConvertFromString(value.ToString()));
+                else return Brushes.White;
+                //return newColor;
+            }
+            return new SolidColorBrush(Colors.Black);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return ((Brush)value).ToString();
+        }
+    }
     public class HueSliderConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -969,12 +1003,12 @@ namespace SandRibbon.Tabs.Groups
             if (value == null)
                 return "";
             var attributes = (PenColors.DrawingAttributesEntry)value;
-            var Pen = attributes.IsHighlighter? "highlighter":"pen";
+            var Pen = attributes.IsHighlighter ? "highlighter" : "pen";
             var size = Math.Round(attributes.PenSize, 1);
-            return string.Format("A {0}, {1} {2} wide, of colour {3}.", 
+            return string.Format("A {0}, {1} {2} wide, of colour {3}.",
                 Pen,
                 size.ToString(),
-                size > 1?"points":"point",
+                size > 1 ? "points" : "point",
                 attributes.XAMLColorName);
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

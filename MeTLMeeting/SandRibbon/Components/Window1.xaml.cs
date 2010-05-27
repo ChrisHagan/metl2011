@@ -25,6 +25,7 @@ using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Tabs;
 using SandRibbon.Tabs.Groups;
 using System.Collections;
+using System.Windows.Ink;
 
 namespace SandRibbon
 {
@@ -121,6 +122,9 @@ namespace SandRibbon
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.SetZoomRect.RegisterCommand(new DelegateCommand<Rectangle>(SetZoomRect));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>((_level) => { }, mustBeLoggedIn));
+            Commands.ChangePenSize.RegisterCommand(new DelegateCommand<object>(AdjustPenSizeAccordingToZoom));
+            Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustDrawingAttributesAccordingToZoom));
+            Commands.ActualReportDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedDrawingAttributesAccordingToZoom));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -128,6 +132,34 @@ namespace SandRibbon
             if (SmartBoardMeTLAlreadyLoaded)
                 checkIfSmartboard();
             Pedagogicometer.RegisterVariant(this);
+        }
+        private void AdjustReportedDrawingAttributesAccordingToZoom(object attributes)
+        {
+            var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
+            var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
+            var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
+            var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
+            zoomIndependentAttributes.Height = zoomIndependentAttributes.Height / currentZoom;
+            zoomIndependentAttributes.Width = zoomIndependentAttributes.Width / currentZoom;
+            Commands.ReportDrawingAttributes.Execute(zoomIndependentAttributes);
+        }
+        private void AdjustPenSizeAccordingToZoom(object pensize)
+        {
+            var zoomCorrectPenSize = ((double)pensize);
+            var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
+            var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
+            var currentZoom = Math.Max(currentZoomHeight,currentZoomWidth);
+            Commands.ActualChangePenSize.Execute(zoomCorrectPenSize * currentZoom);
+        }
+        private void AdjustDrawingAttributesAccordingToZoom(object attributes)
+        {
+            var zoomCorrectAttributes = ((DrawingAttributes)attributes).Clone();
+            var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
+            var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
+            var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
+            zoomCorrectAttributes.Height = zoomCorrectAttributes.Height * currentZoom;
+            zoomCorrectAttributes.Width = zoomCorrectAttributes.Width * currentZoom;
+            Commands.ActualSetDrawingAttributes.Execute(zoomCorrectAttributes);
         }
         private void SetTutorialVisibility(object visibilityObject)
         {
@@ -166,6 +198,7 @@ namespace SandRibbon
             scroll.Height = viewbox.Height;
             scroll.ScrollToHorizontalOffset(topleft.X);
             scroll.ScrollToVerticalOffset(topleft.Y);
+            //updateCurrentPenAfterZoomChanged();
         }
         private bool SmartBoardMeTLAlreadyLoaded
         {
@@ -532,6 +565,7 @@ namespace SandRibbon
                 scroll.Height = double.NaN;
                 scroll.Width = double.NaN;
             }
+            //updateCurrentPenAfterZoomChanged();
         }
         private void FitToPageWidth(object _unused)
         {
@@ -541,6 +575,7 @@ namespace SandRibbon
                 scroll.Height = canvas.ActualWidth / ratio;
                 scroll.Width = canvas.ActualWidth;
             }
+            //updateCurrentPenAfterZoomChanged();
         }
         private void ShowPowerpointBlocker(string explanation)
         {
@@ -674,6 +709,7 @@ namespace SandRibbon
                     newWidth = scroll.ExtentWidth;
                 scroll.Width = newWidth;
             }
+            //updateCurrentPenAfterZoomChanged();
         }
         private void doZoomOut(object sender, ExecutedRoutedEventArgs e)
         {
@@ -715,6 +751,7 @@ namespace SandRibbon
                     newWidth = scroll.ExtentWidth;
                 scroll.Width = newWidth;
             }
+            //updateCurrentPenAfterZoomChanged();
         }
 
         public Visibility GetVisibilityOf(UIElement target)
@@ -843,6 +880,18 @@ namespace SandRibbon
                 var y = Int32.Parse((string)aY.FindResource("preferredDisplayIndex"));
                 return x - y;
             }
+        }
+        private void updateCurrentPenAfterZoomChanged()
+        {
+            try
+            {
+                AdjustDrawingAttributesAccordingToZoom(Globals.drawingAttributes);
+            }
+            catch (NotSetException) { }
+        }
+        private void zoomConcernedControlSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            updateCurrentPenAfterZoomChanged();
         }
     }
 }

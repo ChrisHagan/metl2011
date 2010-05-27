@@ -5,115 +5,120 @@
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:groups="clr-namespace:SandRibbon.Tabs.Groups"
+    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib">
     <sr:RibbonGroup.Resources>
-        <core:String x:Key="preferredDisplayIndex">2</core:String>    
+        <core:String x:Key="preferredDisplayIndex">2</core:String>
     </sr:RibbonGroup.Resources>
     <StackPanel x:Name="LayoutRoot" Orientation="Horizontal">
         <StackPanel.Resources>
-        <ToolTip x:Key="ArtistPaletteToolTip" >
-            <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-                <Grid Margin="2">
-                    <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+            <ToolTip x:Key="ArtistPaletteToolTip" >
+                <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+                    <Grid Margin="2">
+                        <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="\Resources\Ribbon-Palette.png"/>
-                    <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                        <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Artist's palette"/>
-                    <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                        <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
                            Text="Open the custom colour palette.  You can alter your colour by changing the Red, Green and Blue values, by changing the Hue, Saturation or Value values or by selecting a colour directly from the swatch.  Also, you can change the thickness of the pen, or change the pen into a highlighter."/>
-                </Grid>
-            </Border>
-        </ToolTip>
-        <ToolTip x:Key="ClosePopupToolTip" >
-            <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-                <Grid Margin="2">
-                    <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" Foreground="Black" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                    </Grid>
+                </Border>
+            </ToolTip>
+            <ToolTip x:Key="ClosePopupToolTip" >
+                <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+                    <Grid Margin="2">
+                        <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" Foreground="Black" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Close Palette"/>
-                    <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Foreground="Black"
+                        <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Foreground="Black"
                            Text="Close the custom colour palette."/>
-                </Grid>
-            </Border>
-        </ToolTip>
-        <ToolTip x:Key="StickyPopupToolTip" >
-            <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-                <Grid Margin="2">
-                    <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                    </Grid>
+                </Border>
+            </ToolTip>
+            <ToolTip x:Key="StickyPopupToolTip" >
+                <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+                    <Grid Margin="2">
+                        <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="PenOut.png"/>
-                    <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                        <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Sticky Popup"/>
-                    <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                        <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
                            Text="Change the palette so that it stays open.  When the drawing pin is pushed in, the palette will remain open.  When the drawing pin is pulled out, the palette will close whenever you click your mouse or stylus outside the palette."/>
-                </Grid>
-            </Border>
-        </ToolTip>
-        <Style x:Key="ThicknessButton" TargetType="Button">
-            <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Name="border" Background="Transparent" CornerRadius="0" Padding="0" BorderThickness="0">
-                            <ContentPresenter/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource MouseOverGradient}"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource PressedGradient}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Opacity" Value="0.2" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <groups:AttributesToStringConverter x:Key="AttributesToStringConverter"/>
-        <groups:IntTextConverter x:Key="IntTextConverter"/>
-        <groups:HueTextConverter x:Key="HueSliderTextConverter"/>
-        <groups:DoubleTextConverter x:Key="DoubleSliderTextConverter"/>
-        <groups:RoundingConverter x:Key="RoundingConverter"/>
-        <groups:HueSliderConverter x:Key="HueSliderConverter"/>
-        <groups:DoubleSliderConverter x:Key="DoubleSliderConverter"/>
-        <groups:ReverseBoolToVisibilityConverter x:Key="reverseBoolToVisibilityConverter"/>
-        <groups:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
-        <groups:HexToColourConverter x:Key="HexToColourConverter"/>
+                    </Grid>
+                </Border>
+            </ToolTip>
+            <Style x:Key="ThicknessButton" TargetType="Button">
+                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Name="border" Background="Transparent" CornerRadius="0" Padding="0" BorderThickness="0">
+                                <ContentPresenter/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{StaticResource MouseOverGradient}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{StaticResource PressedGradient}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.2" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <groups:AttributesToStringConverter x:Key="AttributesToStringConverter"/>
+            <groups:IntTextConverter x:Key="IntTextConverter"/>
+            <groups:HueTextConverter x:Key="HueSliderTextConverter"/>
+            <groups:DoubleTextConverter x:Key="DoubleSliderTextConverter"/>
+            <groups:RoundingConverter x:Key="RoundingConverter"/>
+            <groups:HueSliderConverter x:Key="HueSliderConverter"/>
+            <groups:DoubleSliderConverter x:Key="DoubleSliderConverter"/>
+            <groups:ReverseBoolToVisibilityConverter x:Key="reverseBoolToVisibilityConverter"/>
+            <groups:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+            <groups:HexToColourConverter x:Key="HexToColourConverter"/>
+            <groups:colourContrastConverter x:Key="colourContrastConverter"/>
 
-        <core:Int32 x:Key="ToolTipDelay">400</core:Int32>
-        <LinearGradientBrush x:Key="BackgroundBlueGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FFF5FAFF" Offset="0"/>
-            <GradientStop Color="#FFD0DEEF" Offset="0.39"/>
-            <GradientStop Color="#FFCADAED" Offset="0.40"/>
-            <GradientStop Color="#FFE7F2FF" Offset="1"/>
-        </LinearGradientBrush>
-        <SolidColorBrush Color="LightGray" x:Key="MouseOverBorderBrush"/>
-        <SolidColorBrush Color="Black" x:Key="MouseOverContentBrush"/>
-        <LinearGradientBrush x:Key="MouseOverGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FFFFFDED" Offset="0"/>
-            <GradientStop Color="#FFFFEBAC" Offset="0.39"/>
-            <GradientStop Color="#FFFFD45F" Offset="0.40"/>
-            <GradientStop Color="#FFFFD45F" Offset="1"/>
-        </LinearGradientBrush>
+            <core:Int32 x:Key="ToolTipDelay">400</core:Int32>
+            <LinearGradientBrush x:Key="BackgroundBlueGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#FFF5FAFF" Offset="0"/>
+                <GradientStop Color="#FFD0DEEF" Offset="0.39"/>
+                <GradientStop Color="#FFCADAED" Offset="0.40"/>
+                <GradientStop Color="#FFE7F2FF" Offset="1"/>
+            </LinearGradientBrush>
+            <SolidColorBrush Color="LightGray" x:Key="MouseOverBorderBrush"/>
+            <SolidColorBrush Color="Black" x:Key="MouseOverContentBrush"/>
+            <LinearGradientBrush x:Key="MouseOverGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#FFFFFDED" Offset="0"/>
+                <GradientStop Color="#FFFFEBAC" Offset="0.39"/>
+                <GradientStop Color="#FFFFD45F" Offset="0.40"/>
+                <GradientStop Color="#FFFFD45F" Offset="1"/>
+            </LinearGradientBrush>
 
-        <SolidColorBrush Color="DarkGray" x:Key="CheckedBorderBrush"/>
-        <SolidColorBrush Color="Black" x:Key="CheckedContentBrush"/>
-        <LinearGradientBrush x:Key="CheckedGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FFFED7A9" Offset="0"/>
-            <GradientStop Color="#FFFBB565" Offset="0.39"/>
-            <GradientStop Color="#FFFA9831" Offset="0.40"/>
-            <GradientStop Color="#FFFDECA6" Offset="1"/>
-        </LinearGradientBrush>
-        <ImageBrush ImageSource="\Resources\Ribbon-Palette.png" x:Key="SpectrumBrush"/>
-        <SolidColorBrush Color="DarkGray" x:Key="PressedBorderBrush"/>
-        <SolidColorBrush Color="Black" x:Key="PressedContentBrush"/>
-        <LinearGradientBrush x:Key="PressedGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FFFED7A9" Offset="0"/>
-            <GradientStop Color="#FFFBB565" Offset="0.45"/>
-            <GradientStop Color="#FFFA9831" Offset="0.46"/>
-            <GradientStop Color="#FFFDECA6" Offset="1"/>
-        </LinearGradientBrush>
-    </StackPanel.Resources>
-        <ItemsControl x:Name="previousColors" IsEnabled="False" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <SolidColorBrush Color="DarkGray" x:Key="CheckedBorderBrush"/>
+            <SolidColorBrush Color="Black" x:Key="CheckedContentBrush"/>
+            <LinearGradientBrush x:Key="CheckedGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#FFFED7A9" Offset="0"/>
+                <GradientStop Color="#FFFBB565" Offset="0.39"/>
+                <GradientStop Color="#FFFA9831" Offset="0.40"/>
+                <GradientStop Color="#FFFDECA6" Offset="1"/>
+            </LinearGradientBrush>
+            <ImageBrush ImageSource="\Resources\Ribbon-Palette.png" x:Key="SpectrumBrush"/>
+            <SolidColorBrush Color="DarkGray" x:Key="PressedBorderBrush"/>
+            <SolidColorBrush Color="Black" x:Key="PressedContentBrush"/>
+            <LinearGradientBrush x:Key="PressedGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#FFFED7A9" Offset="0"/>
+                <GradientStop Color="#FFFBB565" Offset="0.45"/>
+                <GradientStop Color="#FFFA9831" Offset="0.46"/>
+                <GradientStop Color="#FFFDECA6" Offset="1"/>
+            </LinearGradientBrush>
+        </StackPanel.Resources>
+        <SandRibbonInterop:RadioButton x:Name="Draw" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
+        <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectToolTip}"  Icon="\Resources\SelectShiny.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
+        <SandRibbonInterop:RadioButton ToolTip="{StaticResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
+        <ItemsControl x:Name="defaultColours">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
@@ -122,7 +127,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Tag="{Binding Path=ColorName}" IsEnabled="{Binding ElementName=previousColors, Path=IsEnabled}" BorderBrush="Transparent" BorderThickness="0" Click="ChangeColor" Margin="0">
-                        <Button.ToolTip>
+                        <!--<Button.ToolTip>
                             <ToolTip>
                                 <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
                                     <Grid Margin="2">
@@ -136,12 +141,13 @@
                                     </Grid>
                                 </Border>
                             </ToolTip>
-                        </Button.ToolTip>
+                        </Button.ToolTip>-->
                         <Button.Template>
                             <ControlTemplate>
                                 <Border Padding="2" BorderBrush="Transparent" Name="buttonBorder" BorderThickness="1" Height="65" Width="50">
                                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                                         <Rectangle Name="BackgroundColour" RadiusX="10" RadiusY="10" Fill="{Binding Path=XAMLColorName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
+                                        <Rectangle Name="InverseBackgroundColour" RadiusX="10" RadiusY="10" Fill="{Binding Path=XAMLColorName, Converter={StaticResource colourContrastConverter}}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="{Binding PenSize}" Width="Auto"/>
                                         <Label Name="buttonSizeShadow" Visibility="Collapsed" Content="{Binding Path=PenSize}" FontSize="10" Margin="1,0,0,-1" Foreground="Black" VerticalAlignment="Bottom"/>
                                         <Label Name="buttonSize" Visibility="Collapsed" Content="{Binding Path=PenSize}" FontSize="10" Foreground="White" VerticalAlignment="Bottom"/>
                                         <Image Name="buttonHighlighterGlyph" Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}" Source="\Resources\Highlighter.png" Height="30" Width="30" VerticalAlignment="Top"/>
@@ -232,7 +238,7 @@
             </Button.Style>
         </Button>
         <Popup x:Name="RichInkOptionsPopup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
-            <Border BorderThickness="1" BorderBrush="LightGray" CornerRadius="2" Padding="2" Background="{StaticResource BackgroundBlueGradient}">
+            <Border Height="395" BorderThickness="1" BorderBrush="LightGray" CornerRadius="2" Padding="2" Background="{StaticResource BackgroundBlueGradient}">
                 <StackPanel Orientation="Horizontal">
                     <StackPanel>
                         <UniformGrid Rows="1">
@@ -248,8 +254,8 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="25">
                             <Button x:Name="StickyButton" Click="StickyPopup" ToolTip="{StaticResource StickyPopupToolTip}">
                                 <Grid>
-                                    <Image x:Name="PinOut" Source="PenOut.png" Visibility="Visible"/>
-                                    <Image x:Name="PinIn" Source="PenIn.png" Visibility="Collapsed"/>
+                                    <Image x:Name="PinOut" Source="..\..\Resources\PenOut.png" Visibility="Visible"/>
+                                    <Image x:Name="PinIn" Source="..\..\Resources\PenIn.png" Visibility="Collapsed"/>
                                 </Grid>
                             </Button>
                             <Button x:Name="CloseButton" Click="ClosePopup" Content="X" Width="25" Foreground="White" Background="Red" ToolTip="{StaticResource ClosePopupToolTip}"/>
@@ -342,6 +348,68 @@
                             <Rectangle VerticalAlignment="Center" Height="{Binding Path=CurrentPenSize}" x:Name="ColourPreview" Fill="{Binding Path=CurrentHex, Converter={StaticResource HexToColourConverter}}" Width="Auto" HorizontalAlignment="Stretch"/>
                         </Grid>
                     </StackPanel>
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="previousColors" IsEnabled="False" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Tag="{Binding Path=ColorName}" IsEnabled="{Binding ElementName=previousColors, Path=IsEnabled}" BorderBrush="Transparent" BorderThickness="0" Click="ChangeColor" Margin="0">
+                                        <!--<Button.ToolTip>
+                                            <ToolTip>
+                                                <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+                                                    <Grid Margin="2">
+                                                        <Rectangle Name="BackgroundColour" RadiusX="10" RadiusY="10" Fill="{Binding Path=XAMLColorName}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" />
+                                                        <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" Name="buttonHighlighterGlyph" Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}" Source="\Resources\Highlighter.png"/>
+                                                        <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" Name="buttonPenGlyph" Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}" Source="\Resources\Pen.png"/>
+                                                        <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                           Text="{Binding Path=XAMLColorName}"/>
+                                                        <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="{Binding Path=., Converter={StaticResource AttributesToStringConverter}}"/>
+                                                    </Grid>
+                                                </Border>
+                                            </ToolTip>
+                                        </Button.ToolTip>-->
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <Border Padding="2" BorderBrush="Transparent" Name="buttonBorder" BorderThickness="1" Height="65" Width="50">
+                                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
+                                                        <Rectangle Name="BackgroundColour" RadiusX="10" RadiusY="10" Fill="{Binding Path=XAMLColorName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
+                                                        <Rectangle Name="InverseBackgroundColour" RadiusX="10" RadiusY="10" Fill="{Binding Path=XAMLColorName, Converter={StaticResource colourContrastConverter}}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="{Binding PenSize}" Width="Auto"/>
+                                                        <Label Name="buttonSizeShadow" Visibility="Collapsed" Content="{Binding Path=PenSize}" FontSize="10" Margin="1,0,0,-1" Foreground="Black" VerticalAlignment="Bottom"/>
+                                                        <Label Name="buttonSize" Visibility="Collapsed" Content="{Binding Path=PenSize}" FontSize="10" Foreground="White" VerticalAlignment="Bottom"/>
+                                                        <Image Name="buttonHighlighterGlyph" Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}" Source="\Resources\Highlighter.png" Height="30" Width="30" VerticalAlignment="Top"/>
+                                                        <Image Name="buttonPenGlyph" Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}" Source="\Resources\Pen.png" Height="30" Width="30" VerticalAlignment="Top"/>
+                                                    </Grid>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="true" >
+                                                        <Setter Property="BorderBrush" Value="{StaticResource MouseOverGradient}" TargetName="buttonBorder"/>
+                                                        <Setter Property="Background" Value="{StaticResource MouseOverGradient}" TargetName="buttonBorder"/>
+                                                        <Setter Property="Visibility" Value="Visible" TargetName="buttonSize"/>
+                                                        <Setter Property="Visibility" Value="Visible" TargetName="buttonSizeShadow"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="false" >
+                                                        <Setter Property="Visibility" Value="Collapsed" TargetName="buttonSize"/>
+                                                        <Setter Property="Visibility" Value="Collapsed" TargetName="buttonSizeShadow"/>
+                                                        <Setter Property="Visibility" TargetName="buttonHighlighterGlyph" Value="Collapsed"/>
+                                                        <Setter Property="Visibility" TargetName="buttonPenGlyph" Value="Collapsed"/>
+                                                    </Trigger>
+
+                                                    <Trigger Property="Button.IsEnabled" Value="False">
+                                                        <Setter TargetName="BackgroundColour" Property="Opacity" Value="0.2"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
                 </StackPanel>
             </Border>
         </Popup>

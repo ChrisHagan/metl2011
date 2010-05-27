@@ -17,11 +17,8 @@
         <sr:GroupVariant Variant="Collapsed" Priority="5"/>
     </sr:RibbonGroup.Variants>
     <StackPanel Orientation="Horizontal">
-        <SandRibbonInterop:RibbonPanel Tag="inkModes" x:Name="InkOptions" >
-            <SandRibbonInterop:RadioButton x:Name="Draw" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
-            <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectToolTip}"  Icon="\Resources\SelectShiny.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
-            <SandRibbonInterop:RadioButton ToolTip="{StaticResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
-        </SandRibbonInterop:RibbonPanel>
+        <!--<SandRibbonInterop:RibbonPanel Tag="inkModes" x:Name="InkOptions" >
+        </SandRibbonInterop:RibbonPanel>-->
         <SandRibbonInterop:RibbonPanel x:Name="TextOptions" >
             <SandRibbonInterop:RadioButton ToolTip="{StaticResource TextBoxToolTip}" Icon="\Resources\PlaceTextBox.png" Text="Cursor" Command="api:Commands.SetTextCanvasMode" CommandParameter="None"  IsChecked="True"/>
             <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectTextBoxToolTip}" Icon="\Resources\SelectShiny.png" Text="Select" Command="api:Commands.SetTextCanvasMode" CommandParameter="Select" />

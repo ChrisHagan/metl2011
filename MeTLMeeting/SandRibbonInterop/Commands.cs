@@ -43,6 +43,11 @@ namespace SandRibbon
         public static CompositeCommand RemoveHighlight = new CompositeCommand();
 
         #endregion
+        public static CompositeCommand ActualSetDrawingAttributes = new CompositeCommand();
+        public static CompositeCommand ActualChangePenSize= new CompositeCommand();
+        
+        public static CompositeCommand DisablePens = new CompositeCommand();
+        public static CompositeCommand EnablePens = new CompositeCommand();
         public static CompositeCommand SetPedagogyLevel = new CompositeCommand();
         public static CompositeCommand GetMainScrollViewer = new CompositeCommand();
         public static CompositeCommand ShowConversationSearchBox = new CompositeCommand();
@@ -86,6 +91,7 @@ namespace SandRibbon
         public static CompositeCommand ToggleHighlighterMode = new CompositeCommand();
         public static CompositeCommand SetDrawingAttributes = new CompositeCommand();
         public static CompositeCommand ReportDrawingAttributes = new CompositeCommand();
+        public static CompositeCommand ActualReportDrawingAttributes = new CompositeCommand();
         public static CompositeCommand IncreasePenSize = new CompositeCommand();
         public static CompositeCommand ChangePenSize = new CompositeCommand();
         public static CompositeCommand DecreasePenSize = new CompositeCommand();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SandRibbonObjects;
+using System.Windows.Ink;
 
 namespace SandRibbon.Providers
 {
@@ -17,6 +18,13 @@ namespace SandRibbon.Providers
                     currentSlide=slide,
                     availableSlides=conversationDetails.Slides.Select(s=>s.id).ToList()
                 };
+            }
+        }
+        public static DrawingAttributes drawingAttributes
+        {
+            get
+            {
+                return ((DrawingAttributes)Commands.ReportDrawingAttributes.lastValue());
             }
         }
         public static List<Slide> slides {

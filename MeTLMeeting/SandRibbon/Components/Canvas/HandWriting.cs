@@ -40,7 +40,7 @@ namespace SandRibbon.Components.Canvas
             modeChangedCommand = new DelegateCommand<string>(setInkCanvasMode, canChangeMode);
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedStrokes));
             Commands.SetInkCanvasMode.RegisterCommand(modeChangedCommand);
-            Commands.ChangePenSize.RegisterCommand(new DelegateCommand<double>(penSize =>
+            Commands.ActualChangePenSize.RegisterCommand(new DelegateCommand<double>(penSize =>
             {
                 var newAttributes = DefaultDrawingAttributes.Clone();
                 newAttributes.Width = penSize;
@@ -69,7 +69,7 @@ namespace SandRibbon.Components.Canvas
                 newAttributes.Height = defaultHeight;
                 DefaultDrawingAttributes = newAttributes;
             }));
-            Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(attributes =>
+            Commands.ActualSetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(attributes =>
              {
                  DefaultDrawingAttributes = attributes;
              }));
@@ -154,7 +154,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void announceDrawingAttributesChanged(object sender, DrawingAttributesReplacedEventArgs e)
         {
-            Commands.ReportDrawingAttributes.Execute(this.DefaultDrawingAttributes);            
+            Commands.ActualReportDrawingAttributes.Execute(this.DefaultDrawingAttributes);            
         }
         private static List<TimeSpan> strokeReceiptDurations = new List<TimeSpan>();
         private static double averageStrokeReceiptDuration()
