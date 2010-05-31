@@ -31,14 +31,15 @@ namespace SandRibbon.Components
         public static List<double> TEETH = Enumerable.Range(1, TOOTH_COUNT).Select(i => (360.0 / TOOTH_COUNT) * i).ToList();
         static Random random = new Random();
         public string Version { get; set; }
-        public string ReleaseNotes { get {
-            var releaseNotes = HttpResourceProvider.insecureGetString("http://metl.adm.monash.edu.au/MeTL/releaseNotes.txt");
-            if (!string.IsNullOrEmpty(releaseNotes))
-                releaseNotesViewer.Visibility = Visibility.Visible;
-            else
-                releaseNotesViewer.Visibility = Visibility.Collapsed;
-            return releaseNotes;
-        }
+        public string ReleaseNotes { 
+            get {
+                var releaseNotes = HttpResourceProvider.insecureGetString("http://metl.adm.monash.edu.au/MeTL/releaseNotes.txt");
+                if (!string.IsNullOrEmpty(releaseNotes))
+                    releaseNotesViewer.Visibility = Visibility.Visible;
+                else
+                    releaseNotesViewer.Visibility = Visibility.Collapsed;
+                return releaseNotes;
+            }
         }
         public Login()
         {

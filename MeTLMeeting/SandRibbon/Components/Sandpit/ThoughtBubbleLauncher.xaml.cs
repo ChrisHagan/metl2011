@@ -22,25 +22,19 @@ namespace SandRibbon.Components.Sandpit
     public partial class ThoughtBubbleLauncher : UserControl
     {
         private string privacy;
-        private int currentSlide;
-        private ConversationDetails currentDetails;
         public ThoughtBubbleLauncher()
         {
             InitializeComponent();
             Commands.BubbleCurrentSelection.RegisterCommand(new DelegateCommand<object>(BubbleCurrentSelection));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(details => currentDetails = details));
         }
-      
         private void SetPrivacy(string privacy){
             this.privacy = privacy;
         }
-        private void MoveTo(int where) {
-            this.currentSlide = where;
-        }
         private void BubbleCurrentSelection(object _nothing) 
         {
+            var slide = Globals.slide;
+            var currentDetails = Globals.conversationDetails;
             string target = null;
             var selection = new List<SelectedIdentity>();
             foreach(var registeredCommand in Commands.DoWithCurrentSelection.RegisteredCommands)
@@ -50,16 +44,16 @@ namespace SandRibbon.Components.Sandpit
                 }));
             if (selection.Count() > 0)
             {
-                var details = ConversationDetailsProviderFactory.Provider.AppendSlideAfter(currentSlide, currentDetails.Jid, Slide.TYPE.THOUGHT);
-                var slide = details.Slides.Select(s => s.id).Max();
+                var details = ConversationDetailsProviderFactory.Provider.AppendSlideAfter(Globals.slide, currentDetails.Jid, Slide.TYPE.THOUGHT);
+                var newSlide = details.Slides.Select(s => s.id).Max();
                 Commands.SendNewBubble.Execute(new TargettedBubbleContext
                                                    {
                                                        author = Globals.me,
                                                        context = selection,
                                                        privacy = "public",
-                                                       slide = currentSlide,
+                                                       slide = slide,
                                                        target = target,
-                                                       thoughtSlide =slide 
+                                                       thoughtSlide =newSlide 
                                                    });
             }
         } 

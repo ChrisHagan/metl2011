@@ -29,7 +29,7 @@ using System.Windows.Ink;
 
 namespace SandRibbon
 {
-    public partial class Window1 : PedagogicallyVariable
+    public partial class Window1
     {
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
@@ -58,6 +58,7 @@ namespace SandRibbon
         private void DoConstructor()
         {
             InitializeComponent();
+            WorkspaceStateProvider.RestorePreviousSettings();
             userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(text =>
             {
@@ -121,18 +122,18 @@ namespace SandRibbon
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.SetZoomRect.RegisterCommand(new DelegateCommand<Rectangle>(SetZoomRect));
-            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>((_level) => { }, mustBeLoggedIn));
             Commands.ChangePenSize.RegisterCommand(new DelegateCommand<object>(AdjustPenSizeAccordingToZoom));
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustDrawingAttributesAccordingToZoom));
             Commands.ActualReportDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedDrawingAttributesAccordingToZoom));
             Commands.ActualReportStrokeAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedStrokeAttributesAccordingToZoom));
+            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
             if (SmartBoardMeTLAlreadyLoaded)
                 checkIfSmartboard();
-            Pedagogicometer.RegisterVariant(this);
+            WorkspaceStateProvider.RestorePreviousSettings();
         }
         private void AdjustReportedDrawingAttributesAccordingToZoom(object attributes)
         {
@@ -218,11 +219,10 @@ namespace SandRibbon
         private void SetIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
         {
             connect(credentials.name, credentials.password, 0, null);
-            if (credentials.name.Contains("S15")) sleep(null);
             var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
-            Commands.RequerySuggested();
             Commands.AllStaticCommandsAreRegistered();
-            Pedagogicometer.SetDefaultPedagogyLevel();
+            Commands.RequerySuggested();
+            Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);
         }
         private void SetZoomRect(Rectangle viewbox)
         {
@@ -231,7 +231,6 @@ namespace SandRibbon
             scroll.Height = viewbox.Height;
             scroll.ScrollToHorizontalOffset(topleft.X);
             scroll.ScrollToVerticalOffset(topleft.Y);
-            //updateCurrentPenAfterZoomChanged();
         }
         private bool SmartBoardMeTLAlreadyLoaded
         {
@@ -467,7 +466,11 @@ namespace SandRibbon
         }
         private void UpdateTitle()
         {
-            Title = messageFor(Globals.conversationDetails);
+            try
+            {
+                Title = messageFor(Globals.conversationDetails);
+            }
+            catch (NotSetException) { }
         }
         private DelegateCommand<object> canOpenFriendsOverride;
         private void applyPermissions(Permissions permissions)
@@ -845,14 +848,9 @@ namespace SandRibbon
             if (m_notifyIcon != null)
                 m_notifyIcon.Visible = show;
         }
-        public bool CanSetLevel(PedagogyLevel level)
-        {
-            return true;
-        }
-        public bool SetLevel(PedagogyLevel level)
+        public void SetPedagogyLevel(PedagogyLevel level)
         {
             SetupUI(level);
-            return true;
         }
         public void ClearUI()
         {
@@ -889,6 +887,9 @@ namespace SandRibbon
                         tabs.Add(new Tabs.Quizzes());
                         tabs.Add(new Tabs.Analytics());
                         slideDisplay.Visibility = Visibility.Visible;
+                        break;
+                    case 3:
+                        tabs.Add(new Tabs.Plugins());
                         break;
                     default:
                         break;

@@ -92,5 +92,9 @@ namespace SandRibbon
                 Logger.Log(ex.Message);
             }
         }
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            WorkspaceStateProvider.SaveCurrentSettings();
+        }
     }
 }

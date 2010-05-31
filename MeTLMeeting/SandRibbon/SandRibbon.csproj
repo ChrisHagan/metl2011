@@ -436,9 +436,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Widgets\ArtistsPallette.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Widgets\ArtistsPalette.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Compile Include="Components\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -489,6 +489,7 @@
       <DependentUpon>Pedagogicometer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
+    <Compile Include="Providers\WorkspaceStateProvider.cs" />
     <Compile Include="Tabs\Groups\PenColors.xaml.cs" />
     <Compile Include="Components\ConversationConfigurationDialog.xaml.cs">
       <DependentUpon>ConversationConfigurationDialog.xaml</DependentUpon>
@@ -678,8 +679,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Utils\UndoHistory.cs" />
-    <Compile Include="Widgets\ArtistsPallette.xaml.cs">
-      <DependentUpon>ArtistsPallette.xaml</DependentUpon>
+    <Compile Include="Widgets\ArtistsPalette.xaml.cs">
+      <DependentUpon>ArtistsPalette.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -20,8 +20,12 @@ namespace SandRibbon.Components
         private void updateTitleBar(int id)
         {
             Dispatcher.BeginInvoke((Action)delegate {
-                notes.Text = string.Format("Page {0} Notes",
-                    Globals.conversationDetails.Slides.Select(s => s.id).ToList().IndexOf(id)+1);
+                try
+                {
+                    notes.Text = string.Format("Page {0} Notes",
+                        Globals.conversationDetails.Slides.Select(s => s.id).ToList().IndexOf(id) + 1);
+                }
+                catch (NotSetException) { }
             });
         }
     }

@@ -6,6 +6,7 @@ using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Xml.Linq;
 
 namespace SandRibbon
 {
@@ -260,6 +261,9 @@ namespace SandRibbon
                 if (field.GetValue(null) == command)
                     return field.Name;
             return "Not a member of commands";
+        }
+        public static CompositeCommand called(string name) {
+            return (CompositeCommand)typeof(Commands).GetField(name).GetValue(null);
         }
         public static void RequerySuggested()
         {

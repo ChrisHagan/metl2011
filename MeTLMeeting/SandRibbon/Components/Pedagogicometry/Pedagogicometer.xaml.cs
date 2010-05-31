@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SandRibbon.Components.Pedagogicometry;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components.Sandpit
 {
@@ -23,8 +24,6 @@ namespace SandRibbon.Components.Sandpit
     public partial class Pedagogicometer : UserControl
     {
         private static IEnumerable<PedagogyLevel> allPedagogies = null;
-        public static PedagogyLevel level;
-        private static List<PedagogicallyVariable> variants = new List<PedagogicallyVariable>();
         private static Pedagogicometer instance;
         public Pedagogicometer()
         {
@@ -33,31 +32,35 @@ namespace SandRibbon.Components.Sandpit
             var i = 0;
             allPedagogies = new[] { 
                 new PedagogyLevel{ code = i++, label= "Whiteboard" },
-                new PedagogyLevel{ code = i++, label= "Powerpoint" },
-                new PedagogyLevel{ code = i++, label= "CP3" },
-                new PedagogyLevel{ code = i++, label= "MeTL" },
-                new PedagogyLevel{ code = i++, label= "EdgeMeTL" }};
+                new PedagogyLevel{ code = i++, label= "Survey Respondent" },
+                new PedagogyLevel{ code = i++, label= "Responsive Presentation" },
+                new PedagogyLevel{ code = i++, label= "Collaborative Presentation" },
+                new PedagogyLevel{ code = i++, label= "Crowdsourced Conversation" }};
             pedagogies.ItemsSource = allPedagogies;
         }
         public static void SetDefaultPedagogyLevel() 
         {
             instance.pedagogies.SelectedItem = allPedagogies.ElementAt(0);
         }
-        public static void RegisterVariant(PedagogicallyVariable variant) {
-            variants.Add(variant);
-        }
-        public void SetPedagogyLevel(PedagogyLevel level) 
+        public static void SetPedagogyLevel(PedagogyLevel level) 
         {
-            Pedagogicometer.level = level;
-            foreach (var variant in variants)
-                if (variant.CanSetLevel(level))
-                    variant.SetLevel(level);
+            if (Commands.SetPedagogyLevel.CanExecute(level))
+                instance.pedagogies.SelectedItem = level;
+        }
+        private static void doSetPedagogyLevel(PedagogyLevel level) 
+        { 
+            Commands.SetPedagogyLevel.Execute(level);
+        }
+        public static void SetPedagogyLevel(int code) 
+        {
+            SetPedagogyLevel(level(code));     
+        }
+        public static PedagogyLevel level(int level) {
+            return allPedagogies.Where(p => p.code == level).Single();
         }
         private void pedagogies_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var level = (PedagogyLevel)e.AddedItems[0];
-            if (Commands.SetPedagogyLevel.CanExecute(level))
-                SetPedagogyLevel(level);
+            doSetPedagogyLevel((PedagogyLevel)e.AddedItems[0]);
         }
     }
 }

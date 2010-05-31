@@ -4,22 +4,43 @@ using System.Linq;
 using System.Text;
 using SandRibbonObjects;
 using System.Windows.Ink;
+using SandRibbon.Components.Sandpit;
+using SandRibbon.Components.Pedagogicometry;
 
 namespace SandRibbon.Providers
 {
     public class Globals
     {
+        public static PedagogyLevel pedagogy {
+            get {
+                try
+                {
+                    Commands.SetPedagogyLevel.lastValue();
+                }
+                catch (NotSetException)
+                {
+                    Pedagogicometer.SetDefaultPedagogyLevel();
+                }
+                return (PedagogyLevel)Commands.SetPedagogyLevel.lastValue();
+            }
+        }
         public static SandRibbon.Utils.Connection.JabberWire.Location location
         {
             get
             {
-                var conversationDetails = Globals.conversationDetails;
-                return new SandRibbon.Utils.Connection.JabberWire.Location
+                try
                 {
-                    activeConversation = conversationDetails.Jid,
-                    currentSlide = slide,
-                    availableSlides = conversationDetails.Slides.Select(s => s.id).ToList()
-                };
+                    var conversationDetails = Globals.conversationDetails;
+                    return new SandRibbon.Utils.Connection.JabberWire.Location
+                    {
+                        activeConversation = conversationDetails.Jid,
+                        currentSlide = slide,
+                        availableSlides = conversationDetails.Slides.Select(s => s.id).ToList()
+                    };
+                }
+                catch (NotSetException e) {
+                    throw e;
+                }
             }
         }
         public static DrawingAttributes drawingAttributes

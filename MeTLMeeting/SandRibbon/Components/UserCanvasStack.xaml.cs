@@ -49,7 +49,14 @@ namespace SandRibbon.Components
         }
         private ThoughtBubble getBubble(TargettedBubbleContext bubble)
         {
-            if (Globals.conversationDetails == null) return null;
+            try
+            {
+                var a = Globals.conversationDetails;
+            }
+            catch (NotSetException)
+            {
+                return null;
+            }
             var thoughtBubble = new ThoughtBubble();
             Dispatcher.Invoke((Action) delegate
                {

@@ -177,7 +177,13 @@ namespace SandRibbon.Components.Canvas
             CanEditChanged();
         }
         protected bool inMeeting() {
-            return Permissions.InferredTypeOf(Globals.conversationDetails.Permissions) == Permissions.MEETING_PERMISSIONS;
+            try
+            {
+                return Permissions.InferredTypeOf(Globals.conversationDetails.Permissions) == Permissions.MEETING_PERMISSIONS;
+            }
+            catch (NotSetException) {
+                return false;
+            }
         }
         protected override void  OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
         {
