@@ -2,11 +2,42 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Collections.Generic;
 
 namespace SandRibbon.Utils
 {
     public class Crypto
     {
+        private static Encoding encoding = Encoding.UTF8;
+        private static byte[] Key = Encoding.UTF8.GetBytes("01234567");
+        private static byte[] IV = Encoding.UTF8.GetBytes("01234567");
+            
+        public static string decrypt(string input)
+        {
+            if (String.IsNullOrEmpty(input))
+                return "";
+
+            var b64string = ((input.Replace("-","+")).Replace("_","="));
+            var nonB64bytes = Convert.FromBase64String(b64string);
+            var nonB64string = bytestostring(nonB64bytes, encoding);
+            var decryptedString = decryptFromByteArray(nonB64bytes, encoding, Key, IV);
+            
+            var last8Bytes = getLastBytes(nonB64bytes, 8);
+            var paddingBytes = decryptFromByteArray(last8Bytes, encoding, Key, IV);
+            var paddingLength = Int32.Parse(paddingBytes);
+            var decryptedStringFinal = decryptedString.Substring(0, paddingLength);
+            return decryptedStringFinal;
+        }
+        private static byte[] getLastBytes(byte[] input, int numberOfBytesToGet)
+        {
+            var ListOfBytes = new List<byte>();
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (i >= input.Length - numberOfBytesToGet)
+                    ListOfBytes.Add(input[i]);
+            }
+            return ListOfBytes.ToArray();
+        }
         public static string encrypt(string input)
         {
             if (String.IsNullOrEmpty(input))
@@ -43,6 +74,22 @@ namespace SandRibbon.Utils
             sw.Close();
             ms.Close();
             return ms.ToArray();
+        }
+        private static string decryptFromByteArray(byte[] input, Encoding encoding, byte[] Key, byte[] IV)
+        {
+            DESCryptoServiceProvider key = new DESCryptoServiceProvider()
+            {
+                Key = Key,
+                IV = IV,
+                Mode = CipherMode.CBC,
+                Padding = PaddingMode.Zeros
+            };
+            CryptoStream stream = new CryptoStream(new MemoryStream(input), key.CreateDecryptor(), CryptoStreamMode.Read);
+            var decryptedStream = new byte[input.Length];
+            stream.Read(decryptedStream,0,Convert.ToInt32(input.Length));
+            var decryptedString = bytestostring(decryptedStream, encoding);
+            
+            return decryptedString;
         }
         private static string bytestostring(byte[] p, Encoding encoding)
         {

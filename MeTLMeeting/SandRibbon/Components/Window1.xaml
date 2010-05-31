@@ -11,6 +11,7 @@
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    xmlns:widgets="clr-namespace:SandRibbon.Widgets"
     AllowDrop="True"
     Title="MeTL"
     x:Name="ribbonWindow"
@@ -79,7 +80,10 @@
                     </Grid>
                     <components:ScrollBar x:Name="adornerScroll"/>
                     <AdornerDecorator>
-                        <components:PrivacyTools />
+                        <Canvas>
+                            <widgets:ArtistsPalette />
+                            <components:PrivacyTools />
+                        </Canvas>
                     </AdornerDecorator>
                 </Grid>
                 <GridSplitter x:Name="notesGridSplitter"

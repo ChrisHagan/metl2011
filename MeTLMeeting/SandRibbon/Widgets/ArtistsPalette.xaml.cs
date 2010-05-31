@@ -18,14 +18,11 @@ using System.Windows.Controls.Primitives;
 
 namespace SandRibbon.Widgets
 {
-    /// <summary>
-    /// Interaction logic for ArtistsPallette.xaml
-    /// </summary>
-    public partial class ArtistsPallette : UserControl
+    public partial class ArtistsPalette : UserControl
     {
         public CurrentColourValues currentColourValues = new CurrentColourValues();
         public ObservableCollection<PenColors.DrawingAttributesEntry> previouslySelectedDrawingAttributes = new ObservableCollection<PenColors.DrawingAttributesEntry>();
-        public ArtistsPallette()
+        public ArtistsPalette()
         {
             InitializeComponent();
             PenSizeSlider.Value = 1;
@@ -99,12 +96,6 @@ namespace SandRibbon.Widgets
         {
             int nextAvailableSpot = 0;
             if (previouslySelectedDrawingAttributes.Select(c => c.Attributes).Contains(attributes)) return;
-            /*const int maxSizeOfQuickLaunchColors = 10;
-            if (previouslySelectedDrawingAttributes.Count >= maxSizeOfQuickLaunchColors)
-            {
-                previouslySelectedDrawingAttributes.RemoveAt(maxSizeOfQuickLaunchColors - 1);
-                nextAvailableSpot = (nextAvailableSpot) % maxSizeOfQuickLaunchColors;
-            }*/
             previouslySelectedDrawingAttributes.Insert(nextAvailableSpot,
                 new PenColors.DrawingAttributesEntry()
                 {
@@ -163,8 +154,5 @@ namespace SandRibbon.Widgets
             emptyColor.B = 0;
             return emptyColor;
         }
-
-
-
     }
 }
