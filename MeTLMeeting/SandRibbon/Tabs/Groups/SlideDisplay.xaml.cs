@@ -34,7 +34,6 @@ namespace SandRibbon.Tabs.Groups
             InitializeComponent();
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher, _i=> synced));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
-            Commands.MoveToQuiz.RegisterCommand(new DelegateCommand<QuizDetails>(d=>realLocation = d.targetSlide));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(jid =>
             {
                 currentSlideIndex = 0;

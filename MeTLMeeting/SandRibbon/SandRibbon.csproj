@@ -212,6 +212,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Quizzing\AnswerAQuiz.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\CreateAQuiz.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Tabs\Groups\PenColors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -352,50 +360,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Quizzing\AnswerAQuiz.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\AnswerAQuizControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\AuthorAQuiz.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\AuthorAQuizControls.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\AuthorAQuizInstructions.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\AuthorAQuizSampleAnswers.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\BarGraph.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\PollIcon.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Quizzing\PollListing.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\QuizAnswers.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\QuizControls.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Quizzing\RatingControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -490,6 +454,12 @@
     </Compile>
     <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
+    <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">
+      <DependentUpon>AnswerAQuiz.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\CreateAQuiz.xaml.cs">
+      <DependentUpon>CreateAQuiz.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\Groups\PenColors.xaml.cs" />
     <Compile Include="Components\ConversationConfigurationDialog.xaml.cs">
       <DependentUpon>ConversationConfigurationDialog.xaml</DependentUpon>
@@ -587,21 +557,6 @@
     <Compile Include="Providers\RecentConversationProvider.cs" />
     <Compile Include="Providers\Structure\ConversationDetailsProviderFactory.cs" />
     <Compile Include="Providers\Structure\FileConversationDetailsProvider.cs" />
-    <Compile Include="Quizzing\AnswerAQuizControl.xaml.cs">
-      <DependentUpon>AnswerAQuizControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\AuthorAQuizControls.xaml.cs">
-      <DependentUpon>AuthorAQuizControls.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\AuthorAQuizInstructions.xaml.cs">
-      <DependentUpon>AuthorAQuizInstructions.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\AuthorAQuizSampleAnswers.xaml.cs">
-      <DependentUpon>AuthorAQuizSampleAnswers.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\QuizAnswers.xaml.cs">
-      <DependentUpon>QuizAnswers.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Tabs\Analytics.xaml.cs">
       <DependentUpon>Analytics.xaml</DependentUpon>
     </Compile>
@@ -628,26 +583,6 @@
     </Compile>
     <Compile Include="Utils\BackDoor.cs" />
     <Compile Include="Utils\Crypto.cs" />
-    <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">
-      <DependentUpon>AnswerAQuiz.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\AuthorAQuiz.xaml.cs">
-      <DependentUpon>AuthorAQuiz.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\BarGraph.xaml.cs">
-      <DependentUpon>BarGraph.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\PollIcon.xaml.cs">
-      <DependentUpon>PollIcon.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\PollListing.xaml.cs">
-      <DependentUpon>PollListing.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\PollProvider.cs" />
-    <Compile Include="Quizzing\QuizControls.xaml.cs">
-      <DependentUpon>QuizControls.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\QuizParser.cs" />
     <Compile Include="Quizzing\RatingControls.xaml.cs">
       <DependentUpon>RatingControls.xaml</DependentUpon>
     </Compile>

@@ -16,9 +16,7 @@ namespace SandRibbon.Utils.Connection
         public Dictionary<string, TargettedVideo> videos = new Dictionary<string, TargettedVideo>();
         public Dictionary<string, TargettedAutoShape> autoshapes = new Dictionary<string, TargettedAutoShape>();
         public List<TargettedStroke> ink = new List<TargettedStroke>();
-        public List<QuizStatusDetails> quizStatus = new List<QuizStatusDetails>();
-        public List<QuizDetails> quizs = new List<QuizDetails>();
-        public List<QuizAnswer> quizAnswers = new List<QuizAnswer>();
+        public List<QuizQuestion> quizs = new List<QuizQuestion>();
         public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
@@ -48,7 +46,6 @@ namespace SandRibbon.Utils.Connection
             {
                 returnParser.ink.AddRange(parser.ink);
                 returnParser.quizs.AddRange(parser.quizs);
-                returnParser.quizStatus.AddRange(parser.quizStatus);
                 foreach (var kv in parser.text)
                     returnParser.text.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.images)
@@ -74,8 +71,6 @@ namespace SandRibbon.Utils.Connection
                 Commands.ReceiveTextBox.Execute(box);
             foreach(var quiz in quizs)
                 Commands.ReceiveQuiz.Execute(quiz);
-            foreach(var status in quizStatus)
-                Commands.ReceiveQuizStatus.Execute(status);
             foreach (var window in liveWindows.Values)
                 Commands.ReceiveLiveWindow.Execute(window);
             foreach (var video in videos.Values)
@@ -126,11 +121,7 @@ namespace SandRibbon.Utils.Connection
             ink.Add(stroke);
         }
 
-        public override void actOnQuizAnswerReceived(QuizAnswer answer)
-        {
-            quizAnswers.Add(answer);
-        }
-        public override void actOnQuizReceived(QuizDetails quizDetails)
+        public override void actOnQuizReceived(QuizQuestion quizDetails)
         {
             quizs.Add(quizDetails);
         }
@@ -152,10 +143,6 @@ namespace SandRibbon.Utils.Connection
         public override void actOnDirtyLiveWindowReceived(TargettedDirtyElement element)
         {
             liveWindows.Remove(element.identifier);
-        }
-        public override void actOnQuizStatus(QuizStatusDetails status)
-        {
-            quizStatus.Add(status);
         }
         public override void actOnVideoReceived(TargettedVideo video)
         {

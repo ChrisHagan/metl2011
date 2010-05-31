@@ -105,10 +105,7 @@ namespace SandRibbon
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(_obj => { }, mustBeLoggedIn));
             Commands.SetTutorialVisibility.RegisterCommand(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
             Logger.Log("Started MeTL");
-            Commands.CreateQuiz.RegisterCommand(new DelegateCommand<object>(CreateQuiz, canCreateQuiz));
-            Commands.CreateQuiz.RegisterCommand(new DelegateCommand<object>(obj => { }, amAuthor));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(_obj => { }, mustBeLoggedIn));
-            Commands.MoveToQuiz.RegisterCommand(new DelegateCommand<QuizDetails>(moveToQuiz));
             Commands.Relogin.RegisterCommand(new DelegateCommand<object>(Relogin));
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(_o => { }, mustBeInConversation));
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(_arg => Commands.MirrorPresentationSpace.Execute(this)));
@@ -313,7 +310,6 @@ namespace SandRibbon
             ProviderMonitor.HealthCheck(() =>
             {
                 Commands.LoggedIn.Execute(userInformation.credentials.name);
-                removeQuiz();
                 details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
                 applyPermissions(details.Permissions);
                 Commands.UpdateConversationDetails.Execute(details);
@@ -328,11 +324,9 @@ namespace SandRibbon
         }
         private void ClearDynamicContent(object obj)
         {
-            removeQuiz();
         }
         private void MoveTo(int slide)
         {
-            removeQuiz();
             if (userInformation.policy.isAuthor && userInformation.policy.isSynced)
                 Commands.SendSyncMove.Execute(slide);
             var moveTo = (Action)delegate
@@ -350,18 +344,8 @@ namespace SandRibbon
                 moveTo();
             CommandManager.InvalidateRequerySuggested();
         }
-        private void removeQuiz()
-        {
-            if (dynamicContent.Children.Count > 0)
-            {
-                dynamicContent.Children.Clear();
-                Commands.RequerySuggested(Commands.CreateQuiz);
-            }
-        }
-        private bool canCreateQuiz(object arg)
-        {
-            return dynamicContent.Children.Count == 0;
-        }
+
+
         private void Relogin(object obj)
         {
             lock (reconnectionLock)
@@ -397,24 +381,10 @@ namespace SandRibbon
             ProgressDisplay.Children.Add(sp);
             InputBlocker.Visibility = Visibility.Visible;
         }
-        private void CreateQuiz(object numberOfQuestions)
-        {//Insert the new slide after this.  Query the resultant conversation for the new slide's id.  Use that id as the quiz location.
-            var slides = ConversationDetailsProviderFactory.Provider.AppendSlideAfter(
-                userInformation.location.currentSlide,
-                userInformation.location.activeConversation,
-                Slide.TYPE.POLL).Slides;
-            var quizSlideId = slides[slides.Single(s => s.id == userInformation.location.currentSlide).index + 1].id;
-            dynamicContent.Children.Add(new AuthorAQuiz(userInformation, quizSlideId).SetQuestionCount((int)numberOfQuestions));
-        }
-        private void moveToQuiz(QuizDetails quiz)
+        private void moveToQuiz(QuizQuestion quiz)
         {
-            dynamicContent.Children.Clear();
-            dynamicContent.Children.Add(new AnswerAQuiz(userInformation, quiz).SetQuestionCount(quiz.optionCount));
         }
-        private bool amAuthor(object _obj)
-        {
-            return userInformation.policy.isAuthor;
-        }
+
         private void ShowTutorial()
         {
             TutorialLayer.Visibility = Visibility.Visible;

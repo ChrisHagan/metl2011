@@ -178,14 +178,13 @@ namespace SandRibbon.Utils.Connection
             Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
             Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoShape));
             Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoShape));
-            Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizDetails>(SendQuiz));
+            Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
+            Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>((_arg) => new Printer().PrintPrivate(location.activeConversation, credentials.name)));
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>((_arg) => new Printer().PrintHandout(location.activeConversation, credentials.name)));
             Commands.SendChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendChat));
             Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
             Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
-            Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(sendQuizAnswer));
-            Commands.SendQuizStatus.RegisterCommand(new DelegateCommand<QuizStatusDetails>(sendQuizStatus));
             Commands.SendWormMove.RegisterCommand(new DelegateCommand<WormMove>(SendWormMove));
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
             Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
@@ -195,6 +194,7 @@ namespace SandRibbon.Utils.Connection
             Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
         }
+
         private void SendNewBubble(TargettedBubbleContext selection){
             stanza(new MeTLStanzas.Bubble(selection));
         }
@@ -444,14 +444,6 @@ namespace SandRibbon.Utils.Connection
         {
             stanza(new MeTLStanzas.DirtyImage(element));
         }
-        private void sendQuizAnswer(QuizAnswer answer)
-        {
-            stanza(answer.quizParent.ToString(), new MeTLStanzas.Answer(answer));
-        }
-        private void sendQuizStatus(QuizStatusDetails status)
-        {
-            stanza(status.targetQuiz.ToString(), new MeTLStanzas.QuizStatus(status));
-        }
         public bool IsConnected()
         {
             return conn != null && conn.Authenticated;
@@ -514,10 +506,16 @@ namespace SandRibbon.Utils.Connection
         {
             stanza(box.slide.ToString(), new MeTLStanzas.TextBox(box));
         }
-        public void SendQuiz(QuizDetails parameters)
+        public void SendQuiz(QuizQuestion parameters)
         {
             var quiz = new MeTLStanzas.Quiz(parameters);
-            stanza(parameters.returnSlide.ToString(), quiz);
+            stanza(Globals.slide.ToString(), quiz);
+        }
+
+        private void SendQuizAnswer(QuizAnswer parameters)
+        {
+            var quiz = new MeTLStanzas.QuizResponse(parameters);
+            stanza(Globals.location.activeConversation, quiz);
         }
         public void SendDirtyConversationDetails(string jid)
         {
@@ -666,14 +664,12 @@ namespace SandRibbon.Utils.Connection
                     actOnAutoShapeReceived(autoshape.autoshape);
                 foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
                     actOnQuizReceived(quiz.parameters);
+                foreach (var quizAnswer in message.SelectElements<MeTLStanzas.QuizResponse>(true))
+                    actOnQuizAnswerReceived(quizAnswer.parameters);
                 foreach (var liveWindow in message.SelectElements<MeTLStanzas.LiveWindow>(true))
                     actOnLiveWindowReceived(liveWindow.parameters);
                 foreach (var dirtyLiveWindow in message.SelectElements<MeTLStanzas.DirtyLiveWindow>(true))
                     actOnDirtyLiveWindowReceived(dirtyLiveWindow.element);
-                foreach (var quizAnswer in message.SelectElements<MeTLStanzas.Answer>(true))
-                    actOnQuizAnswerReceived(quizAnswer.quizAnswer);
-                foreach (var quizStatus in message.SelectElements<MeTLStanzas.QuizStatus>(true))
-                    actOnQuizStatus(quizStatus.status);
                 foreach (var dirtyText in message.SelectElements<MeTLStanzas.DirtyText>(true))
                     actOnDirtyTextReceived(dirtyText);
                 foreach (var dirtyInk in message.SelectElements<MeTLStanzas.DirtyInk>(true))
@@ -694,6 +690,7 @@ namespace SandRibbon.Utils.Connection
             if (message.SelectSingleElement("body") != null)
                 ReceiveCommand(message.SelectSingleElement("body").InnerXml);
         }
+
         public virtual void actOnVideoReceived(TargettedVideo video) 
         {
             Commands.ReceiveVideo.Execute(video);
@@ -702,17 +699,9 @@ namespace SandRibbon.Utils.Connection
         {
             Commands.ReceiveNewBubble.Execute(bubble);
         }
-        public virtual void actOnQuizStatus(QuizStatusDetails status)
-        {
-            Commands.ReceiveQuizStatus.Execute(status);
-        }
         public virtual void actOnDirtyAutoshapeReceived(MeTLStanzas.DirtyAutoshape dirtyAutoShape)
         {
             Commands.ReceiveDirtyAutoShape.Execute(dirtyAutoShape.element);
-        }
-        public virtual void actOnQuizAnswerReceived(QuizAnswer answer)
-        {
-            Commands.ReceiveQuizAnswer.Execute(answer);
         }
         public virtual void actOnDirtyImageReceived(MeTLStanzas.DirtyImage dirtyImage)
         {
@@ -734,9 +723,13 @@ namespace SandRibbon.Utils.Connection
         {
             Commands.ReceiveAutoShape.Execute(autoshape);
         }
-        public virtual void actOnQuizReceived(QuizDetails quiz)
+        public virtual void actOnQuizReceived(QuizQuestion quiz)
         {
             Commands.ReceiveQuiz.Execute(quiz);
+        }
+        private void actOnQuizAnswerReceived(QuizAnswer answer)
+        {
+            Commands.ReceiveQuizAnswer.Execute(answer);
         }
         public virtual void actOnStrokeReceived(TargettedStroke stroke)
         {

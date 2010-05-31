@@ -329,15 +329,21 @@ namespace SandRibbon.Components.Canvas
         }
         public void SendTargettedStroke(Stroke stroke, string thisPrivacy)
         {
-            Commands.ActualReportStrokeAttributes.Execute(stroke.DrawingAttributes);
-            Commands.SendStroke.Execute(new TargettedStroke
+            try
             {
-                stroke = stroke,
-                target = target,
-                author = Globals.me,
-                privacy = thisPrivacy,
-                slide = Globals.slide
-            });
+                Commands.ActualReportStrokeAttributes.Execute(stroke.DrawingAttributes);
+                Commands.SendStroke.Execute(new TargettedStroke
+                                                {
+                                                    stroke = stroke,
+                                                    target = target,
+                                                    author = Globals.me,
+                                                    privacy = thisPrivacy,
+                                                    slide = Globals.slide
+                                                });
+            }
+            catch(NotSetException e)
+            {
+            }
         }
         public void FlushStrokes()
         {

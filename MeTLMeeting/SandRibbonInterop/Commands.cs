@@ -72,11 +72,6 @@ namespace SandRibbon
         #region Quizzing
         public static CompositeCommand SendWormMove = new CompositeCommand(); 
         public static CompositeCommand ReceiveWormMove = new CompositeCommand(); 
-        public static CompositeCommand SendQuizStatus = new CompositeCommand(); 
-        public static CompositeCommand SetCurrentQuiz = new CompositeCommand(); 
-        public static CompositeCommand ReceiveQuizStatus = new CompositeCommand(); 
-        public static CompositeCommand SetQuizOptions = new CompositeCommand();
-        public static CompositeCommand CreateQuiz = new CompositeCommand();
         public static CompositeCommand ConvertPresentationSpaceToQuiz = new CompositeCommand();
         public static CompositeCommand SendQuiz = new CompositeCommand();
         public static CompositeCommand SendQuizAnswer = new CompositeCommand();
@@ -106,6 +101,7 @@ namespace SandRibbon
         public static CompositeCommand ReceiveDirtyStrokes = new CompositeCommand();
         public static CompositeCommand SetPrivacy = new CompositeCommand();
         public static RoutedCommand Flush = new RoutedCommand();
+        public static RoutedCommand CreateQuizStructure = new RoutedCommand();
         public static RoutedCommand ZoomIn = new RoutedCommand();
         public static RoutedCommand ZoomOut = new RoutedCommand();
         #endregion
@@ -171,7 +167,6 @@ namespace SandRibbon
         #region ConversationLevel
         public static CompositeCommand SyncedMoveRequested = new CompositeCommand();
         public static CompositeCommand SendSyncMove = new CompositeCommand();
-        public static CompositeCommand MoveToQuiz = new CompositeCommand();
         public static CompositeCommand MoveTo = new CompositeCommand();
         public static CompositeCommand SneakInto = new CompositeCommand();
         public static CompositeCommand SneakOutOf = new CompositeCommand();

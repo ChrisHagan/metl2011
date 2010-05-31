@@ -8,7 +8,6 @@
     xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl"
     xmlns:chrome="clr-namespace:SandRibbon.Chrome"
     xmlns:tabs="clr-namespace:SandRibbon.Tabs"
-    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     AllowDrop="True"
