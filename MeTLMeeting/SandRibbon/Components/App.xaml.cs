@@ -15,6 +15,9 @@ namespace SandRibbon
 {
     public partial class App : Application
     {
+        static App() {
+            Console.WriteLine("Start ", DateTime.Now.ToString());
+        }
         protected override void OnStartup(StartupEventArgs e)
         {
             //This is to ensure that all the static constructors are called.
@@ -40,6 +43,7 @@ namespace SandRibbon
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyElement();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyAutoshape();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyLiveWindow();
+                Console.WriteLine("End ", DateTime.Now.ToString());
             }
             catch (Exception ex)
             {
