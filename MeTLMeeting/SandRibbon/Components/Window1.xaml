@@ -8,7 +8,6 @@
     xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl"
     xmlns:chrome="clr-namespace:SandRibbon.Chrome"
     xmlns:tabs="clr-namespace:SandRibbon.Tabs"
-    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:widgets="clr-namespace:SandRibbon.Widgets"
@@ -76,7 +75,6 @@
                         <Canvas Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">
                             <StackPanel x:Name="ProgressDisplay" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Canvas>
-                        <components:ProviderMonitor x:Name="monitor" Visibility="Collapsed" />
                     </Grid>
                     <components:ScrollBar x:Name="adornerScroll"/>
                     <AdornerDecorator>
@@ -87,12 +85,12 @@
                     </AdornerDecorator>
                 </Grid>
                 <GridSplitter x:Name="notesGridSplitter"
-              Grid.Column="3"
-              HorizontalAlignment="Center"
-              VerticalAlignment="Stretch"
-              ShowsPreview="True"
-              Width="10"
-              Visibility="{Binding ElementName=drawer, Path=Visibility}" />
+                  Grid.Column="3"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Stretch"
+                  ShowsPreview="True"
+                  Width="10"
+                  Visibility="{Binding ElementName=drawer, Path=Visibility}" />
                 <components:Drawer Grid.Column="4"  Width="auto" x:Name="drawer" Visibility="Collapsed"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="auto"/>
                 <components:LoadProgress x:Name="progress" Visibility="Collapsed" />
             </Grid>

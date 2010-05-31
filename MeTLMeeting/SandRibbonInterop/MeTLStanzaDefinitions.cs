@@ -734,87 +734,87 @@ namespace SandRibbonInterop.MeTLStanzas
                 }
             }
         }
-        public class QuizStatus : Element
+        public class QuizOption: Element
         {
-            static QuizStatus()
+            static QuizOption()
             {
-                agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(QuizStatus));
+                agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(QuizOption));
             }
-            public static string TAG = "quizStatus";
-            public static readonly string statusTag = "currentStatus";
-            public static readonly string parentTag = "parentTag";
-            public QuizStatus()
+            public static string TAG = "quizOption";
+            public static readonly string NAME = "name";
+            public static readonly string TEXT = "text";
+            public static readonly string CORRECT = "correct";
+            public static readonly string COLOR= "color";
+
+            public QuizOption()
             {
                 this.Namespace = METL_NS;
                 this.TagName = TAG;
             }
-            public QuizStatus(QuizStatusDetails status)
-                : this()
+            public QuizOption(Option parameters):this()
             {
-                this.status = status;
-                SetTag(privacyTag, "public");
+                this.parameters = parameters;
             }
-            public QuizStatusDetails status
+            public Option parameters
             {
                 get
                 {
-                    return new QuizStatusDetails
-                    {
-                        answerer = GetTag(answererTag),
-                        status = GetTag(statusTag),
-                        targetQuiz = Int32.Parse(GetTag(targetTag)),
-                        quizParent = Int32.Parse(GetTag(parentTag))
+                    return new Option
+                               {
+                                   name = GetTag(NAME),
+                                   correct = GetTag(CORRECT).ToString().ToLower() == "true",
+                                   optionText = GetTag(TEXT),
+                                   color = Ink.stringToColor(GetTag(COLOR))
 
-                    };
+                               };
+
                 }
                 set
                 {
-                    SetTag(statusTag, value.status);
-                    SetTag(answererTag, value.answerer);
-                    SetTag(targetTag, value.targetQuiz);
-                    SetTag(parentTag, value.quizParent);
+                    SetTag(NAME, value.name);
+                    SetTag(TEXT, value.optionText);
+                    SetTag(CORRECT, value.correct.ToString());
+                    SetTag(COLOR, Ink.colorToString(value.color));
                 }
             }
         }
-        public class Answer : Element
+        public class QuizResponse: Element
         {
-            static Answer()
+            static QuizResponse()
             {
-                agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Answer));
+                agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof (QuizResponse));
             }
-            public static string TAG = "answer";
-            public static readonly string URL = "URL";
-            public static readonly string TARGETQUIZ = "targetQuiz";
-            public static readonly string ANSWER = "targetAnswer";
-            public static readonly string ANSWERER_TAG = "targetAnswerer";
-            public Answer()
+
+            public static string TAG = "quizResponse";
+            public static string ANSWER = "answer";
+            public static string ANSWERER = "answerer";
+            public static string ID = "id";
+            public QuizResponse()
             {
                 this.Namespace = METL_NS;
                 this.TagName = TAG;
             }
-            public Answer(QuizAnswer answer)
-                : this()
+            public QuizResponse(QuizAnswer parameters):this()
             {
-                this.quizAnswer = answer;
+                this.parameters = parameters;
             }
-            public QuizAnswer quizAnswer
+
+            public QuizAnswer parameters
             {
                 get
                 {
                     return new QuizAnswer
                                {
                                    answer = GetTag(ANSWER),
-                                   answerURL = GetTag(URL),
-                                   targetQuiz = Int32.Parse(GetTag(TARGETQUIZ)),
-                                   answerer = GetTag(ANSWERER_TAG)
+                                   answerer = GetTag(ANSWERER),
+                                   id = long.Parse(GetTag(ID))
                                };
                 }
                 set
                 {
-                    SetTag(URL, value.answerURL);
                     SetTag(ANSWER, value.answer);
-                    SetTag(ANSWERER_TAG, value.answerer);
-                    SetTag(TARGETQUIZ, value.targetQuiz.ToString());
+                    SetTag(ANSWERER, value.answerer);
+                    SetTag(ID, value.id.ToString());
                 }
             }
         }
@@ -824,46 +824,51 @@ namespace SandRibbonInterop.MeTLStanzas
             {
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Quiz));
             }
-            public static string TAG = "poll";
-            public static readonly string DESTINATION = "destination";
-            public static readonly string OPTIONCOUNT = "options";
-            public static readonly string TARGET = "target";
-            public static readonly string ORIGIN = "origin";
+            public static string TAG = "quiz";
+            public static readonly string TITLE = "title";
+            public static readonly string QUESTION = "question";
             public static readonly string AUTHOR = "author";
-            public static readonly string URL = "URL";
+            public static readonly string ID = "id";
             public Quiz()
             {
                 this.Namespace = METL_NS;
                 this.TagName = TAG;
             }
-            public Quiz(QuizDetails parameters)
+            public Quiz(QuizQuestion parameters)
                 : this()
             {
                 this.parameters = parameters;
             }
-            public QuizDetails parameters
+            public QuizQuestion parameters
             {
                 get
                 {
-                    return new QuizDetails
+                    var quiz = new QuizQuestion
                                {
-                                   returnSlide = Int32.Parse(GetTag(ORIGIN)),
-                                   targetSlide = Int32.Parse(GetTag(DESTINATION)),
-                                   target = GetTag(targetTag),
-                                   optionCount = Int32.Parse(GetTag(OPTIONCOUNT)),
+                                   title = GetTag(TITLE),
+                                   question = GetTag(QUESTION),
                                    author = GetTag(AUTHOR),
-                                   quizPath = GetTag(URL)
-
+                                   id = long.Parse(GetTag(ID))
                                };
+                    foreach(var node in ChildNodes)
+                    {
+                        if(node.GetType() == typeof(QuizOption))
+                            quiz.options.Add(((QuizOption)node).parameters);
+                    }
+                    return quiz;
                 }
                 set
                 {
-                    SetTag(DESTINATION, value.targetSlide.ToString());
-                    SetTag(ORIGIN, value.returnSlide.ToString());
-                    SetTag(OPTIONCOUNT, value.optionCount.ToString());
-                    SetTag(targetTag, value.target.ToString());
-                    SetTag(AUTHOR, value.author.ToString());
-                    SetTag(URL, value.quizPath);
+         
+                    SetTag(TITLE, value.title);
+                    SetTag(QUESTION, value.question);
+                    SetTag(AUTHOR, value.author);
+                    SetTag(ID, value.id.ToString());
+                    foreach(var option in value.options)
+                    {
+                        var optionElement= new QuizOption(option);
+                        AddChild(optionElement);
+                    }
                 }
             }
         }

@@ -36,7 +36,6 @@ namespace SandRibbon.Components
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
-            Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<QuizDetails>(receiveQuiz));
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<Window1>( MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.CreateThumbnail.RegisterCommand(new DelegateCommand<int>(CreateThumbnail));
@@ -173,8 +172,6 @@ namespace SandRibbon.Components
             stack.images.ReceiveImages(parser.images.Values);
             foreach (var text in parser.text.Values)
                 stack.text.doText(text);
-            foreach(var quizDetails in parser.quizs)
-                receiveQuiz(quizDetails);
             foreach (var video in parser.videos)
                 stack.images.AddVideo(((TargettedVideo)video.Value).video);
             foreach(var bubble in parser.bubbleList)
@@ -380,27 +377,9 @@ namespace SandRibbon.Components
                 return new byte[0];
             }
         }
-        private void receiveQuiz(QuizDetails details)
+        private void receiveQuiz(QuizQuestion details)
         {
-            var doReceive = (Action) delegate
-            {
-                var adorner = AdornerLayer.GetAdornerLayer(this);
-                if (adorner != null)
-                {
-                    var adorners = adorner.GetAdorners(this);
-                    if(adorners != null)
-                        foreach (var a in adorners)
-                            if (a is PollMarker && ((PollMarker)a).target == details.targetSlide)
-                                return;
-                    var x = 30 * (adorners == null ? 1 : adorners.Length);
-                    var y = 5 * (adorners == null ? 1 : adorners.Length);
-                    adorner.Add(new PollMarker(x, y, this, details));
-                }
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doReceive);
-            else
-                doReceive();
+          
         }
         private System.Windows.Shapes.Path privacyAdorner = new System.Windows.Shapes.Path();
         public Brush privacyOverlay;
@@ -465,15 +444,7 @@ namespace SandRibbon.Components
                 height);
             var hostedFileName = ResourceUploader.uploadResource(Globals.me, path);
             var location = Globals.location;
-            Commands.SendQuiz.Execute(new QuizDetails
-            {
-                author = Globals.me,
-                optionCount = options,
-                quizPath = hostedFileName,
-                returnSlide = location.currentSlide,
-                targetSlide = location.currentSlide,
-                target = "presentationSpace"
-            });
+
         }
         protected override AutomationPeer OnCreateAutomationPeer()
         {

@@ -176,7 +176,6 @@ namespace SandRibbon.Components
         }
         private void handleConversationDialogueCompletion()
         {
-            Commands.UploadPowerpoint.Execute(new PowerpointSpec());
             switch (dialogMode)
             {
                 case ConversationConfigurationMode.IMPORT:

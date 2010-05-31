@@ -92,15 +92,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="IronRuby, Version=1.0.0.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\IronRuby.dll</HintPath>
+    <Reference Include="Microsoft.Office.Interop.PowerPoint, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <Private>True</Private>
     </Reference>
-    <Reference Include="IronRuby.Libraries, Version=1.0.0.2, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\IronRuby.Libraries.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Office.Interop.PowerPoint, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" />
     <Reference Include="Microsoft.Practices.Composite, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Microsoft.Practices.Composite.dll</HintPath>
@@ -108,14 +102,6 @@
     <Reference Include="Microsoft.Practices.Composite.Presentation, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Microsoft.Practices.Composite.Presentation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Scripting, Version=1.0.0.5001, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\Microsoft.Scripting.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Scripting.ExtensionAttribute, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\Microsoft.Scripting.ExtensionAttribute.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Vbe.Interop, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" />
     <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -212,6 +198,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Quizzing\AnswerAQuiz.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\CreateAQuiz.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Tabs\Groups\PenColors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -237,10 +231,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Projector.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\ProviderMonitor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -352,54 +342,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Quizzing\AnswerAQuiz.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\AnswerAQuizControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\AuthorAQuiz.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\AuthorAQuizControls.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\AuthorAQuizInstructions.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\AuthorAQuizSampleAnswers.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\BarGraph.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\PollIcon.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Quizzing\PollListing.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\QuizAnswers.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\QuizControls.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Quizzing\RatingControls.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Quizzing\Worm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -489,7 +431,14 @@
       <DependentUpon>Pedagogicometer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
+    <Compile Include="Providers\ProviderMonitor.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
+    <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">
+      <DependentUpon>AnswerAQuiz.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\CreateAQuiz.xaml.cs">
+      <DependentUpon>CreateAQuiz.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\Groups\PenColors.xaml.cs" />
     <Compile Include="Components\ConversationConfigurationDialog.xaml.cs">
       <DependentUpon>ConversationConfigurationDialog.xaml</DependentUpon>
@@ -508,9 +457,6 @@
     </Compile>
     <Compile Include="Components\Projector.xaml.cs">
       <DependentUpon>Projector.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\ProviderMonitor.xaml.cs">
-      <DependentUpon>ProviderMonitor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\RubyRepl.xaml.cs" />
     <Compile Include="Components\Sandpit\BoardManager.cs" />
@@ -587,21 +533,6 @@
     <Compile Include="Providers\RecentConversationProvider.cs" />
     <Compile Include="Providers\Structure\ConversationDetailsProviderFactory.cs" />
     <Compile Include="Providers\Structure\FileConversationDetailsProvider.cs" />
-    <Compile Include="Quizzing\AnswerAQuizControl.xaml.cs">
-      <DependentUpon>AnswerAQuizControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\AuthorAQuizControls.xaml.cs">
-      <DependentUpon>AuthorAQuizControls.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\AuthorAQuizInstructions.xaml.cs">
-      <DependentUpon>AuthorAQuizInstructions.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\AuthorAQuizSampleAnswers.xaml.cs">
-      <DependentUpon>AuthorAQuizSampleAnswers.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\QuizAnswers.xaml.cs">
-      <DependentUpon>QuizAnswers.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Tabs\Analytics.xaml.cs">
       <DependentUpon>Analytics.xaml</DependentUpon>
     </Compile>
@@ -628,29 +559,6 @@
     </Compile>
     <Compile Include="Utils\BackDoor.cs" />
     <Compile Include="Utils\Crypto.cs" />
-    <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">
-      <DependentUpon>AnswerAQuiz.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\AuthorAQuiz.xaml.cs">
-      <DependentUpon>AuthorAQuiz.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\BarGraph.xaml.cs">
-      <DependentUpon>BarGraph.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\PollIcon.xaml.cs">
-      <DependentUpon>PollIcon.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\PollListing.xaml.cs">
-      <DependentUpon>PollListing.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\PollProvider.cs" />
-    <Compile Include="Quizzing\QuizControls.xaml.cs">
-      <DependentUpon>QuizControls.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\QuizParser.cs" />
-    <Compile Include="Quizzing\RatingControls.xaml.cs">
-      <DependentUpon>RatingControls.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Quizzing\Worm.xaml.cs">
       <DependentUpon>Worm.xaml</DependentUpon>
     </Compile>
@@ -752,7 +660,6 @@
     <Resource Include="Resources\scratchpadplaceholderyellownotepad.png" />
     <Resource Include="Resources\MagnifyingGlassShiny.png" />
     <Resource Include="Resources\AnonHead.png" />
-    <Resource Include="Resources\homeloo_gear_clock_2.jpg" />
     <Resource Include="Resources\SelectShiny.png" />
     <Resource Include="Resources\ShinyRefresh.png" />
     <Resource Include="Resources\bold.png" />
@@ -799,6 +706,9 @@
     <Content Include="Resources\AddVideo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <SplashScreen Include="Resources\BenHead.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </SplashScreen>
     <Content Include="Resources\Highlighter.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -16,7 +16,6 @@
         </DrawingBrush>
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
-        <quiz:RatingControls />
         <Canvas Width="200" x:Name="trail" Background="{StaticResource grid}" /> 
     </StackPanel>
 </UserControl>

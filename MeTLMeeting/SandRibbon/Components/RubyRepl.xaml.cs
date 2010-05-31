@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Org.TechA.Wpf.Controls;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Components
 {
@@ -28,7 +29,7 @@ namespace SandRibbon.Components
         }
         private void launchRepl(object sender, RoutedEventArgs e)
         {
-            new TiasWindow().Show();
+            MessageBox.Show(Logger.log);
         }
     }
 }

@@ -37,6 +37,7 @@ namespace SandRibbon.Providers
         }
         public static void RestorePreviousSettings()
         {
+            App.Now("Restoring settings");
             ensureWorkspaceDirectoryExists();
             var savedWorkspace = XElement.Load(WORKSPACE_SAVE_FILE);
             foreach (var element in savedWorkspace.Descendants(WORKSPACE_PREFERENCE_ELEMENT))
@@ -71,6 +72,7 @@ namespace SandRibbon.Providers
                     break;
                 }
             }
+            App.Now("Finished restoring settings");
         }
         public static void SaveCurrentSettings() { 
             ensureWorkspaceDirectoryExists();
@@ -90,22 +92,29 @@ namespace SandRibbon.Providers
                 }
                 commandState.RemoveAll();
                 commandState.SetAttributeValue(WORKSPACE_COMMAND_ATTRIBUTE, commandName);
-                switch (commandName) { 
-                    case "SetPedagogyLevel":
-                        commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT, Globals.pedagogy.code));
-                    break;
-                    case "SetIdentity":
-                        commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT, 
-                            new XAttribute("authentication", string.Format(@"{0}:{1}", Globals.credentials.name, Globals.credentials.password))));
-                    break;
-                    case "JoinConversation":
-                        commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
-                            new XAttribute("conversation", Globals.conversationDetails.Jid)));
-                    break;
-                    case "MoveTo":
-                        commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
-                            new XAttribute("slide", Globals.slide)));
-                    break;
+                try
+                {
+                    switch (commandName)
+                    {
+                        case "SetPedagogyLevel":
+                            commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT, Globals.pedagogy.code));
+                            break;
+                        case "SetIdentity":
+                            commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
+                                new XAttribute("authentication", string.Format(@"{0}:{1}", Globals.credentials.name, Globals.credentials.password))));
+                            break;
+                        case "JoinConversation":
+                            commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
+                                new XAttribute("conversation", Globals.conversationDetails.Jid)));
+                            break;
+                        case "MoveTo":
+                            commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
+                                new XAttribute("slide", Globals.slide)));
+                            break;
+                    }
+                }
+                catch (NotSetException) {
+                    commandState.Remove();
                 }
             }
             doc.Save(WORKSPACE_SAVE_FILE);

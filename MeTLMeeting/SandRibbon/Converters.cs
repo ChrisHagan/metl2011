@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using SandRibbon.Providers;
+using SandRibbonInterop;
 using SandRibbonObjects;
 
 namespace SandRibbon
@@ -24,6 +26,7 @@ namespace SandRibbon
         public static DivideConverter divide = new DivideConverter();
         public static RandomConverter random = new RandomConverter();
         public static StringToIntConverter parseInt = new StringToIntConverter();
+        public static QuizPositionConverter quizPositionConverter = new QuizPositionConverter();
         public static ConversationDateConverter DateTimeConverter = new ConversationDateConverter();
     }
     public class RandomConverter : IValueConverter
@@ -51,6 +54,21 @@ namespace SandRibbon
         {
             return value;
         }
+    }
+    public class QuizPositionConverter:IMultiValueConverter 
+    {
+
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var list = ((ObservableCollection<QuizQuestion>) values[1]);
+            return string.Format("Quiz: {0}", list.IndexOf((QuizQuestion) values[0]) + 1);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
     }
     public class ConversationNameExtractor : IValueConverter
     {

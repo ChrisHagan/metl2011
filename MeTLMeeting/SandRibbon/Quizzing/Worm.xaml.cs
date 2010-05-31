@@ -35,7 +35,6 @@ namespace SandRibbon.Quizzing
             Commands.ReceiveTextBox.RegisterCommand(new DelegateCommand<object>(receivedMessage));
             Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<object>(receivedMessage));
             Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<object>(receivedMessage));
-            Commands.ReceiveQuizStatus.RegisterCommand(new DelegateCommand<object>(receivedMessage));
             Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<object>(receivedMessage));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<object>(receivedMessage));
             Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<object>(receivedMessage));

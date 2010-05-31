@@ -15,13 +15,37 @@ namespace SandRibbon
 {
     public partial class App : Application
     {
+        public static void Now(string title){
+            var now = DateTime.Now;
+            Logger.Log(string.Format("{2} {0}:{1}", now, now.Millisecond, title));
+        }
         static App() {
-            Console.WriteLine("Start ", DateTime.Now.ToString());
+            Now("Static App start");
         }
         protected override void OnStartup(StartupEventArgs e)
         {
             //This is to ensure that all the static constructors are called.
             base.OnStartup(e);
+            new Worm();
+            new Printer();
+            new CommandParameterProvider();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Ink();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Quiz();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Image();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Video();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Bubble();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.TextBox();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyInk();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyText();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.AutoShape();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyImage();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.LiveWindow();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.QuizOption();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.QuizResponse();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyElement();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyAutoshape();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyLiveWindow();
+            App.Now("Finished static constructor");
             try
             {
                 new Worm();
@@ -29,16 +53,16 @@ namespace SandRibbon
                 new CommandParameterProvider();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Ink();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Quiz();
+                new SandRibbonInterop.MeTLStanzas.MeTLStanzas.QuizResponse();
+                new SandRibbonInterop.MeTLStanzas.MeTLStanzas.QuizOption();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Image();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Video();
-                new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Answer();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Bubble();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.TextBox();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyInk();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyText();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.AutoShape();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyImage();
-                new SandRibbonInterop.MeTLStanzas.MeTLStanzas.QuizStatus();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.LiveWindow();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyElement();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyAutoshape();

@@ -8,9 +8,9 @@ namespace SandRibbon.Utils
 {
     public class Crypto
     {
+        private static readonly byte[] Key = Encoding.UTF8.GetBytes("01234567");
+        private static readonly byte[] IV = Encoding.UTF8.GetBytes("01234567");
         private static Encoding encoding = Encoding.UTF8;
-        private static byte[] Key = Encoding.UTF8.GetBytes("01234567");
-        private static byte[] IV = Encoding.UTF8.GetBytes("01234567");
             
         public static string decrypt(string input)
         {
@@ -42,8 +42,6 @@ namespace SandRibbon.Utils
         {
             if (String.IsNullOrEmpty(input))
                 return "";
-            var Key = Encoding.UTF8.GetBytes("01234567");
-            var IV = Encoding.UTF8.GetBytes("01234567");
             string CountPadding = ((input.Length).ToString()).PadLeft(8);
             var encryptedBytes = encryptToByteArray(input, Encoding.UTF8, Key, IV);
             var paddingBytes = encryptToByteArray(CountPadding, Encoding.UTF8, Key, IV);

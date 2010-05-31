@@ -45,7 +45,6 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.DataContext = this;
-            servers.ItemsSource = getServers();
             Loaded += loaded;
             Commands.AddWindowEffect.Execute(null);
             Version = getMetlVersion();
@@ -57,7 +56,14 @@ namespace SandRibbon.Components
                     Commands.ShowConversationSearchBox.Execute(null);
                     this.Visibility = Visibility.Collapsed;
                 }));
+            Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
         }
+        private void ServersDown(IEnumerable<ServerStatus> servers) {
+            Dispatcher.Invoke((Action)delegate
+            {
+                this.servers.ItemsSource = servers;
+            });
+        } 
         private static string getMetlVersion()
         {
             var doc = XDocument.Load("MeTL.exe.manifest");
@@ -121,7 +127,7 @@ namespace SandRibbon.Components
         }
         private void checkAuthenticationAttemptIsPlausible(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = username != null && username.Text.Length > 0 && password != null && password.Password.Length > 0 && getServers().All(s => s.ok);
+            e.CanExecute = username != null && username.Text.Length > 0 && password != null && password.Password.Length > 0;
         }
         private void attemptAuthentication(object sender, ExecutedRoutedEventArgs e)
         {
@@ -180,14 +186,8 @@ namespace SandRibbon.Components
         }
         private void loaded(object sender, RoutedEventArgs e)
         {
-            checkServers();
             checkDestinationAlreadyKnown();
             username.Focus();
-        }
-        private void checkServers()
-        {
-            foreach (var server in getServers())
-                server.CheckStatus(server);
         }
         private void checkDestinationAlreadyKnown()
         {
@@ -211,14 +211,6 @@ namespace SandRibbon.Components
                     });
                 }));
             }
-        }
-        private ObservableCollection<ServerStatus> getServers()
-        {
-            return ProviderMonitor.SERVERS;
-        }
-        private void retryServerHealthCheck(object sender, RoutedEventArgs e)
-        {
-            checkServers();
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

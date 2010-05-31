@@ -41,10 +41,7 @@ namespace SandRibbon
         private UndoHistory history = new UndoHistory();
         public ConversationDetails details;
         private JabberWire wire;
-        private string privacy;
         public string CurrentProgress { get; set; }
-        /*Clunky - these are to be exposed to the debugging and support RePL, which has access to this
-         * window instance through the visual hierarchy.*/
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
         public static ScrollViewer MAIN_SCROLL;
         public string log
@@ -53,70 +50,45 @@ namespace SandRibbon
         }
         public Window1()
         {
+            App.Now("Window 1 Constructor start");
             ProviderMonitor.HealthCheck(DoConstructor);
         }
         private void DoConstructor()
         {
             InitializeComponent();
-            WorkspaceStateProvider.RestorePreviousSettings();
             userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
-            Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(text =>
-            {
-                foreach (var tab in ribbon.Tabs)
-                    if (((RibbonTab)tab).Text == text)
-                        ribbon.SelectedTab = (RibbonTab)tab;
-            }));
+            Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(SetIdentity));
-            Commands.SetLayer.Execute("Sketch");
-            powerPointFinished = new DelegateCommand<string>((_whatever) => Dispatcher.BeginInvoke((Action)(finishedPowerpoint)));
-            Commands.PowerPointLoadFinished.RegisterCommand(powerPointFinished);
-            powerpointProgress = new DelegateCommand<string>(
-                (progress) => Dispatcher.BeginInvoke((Action)(() => showPowerPointProgress(progress))));
-            Commands.PowerPointProgress.RegisterCommand(powerpointProgress);
+            Commands.PowerPointLoadFinished.RegisterCommand(new DelegateCommand<object>(PowerPointLoadFinished));
+            Commands.PowerPointProgress.RegisterCommand(new DelegateCommand<string>(PowerPointProgress));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.ClearDynamicContent.RegisterCommand(new DelegateCommand<object>(ClearDynamicContent));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(_obj => { }, mustBeLoggedIn));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(toggleFriendsVisibility, mustBeLoggedIn));
-            Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>((_arg) => { }, mustBeInConversation));
-            Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>((_arg) => { }, mustBeInConversation));
-            Commands.PrintCompleted.RegisterCommand(new DelegateCommand<object>(_obj => HideProgressBlocker()));
-            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(
-                _obj =>
-                {
-                    ShowPowerpointBlocker("Starting Powerpoint Import");
-                    Commands.PostImportPowerpoint.Execute(null);
-                }, mustBeLoggedIn));
-            Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(
-                (conversationDetails) =>
-                {
-                    ShowPowerpointBlocker("Starting Powerpoint Import");
-                    Commands.PostStartPowerPointLoad.Execute(conversationDetails);
-                },
-                mustBeLoggedIn));
+            Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
+            Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
+            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerPoint, mustBeLoggedIn));
+            Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(StartPowerPointLoad, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(CreateConversation));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
-            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(_obj => setLayer("Sketch"), mustBeInConversation));
+            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(ToggleNotePadVisibility, mustBeLoggedIn));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(_obj => { }, mustBeInConversation));
-            Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(_obj => { }, mustBeLoggedIn));
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
+            Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.SetTutorialVisibility.RegisterCommand(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
-            Logger.Log("Started MeTL");
-            Commands.CreateQuiz.RegisterCommand(new DelegateCommand<object>(CreateQuiz, canCreateQuiz));
-            Commands.CreateQuiz.RegisterCommand(new DelegateCommand<object>(obj => { }, amAuthor));
-            Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(_obj => { }, mustBeLoggedIn));
-            Commands.MoveToQuiz.RegisterCommand(new DelegateCommand<QuizDetails>(moveToQuiz));
+            Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.Relogin.RegisterCommand(new DelegateCommand<object>(Relogin));
-            Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(_o => { }, mustBeInConversation));
-            Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(_arg => Commands.MirrorPresentationSpace.Execute(this)));
+            Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
+            Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(ProxyMirrorPresentationSpace));
             Commands.ReceiveWormMove.RegisterCommand(new DelegateCommand<string>(ReceiveWormMove));
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
             Commands.AddWindowEffect.RegisterCommand(new DelegateCommand<object>(AddWindowEffect));
             Commands.RemoveWindowEffect.RegisterCommand(new DelegateCommand<object>(RemoveWindowEffect));
-            Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(_nil => { }, mustBeLoggedIn));
+            Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
@@ -127,13 +99,48 @@ namespace SandRibbon
             Commands.ActualReportDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedDrawingAttributesAccordingToZoom));
             Commands.ActualReportStrokeAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedStrokeAttributesAccordingToZoom));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
+            Commands.SetLayer.Execute("Sketch");
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
             if (SmartBoardMeTLAlreadyLoaded)
                 checkIfSmartboard();
+            App.Now("Restoring settings");
             WorkspaceStateProvider.RestorePreviousSettings();
+            App.Now("Started MeTL");
+        }
+        private void noop(object unused) { }
+        private void SetInkCanvasMode(object unused)
+        {
+            setLayer("Sketch");
+        }
+        private void ProxyMirrorPresentationSpace(object unused)
+        {
+            Commands.MirrorPresentationSpace.Execute(this);
+        }
+        private void PowerPointLoadFinished(object unused)
+        {
+            Dispatcher.BeginInvoke((Action)(finishedPowerpoint));
+        }
+        private void PowerPointProgress(string progress)
+        {
+            Dispatcher.BeginInvoke((Action)(() => showPowerPointProgress(progress)));
+        }
+        private void ChangeTab(string which)
+        {
+            foreach (var tab in ribbon.Tabs)
+                if (((RibbonTab)tab).Text == which)
+                    ribbon.SelectedTab = (RibbonTab)tab;
+        }
+        private void StartPowerPointLoad(object unused)
+        {
+            ShowPowerpointBlocker("Starting Powerpoint Import");
+            Commands.PostStartPowerPointLoad.Execute(null);
+        }
+        private void ImportPowerPoint(object unused) { 
+            ShowPowerpointBlocker("Starting Powerpoint Import");
+            Commands.PostImportPowerpoint.Execute(null);
         }
         private void AdjustReportedDrawingAttributesAccordingToZoom(object attributes)
         {
@@ -236,14 +243,10 @@ namespace SandRibbon
         {
             get
             {
-                bool isSmartboardMeTL = true;
                 var thisProcess = Process.GetCurrentProcess();
-                foreach (Process p in Process.GetProcessesByName("MeTL"))
-                {
-                    if ((p.MainWindowTitle.StartsWith("S15") || p.MainWindowTitle.Equals("")) && p.Id != thisProcess.Id)
-                        isSmartboardMeTL = false;
-                }
-                return isSmartboardMeTL;
+                return Process.GetProcessesByName("MeTL").Any(p=>
+                    p.Id != thisProcess.Id &&
+                    (p.MainWindowTitle.StartsWith("S15") || p.MainWindowTitle.Equals("")));
             }
         }
         public void checkIfSmartboard()
@@ -252,7 +255,7 @@ namespace SandRibbon
             if (!File.Exists(path)) return;
             var myFile = new StreamReader(path);
             var username = myFile.ReadToEnd();
-            MessageBox.Show("logging in as {0}", username);
+            MessageBox.Show("Logging in as {0}", username);
             JabberWire.SwitchServer("staging");
             var doDetails = (Action)delegate
             {
@@ -264,12 +267,12 @@ namespace SandRibbon
                 doDetails();
             Commands.SetIdentity.Execute(new JabberWire.Credentials { authorizedGroups = new List<JabberWire.AuthorizedGroup>(), name = username, password = "examplePassword" });
         }
-
         private static object reconnectionLock = new object();
         private static bool reconnecting = false;
         private void AddWindowEffect(object _o)
         {
             CanvasBlocker.Visibility = Visibility.Visible;
+            
         }
         private void RemoveWindowEffect(object _o)
         {
@@ -313,8 +316,7 @@ namespace SandRibbon
             ProviderMonitor.HealthCheck(() =>
             {
                 Commands.LoggedIn.Execute(userInformation.credentials.name);
-                removeQuiz();
-                details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
+                var details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
                 applyPermissions(details.Permissions);
                 Commands.UpdateConversationDetails.Execute(details);
                 Logger.Log("Joined conversation " + title);
@@ -328,11 +330,9 @@ namespace SandRibbon
         }
         private void ClearDynamicContent(object obj)
         {
-            removeQuiz();
         }
         private void MoveTo(int slide)
         {
-            removeQuiz();
             if (userInformation.policy.isAuthor && userInformation.policy.isSynced)
                 Commands.SendSyncMove.Execute(slide);
             var moveTo = (Action)delegate
@@ -350,18 +350,8 @@ namespace SandRibbon
                 moveTo();
             CommandManager.InvalidateRequerySuggested();
         }
-        private void removeQuiz()
-        {
-            if (dynamicContent.Children.Count > 0)
-            {
-                dynamicContent.Children.Clear();
-                Commands.RequerySuggested(Commands.CreateQuiz);
-            }
-        }
-        private bool canCreateQuiz(object arg)
-        {
-            return dynamicContent.Children.Count == 0;
-        }
+
+
         private void Relogin(object obj)
         {
             lock (reconnectionLock)
@@ -397,24 +387,10 @@ namespace SandRibbon
             ProgressDisplay.Children.Add(sp);
             InputBlocker.Visibility = Visibility.Visible;
         }
-        private void CreateQuiz(object numberOfQuestions)
-        {//Insert the new slide after this.  Query the resultant conversation for the new slide's id.  Use that id as the quiz location.
-            var slides = ConversationDetailsProviderFactory.Provider.AppendSlideAfter(
-                userInformation.location.currentSlide,
-                userInformation.location.activeConversation,
-                Slide.TYPE.POLL).Slides;
-            var quizSlideId = slides[slides.Single(s => s.id == userInformation.location.currentSlide).index + 1].id;
-            dynamicContent.Children.Add(new AuthorAQuiz(userInformation, quizSlideId).SetQuestionCount((int)numberOfQuestions));
-        }
-        private void moveToQuiz(QuizDetails quiz)
+        private void moveToQuiz(QuizQuestion quiz)
         {
-            dynamicContent.Children.Clear();
-            dynamicContent.Children.Add(new AnswerAQuiz(userInformation, quiz).SetQuestionCount(quiz.optionCount));
         }
-        private bool amAuthor(object _obj)
-        {
-            return userInformation.policy.isAuthor;
-        }
+
         private void ShowTutorial()
         {
             TutorialLayer.Visibility = Visibility.Visible;
@@ -449,7 +425,13 @@ namespace SandRibbon
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (details.Jid != userInformation.location.activeConversation) return;
+            try
+            {
+                if (details.Jid != Globals.location.activeConversation) return;
+            }
+            catch (NotSetException) {
+                //We're not anywhere yet so update away
+            }
             var doUpdate = (Action)delegate
             {
                 userInformation.location.availableSlides = details.Slides.Select(s => s.id).ToList();
@@ -480,7 +462,6 @@ namespace SandRibbon
             canOpenFriendsOverride = new DelegateCommand<object>((_param) => { }, (_param) => true);
             Commands.ToggleFriendsVisibility.RegisterCommand(canOpenFriendsOverride);
         }
-        private DelegateCommand<bool> canPublishOverride;
         private void showPowerPointProgress(string progress)
         {
             var text = new TextBlock
@@ -601,7 +582,6 @@ namespace SandRibbon
                 scroll.Height = double.NaN;
                 scroll.Width = double.NaN;
             }
-            //updateCurrentPenAfterZoomChanged();
         }
         private void FitToPageWidth(object _unused)
         {
@@ -611,7 +591,6 @@ namespace SandRibbon
                 scroll.Height = canvas.ActualWidth / ratio;
                 scroll.Width = canvas.ActualWidth;
             }
-            //updateCurrentPenAfterZoomChanged();
         }
         private void ShowPowerpointBlocker(string explanation)
         {
@@ -625,13 +604,9 @@ namespace SandRibbon
             ProgressDisplay.Children.Clear();
             InputBlocker.Visibility = Visibility.Collapsed;
         }
-
         private void canZoomIn(object sender, CanExecuteRoutedEventArgs e)
         {
-            if (scroll == null)
-                e.CanExecute = false;
-            else
-                e.CanExecute = true;
+            e.CanExecute = !(scroll == null);
         }
         private void canZoomOut(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -745,7 +720,6 @@ namespace SandRibbon
                     newWidth = scroll.ExtentWidth;
                 scroll.Width = newWidth;
             }
-            //updateCurrentPenAfterZoomChanged();
         }
         private void doZoomOut(object sender, ExecutedRoutedEventArgs e)
         {
@@ -787,14 +761,11 @@ namespace SandRibbon
                     newWidth = scroll.ExtentWidth;
                 scroll.Width = newWidth;
             }
-            //updateCurrentPenAfterZoomChanged();
         }
-
         public Visibility GetVisibilityOf(UIElement target)
         {
             return target.Visibility;
         }
-
         private void SetConversationPermissions(object obj)
         {
             var style = (string)obj;

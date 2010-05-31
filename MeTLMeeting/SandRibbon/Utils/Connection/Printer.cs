@@ -76,7 +76,7 @@ namespace SandRibbon.Utils.Connection
                 return new [] {publicCanvas, privateCanvas};
             }
 
-            public override void actOnQuizReceived(QuizDetails quizDetails)
+            public override void actOnQuizReceived(QuizQuestion quizDetails)
             {
                 //Nothing.  Printer doesn't care about quiz
             }
