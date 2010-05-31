@@ -81,7 +81,7 @@
                     <components:ScrollBar x:Name="adornerScroll"/>
                     <AdornerDecorator>
                         <Canvas>
-                            <widgets:ArtistsPalette />
+                            <!--<widgets:ArtistsPalette />-->
                             <components:PrivacyTools />
                         </Canvas>
                     </AdornerDecorator>
