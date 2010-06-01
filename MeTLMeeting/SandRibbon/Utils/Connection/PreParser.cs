@@ -17,6 +17,7 @@ namespace SandRibbon.Utils.Connection
         public Dictionary<string, TargettedAutoShape> autoshapes = new Dictionary<string, TargettedAutoShape>();
         public List<TargettedStroke> ink = new List<TargettedStroke>();
         public List<QuizQuestion> quizzes = new List<QuizQuestion>();
+        public List<QuizAnswer> quizAnswers = new List<QuizAnswer>();
         public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
@@ -46,6 +47,7 @@ namespace SandRibbon.Utils.Connection
             {
                 returnParser.ink.AddRange(parser.ink);
                 returnParser.quizzes.AddRange(parser.quizzes);
+                returnParser.quizAnswers.AddRange(parser.quizAnswers);
                 foreach (var kv in parser.text)
                     returnParser.text.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.images)
@@ -71,6 +73,8 @@ namespace SandRibbon.Utils.Connection
                 Commands.ReceiveTextBox.Execute(box);
             foreach(var quiz in quizzes)
                 Commands.ReceiveQuiz.Execute(quiz);
+            foreach(var answer in quizAnswers)
+                Commands.ReceiveQuizAnswer.Execute(answer);
             foreach (var window in liveWindows.Values)
                 Commands.ReceiveLiveWindow.Execute(window);
             foreach (var video in videos.Values)
@@ -123,6 +127,10 @@ namespace SandRibbon.Utils.Connection
         public override void actOnQuizReceived(QuizQuestion quizDetails)
         {
             quizzes.Add(quizDetails);
+        }
+        public override void actOnQuizAnswerReceived(QuizAnswer answer)
+        {
+            quizAnswers.Add(answer);
         }
         public override void actOnTextReceived(TargettedTextBox box)
         {

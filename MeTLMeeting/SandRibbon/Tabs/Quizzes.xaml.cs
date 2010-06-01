@@ -37,6 +37,8 @@ namespace SandRibbon.Tabs
         {
             foreach(var quiz in preParser.quizzes)
                 ReceiveQuiz(quiz);
+            foreach(var answer in preParser.quizAnswers)
+                ReceiveQuizAnswer(answer);
         }
         private void MoveTo(object obj)
         {
