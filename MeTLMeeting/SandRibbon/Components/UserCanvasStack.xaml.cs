@@ -31,8 +31,7 @@ namespace SandRibbon.Components
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetLayer.Execute("Sketch");
-            Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(
-                ReceiveNewBubble));
+            Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(ReceiveNewBubble));
         }
         public void ReceiveNewBubble(TargettedBubbleContext context) {
             if(context.target != handwriting.target) return;

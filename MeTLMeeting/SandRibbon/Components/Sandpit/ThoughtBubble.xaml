@@ -4,16 +4,14 @@
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:Components="clr-namespace:SandRibbon.Components"
     xmlns:Sandpit="clr-namespace:SandRibbon.Components.Sandpit" >
-        <Canvas x:Name="thoughtContainer" Background="Black">
-            <Border BorderBrush="Black" BorderThickness="1" Background="Black">
-                <Viewbox x:Name="thoughtView" Height="40" Width="40"
+        <Canvas x:Name="thoughtContainer">
+                <Viewbox x:Name="thoughtView" Height="80" Width="80"
                          MouseLeftButtonUp="toggleThoughtBubble"
                                                 MouseEnter="thought_MouseEnter" 
                                                 MouseLeave="thought_MouseLeave">
                     <Sandpit:ThoughtBubbleSpace x:Name="thought" 
                                                 />
                 </Viewbox>
-            </Border>
-            <Viewbox x:Name="RLWViewBox" Width="40" Height="40"/>
+            <Viewbox x:Name="RLWViewBox" Width="80" Height="80"/>
         </Canvas>
 </UserControl>

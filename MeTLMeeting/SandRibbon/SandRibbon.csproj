@@ -735,6 +735,7 @@
     <Content Include="Resources\SyncRed.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\thoughtOutline.png" />
     <Resource Include="Resources\underline.png" />
     <Resource Include="Resources\UndoShiny.png" />
     <Resource Include="Resources\SyncShiny.png" />

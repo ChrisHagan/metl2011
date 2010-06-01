@@ -34,7 +34,7 @@ namespace SandRibbon.Components.Sandpit
         private bool opened = false;
         public int room;
         public List<FrameworkElement> childContext;
-
+        private ImageBrush thoughtMask;
         public ThoughtBubble()
         {
             InitializeComponent();
@@ -45,6 +45,15 @@ namespace SandRibbon.Components.Sandpit
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(mainWindowMove));
             Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(dirtyStroke));
+            var uri = new Uri(@"..\..\Resources\thoughtOutline.png", UriKind.RelativeOrAbsolute);
+            var image = new BitmapImage(uri);
+            thoughtMask = new ImageBrush
+                              {
+                                  ImageSource = image 
+                              };
+            thought.OpacityMask = thoughtMask;
+            thought.stack.handwriting.Background = Brushes.Cornsilk;
+            thought.stack.Opacity = 0.3;
         }
 
         private void dirtyStroke(TargettedDirtyElement stroke)
@@ -99,7 +108,7 @@ namespace SandRibbon.Components.Sandpit
         public ThoughtBubble relocate() 
         {
             var bounds = getBounds();
-            position = new Point(Math.Abs(bounds.X - 40), Math.Abs(bounds.Y - 40));
+            position = new Point(Math.Abs(bounds.X + 40), Math.Abs(bounds.Y - 80));
             return this;
         }
         public void enterBubble()
@@ -147,6 +156,9 @@ namespace SandRibbon.Components.Sandpit
         {
             if(!opened)
             {
+                thought.OpacityMask = null;
+                thought.stack.Opacity = 1;
+                thought.stack.handwriting.Background = Brushes.Transparent;
                 position = new Point(0, 0);
                 thought.IsHitTestVisible = true;
                 thoughtView.MouseLeftButtonUp-= toggleThoughtBubble;
@@ -162,12 +174,15 @@ namespace SandRibbon.Components.Sandpit
             else
             {
                 relocate();
+                thought.OpacityMask = thoughtMask;
+                thought.stack.Opacity = 0.3;
+                thought.stack.handwriting.Background = Brushes.Cornsilk;
                 thoughtView.MouseLeftButtonUp +=new MouseButtonEventHandler(toggleThoughtBubble);
                 //thought.MouseEnter += new MouseEventHandler(thought_MouseEnter);
                 //thought.MouseLeave += new MouseEventHandler(thought_MouseLeave);
                 RLWViewBox.Visibility = Visibility.Collapsed;
-                thoughtView.Width = 40;
-                thoughtView.Height = 40;
+                thoughtView.Width = 80;
+                thoughtView.Height = 80;
                 setThoughtAccess(false);
             
             }
@@ -176,7 +191,8 @@ namespace SandRibbon.Components.Sandpit
         }
         private void thought_MouseEnter(object sender, MouseEventArgs e)
         {
-
+            if(!opened)
+               thought.stack.Opacity = 0.7;
             foreach(var stroke in strokeContext)
             {
                 var bounds = stroke.GetBounds();
@@ -204,6 +220,8 @@ namespace SandRibbon.Components.Sandpit
         }
         private void thought_MouseLeave(object sender, MouseEventArgs e)
         {
+            if(!opened)
+                thought.stack.Opacity = 0.3;
             foreach (var stroke in strokeContext)
             {
                 var bounds = stroke.GetBounds();
