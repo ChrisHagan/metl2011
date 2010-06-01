@@ -16,6 +16,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Quizzing;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Tabs
 {
@@ -26,27 +27,23 @@ namespace SandRibbon.Tabs
         public Quizzes()
         {
             InitializeComponent();
-            Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(receiveQuiz));
-            Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(recieveQuizAnswer));
+            Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(ReceiveQuiz));
+            Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(ReceiveQuizAnswer));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             quizzes.ItemsSource = activeQuizes;
-
         }
-
         private void preparserAvailable(PreParser preParser)
         {
-            foreach(var quiz in preParser.quizs)
-                receiveQuiz(quiz);
+            foreach(var quiz in preParser.quizzes)
+                ReceiveQuiz(quiz);
         }
-
         private void MoveTo(object obj)
         {
             activeQuizes = new ObservableCollection<QuizQuestion>();
             quizzes.ItemsSource = activeQuizes;
         }
-
-        private void recieveQuizAnswer(QuizAnswer answer)
+        private void ReceiveQuizAnswer(QuizAnswer answer)
         {
             if(answers.ContainsKey(answer.id))
                 answers[answer.id].Add(answer);
@@ -58,21 +55,24 @@ namespace SandRibbon.Tabs
             }
             MessageBox.Show(answer.answer);
         }
-
-        private void receiveQuiz(QuizQuestion quiz)
+        private void ReceiveQuiz(QuizQuestion quiz)
         {
+            if (activeQuizes.Any(q => q.id == quiz.id)) return;
+            if (!answers.ContainsKey(quiz.id))
+                answers[quiz.id] = new List<QuizAnswer>();
             activeQuizes.Add(quiz);
         }
         private void CreateQuiz(object sender, RoutedEventArgs e)
         {
             new CreateAQuiz().ShowDialog();
         }
-
         private void quiz_Click(object sender, RoutedEventArgs e)
         {
-            var thisQuiz = (QuizQuestion) ((System.Windows.Controls.Button) sender).DataContext;
-            new AnswerAQuiz(thisQuiz).ShowDialog();
-            var a = 1;
+            var thisQuiz = (QuizQuestion) ((FrameworkElement)sender).DataContext;
+            if (thisQuiz.author == Globals.me)
+                new AssessAQuiz(answers[thisQuiz.id], thisQuiz).ShowDialog();
+            else
+                new AnswerAQuiz(thisQuiz).ShowDialog();
         }
     }
 }

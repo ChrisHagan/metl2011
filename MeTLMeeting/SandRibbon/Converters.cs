@@ -28,6 +28,17 @@ namespace SandRibbon
         public static StringToIntConverter parseInt = new StringToIntConverter();
         public static QuizPositionConverter quizPositionConverter = new QuizPositionConverter();
         public static ConversationDateConverter DateTimeConverter = new ConversationDateConverter();
+        public static ColorToBrushConverter ColorToBrushConverter = new ColorToBrushConverter();
+    }
+    public class ColorToBrushConverter : IValueConverter {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return new SolidColorBrush((Color)value);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
     }
     public class RandomConverter : IValueConverter
     {

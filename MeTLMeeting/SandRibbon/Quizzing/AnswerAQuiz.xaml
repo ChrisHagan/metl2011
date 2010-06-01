@@ -1,10 +1,23 @@
 ﻿<Window x:Class="SandRibbon.Quizzing.AnswerAQuiz"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="AnswerAQuiz" Width="300">
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:sr="clr-namespace:SandRibbon"
+    Title="Answer Quiz">
     <Border Background="{StaticResource BackgroundBlueGradient}">
-        <StackPanel Orientation="Vertical" x:Name="Quiz"> 
-            
+        <StackPanel Orientation="Vertical"> 
+            <Label Content="{Binding Path=title, Converter={x:Static quiz:AnswerAQuiz.TitleConverter}}" />
+            <Label Content="{Binding Path=question, Converter={x:Static quiz:AnswerAQuiz.QuestionConverter}}" />
+            <ListBox SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" >
+                            <Ellipse Fill="{Binding Path=color, Converter={x:Static sr:Converters.ColorToBrushConverter}}" Height="40" Width="40"/>
+                            <Label Content="{Binding Path=optionText}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate> 
+            </ListBox>
         </StackPanel> 
     </Border>
 </Window>

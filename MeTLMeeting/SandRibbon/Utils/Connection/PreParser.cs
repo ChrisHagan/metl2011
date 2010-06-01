@@ -16,7 +16,7 @@ namespace SandRibbon.Utils.Connection
         public Dictionary<string, TargettedVideo> videos = new Dictionary<string, TargettedVideo>();
         public Dictionary<string, TargettedAutoShape> autoshapes = new Dictionary<string, TargettedAutoShape>();
         public List<TargettedStroke> ink = new List<TargettedStroke>();
-        public List<QuizQuestion> quizs = new List<QuizQuestion>();
+        public List<QuizQuestion> quizzes = new List<QuizQuestion>();
         public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
@@ -45,7 +45,7 @@ namespace SandRibbon.Utils.Connection
             foreach (var parser in new[] { this, otherParser })
             {
                 returnParser.ink.AddRange(parser.ink);
-                returnParser.quizs.AddRange(parser.quizs);
+                returnParser.quizzes.AddRange(parser.quizzes);
                 foreach (var kv in parser.text)
                     returnParser.text.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.images)
@@ -69,7 +69,7 @@ namespace SandRibbon.Utils.Connection
                 Commands.ReceiveImage.Execute(images.Values);
             foreach (var box in text.Values)
                 Commands.ReceiveTextBox.Execute(box);
-            foreach(var quiz in quizs)
+            foreach(var quiz in quizzes)
                 Commands.ReceiveQuiz.Execute(quiz);
             foreach (var window in liveWindows.Values)
                 Commands.ReceiveLiveWindow.Execute(window);
@@ -120,10 +120,9 @@ namespace SandRibbon.Utils.Connection
         {
             ink.Add(stroke);
         }
-
         public override void actOnQuizReceived(QuizQuestion quizDetails)
         {
-            quizs.Add(quizDetails);
+            quizzes.Add(quizDetails);
         }
         public override void actOnTextReceived(TargettedTextBox box)
         {

@@ -202,6 +202,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Quizzing\AssessAQuiz.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Quizzing\CreateAQuiz.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -435,6 +439,9 @@
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
     <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">
       <DependentUpon>AnswerAQuiz.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\AssessAQuiz.xaml.cs">
+      <DependentUpon>AssessAQuiz.xaml</DependentUpon>
     </Compile>
     <Compile Include="Quizzing\CreateAQuiz.xaml.cs">
       <DependentUpon>CreateAQuiz.xaml</DependentUpon>

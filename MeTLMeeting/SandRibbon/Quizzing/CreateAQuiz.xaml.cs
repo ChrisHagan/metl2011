@@ -16,7 +16,6 @@ using CheckBox=System.Windows.Controls.CheckBox;
 
 namespace SandRibbon.Quizzing
 {
- 
     public partial class CreateAQuiz : Window
     {
         public List<Option> QUIZ_ANSWERS = new List<Option>
