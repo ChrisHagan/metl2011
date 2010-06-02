@@ -405,12 +405,19 @@ namespace SandRibbon.Components
         }
         public void AddPrivateRegion(IEnumerable<Point> vertices, Color color)
         {
-            privacyOverlay = new SolidColorBrush {Color = color, Opacity = 0.2};
-            privacyAdorner.Fill = privacyOverlay;
-            RemovePrivateRegion(vertices);
-            var segments = vertices.Select(v => (PathSegment)new LineSegment(v, true));
-            if((PathGeometry)privacyAdorner.Data == null) return;
-            ((PathGeometry)privacyAdorner.Data).Figures.Add(new PathFigure(vertices.First(), segments, true));
+            try
+            {
+                if(Globals.pedagogy.code < 3) return;
+                privacyOverlay = new SolidColorBrush {Color = color, Opacity = 0.2};
+                privacyAdorner.Fill = privacyOverlay;
+                RemovePrivateRegion(vertices);
+                var segments = vertices.Select(v => (PathSegment) new LineSegment(v, true));
+                if ((PathGeometry) privacyAdorner.Data == null) return;
+                ((PathGeometry) privacyAdorner.Data).Figures.Add(new PathFigure(vertices.First(), segments, true));
+            }
+            catch(NotSetException e)
+            {
+            }
         }
         public void AddPrivateRegion(IEnumerable<Point> vertices)
         {
