@@ -210,6 +210,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Quizzing\QuizButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Tabs\Groups\PenColors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -445,6 +449,9 @@
     </Compile>
     <Compile Include="Quizzing\CreateAQuiz.xaml.cs">
       <DependentUpon>CreateAQuiz.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\QuizButton.xaml.cs">
+      <DependentUpon>QuizButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Groups\PenColors.xaml.cs" />
     <Compile Include="Components\ConversationConfigurationDialog.xaml.cs">

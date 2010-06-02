@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:sr="clr-namespace:SandRibbon"
+    Topmost="True"
     Title="Answer Quiz">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <StackPanel Orientation="Vertical"> 
@@ -12,7 +13,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" >
-                            <Ellipse Fill="{Binding Path=color, Converter={x:Static sr:Converters.ColorToBrushConverter}}" Height="40" Width="40"/>
+                            <quiz:QuizButton />
                             <Label Content="{Binding Path=optionText}" />
                         </StackPanel>
                     </DataTemplate>

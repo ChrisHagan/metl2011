@@ -30,7 +30,7 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0">Title (*)</Label>
-                        <TextBox Grid.Row="1" Width="300" x:Name="title">Please enter a quiz title</TextBox>
+                        <TextBox Grid.Row="1" Width="300" x:Name="title" Text="{x:Static q:CreateAQuiz.PROMPT_TEXT}" />
                         <Label Grid.Row="2">Question</Label>
                         <TextBox Grid.Row="3" Height="90" Width="300" x:Name="question" AcceptsReturn="True"></TextBox>
                     </Grid>

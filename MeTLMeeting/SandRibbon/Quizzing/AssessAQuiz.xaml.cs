@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using SandRibbonInterop;
+using System.Collections.ObjectModel;
 
 namespace SandRibbon.Quizzing
 {
@@ -20,32 +21,40 @@ namespace SandRibbon.Quizzing
         {
             InitializeComponent();
         }
-        public AssessAQuiz(List<QuizAnswer> answers, QuizQuestion question) : this() 
+        public AssessAQuiz(ObservableCollection<QuizAnswer> answers, QuizQuestion question) : this() 
         {
-            resultDisplay.DataContext = question.options.Select(o =>{
+            DataContext = question;
+            represent(answers, question);
+            answers.CollectionChanged += 
+                (sender,args)=>
+                    represent(answers, question);
+        }
+        private void represent(IEnumerable<QuizAnswer> answers, QuizQuestion question)
+        {
+            responseCount.Content = string.Format("({0} responses)",answers.Count());
+            resultDisplay.ItemsSource = question.options.Select(o =>{
                 var relevant = answers.Where(a=>a.answer==o.name);
-                    return new DisplayableResultSet
-                    {
-                        color = o.color,
-                        count = relevant.Count(),
-                        percentage = relevant.Count() / answers.Count() * 100,
-                        tooltip = o.optionText
-                    };
-                }
-            );
-            allResults.DataContext = question;
+                return new DisplayableResultSet
+                {
+                    color = o.color,
+                    count = relevant.Count(),
+                    proportion = answers.Count() == 0 ? 0 :
+                        (double)relevant.Count() / answers.Count(),
+                    tooltip = o.optionText,
+                    name=o.name
+                };
+            });
         }
     }
     public class DisplayableResultSet 
     {
         public Color color { get; set; }
         public int count { get; set; }
-        public int percentage { get; set; }
+        public double proportion { get; set; }
         public string tooltip { get; set; }
-        public string label {
-            get {
-                return string.Format("{0}% ({1} responses)", percentage, count);
-            }
-        }
+        public string name { get; set; }
+        public string percentage { get {
+            return string.Format("{0:0.00}%", proportion * 100);
+        } }
     }
 }

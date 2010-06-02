@@ -23,7 +23,7 @@ namespace SandRibbon.Tabs
     public partial class Quizzes : Divelements.SandRibbon.RibbonTab
     {
         public ObservableCollection<QuizQuestion> activeQuizes = new ObservableCollection<QuizQuestion>();
-        public Dictionary<long, List<QuizAnswer>> answers = new Dictionary<long, List<QuizAnswer>>();
+        public Dictionary<long, ObservableCollection<QuizAnswer>> answers = new Dictionary<long, ObservableCollection<QuizAnswer>>();
         public Quizzes()
         {
             InitializeComponent();
@@ -51,17 +51,16 @@ namespace SandRibbon.Tabs
                 answers[answer.id].Add(answer);
             else
             {
-                var newList = new List<QuizAnswer>();
+                var newList = new ObservableCollection<QuizAnswer>();
                 newList.Add(answer);
                 answers.Add(answer.id, newList);
             }
-            MessageBox.Show(answer.answer);
         }
         private void ReceiveQuiz(QuizQuestion quiz)
         {
             if (activeQuizes.Any(q => q.id == quiz.id)) return;
             if (!answers.ContainsKey(quiz.id))
-                answers[quiz.id] = new List<QuizAnswer>();
+                answers[quiz.id] = new ObservableCollection<QuizAnswer>();
             activeQuizes.Add(quiz);
         }
         private void CreateQuiz(object sender, RoutedEventArgs e)
@@ -72,9 +71,9 @@ namespace SandRibbon.Tabs
         {
             var thisQuiz = (QuizQuestion) ((FrameworkElement)sender).DataContext;
             if (thisQuiz.author == Globals.me)
-                new AssessAQuiz(answers[thisQuiz.id], thisQuiz).ShowDialog();
+                new AssessAQuiz(answers[thisQuiz.id], thisQuiz).Show();
             else
-                new AnswerAQuiz(thisQuiz).ShowDialog();
+                new AnswerAQuiz(thisQuiz).Show();
         }
     }
 }

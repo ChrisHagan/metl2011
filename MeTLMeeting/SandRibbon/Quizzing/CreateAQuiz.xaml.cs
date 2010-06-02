@@ -18,6 +18,7 @@ namespace SandRibbon.Quizzing
 {
     public partial class CreateAQuiz : Window
     {
+        public static readonly string PROMPT_TEXT = "Please enter a quiz title";
         public List<Option> QUIZ_ANSWERS = new List<Option>
                                                      {
                                                          new Option {name = "A" },
@@ -25,20 +26,18 @@ namespace SandRibbon.Quizzing
                                                          new Option {name = "C"},
                                                          new Option {name = "D"},
                                                      };
-
-        public List<Brush> QUESTIONCOLORS = new List<Brush>
+        public List<Color> QUESTIONCOLORS = new List<Color>
                                           {
-                                              Brushes.Red,
-                                              Brushes.Yellow, 
-                                              Brushes.Blue,
-                                              Brushes.Green
-    };
+                                              Colors.Red,
+                                              Colors.Yellow, 
+                                              Colors.Blue,
+                                              Colors.Green
+        };
         public CreateAQuiz()
         {
             InitializeComponent();
             addCreateQuestions();
         }
-
         private void addCreateQuestions()
         {
             var num = new Random().Next(QUESTIONCOLORS.Count);
@@ -46,52 +45,45 @@ namespace SandRibbon.Quizzing
             foreach(var question in QUIZ_ANSWERS)
             {
                 var container = new StackPanel {Orientation = Orientation.Horizontal, Margin = new Thickness(0,10,0,10)};
-                var questionIcon = new Ellipse {Fill = QUESTIONCOLORS.ElementAt((num += 1) % QUESTIONCOLORS.Count) , Height = 40, Width = 40, Name = question.name};
+                var questionIcon = new QuizButton{
+                    DataContext=new Option{
+                        color=QUESTIONCOLORS.ElementAt(num++ % QUESTIONCOLORS.Count),
+                        name=question.name
+                    }
+                };
                 container.Children.Add(questionIcon);
                 container.Children.Add(new TextBox{Width = 300});
-                container.Children.Add(new CheckBox{Margin = new Thickness(10, 10, 0, 0)});
+                var checkBox = new CheckBox{Margin = new Thickness(10, 10, 0, 0)};
+                container.Children.Add(checkBox);
+                KeyboardNavigation.SetIsTabStop(checkBox, false);
                 quizQuestions.Children.Add(container);
             }
         }
-
         private void Close(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
-
         private void canCreateQuizQuestion(object sender, CanExecuteRoutedEventArgs e)
         {
-            try
-            {
-
-                bool a = Globals.conversationDetails.Author == "pants";
-                if (title == null)
-                    e.CanExecute = false;
-                else
-                    e.CanExecute = !(title.Text == "Please enter a quiz title");
-            }
-            catch(NotSetException err)
-            {
-                e.CanExecute = false;
-            }
+            e.CanExecute = title != null && !(string.IsNullOrEmpty(title.Text) || title.Text == CreateAQuiz.PROMPT_TEXT);
         }
-
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
-           var quiz = new QuizQuestion {title = title.Text, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks};
-                foreach(StackPanel questionField in quizQuestions.Children)
+            var quiz = new QuizQuestion {title = title.Text, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks};
+            foreach(StackPanel questionField in quizQuestions.Children)
+            {
+                if(((TextBox)questionField.Children[1]).Text.Length > 0)
                 {
-                    if(((TextBox)questionField.Children[1]).Text.Length > 0)
+                    var option = ((Option)((FrameworkElement)questionField.Children[0]).DataContext);
+                    quiz.options.Add(new Option
                     {
-                        quiz.options.Add(new Option
-                            {
-                                name = ((Ellipse) questionField.Children[0]).Name,
-                                color = ((SolidColorBrush)((Ellipse) questionField.Children[0]).Fill).Color,
-                                optionText = ((TextBox) questionField.Children[1]).Text,
-                                correct = (bool)((CheckBox) questionField.Children[2]).IsChecked, 
-                            });
-                    }
+                        name = option.name,
+                        color = option.color,
+                        optionText = ((TextBox) questionField.Children[1]).Text,
+                        correct = (bool)((CheckBox) questionField.Children[2]).IsChecked, 
+                    });
                 }
+            }
             Commands.SendQuiz.Execute(quiz);
             this.Close();
         }

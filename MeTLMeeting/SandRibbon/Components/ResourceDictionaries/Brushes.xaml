@@ -23,6 +23,21 @@
         <GradientStop Color="#FF7AA3F4" Offset="0.40"/>
         <GradientStop Color="#FFC5D5F6" Offset="1"/>
     </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ShinyAbsoluteHighlightBrush" Opacity="0.8" EndPoint="0.2,0" StartPoint="1,0.35">
+        <GradientStop Color="#00FFFFFF" Offset="0.78"/>
+        <GradientStop Color="#80FFFFFF" Offset="0.80"/>
+        <GradientStop Color="#99FFFFFF" Offset="0.87"/>
+        <GradientStop Color="#00FFFFFF" Offset="0.92"/>
+        <GradientStop Color="#80FFFFFF" Offset="0.94"/>
+        <GradientStop Color="#60FFFFFF" Offset="0.95"/>
+        <GradientStop Color="#00FFFFFF" Offset="0.99"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ShinyHighlightBrush" Opacity="0.8" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#00FFFFFF" Offset="0"/>
+        <GradientStop Color="#99FFFFFF" Offset="0.2"/>
+        <GradientStop Color="#00FFFFFF" Offset="0.6"/>
+        <GradientStop Color="#FF000000" Offset="1"/>
+    </LinearGradientBrush>
     <SandRibbonInterop:AutoShape x:Key="BlueAutoShape" Background="LightBlue" Foreground="DarkBlue">
         <SandRibbonInterop:AutoShape.PathData>
             <PathGeometry>
