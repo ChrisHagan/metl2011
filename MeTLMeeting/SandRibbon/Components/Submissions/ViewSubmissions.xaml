@@ -1,0 +1,22 @@
+﻿<Window x:Class="SandRibbon.Components.Submissions.ViewSubmissions"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:SandRibbon="clr-namespace:SandRibbon"
+    Title="View Submissions">
+    <Border Background="{StaticResource BackgroundBlueGradient}">
+        <StackPanel Orientation="Vertical" >
+            <ScrollViewer>
+                <ListBox x:Name="submissions" SelectionMode="Multiple" Background ="Transparent">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Viewbox Width="100" Height="100">
+                                <Image Source="{Binding Path=url, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" ToolTip="{Binding Path=author}"/>
+                            </Viewbox>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
+            <Button Click="importSubmissions" HorizontalAlignment="Right">Import selected submission(s) to presentation space</Button>
+        </StackPanel>
+    </Border>
+</Window>

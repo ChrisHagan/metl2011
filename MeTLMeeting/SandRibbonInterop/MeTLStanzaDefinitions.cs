@@ -19,7 +19,7 @@ namespace SandRibbonInterop.MeTLStanzas
 {
     public class TargettedElement
     {
-        public string author;
+        public string author { get; set;}
         public string target;
         public string privacy;
         public int slide;
@@ -27,6 +27,10 @@ namespace SandRibbonInterop.MeTLStanzas
     public class TargettedAutoShape : TargettedElement
     {
         public AutoShape autoshape;
+    }
+    public class TargettedSubmission : TargettedElement
+    {
+        public string url { get; set; }
     }
     public class TargettedStroke : TargettedElement
     {
@@ -734,6 +738,49 @@ namespace SandRibbonInterop.MeTLStanzas
                 }
             }
         }
+        
+        public class ScreenshotSubmission: Element
+        {
+            static ScreenshotSubmission()
+            {
+                agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(ScreenshotSubmission));
+            }
+
+            public static string TAG = "screenshotSubmission";
+            public static string AUTHOR = "author";
+            public static string URL = "url";
+            public static string SLIDE = "slide";
+            
+            public ScreenshotSubmission()
+            {
+                this.Namespace = METL_NS;
+                this.TagName = TAG;
+            }
+            public ScreenshotSubmission(TargettedSubmission submission):this()
+            {
+                this.parameters = submission;
+            }
+            public TargettedSubmission parameters
+            {
+                get
+                {
+                    return new TargettedSubmission
+                               {
+                                   author = GetTag(AUTHOR),
+                                   url = GetTag(URL),
+                                   slide = int.Parse(GetTag(SLIDE))
+                               };
+                }
+                set
+                {
+                    SetTag(AUTHOR, value.author);
+                    SetTag(URL, value.url);
+                    SetTag(SLIDE, value.slide.ToString());
+                }
+            }
+
+        }
+
         public class QuizOption: Element
         {
             static QuizOption()

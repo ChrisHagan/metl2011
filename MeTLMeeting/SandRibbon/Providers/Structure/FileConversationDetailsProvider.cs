@@ -173,9 +173,7 @@ namespace SandRibbon.Providers.Structure
                     conversationsCache = RestrictToAccessible(conversationsCache, myGroups);
                     return conversationsCache;
                 }
-                var data =
-                    HttpResourceProvider.secureGetData(string.Format("http://{0}:1188/Structure/all.zip",
-                                                                     Constants.JabberWire.SERVER));
+                var data = secureGetData(string.Format("http://{0}:1188/Structure/all.zip", Constants.JabberWire.SERVER));
                 using (var zip = ZipFile.Read(data))
                 {
                     var summary = zip
@@ -212,7 +210,7 @@ namespace SandRibbon.Providers.Structure
                 .Where(c => myGroups.Contains(c.Subject))
                 .Distinct(new UniqueConversationComparator()).ToList();
         }
-        public SandRibbonObjects.ConversationDetails Create(SandRibbonObjects.ConversationDetails details)
+        public ConversationDetails Create(ConversationDetails details)
         {
             if (details.Slides.Count == 0)
             {
@@ -231,7 +229,7 @@ namespace SandRibbon.Providers.Structure
             Update(details);
             return details;
         }
-        public SandRibbonObjects.ApplicationLevelInformation GetApplicationLevelInformation()
+        public ApplicationLevelInformation GetApplicationLevelInformation()
         {
             return new ApplicationLevelInformation { currentId = Int32.Parse(HttpResourceProvider.secureGetString(NEXT_AVAILABLE_ID)) };
         }

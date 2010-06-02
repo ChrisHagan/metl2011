@@ -82,6 +82,9 @@ namespace SandRibbon.Utils.Connection
             Commands.AllContentSent.Execute(location.currentSlide);
             Logger.Log(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
+        public override void actOnScreenshotSubmission(TargettedSubmission submission)
+        {
+        }
         public override void actOnDirtyImageReceived(SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyImage image)
         {
             if(images.ContainsKey(image.element.identifier))

@@ -198,6 +198,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Components\Submissions\ScreenshotSubmission.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Submissions\ViewSubmissions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Quizzing\AnswerAQuiz.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -439,6 +447,12 @@
       <DependentUpon>Pedagogicometer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
+    <Compile Include="Components\Submissions\ScreenshotSubmission.xaml.cs">
+      <DependentUpon>ScreenshotSubmission.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Submissions\ViewSubmissions.xaml.cs">
+      <DependentUpon>ViewSubmissions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Providers\ProviderMonitor.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
     <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">

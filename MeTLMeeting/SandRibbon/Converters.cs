@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using SandRibbon.Providers;
 using SandRibbonInterop;
 using SandRibbonObjects;
@@ -30,12 +31,30 @@ namespace SandRibbon
         public static ConversationDateConverter DateTimeConverter = new ConversationDateConverter();
         public static ColorToBrushConverter ColorToBrushConverter = new ColorToBrushConverter();
         public static BracketingConverter BracketingConverter = new BracketingConverter();
+        public static ConvertStringToImageSource ConvertStringToImageSource = new ConvertStringToImageSource();
     }
     public class BracketingConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return string.Format("({0})", value);
         }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+    public class ConvertStringToImageSource: IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = uri;
+            bitmap.EndInit();
+            return bitmap;
+        }
+
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value;

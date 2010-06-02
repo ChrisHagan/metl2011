@@ -46,8 +46,10 @@ namespace SandRibbon.Components
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
             Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
+            Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<object>(generateScreenshot));
             Loaded += presentationSpaceLoaded;
         }
+
         private void exploreBubble(ThoughtBubble thoughtBubble)
         {
             var origin = new Point(0, 0);
@@ -148,17 +150,38 @@ namespace SandRibbon.Components
                    return (FrameworkElement)child;
             return null;
         }
+
+
+        private void generateScreenshot(object obj)
+        {
+            var rtb = generateCapture((int) ActualWidth);
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(rtb));
+            var file = string.Format("{0}submission.png", Globals.me);
+            using(Stream stream = File.Create(file))
+            {
+                encoder.Save(stream);
+            }
+
+            var hostedFileName = ResourceUploader.uploadResource(Globals.slide.ToString(), file);
+            if (hostedFileName == "failed")
+            {
+                MessageBox.Show("cannot upload submission");
+                return;
+            }
+            Commands.SendScreenshotSubmission.Execute(new TargettedSubmission
+                                                          {
+                                                              author = Globals.me,
+                                                              url = hostedFileName,
+                                                              slide = Globals.slide
+                                                          });
+
+        }
         private void CreateThumbnail(int id)
         {
             try
             {
-                const int side = 96;
-                var dpi = 96;
-                var bitmap = new RenderTargetBitmap(side, side, dpi, dpi, PixelFormats.Default);
-                var dv = new DrawingVisual();
-                using (var context = dv.RenderOpen())
-                    context.DrawRectangle(new VisualBrush(stack), null, new Rect(new Point(), new Size(side, side)));
-                bitmap.Render(dv);
+                var bitmap = generateCapture(96);
                 Commands.ThumbnailGenerated.Execute(new UnscaledThumbnailData { id = Globals.location.currentSlide, data = bitmap });
             }
             catch (OverflowException)
@@ -166,6 +189,18 @@ namespace SandRibbon.Components
                 //The image is too large to thumbnail.  Just leave it be.
             }
         }
+
+        private RenderTargetBitmap generateCapture(int side)
+        {
+            var dpi = 96;
+            var bitmap = new RenderTargetBitmap(side, side, dpi, dpi, PixelFormats.Default);
+            var dv = new DrawingVisual();
+            using (var context = dv.RenderOpen())
+                context.DrawRectangle(new VisualBrush(stack), null, new Rect(new Point(), new Size(side, side)));
+            bitmap.Render(dv);
+            return bitmap;
+        }
+
         private void PreParserAvailable(PreParser parser)
         {
             stack.handwriting.ReceiveStrokes(parser.ink);
@@ -412,7 +447,7 @@ namespace SandRibbon.Components
                 privacyAdorner.Fill = privacyOverlay;
                 RemovePrivateRegion(vertices);
                 var segments = vertices.Select(v => (PathSegment) new LineSegment(v, true));
-                if ((PathGeometry) privacyAdorner.Data == null) return;
+                if (privacyAdorner.Data == null) return;
                 ((PathGeometry) privacyAdorner.Data).Figures.Add(new PathFigure(vertices.First(), segments, true));
             }
             catch(NotSetException e)
