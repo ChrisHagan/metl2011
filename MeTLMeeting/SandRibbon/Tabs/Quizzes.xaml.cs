@@ -65,7 +65,7 @@ namespace SandRibbon.Tabs
         }
         private void CreateQuiz(object sender, RoutedEventArgs e)
         {
-            new CreateAQuiz().ShowDialog();
+            new CreateAQuiz().Show();
         }
         private void quiz_Click(object sender, RoutedEventArgs e)
         {
