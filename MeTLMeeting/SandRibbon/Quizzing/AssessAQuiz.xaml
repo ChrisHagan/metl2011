@@ -24,9 +24,7 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
                                 <Grid Grid.Column="0">
-                                    <Rectangle Fill="Gold" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray"/>
-                                    <Rectangle Margin="0,0,0,0" HorizontalAlignment="Right" Width="60" Fill="{StaticResource ShinyAbsoluteHighlightBrush}" 
-                                           RadiusX="3" RadiusY="3" />
+                                    <quiz:GoldPlaque />
                                     <StackPanel Orientation="Horizontal">
                                         <quiz:QuizButton />
                                         <Label FontWeight="Bold" Content="{Binding percentage}" HorizontalAlignment="Left" />

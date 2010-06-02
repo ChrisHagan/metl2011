@@ -13,13 +13,14 @@ using System.Windows.Shapes;
 using SandRibbon.Providers;
 using SandRibbonInterop;
 using CheckBox=System.Windows.Controls.CheckBox;
+using System.Collections.ObjectModel;
 
 namespace SandRibbon.Quizzing
 {
     public partial class CreateAQuiz : Window
     {
         public static readonly string PROMPT_TEXT = "Please enter a quiz title";
-        public List<Option> QUIZ_ANSWERS = new List<Option>
+        public ObservableCollection<Option> QUIZ_ANSWERS = new ObservableCollection<Option>
                                                      {
                                                          new Option {name = "A" },
                                                          new Option {name = "B"},
@@ -41,23 +42,26 @@ namespace SandRibbon.Quizzing
         private void addCreateQuestions()
         {
             var num = new Random().Next(QUESTIONCOLORS.Count);
-
-            foreach(var question in QUIZ_ANSWERS)
+            quizQuestions.ItemsSource = QUIZ_ANSWERS.Select(a => new Option
             {
-                var container = new StackPanel {Orientation = Orientation.Horizontal, Margin = new Thickness(0,10,0,10)};
-                var questionIcon = new QuizButton{
-                    DataContext=new Option{
-                        color=QUESTIONCOLORS.ElementAt(num++ % QUESTIONCOLORS.Count),
-                        name=question.name
-                    }
-                };
-                container.Children.Add(questionIcon);
-                container.Children.Add(new TextBox{Width = 300});
-                var checkBox = new CheckBox{Margin = new Thickness(10, 10, 0, 0)};
-                container.Children.Add(checkBox);
-                KeyboardNavigation.SetIsTabStop(checkBox, false);
-                quizQuestions.Children.Add(container);
-            }
+                color = QUESTIONCOLORS.ElementAt(num++ % QUESTIONCOLORS.Count),
+                name = a.name,
+                optionText="",
+                correct=false
+            });
+        }
+        private void help(object sender, RoutedEventArgs e)
+        {
+            var finalImage = new Image();
+            BitmapImage helpImage = new BitmapImage();
+            helpImage.BeginInit();
+            helpImage.UriSource = new Uri("pack://application:,,,/MeTL;component/Resources/createAQuizHelp.PNG");
+            helpImage.EndInit();
+            finalImage.Source = helpImage;
+            new Window{
+                Content=finalImage,
+                SizeToContent=SizeToContent.WidthAndHeight
+            }.ShowDialog();
         }
         private void Close(object sender, RoutedEventArgs e)
         {
@@ -70,19 +74,11 @@ namespace SandRibbon.Quizzing
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
             var quiz = new QuizQuestion {title = title.Text, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks};
-            foreach(StackPanel questionField in quizQuestions.Children)
+            foreach(object obj in quizQuestions.Items)
             {
-                if(((TextBox)questionField.Children[1]).Text.Length > 0)
-                {
-                    var option = ((Option)((FrameworkElement)questionField.Children[0]).DataContext);
-                    quiz.options.Add(new Option
-                    {
-                        name = option.name,
-                        color = option.color,
-                        optionText = ((TextBox) questionField.Children[1]).Text,
-                        correct = (bool)((CheckBox) questionField.Children[2]).IsChecked, 
-                    });
-                }
+                var answer = (Option)obj;
+                if (!string.IsNullOrEmpty(answer.optionText))
+                    quiz.options.Add(answer);
             }
             Commands.SendQuiz.Execute(quiz);
             this.Close();
