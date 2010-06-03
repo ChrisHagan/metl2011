@@ -43,6 +43,7 @@ namespace SandRibbon
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+
             if(value == null) return value;
             var converter = new ConvertStringToImageSource();
             return converter.Convert(((TargettedSubmission)value).url, null,null, null);

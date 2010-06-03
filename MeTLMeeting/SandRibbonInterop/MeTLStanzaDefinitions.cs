@@ -32,6 +32,7 @@ namespace SandRibbonInterop.MeTLStanzas
     {
         public string url { get; set; }
         public long time{ get; set;}
+
     }
     public class TargettedStroke : TargettedElement
     {
