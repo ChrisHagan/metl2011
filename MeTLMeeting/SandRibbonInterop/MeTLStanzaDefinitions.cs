@@ -31,6 +31,8 @@ namespace SandRibbonInterop.MeTLStanzas
     public class TargettedSubmission : TargettedElement
     {
         public string url { get; set; }
+        public long time{ get; set;}
+
     }
     public class TargettedStroke : TargettedElement
     {
@@ -762,6 +764,7 @@ namespace SandRibbonInterop.MeTLStanzas
             public static string AUTHOR = "author";
             public static string URL = "url";
             public static string SLIDE = "slide";
+            public static string TIME = "time";
             
             public ScreenshotSubmission()
             {
@@ -780,7 +783,9 @@ namespace SandRibbonInterop.MeTLStanzas
                                {
                                    author = GetTag(AUTHOR),
                                    url = GetTag(URL),
-                                   slide = int.Parse(GetTag(SLIDE))
+                                   slide = int.Parse(GetTag(SLIDE)),
+                                   time = long.Parse(GetTag(TIME))
+  
                                };
                 }
                 set
@@ -788,6 +793,7 @@ namespace SandRibbonInterop.MeTLStanzas
                     SetTag(AUTHOR, value.author);
                     SetTag(URL, value.url);
                     SetTag(SLIDE, value.slide.ToString());
+                    SetTag(TIME, value.time.ToString());
                 }
             }
 

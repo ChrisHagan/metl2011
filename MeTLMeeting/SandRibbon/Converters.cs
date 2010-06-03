@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using SandRibbon.Providers;
 using SandRibbonInterop;
+using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 
 namespace SandRibbon
@@ -36,6 +37,22 @@ namespace SandRibbon
         public static ColorToBrushConverter ColorToBrushConverter = new ColorToBrushConverter();
         public static BracketingConverter BracketingConverter = new BracketingConverter();
         public static ConvertStringToImageSource ConvertStringToImageSource = new ConvertStringToImageSource();
+        public static ExtractUrlAndConvertConverter ExtractUrlAndConvertConverter = new ExtractUrlAndConvertConverter();
+    }
+    public class ExtractUrlAndConvertConverter:IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+
+            if(value == null) return value;
+            var converter = new ConvertStringToImageSource();
+            return converter.Convert(((TargettedSubmission)value).url, null,null, null);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
     }
     public class BracketingConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
