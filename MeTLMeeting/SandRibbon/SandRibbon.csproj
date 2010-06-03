@@ -431,6 +431,7 @@
       <DependentUpon>Pedagogicometer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
+    <Compile Include="Components\ResourceDictionaries\TypedControlStylingEventHandlers.cs" />
     <Compile Include="Providers\ProviderMonitor.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
     <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">

@@ -107,6 +107,7 @@ namespace SandRibbon
         public static RoutedCommand ZoomOut = new RoutedCommand();
         #endregion
         #region ImageCanvas
+        public static CompositeCommand SetImageCanvasMode = new CompositeCommand();
         public static CompositeCommand ImageDropped = new CompositeCommand();
         public static CompositeCommand AddVideo = new CompositeCommand();
         public static CompositeCommand SendVideo = new CompositeCommand();

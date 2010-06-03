@@ -173,8 +173,18 @@ namespace SandRibbon.Components
             foreach (var text in parser.text.Values)
                 stack.text.doText(text);
             foreach (var video in parser.videos)
-                stack.images.AddVideo(((TargettedVideo)video.Value).video);
-            foreach(var bubble in parser.bubbleList)
+            {
+                var srVideo = new SandRibbonInterop.Video
+                {
+                    MediaElement = ((TargettedVideo)video.Value).video,
+                    VideoSource = ((TargettedVideo)video.Value).video.Source,
+                    Duration = ((TargettedVideo)video.Value).video.NaturalDuration,
+                    Position = ((TargettedVideo)video.Value).video.Position
+                };
+                srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
+                srVideo.MediaElement.ScrubbingEnabled = true;
+                stack.images.AddVideo(srVideo);
+            } foreach (var bubble in parser.bubbleList)
                 stack.ReceiveNewBubble(bubble);
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
         }
