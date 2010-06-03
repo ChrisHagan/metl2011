@@ -13,6 +13,10 @@ namespace SandRibbon
 {
     public class Converters
     {
+        public static milisecondsToTimeConverter milisecondsToTimeConverter = new milisecondsToTimeConverter();
+        public static videoMediaElementToMediaElementConverter videoMediaElementToMediaElementConverter = new videoMediaElementToMediaElementConverter();
+        public static videoTimeSpanToDoubleSecondsConverter videoTimeSpanToDoubleSecondsConverter = new videoTimeSpanToDoubleSecondsConverter();
+        public static videoDurationToDoubleConverter videoDurationToDoubleConverter = new videoDurationToDoubleConverter();
         public static DebugConverter debugConverter = new DebugConverter();
         public static ConversationNameExtractor conversationNameExtractor = new ConversationNameExtractor();
         public static ConversationTooltipExtractor conversationTooltipExtractor = new ConversationTooltipExtractor();
@@ -122,13 +126,13 @@ namespace SandRibbon
             return value;
         }
     }
-    public class QuizPositionConverter:IMultiValueConverter 
+    public class QuizPositionConverter : IMultiValueConverter
     {
 
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var list = ((ObservableCollection<QuizQuestion>) values[1]);
-            return string.Format("Quiz: {0}", list.IndexOf((QuizQuestion) values[0]) + 1);
+            var list = ((ObservableCollection<QuizQuestion>)values[1]);
+            return string.Format("Quiz: {0}", list.IndexOf((QuizQuestion)values[0]) + 1);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -141,7 +145,7 @@ namespace SandRibbon
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if(value != null && value is ConversationDetails)
+            if (value != null && value is ConversationDetails)
                 return ((ConversationDetails)value).Title;
             return value;
         }
@@ -266,7 +270,7 @@ namespace SandRibbon
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(parameter is string)
+            if (parameter is string)
                 return ((double)value) / Double.Parse((string)parameter);
             return ((double)value) / (int)parameter;
         }
@@ -362,6 +366,68 @@ namespace SandRibbon
             return string.Format("{0} {1}", value, parameter);
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class videoTimeSpanToDoubleSecondsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return null;
+            var me = ((TimeSpan)value);
+            return (double)(me.Hours * 3600) + (me.Minutes * 60) + (me.Seconds);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class videoDurationToDoubleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return null;
+            var meDuration = ((Duration)value);
+            TimeSpan me;
+            if (meDuration.HasTimeSpan)
+                me = meDuration.TimeSpan;
+            else me = new TimeSpan(0,0,0);    
+            return (double)(me.Hours * 3600) + (me.Minutes * 60) + (me.Seconds);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class milisecondsToTimeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return null;
+            double Totalmilis = (double)value;
+            int Seconds = System.Convert.ToInt32(Totalmilis / 1000);
+            int Minutes = System.Convert.ToInt32(Seconds / 60);
+            int Hours = System.Convert.ToInt32(Minutes / 60);
+            return new TimeSpan(Hours,Minutes,Seconds).ToString();
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class videoMediaElementToMediaElementConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return null;
+            return ((SandRibbonInterop.Video)value);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

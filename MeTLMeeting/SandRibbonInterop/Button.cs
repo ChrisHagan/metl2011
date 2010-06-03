@@ -133,6 +133,29 @@ namespace SandRibbonInterop
     }
     public class Video : System.Windows.Controls.Primitives.Thumb
     {
+
+        public Duration Duration
+        {
+            get { return (Duration)GetValue(DurationProperty); }
+            set { SetValue(DurationProperty, value); }
+        }
+        public static readonly DependencyProperty DurationProperty =
+            DependencyProperty.Register("Duration", typeof(Duration), typeof(Thumb), new UIPropertyMetadata(null));
+        public TimeSpan Position
+        {
+            get { return (TimeSpan)GetValue(PositionProperty); }
+            set { SetValue(PositionProperty, value); }
+        }
+        public static readonly DependencyProperty PositionProperty =
+            DependencyProperty.Register("Position", typeof(TimeSpan), typeof(Thumb), new UIPropertyMetadata(null));
+        
+        public System.Windows.Controls.MediaElement MediaElement
+        {
+            get { return (System.Windows.Controls.MediaElement)GetValue(MediaElementProperty); }
+            set { SetValue(MediaElementProperty, value); }
+        }
+        public static readonly DependencyProperty MediaElementProperty =
+            DependencyProperty.Register("MediaElement", typeof(System.Windows.Controls.MediaElement), typeof(Thumb), new UIPropertyMetadata(null));
         public System.Uri VideoSource
         {
             get { return (System.Uri)GetValue(VideoSourceProperty); }
@@ -317,7 +340,7 @@ namespace SandRibbonInterop
         }
         public static readonly DependencyProperty ParentActiveVariantProperty =
             DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(CheckBox), new UIPropertyMetadata(RibbonGroupVariant.Large));
-        
+
         public InternalButtonSize InternalButtonSize
         {
             get { return (InternalButtonSize)GetValue(InternalButtonSizeProperty); }
@@ -389,7 +412,7 @@ namespace SandRibbonInterop
         }
         public static readonly DependencyProperty InternalButtonSizeProperty =
             DependencyProperty.Register("InternalButtonSize", typeof(InternalButtonSize), typeof(RadioButton), new UIPropertyMetadata(InternalButtonSize.Large));
-        
+
         public RibbonGroupVariant ParentActiveVariant
         {
             get { return (RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
@@ -397,7 +420,7 @@ namespace SandRibbonInterop
         }
         public static readonly DependencyProperty ParentActiveVariantProperty =
             DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(RadioButton), new UIPropertyMetadata(RibbonGroupVariant.Large));
-        
+
         public RadioButton()
             : base()
         {
@@ -459,7 +482,7 @@ namespace SandRibbonInterop
         }
         public static readonly DependencyProperty ParentActiveVariantProperty =
             DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(Button), new UIPropertyMetadata(RibbonGroupVariant.Large));
-        
+
         public Button()
             : base()
         {
@@ -562,7 +585,7 @@ namespace SandRibbonInterop
         }
         public static readonly DependencyProperty ParentActiveVariantProperty =
             DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(DoubleButton), new UIPropertyMetadata(RibbonGroupVariant.Large));
-        
+
         public DoubleButton()
             : base()
         {

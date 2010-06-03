@@ -1,6 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:my="clr-namespace:SandRibbon"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+    x:Class="SandRibbon.Components.ResourceDictionaries.TypedControlStylingEventHandlers"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!--This area is for defining control templates and their triggers on specific controls-->
     <Style x:Key="ThicknessButton" TargetType="Button">
@@ -34,20 +37,34 @@
                     <Border CornerRadius="4" Padding="4" 
                             BorderBrush="DarkGray" BorderThickness="1"
                             Background="{StaticResource BackgroundBlueGradient}">
-                        <Grid>
+                        <!--<Grid DataContext="{TemplateBinding MediaElement, Converter={x:Static my:Converters.videoMediaElementToMediaElementConverter}}">
+                            -->
+                        <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent},Converter={x:Static my:Converters.videoMediaElementToMediaElementConverter}}">
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
+                                <RowDefinition Height="30"/>
                                 <RowDefinition Height="20"/>
                             </Grid.RowDefinitions >
-                            <MediaElement Grid.Row="0" Source="{TemplateBinding VideoSource}"/>
-                            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                <Button Content="SkipBack"/>
-                                <Button Content="Play"/>
-                                <Button Content="Pause"/>
-                                <Button Content="SkipForward"/>
-                                <Button Content="Restart"/>
-                                <Button Content="Mute"/>
+                            <ContentPresenter Grid.Row="0"
+                                              Content="{Binding Path=MediaElement}"/>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" >
+                                <Button Content="Play" Click="Video_Play"/>
+                                <Button Content="Pause" Click="Video_Pause"/>
+                                <Button Content="Mute" Click="Video_Mute"/>
+                                <Slider Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=MediaElement.Volume}" Minimum="0" Maximum="10" Width="100"/>
                             </StackPanel>
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="80"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="{Binding ElementName=scrubBar, Path=Value, Converter={x:Static my:Converters.milisecondsToTimeConverter}}"/>
+                                <Slider Grid.Column="1" Name="scrubBar" Initialized="CreateMediaTimeline" 
+                                        Minimum="0" ValueChanged="sliderValueChanged" PreviewMouseDown="sliderMouseDown" 
+                                        PreviewMouseUp="sliderMouseUp" IsMoveToPointEnabled="False" TickFrequency="1000" IsSnapToTickEnabled="True" SmallChange="1000" />
+                                <Label Grid.Column="2" Content="{Binding ElementName=scrubBar, Path=Maximum, Converter={x:Static my:Converters.milisecondsToTimeConverter}}"/>
+                            </Grid>
                         </Grid>
                     </Border>
                 </ControlTemplate>
