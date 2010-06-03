@@ -719,9 +719,14 @@ namespace SandRibbon.Components.Canvas
                                          RepeatBehavior = RepeatBehavior.Forever
                                      };
             image.BeginAnimation(OpacityProperty, animationPulse);
-
-            var hostedFileName = ResourceUploader.uploadResource(Globals.slide.ToString(), fileName);
-            if (hostedFileName == "failed") return;
+            string hostedFileName;
+            if (!fileName.Contains("http://"))
+            {
+                hostedFileName = ResourceUploader.uploadResource(Globals.slide.ToString(), fileName);
+                if (hostedFileName == "failed") return;
+            }
+            else
+                hostedFileName = fileName;
             var uri = new Uri(hostedFileName, UriKind.Absolute);
             var hostedImage = new System.Windows.Controls.Image();
             try

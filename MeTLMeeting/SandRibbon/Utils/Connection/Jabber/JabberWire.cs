@@ -22,6 +22,7 @@ namespace SandRibbon.Utils.Connection
     public partial class JabberWire
     {
         protected const string WORM = "/WORM_MOVES";
+        protected const string SUBMISSION = "/SUBMISSION";
         protected const string UPDATE_CONVERSATION_DETAILS = "/UPDATE_CONVERSATION_DETAILS";
         protected const string SYNC_MOVE = "/SYNC_MOVE";
         protected const string GO_TO_SLIDE = "/GO_TO_SLIDE";
@@ -193,7 +194,9 @@ namespace SandRibbon.Utils.Connection
             Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(SendNewBubble));
             Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
+            Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
         }
+
 
         private void SendNewBubble(TargettedBubbleContext selection){
             stanza(new MeTLStanzas.Bubble(selection));
@@ -481,6 +484,10 @@ namespace SandRibbon.Utils.Connection
         {
             stanza(stroke.slide.ToString(), new MeTLStanzas.Ink(stroke));
         }
+        private void SendScreenshotSubmission(TargettedSubmission submission)
+        {
+            stanza(Globals.location.activeConversation, new MeTLStanzas.ScreenshotSubmission(submission));
+        }
         public void SendSyncMoveTo(int where)
         {
             command(location.activeConversation,SYNC_MOVE + " " + where);
@@ -656,6 +663,8 @@ namespace SandRibbon.Utils.Connection
             if (Application.Current == null) return;
             var action = (System.Action)delegate
             {
+                foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
+                    actOnScreenshotSubmission(submission.parameters);
                 foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
                     actOnTextReceived(box.Box);
                 foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
@@ -689,6 +698,11 @@ namespace SandRibbon.Utils.Connection
                 action();
             if (message.SelectSingleElement("body") != null)
                 ReceiveCommand(message.SelectSingleElement("body").InnerXml);
+        }
+
+        public virtual void actOnScreenshotSubmission(TargettedSubmission submission)
+        {
+            Commands.ReceiveScreenshotSubmission.Execute(submission);
         }
 
         public virtual void actOnVideoReceived(TargettedVideo video) 
@@ -727,7 +741,8 @@ namespace SandRibbon.Utils.Connection
         {
             Commands.ReceiveQuiz.Execute(quiz);
         }
-        private void actOnQuizAnswerReceived(QuizAnswer answer)
+
+        public virtual void actOnQuizAnswerReceived(QuizAnswer answer)
         {
             Commands.ReceiveQuizAnswer.Execute(answer);
         }
@@ -778,6 +793,14 @@ namespace SandRibbon.Utils.Connection
             }
             location.activeConversation = room;
             joinRooms();
+            HistoryProviderFactory.provider.Retrieve<PreParser>(
+                onStart,
+                onProgress,
+                finishedParser =>{
+                    Logger.Log(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
+                    Commands.PreParserAvailable.Execute(finishedParser);
+                },
+                location.activeConversation.ToString());
         }
         private void handleSyncMoveReceived(string[] parts)
         {

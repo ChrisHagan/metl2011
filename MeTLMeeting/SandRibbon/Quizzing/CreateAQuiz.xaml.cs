@@ -13,86 +13,73 @@ using System.Windows.Shapes;
 using SandRibbon.Providers;
 using SandRibbonInterop;
 using CheckBox=System.Windows.Controls.CheckBox;
+using System.Collections.ObjectModel;
 
 namespace SandRibbon.Quizzing
 {
- 
     public partial class CreateAQuiz : Window
     {
-        public List<Option> QUIZ_ANSWERS = new List<Option>
+        public static readonly string PROMPT_TEXT = "Please enter a quiz title";
+        public ObservableCollection<Option> QUIZ_ANSWERS = new ObservableCollection<Option>
                                                      {
                                                          new Option {name = "A" },
                                                          new Option {name = "B"},
                                                          new Option {name = "C"},
                                                          new Option {name = "D"},
                                                      };
-
-        public List<Brush> QUESTIONCOLORS = new List<Brush>
+        public List<Color> QUESTIONCOLORS = new List<Color>
                                           {
-                                              Brushes.Red,
-                                              Brushes.Yellow, 
-                                              Brushes.Blue,
-                                              Brushes.Green
-    };
+                                              Colors.Red,
+                                              Colors.Yellow, 
+                                              Colors.Blue,
+                                              Colors.Green
+        };
         public CreateAQuiz()
         {
             InitializeComponent();
             addCreateQuestions();
         }
-
         private void addCreateQuestions()
         {
             var num = new Random().Next(QUESTIONCOLORS.Count);
-
-            foreach(var question in QUIZ_ANSWERS)
+            quizQuestions.ItemsSource = QUIZ_ANSWERS.Select(a => new Option
             {
-                var container = new StackPanel {Orientation = Orientation.Horizontal, Margin = new Thickness(0,10,0,10)};
-                var questionIcon = new Ellipse {Fill = QUESTIONCOLORS.ElementAt((num += 1) % QUESTIONCOLORS.Count) , Height = 40, Width = 40, Name = question.name};
-                container.Children.Add(questionIcon);
-                container.Children.Add(new TextBox{Width = 300});
-                container.Children.Add(new CheckBox{Margin = new Thickness(10, 10, 0, 0)});
-                quizQuestions.Children.Add(container);
-            }
+                color = QUESTIONCOLORS.ElementAt(num++ % QUESTIONCOLORS.Count),
+                name = a.name,
+                optionText="",
+                correct=false
+            });
         }
-
+        private void help(object sender, RoutedEventArgs e)
+        {
+            var finalImage = new Image();
+            BitmapImage helpImage = new BitmapImage();
+            helpImage.BeginInit();
+            helpImage.UriSource = new Uri("pack://application:,,,/MeTL;component/Resources/createAQuizHelp.PNG");
+            helpImage.EndInit();
+            finalImage.Source = helpImage;
+            new Window{
+                Content=finalImage,
+                SizeToContent=SizeToContent.WidthAndHeight
+            }.ShowDialog();
+        }
         private void Close(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
-
         private void canCreateQuizQuestion(object sender, CanExecuteRoutedEventArgs e)
         {
-            try
-            {
-
-                bool a = Globals.conversationDetails.Author == "pants";
-                if (title == null)
-                    e.CanExecute = false;
-                else
-                    e.CanExecute = !(title.Text == "Please enter a quiz title");
-            }
-            catch(NotSetException err)
-            {
-                e.CanExecute = false;
-            }
+            e.CanExecute = title != null && !(string.IsNullOrEmpty(title.Text) || title.Text == CreateAQuiz.PROMPT_TEXT);
         }
-
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
-           var quiz = new QuizQuestion {title = title.Text, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks};
-                foreach(StackPanel questionField in quizQuestions.Children)
-                {
-                    if(((TextBox)questionField.Children[1]).Text.Length > 0)
-                    {
-                        quiz.options.Add(new Option
-                            {
-                                name = ((Ellipse) questionField.Children[0]).Name,
-                                color = ((SolidColorBrush)((Ellipse) questionField.Children[0]).Fill).Color,
-                                optionText = ((TextBox) questionField.Children[1]).Text,
-                                correct = (bool)((CheckBox) questionField.Children[2]).IsChecked, 
-                            });
-                    }
-                }
+            var quiz = new QuizQuestion {title = title.Text, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks};
+            foreach(object obj in quizQuestions.Items)
+            {
+                var answer = (Option)obj;
+                if (!string.IsNullOrEmpty(answer.optionText))
+                    quiz.options.Add(answer);
+            }
             Commands.SendQuiz.Execute(quiz);
             this.Close();
         }

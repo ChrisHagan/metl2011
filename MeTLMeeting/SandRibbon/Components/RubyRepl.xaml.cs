@@ -30,6 +30,7 @@ namespace SandRibbon.Components
         private void launchRepl(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(Logger.log);
+            Clipboard.SetText(Logger.log);
         }
     }
 }

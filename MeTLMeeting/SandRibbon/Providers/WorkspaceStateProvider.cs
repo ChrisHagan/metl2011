@@ -66,7 +66,16 @@ namespace SandRibbon.Providers
                         onJoin = new DelegateCommand<object>((details) =>
                         {
                             Commands.UpdateConversationDetails.UnregisterCommand(onJoin);
-                            Commands.MoveTo.Execute(Int32.Parse(param.Attribute("slide").Value));
+                            var slide = Int32.Parse(param.Attribute("slide").Value);
+                            try
+                            {
+                                if (Globals.slide != slide)
+                                    Commands.MoveTo.Execute(slide);
+                            }
+                            catch (NotSetException)
+                            {
+                                Commands.MoveTo.Execute(slide);
+                            }
                         });
                         Commands.UpdateConversationDetails.RegisterCommand(onJoin);
                     break;

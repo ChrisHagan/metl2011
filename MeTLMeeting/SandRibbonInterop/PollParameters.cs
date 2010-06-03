@@ -6,18 +6,21 @@ namespace SandRibbonInterop
 {
    public class Option
     {
-       public String name;
-       public string optionText;
-       public bool correct;
-       public Color color;
+       public String name{get;set;}
+       public string optionText { get; set; }
+       public bool correct { get; set; }
+       public Color color { get; set; }
     }
     public class QuizQuestion
     {
         public string title { get; set;}
         public string question { get; set;}
         public string author { get; set; }
-        public List<Option> options = new List<Option>();
-        public long id;
+        public List<Option> options { get; set; }
+        public long id { get; set; }
+        public QuizQuestion(){
+            options = new List<Option>();
+        }
     }
     public class QuizAnswer
     {

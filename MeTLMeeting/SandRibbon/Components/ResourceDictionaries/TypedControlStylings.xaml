@@ -51,7 +51,7 @@
                                 <Button Content="Play" Click="Video_Play"/>
                                 <Button Content="Pause" Click="Video_Pause"/>
                                 <Button Content="Mute" Click="Video_Mute"/>
-                                <Slider Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=MediaElement.Volume}" Minimum="0" Maximum="100" Width="100"/>
+                                <Slider Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=MediaElement.Volume}" Minimum="0" Maximum="10" Width="100"/>
                             </StackPanel>
                             <Grid Grid.Row="2">
                                 <Grid.ColumnDefinitions>

@@ -2,11 +2,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:q="clr-namespace:SandRibbon.Quizzing"
+    xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:SandRibbon="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     Title="Create a quiz" 
     ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"
-    Width="413">
+    SizeToContent="WidthAndHeight">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static SandRibbon:Commands.CreateQuizStructure}" Executed="CreateQuizQuestion" CanExecute="canCreateQuizQuestion"/>
     </Window.CommandBindings>
@@ -15,7 +16,7 @@
             <Border DockPanel.Dock="Bottom" Padding="10" Background="{StaticResource BackgroundBlueGradient}" >
                 <Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button x:Name="CommitButton" Content="Create QuizQuestion" Command="{x:Static SandRibbon:Commands.CreateQuizStructure}"/>
+                        <Button x:Name="CommitButton" Content="Create" Command="{x:Static SandRibbon:Commands.CreateQuizStructure}"/>
                         <Button Click="Close" Content="Cancel"/>
                     </StackPanel>
                 </Grid>
@@ -29,12 +30,24 @@
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="0">Title (*)</Label>
-                        <TextBox Grid.Row="1" Width="300" x:Name="title">Please enter a quiz title</TextBox>
-                        <Label Grid.Row="2">Question</Label>
+                        <Label FontWeight="Bold" Grid.Row="0">Title</Label>
+                        <TextBox FontWeight="Bold" Grid.Row="1" Width="300" x:Name="title" Text="{x:Static q:CreateAQuiz.PROMPT_TEXT}" />
+                        <Label FontWeight="Bold" Grid.Row="2">Question (optional)</Label>
                         <TextBox Grid.Row="3" Height="90" Width="300" x:Name="question" AcceptsReturn="True"></TextBox>
                     </Grid>
-                    <StackPanel Margin="0,10,0, 0" x:Name="quizQuestions" Orientation="Vertical"/>
+                    <ItemsControl Margin="10" x:Name="quizQuestions">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <q:GoldPlaque />
+                                    <StackPanel Orientation="Horizontal">
+                                        <q:QuizButton />
+                                        <TextBox Margin="0 5 20 5" Width="300" Text="{Binding Path=optionText}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </ScrollViewer>
         </DockPanel>

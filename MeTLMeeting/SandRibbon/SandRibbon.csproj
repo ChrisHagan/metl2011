@@ -198,11 +198,35 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Components\HelpButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Submissions\ScreenshotSubmission.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Submissions\ViewSubmissions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Quizzing\AnswerAQuiz.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Quizzing\AssessAQuiz.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Quizzing\CreateAQuiz.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\GoldPlaque.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Quizzing\QuizButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -431,14 +455,31 @@
       <DependentUpon>Pedagogicometer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
-    <Compile Include="Components\ResourceDictionaries\TypedControlStylingEventHandlers.cs" />
+    <Compile Include="Components\HelpButton.xaml.cs">
+      <DependentUpon>HelpButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Submissions\ScreenshotSubmission.xaml.cs">
+      <DependentUpon>ScreenshotSubmission.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Submissions\ViewSubmissions.xaml.cs">
+      <DependentUpon>ViewSubmissions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Providers\ProviderMonitor.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
     <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">
       <DependentUpon>AnswerAQuiz.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Quizzing\AssessAQuiz.xaml.cs">
+      <DependentUpon>AssessAQuiz.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Quizzing\CreateAQuiz.xaml.cs">
       <DependentUpon>CreateAQuiz.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\GoldPlaque.xaml.cs">
+      <DependentUpon>GoldPlaque.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\QuizButton.xaml.cs">
+      <DependentUpon>QuizButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Groups\PenColors.xaml.cs" />
     <Compile Include="Components\ConversationConfigurationDialog.xaml.cs">
@@ -710,6 +751,7 @@
     <SplashScreen Include="Resources\BenHead.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </SplashScreen>
+    <Resource Include="Resources\createAQuizHelp.PNG" />
     <Content Include="Resources\Highlighter.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -736,6 +778,7 @@
     <Content Include="Resources\SyncRed.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\thoughtOutline.png" />
     <Resource Include="Resources\underline.png" />
     <Resource Include="Resources\UndoShiny.png" />
     <Resource Include="Resources\SyncShiny.png" />

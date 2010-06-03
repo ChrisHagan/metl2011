@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using SandRibbon.Providers;
 using SandRibbonInterop;
 using SandRibbonObjects;
@@ -32,6 +33,72 @@ namespace SandRibbon
         public static StringToIntConverter parseInt = new StringToIntConverter();
         public static QuizPositionConverter quizPositionConverter = new QuizPositionConverter();
         public static ConversationDateConverter DateTimeConverter = new ConversationDateConverter();
+        public static ColorToBrushConverter ColorToBrushConverter = new ColorToBrushConverter();
+        public static BracketingConverter BracketingConverter = new BracketingConverter();
+        public static ConvertStringToImageSource ConvertStringToImageSource = new ConvertStringToImageSource();
+    }
+    public class BracketingConverter : IValueConverter {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return string.Format("({0})", value);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+    public class ConvertStringToImageSource: IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var uri = new Uri(value.ToString(), UriKind.RelativeOrAbsolute);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = uri;
+            bitmap.EndInit();
+            return bitmap;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+    public class ColorToBrushConverter : IValueConverter {
+        private static readonly int INCREMENT = 20;
+        private static Color modify(Func<byte,byte> action, Color color) {
+            return new Color
+            {
+                A = color.A,
+                R = action(color.R),
+                G = action(color.G),
+                B = action(color.B)
+            };
+        }
+        private static Color highlightColor(Color color) { 
+            return modify(i=>(byte)Math.Min(255,i+INCREMENT*4), color);
+        }
+        private static Color shadowColor(Color color) { 
+            return modify(i=>(byte)Math.Max(0,i-INCREMENT), color);
+        }
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var baseColor = (Color)value;
+            return new LinearGradientBrush
+            {
+                GradientStops = new GradientStopCollection {
+                        new GradientStop(shadowColor(baseColor), 0), 
+                        new GradientStop(baseColor, 0.2), 
+                        new GradientStop(highlightColor(baseColor), 0.65)
+                    },
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(1, 0)
+            };
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
     }
     public class RandomConverter : IValueConverter
     {

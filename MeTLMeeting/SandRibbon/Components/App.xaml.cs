@@ -67,6 +67,7 @@ namespace SandRibbon
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyElement();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyAutoshape();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyLiveWindow();
+                new SandRibbonInterop.MeTLStanzas.MeTLStanzas.ScreenshotSubmission();
                 Console.WriteLine("End ", DateTime.Now.ToString());
             }
             catch (Exception ex)

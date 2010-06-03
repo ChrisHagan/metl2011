@@ -847,19 +847,19 @@ namespace SandRibbon
                         break;
                     case 1:
                         ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
+                        tabs.Add(new Tabs.Quizzes());
                         homeGroups.Add(new EditingModes());
                         homeGroups.Add(new ToolBox());
                         homeGroups.Add(new TextTools());
                         ribbon.ToolBar = new Chrome.ToolBar();
                         break;
                     case 2:
-                        homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
-                        homeGroups.Add(new Notes());
-                        tabs.Add(new Tabs.Quizzes());
-                        tabs.Add(new Tabs.Analytics());
                         slideDisplay.Visibility = Visibility.Visible;
                         break;
                     case 3:
+                        homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
+                        homeGroups.Add(new Notes());
+                        tabs.Add(new Tabs.Analytics());
                         tabs.Add(new Tabs.Plugins());
                         break;
                     default:

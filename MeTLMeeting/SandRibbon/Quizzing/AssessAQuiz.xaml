@@ -1,0 +1,54 @@
+﻿<Window x:Class="SandRibbon.Quizzing.AssessAQuiz"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="clr-namespace:SandRibbon"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    Topmost="True"
+    Title="{Binding Path=title}" SizeToContent="WidthAndHeight" >
+    <Border Background="{StaticResource BackgroundBlueGradient}" x:Name="allResults" Padding="10">
+        <StackPanel Orientation="Vertical">
+            <Grid Margin="0 0 0 20">
+                <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
+                <StackPanel>
+                    <Label FontWeight="Bold" Content="{Binding Path=question}" HorizontalAlignment="Center" />
+                    <Label FontWeight="Bold" x:Name="responseCount" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+            <ItemsControl x:Name="resultDisplay" HorizontalAlignment="Left" Padding="30 0 0 0" Grid.IsSharedSizeScope="True">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid ToolTip="{Binding Path=tooltip}" Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition SharedSizeGroup="Foo"/>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid Grid.Column="0">
+                                    <quiz:GoldPlaque />
+                                    <StackPanel Orientation="Horizontal">
+                                        <quiz:QuizButton />
+                                        <Label FontWeight="Bold" Content="{Binding percentage}" HorizontalAlignment="Left" />
+                                        <Label FontWeight="Bold" Content="{Binding count, Converter={x:Static sr:Converters.BracketingConverter}}" HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                                <Grid Grid.Column="1" HorizontalAlignment="Left">
+                                    <Grid.Width>
+                                        <MultiBinding Converter="{x:Static sr:Converters.multiply}">
+                                            <Binding ElementName="allResults" Path="ActualWidth" />
+                                            <Binding Path="proportion" />
+                                        </MultiBinding>
+                                    </Grid.Width>
+                                    <Rectangle Fill="{Binding Path=color, Converter={x:Static sr:Converters.ColorToBrushConverter}}" 
+                                       HorizontalAlignment="Stretch" Width="Auto" RadiusX="3" RadiusY="3" Stroke="Gray"/>
+                                    <Rectangle HorizontalAlignment="Stretch" Width="Auto" Fill="{StaticResource ShinyHighlightBrush}" 
+                                           RadiusX="3" RadiusY="3" />
+                                </Grid>
+                            </Grid>
+                            <Rectangle Fill="{StaticResource ShinyAbsoluteHighlightBrush}" IsHitTestVisible="False"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Border>
+</Window>
