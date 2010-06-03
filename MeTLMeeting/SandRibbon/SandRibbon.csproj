@@ -190,6 +190,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\HelpButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Components\Login.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -198,37 +202,33 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\HelpButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Components\Submissions\ScreenshotSubmission.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Submissions\ViewSubmissions.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Quizzing\AnswerAQuiz.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Quizzing\AssessAQuiz.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Quizzing\CreateAQuiz.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Quizzing\GoldPlaque.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Quizzing\QuizButton.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\PenColors.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -448,6 +448,7 @@
     <Compile Include="Components\Friends.xaml.cs">
       <DependentUpon>Friends.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\HelpButton.xaml.cs" />
     <Compile Include="Components\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
@@ -455,9 +456,7 @@
       <DependentUpon>Pedagogicometer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
-    <Compile Include="Components\HelpButton.xaml.cs">
-      <DependentUpon>HelpButton.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Components\ResourceDictionaries\TypedControlStylingEventHandlers.cs" />
     <Compile Include="Components\Submissions\ScreenshotSubmission.xaml.cs">
       <DependentUpon>ScreenshotSubmission.xaml</DependentUpon>
     </Compile>
@@ -751,7 +750,6 @@
     <SplashScreen Include="Resources\BenHead.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </SplashScreen>
-    <Resource Include="Resources\createAQuizHelp.PNG" />
     <Content Include="Resources\Highlighter.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -778,7 +776,6 @@
     <Content Include="Resources\SyncRed.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Resources\thoughtOutline.png" />
     <Resource Include="Resources\underline.png" />
     <Resource Include="Resources\UndoShiny.png" />
     <Resource Include="Resources\SyncShiny.png" />
