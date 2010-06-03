@@ -425,7 +425,7 @@ namespace SandRibbon
         {
             if (value == null)
                 return null;
-            return ((SandRibbonInterop.Video)value);
+            return ((FrameworkElement)value);
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

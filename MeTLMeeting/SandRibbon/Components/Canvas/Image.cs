@@ -145,6 +145,18 @@ namespace SandRibbon.Components.Canvas
                             slide = Globals.slide
                         });
                     }
+                    if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "SandRibbonInterop.Video")
+                    {
+                        var video = (SandRibbonInterop.Video)GetSelectedElements().ElementAt(i);
+                        Commands.SendDirtyVideo.Execute(new TargettedDirtyElement
+                        {
+                            identifier = video.Tag.ToString(),
+                            target = target,
+                            privacy = privacy,
+                            author = Globals.me,
+                            slide = Globals.slide
+                        });
+                    }
                     if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "SandRibbonInterop.RenderedLiveWindow")
                     {
                         var liveWindow = (SandRibbonInterop.RenderedLiveWindow)GetSelectedElements().ElementAt(i);
@@ -407,6 +419,8 @@ namespace SandRibbon.Components.Canvas
                     myImages.Add((SandRibbonInterop.AutoShape)image);
                 if (image.GetType().ToString() == "SandRibbonInterop.RenderedLiveWindow")
                     myImages.Add((SandRibbonInterop.RenderedLiveWindow)image);
+                if (image.GetType().ToString() == "SandRibbonInterop.Video")
+                    myImages.Add((SandRibbonInterop.Video)image);
             }
             return myImages;
         }
@@ -455,6 +469,15 @@ namespace SandRibbon.Components.Canvas
                         author = Globals.me
                     });
                 }
+                else if (selectedImage is Video)
+                    Commands.AddVideo.Execute(new TargettedVideo
+                    {
+                        author=Globals.me,
+                        slide = Globals.slide,
+                        privacy = privacy,
+                        target = target,
+                        video = ((SandRibbonInterop.Video)selectedImage).MediaElement
+                    });
             }
         }
         private void dirtyImage(object sender, InkCanvasSelectionEditingEventArgs e)
@@ -510,6 +533,16 @@ namespace SandRibbon.Components.Canvas
                             privacy = selectedElementPrivacy,
                             target = target
                         });
+                    else if (selectedImage is Video)
+                        Commands.SendDirtyVideo.Execute(
+                            new TargettedDirtyElement
+                            {
+                                author = Globals.me,
+                                slide = Globals.slide,
+                                identifier = ((SandRibbonInterop.Video)selectedImage).Tag.ToString(),
+                                privacy = selectedElementPrivacy,
+                                target = target
+                            });
             }
         }
         private void DugPublicSpace(LiveWindowSetup setup)
