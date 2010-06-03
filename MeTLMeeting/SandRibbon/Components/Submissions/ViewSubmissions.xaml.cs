@@ -40,23 +40,29 @@ namespace SandRibbon.Components.Submissions
             submissionList.Add(submission);
         }
 
-        private void importSubmissions(object sender, RoutedEventArgs e)
+        private void importSubmission(object sender, ExecutedRoutedEventArgs e)
         {
+            var item = submissions.SelectedItem;
+            DelegateCommand<object> onPreparserAvailable = null;
+            onPreparserAvailable = new DelegateCommand<object>((_obj) =>
+               {
+                   Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
+                   var image = (TargettedSubmission) item;
+                   Commands.ImageDropped.Execute(new ImageDrop { 
+                         filename = image.url.ToString (), 
+                         target = "presentationSpace",
+                         point = new Point (0, 0),
+                         position = 1
 
-            foreach (var item in submissions.SelectedItems)
-            {
-                double y = 0;
-                var image = (TargettedSubmission)item;
-                Commands.ImageDropped.Execute(new ImageDrop
-                                                  {
-                                                      filename = image.url.ToString(),
-                                                      target = "presentationSpace",
-                                                      point = new Point(0, y),
-                                                      position = 1
+                     });
+               });
+            Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
+            Commands.AddSlide.Execute(null);
+        }
 
-                                                  });
-                y += 100;
-            }
+        private void canImportSubmission(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = submissions.SelectedItem != null;
         }
     }
 }
