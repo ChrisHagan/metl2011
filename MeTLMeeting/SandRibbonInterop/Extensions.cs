@@ -58,7 +58,7 @@ namespace SandRibbonInterop
     }
     public static class VideoExtensions 
     { 
-        public static ImageTag tag(this MediaElement image )
+        public static ImageTag tag(this SandRibbonInterop.Video image )
         {
             var imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
             return new ImageTag 
@@ -70,7 +70,7 @@ namespace SandRibbonInterop
                 zIndex = imageInfo.zIndex
             };
         }
-        public static ImageTag tag(this MediaElement image, ImageTag tag)
+        public static ImageTag tag(this SandRibbonInterop.Video image, ImageTag tag)
         {
             image.Tag = JsonConvert.SerializeObject(tag);  
             return tag;

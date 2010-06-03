@@ -209,13 +209,14 @@ namespace SandRibbon.Components
                 stack.text.doText(text);
             foreach (var video in parser.videos)
             {
-                var srVideo = new SandRibbonInterop.Video
-                {
-                    MediaElement = ((TargettedVideo)video.Value).video,
-                    VideoSource = ((TargettedVideo)video.Value).video.Source,
-                    Duration = ((TargettedVideo)video.Value).video.NaturalDuration,
-                    Position = ((TargettedVideo)video.Value).video.Position
-                };
+                var srVideo = ((TargettedVideo)video.Value).video;
+                /*{
+                    MediaElement = ((TargettedVideo)video.Value).video.MediaElement,
+                    VideoSource = ((TargettedVideo)video.Value).video.MediaElement.Source,
+                    Duration = ((TargettedVideo)video.Value).video.MediaElement.NaturalDuration,
+                    Position = ((TargettedVideo)video.Value).video.Position,
+                    X = ;
+                };*/
                 srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
                 srVideo.MediaElement.ScrubbingEnabled = true;
                 stack.images.AddVideo(srVideo);

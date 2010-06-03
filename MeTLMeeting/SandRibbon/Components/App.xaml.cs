@@ -65,6 +65,7 @@ namespace SandRibbon
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyImage();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.LiveWindow();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyElement();
+                new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyVideo();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyAutoshape();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyLiveWindow();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.ScreenshotSubmission();

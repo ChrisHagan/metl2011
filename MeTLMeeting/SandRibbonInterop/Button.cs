@@ -133,7 +133,6 @@ namespace SandRibbonInterop
     }
     public class Video : System.Windows.Controls.Primitives.Thumb
     {
-
         public Duration Duration
         {
             get { return (Duration)GetValue(DurationProperty); }
@@ -146,6 +145,39 @@ namespace SandRibbonInterop
             get { return (TimeSpan)GetValue(PositionProperty); }
             set { SetValue(PositionProperty, value); }
         }
+
+        public static readonly DependencyProperty XProperty =
+            DependencyProperty.Register("X", typeof(double), typeof(Thumb), new UIPropertyMetadata((double)0));
+        public double X
+        {
+            get { return (double)GetValue(XProperty); }
+            set { SetValue(XProperty, value); }
+        }
+        public static readonly DependencyProperty YProperty =
+            DependencyProperty.Register("Y", typeof(double), typeof(Thumb), new UIPropertyMetadata((double)0));
+        public double Y
+        {
+            get { return (double)GetValue(YProperty); }
+            set { SetValue(YProperty, value); }
+        }
+        public static readonly DependencyProperty WidthProperty =
+            DependencyProperty.Register("Width", typeof(double), typeof(Thumb), new UIPropertyMetadata((double)0));
+        public double Width
+        {
+            get { return (double)GetValue(WidthProperty); }
+            set { SetValue(WidthProperty, value); }
+        }
+        public static readonly DependencyProperty HeightProperty =
+            DependencyProperty.Register("Height", typeof(double), typeof(Thumb), new UIPropertyMetadata((double)0));
+        public double Height
+        {
+            get { return (double)GetValue(HeightProperty); }
+            set { SetValue(HeightProperty, value); }
+        }
+        
+        
+        
+        
         public static readonly DependencyProperty PositionProperty =
             DependencyProperty.Register("Position", typeof(TimeSpan), typeof(Thumb), new UIPropertyMetadata(null));
         

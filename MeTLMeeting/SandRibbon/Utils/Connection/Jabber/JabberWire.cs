@@ -177,6 +177,7 @@ namespace SandRibbon.Utils.Connection
             Commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(SendImage));
             Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(SendVideo));
             Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
+            Commands.SendDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyVideo));
             Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoShape));
             Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoShape));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
@@ -439,6 +440,10 @@ namespace SandRibbon.Utils.Connection
         {
             stanza(new MeTLStanzas.DirtyText(element));
         }
+        public void SendDirtyVideo(TargettedDirtyElement element)
+        {
+            stanza(new MeTLStanzas.DirtyVideo(element));
+        }
         public void SendDirtyImage(TargettedDirtyElement element)
         {
             stanza(new MeTLStanzas.DirtyImage(element));
@@ -690,7 +695,12 @@ namespace SandRibbon.Utils.Connection
                 foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
                     actOnBubbleReceived(bubble.context);
                 foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
-                    actOnVideoReceived(video.Vid);
+                {
+                    var vid = video.Vid;
+                    actOnVideoReceived(vid);
+                }
+                foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
+                    actOnDirtyVideoReceived(dirtyVideo);
             };
             if (Application.Current.Dispatcher.Thread != Thread.CurrentThread)
                 Application.Current.Dispatcher.BeginInvoke(action);
@@ -716,6 +726,10 @@ namespace SandRibbon.Utils.Connection
         public virtual void actOnDirtyAutoshapeReceived(MeTLStanzas.DirtyAutoshape dirtyAutoShape)
         {
             Commands.ReceiveDirtyAutoShape.Execute(dirtyAutoShape.element);
+        }
+        public virtual void actOnDirtyVideoReceived(MeTLStanzas.DirtyVideo dirtyVideo)
+        {
+            Commands.ReceiveDirtyVideo.Execute(dirtyVideo.element);
         }
         public virtual void actOnDirtyImageReceived(MeTLStanzas.DirtyImage dirtyImage)
         {

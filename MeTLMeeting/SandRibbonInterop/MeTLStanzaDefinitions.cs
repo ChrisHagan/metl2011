@@ -63,20 +63,32 @@ namespace SandRibbonInterop.MeTLStanzas
     }
     public class TargettedVideo : TargettedElement 
     {
-        public MediaElement videoProperty;
+        public SandRibbonInterop.Video videoProperty;
         public MeTLStanzas.Video videoSpecification;
         public string id;
-        public MediaElement video { 
+        public SandRibbonInterop.Video video { 
             get{
                 var reified = videoSpecification.forceEvaluation();
                 id = reified.tag().id;
+                reified.Height = Height;
+                reified.Width = Width;
+                reified.X = X;
+                reified.Y = Y;
                 return reified;
             }
             set {
                 id = value.tag().id;
+                X = value.X;
+                Y = value.Y;
+                Height = value.ActualHeight;
+                Width = value.ActualWidth;
                 videoProperty = value;
-            }
+                }
         }
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Height { get; set; }
+        public double Width { get; set; }
     }
     public class TargettedPowerpointBackgroundVideo : TargettedElement
     {
@@ -991,12 +1003,13 @@ namespace SandRibbonInterop.MeTLStanzas
             public Video(TargettedVideo video) : this() {
                 this.Vid = video;
             }
-            public MediaElement forceEvaluation() {
+            public SandRibbonInterop.Video forceEvaluation() {
                 var video = new MediaElement { 
                     Tag = this.tag,
                     Source = new Uri(this.source, UriKind.RelativeOrAbsolute)
                 };
-                return video;
+                var srVideo = new SandRibbonInterop.Video { MediaElement = video, Tag=this.tag, VideoSource = new System.Uri(this.source,UriKind.RelativeOrAbsolute) };
+                return srVideo;
             }
             public TargettedVideo Vid
             {
@@ -1008,14 +1021,16 @@ namespace SandRibbonInterop.MeTLStanzas
                         slide = Int32.Parse(GetTag(slideTag)),
                         target = GetTag(targetTag),
                         privacy = GetTag(privacyTag),
-                        author = GetTag("author"),
-                        id = GetTag(identityTag)
+                        author = GetTag(authorTag),
+                        id = GetTag(identityTag),
+                        X = Double.Parse(GetTag(xTag)),
+                        Y = Double.Parse(GetTag(yTag))
                     };
                     return targettedVideo;
                 }
                 set
                 {
-                    var absolutePath = value.videoProperty.Source.ToString();
+                    var absolutePath = value.videoProperty.MediaElement.Source.ToString();
                     SetTag(tagTag, value.videoProperty.Tag.ToString());
                     SetTag(sourceTag, absolutePath);
                     SetTag(xTag, InkCanvas.GetLeft(value.videoProperty).ToString());
@@ -1267,6 +1282,17 @@ namespace SandRibbonInterop.MeTLStanzas
             static DirtyAutoshape() { agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(DirtyAutoshape)); }
             public DirtyAutoshape() { }
             public DirtyAutoshape(TargettedDirtyElement element)
+                : base(element)
+            {
+                this.TagName = TAG;
+            }
+        }
+        public class DirtyVideo : DirtyElement
+        {
+            static readonly string TAG = "dirtyVideo";
+            static DirtyVideo() { agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(DirtyVideo)); }
+            public DirtyVideo() { }
+            public DirtyVideo(TargettedDirtyElement element)
                 : base(element)
             {
                 this.TagName = TAG;

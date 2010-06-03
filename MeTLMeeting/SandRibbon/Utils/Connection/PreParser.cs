@@ -38,6 +38,8 @@ namespace SandRibbon.Utils.Connection
                 canvas.Children.Add(textbox.Value.box);
             foreach (var shape in autoshapes)
                 canvas.Children.Add(shape.Value.autoshape);
+            foreach (var video in videos)
+                canvas.Children.Add(video.Value.video);
             return canvas;
         }
         public T merge<T>(T otherParser) where T : PreParser
@@ -99,6 +101,11 @@ namespace SandRibbon.Utils.Connection
         {
             if(text.ContainsKey(element.element.identifier))
                 text.Remove(element.element.identifier);
+        }
+        public override void actOnDirtyVideoReceived(MeTLStanzas.DirtyVideo element)
+        {
+            if (videos.ContainsKey(element.element.identifier))
+                videos.Remove(element.element.identifier);
         }
         public override void actOnDirtyStrokeReceived(MeTLStanzas.DirtyInk dirtyInk)
         {

@@ -51,6 +51,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(ReceiveVideo));
             Commands.ReceiveAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(ReceiveAutoShape));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
+            Commands.ReceiveDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyVideo));
             Commands.ReceiveDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyAutoShape));
             Commands.AddAutoShape.RegisterCommand(new DelegateCommand<object>(createNewAutoShape));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(addImageFromDisk));
@@ -201,26 +202,25 @@ namespace SandRibbon.Components.Canvas
         {
             Action doAdd = () =>
             {
-                video.video.LoadedBehavior = MediaState.Manual;
-                video.video.ScrubbingEnabled = true;
-                AddVideo(new SandRibbonInterop.Video
-                {
-                    MediaElement = video.video,
-                    VideoSource = video.video.Source,
-                    Duration = video.video.NaturalDuration,
-                    Position = video.video.Position
-
-                });
+                video.video.MediaElement.LoadedBehavior = MediaState.Manual;
+                video.video.MediaElement.ScrubbingEnabled = true;
+                AddVideo(video.video);
             };
             if (Thread.CurrentThread != Dispatcher.Thread)
                 Dispatcher.BeginInvoke(doAdd);
             else
                 doAdd();
-            }
+        }
         public void AddVideo(SandRibbonInterop.Video element)
         {
             Console.WriteLine("Received Media Element");
-            Children.Add(element);
+            if (!videoExistsOnCanvas(element))
+            {
+                Children.Add(element);
+                element.MediaElement.LoadedBehavior = MediaState.Manual;
+                InkCanvas.SetLeft(element, element.X);
+                InkCanvas.SetTop(element, element.Y);
+            }
         }
         private void ensureAllImagesHaveCorrectPrivacy()
         {
@@ -261,12 +261,29 @@ namespace SandRibbon.Components.Canvas
             if (!(element.slide == Globals.slide)) return;
             doDirtyImage(element.identifier);
         }
+        public void ReceiveDirtyVideo(TargettedDirtyElement element)
+        {
+            if (!(element.target.Equals(target))) return;
+            if (!(element.slide == Globals.slide)) return;
+            doDirtyVideo(element.identifier);
+        }
 
         private void doDirtyImage(string imageId)
         {
             Action doDirty = (Action)delegate
             {
                 dirtyImage(imageId);
+            };
+            if (Thread.CurrentThread != Dispatcher.Thread)
+                Dispatcher.BeginInvoke(doDirty);
+            else
+                doDirty();
+        }
+        private void doDirtyVideo(string imageId)
+        {
+            Action doDirty = (Action)delegate
+            {
+                dirtyVideo(imageId);
             };
             if (Thread.CurrentThread != Dispatcher.Thread)
                 Dispatcher.BeginInvoke(doDirty);
@@ -284,6 +301,20 @@ namespace SandRibbon.Components.Canvas
                     if (imageId.Equals(currentImage.tag().id))
                     {
                         Children.Remove(currentImage);
+                    }
+                }
+            }
+        }
+        private void dirtyVideo(string videoId)
+        {
+            for (int i = 0; i < Children.Count; i++)
+            {
+                if (Children[i] is SandRibbonInterop.Video)
+                {
+                    var currentVideo = (SandRibbonInterop.Video)Children[i];
+                    if (videoId.Equals(currentVideo.Tag.ToString()))
+                    {
+                        Children.Remove(currentVideo);
                     }
                 }
             }
@@ -420,7 +451,10 @@ namespace SandRibbon.Components.Canvas
                 if (image.GetType().ToString() == "SandRibbonInterop.RenderedLiveWindow")
                     myImages.Add((SandRibbonInterop.RenderedLiveWindow)image);
                 if (image.GetType().ToString() == "SandRibbonInterop.Video")
+                {
+                    ((SandRibbonInterop.Video)image).MediaElement.LoadedBehavior = MediaState.Manual;
                     myImages.Add((SandRibbonInterop.Video)image);
+                }
             }
             return myImages;
         }
@@ -470,14 +504,29 @@ namespace SandRibbon.Components.Canvas
                     });
                 }
                 else if (selectedImage is Video)
-                    Commands.AddVideo.Execute(new TargettedVideo
+                {
+                    ((SandRibbonInterop.Video)selectedImage).Tag = ((SandRibbonInterop.Video)selectedImage).MediaElement.Tag;
+                    var tag = ((SandRibbonInterop.Video)selectedImage).tag();
+                    tag.privacy = privacy;
+                    tag.zIndex = -1;
+                    ((SandRibbonInterop.Video)selectedImage).tag(tag);
+
+                    var srVideo = ((SandRibbonInterop.Video)selectedImage);
+                    srVideo.X = InkCanvas.GetLeft(srVideo);
+                    srVideo.Y = InkCanvas.GetTop(srVideo);
+                    srVideo.Height = srVideo.ActualHeight;
+                    srVideo.Width = srVideo.ActualWidth;
+                    srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
+                    Commands.SendVideo.Execute(new TargettedVideo
                     {
-                        author=Globals.me,
+                        author = Globals.me,
                         slide = Globals.slide,
                         privacy = privacy,
                         target = target,
-                        video = ((SandRibbonInterop.Video)selectedImage).MediaElement
+                        video = srVideo,
+                        id = srVideo.tag().id
                     });
+                }
             }
         }
         private void dirtyImage(object sender, InkCanvasSelectionEditingEventArgs e)
@@ -511,6 +560,7 @@ namespace SandRibbon.Components.Canvas
                     });
                 }
                 else if (selectedImage is RenderedLiveWindow)
+                {
                     if (((Rectangle)(((RenderedLiveWindow)selectedImage).Rectangle)).Tag != null)
                     {
                         var rect = ((RenderedLiveWindow)selectedImage).Rectangle;
@@ -524,25 +574,26 @@ namespace SandRibbon.Components.Canvas
                                 slide = Globals.slide
                             });
                     }
-                    else if (selectedImage is AutoShape)
-                        Commands.SendDirtyAutoShape.Execute(new TargettedDirtyElement
+                }
+                else if (selectedImage is AutoShape)
+                    Commands.SendDirtyAutoShape.Execute(new TargettedDirtyElement
+                    {
+                        author = Globals.me,
+                        slide = Globals.slide,
+                        identifier = ((SandRibbonInterop.AutoShape)selectedImage).Tag.ToString(),
+                        privacy = selectedElementPrivacy,
+                        target = target
+                    });
+                else if (selectedImage is Video)
+                    Commands.SendDirtyVideo.Execute(
+                        new TargettedDirtyElement
                         {
                             author = Globals.me,
                             slide = Globals.slide,
-                            identifier = ((SandRibbonInterop.AutoShape)selectedImage).Tag.ToString(),
+                            identifier = ((SandRibbonInterop.Video)selectedImage).MediaElement.Tag.ToString(),
                             privacy = selectedElementPrivacy,
                             target = target
                         });
-                    else if (selectedImage is Video)
-                        Commands.SendDirtyVideo.Execute(
-                            new TargettedDirtyElement
-                            {
-                                author = Globals.me,
-                                slide = Globals.slide,
-                                identifier = ((SandRibbonInterop.Video)selectedImage).Tag.ToString(),
-                                privacy = selectedElementPrivacy,
-                                target = target
-                            });
             }
         }
         private void DugPublicSpace(LiveWindowSetup setup)
@@ -579,7 +630,7 @@ namespace SandRibbon.Components.Canvas
             });
         }
         #endregion
-        #region Video
+/*        #region Video
         private SandRibbonInterop.Video newVideo(System.Uri Source)
         {
             var MeTLVideo = new SandRibbonInterop.Video()
@@ -589,6 +640,7 @@ namespace SandRibbon.Components.Canvas
             return MeTLVideo;
         }
         #endregion
+  */  
         #region AutoShapes
         private void createNewAutoShape(object obj)
         {
@@ -675,12 +727,12 @@ namespace SandRibbon.Components.Canvas
 
                 var hostedFileName = ResourceUploader.uploadResource(Globals.slide.ToString(), fileName);
                 if (hostedFileName == "failed") return;
-                var me = new MediaElement { Source = new Uri(hostedFileName, UriKind.Absolute), LoadedBehavior=MediaState.Manual };
+                var me = new MediaElement { Source = new Uri(hostedFileName, UriKind.Absolute), LoadedBehavior = MediaState.Manual };
                 var video = new SandRibbonInterop.Video { MediaElement = me, VideoSource = me.Source };
                 Children.Remove(placeHolder);
                 InkCanvas.SetLeft(video, pos.X);
                 InkCanvas.SetTop(video, pos.Y);
-                video.MediaElement.tag(new ImageTag
+                video.tag(new ImageTag
                                   {
                                       author = Globals.me,
                                       id = string.Format("{0}:{1}:{2}", Globals.me, SandRibbonObjects.DateTimeFactory.Now(), count),
@@ -693,23 +745,29 @@ namespace SandRibbon.Components.Canvas
                         Children.Remove(video);
                         Commands.SendDirtyImage.Execute(new TargettedDirtyElement
                                                             {
-                                                                identifier = video.MediaElement.tag().id,
+                                                                identifier = video.tag().id,
                                                                 target = target,
-                                                                privacy = video.MediaElement.tag().privacy,
-                                                                author = video.MediaElement.tag().author,
+                                                                privacy = video.tag().privacy,
+                                                                author = video.tag().author,
                                                                 slide = Globals.slide
                                                             });
                     },
                     () =>
                     {
                     });
+                video.MediaElement.LoadedBehavior = MediaState.Manual;
                 Commands.SendVideo.Execute(new TargettedVideo
                 {
                     author = Globals.me,
                     slide = Globals.slide,
                     privacy = privacy,
                     target = target,
-                    video = video.MediaElement
+                    video = video,
+                    X = InkCanvas.GetLeft(video),
+                    Y = InkCanvas.GetTop(video),
+                    Height = video.ActualHeight,
+                    Width = video.ActualWidth,
+                    id = video.tag().id
                 });
             }
         }
@@ -863,6 +921,14 @@ namespace SandRibbon.Components.Canvas
                         return true;
             return false;
         }
+        private bool videoExistsOnCanvas(SandRibbonInterop.Video testVideo)
+        {
+            foreach (UIElement video in Children)
+                if (video is SandRibbonInterop.Video)
+                    if (videoCompare((SandRibbonInterop.Video)video, testVideo))
+                        return true;
+             return false;
+        }
         private bool imageExistsOnCanvas(System.Windows.Controls.Image testImage)
         {
             foreach (UIElement image in Children)
@@ -880,6 +946,18 @@ namespace SandRibbon.Components.Canvas
             if (image.Source.ToString() != currentImage.Source.ToString())
                 return false;
             if (image.tag().id != currentImage.tag().id)
+                return false;
+            return true;
+        }
+        private static bool videoCompare(SandRibbonInterop.Video video, SandRibbonInterop.Video currentVideo)
+        {
+            if (!(System.Windows.Controls.Canvas.GetTop(currentVideo) != System.Windows.Controls.Canvas.GetTop(video)))
+                return false;
+            if (!(System.Windows.Controls.Canvas.GetLeft(currentVideo) != System.Windows.Controls.Canvas.GetLeft(video)))
+                return false;
+            if (video.VideoSource.ToString() != currentVideo.VideoSource.ToString())
+                return false;
+            if (video.tag().id != currentVideo.tag().id)
                 return false;
             return true;
         }
