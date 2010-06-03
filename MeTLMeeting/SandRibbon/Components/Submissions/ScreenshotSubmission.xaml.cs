@@ -31,7 +31,7 @@ namespace SandRibbon.Components.Submissions
         }
         private void generateScreenshot(object sender, RoutedEventArgs e)
         {
-            Commands.GenerateScreenshot.Execute(null);
+            Commands.GenerateScreenshot.Execute(DateTime.Now.Ticks);
         }
 
         private void viewSubmissions(object sender, RoutedEventArgs e)
