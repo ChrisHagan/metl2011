@@ -50,6 +50,7 @@ namespace SandRibbon
         public static CompositeCommand GenerateScreenshot = new CompositeCommand();
         public static CompositeCommand SendScreenshotSubmission = new CompositeCommand();
         public static CompositeCommand ReceiveScreenshotSubmission = new CompositeCommand();
+        public static RoutedCommand ImportSubmission = new RoutedCommand();
         
         public static CompositeCommand DisablePens = new CompositeCommand();
         public static CompositeCommand EnablePens = new CompositeCommand();

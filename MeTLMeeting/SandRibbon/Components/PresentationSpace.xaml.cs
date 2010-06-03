@@ -46,7 +46,7 @@ namespace SandRibbon.Components
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
             Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
-            Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<object>(generateScreenshot));
+            Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<long>(generateScreenshot));
             Loaded += presentationSpaceLoaded;
         }
 
@@ -152,7 +152,7 @@ namespace SandRibbon.Components
         }
 
 
-        private void generateScreenshot(object obj)
+        private void generateScreenshot(long snapshotTime)
         {
             var rtb = generateCapture((int) ActualWidth);
             var encoder = new PngBitmapEncoder();
@@ -173,7 +173,8 @@ namespace SandRibbon.Components
                                                           {
                                                               author = Globals.me,
                                                               url = hostedFileName,
-                                                              slide = Globals.slide
+                                                              slide = Globals.slide,
+                                                              time = snapshotTime
                                                           });
 
         }
