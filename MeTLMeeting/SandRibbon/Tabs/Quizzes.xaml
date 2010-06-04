@@ -5,6 +5,7 @@
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:metl="clr-namespace:SandRibbon"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
+    xmlns:submissions="clr-namespace:SandRibbon.Components.Submissions"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon">
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">5</core:String>    
@@ -37,5 +38,8 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl> 
+    </sr:RibbonGroup>
+    <sr:RibbonGroup Header="Submission">
+        <submissions:ScreenshotSubmission/>
     </sr:RibbonGroup>
 </sr:RibbonTab>

@@ -36,6 +36,7 @@ namespace SandRibbon.Tabs.Groups
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(jid =>
             {
+            Console.WriteLine("Slide"); 
                 currentSlideIndex = 0;
                 slides.SelectedIndex = 0;
                 slides.ScrollIntoView(slides.SelectedIndex);

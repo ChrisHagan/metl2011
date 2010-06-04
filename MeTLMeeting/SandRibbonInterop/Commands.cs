@@ -16,10 +16,14 @@ namespace SandRibbon
         {
             if (CommandParameterProvider.parameters.ContainsKey(command))
                 return CommandParameterProvider.parameters[command];
-            throw new NotSetException();
+            throw new NotSetException(Commands.which(command));
         }
     }
-    public class NotSetException : Exception { 
+    public class NotSetException : Exception {
+        public NotSetException(string command):base(command)
+        {
+            
+        }
     }
     public class Commands
     {

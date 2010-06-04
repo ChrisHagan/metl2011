@@ -315,6 +315,7 @@ namespace SandRibbon
         {
             ProviderMonitor.HealthCheck(() =>
             {
+                Console.WriteLine("window1");
                 Commands.LoggedIn.Execute(userInformation.credentials.name);
                 var details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
                 applyPermissions(details.Permissions);

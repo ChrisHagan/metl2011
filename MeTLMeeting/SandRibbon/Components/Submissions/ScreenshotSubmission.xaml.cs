@@ -12,7 +12,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 using SandRibbonInterop.MeTLStanzas;
+using SandRibbonObjects;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -24,6 +26,30 @@ namespace SandRibbon.Components.Submissions
         {
             InitializeComponent();
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(conversationChanged));
+        }
+
+        private void conversationChanged(ConversationDetails details)
+        {
+            Dispatcher.BeginInvoke((Action) delegate
+                                                {
+                                                    if (details.Author == Globals.me)
+                                                        amTeacher();
+                                                    else
+                                                        amStudent();
+                                                });
+        }
+        private void amTeacher()
+        {
+            submit.Visibility = Visibility.Collapsed;
+            view.Visibility = Visibility.Visible;
+
+        }
+        private void amStudent()
+        {
+            submit.Visibility = Visibility.Visible;
+            view.Visibility = Visibility.Collapsed;
+
         }
         private void receiveSubmission(TargettedSubmission submission)
         {

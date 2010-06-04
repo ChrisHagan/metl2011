@@ -33,6 +33,7 @@ namespace SandRibbon.Chrome
         }
         private void JoinConversation(string _jid)
         {
+            Console.WriteLine("status bar");
             showDetails();
         }
         private void UpdateConversationDetails(ConversationDetails _details) 
@@ -41,20 +42,26 @@ namespace SandRibbon.Chrome
         }
         private void showDetails()
         {
-            try
-            {
-                var details = Globals.conversationDetails;
-                var doDetails = (Action)delegate
+            var details = Globals.conversationDetails;
+            var doDetails = (Action)delegate
+                                         {
+                                             try
                                              {
-                                                 StatusLabel.Text = string.Format("{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
-                                                         Globals.privacy, Permissions.InferredTypeOf(details.Permissions).Label, details.Subject, Globals.me);
-                                             };
-                if (Thread.CurrentThread != Dispatcher.Thread)
-                    Dispatcher.BeginInvoke(doDetails);
-                else
-                    doDetails();
-            }
-            catch (NotSetException) { }
+                                                 StatusLabel.Text =
+                                                     string.Format(
+                                                         "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
+                                                         Globals.privacy,
+                                                         Permissions.InferredTypeOf(details.Permissions).Label,
+                                                         details.Subject, Globals.me);
+                                             }
+                                             catch(NotSetException)
+                                             {
+                                             }
+                                         };
+            if (Thread.CurrentThread != Dispatcher.Thread)
+                Dispatcher.BeginInvoke(doDetails);
+            else
+                doDetails();
         }
     }
 }

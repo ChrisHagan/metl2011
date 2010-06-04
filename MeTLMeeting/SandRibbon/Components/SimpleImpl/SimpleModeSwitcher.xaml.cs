@@ -35,6 +35,7 @@ namespace SandRibbon.Components.SimpleImpl
 
         private void setDefaults(object obj)
         {
+            Console.WriteLine("Switcher"); 
             var action = (Action)delegate
             {
                 Commands.SetLayer.Execute("Sketch");

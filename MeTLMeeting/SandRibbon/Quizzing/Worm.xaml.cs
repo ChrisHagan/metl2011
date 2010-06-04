@@ -43,6 +43,7 @@ namespace SandRibbon.Quizzing
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(receivedMessage));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(
                 title=>{
+                        Console.WriteLine("Worm"); 
                     if (heart == null)
                         heart = new DispatcherTimer(TimeSpan.FromMilliseconds(2500), DispatcherPriority.ApplicationIdle, Render, Dispatcher);
                 }));

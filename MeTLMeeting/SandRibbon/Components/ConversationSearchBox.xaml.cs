@@ -55,6 +55,7 @@ namespace SandRibbon.Components
         }
         private void JoinConversation(object o)
         {
+            Console.WriteLine("search box");
             CloseConversationSearchBox();
         }
         private void CloseConversationSearchBox()

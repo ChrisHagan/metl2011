@@ -3,7 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
-    xmlns:submissions="clr-namespace:SandRibbon.Components.Submissions"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     sr:KeyboardAccess.Keys="P" Text="Plugins" x:Name="pluginRoot">
@@ -22,7 +21,5 @@
     <sr:RibbonGroup Header="Integration">
         <components:SMARTboardControl /> 
     </sr:RibbonGroup>
-    <sr:RibbonGroup Header="Submission">
-        <submissions:ScreenshotSubmission/>
-    </sr:RibbonGroup>
+
 </sr:RibbonTab>

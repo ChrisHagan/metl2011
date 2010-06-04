@@ -55,6 +55,8 @@ namespace SandRibbon.Components
         }
         private void JoinConversation(object _unused)
         {
+
+            Console.WriteLine("Selector");
             var doRecent = (Action) delegate
                 {
                     this.conversations.ItemsSource =

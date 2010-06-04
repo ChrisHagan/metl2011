@@ -2,10 +2,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
     <StackPanel Orientation="Horizontal">
-        <Button Click="generateScreenshot">
+        <Button x:Name="submit" Click="generateScreenshot">
             <TextBlock>Submit a screenshot</TextBlock>
         </Button>
-        <Button Click="viewSubmissions" >
+        <Button x:Name="view" Click="viewSubmissions" >
             <TextBlock>View Submissions</TextBlock>
         </Button>
     </StackPanel>
