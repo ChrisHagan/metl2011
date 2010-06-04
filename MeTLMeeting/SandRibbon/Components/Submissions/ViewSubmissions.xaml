@@ -29,8 +29,10 @@
                 </ScrollViewer>
                 <StackPanel Orientation="Vertical">
                     <Label>Preview</Label>
-                    <Image x:Name="previewImage" Source="{Binding ElementName=submissions, Path=SelectedItem, 
+                    <Viewbox Width="350" Height="250">
+                        <Image x:Name="previewImage" Source="{Binding ElementName=submissions, Path=SelectedItem, 
                         Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" />
+                    </Viewbox>
                 </StackPanel>
             </StackPanel>
             <Button Command="{x:Static api:Commands.ImportSubmission}" HorizontalAlignment="Right">Import selected submission</Button>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -154,9 +155,29 @@ namespace SandRibbon.Components
 
         private void generateScreenshot(long snapshotTime)
         {
-            var rtb = generateCapture((int) ActualWidth);
+
+            var dpi = 96;
+            var size = 1024;
+            var bitmap = new RenderTargetBitmap(size, size, dpi, dpi, PixelFormats.Default);
+            var dv = new DrawingVisual();
+            using (var context = dv.RenderOpen())
+            {
+                context.DrawRectangle(new VisualBrush(stack), null,
+                                      new Rect(new Point(), new Size(size, size)));
+                context.DrawText(new FormattedText(
+                    string.Format("{0}'s submission at {1}", Globals.me,new DateTime(snapshotTime)),
+                    CultureInfo.GetCultureInfo("en-us"),
+                    FlowDirection.LeftToRight,
+                    new Typeface("Arial"),
+                    24, 
+                    Brushes.Black
+                    ),
+                    new Point(5, 10));
+            }
+            bitmap.Render(dv);
+
             var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(rtb));
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
             var file = string.Format("{0}submission.png", Globals.me);
             using(Stream stream = File.Create(file))
             {
