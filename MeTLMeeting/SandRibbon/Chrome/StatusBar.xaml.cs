@@ -42,26 +42,32 @@ namespace SandRibbon.Chrome
         }
         private void showDetails()
         {
-            var details = Globals.conversationDetails;
-            var doDetails = (Action)delegate
-                                         {
-                                             try
+            try
+            {
+                var details = Globals.conversationDetails;
+                var doDetails = (Action) delegate
                                              {
-                                                 StatusLabel.Text =
-                                                     string.Format(
-                                                         "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
-                                                         Globals.privacy,
-                                                         Permissions.InferredTypeOf(details.Permissions).Label,
-                                                         details.Subject, Globals.me);
-                                             }
-                                             catch(NotSetException)
-                                             {
-                                             }
-                                         };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDetails);
-            else
-                doDetails();
+                                                 try
+                                                 {
+                                                     StatusLabel.Text =
+                                                         string.Format(
+                                                             "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
+                                                             Globals.privacy,
+                                                             Permissions.InferredTypeOf(details.Permissions).Label,
+                                                             details.Subject, Globals.me);
+                                                 }
+                                                 catch (NotSetException)
+                                                 {
+                                                 }
+                                             };
+                if (Thread.CurrentThread != Dispatcher.Thread)
+                    Dispatcher.BeginInvoke(doDetails);
+                else
+                    doDetails();
+            }
+            catch(NotSetException)
+            {
+            }
         }
     }
 }

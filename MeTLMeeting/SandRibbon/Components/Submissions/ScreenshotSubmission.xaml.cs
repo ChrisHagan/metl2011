@@ -26,17 +26,24 @@ namespace SandRibbon.Components.Submissions
         {
             InitializeComponent();
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(conversationChanged));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(conversationChanged));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
         }
 
-        private void conversationChanged(ConversationDetails details)
+        private void conversationChanged(object details)
         {
             Dispatcher.BeginInvoke((Action) delegate
                                                 {
-                                                    if (details.Author == Globals.me)
-                                                        amTeacher();
-                                                    else
-                                                        amStudent();
+                                                    try
+                                                    {
+                                                        if (Globals.conversationDetails.Author == Globals.me)
+                                                            amTeacher();
+                                                        else
+                                                            amStudent();
+                                                    }
+                                                    catch(NotSetException)
+                                                    {
+                                                    }
                                                 });
         }
         private void amTeacher()
