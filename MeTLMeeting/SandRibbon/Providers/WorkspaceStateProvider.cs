@@ -10,6 +10,7 @@ using SandRibbon.Components.Pedagogicometry;
 using Constants;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbonObjects;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Providers
 {
@@ -62,7 +63,7 @@ namespace SandRibbon.Providers
                             (Pedagogicometer.level(Int32.Parse(param.Value)));
                     break;
                     case "SetIdentity":
-                        var values = param.Attribute("authentication").Value.Split(':');
+                        var values = (Crypto.decrypt(param.Attribute("authentication").Value)).Split(':');
                         Commands.SetIdentity.Execute(
                             new SandRibbon.Utils.Connection.JabberWire.Credentials{
                                 name=values[0],
@@ -122,7 +123,7 @@ namespace SandRibbon.Providers
                             break;
                         case "SetIdentity":
                             commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
-                                new XAttribute("authentication", string.Format(@"{0}:{1}", Globals.credentials.name, Globals.credentials.password))));
+                                new XAttribute("authentication", Crypto.encrypt(string.Format(@"{0}:{1}", Globals.credentials.name, Globals.credentials.password)))));
                             break;
                         case "JoinConversation":
                             commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
