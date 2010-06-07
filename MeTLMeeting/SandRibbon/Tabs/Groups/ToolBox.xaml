@@ -26,8 +26,6 @@
         <SandRibbonInterop:RibbonPanel x:Name="ImageOptions">
             <SandRibbonInterop:Button ToolTip="{StaticResource AddImageToolTip}"  Icon="\Resources\AddImage.png" Text="Add Media" Command="api:Commands.AddImage"/>
             <SandRibbonInterop:Button ToolTip="{StaticResource AddLiveWindowToolTip}" Text="Live View" Icon="\Resources\Ribbon-LivePreviewDraft02.png" Command="{x:Static api:Commands.InitiateDig}" />
-            <SandRibbonInterop:Button Text="Interact" Command="api:Commands.SetImageCanvasMode" CommandParameter="None"/>
-            <SandRibbonInterop:Button Text="Select" Command="api:Commands.SetImageCanvasMode" CommandParameter="Select"/>
         </SandRibbonInterop:RibbonPanel>
     </StackPanel>
 </sr:RibbonGroup>

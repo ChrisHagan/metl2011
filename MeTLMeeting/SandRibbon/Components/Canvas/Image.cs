@@ -55,7 +55,6 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyAutoShape));
             Commands.AddAutoShape.RegisterCommand(new DelegateCommand<object>(createNewAutoShape));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(addImageFromDisk));
-            Commands.SetImageCanvasMode.RegisterCommand(new DelegateCommand<string>(SetImageCanvasMode));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<ImageDrop>((drop) =>
             {
                 try
@@ -70,13 +69,6 @@ namespace SandRibbon.Components.Canvas
             }));
             Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyLiveWindow));
             Commands.DugPublicSpace.RegisterCommand(new DelegateCommand<LiveWindowSetup>(DugPublicSpace));
-        }
-        private void SetImageCanvasMode(string modeString)
-        {
-            if (!canEdit)
-                EditingMode = InkCanvasEditingMode.None;
-            else
-                EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
         }
         private void ReceiveDirtyLiveWindow(TargettedDirtyElement dirtyElement)
         {
@@ -514,6 +506,8 @@ namespace SandRibbon.Components.Canvas
                     var srVideo = ((SandRibbonInterop.Video)selectedImage);
                     srVideo.X = InkCanvas.GetLeft(srVideo);
                     srVideo.Y = InkCanvas.GetTop(srVideo);
+                    srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
+                    srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
                     srVideo.Height = srVideo.ActualHeight;
                     srVideo.Width = srVideo.ActualWidth;
                     srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
@@ -728,7 +722,7 @@ namespace SandRibbon.Components.Canvas
                 var hostedFileName = ResourceUploader.uploadResource(Globals.slide.ToString(), fileName);
                 if (hostedFileName == "failed") return;
                 var me = new MediaElement { Source = new Uri(hostedFileName, UriKind.Absolute), LoadedBehavior = MediaState.Manual };
-                var video = new SandRibbonInterop.Video { MediaElement = me, VideoSource = me.Source };
+                var video = new SandRibbonInterop.Video { MediaElement = me, VideoSource = me.Source, VideoHeight = me.NaturalVideoHeight, VideoWidth = me.NaturalVideoWidth };
                 Children.Remove(placeHolder);
                 InkCanvas.SetLeft(video, pos.X);
                 InkCanvas.SetTop(video, pos.Y);
@@ -756,6 +750,8 @@ namespace SandRibbon.Components.Canvas
                     {
                     });
                 video.MediaElement.LoadedBehavior = MediaState.Manual;
+                video.VideoHeight = video.MediaElement.NaturalVideoHeight;
+                video.VideoWidth = video.MediaElement.NaturalVideoWidth;
                 Commands.SendVideo.Execute(new TargettedVideo
                 {
                     author = Globals.me,

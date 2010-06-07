@@ -239,6 +239,8 @@ namespace SandRibbon.Components
                     Position = ((TargettedVideo)video.Value).video.Position,
                     X = ;
                 };*/
+                srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
+                srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
                 srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
                 srVideo.MediaElement.ScrubbingEnabled = true;
                 stack.images.AddVideo(srVideo);

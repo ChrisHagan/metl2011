@@ -45,7 +45,7 @@
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="20"/>
                                 </Grid.RowDefinitions >
-                                <ContentPresenter Grid.Row="0"
+                                    <ContentPresenter Grid.Row="0"
                                               Content="{Binding Path=MediaElement}"/>
                                 <StackPanel Grid.Row="1" Orientation="Horizontal" >
                                     <Button Content="Play" Click="Video_Play"/>

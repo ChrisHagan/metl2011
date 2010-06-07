@@ -221,6 +221,15 @@ namespace SandRibbonInterop
         public static readonly DependencyProperty VideoWidthProperty =
             DependencyProperty.Register("VideoWidth", typeof(System.Double), typeof(Thumb), new UIPropertyMetadata((System.Double)Double.NaN));
 
+        /*public System.Windows.Controls.Image Thumbnail
+        {
+            get { return (System.Windows.Controls.Image)GetValue(ThumbnailProperty); }
+            set { SetValue(ThumbnailProperty, value); }
+        }
+        public static readonly DependencyProperty ThumbnailProperty =
+            DependencyProperty.Register("Thumbnail", typeof(System.Windows.Controls.Image), typeof(Thumb), new UIPropertyMetadata(null));
+        */
+
         public Video()
             : base()
         {

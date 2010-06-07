@@ -1014,7 +1014,13 @@ namespace SandRibbonInterop.MeTLStanzas
                     Tag = this.tag,
                     Source = new Uri(this.source, UriKind.RelativeOrAbsolute)
                 };
-                var srVideo = new SandRibbonInterop.Video { MediaElement = video, Tag=this.tag, VideoSource = new System.Uri(this.source,UriKind.RelativeOrAbsolute) };
+                var srVideo = new SandRibbonInterop.Video { 
+                    MediaElement = video, 
+                    Tag=this.tag, 
+                    VideoSource = new System.Uri(this.source,UriKind.RelativeOrAbsolute),
+                    VideoHeight = video.NaturalVideoHeight,
+                    VideoWidth = video.NaturalVideoWidth
+                };
                 return srVideo;
             }
             public TargettedVideo Vid
@@ -1029,6 +1035,8 @@ namespace SandRibbonInterop.MeTLStanzas
                         privacy = GetTag(privacyTag),
                         author = GetTag(authorTag),
                         id = GetTag(identityTag),
+                        Height = Double.Parse(GetTag(heightTag)),
+                        Width = Double.Parse(GetTag(widthTag)),
                         X = Double.Parse(GetTag(xTag)),
                         Y = Double.Parse(GetTag(yTag))
                     };
@@ -1041,6 +1049,8 @@ namespace SandRibbonInterop.MeTLStanzas
                     SetTag(sourceTag, absolutePath);
                     SetTag(xTag, InkCanvas.GetLeft(value.videoProperty).ToString());
                     SetTag(yTag, InkCanvas.GetTop(value.videoProperty).ToString());
+                    SetTag(heightTag, (value.videoProperty.ActualHeight).ToString());
+                    SetTag(widthTag, (value.videoProperty.ActualWidth).ToString());
                     SetTag(authorTag, value.author);
                     SetTag(targetTag, value.target);
                     SetTag(privacyTag, value.privacy);
@@ -1048,7 +1058,19 @@ namespace SandRibbonInterop.MeTLStanzas
                     SetTag(identityTag, value.id);
                 }
             }
+            private static readonly string widthTag = "width";
+            private static readonly string heightTag = "height";
             private static readonly string sourceTag = "source";
+            public double width
+            {
+                get { return Double.Parse(GetTag(widthTag)); }
+                set { SetTag(widthTag, value.ToString()); }
+            }
+            public double height
+            {
+                get { return Double.Parse(GetTag(heightTag)); }
+                set { SetTag(heightTag, value.ToString()); }
+            }
             public string tag
             {
                 get { return GetTag(tagTag); }

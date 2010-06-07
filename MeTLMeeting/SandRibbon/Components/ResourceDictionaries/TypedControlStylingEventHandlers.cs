@@ -43,6 +43,7 @@ namespace SandRibbon.Components.ResourceDictionaries
             var MediaElement = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext).MediaElement;
             MediaElement.DataContext = (System.Windows.Controls.Slider)sender;
             MediaElement.MediaOpened += new RoutedEventHandler(MediaElement_MediaOpened);
+            Video_Play(sender, new RoutedEventArgs());
         }
         private bool MouseDown = false;
         private bool Updating = true;
@@ -99,6 +100,7 @@ namespace SandRibbon.Components.ResourceDictionaries
                             Slider.Value = mc.CurrentTime.Value.TotalMilliseconds;
                     }
                 };
+            MediaElement.Clock.Controller.Pause();
         }
     }
 }
