@@ -40,7 +40,6 @@ namespace SandRibbon.Components.Sandpit
             InitializeComponent();
             strokeContext = new List<Stroke>();
             childContext = new List<FrameworkElement>();
-            setUpUserCanvasStack();
             Commands.ThoughtLiveWindow.RegisterCommand(new DelegateCommand<ThoughtBubbleLiveWindow>(mainSlideLiveWindow));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(mainWindowMove));
@@ -51,9 +50,8 @@ namespace SandRibbon.Components.Sandpit
                               {
                                   ImageSource = image 
                               };
-            thought.OpacityMask = thoughtMask;
-            thought.stack.handwriting.Background = Brushes.Cornsilk;
-            thought.stack.Opacity = 0.3;
+            thoughtBorder.OpacityMask = thoughtMask;
+            thought.Opacity = 0.3;
         }
 
         private void dirtyStroke(TargettedDirtyElement stroke)
@@ -63,24 +61,13 @@ namespace SandRibbon.Components.Sandpit
 
         private void mainWindowMove(int newSlide)
         {
-            if (newSlide != parent && room != 0)
+            if (newSlide != parent)
                 Commands.SneakOutOf.Execute(room.ToString());
         }
 
-        private void setUpUserCanvasStack()
-        {
-            foreach(var canvas in thought.stack.canvasStack.Children)
-            {
-                if(canvas.GetType() == typeof(InkCanvas))
-                {
-                    ((AbstractCanvas) canvas).target = "thoughtBubble";
-                    ((AbstractCanvas) canvas).defaultPrivacy = "public";
-                    ((AbstractCanvas) canvas).actualPrivacy = "public";
-                }
-            }
-        }
         private void PreParserAvailable(PreParser parser)
         {
+            Console.WriteLine(string.Format("Bubble:{0} received a preparser", room));
             thought.stack.handwriting.ReceiveStrokes(parser.ink);
             thought.stack.images.ReceiveImages(parser.images.Values);
             foreach (var text in parser.text.Values)
@@ -156,9 +143,9 @@ namespace SandRibbon.Components.Sandpit
         {
             if(!opened)
             {
-                thought.OpacityMask = null;
-                thought.stack.Opacity = 1;
-                thought.stack.handwriting.Background = Brushes.Transparent;
+                
+                thoughtBorder.OpacityMask = null;
+                thought.Opacity = 1;
                 position = new Point(0, 0);
                 thought.IsHitTestVisible = true;
                 thoughtView.MouseLeftButtonUp-= toggleThoughtBubble;
@@ -174,9 +161,9 @@ namespace SandRibbon.Components.Sandpit
             else
             {
                 relocate();
-                thought.OpacityMask = thoughtMask;
-                thought.stack.Opacity = 0.3;
-                thought.stack.handwriting.Background = Brushes.Cornsilk;
+
+                thoughtBorder.OpacityMask = thoughtMask;
+                thought.Opacity = 0.3;
                 thoughtView.MouseLeftButtonUp +=new MouseButtonEventHandler(toggleThoughtBubble);
                 //thought.MouseEnter += new MouseEventHandler(thought_MouseEnter);
                 //thought.MouseLeave += new MouseEventHandler(thought_MouseLeave);
@@ -192,7 +179,7 @@ namespace SandRibbon.Components.Sandpit
         private void thought_MouseEnter(object sender, MouseEventArgs e)
         {
             if(!opened)
-               thought.stack.Opacity = 0.7;
+               thought.Opacity = 0.7;
             foreach(var stroke in strokeContext)
             {
                 var bounds = stroke.GetBounds();
@@ -221,7 +208,7 @@ namespace SandRibbon.Components.Sandpit
         private void thought_MouseLeave(object sender, MouseEventArgs e)
         {
             if(!opened)
-                thought.stack.Opacity = 0.3;
+                thought.Opacity = 0.3;
             foreach (var stroke in strokeContext)
             {
                 var bounds = stroke.GetBounds();
@@ -247,6 +234,12 @@ namespace SandRibbon.Components.Sandpit
                                                          });
 
             }
+        }
+
+        public void overrideCanvasDefaults()
+        {
+            thought.stack.handwriting.currentSlide = room;
+            thought.stack.text.currentSlide = room;
         }
     }
 

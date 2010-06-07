@@ -28,6 +28,7 @@ namespace SandRibbon.Components.Submissions
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(conversationChanged));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
+            conversationChanged(null);
         }
 
         private void conversationChanged(object details)

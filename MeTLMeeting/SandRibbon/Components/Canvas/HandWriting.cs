@@ -164,7 +164,7 @@ namespace SandRibbon.Components.Canvas
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
         {
             if (receivedStrokes.Count() == 0) return;
-            if (receivedStrokes.First().slide != Globals.slide) return;
+            if (receivedStrokes.First().slide != currentSlide) return;
             var strokeTarget = target;
             var doStrokes = (Action)delegate
             {
@@ -269,7 +269,7 @@ namespace SandRibbon.Components.Canvas
             {
                 identifier = sum, 
                 author = Globals.me,
-                slide = Globals.slide,
+                slide = currentSlide,
                 privacy = stroke.tag().privacy,
                 target = target
             });
@@ -338,7 +338,7 @@ namespace SandRibbon.Components.Canvas
                                                     target = target,
                                                     author = Globals.me,
                                                     privacy = thisPrivacy,
-                                                    slide = Globals.slide
+                                                    slide = currentSlide
                                                 });
             }
             catch(NotSetException e)
@@ -392,7 +392,7 @@ namespace SandRibbon.Components.Canvas
                 {
                     identifier = stroke.sum().checksum.ToString(),
                     author = Globals.me,
-                    slide = Globals.slide,
+                    slide = currentSlide,
                     privacy = stroke.tag().privacy,
                     target = target
                 });
@@ -444,17 +444,15 @@ namespace SandRibbon.Components.Canvas
         }
         public void SetValue(string value)
         {
-            HandWriting.ParseInjectedStream(value, element =>{
-                HandWriting.Dispatcher.Invoke((Action)delegate
-                {
-                    foreach (var ink in element.SelectElements<MeTLStanzas.Ink>(true))
-                    {
-                        var stroke = ink.Stroke.stroke;
-                        HandWriting.doMyStrokeAdded(stroke);
-                        HandWriting.strokes.Remove(stroke.sum());//Pretend we haven't seen it - IRL it would be on the screen already.
-                    }
-                });
-            });
+            HandWriting.ParseInjectedStream(value, element => HandWriting.Dispatcher.Invoke((Action)delegate
+                                            {
+                                                foreach (var ink in element.SelectElements<MeTLStanzas.Ink>(true))
+                                                {
+                                                    var stroke = ink.Stroke.stroke;
+                                                    HandWriting.doMyStrokeAdded(stroke);
+                                                    HandWriting.strokes.Remove(stroke.sum());//Pretend we haven't seen it - IRL it would be on the screen already.
+                                                }
+                                            }));
         }
         bool IValueProvider.IsReadOnly
         {

@@ -48,7 +48,6 @@ namespace SandRibbon.Components
             Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
             Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<long>(generateScreenshot));
-            Loaded += presentationSpaceLoaded;
         }
 
         private void exploreBubble(ThoughtBubble thoughtBubble)
@@ -97,12 +96,6 @@ namespace SandRibbon.Components
                                                    });
         }
 
-        private void presentationSpaceLoaded(object sender, RoutedEventArgs e)
-        {
-            //remove these if you want the on-canvas privacy buttons to disappear.  If you do that, you MUST uncomment the static declaration of currentPrivacyTools
-            var adorner = GetAdorner();
-            AdornerLayer.GetAdornerLayer(this).Add(new UIAdorner(adorner, new PrivacyTools()));
-        }
         private void setSync(object obj)
         {
             synced = !synced;

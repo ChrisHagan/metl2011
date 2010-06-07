@@ -9,8 +9,9 @@
                          MouseLeftButtonUp="toggleThoughtBubble"
                                                 MouseEnter="thought_MouseEnter" 
                                                 MouseLeave="thought_MouseLeave">
-                    <Sandpit:ThoughtBubbleSpace x:Name="thought" 
-                                                />
+                    <Border x:Name="thoughtBorder" Background="Cornsilk" BorderThickness="1" BorderBrush="Black">
+                        <Sandpit:ThoughtBubbleSpace x:Name="thought" />
+                    </Border>
                 </Viewbox>
             <Viewbox x:Name="RLWViewBox" Width="80" Height="80"/>
         </Canvas>

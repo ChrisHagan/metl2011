@@ -43,6 +43,7 @@ namespace SandRibbon.Components
                                         {
                                             var adornerLayer = AdornerLayer.GetAdornerLayer(this);
                                             adornerLayer.Add(UIAdorner.InCanvas(this, bubble, bubble.position));
+                                            bubble.enterBubble();
                                         }
                                     });
         }
@@ -72,8 +73,8 @@ namespace SandRibbon.Components
                                                         conversation = Globals.conversationDetails.Jid,
                                                         room = bubble.thoughtSlide
                                                     };
+                            thoughtBubble.overrideCanvasDefaults();
                             thoughtBubble.relocate();
-                            thoughtBubble.enterBubble();
 
                         }
                });

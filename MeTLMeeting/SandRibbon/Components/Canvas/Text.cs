@@ -110,14 +110,14 @@ namespace SandRibbon.Components.Canvas
                 target = target,
                 privacy = box.tag().privacy,
                 author = Globals.me,
-                slide = Globals.slide
+                slide = currentSlide 
             });
         }
         
         private void receiveDirtyText(TargettedDirtyElement element)
         {
             if (!(element.target.Equals(target))) return;
-            if (!(element.slide == Globals.slide)) return;
+            if (!(element.slide == currentSlide)) return;
             var doDirtyText = (Action)delegate
             {
                 for (int i = 0; i < Children.Count; i++)
@@ -389,7 +389,7 @@ namespace SandRibbon.Components.Canvas
                                                        target = target,
                                                        privacy = currentTag.privacy,
                                                        author = Globals.me,
-                                                       slide = Globals.slide
+                                                       slide =currentSlide 
                                                    });
                 currentTag.privacy = privacy;
                 box.tag(currentTag);
@@ -398,7 +398,7 @@ namespace SandRibbon.Components.Canvas
                                                      box = box,
                                                      author = Globals.me,
                                                      privacy = currentTag.privacy,
-                                                     slide = Globals.slide,
+                                                     slide = currentSlide,
                                                      target = target,
                                                  });
             }
@@ -477,7 +477,7 @@ namespace SandRibbon.Components.Canvas
                 box = box,
                 author = Globals.me,
                 privacy = thisPrivacy,
-                slide = Globals.slide,
+                slide = currentSlide,
                 target = target,
             });
         }
@@ -511,7 +511,7 @@ namespace SandRibbon.Components.Canvas
         {
             if(targettedBox.target != target) return;
             if(targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box)) return;//I never want my live text to collide with me.
-            if (targettedBox.slide == Globals.slide && (targettedBox.privacy == "private" && Globals.me == "Projector"))
+            if (targettedBox.slide == currentSlide && (targettedBox.privacy == "private" && Globals.me == "Projector"))
             {
                 var doProjector = (Action) delegate
                                                {
@@ -523,7 +523,7 @@ namespace SandRibbon.Components.Canvas
                     doProjector();
             }
 
-            if (targettedBox.slide == Globals.slide &&(targettedBox.privacy == "public" || targettedBox.author == Globals.me))
+            if (targettedBox.slide == currentSlide &&(targettedBox.privacy == "public" || targettedBox.author == Globals.me))
             {
                 if (Thread.CurrentThread != Dispatcher.Thread)
                     Dispatcher.BeginInvoke((Action)delegate { doText(targettedBox); });
@@ -559,7 +559,7 @@ namespace SandRibbon.Components.Canvas
         {
             if(targettedBox.target != target) return;
             if(targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box)) return;//I never want my live text to collide with me.
-            if (targettedBox.slide == Globals.slide && (targettedBox.privacy == "public" || targettedBox.author == Globals.me))
+            if (targettedBox.slide == currentSlide && (targettedBox.privacy == "public" || targettedBox.author == Globals.me))
             {
 
                 Console.WriteLine("Received textbox");
@@ -626,7 +626,7 @@ namespace SandRibbon.Components.Canvas
                                       target = target,
                                       privacy = box.tag().privacy,
                                       author = Globals.me,
-                                      slide = Globals.slide
+                                      slide =currentSlide 
                                   });
             }
             foreach(var element in listToCut)
