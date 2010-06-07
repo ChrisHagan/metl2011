@@ -63,6 +63,7 @@ namespace SandRibbon
             Commands.PowerPointProgress.RegisterCommand(new DelegateCommand<string>(PowerPointProgress));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.ClearDynamicContent.RegisterCommand(new DelegateCommand<object>(ClearDynamicContent));
+            Commands.LogOut.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
@@ -138,7 +139,8 @@ namespace SandRibbon
             ShowPowerpointBlocker("Starting Powerpoint Import");
             Commands.PostStartPowerPointLoad.Execute(null);
         }
-        private void ImportPowerPoint(object unused) { 
+        private void ImportPowerPoint(object unused)
+        {
             ShowPowerpointBlocker("Starting Powerpoint Import");
             Commands.PostImportPowerpoint.Execute(null);
         }
@@ -244,7 +246,7 @@ namespace SandRibbon
             get
             {
                 var thisProcess = Process.GetCurrentProcess();
-                return Process.GetProcessesByName("MeTL").Any(p=>
+                return Process.GetProcessesByName("MeTL").Any(p =>
                     p.Id != thisProcess.Id &&
                     (p.MainWindowTitle.StartsWith("S15") || p.MainWindowTitle.Equals("")));
             }
@@ -272,7 +274,7 @@ namespace SandRibbon
         private void AddWindowEffect(object _o)
         {
             CanvasBlocker.Visibility = Visibility.Visible;
-            
+
         }
         private void RemoveWindowEffect(object _o)
         {
@@ -430,7 +432,8 @@ namespace SandRibbon
             {
                 if (details.Jid != Globals.location.activeConversation) return;
             }
-            catch (NotSetException) {
+            catch (NotSetException)
+            {
                 //We're not anywhere yet so update away
             }
             var doUpdate = (Action)delegate

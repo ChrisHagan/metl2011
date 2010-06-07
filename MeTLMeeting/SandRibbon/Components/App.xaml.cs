@@ -9,12 +9,15 @@ using System.Security.Permissions;
 using SandRibbon.Providers;
 using SandRibbon.Utils.Connection;
 using SandRibbon.Quizzing;
+using Microsoft.Practices.Composite.Presentation.Commands;
 
 [assembly:UIPermission(SecurityAction.RequestMinimum)]
 namespace SandRibbon
 {
     public partial class App : Application
     {
+        private bool loggingOut = false;
+
         public static void Now(string title){
             var now = DateTime.Now;
             Logger.Log(string.Format("{2} {0}:{1}", now, now.Millisecond, title));
@@ -22,6 +25,14 @@ namespace SandRibbon
         static App() {
             Now("Static App start");
         }
+        private void LogOut(object _Unused)
+        {
+            loggingOut = true;
+            WorkspaceStateProvider.ClearSettings();
+            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+            Application.Current.Shutdown();
+        }
+        
         protected override void OnStartup(StartupEventArgs e)
         {
             //This is to ensure that all the static constructors are called.
@@ -29,6 +40,7 @@ namespace SandRibbon
             new Worm();
             new Printer();
             new CommandParameterProvider();
+            Commands.LogOut.RegisterCommand(new DelegateCommand<object>(LogOut));
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Ink();
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Quiz();
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Image();
@@ -124,6 +136,7 @@ namespace SandRibbon
         }
         private void Application_Exit(object sender, ExitEventArgs e)
         {
+            if (loggingOut) return;
             WorkspaceStateProvider.SaveCurrentSettings();
         }
     }

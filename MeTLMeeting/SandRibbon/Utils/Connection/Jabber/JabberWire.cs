@@ -197,8 +197,6 @@ namespace SandRibbon.Utils.Connection
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
         }
-
-
         private void SendNewBubble(TargettedBubbleContext selection){
             stanza(new MeTLStanzas.Bubble(selection));
         }

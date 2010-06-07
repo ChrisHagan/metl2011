@@ -35,6 +35,18 @@ namespace SandRibbon.Providers
                 new XElement(WORKSPACE_ROOT_ELEMENT).Save(WORKSPACE_SAVE_FILE);
             } 
         }
+        public static void ClearSettings()
+        {
+            ensureWorkspaceDirectoryExists();
+            try
+            {
+                File.Delete(WORKSPACE_SAVE_FILE);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public static void RestorePreviousSettings()
         {
             App.Now("Restoring settings");

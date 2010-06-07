@@ -360,7 +360,14 @@ namespace SandRibbon.Tabs.Groups
         }
         private bool mustBeInConversation(object _unused)
         {
-            return Globals.location.activeConversation != null;
+            try
+            {
+                return (Globals.location != null && Globals.location.activeConversation != null);
+            }
+            catch (NotSetException e)
+            {
+                return false;
+            }
         }
         private void updateToolBox(string layer)
         {

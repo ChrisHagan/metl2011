@@ -23,4 +23,5 @@
             <MenuItem ToolTip="{StaticResource TutorialToolTip}"  FontSize="12" Click="OpenTutorialBrowser" Header="Tutorial"/>
         </sr:RibbonPopup>
     </sr:MenuItem>
+    <sr:MenuItem Text="Logout" Command="{x:Static api:Commands.LogOut}"/>
 </sr:ApplicationPopup>

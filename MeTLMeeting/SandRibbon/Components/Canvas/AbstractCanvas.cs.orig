@@ -41,8 +41,7 @@ namespace SandRibbon.Components.Canvas
         public string defaultPrivacy;
         public string actualPrivacy;
         public string target;
-        public bool canEdit;
-        public int currentSlide;
+        public bool canEdit; 
         
         private bool affectedByPrivacy { get { return target == "presentationSpace"; } }
         public string privacy{get{return affectedByPrivacy?actualPrivacy:defaultPrivacy;}}
@@ -50,6 +49,7 @@ namespace SandRibbon.Components.Canvas
         public event ChildrenChangedHandler ChildrenChanged;
         public AbstractCanvas():base()
         {
+            Commands.LogOut.RegisterCommand(new DelegateCommand<object>(LogOut));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             DragOver+=ImageDragOver;
             Drop+=ImagesDrop;
@@ -68,9 +68,14 @@ namespace SandRibbon.Components.Canvas
                     context = getContext();
                 }
             });
-            currentSlide = Globals.slide;
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
 
+        }
+
+        private void LogOut(object _Unused)
+        {
+            Strokes.Clear();
+            Children.Clear();
         }
 
         public void DoWithCurrentSelection(Action<SelectedIdentity> todo)
