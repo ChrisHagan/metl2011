@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="SandRibbon.Components.SlideDisplay"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    x:Name="SlideMeasure">
+    <StackPanel Orientation="Vertical">
+        <StackPanel.CommandBindings>
+            <CommandBinding Command="{x:Static api:Commands.PostRetrievedHistoryPortion}" Executed="showHistoryProgress" />
+        </StackPanel.CommandBindings>
+        <SandRibbonInterop:RibbonPanel Orientation="Horizontal">
+            <SandRibbonInterop:Button Text="Sync" Icon="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{StaticResource SyncToolTip}" Click="toggleSync"/>
+            <SandRibbonInterop:Button Text="Previous" Icon="\Resources\Previous.png" ToolTip="{StaticResource PreviousSlideToolTip}" Command="{x:Static api:Commands.MoveToPrevious}" />
+            <SandRibbonInterop:Button Text="Add Page" Icon="/Resources/NewSlide.png" ToolTip="{StaticResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
+            <SandRibbonInterop:Button Text="Next" Icon="\Resources\Next.png" ToolTip="{StaticResource NextSlideToolTip}" Command="{x:Static api:Commands.MoveToNext}" />
+        </SandRibbonInterop:RibbonPanel>
+        <Grid>
+            <SandRibbonInterop:SlideViewingListBox
+                         ScrollViewer.HorizontalScrollBarVisibility="Visible" 
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                     OverridesDefaultStyle="False"
+                         SelectionChanged="slides_SelectionChanged"
+                         ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
+                         VerticalAlignment="Top" x:Name="slides" >
+                <SandRibbonInterop:SlideViewingListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type SandRibbonInterop:ThumbnailInformation}">
+                        <Grid Name="slideItem" Width="{Binding ElementName=SlideMeasure, Path=ActualWidth}" Height="{Binding ElementName=SlideMeasure, Path=ActualWidth}">
+                            <Rectangle Width="Auto" Height="Auto" Fill="{StaticResource BackgroundBlueGradient}" />
+                            <Rectangle Width="Auto" Height="Auto" Fill="{Binding Path=thumbnail}"/>
+                            <Rectangle Fill="DarkBlue" HorizontalAlignment="Right" VerticalAlignment="Bottom" RadiusX="9" RadiusY="9" Height="18" Width="18"/>
+                            <Label FontSize="10" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="{Binding Path=slideNumber}"/>
+                        </Grid>
+                    </DataTemplate>
+                </SandRibbonInterop:SlideViewingListBox.ItemTemplate>
+                <SandRibbonInterop:SlideViewingListBox.Template>
+                    <ControlTemplate>
+                        <Border BorderBrush="DarkGray" BorderThickness="1" Padding="1">
+                            <ScrollViewer Name="Scroller" Background="White" Foreground="DarkGray" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Name="slideStack" Orientation="Vertical" IsItemsHost="True" Width="{Binding ElementName=SlideMeasure, Path=ActualWidth}"/>
+                            </ScrollViewer>
+                        </Border>
+             <!--           <ControlTemplate.Triggers>
+                            <Trigger Property="SandRibbonInterop:SlideViewingListBox.ParentActiveVariant" Value="Small">
+                                <Setter TargetName="Scroller" Property="Width" Value="62"/>
+                                <Setter TargetName="Scroller" Property="Height" Value="62"/>
+                                <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible"/>
+                                <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+                                <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Vertical"/>
+                            </Trigger>
+                            <Trigger Property="SandRibbonInterop:SlideViewingListBox.ParentActiveVariant" Value="Medium">
+                                <Setter TargetName="Scroller" Property="Width" Value="150"/>
+                                <Setter TargetName="Scroller" Property="Height" Value="62"/>
+                                <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+                                <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
+                                <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
+                            </Trigger>
+                            <Trigger Property="SandRibbonInterop:SlideViewingListBox.ParentActiveVariant" Value="Large">
+                                <Setter TargetName="Scroller" Property="Width" Value="250"/>
+                                <Setter TargetName="Scroller" Property="Height" Value="62"/>
+                                <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+                                <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
+                                <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                 -->
+                        </ControlTemplate>
+                </SandRibbonInterop:SlideViewingListBox.Template>
+            </SandRibbonInterop:SlideViewingListBox>
+            <components:LoadProgress x:Name="loadProgress" VerticalAlignment="Top" Margin="0,2,0,0" Height="40" Width="{Binding ElementName=slides, Path=ActualWidth}" Visibility="Collapsed"/>
+        </Grid>
+    </StackPanel>
+</UserControl>
