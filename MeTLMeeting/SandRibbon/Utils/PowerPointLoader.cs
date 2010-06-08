@@ -100,9 +100,7 @@ namespace SandRibbon.Utils
                 var thumbnailStartId = conversation.Slides.First().id;
                 foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
                 {
-                    var slideNumber = slide.SlideNumber.ToString();
-                    //var slidePath = new PrintingHost().ThumbnailPath(thumbnailStartId++);
-                    var slidePath = currentWorkingDirectory + "\\pptImportSlide" + slideNumber.ToString() + ".PNG";
+                    var slidePath = Directory.GetCurrentDirectory() + "\\" +  new PrintingHost().ThumbnailPath(thumbnailStartId++);
                     foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                     {
                         shape.Visible = MsoTriState.msoFalse;
