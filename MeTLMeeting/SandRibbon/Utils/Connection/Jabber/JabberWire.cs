@@ -602,7 +602,7 @@ namespace SandRibbon.Utils.Connection
         }
         public virtual void handleGoToConversation(string[] parts)
         {
-            Application.Current.Dispatcher.Invoke((Action)delegate
+            Application.Current.Dispatcher.adopt((Action)delegate
             {
                 Commands.JoinConversation.Execute(parts[1]);
             });
@@ -618,21 +618,21 @@ namespace SandRibbon.Utils.Connection
                     _conversationJid =>
                     {
                         Commands.UpdateConversationDetails.UnregisterCommand(joinedConversation);
-                        Application.Current.Dispatcher.Invoke((Action)delegate
+                        Application.Current.Dispatcher.adopt((Action)delegate
                         {
                             Commands.MoveTo.Execute(id);
                             Commands.ReceiveMoveBoardToSlide.Execute(id);
                         });
                     });
                 Commands.UpdateConversationDetails.RegisterCommand(joinedConversation);
-                Application.Current.Dispatcher.Invoke((Action)delegate
+                Application.Current.Dispatcher.adopt((Action)delegate
                 {
                     Commands.JoinConversation.Execute(desiredConversation);
                 });
             }
             else
             {
-                Application.Current.Dispatcher.Invoke((Action)delegate
+                Application.Current.Dispatcher.adopt((Action)delegate
                 {
                     Commands.MoveTo.Execute(id);
                 });
@@ -640,13 +640,13 @@ namespace SandRibbon.Utils.Connection
         }
         public virtual void handleWakeUp(string[] parts)
         {
-             Application.Current.Dispatcher.Invoke((Action)delegate{
+             Application.Current.Dispatcher.adopt((Action)delegate{
                 Commands.ReceiveWakeUp.Execute(null);
              }); 
         }
         public virtual void handleSleep(string[] parts)
         {
-             Application.Current.Dispatcher.Invoke((Action)delegate{
+             Application.Current.Dispatcher.adopt((Action)delegate{
                 Commands.ReceiveSleep.Execute(null);
              });
         }

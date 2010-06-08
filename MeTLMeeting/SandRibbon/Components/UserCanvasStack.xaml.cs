@@ -58,7 +58,7 @@ namespace SandRibbon.Components
                 return null;
             }
             var thoughtBubble = new ThoughtBubble();
-            Dispatcher.Invoke((Action) delegate
+            Dispatcher.adopt((Action) delegate
                {
                         var ids = bubble.context.Select(c => c.id);
                         var relevantStrokes = getStrokesRelevantTo(ids);
@@ -160,7 +160,7 @@ namespace SandRibbon.Components
         }
         protected void ClearAdorners()
         {
-            var doClear = (Action)delegate
+            Dispatcher.adopt((Action)delegate
             {
                 var adornerLayer = AdornerLayer.GetAdornerLayer(this);
                 if (adornerLayer == null) return;
@@ -168,11 +168,7 @@ namespace SandRibbon.Components
                 if (adorners != null)
                     foreach (var adorner in adorners)
                         adornerLayer.Remove(adorner);
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.Invoke(doClear);
-            else
-                doClear();
+            });
         }
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
         {

@@ -668,7 +668,7 @@ namespace SandRibbon.Components.Canvas
         public void SetValue(string value)
         {
             Text.ParseInjectedStream(value, element =>{
-                Text.Dispatcher.Invoke((Action)delegate
+                Text.Dispatcher.adopt((Action)delegate
                 {
                     foreach (var text in element.SelectElements<MeTLStanzas.TextBox>(true))
                     {

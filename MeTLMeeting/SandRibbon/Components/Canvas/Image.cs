@@ -593,7 +593,7 @@ namespace SandRibbon.Components.Canvas
         private void DugPublicSpace(LiveWindowSetup setup)
         {
             if (target != "notepad") return;
-            Dispatcher.Invoke((Action)delegate
+            Dispatcher.adopt((Action)delegate
             {
                 var view = new Rect(setup.origin, new Size(setup.frame.Width, setup.frame.Height));
                 var liveWindow = new Rectangle
@@ -1006,7 +1006,7 @@ namespace SandRibbon.Components.Canvas
         }
         public void SetValue(string value)
         {
-            Image.ParseInjectedStream(value, element => Image.Dispatcher.Invoke((Action)delegate
+            Image.ParseInjectedStream(value, element => Image.Dispatcher.adopt((Action)delegate
                                                                                             {
                                                                                                 foreach (var image in element.SelectElements<MeTLStanzas.Image>(true))
                                                                                                 {

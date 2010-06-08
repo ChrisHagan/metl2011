@@ -55,9 +55,7 @@ namespace SandRibbon.Components
         }
         private void JoinConversation(object _unused)
         {
-
-            Console.WriteLine("Selector");
-            var doRecent = (Action) delegate
+            Dispatcher.adopt((Action) delegate
                 {
                     this.conversations.ItemsSource =
                         RecentConversationProvider.loadRecentConversations()
@@ -65,15 +63,11 @@ namespace SandRibbon.Components
                         .Reverse()
                         .Take(6);
 
-                };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.Invoke(doRecent);
-            else
-                doRecent();
+                });
         }
         public void List(IEnumerable<SandRibbonObjects.ConversationDetails> conversations)
         {
-            var doList = (Action)delegate
+            Dispatcher.adopt((Action)delegate
             {
                 rawConversationList = conversations.ToList();
                 var list = new List<ConversationDetails>();
@@ -97,11 +91,7 @@ namespace SandRibbon.Components
                     }
                 }
                 this.conversations.ItemsSource = list;
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.Invoke(doList);
-            else
-                doList();
+            });
         }
         public IEnumerable<string> List()
         {

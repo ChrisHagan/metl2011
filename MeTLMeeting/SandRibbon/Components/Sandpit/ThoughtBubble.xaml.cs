@@ -77,7 +77,7 @@ namespace SandRibbon.Components.Sandpit
         private void mainSlideLiveWindow(ThoughtBubbleLiveWindow thoughtBubbleLiveWindow)
         {
             if(thoughtBubbleLiveWindow.Bubble.room != room)return;
-            Dispatcher.Invoke((Action) delegate
+            Dispatcher.adopt((Action) delegate
                                            {
                                                var RLW = new RenderedLiveWindow()
                                                {

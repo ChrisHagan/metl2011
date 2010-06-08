@@ -62,7 +62,7 @@ namespace SandRibbon.Components
                     {
                         timer.Stop();
                         timer.Dispose();
-                        Application.Current.Dispatcher.Invoke((Action)delegate
+                        Application.Current.Dispatcher.adopt((Action)delegate
                         {
                             healthyBehaviour();
                         });

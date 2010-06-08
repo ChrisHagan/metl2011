@@ -125,6 +125,7 @@ namespace SandRibbon.Components
             var previousIndex = slides.SelectedIndex - 1;
             if(previousIndex < 0) return;
             slides.SelectedIndex = previousIndex;
+            slides.ScrollIntoView(slides.SelectedItem);
         }
         private bool isNext(object _object)
         {
@@ -134,6 +135,7 @@ namespace SandRibbon.Components
         {
             var nextIndex = slides.SelectedIndex + 1;
             slides.SelectedIndex = nextIndex;
+            slides.ScrollIntoView(slides.SelectedItem);
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
@@ -191,6 +193,7 @@ namespace SandRibbon.Components
                 currentSlideIndex = proposedIndex;
                 currentSlideId = proposedId;
                 Commands.MoveTo.Execute( newThumb.slideId);
+                slides.ScrollIntoView(slides.SelectedItem);
             }
         }
         private void showHistoryProgress(object sender, ExecutedRoutedEventArgs e)

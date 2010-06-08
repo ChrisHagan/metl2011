@@ -65,13 +65,10 @@ namespace SandRibbon.Components
         }
         private void UpdateAllConversations(SandRibbonObjects.ConversationDetails details)
         {
-            Dispatcher.Invoke((Action)delegate
+            Dispatcher.adopt((Action)delegate
             {
-
                 if (this.Visibility == Visibility.Visible)
-                {
                     DoUpdateAllConversations();
-                }
             });
         }
         private void DoUpdateAllConversations()

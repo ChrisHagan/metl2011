@@ -286,7 +286,7 @@ namespace SandRibbon
             lock (reconnectionLock)
             {
                 Logger.Log("Window1.ReceiveWormMove: Window 1 initiating move in reconnect");
-                Dispatcher.Invoke((Action)delegate
+                Dispatcher.adopt((Action)delegate
                 {
                     try
                     {

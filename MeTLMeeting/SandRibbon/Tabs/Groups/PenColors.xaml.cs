@@ -422,14 +422,14 @@ namespace SandRibbon.Tabs.Groups
         }
         public void Disable()
         {
-            Dispatcher.Invoke((Action)delegate
+            Dispatcher.adopt((Action)delegate
                                            {
                                                this.Effect = new BlurEffect();
                                            });
         }
         public void Enable()
         {
-            Dispatcher.Invoke((Action)delegate
+            Dispatcher.adopt((Action)delegate
                                            {
                                                this.Effect = null;
                                            });

@@ -59,7 +59,7 @@ namespace SandRibbon.Components
             Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
         }
         private void ServersDown(IEnumerable<ServerStatus> servers) {
-            Dispatcher.Invoke((Action)delegate
+            Dispatcher.adopt((Action)delegate
             {
                 this.servers.ItemsSource = servers;
             });

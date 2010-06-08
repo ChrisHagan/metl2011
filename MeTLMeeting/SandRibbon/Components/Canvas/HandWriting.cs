@@ -444,7 +444,7 @@ namespace SandRibbon.Components.Canvas
         }
         public void SetValue(string value)
         {
-            HandWriting.ParseInjectedStream(value, element => HandWriting.Dispatcher.Invoke((Action)delegate
+            HandWriting.ParseInjectedStream(value, element => HandWriting.Dispatcher.adopt((Action)delegate
                                             {
                                                 foreach (var ink in element.SelectElements<MeTLStanzas.Ink>(true))
                                                 {

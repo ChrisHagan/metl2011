@@ -645,13 +645,6 @@ namespace SandRibbonInterop
     }
     public class SlideViewingListBox : System.Windows.Controls.ListBox
     {
-        public SlideViewingListBox()
-            : base()
-        {
-            this.Loaded += (a, b) =>
-            {
-            };
-        }
         public RibbonGroupVariant ParentActiveVariant
         {
             get { return (Divelements.SandRibbon.RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
