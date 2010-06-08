@@ -25,14 +25,13 @@ namespace SandRibbon.Components
         public int currentSlideIndex = -1;
         public int currentSlideId = -1;
         public ObservableCollection<ThumbnailInformation> thumbnailList = new ObservableCollection<ThumbnailInformation>();
-        public bool synced = false;
         public bool isAuthor = false;
         private bool moveTo;
         private int realLocation;
         public SlideDisplay()
         {
             InitializeComponent();
-            Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher, _i=> synced));
+            Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(jid =>
             {
@@ -41,7 +40,6 @@ namespace SandRibbon.Components
                 slides.ScrollIntoView(slides.SelectedIndex);
             }));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(Display));
-            Commands.SetSync.RegisterCommand(new DelegateCommand<object>(syncChanded));
             Commands.ThumbnailAvailable.RegisterCommand(new DelegateCommand<int>(loadThumbnail));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
@@ -54,11 +52,6 @@ namespace SandRibbon.Components
             {
                     //YAAAAAY
             }
-        }
-        private void syncChanded(object obj)
-        {
-            synced = !synced;
-            Commands.RequerySuggested(Commands.SyncedMoveRequested);
         }
         private bool canAddSlide(object _slide)
         {
@@ -109,9 +102,10 @@ namespace SandRibbon.Components
         private void moveToTeacher(int where)
         {
             if(isAuthor) return;
+            if (!Globals.synched) return;
             var action = (Action) (() => Dispatcher.BeginInvoke((Action) delegate
                                          {
-                                             if (thumbnailList.Where( t => t.slideId == where).Count()==1&&synced)
+                                             if (thumbnailList.Where( t => t.slideId == where).Count()==1)
                                                  Commands.MoveTo.Execute(where);
                                          }));
             GlobalTimers.SetSyncTimer(action);

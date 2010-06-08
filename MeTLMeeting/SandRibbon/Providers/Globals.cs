@@ -84,6 +84,25 @@ namespace SandRibbon.Providers
                 return ((Utils.Connection.JabberWire.Credentials)credentials).authorizedGroups;
             }
         }
+        public static bool synched{
+            get {
+                try
+                {
+                    return (bool)Commands.SetSync.lastValue();
+                }
+                catch (NotSetException)
+                {
+                    return true;
+                }
+            }
+        }
+        public static int teacherSlide 
+        {
+            get 
+            {
+                return (int)Commands.SyncedMoveRequested.lastValue();
+            }
+        }
         public static int slide
         {
             get

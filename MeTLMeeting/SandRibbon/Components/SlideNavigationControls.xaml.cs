@@ -24,32 +24,49 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
+            Commands.SetSync.Execute(Globals.synched);
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            nav.Visibility = Visibility.Visible;
-            if (details.Author == Globals.me)
+            Dispatcher.adopt(delegate
             {
-                addSlideButton.Visibility = Visibility.Visible;
-                syncButton.Visibility = Visibility.Collapsed;
+                nav.Visibility = Visibility.Visible;
+                if (details.Author == Globals.me)
+                {
+                    addSlideButton.Visibility = Visibility.Visible;
+                    syncButton.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    addSlideButton.Visibility = Visibility.Collapsed;
+                    syncButton.Visibility = Visibility.Visible;
+                }
+            });
+        }
+        private void SetSync(bool sync)
+        { 
+            var synced = new Uri(Directory.GetCurrentDirectory() + "\\Resources\\SyncRed.png");
+            var deSynced = new Uri(Directory.GetCurrentDirectory() + "\\Resources\\SyncGreen.png");
+            BitmapImage source;
+            if(Globals.synched)
+            {
+                source = new BitmapImage(synced);
+                try
+                {
+                    Commands.MoveTo.Execute((int)Globals.teacherSlide);
+                }
+                catch (NotSetException){ }
             }
             else
             {
-                addSlideButton.Visibility = Visibility.Collapsed;
-                syncButton.Visibility = Visibility.Visible;
+                source = new BitmapImage(deSynced);
             }
+            syncButton.Icon = source;
         }
         private void toggleSync(object sender, RoutedEventArgs e)
         {
-            Commands.SetSync.Execute(null);
-            BitmapImage source;
-            var synced = new Uri(Directory.GetCurrentDirectory() + "\\Resources\\SyncRed.png");
-            var deSynced = new Uri(Directory.GetCurrentDirectory() + "\\Resources\\SyncGreen.png");
-            if(syncButton.Icon.ToString().Contains("SyncGreen"))
-                source = new BitmapImage(synced);
-            else
-                source = new BitmapImage(deSynced);
-            syncButton.Icon = source;
+            Commands.SetSync.Execute(!Globals.synched);
         }
     }
 }

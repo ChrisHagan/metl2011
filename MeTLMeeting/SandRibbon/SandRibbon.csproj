@@ -480,6 +480,7 @@
     <Compile Include="Components\Submissions\ViewSubmissions.xaml.cs">
       <DependentUpon>ViewSubmissions.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DispatcherExtensions.cs" />
     <Compile Include="Providers\Colors.cs" />
     <Compile Include="Providers\ProviderMonitor.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
