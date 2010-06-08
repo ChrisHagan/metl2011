@@ -832,6 +832,7 @@ namespace SandRibbon
             Commands.UnregisterAllCommands();
             ribbon.Tabs.Clear();
             ribbon.ToolBar = null;
+            privacyTools.Children.Clear();
         }
         public void SetupUI(PedagogyLevel level)
         {
@@ -865,6 +866,7 @@ namespace SandRibbon
                         homeGroups.Add(new Notes());
                         tabs.Add(new Tabs.Analytics());
                         tabs.Add(new Tabs.Plugins());
+                        privacyTools.Children.Add(new PrivacyTools());
                         break;
                     default:
                         break;

@@ -19,7 +19,7 @@ namespace SandRibbon.Components
         public PrivacyTools()
         {
             InitializeComponent();
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>( SetPrivacy,canSetPrivacy));
+            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy,canSetPrivacy));
             DataContext = this;
         }
         private bool canSetPrivacy(string privacy)
