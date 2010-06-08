@@ -204,20 +204,6 @@ namespace SandRibbon.Components
             var progress = (int[]) e.Parameter;
             loadProgress.Show(progress[0], progress[1]); 
         }
-        private void toggleSync(object sender, RoutedEventArgs e)
-        {
-            Commands.SetSync.Execute(null);
-            BitmapImage source;
-            var synced = new Uri(Directory.GetCurrentDirectory() + "\\Resources\\SyncRed.png");
-            var deSynced = new Uri(Directory.GetCurrentDirectory() + "\\Resources\\SyncGreen.png");
-            if(syncButton.Icon.ToString().Contains("SyncGreen"))
-                source = new BitmapImage(synced);
-            else
-            {
-                source = new BitmapImage(deSynced);
-            }
-            syncButton.Icon = source;
-        }
         private void loadThumbnail(int slideId)
         {
             var doLoad = (Action)delegate
