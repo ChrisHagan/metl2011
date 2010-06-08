@@ -91,10 +91,11 @@ namespace SandRibbon.Utils
                 Commands.PowerPointProgress.Execute("Starting to parse powerpoint file");
                 var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
                 var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
+                var thumbnailStartId = conversation.Slides.First().id;
                 foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
                 {
-                    int slideNumber = slide.SlideIndex;
-                    var slidePath = currentWorkingDirectory + "\\pptImportSlide" + slideNumber.ToString() + ".PNG";
+                    var slidePath = new PrintingHost().ThumbnailPath(thumbnailStartId++);
+                       // currentWorkingDirectory + "\\pptImportSlide" + slideNumber.ToString() + ".PNG";)
                     foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                     {
                         shape.Visible = MsoTriState.msoFalse;

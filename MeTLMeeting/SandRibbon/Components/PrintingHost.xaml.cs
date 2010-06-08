@@ -29,7 +29,7 @@ namespace SandRibbon.Components
         {
             this.slideId = slideId;
         }
-        private string ThumbnailPath(int id)
+        public string ThumbnailPath(int id)
         {
             if (!Directory.Exists("thumbs"))
                 Directory.CreateDirectory("thumbs");
