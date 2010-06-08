@@ -445,15 +445,30 @@ namespace SandRibbon.Tabs.Groups
         {
             var newBrush = new SolidColorBrush();
             ColourSettingPopup.Tag = ((System.Windows.Controls.Button)sender).Tag.ToString();
-            newBrush.Color = ((DrawingAttributes)defaultDrawingAttributes[Int32.Parse(((System.Windows.Controls.Button)sender).Tag.ToString())]).Color;
+            var Attributes = ((DrawingAttributes)defaultDrawingAttributes[Int32.Parse(((System.Windows.Controls.Button)sender).Tag.ToString())]);
+            newBrush.Color = Attributes.Color;
             ColourSettingPopupDefaultColour.Fill = newBrush;
             ColourSettingPopup.IsOpen = true;
             ColourChooser.ItemsSource = simpleColourSet;
             SizeChooser.ItemsSource = simpleSizeSet;
+            foreach (double item in SizeChooser.Items)
+            {
+                if (item == Attributes.Height)
+                {
+                    SizeChooser.Items.MoveCurrentTo(item);
+                }
+            }
+            foreach (SolidColorBrush item in ColourChooser.Items)
+            {
+                if (item.Color.ToString() == Attributes.Color.ToString())
+                {
+                    ColourChooser.Items.MoveCurrentTo(item);
+                }
+            }
         }
         private void ChangeColour(object sender, RoutedEventArgs e)
         {
-            var Brush = ((Brush)((System.Windows.Controls.Button)sender).Background).ToString();
+            var Brush = ((Brush)((Rectangle)sender).Fill).ToString();
             var Color = (Color)ColorConverter.ConvertFromString(Brush);
             var PresetToUpdate = Int32.Parse(ColourSettingPopup.Tag.ToString());
             ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).ColorValue = Color;
@@ -477,7 +492,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void ChangeSize(object sender, RoutedEventArgs e)
         {
-            var newSize = (double)Double.Parse(((System.Windows.Controls.Button)sender).Tag.ToString());
+            var newSize = (double)Double.Parse(((Rectangle)sender).Tag.ToString());
             var PresetToUpdate = Int32.Parse(ColourSettingPopup.Tag.ToString());
             ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).PenSize = newSize;
             defaultColours.Items.Refresh();

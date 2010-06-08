@@ -134,7 +134,7 @@
                                         </StackPanel>
                                     </Border>
                                 </ListBoxItem>
-                                <ListBoxItem Tag="Slides" Selected="selectChoice">
+                                <ListBoxItem Tag="Image" Selected="selectChoice">
                                     <Border>
                                         <StackPanel>
                                             <Grid Height="75" Width="75">
@@ -144,7 +144,7 @@
                                         </StackPanel>
                                     </Border>
                                 </ListBoxItem>
-                                <ListBoxItem Tag="Slides-HighDef" Selected="selectChoice">
+                                <ListBoxItem Tag="HighDefImage" Selected="selectChoice">
                                     <Border>
                                         <StackPanel>
                                             <Image Height="75" Width="75" Source="..\Resources\homeloo_gear_clock_2.jpg"/>

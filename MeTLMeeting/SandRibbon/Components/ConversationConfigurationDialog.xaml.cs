@@ -187,7 +187,7 @@ namespace SandRibbon.Components
                                 File=importFile,
                                 Details=details,
                                 Type=importType,
-                                Magnification= importType == (PowerPointLoader.PowerpointImportType)Enum.Parse(typeof(PowerPointLoader.PowerpointImportType),"Slides-HighDef") ? magnification : 1
+                                Magnification= importType == (PowerPointLoader.PowerpointImportType)Enum.Parse(typeof(PowerPointLoader.PowerpointImportType),"HighDefImage") ? magnification : 1
                         });
                         }
                         catch (Exception e)

@@ -40,6 +40,7 @@ namespace SandRibbon.Utils
         public JabberWire wire;
         public enum PowerpointImportType
         {
+            HighDefImage,
             Image,
             Shapes
         }
@@ -53,6 +54,9 @@ namespace SandRibbon.Utils
         private void UploadPowerpoint(PowerpointSpec spec) {
             switch (spec.Type)
             {
+                case PowerpointImportType.HighDefImage:
+                    LoadPowerpointAsFlatSlides(spec.File, spec.Details, spec.Magnification);
+                    break;
                 case PowerpointImportType.Image:
                     LoadPowerpointAsFlatSlides(spec.File,spec.Details,spec.Magnification);
                     break;
@@ -94,8 +98,9 @@ namespace SandRibbon.Utils
                 var thumbnailStartId = conversation.Slides.First().id;
                 foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
                 {
-                    var slidePath = new PrintingHost().ThumbnailPath(thumbnailStartId++);
-                       // currentWorkingDirectory + "\\pptImportSlide" + slideNumber.ToString() + ".PNG";)
+                    var slideNumber = slide.SlideNumber.ToString();
+                    //var slidePath = new PrintingHost().ThumbnailPath(thumbnailStartId++);
+                    var slidePath = currentWorkingDirectory + "\\pptImportSlide" + slideNumber.ToString() + ".PNG";
                     foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                     {
                         shape.Visible = MsoTriState.msoFalse;
@@ -450,13 +455,16 @@ namespace SandRibbon.Utils
                 var pptcolour = textFrame.TextRange.Font.Color.RGB;
                 var SystemDrawingColor = System.Drawing.ColorTranslator.FromOle(Int32.Parse((pptcolour.ToString())));
                 var safeColour = (new Color { A = SystemDrawingColor.A, R = SystemDrawingColor.R, G = SystemDrawingColor.G, B = SystemDrawingColor.B }).ToString();
+                string safeFont = "arial";
+                if (textFrame.TextRange.Font.Name != null)
+                    safeFont = textFrame.TextRange.Font.Name;
                 xSlide.Add(new XElement("publicText",
                         new XAttribute("privacy", privacy),
                         new XAttribute("content", textFrame.TextRange.Text.Replace('\v', '\n')),
                         new XAttribute("x", shape.Left),
                         new XAttribute("y", shape.Top),
                         new XElement("font",
-                            new XAttribute("family", textFrame.TextRange.Font.Name),
+                            new XAttribute("family", safeFont),
                             new XAttribute("size", textFrame.TextRange.Font.Size),
                             new XAttribute("color", safeColour))));
             }
