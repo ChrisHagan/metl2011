@@ -840,13 +840,13 @@ namespace SandRibbon
                         homeGroups.Add(new MiniMap());
                         break;
                     case 1:
-                        ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
                         tabs.Add(new Tabs.Quizzes());
                         homeGroups.Add(new EditingModes());
                         homeGroups.Add(new ToolBox());
                         homeGroups.Add(new TextTools());
                         break;
                     case 2:
+                        ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
                         RHSDrawerDefinition.Width = new GridLength(180);
                         break;
                     case 3:

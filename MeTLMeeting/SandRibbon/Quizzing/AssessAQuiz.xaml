@@ -4,6 +4,7 @@
     xmlns:sr="clr-namespace:SandRibbon"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     Topmost="True"
+    WindowStyle="ToolWindow"
     Title="{Binding Path=title}" SizeToContent="WidthAndHeight" >
     <Border Background="{StaticResource BackgroundBlueGradient}" x:Name="allResults" Padding="10">
         <StackPanel Orientation="Vertical">
@@ -44,7 +45,6 @@
                                            RadiusX="3" RadiusY="3" />
                                 </Grid>
                             </Grid>
-                            <Rectangle Fill="{StaticResource ShinyAbsoluteHighlightBrush}" IsHitTestVisible="False"/>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

@@ -12,6 +12,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbonObjects;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
@@ -20,6 +23,21 @@ namespace SandRibbon.Components
         public SlideNavigationControls()
         {
             InitializeComponent();
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+        }
+        private void UpdateConversationDetails(ConversationDetails details)
+        {
+            nav.Visibility = Visibility.Visible;
+            if (details.Author == Globals.me)
+            {
+                addSlideButton.Visibility = Visibility.Visible;
+                syncButton.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                addSlideButton.Visibility = Visibility.Collapsed;
+                syncButton.Visibility = Visibility.Visible;
+            }
         }
         private void toggleSync(object sender, RoutedEventArgs e)
         {

@@ -9,7 +9,6 @@
         <GradientStop Color="#FF848484" Offset="0.7"/>
         <GradientStop Color="#FF959595" Offset="1"/>
     </LinearGradientBrush>
-
     <LinearGradientBrush x:Key="BackgroundBlueGradient" Opacity="1" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#FFF5FAFF" Offset="0"/>
         <GradientStop Color="#FFD0DEEF" Offset="0.39"/>
@@ -23,7 +22,7 @@
         <GradientStop Color="#FF7AA3F4" Offset="0.40"/>
         <GradientStop Color="#FFC5D5F6" Offset="1"/>
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ShinyAbsoluteHighlightBrush" Opacity="0.8" EndPoint="0.2,0" StartPoint="1,0.35">
+    <LinearGradientBrush x:Key="ShinyAbsoluteHighlightBrush" Opacity="0.8" StartPoint="0.8,0.55" EndPoint="0.2,0.2" >
         <GradientStop Color="#00FFFFFF" Offset="0.78"/>
         <GradientStop Color="#80FFFFFF" Offset="0.80"/>
         <GradientStop Color="#99FFFFFF" Offset="0.87"/>
