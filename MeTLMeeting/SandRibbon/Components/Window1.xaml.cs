@@ -26,6 +26,7 @@ using SandRibbon.Tabs;
 using SandRibbon.Tabs.Groups;
 using System.Collections;
 using System.Windows.Ink;
+using System.Collections.ObjectModel;
 
 namespace SandRibbon
 {
@@ -77,7 +78,7 @@ namespace SandRibbon
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
-            Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(ToggleNotePadVisibility, mustBeLoggedIn));
+            Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.SetTutorialVisibility.RegisterCommand(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
@@ -539,34 +540,15 @@ namespace SandRibbon
         }
         private void showFriends()
         {
-            friendContent.Width = new GridLength(300);
             SetVisibilityOf(friends, Visibility.Visible);
         }
         private void hideFriends()
         {
-            friendContent.Width = new GridLength(0);
             SetVisibilityOf(friends, Visibility.Collapsed);
         }
         private static void SetVisibilityOf(UIElement target, Visibility visibility)
         {
             target.Visibility = visibility;
-        }
-        private void ToggleNotePadVisibility(object _param)
-        {
-            if (drawer.Visibility == Visibility.Visible)
-                hideScratchPad();
-            else
-                showScratchPad();
-        }
-        private void hideScratchPad()
-        {
-            scratchPadContent.Width = new GridLength(0);
-            SetVisibilityOf(drawer, Visibility.Collapsed);
-        }
-        private void showScratchPad()
-        {
-            scratchPadContent.Width = new GridLength(300);
-            SetVisibilityOf(drawer, Visibility.Visible);
         }
         private void setSync(object _obj)
         {
@@ -831,22 +813,39 @@ namespace SandRibbon
         {
             Commands.UnregisterAllCommands();
             ribbon.Tabs.Clear();
-            ribbon.ToolBar = null;
+            rightDrawer.Children.Clear();
             privacyTools.Children.Clear();
+        }
+        private GridSplitter split() {
+            return new GridSplitter { 
+                ShowsPreview=true,
+                VerticalAlignment=VerticalAlignment.Stretch,
+                Width=10,
+                Height=Double.NaN,
+                ResizeBehavior=GridResizeBehavior.PreviousAndNext
+            };
         }
         public void SetupUI(PedagogyLevel level)
         {
             List<FrameworkElement> homeGroups = new List<FrameworkElement>();
             List<FrameworkElement> tabs = new List<FrameworkElement>();
-            SlideDisplay slideDisplay = null;
+            ObservableCollection<DrawerContent> rightHandDrawerItems = new ObservableCollection<DrawerContent>();
+            SlideDisplay slides = new SlideDisplay();
             foreach (var i in Enumerable.Range(0, level.code + 1))
             {
                 switch (i)
                 {
                     case 0:
+                        int col = 0;
                         ClearUI();
-                        slideDisplay = new SlideDisplay { Visibility = Visibility.Collapsed };
-                        homeGroups.Add(slideDisplay);
+                        var cols = new FrameworkElement[]{ 
+                            new Drawer(), 
+                            split(),
+                            slides};
+                        foreach(var item in cols){
+                            rightDrawer.Children.Add(item);
+                            Grid.SetColumn(item, col++);
+                        }
                         homeGroups.Add(new PenColors());
                         homeGroups.Add(new MiniMap());
                         break;
@@ -856,10 +855,9 @@ namespace SandRibbon
                         homeGroups.Add(new EditingModes());
                         homeGroups.Add(new ToolBox());
                         homeGroups.Add(new TextTools());
-                        ribbon.ToolBar = new Chrome.ToolBar();
                         break;
                     case 2:
-                        slideDisplay.Visibility = Visibility.Visible;
+                        slides.Visibility = Visibility.Visible;
                         break;
                     case 3:
                         homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());

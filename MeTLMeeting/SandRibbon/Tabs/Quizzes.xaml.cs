@@ -20,6 +20,10 @@ using SandRibbon.Providers;
 
 namespace SandRibbon.Tabs
 {
+    /*
+     * The slide display should be on the right.  This is one of the features of CP3.
+     * Color dialog to highlight current selection
+     */
     public partial class Quizzes : Divelements.SandRibbon.RibbonTab
     {
         public ObservableCollection<QuizQuestion> activeQuizes = new ObservableCollection<QuizQuestion>();

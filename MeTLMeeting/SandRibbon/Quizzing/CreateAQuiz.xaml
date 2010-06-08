@@ -35,14 +35,14 @@
                         <Label FontWeight="Bold" Grid.Row="2">Question (optional)</Label>
                         <TextBox Grid.Row="3" Height="90" Width="300" x:Name="question" AcceptsReturn="True"></TextBox>
                     </Grid>
-                    <ItemsControl Margin="10" x:Name="quizQuestions">
+                    <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{x:Static q:CreateAQuiz.options}" Loaded="TextBox_GotFocus">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
                                     <q:GoldPlaque />
                                     <StackPanel Orientation="Horizontal">
                                         <q:QuizButton />
-                                        <TextBox Margin="0 5 20 5" Width="300" Text="{Binding Path=optionText}" />
+                                        <TextBox Margin="0 5 20 5" Width="300" Text="{Binding Path=optionText}" GotFocus="TextBox_GotFocus"/>
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>

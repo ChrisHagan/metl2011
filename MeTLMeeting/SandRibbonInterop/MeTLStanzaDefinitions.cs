@@ -785,7 +785,6 @@ namespace SandRibbonInterop.MeTLStanzas
                                    url = GetTag(URL),
                                    slide = int.Parse(GetTag(SLIDE)),
                                    time = long.Parse(GetTag(TIME))
-  
                                };
                 }
                 set

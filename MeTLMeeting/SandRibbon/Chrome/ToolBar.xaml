@@ -3,11 +3,11 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <sr:Button ToolTip="{StaticResource UndoToolTip}" Text="Undo" Image="\Resources\UndoShiny.png" Command="{x:Static api:Commands.Undo}" />
-    <sr:Button ToolTip="{StaticResource RedoToolTip}" Text="Redo" Image="\Resources\RedoShiny.png" Command="{x:Static api:Commands.Redo}" />
-    <sr:Button ToolTip="{StaticResource FriendsToolTip}" Text="Friends" Image="\Resources\friendsplaceholder.png" Command="{x:Static api:Commands.ToggleFriendsVisibility}" CommandParameter="True" />
-    <sr:Button ToolTip="{StaticResource NotesToolTip}" Text="Notes" Image="\Resources\scratchpadplaceholderyellownotepad.png" Command="{x:Static api:Commands.ToggleScratchPadVisibility}" />
-    <sr:Button x:Name="quickLaunchTutorial" ToolTip="{StaticResource CreateTutorialToolTip}" Text="Tutorial Style" Image="\Resources\Ribbon-Tutorial.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="tutorial" />
-    <sr:Button x:Name="quickLaunchLecture" ToolTip="{StaticResource CreateLectureToolTip}" Text="Lecture Style" Image="\Resources\Ribbon-Lecture.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="lecture" />
-    <sr:Button x:Name="quickLaunchMeeting" ToolTip="{StaticResource CreateMeetingToolTip}" Text="Meeting Style" Image="\Resources\Ribbon-Meeting.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="meeting" />
+    <sr:Button x:Name="undo" ToolTip="{StaticResource UndoToolTip}" Text="Undo" Image="\Resources\UndoShiny.png" Command="{x:Static api:Commands.Undo}" />
+    <sr:Button x:Name="redo" ToolTip="{StaticResource RedoToolTip}" Text="Redo" Image="\Resources\RedoShiny.png" Command="{x:Static api:Commands.Redo}" />
+    <sr:Button x:Name="friends" ToolTip="{StaticResource FriendsToolTip}" Text="Friends" Image="\Resources\friendsplaceholder.png" Command="{x:Static api:Commands.ToggleFriendsVisibility}" CommandParameter="True" />
+    <sr:Button x:Name="notes" ToolTip="{StaticResource NotesToolTip}" Text="Notes" Image="\Resources\scratchpadplaceholderyellownotepad.png" Command="{x:Static api:Commands.ToggleScratchPadVisibility}" />
+    <sr:Button x:Name="tutorialStyle" ToolTip="{StaticResource CreateTutorialToolTip}" Text="Tutorial Style" Image="\Resources\Ribbon-Tutorial.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="tutorial" />
+    <sr:Button x:Name="lectureStyle" ToolTip="{StaticResource CreateLectureToolTip}" Text="Lecture Style" Image="\Resources\Ribbon-Lecture.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="lecture" />
+    <sr:Button x:Name="meetingStyle" ToolTip="{StaticResource CreateMeetingToolTip}" Text="Meeting Style" Image="\Resources\Ribbon-Meeting.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="meeting" />
 </sr:ToolBar>

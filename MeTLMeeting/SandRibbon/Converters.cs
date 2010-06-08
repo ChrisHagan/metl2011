@@ -9,6 +9,10 @@ using SandRibbon.Providers;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
+using System.Collections.Generic;
+using System.Linq;
+using SandRibbon.Components;
+using System.Windows.Controls;
 
 namespace SandRibbon
 {
@@ -38,6 +42,20 @@ namespace SandRibbon
         public static BracketingConverter BracketingConverter = new BracketingConverter();
         public static ConvertStringToImageSource ConvertStringToImageSource = new ConvertStringToImageSource();
         public static ExtractUrlAndConvertConverter ExtractUrlAndConvertConverter = new ExtractUrlAndConvertConverter();
+        public static IndexInThisCollectionConverter IndexInThisCollectionConverter = new IndexInThisCollectionConverter();
+    }
+    public class IndexInThisCollectionConverter : IMultiValueConverter {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values.Any(v => v == DependencyProperty.UnsetValue)) return 0;
+            var items = ((ItemsControl)values[1]).Items;
+            var number = items.IndexOf(values[0]);
+            return number;
+        }
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException("You shouldn't be converting an IndexInThisCollection back to anything");
+        }
     }
     public class ExtractUrlAndConvertConverter:IValueConverter
     {

@@ -533,6 +533,14 @@ namespace SandRibbonInterop
         }
     }
 
+    public class DrawerContent
+    {
+        public System.Windows.Controls.UserControl content { get; set; }
+        public string header { get; set; }
+        public Visibility visibility { get; set; }
+        public int column { get; set; }
+    }
+    
     public class NonRibbonButton : System.Windows.Controls.Button
     {
         public string Text

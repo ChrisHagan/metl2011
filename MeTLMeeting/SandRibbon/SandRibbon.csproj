@@ -186,6 +186,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\DrawerSplitter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Friends.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -199,6 +203,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Pedagogicometry\Pedagogicometer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\SlideDisplay.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -322,10 +330,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Tabs\Groups\SlideDisplay.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Tabs\Groups\TextTools.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -445,6 +449,9 @@
     <Compile Include="Components\Drawer.xaml.cs">
       <DependentUpon>Drawer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\DrawerSplitter.xaml.cs">
+      <DependentUpon>DrawerSplitter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Friends.xaml.cs">
       <DependentUpon>Friends.xaml</DependentUpon>
     </Compile>
@@ -457,12 +464,16 @@
     </Compile>
     <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
     <Compile Include="Components\ResourceDictionaries\TypedControlStylingEventHandlers.cs" />
+    <Compile Include="Components\SlideDisplay.xaml.cs">
+      <DependentUpon>SlideDisplay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Submissions\ScreenshotSubmission.xaml.cs">
       <DependentUpon>ScreenshotSubmission.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Submissions\ViewSubmissions.xaml.cs">
       <DependentUpon>ViewSubmissions.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Providers\Colors.cs" />
     <Compile Include="Providers\ProviderMonitor.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
     <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">
@@ -539,9 +550,6 @@
     </Compile>
     <Compile Include="Components\Scratchpad.xaml.cs">
       <DependentUpon>Scratchpad.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Groups\SlideDisplay.xaml.cs">
-      <DependentUpon>SlideDisplay.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Groups\TextTools.xaml.cs" />
     <Compile Include="Tabs\Groups\ToolBox.xaml.cs">

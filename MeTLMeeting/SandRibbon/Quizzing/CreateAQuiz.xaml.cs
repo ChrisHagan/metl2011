@@ -14,41 +14,21 @@ using SandRibbon.Providers;
 using SandRibbonInterop;
 using CheckBox=System.Windows.Controls.CheckBox;
 using System.Collections.ObjectModel;
+using WPFColors = System.Windows.Media.Colors;
 
 namespace SandRibbon.Quizzing
 {
     public partial class CreateAQuiz : Window
     {
         public static readonly string PROMPT_TEXT = "Please enter a quiz title";
-        public ObservableCollection<Option> QUIZ_ANSWERS = new ObservableCollection<Option>
+        public static ObservableCollection<Option> options = new ObservableCollection<Option>
                                                      {
-                                                         new Option {name = "A" },
-                                                         new Option {name = "B"},
-                                                         new Option {name = "C"},
-                                                         new Option {name = "D"},
+                                                         new Option {name = "A" }
                                                      };
-        public List<Color> QUESTIONCOLORS = new List<Color>
-                                          {
-                                              Colors.Red,
-                                              Colors.Yellow, 
-                                              Colors.Blue,
-                                              Colors.Green
-        };
         public CreateAQuiz()
         {
             InitializeComponent();
-            addCreateQuestions();
-        }
-        private void addCreateQuestions()
-        {
-            var num = new Random().Next(QUESTIONCOLORS.Count);
-            quizQuestions.ItemsSource = QUIZ_ANSWERS.Select(a => new Option
-            {
-                color = QUESTIONCOLORS.ElementAt(num++ % QUESTIONCOLORS.Count),
-                name = a.name,
-                optionText="",
-                correct=false
-            });
+            options.First().color = AllColors.all[0];
         }
         private void help(object sender, RoutedEventArgs e)
         {
@@ -82,6 +62,22 @@ namespace SandRibbon.Quizzing
             }
             Commands.SendQuiz.Execute(quiz);
             this.Close();
+        }
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var emptyOptions = options.Where(o=>string.IsNullOrEmpty(o.optionText));
+            if(emptyOptions.Count() > 1) return;
+            foreach (var option in options)
+                ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(option)).Opacity = 1;
+            var newOption = new Option
+            {
+                name = new String(new[]{
+                    (char)(options.Last().name.ToCharArray()[0]+1)
+                }).ToUpper(),
+                color = AllColors.all.ElementAt(AllColors.all.IndexOf(options.Last().color)+1)
+            };
+            options.Add(newOption);
+            ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption)).Opacity = 0.5;
         }
     }
 }
