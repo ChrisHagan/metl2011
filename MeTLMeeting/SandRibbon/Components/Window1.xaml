@@ -77,11 +77,8 @@
                         </Canvas>
                     </Grid>
                     <components:ScrollBar x:Name="adornerScroll"/>
-                    <AdornerDecorator>
-                        <Canvas>
-                            <!--<widgets:ArtistsPalette />-->
-                            <components:PrivacyTools />
-                        </Canvas>
+                    <AdornerDecorator >
+                        <Canvas x:Name="privacyTools"/>
                     </AdornerDecorator>
                 </Grid>
                 <GridSplitter x:Name="notesGridSplitter"
