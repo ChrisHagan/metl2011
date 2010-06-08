@@ -240,6 +240,7 @@ namespace SandRibbon.Components.Sandpit
         {
             thought.stack.handwriting.currentSlide = room;
             thought.stack.text.currentSlide = room;
+            thought.stack.images.currentSlide = room;
         }
     }
 

@@ -403,7 +403,7 @@ namespace SandRibbon.Components.Canvas
         public void ReceiveDirtyStrokes(IEnumerable<TargettedDirtyElement> targettedDirtyStrokes)
         {
             if (targettedDirtyStrokes.Count() == 0) return;
-            if (!(targettedDirtyStrokes.First().target.Equals(target)) || targettedDirtyStrokes.First().slide != Globals.slide) return;
+            if (!(targettedDirtyStrokes.First().target.Equals(target)) || targettedDirtyStrokes.First().slide != currentSlide) return;
             var doReceiveDirty = (Action)delegate
             {
                 var dirtyChecksums = targettedDirtyStrokes.Select(t => t.identifier);
