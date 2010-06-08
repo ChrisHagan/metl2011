@@ -50,15 +50,11 @@
         <Grid x:Name="EffectRoot">
             <Grid x:Name="columns">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="LHSDrawerDefinition" Width="*"/>
-                    <ColumnDefinition x:Name="LHSSplitterDefinition" Width="10"/>
-                    <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40"/>
-                    <ColumnDefinition x:Name="RHSSplitterDefinition" Width="10"/>
-                    <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*"/>
+                    <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
+                    <ColumnDefinition x:Name="RHSSplitterDefinition" Width="10" />
+                    <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*" />
                 </Grid.ColumnDefinitions>
-                <components:Friends Grid.Column="0" x:Name="friends" />
-                <GridSplitter x:Name="friendGridSplitter" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" Visibility="{Binding ElementName=LHSDrawerContainer, Path=Visibility}" />
-                <Grid Grid.Column="2">
+                <Grid Grid.Column="0">
                     <Grid x:Name="adornerGrid" Margin="0,0,27,27" SizeChanged="adornerGrid_SizeChanged">
                         <InkCanvas EditingMode="None" Background="Transparent" x:Name="adorner"/>
                         <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
@@ -78,93 +74,10 @@
                         <Canvas x:Name="privacyTools"/>
                     </AdornerDecorator>
                 </Grid>
-                <GridSplitter x:Name="notesGridSplitter" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10"
-                  Visibility="{Binding ElementName=RHSDrawerContainer, Path=Visibility}" />
-                <Grid Grid.Column="4" x:Name="rightDrawer">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <GridSplitter x:Name="notesGridSplitter" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
+                <Grid Grid.Column="2" x:Name="rightDrawer">
+                    <components:SlideDisplay x:Name="slides" />
                 </Grid>
-                <!--
-                <ItemsControl Grid.Column="4" x:Name="RHSDrawerContainer">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Columns="2"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Padding="10" Background="Transparent" Grid.Column="{Binding Path=column}">
-                                <Grid.Column>
-                                    <MultiBinding Converter="{x:Static my:Converters.IndexInThisCollectionConverter}">
-                                        <Binding />
-                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=ItemsControl}"/>
-                                    </MultiBinding>
-                                </Grid.Column>
-                                <StackPanel Orientation="Horizontal">
-                                    <GridSplitter Width="20" Background="{StaticResource BackgroundBlueGradient}" 
-                                                  ResizeBehavior="PreviousAndCurrent" ResizeDirection="Columns"
-                                                  VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Center">
-                                        <Grid.Column>
-                                            <MultiBinding Converter="{x:Static my:Converters.IndexInThisCollectionConverter}">
-                                                <Binding />
-                                                <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=ItemsControl}"/>
-                                            </MultiBinding>
-                                        </Grid.Column>
-                                    </GridSplitter>
-                                    <StackPanel>
-                                        <Label Content="{Binding header}"/>
-                                        <ContentPresenter Content="{Binding content}"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="{x:Type UserControl}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate>
-                                        <Border Padding="5" Name="ThisDrawerItem" Background="Wheat">
-                                            <Grid.Column>
-                                                <MultiBinding Converter="{x:Static my:Converters.IndexInThisCollectionConverter}">
-                                                    <Binding RelativeSource="{RelativeSource TemplatedParent}"/>
-                                                    <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=ItemsControl}"/>
-                                                </MultiBinding>
-                                            </Grid.Column>
-                                            <StackPanel Orientation="Horizontal">
-                                                <GridSplitter Width="20" Background="{StaticResource BackgroundBlueGradient}" 
-                                                  ResizeBehavior="PreviousAndCurrent" ResizeDirection="Columns"
-                                                  VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Center">
-                                                    <Grid.Column>
-                                                        <MultiBinding Converter="{x:Static my:Converters.IndexInThisCollectionConverter}">
-                                                            <Binding RelativeSource="{RelativeSource TemplatedParent}"/>
-                                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType=ItemsControl}"/>
-                                                        </MultiBinding>
-                                                    </Grid.Column>
-                                                </GridSplitter>
-                                                <ContentPresenter Content="{TemplateBinding}" />
-                                            </StackPanel>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                </ItemsControl-->
-                <!--<Grid Grid.Column="4" x:Name="RHSDrawerContainer">
-                    <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="scratchPadContent" Width ="auto" />
-                    <ColumnDefinition x:Name="slideSplitter" Width="10"/>
-                    <ColumnDefinition x:Name="slideContent" Width ="auto" />
-                    </Grid.ColumnDefinitions>
-                    <components:Drawer Grid.Column="4"  Width="auto" x:Name="drawer" Visibility="Collapsed"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="auto" />
-                    <GridSplitter x:Name="slidesSplitter" Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10"
-                      Visibility="{Binding ElementName=slides, Path=Visibility}" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns"/>
-                    <components:SlideDisplay Grid.Column="6" Visibility="Collapsed" x:Name="slides"/>
-                </Grid>-->
             </Grid>
             <components:LoadProgress x:Name="progress" Visibility="Collapsed" />
             <Grid x:Name="TutorialLayer" Visibility="Collapsed" IsHitTestVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-90,0,0" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" >

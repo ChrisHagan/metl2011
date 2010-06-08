@@ -68,7 +68,6 @@ namespace SandRibbon
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
-            Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(toggleFriendsVisibility, mustBeLoggedIn));
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerPoint, mustBeLoggedIn));
@@ -531,6 +530,7 @@ namespace SandRibbon
         {
             Commands.PostRetrievedHistoryPortion.Execute(e.Parameter);
         }
+        /*
         private void toggleFriendsVisibility(object _param)
         {
             if (friends.Visibility == Visibility.Visible)
@@ -546,6 +546,7 @@ namespace SandRibbon
         {
             SetVisibilityOf(friends, Visibility.Collapsed);
         }
+         */
         private static void SetVisibilityOf(UIElement target, Visibility visibility)
         {
             target.Visibility = visibility;
@@ -813,8 +814,8 @@ namespace SandRibbon
         {
             Commands.UnregisterAllCommands();
             ribbon.Tabs.Clear();
-            rightDrawer.Children.Clear();
             privacyTools.Children.Clear();
+            RHSDrawerDefinition.Width = new GridLength(0);
         }
         private GridSplitter split() {
             return new GridSplitter { 
@@ -829,23 +830,12 @@ namespace SandRibbon
         {
             List<FrameworkElement> homeGroups = new List<FrameworkElement>();
             List<FrameworkElement> tabs = new List<FrameworkElement>();
-            ObservableCollection<DrawerContent> rightHandDrawerItems = new ObservableCollection<DrawerContent>();
-            SlideDisplay slides = new SlideDisplay();
             foreach (var i in Enumerable.Range(0, level.code + 1))
             {
                 switch (i)
                 {
                     case 0:
-                        int col = 0;
                         ClearUI();
-                        var cols = new FrameworkElement[]{ 
-                            new Drawer(), 
-                            split(),
-                            slides};
-                        foreach(var item in cols){
-                            rightDrawer.Children.Add(item);
-                            Grid.SetColumn(item, col++);
-                        }
                         homeGroups.Add(new PenColors());
                         homeGroups.Add(new MiniMap());
                         break;
@@ -857,7 +847,7 @@ namespace SandRibbon
                         homeGroups.Add(new TextTools());
                         break;
                     case 2:
-                        slides.Visibility = Visibility.Visible;
+                        RHSDrawerDefinition.Width = new GridLength(180);
                         break;
                     case 3:
                         homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
