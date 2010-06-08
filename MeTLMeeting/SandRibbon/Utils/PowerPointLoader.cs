@@ -26,7 +26,8 @@ using SandRibbon.Providers;
 
 namespace SandRibbon.Utils
 {
-    public class PowerpointSpec {
+    public class PowerpointSpec
+    {
         public string File;
         public ConversationDetails Details;
         public PowerPointLoader.PowerpointImportType Type;
@@ -51,14 +52,15 @@ namespace SandRibbon.Utils
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.UploadPowerpoint.RegisterCommand(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
         }
-        private void UploadPowerpoint(PowerpointSpec spec) {
+        private void UploadPowerpoint(PowerpointSpec spec)
+        {
             switch (spec.Type)
             {
                 case PowerpointImportType.HighDefImage:
                     LoadPowerpointAsFlatSlides(spec.File, spec.Details, spec.Magnification);
                     break;
                 case PowerpointImportType.Image:
-                    LoadPowerpointAsFlatSlides(spec.File,spec.Details,spec.Magnification);
+                    LoadPowerpointAsFlatSlides(spec.File, spec.Details, spec.Magnification);
                     break;
                 case PowerpointImportType.Shapes:
                     LoadPowerpoint(spec.File, spec.Details);
@@ -105,14 +107,17 @@ namespace SandRibbon.Utils
                     {
                         shape.Visible = MsoTriState.msoFalse;
                     }
+                    var privateShapes = new List<Microsoft.Office.Interop.PowerPoint.Shape>();
                     foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                     {
                         if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
+                        {
                             shape.Visible = MsoTriState.msoFalse;
+                            privateShapes.Add(shape);
+                        }
                         else shape.Visible = MsoTriState.msoTrue;
                     }
                     slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
-
                     var xSlide = new XElement("slide");
                     xSlide.Add(new XAttribute("index", slide.SlideIndex));
                     xSlide.Add(new XElement("shape",
@@ -121,6 +126,25 @@ namespace SandRibbon.Utils
                     new XAttribute("privacy", "public"),
                     new XAttribute("snapshot", slidePath)));
                     xml.Add(xSlide);
+                    var exportFormat = PpShapeFormat.ppShapeFormatPNG;
+                    var exportMode = PpExportMode.ppRelativeToSlide;
+                    var actualBackgroundHeight = 540;
+                    var actualBackgroundWidth = 720;
+                    double Magnification = (double)MagnificationRating;
+                    try
+                    {
+                        if (actualBackgroundHeight != Convert.ToInt32(slide.Master.Height))
+                            actualBackgroundHeight = Convert.ToInt32(slide.Master.Height);
+                        if (actualBackgroundWidth != Convert.ToInt32(slide.Master.Width))
+                            actualBackgroundWidth = Convert.ToInt32(slide.Master.Width);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in (from p in privateShapes orderby (p.ZOrderPosition) select p))
+                    {
+                        ExportShape(shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
+                    }
                 }
                 Commands.PowerPointProgress.Execute("Finished parsing powerpoint, Beginning data upload");
                 var startingId = conversation.Slides.First().id;
@@ -213,6 +237,7 @@ namespace SandRibbon.Utils
                 InkCanvas.SetTop(newText, Double.Parse(text.Attribute("y").Value));
                 var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + Globals.me;
                 var font = text.Descendants("font").ElementAt(0);
+                var privacy = text.Attribute("privacy").Value.ToString();
                 newText.FontFamily = new FontFamily(font.Attribute("family").Value);
                 newText.FontSize = Double.Parse(font.Attribute("size").Value);
                 newText.Foreground = (Brush)(new BrushConverter().ConvertFromString((font.Attribute("color").Value).ToString()));
@@ -221,13 +246,13 @@ namespace SandRibbon.Utils
                     {
                         author = Globals.me,
                         id = textBoxIdentity,
-                        privacy = "public"
+                        privacy = privacy
                     });
                 wire.SendTextbox(new TargettedTextBox
                 {
                     slide = id,
                     author = Globals.me,
-                    privacy = "public",
+                    privacy = privacy,
                     target = "presentationSpace",
                     box = newText
                 });
@@ -334,6 +359,7 @@ namespace SandRibbon.Utils
             var exportMode = PpExportMode.ppRelativeToSlide;
             var backgroundHeight = 540;
             var backgroundWidth = 720;
+            double Magnification = 1;
             try
             {
                 if (backgroundHeight != Convert.ToInt32(slide.Master.Height))
@@ -369,84 +395,96 @@ namespace SandRibbon.Utils
             foreach (var shapeObj in from p in SortedShapes orderby (p.ZOrderPosition) select p)
             {/*This wacky customer has been hand tuned to get the height and width that PPT renders faithfully at.  
                 I have no idea why it has to be this way, it just looks right when it is.*/
-                var shape = (Microsoft.Office.Interop.PowerPoint.Shape)shapeObj;
-                var file = currentWorkingDirectory + "\\background" + (++resource).ToString() + ".jpg";
-                var x = shape.Left;
-                var y = shape.Top;
-                string tags;
-                if (shape.Type == MsoShapeType.msoInkComment)
-                    tags = shape.Tags.ToString();
-                //the ink doesn't appear to have vertices - I can't find the actual ink data
-                if (shape.Type == MsoShapeType.msoPlaceholder)
-                    //there're two of these on my sample slide.  They become the textboxes that have text in them, if you use the template's textbox placeholders.  Otherwise they'd be textboxes instead.
-                    tags = shape.Tags.ToString();
-                if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
-                {
-                    try
-                    {
-                        shape.Visible = MsoTriState.msoTrue;
-                        // Importing Powerpoint textboxes AS textboxes instead of pictures currently disabled.  
-                        if (shape.HasTextFrame == MsoTriState.msoTrue &&
-                            shape.TextFrame.HasText == MsoTriState.msoTrue &&
-                            !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))
-                            addPublicText(xSlide, shape, "private");
-                        else
-                        {
-                            try
-                            {
-                                shape.Export(file, PpShapeFormat.ppShapeFormatPNG, backgroundWidth, backgroundHeight, exportMode);
-                                xSlide.Add(new XElement("shape",
-                                    new XAttribute("x", x),
-                                    new XAttribute("y", y),
-                                    new XAttribute("privacy", "private"),
-                                    new XAttribute("snapshot", file)));
-                            }
-                            catch (COMException)
-                            {
-                                //This shape doesn't export gracefully.  Continue looping through the others.
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Exception parsing private content: " + ex);
-                    }
-                }
-                else if (shape.Visible == MsoTriState.msoTrue)
-                    if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "_")
-                    {
-                        if (shape.HasTextFrame == MsoTriState.msoTrue &&
-                            shape.TextFrame.HasText == MsoTriState.msoTrue &&
-                            !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))
-                            addPublicText(xSlide, shape, "public");
-                        else
-                        {
-                            shape.Export(file, PpShapeFormat.ppShapeFormatPNG, backgroundWidth, backgroundHeight, exportMode);
-                            xSlide.Add(new XElement("shape",
-                                new XAttribute("x", x),
-                                new XAttribute("y", y),
-                                new XAttribute("privacy", "public"),
-                                new XAttribute("snapshot", file)));
-                        }
-                    }
-                    else
-                    {
-                        shape.Export(file, exportFormat, backgroundWidth, backgroundHeight, exportMode);
-                        xSlide.Add(new XElement("shape",
-                            new XAttribute("x", x),
-                            new XAttribute("y", y),
-                            new XAttribute("privacy", "public"),
-                            new XAttribute("snapshot", file)));
-                    }
+                ExportShape(shapeObj, xSlide, currentWorkingDirectory, exportFormat, exportMode, backgroundWidth, backgroundHeight, Magnification);
             }
             foreach (var notes in slide.NotesPage.Shapes)
             {
                 var shape = (Microsoft.Office.Interop.PowerPoint.Shape)notes;
-                addText(xSlide, shape);
+                addText(xSlide, shape, Magnification);
             }
             xml.Add(xSlide);
         }
-        private static void addPublicText(XElement xSlide, Microsoft.Office.Interop.PowerPoint.Shape shape, string privacy)
+        private static void ExportShape(
+            Microsoft.Office.Interop.PowerPoint.Shape shapeObj,
+            XElement xSlide,
+            string currentWorkingDirectory,
+            PpShapeFormat exportFormat,
+            PpExportMode exportMode,
+            int backgroundWidth,
+            int backgroundHeight,
+            double Magnification)
+        {
+            var shape = (Microsoft.Office.Interop.PowerPoint.Shape)shapeObj;
+            var file = currentWorkingDirectory + "\\background" + (++resource).ToString() + ".jpg";
+            var x = shape.Left * Magnification;
+            var y = shape.Top * Magnification;
+            string tags;
+            if (shape.Type == MsoShapeType.msoInkComment)
+                tags = shape.Tags.ToString();
+            //the ink doesn't appear to have vertices - I can't find the actual ink data
+            if (shape.Type == MsoShapeType.msoPlaceholder)
+                //there're two of these on my sample slide.  They become the textboxes that have text in them, if you use the template's textbox placeholders.  Otherwise they'd be textboxes instead.
+                tags = shape.Tags.ToString();
+            if ((shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor") || shape.Visible == FALSE)
+            {
+                try
+                {
+                    shape.Visible = MsoTriState.msoTrue;
+                    if (shape.HasTextFrame == MsoTriState.msoTrue &&
+                        shape.TextFrame.HasText == MsoTriState.msoTrue &&
+                        !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))
+                        addPublicText(xSlide, shape, "private", Magnification);
+                    else
+                    {
+                        try
+                        {
+                            shape.Export(file, PpShapeFormat.ppShapeFormatPNG, backgroundWidth, backgroundHeight, exportMode);
+                            xSlide.Add(new XElement("shape",
+                                new XAttribute("x", x * Magnification),
+                                new XAttribute("y", y * Magnification),
+                                new XAttribute("privacy", "private"),
+                                new XAttribute("snapshot", file)));
+                        }
+                        catch (COMException)
+                        {
+                            //This shape doesn't export gracefully.  Continue looping through the others.
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception parsing private content: " + ex);
+                }
+            }
+            else if (shape.Visible == MsoTriState.msoTrue)
+                if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "_")
+                {
+                    if (shape.HasTextFrame == MsoTriState.msoTrue &&
+                        shape.TextFrame.HasText == MsoTriState.msoTrue &&
+                        !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))
+                        addPublicText(xSlide, shape, "public", Magnification);
+                    else
+                    {
+                        shape.Export(file, PpShapeFormat.ppShapeFormatPNG, backgroundWidth, backgroundHeight, exportMode);
+                        xSlide.Add(new XElement("shape",
+                            new XAttribute("x", x * Magnification),
+                            new XAttribute("y", y * Magnification),
+                            new XAttribute("privacy", "public"),
+                            new XAttribute("snapshot", file)));
+                    }
+                }
+                else
+                {
+                    shape.Export(file, exportFormat, backgroundWidth, backgroundHeight, exportMode);
+                    xSlide.Add(new XElement("shape",
+                        new XAttribute("x", x * Magnification),
+                        new XAttribute("y", y * Magnification),
+                        new XAttribute("privacy", "public"),
+                        new XAttribute("snapshot", file)));
+                }
+        }
+
+        private static void addPublicText(XElement xSlide, Microsoft.Office.Interop.PowerPoint.Shape shape, string privacy, double Magnification)
         {
             //This should be used to create a RichTextbox, not a textbox, so that it can correctly represent PPT textboxes. 
             var textFrame = (Microsoft.Office.Interop.PowerPoint.TextFrame)shape.TextFrame;
@@ -461,23 +499,23 @@ namespace SandRibbon.Utils
                 xSlide.Add(new XElement("publicText",
                         new XAttribute("privacy", privacy),
                         new XAttribute("content", textFrame.TextRange.Text.Replace('\v', '\n')),
-                        new XAttribute("x", shape.Left),
-                        new XAttribute("y", shape.Top),
+                        new XAttribute("x", shape.Left * Magnification),
+                        new XAttribute("y", shape.Top * Magnification),
                         new XElement("font",
                             new XAttribute("family", safeFont),
-                            new XAttribute("size", textFrame.TextRange.Font.Size),
+                            new XAttribute("size", textFrame.TextRange.Font.Size * Magnification),
                             new XAttribute("color", safeColour))));
             }
         }
-        private static void addText(XElement xSlide, Microsoft.Office.Interop.PowerPoint.Shape shape)
+        private static void addText(XElement xSlide, Microsoft.Office.Interop.PowerPoint.Shape shape, double Magnification)
         {
             var textFrame = (Microsoft.Office.Interop.PowerPoint.TextFrame)shape.TextFrame;
             if (check(textFrame.HasText))
             {
                 xSlide.Add(new XElement("privateText",
                         new XAttribute("content", textFrame.TextRange.Text.Replace('\v', '\n')),
-                        new XAttribute("x", shape.Left),
-                        new XAttribute("y", shape.Top),
+                        new XAttribute("x", shape.Left * Magnification),
+                        new XAttribute("y", shape.Top * Magnification),
                         new XElement("font",
                             new XAttribute("family", "Arial"),
                             new XAttribute("size", "12"),
