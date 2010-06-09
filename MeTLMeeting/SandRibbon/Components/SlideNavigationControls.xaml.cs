@@ -34,6 +34,7 @@ namespace SandRibbon.Components
                 nav.Visibility = Visibility.Visible;
                 if (details.Author == Globals.me)
                 {
+                    Commands.SetSync.Execute(true);
                     addSlideButton.Visibility = Visibility.Visible;
                     syncButton.Visibility = Visibility.Collapsed;
                 }

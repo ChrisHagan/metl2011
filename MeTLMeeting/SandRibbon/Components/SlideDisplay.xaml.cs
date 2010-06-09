@@ -74,7 +74,7 @@ namespace SandRibbon.Components
         }
         private void MoveTo(int slide)
         {
-            var doMove = (Action) delegate
+           Dispatcher.adoptAsync((Action) delegate
                                       {
                                           //The real location may not be a displayable thumb
                                           realLocation = slide;
@@ -90,11 +90,7 @@ namespace SandRibbon.Components
                                                   currentSlideIndex = slides.SelectedIndex;
                                           }
                                           slides.ScrollIntoView(slides.SelectedItem);
-                                      };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doMove);
-            else
-                doMove();
+                                      });
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
 
@@ -102,6 +98,7 @@ namespace SandRibbon.Components
         private void moveToTeacher(int where)
         {
             if(isAuthor) return;
+            ((ThumbnailInformation) thumbnailList.Select(s => s.slideId == where)).exposed = true;
             if (!Globals.synched) return;
             var action = (Action) (() => Dispatcher.BeginInvoke((Action) delegate
                                          {
@@ -155,6 +152,7 @@ namespace SandRibbon.Components
                                 {
                                     slideId = slide.id,
                                     slideNumber = details.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
+                                    exposed = details.Slides.IndexOf(slide) == 0 || Globals.pedagogy.code > 2
                                 });
                     }
                 }

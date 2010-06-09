@@ -14,6 +14,7 @@ namespace SandRibbonInterop
         public int slideId { get; set; }
         public int slideNumber { get; set; }
         private ImageBrush thumbnailProperty;
+        public bool exposed;
         public ImageBrush thumbnail
         {
             get { return thumbnailProperty; }

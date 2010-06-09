@@ -196,7 +196,7 @@ namespace SandRibbon.Components
         {
             try
             {
-                var bitmap = generateCapture(96);
+                var bitmap = generateCapture(1024);
                 Commands.ThumbnailGenerated.Execute(new UnscaledThumbnailData { id = Globals.location.currentSlide, data = bitmap });
             }
             catch (OverflowException)
