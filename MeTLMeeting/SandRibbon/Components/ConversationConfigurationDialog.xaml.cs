@@ -165,7 +165,8 @@ namespace SandRibbon.Components
             proposedDetails.Title = proposedDetails.Title.Trim();
             var currentDetails = details;
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
-            var thisTitleIsNotTaken = (extantConversations.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).Count() == 0);
+            var thisTitleIsNotTaken = dialogMode == ConversationConfigurationMode.EDIT ? true :
+                (extantConversations.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).Count() == 0);
             var IAmTheAuthor = (details.Author == Globals.me);
             return thisIsAValidTitle && thisTitleIsNotTaken && IAmTheAuthor;
         }
@@ -219,7 +220,7 @@ namespace SandRibbon.Components
         }
         private void Create(object sender, ExecutedRoutedEventArgs e)
         {
-            if (importType != null && checkConversation(details))
+            if (checkConversation(details))
             {
                 handleConversationDialogueCompletion();
                 this.Close();
@@ -286,7 +287,6 @@ namespace SandRibbon.Components
             startingContentSelector.SelectionChanged += startingContentListBox_SelectionChanged;
             CommitButton.Command = CompleteConversationDialog;
         }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateDialogBoxAppearance();

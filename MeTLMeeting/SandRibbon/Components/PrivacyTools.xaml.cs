@@ -20,6 +20,16 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy,canSetPrivacy));
+            try
+            {
+                if (Globals.isAuthor)
+                    Commands.SetPrivacy.Execute("public");
+                else
+                    Commands.SetPrivacy.Execute("private");
+            }
+            catch (NotSetException) { 
+                Commands.SetPrivacy.Execute("Private");
+            }
             DataContext = this;
         }
         private bool canSetPrivacy(string privacy)
@@ -36,15 +46,11 @@ namespace SandRibbon.Components
         }
         private void SetPrivacy(string p)
         {
-            var doPrivacy = (Action) delegate
+            Dispatcher.adoptAsync((Action) delegate
                                          {
                                              SetValue(PrivateProperty, p);
                                              Commands.RequerySuggested(Commands.SetPrivacy);
-                                         };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doPrivacy);
-            else
-                doPrivacy();
+                                         });
         }
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
         {

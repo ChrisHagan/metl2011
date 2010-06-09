@@ -11,6 +11,13 @@ namespace SandRibbon.Providers
 {
     public class Globals
     {
+        public static bool isAuthor 
+        {
+            get 
+            {
+                return me == conversationDetails.Author;
+            }
+        }
         public static PedagogyLevel pedagogy {
             get {
                 try
