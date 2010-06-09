@@ -8,7 +8,7 @@
               x:Name="statusBar">
     <Grid Width="{Binding ElementName=statusBar, Path=ActualWidth}" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,160,0" >
-            <sandpit:Pedagogicometer />
+            <sandpit:Pedagogicometer Visibility="Collapsed"/>
             <sr:Label x:Name="StatusLabel" ToolTip="currentMode"/>
         </StackPanel>
         <components:ZoomControls HorizontalAlignment="Right" Margin="0,0,50,0" />

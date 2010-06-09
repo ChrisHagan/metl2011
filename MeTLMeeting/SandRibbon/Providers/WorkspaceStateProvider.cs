@@ -59,8 +59,8 @@ namespace SandRibbon.Providers
                 var param = element.Element(WORKSPACE_PARAMETER_ELEMENT);
                 switch (which) { 
                     case "SetPedagogyLevel":
-                        CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = 
-                            (Pedagogicometer.level(Int32.Parse(param.Value)));
+                        //CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = (Pedagogicometer.level(Int32.Parse(param.Value)));
+                        CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(2);
                     break;
                     case "SetIdentity":
                         var values = (Crypto.decrypt(param.Attribute("authentication").Value)).Split(':');
