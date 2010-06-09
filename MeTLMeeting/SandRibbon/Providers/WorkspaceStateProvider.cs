@@ -74,6 +74,7 @@ namespace SandRibbon.Providers
                     case "JoinConversation":
                         Commands.JoinConversation.Execute(param.Attribute("conversation").Value);
                     break;
+                        /*
                     case "MoveTo":
                         DelegateCommand<object> onJoin = null;
                         onJoin = new DelegateCommand<object>((details) =>
@@ -92,6 +93,7 @@ namespace SandRibbon.Providers
                         });
                         Commands.UpdateConversationDetails.RegisterCommand(onJoin);
                     break;
+                         */
                 }
             }
             App.Now("Finished restoring settings");

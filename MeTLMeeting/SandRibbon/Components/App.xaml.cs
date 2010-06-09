@@ -18,9 +18,11 @@ namespace SandRibbon
     {
         private bool loggingOut = false;
 
-        public static void Now(string title){
+        public static string Now(string title){
             var now = DateTime.Now;
-            Logger.Log(string.Format("{2} {0}:{1}", now, now.Millisecond, title));
+            var s = string.Format("{2} {0}:{1}", now, now.Millisecond, title);
+            Logger.Log(s);
+            return s;
         }
         static App() {
             Now("Static App start");

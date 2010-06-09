@@ -138,11 +138,8 @@ namespace SandRibbon.Components
                    return (FrameworkElement)child;
             return null;
         }
-
-
         private void generateScreenshot(long snapshotTime)
         {
-
             var dpi = 96;
             var size = 1024;
             var bitmap = new RenderTargetBitmap(size, size, dpi, dpi, PixelFormats.Default);
@@ -184,13 +181,12 @@ namespace SandRibbon.Components
                                                               slide = Globals.slide,
                                                               time = snapshotTime
                                                           });
-
         }
         private void CreateThumbnail(int id)
         {
             try
             {
-                var bitmap = generateCapture(1024);
+                var bitmap = generateCapture(512);
                 Commands.ThumbnailGenerated.Execute(new UnscaledThumbnailData { id = Globals.location.currentSlide, data = bitmap });
             }
             catch (OverflowException)
@@ -198,18 +194,22 @@ namespace SandRibbon.Components
                 //The image is too large to thumbnail.  Just leave it be.
             }
         }
-
+        private Rect measureToAspect(double width, double height, double max) {
+            var dominantSide = height > width? height : width;
+            var scalingFactor = max / dominantSide;
+            return new Rect(0, 0, width * scalingFactor, height * scalingFactor); 
+        }
         private RenderTargetBitmap generateCapture(int side)
         {
             var dpi = 96;
-            var bitmap = new RenderTargetBitmap(side, side, dpi, dpi, PixelFormats.Default);
+            var dimensions = measureToAspect(ActualWidth, ActualHeight, side);
+            var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
             var dv = new DrawingVisual();
             using (var context = dv.RenderOpen())
-                context.DrawRectangle(new VisualBrush(stack), null, new Rect(new Point(), new Size(side, side)));
+                context.DrawRectangle(new VisualBrush(stack), null, dimensions);
             bitmap.Render(dv);
             return bitmap;
         }
-
         private void PreParserAvailable(PreParser parser)
         {
             stack.handwriting.ReceiveStrokes(parser.ink);

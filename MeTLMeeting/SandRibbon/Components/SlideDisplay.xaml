@@ -4,34 +4,37 @@
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:my="clr-namespace:SandRibbon"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
-    x:Name="SlideMeasure">
-    <StackPanel Orientation="Vertical">
-        <StackPanel.CommandBindings>
-            <CommandBinding Command="{x:Static api:Commands.PostRetrievedHistoryPortion}" Executed="showHistoryProgress" />
-        </StackPanel.CommandBindings>
-        <components:SlideNavigationControls />
+    x:Name="SlideMeasure" >
         <Grid>
-            <SandRibbonInterop:SlideViewingListBox
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         OverridesDefaultStyle="False"
-                         SelectionChanged="slides_SelectionChanged"
-                         ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
-                         VerticalAlignment="Top" x:Name="slides">
-                <SandRibbonInterop:SlideViewingListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type SandRibbonInterop:ThumbnailInformation}">
-                        <Grid Name="slideItem" Width="{Binding ElementName=SlideMeasure, Path=ActualWidth}" Height="{Binding ElementName=SlideMeasure, Path=ActualWidth}">
-                            <Rectangle Width="Auto" Height="Auto" Fill="{StaticResource BackgroundBlueGradient}" />
-                            <Rectangle Width="Auto" Height="Auto" Fill="{Binding Path=thumbnail}"/>
-                            <Rectangle Fill="DarkBlue" HorizontalAlignment="Right" VerticalAlignment="Bottom" RadiusX="9" RadiusY="9" Height="18" Width="18"/>
-                            <Label FontSize="10" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="{Binding Path=slideNumber}"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+        <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
+        <SandRibbonInterop:SlideViewingListBox
+                     Grid.Row="1"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     OverridesDefaultStyle="False"
+                     SelectionChanged="slides_SelectionChanged"
+                     VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" x:Name="slides">
+            <SandRibbonInterop:SlideViewingListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type SandRibbonInterop:ThumbnailInformation}">
+                    <Grid Name="slideItem" Width="{Binding ElementName=SlideMeasure, Path=ActualWidth}" 
+                          Height="{Binding ElementName=SlideMeasure, Path=ActualWidth}">
+                        <Rectangle Margin="6 6 30 6" Width="Auto" Height="Auto" Fill="{StaticResource BackgroundBlueGradient}" />
+                        <Image Margin="10 10 34 10" Stretch="Uniform" Source="{Binding Path=thumbnail.ImageSource}"/>
+                        <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                            <Rectangle Fill="DarkBlue" RadiusX="12" RadiusY="12" Height="24" Width="24"/>
+                            <Label HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                   FontSize="10" Foreground="White" Content="{Binding Path=slideNumber}"/>
                         </Grid>
-                    </DataTemplate>
-                </SandRibbonInterop:SlideViewingListBox.ItemTemplate>
-            </SandRibbonInterop:SlideViewingListBox>
-            <components:LoadProgress x:Name="loadProgress" VerticalAlignment="Top" Margin="0,2,0,0" Height="40" Width="{Binding ElementName=slides, Path=ActualWidth}" Visibility="Collapsed"/>
+                    </Grid>
+                </DataTemplate>
+            </SandRibbonInterop:SlideViewingListBox.ItemTemplate>
+        </SandRibbonInterop:SlideViewingListBox>
         </Grid>
-    </StackPanel>
 </UserControl>

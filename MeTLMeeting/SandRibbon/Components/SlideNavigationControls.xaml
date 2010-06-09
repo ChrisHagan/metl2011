@@ -3,6 +3,7 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:quizzing="clr-namespace:SandRibbon.Quizzing"
+    Height="{Binding ElementName=nav, Path=ActualHeight}"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <quizzing:GoldPlaque Height="Auto"/>

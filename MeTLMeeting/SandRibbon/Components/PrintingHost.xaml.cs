@@ -13,7 +13,7 @@ namespace SandRibbon.Components
     public partial class PrintingHost : UserControl
     {
         private int slideId;
-        private static int ThumbnailSideSize = 96;
+        public static int THUMBNAIL_WIDTH = 512;
         public PrintingHost()
         {
             InitializeComponent();
@@ -22,7 +22,14 @@ namespace SandRibbon.Components
         }
         private void ThumbnailGenerated(UnscaledThumbnailData thumbData)
         {
-            saveScaledBitmapToDisk(ThumbnailPath(thumbData.id), ThumbnailSideSize, ThumbnailSideSize, thumbData.data);
+            var bitmap = BitmapFrame.Create(thumbData.data);
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(bitmap);
+            var stream = new MemoryStream();
+            encoder.Save(stream);
+            var frombitmap = new Bitmap(stream);
+            stream.Close();
+            saveUnscaledBitmapToDisk(ThumbnailPath(thumbData.id), frombitmap);
             Commands.ThumbnailAvailable.Execute(thumbData.id);
         }
         private void MoveTo(int slideId)
@@ -45,6 +52,10 @@ namespace SandRibbon.Components
             bitmap.Render(content);
             saveScaledBitmapToDisk(path, desiredWidth, desiredHeight, bitmap);
         }
+        private static void saveUnscaledBitmapToDisk(string path, Bitmap bitmap) { 
+            using (var stream = File.Create(path))
+                bitmap.Save((Stream)stream, System.Drawing.Imaging.ImageFormat.Png);
+        }
         private static void saveScaledBitmapToDisk(string path, int width, int height, RenderTargetBitmap bitmap)
         {
             var dominantSide = bitmap.Height;
@@ -53,8 +64,7 @@ namespace SandRibbon.Components
             var scalingRatio = width / dominantSide;
             using (var scaledBitmap = Scale(bitmap, (float)scalingRatio, (float)scalingRatio))
             {
-                using (var stream = File.Create(path))
-                    scaledBitmap.Save((Stream)stream, System.Drawing.Imaging.ImageFormat.Png);
+                saveUnscaledBitmapToDisk(path, scaledBitmap); 
             }
         }
         public static Bitmap Scale(RenderTargetBitmap bitmap, float ScaleFactorX, float ScaleFactorY)

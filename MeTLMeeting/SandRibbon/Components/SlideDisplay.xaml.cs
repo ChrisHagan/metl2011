@@ -218,11 +218,6 @@ namespace SandRibbon.Components
                 slides.ScrollIntoView(slides.SelectedItem);
             }
         }
-        private void showHistoryProgress(object sender, ExecutedRoutedEventArgs e)
-        {
-            var progress = (int[]) e.Parameter;
-            loadProgress.Show(progress[0], progress[1]); 
-        }
         private void loadThumbnail(int slideId)
         {
             var doLoad = (Action)delegate
