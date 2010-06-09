@@ -24,7 +24,7 @@ namespace SandRibbon.Providers.Structure
         private static readonly int HTTP_PORT = 1188;
         private static string ROOT_ADDRESS
         {
-            get { return string.Format("http://{0}:{1}", Constants.JabberWire.SERVER, HTTP_PORT); }
+            get { return string.Format("https://{0}:{1}", Constants.JabberWire.SERVER, HTTP_PORT); }
         }
         private static readonly string RESOURCE = "Resource";
         private static readonly string STRUCTURE = "Structure";
@@ -173,7 +173,7 @@ namespace SandRibbon.Providers.Structure
                     conversationsCache = RestrictToAccessible(conversationsCache, myGroups);
                     return conversationsCache;
                 }
-                var data = secureGetData(string.Format("http://{0}:1188/Structure/all.zip", Constants.JabberWire.SERVER));
+                var data = secureGetData(string.Format("https://{0}:1188/Structure/all.zip", Constants.JabberWire.SERVER));
                 using (var zip = ZipFile.Read(data))
                 {
                     var summary = zip

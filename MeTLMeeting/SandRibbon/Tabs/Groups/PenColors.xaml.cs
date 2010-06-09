@@ -350,10 +350,10 @@ namespace SandRibbon.Tabs.Groups
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(setDefaults));
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(setDefaults));
+            InvokeAlteredPreset(2);
         }
         private void setDefaults(object obj)
         {
-
             Console.WriteLine("Pen"); 
             Draw.IsChecked = true;
             Commands.SetInkCanvasMode.Execute("Ink");
@@ -436,7 +436,8 @@ namespace SandRibbon.Tabs.Groups
         }
         private void ChangeColorFromPreset(object sender, RoutedEventArgs e)
         {
-            var IndexNumber = Int32.Parse(((System.Windows.Controls.Button)sender).Tag.ToString());
+            var listBox = ((ListBox)sender);
+            var IndexNumber = listBox.Items.IndexOf(listBox.SelectedItem);
             var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[IndexNumber])).Attributes);
             Commands.SetDrawingAttributes.Execute(drawingAttributes);
             e.Handled = true;
@@ -485,6 +486,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void InvokeAlteredPreset(int index)
         {
+            defaultColours.SelectedItem = defaultColours.Items[index];
             var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[index])).Attributes);
             Commands.SetDrawingAttributes.Execute(drawingAttributes);
             ColourSettingPopup.IsOpen = false;

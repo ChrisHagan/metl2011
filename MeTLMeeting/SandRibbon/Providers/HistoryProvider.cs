@@ -75,7 +75,7 @@ namespace SandRibbon.Providers
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
-                                     var zipUri = string.Format("http://{0}:1749/{1}/all.zip", Constants.JabberWire.SERVER, room);
+                                     var zipUri = string.Format("https://{0}:1749/{1}/all.zip", Constants.JabberWire.SERVER, room);
                                      try
                                      {
                                          var zipData = HttpResourceProvider.secureGetData(zipUri);
@@ -96,6 +96,7 @@ namespace SandRibbon.Providers
                                      }
                                      catch (WebException e)
                                      {
+                                         MessageBox.Show("WE: " + e.Message);
                                          //Nothing to do if it's a 404.  There is no history to obtain.
                                      }
                                  };

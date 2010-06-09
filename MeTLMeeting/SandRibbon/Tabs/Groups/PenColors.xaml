@@ -43,53 +43,41 @@
         <SandRibbonInterop:RadioButton x:Name="Draw" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
         <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectToolTip}"  Icon="\Resources\SelectShiny.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
         <SandRibbonInterop:RadioButton ToolTip="{StaticResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
-        <ItemsControl x:Name="defaultColours">
-            <ItemsControl.ItemsPanel>
+        <ListBox x:Name="defaultColours" SelectionChanged="ChangeColorFromPreset" Background="Transparent" 
+                 ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Padding="0" BorderBrush="Transparent">
+            <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
                 </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Button Tag="{Binding Path=Index}" IsEnabled="{Binding ElementName=previousColors, Path=IsEnabled}" BorderBrush="Transparent" BorderThickness="0" Click="ChangeColorFromPreset" Margin="0">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Border Padding="2" BorderBrush="Transparent" Name="buttonBorder" BorderThickness="1" Height="65" Width="50">
-                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="40"/>
-                                            <RowDefinition Height="25"/>
-                                        </Grid.RowDefinitions>
-                                        <Rectangle Grid.Row="0" Fill="{StaticResource CheckerboardBackground}"/>
-                                        <Rectangle Grid.Row="0" Grid.RowSpan="2" Fill="{StaticResource BrushGradientBackground}"/>
-                                        <Border BorderThickness="0" Padding="0" Grid.Row="0" ClipToBounds="True">
-                                            <Grid>
-                                                <InkPresenter 
+                    <Border Tag="{Binding Path=Index}" IsEnabled="{Binding ElementName=previousColors, Path=IsEnabled}" 
+                            Padding="2" BorderBrush="Transparent" Name="buttonBorder" BorderThickness="1" Height="62" Width="50">
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="25"/>
+                            </Grid.RowDefinitions>
+                            <Rectangle Grid.Row="0" Fill="{StaticResource CheckerboardBackground}"/>
+                            <Rectangle Grid.Row="0" Grid.RowSpan="2" Fill="{StaticResource BrushGradientBackground}"/>
+                            <Border BorderThickness="0" Padding="0" Grid.Row="0" ClipToBounds="True">
+                                <Grid>
+                                    <InkPresenter 
                                                       Strokes="{Binding Path=BrushPreviewStroke}"/>
-                                                <InkPresenter 
+                                    <InkPresenter 
                                                       Strokes="{Binding Path=HighlighterPreviewStroke}"
                                                       Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}" />
-                                            </Grid>
-                                        </Border>
-                                        <Button Margin="0" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" x:Name="OpenPopup" Click="OpenColourSettingPopup" Tag="{Binding Path=Index}">
-                                            <Polygon Stroke="DarkGray" Fill="LightGray" Points="0,0 10,0 5,5 0,0"/>
-                                        </Button>
-                                    </Grid>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="true" >
-                                        <Setter Property="BorderBrush" Value="{StaticResource MouseOverGradient}" TargetName="buttonBorder"/>
-                                        <Setter Property="Background" Value="{StaticResource MouseOverGradient}" TargetName="buttonBorder"/>
-                                    </Trigger>
-                                    <Trigger Property="IsMouseOver" Value="false" >
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                                </Grid>
+                            </Border>
+                            <Button Margin="0" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" x:Name="OpenPopup" Click="OpenColourSettingPopup" Tag="{Binding Path=Index}">
+                                <Polygon Stroke="DarkGray" Fill="LightGray" Points="0,0 10,0 5,5 0,0"/>
+                            </Button>
+                        </Grid>
+                    </Border>
                 </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <Popup x:Name="ColourSettingPopup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
             <Border Height="300" Width="250" BorderThickness="1" BorderBrush="LightGray" CornerRadius="2" Padding="2" Background="{StaticResource BackgroundBlueGradient}">
                 <StackPanel>

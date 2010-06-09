@@ -1201,7 +1201,7 @@ namespace SandRibbonInterop.MeTLStanzas
                 {
                     try
                     {
-                        var path = string.Format("http://{0}:1188{1}", JabberWire.SERVER, GetTag(sourceTag));
+                        var path = string.Format("https://{0}:1188{1}", JabberWire.SERVER, GetTag(sourceTag));
                         return (ImageSource)new ImageSourceConverter().ConvertFromString(path);
                     }
                     catch (Exception e)

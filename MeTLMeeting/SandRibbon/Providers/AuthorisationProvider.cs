@@ -14,7 +14,7 @@ namespace SandRibbon.Providers
                 return new List<JabberWire.AuthorizedGroup> { new JabberWire.AuthorizedGroup("Artificial person", "") };
             var groups = new List<JabberWire.AuthorizedGroup>();
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
-            string sXML = HttpResourceProvider.insecureGetString(String.Format("http://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, Constants.JabberWire.SERVER));
+            string sXML = HttpResourceProvider.insecureGetString(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, Constants.JabberWire.SERVER));
             var doc = new XmlDocument();
                 doc.LoadXml(sXML);
             if (doc.GetElementsByTagName("error").Count == 0)
