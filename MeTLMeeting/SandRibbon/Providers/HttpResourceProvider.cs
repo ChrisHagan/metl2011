@@ -3,6 +3,12 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace SandRibbon.Providers
 {
+    public class LaxCertificatePolicy : ICertificatePolicy {
+        public bool CheckValidationResult(ServicePoint srvPoint, System.Security.Cryptography.X509Certificates.X509Certificate certificate, WebRequest request, int certificateProblem)
+        {
+            return true;
+        }
+    }
     public class HttpResourceProvider
     {
         private static WebClient client()

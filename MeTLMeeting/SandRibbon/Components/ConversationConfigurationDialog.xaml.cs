@@ -21,6 +21,7 @@ using TextBox = System.Windows.Controls.TextBox;
 using ListBox = System.Windows.Controls.ListBox;
 using System.Windows.Forms;
 using SandRibbon.Utils;
+using SandRibbon.Components.Pedagogicometry;
 
 namespace SandRibbon.Components
 {
@@ -30,7 +31,7 @@ namespace SandRibbon.Components
         private ConversationDetails details;
         private ConversationConfigurationMode dialogMode;
         public enum ConversationConfigurationMode { CREATE, EDIT, IMPORT, DELETE }
-        private int magnification = 4;
+        private int magnification = 2;
         private PowerPointLoader.PowerpointImportType importType;
         private string importFile;
 
@@ -49,27 +50,8 @@ namespace SandRibbon.Components
         {
             if (details == null) return;
             conversationNameTextBox.Text = details.Title;
-            conversationTagTextBox.Text = details.Tag;
             if (conversationSubjectListBox.Items.Count > 0)
                 conversationSubjectListBox.SelectedItem = conversationSubjectListBox.Items[conversationSubjectListBox.Items.IndexOf(details.Subject.ToString())];
-            if (conversationStyleListBox.Items.Count > 0)
-            {
-                switch ((Permissions.InferredTypeOf(details.Permissions)).Label)
-                {
-                    case "lecture":
-                        conversationStyleListBox.SelectedItem = conversationStyleListBox.Items[0];
-                        break;
-                    case "tutorial":
-                        conversationStyleListBox.SelectedItem = conversationStyleListBox.Items[1];
-                        break;
-                    case "meeting":
-                        conversationStyleListBox.SelectedItem = conversationStyleListBox.Items[2];
-                        break;
-                    default:
-                        conversationStyleListBox.SelectedItem = conversationStyleListBox.Items[0];
-                        break;
-                }
-            }
         }
         private void UpdateDialogBoxAppearance()
         {
@@ -152,11 +134,6 @@ namespace SandRibbon.Components
         {
             if (details != null)
                 details.Title = ((TextBox)sender).Text;
-        }
-        private void UpdateConversationTag(object sender, TextChangedEventArgs e)
-        {
-            if (details != null)
-                details.Tag = ((TextBox)sender).Text;
         }
         private bool checkConversation(ConversationDetails proposedDetails)
         {
@@ -243,36 +220,7 @@ namespace SandRibbon.Components
                     UpdateDialogBoxAppearance();
                     break;
             }
- }
-
-        private void conversationStyleListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Permissions newPermissions;
-            if (String.IsNullOrEmpty(((ListBoxItem)((ListBox)sender).SelectedItem).Tag.ToString()))
-                return;
-            switch (((ListBoxItem)(((ListBox)sender).SelectedItem)).Tag.ToString())
-            {
-                case "LECTURE_PERMISSIONS":
-                    newPermissions = Permissions.LECTURE_PERMISSIONS;
-                    break;
-                case "TUTORIAL_PERMISSIONS":
-                    newPermissions = Permissions.TUTORIAL_PERMISSIONS;
-                    break;
-                case "MEETING_PERMISSIONS":
-                    newPermissions = Permissions.MEETING_PERMISSIONS;
-                    break;
-                case "LABORATORY_PERMISSIONS":
-                    newPermissions = Permissions.LABORATORY_PERMISSIONS;
-                    break;
-                default:
-                    newPermissions = Permissions.TUTORIAL_PERMISSIONS;
-                    break;
-            }
-            if (details != null)
-                details.Permissions = newPermissions;
- 
         }
-
         private void conversationSubjectListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (String.IsNullOrEmpty((((ListBox)sender).SelectedItem).ToString()))
@@ -283,7 +231,6 @@ namespace SandRibbon.Components
         private void AttachHandlers()
         {
             conversationSubjectListBox.SelectionChanged += conversationSubjectListBox_SelectionChanged;
-            conversationStyleListBox.SelectionChanged += conversationStyleListBox_SelectionChanged;
             startingContentSelector.SelectionChanged += startingContentListBox_SelectionChanged;
             CommitButton.Command = CompleteConversationDialog;
         }
@@ -293,7 +240,6 @@ namespace SandRibbon.Components
             PopulateFields();
             AttachHandlers();
         }
-
         private void CanCompleteDialog(object sender, CanExecuteRoutedEventArgs e)
         {
             bool canExecute = false;

@@ -40,7 +40,7 @@ namespace SandRibbon.Components.Sandpit
         }
         public static void SetDefaultPedagogyLevel() 
         {
-            instance.pedagogies.SelectedItem = allPedagogies.ElementAt(0);
+            instance.pedagogies.SelectedItem = allPedagogies.ElementAt(2);
         }
         public static void SetPedagogyLevel(PedagogyLevel level) 
         {

@@ -35,40 +35,6 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Grid.Row="0" Height="25">Title:</Label>
                         <TextBox Grid.Column="1" Grid.Row="0" x:Name="conversationNameTextBox" TextChanged="UpdateConversationTitle"></TextBox>
-                        <Label Grid.Column="0" Grid.Row="1" Height="25">Style:</Label>
-                        <ListBox Grid.Column="1" Grid.Row="1" x:Name="conversationStyleListBox">
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
-                            <ListBoxItem Tag="LECTURE_PERMISSIONS" IsSelected="True">
-                                <Border>
-                                    <StackPanel>
-                                        <Image Height="75" Width="75" Source="..\Resources\Ribbon-Lecture.png"/>
-                                        <Label HorizontalAlignment="Center" Content="Lecture"/>
-                                    </StackPanel>
-                                </Border>
-                            </ListBoxItem>
-                            <ListBoxItem Tag="TUTORIAL_PERMISSIONS">
-                                <Border>
-                                    <StackPanel>
-                                        <Image Height="75" Width="75" Source="..\Resources\Ribbon-Tutorial.png"/>
-                                        <Label HorizontalAlignment="Center" Content="Tutorial"/>
-                                    </StackPanel>
-                                </Border>
-                            </ListBoxItem>
-                            <ListBoxItem Tag="MEETING_PERMISSIONS">
-                                <Border>
-                                    <StackPanel>
-                                        <Image Height="75" Width="75" Source="..\Resources\Ribbon-Meeting.png"/>
-                                        <Label HorizontalAlignment="Center" Content="Meeting"/>
-                                    </StackPanel>
-                                </Border>
-                            </ListBoxItem>
-                        </ListBox>
-                        <Label Grid.Row="2" Grid.Column="0">Tags:</Label>
-                        <TextBox Grid.Row="2" Grid.Column="1" x:Name="conversationTagTextBox" TextChanged="UpdateConversationTag"></TextBox>
                         <Label Grid.Row="3" Grid.Column="0">Restricted to:</Label>
                         <ListBox Grid.Row="3" Grid.Column="1" x:Name="conversationSubjectListBox"></ListBox>
                     </Grid>
