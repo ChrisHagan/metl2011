@@ -33,7 +33,6 @@ namespace SandRibbon.Components
         {
             privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
             InitializeComponent();
-            Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
@@ -95,14 +94,9 @@ namespace SandRibbon.Components
                                                        Bubble = thoughtBubble
                                                    });
         }
-
-        private void setSync(object obj)
-        {
-            synced = !synced;
-        }
         private void setUpSyncDisplay(int slide)
         {
-            if(!synced) return;
+            if(!Globals.synched) return;
             try
             {
                 if (Globals.conversationDetails.Author == Globals.me) return;

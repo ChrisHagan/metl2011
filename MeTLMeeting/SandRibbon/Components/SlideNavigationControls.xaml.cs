@@ -25,7 +25,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
-            Commands.SetSync.Execute(Globals.synched);
+            Commands.SetSync.Execute(false);
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {

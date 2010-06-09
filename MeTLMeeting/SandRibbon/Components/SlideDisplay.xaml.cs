@@ -98,8 +98,15 @@ namespace SandRibbon.Components
         private void moveToTeacher(int where)
         {
             if(isAuthor) return;
-            ((ThumbnailInformation) thumbnailList.Select(s => s.slideId == where)).exposed = true;
-            slides.ItemsSource = thumbnailList.Where(s => s.exposed);
+
+            var teacherSlide = thumbnailList.Where(s => s.slideId == where).FirstOrDefault();
+            if(teacherSlide != null)
+            {
+                teacherSlide.exposed = true;
+                Dispatcher.adopt((Action) delegate {
+                                                       slides.ItemsSource = thumbnailList.Where(s => s.exposed);
+                });
+            }
             if (!Globals.synched) return;
             var action = (Action) (() => Dispatcher.BeginInvoke((Action) delegate
                                          {
