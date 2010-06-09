@@ -19,13 +19,13 @@ namespace SandRibbon.Components.Utility
                                               timedActions.Last()();
                                               timedActions = new List<Action>();
                                               SyncTimer = null;
-                                          },null, 3000, Timeout.Infinite );
+                                          },null, 500, Timeout.Infinite );
         }
         public static void resetSyncTimer()
         {
             if(SyncTimer != null)
             {
-                SyncTimer.Change(3000, Timeout.Infinite);
+                SyncTimer.Change(500, Timeout.Infinite);
             }
         }
     }

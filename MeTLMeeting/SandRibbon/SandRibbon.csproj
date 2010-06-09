@@ -763,9 +763,6 @@
     <Content Include="Resources\AddVideo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <SplashScreen Include="Resources\BenHead.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </SplashScreen>
     <Content Include="Resources\Highlighter.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
