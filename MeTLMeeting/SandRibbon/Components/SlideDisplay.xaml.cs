@@ -74,23 +74,23 @@ namespace SandRibbon.Components
         }
         private void MoveTo(int slide)
         {
-           Dispatcher.adoptAsync((Action) delegate
-                                      {
-                                          //The real location may not be a displayable thumb
-                                          realLocation = slide;
-                                          var typeOfDestination =
-                                              Globals.conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
-                                                  FirstOrDefault();
-                                          var currentSlide = (ThumbnailInformation) slides.SelectedItem;
-                                          if (currentSlide == null || currentSlide.slideId != slide)
-                                          {
-                                              slides.SelectedIndex =
-                                                  thumbnailList.Select(s => s.slideId).ToList().IndexOf(slide);
-                                              if (slides.SelectedIndex != -1)
-                                                  currentSlideIndex = slides.SelectedIndex;
-                                          }
-                                          slides.ScrollIntoView(slides.SelectedItem);
-                                      });
+           Dispatcher.adoptAsync(delegate
+                                     {
+                                         //The real location may not be a displayable thumb
+                                         realLocation = slide;
+                                         var typeOfDestination =
+                                             Globals.conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
+                                                 FirstOrDefault();
+                                         var currentSlide = (ThumbnailInformation) slides.SelectedItem;
+                                         if (currentSlide == null || currentSlide.slideId != slide)
+                                         {
+                                             slides.SelectedIndex =
+                                                 thumbnailList.Select(s => s.slideId).ToList().IndexOf(slide);
+                                             if (slides.SelectedIndex != -1)
+                                                 currentSlideIndex = slides.SelectedIndex;
+                                         }
+                                         slides.ScrollIntoView(slides.SelectedItem);
+                                     });
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
 
@@ -144,7 +144,7 @@ namespace SandRibbon.Components
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
-            var doDisplay = (Action)delegate
+            Dispatcher.adoptAsync((Action)delegate
             {
                 if (Globals.me == details.Author)
                     isAuthor = true;
@@ -160,7 +160,7 @@ namespace SandRibbon.Components
                                 {
                                     slideId = slide.id,
                                     slideNumber = details.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
-                                    exposed = isAuthor || details.Slides.IndexOf(slide) == 0 || Globals.pedagogy.code > 2
+                                    exposed = isSlideExposed(details, slide)
                                 });
                     }
                 }
@@ -176,13 +176,15 @@ namespace SandRibbon.Components
                 thumbnailList = thumbs;
                 foreach (var thumb in thumbnailList)
                     loadThumbnail(thumb.slideId);
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDisplay);
-            else
-                doDisplay();
-            Commands.RequerySuggested(Commands.MoveTo);
+            });
+
         }
+
+        private bool isSlideExposed(ConversationDetails details, Slide slide)
+        {
+            return isAuthor || details.Slides.IndexOf(slide) == 0 || Globals.pedagogy.code > 2;
+        }
+
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (((ListBox)sender).SelectedItem != null)
