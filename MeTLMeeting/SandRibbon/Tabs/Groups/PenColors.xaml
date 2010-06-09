@@ -95,46 +95,52 @@
                 <StackPanel>
                     <Button Click="ResetToDefault">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                            <Rectangle Height="20" Width="25" x:Name="ColourSettingPopupDefaultColour"/>
+                            <Rectangle Width="25" Height="20" x:Name="ColourSettingPopupDefaultColour"/>
                             <Label Content="Reset pen to default settings" FontWeight="Regular" FontSize="11"/>
+                            <Rectangle Width="25" Fill="Black" x:Name="ColourSettingPopupDefaultSize"/>
                         </StackPanel>
                     </Button>
                     <Label Content="Change the colour"/>
-                    <ItemsControl x:Name="ColourChooser" Height="160">
-                        <ItemsControl.ItemsPanel>
+                    <ListBox x:Name="ColourChooser" Height="160" 
+                             Background="Transparent"
+                             SelectionChanged="ChangeColour">
+                        <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <UniformGrid Rows="4" Columns="6"/>
+                                <UniformGrid Rows="4" Columns="6" />
                             </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid Name="Halo" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                         Width="Auto" Height="Auto" Background="Transparent">
-                                    <Rectangle Fill="{Binding}" Margin="1" PreviewMouseDown="ChangeColour"/>
+                                    <Rectangle Fill="{Binding}" Margin="3" IsHitTestVisible="False"/>
                                 </Grid>
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                     <Label Content="Change the size"/>
-                    <ItemsControl x:Name="SizeChooser" Height="40">
-                        <ItemsControl.ItemsPanel>
+                    <ListBox x:Name="SizeChooser" Height="40"
+                             Background="Transparent" 
+                             SelectionChanged="ChangeSize">
+                        <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <UniformGrid Rows="1"/>
                             </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid Name="Halo" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                <Grid 
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                         Width="Auto" Height="Auto" Background="Transparent">
-                                    <Rectangle Margin="1"
-                                    Fill="Black"  StrokeThickness="1" Width="Auto"  
+                                    <Rectangle Margin="2"
+                                    Fill="Black" IsHitTestVisible="False" 
+                                    StrokeThickness="1" Width="Auto"  
                                     Stroke="Black" HorizontalAlignment="Stretch" 
-                                    PreviewMouseDown="ChangeSize" Tag="{Binding}"
                                     VerticalAlignment="Center" Height="{Binding}"/>
                                 </Grid>
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </StackPanel>
             </Border>
         </Popup>

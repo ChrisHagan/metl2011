@@ -312,7 +312,7 @@ namespace SandRibbon.Tabs.Groups
         public CurrentColourValues currentColourValues = new CurrentColourValues();
 
         public Brush[] simpleColourSet = new Brush[] {
-            Brushes.White,Brushes.LightPink,Brushes.PaleGreen,Brushes.PaleTurquoise,Brushes.PaleVioletRed,Brushes.LightYellow,
+            Brushes.White,Brushes.LightPink,Brushes.PaleGreen,Brushes.Cyan,Brushes.PaleVioletRed,Brushes.LightYellow,
             Brushes.LightGray,Brushes.Pink,Brushes.LightGreen,Brushes.LightBlue,Brushes.Violet,Brushes.Yellow,
             Brushes.DarkGray,Brushes.Red,Brushes.Green,Brushes.Blue,Brushes.Purple,Brushes.Orange,
             Brushes.Black,Brushes.DarkRed,Brushes.DarkGreen,Brushes.DarkBlue,Brushes.Maroon,Brushes.OrangeRed    
@@ -441,34 +441,41 @@ namespace SandRibbon.Tabs.Groups
             Commands.SetDrawingAttributes.Execute(drawingAttributes);
             e.Handled = true;
         }
+        private bool OpeningPopup;
         private void OpenColourSettingPopup(object sender, RoutedEventArgs e)
         {
             var newBrush = new SolidColorBrush();
-            ColourSettingPopup.Tag = ((System.Windows.Controls.Button)sender).Tag.ToString();
-            var Attributes = ((DrawingAttributes)defaultDrawingAttributes[Int32.Parse(((System.Windows.Controls.Button)sender).Tag.ToString())]);
+            var AttributeNumber = Int32.Parse(((System.Windows.Controls.Button)sender).Tag.ToString());
+            ColourSettingPopup.Tag = AttributeNumber.ToString();
+            var Attributes = ((DrawingAttributes)defaultDrawingAttributes[AttributeNumber]);
+            var PopupAttributes = defaultColours.Items[AttributeNumber];
             newBrush.Color = Attributes.Color;
             ColourSettingPopupDefaultColour.Fill = newBrush;
+            ColourSettingPopupDefaultSize.Height = Attributes.Height;
             ColourSettingPopup.IsOpen = true;
             ColourChooser.ItemsSource = simpleColourSet;
             SizeChooser.ItemsSource = simpleSizeSet;
+            OpeningPopup = true;
             foreach (double item in SizeChooser.Items)
             {
-                if (item == Attributes.Height)
+                if (item == ((DrawingAttributesEntry)PopupAttributes).Attributes.Height)
                 {
-                    SizeChooser.Items.MoveCurrentTo(item);
+                    SizeChooser.SelectedItem = item;
                 }
             }
             foreach (SolidColorBrush item in ColourChooser.Items)
             {
-                if (item.Color.ToString() == Attributes.Color.ToString())
+                if (item.Color.ToString() == ((DrawingAttributesEntry)PopupAttributes).Attributes.Color.ToString())
                 {
-                    ColourChooser.Items.MoveCurrentTo(item);
+                    ColourChooser.SelectedItem = item;
                 }
             }
+            OpeningPopup = false;
         }
         private void ChangeColour(object sender, RoutedEventArgs e)
         {
-            var Brush = ((Brush)((Rectangle)sender).Fill).ToString();
+            if (OpeningPopup) return;
+            var Brush = ((Brush)((ListBox)sender).SelectedItem).ToString();
             var Color = (Color)ColorConverter.ConvertFromString(Brush);
             var PresetToUpdate = Int32.Parse(ColourSettingPopup.Tag.ToString());
             ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).ColorValue = Color;
@@ -492,7 +499,8 @@ namespace SandRibbon.Tabs.Groups
         }
         private void ChangeSize(object sender, RoutedEventArgs e)
         {
-            var newSize = (double)Double.Parse(((Rectangle)sender).Tag.ToString());
+            if (OpeningPopup) return;
+            var newSize = ((double)((ListBox)sender).SelectedItem);
             var PresetToUpdate = Int32.Parse(ColourSettingPopup.Tag.ToString());
             ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).PenSize = newSize;
             defaultColours.Items.Refresh();
