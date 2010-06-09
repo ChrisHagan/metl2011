@@ -99,6 +99,7 @@ namespace SandRibbon.Components
         {
             if(isAuthor) return;
             ((ThumbnailInformation) thumbnailList.Select(s => s.slideId == where)).exposed = true;
+            slides.ItemsSource = thumbnailList.Where(s => s.exposed);
             if (!Globals.synched) return;
             var action = (Action) (() => Dispatcher.BeginInvoke((Action) delegate
                                          {
@@ -152,11 +153,11 @@ namespace SandRibbon.Components
                                 {
                                     slideId = slide.id,
                                     slideNumber = details.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
-                                    exposed = details.Slides.IndexOf(slide) == 0 || Globals.pedagogy.code > 2
+                                    exposed = isAuthor || details.Slides.IndexOf(slide) == 0 || Globals.pedagogy.code > 2
                                 });
                     }
                 }
-                slides.ItemsSource = thumbs;
+                slides.ItemsSource = thumbs.Where(s => s.exposed);
                 if(moveTo)
                 {
                     currentSlideIndex++;
