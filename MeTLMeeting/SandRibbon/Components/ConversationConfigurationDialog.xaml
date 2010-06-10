@@ -2,12 +2,16 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:my="clr-namespace:SandRibbon"
     MinWidth="380" 
-        Loaded="Window_Loaded" ShowInTaskbar="True" WindowStartupLocation="CenterScreen"
-        Title="Configure new MeTL Conversation">
+    Loaded="Window_Loaded" ShowInTaskbar="True" WindowStartupLocation="CenterScreen"
+    Title="Configure new MeTL Conversation">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
+            <Button Command="api:Commands.ShowEditSlidesDialog" DockPanel.Dock="Bottom">
+                <TextBlock Text="Edit slides" />
+            </Button>
             <Border DockPanel.Dock="Bottom" Padding="10" Background="{StaticResource BackgroundBlueGradient}" >
                 <Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

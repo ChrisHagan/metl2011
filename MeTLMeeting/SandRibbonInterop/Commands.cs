@@ -194,6 +194,7 @@ namespace SandRibbon
         public static CompositeCommand SetSync = new CompositeCommand();
         public static CompositeCommand AddSlide = new CompositeCommand();
         public static CompositeCommand ShowCreateConversationDialog = new CompositeCommand();
+        public static CompositeCommand ShowEditSlidesDialog = new CompositeCommand();
         public static CompositeCommand CreateConversation = new CompositeCommand();
         public static CompositeCommand EditConversation = new CompositeCommand();
         public static CompositeCommand ImportPowerpoint = new CompositeCommand();

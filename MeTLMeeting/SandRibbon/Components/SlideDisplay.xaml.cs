@@ -213,42 +213,12 @@ namespace SandRibbon.Components
         }
         private void loadThumbnail(int slideId)
         {
-            var doLoad = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
-                var directory = Directory.GetCurrentDirectory();
-                var unknownSlidePath = directory + "\\Resources\\slide_Not_Loaded.png";
-                var path = string.Format(@"{0}\thumbs\{1}\{2}.png", directory, Globals.me, slideId);
-                ImageSource thumbnailSource;
-                if (File.Exists(path))
-                    thumbnailSource = loadedCachedImage(path);
-                else
-                    thumbnailSource = loadedCachedImage(unknownSlidePath);
-                var brush = new ImageBrush(thumbnailSource);
-                var thumb = thumbnailList.Where(t => t.slideId == slideId).FirstOrDefault();
-                if (thumb != null) thumb.Thumbnail = brush;
-            };
-            if (Dispatcher.Thread != Thread.CurrentThread)
-                Dispatcher.BeginInvoke(doLoad);
-            else
-                doLoad();
+                foreach(var thumb in thumbnailList.Where(t => t.slideId == slideId))
+                    thumb.Thumbnail = ThumbnailProvider.get(slideId);
+            });
         }
-        private static BitmapImage loadedCachedImage(string uri)
-        {
-            BitmapImage bi = new BitmapImage();
-            try
-            {
-                bi.BeginInit();
-                bi.UriSource = new Uri(uri);
-                bi.CacheOption = BitmapCacheOption.OnLoad;
-                bi.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                bi.EndInit();
-                bi.Freeze();
-            }
-            catch (Exception e)
-            {
-                Logger.Log("Loaded cached image failed");
-            }
-            return bi;
-        }
+        
     }
 }

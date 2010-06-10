@@ -100,6 +100,7 @@ namespace SandRibbon
             Commands.ActualReportDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedDrawingAttributesAccordingToZoom));
             Commands.ActualReportStrokeAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedStrokeAttributesAccordingToZoom));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
+            Commands.ShowEditSlidesDialog.RegisterCommand(new DelegateCommand<object>(ShowEditSlidesDialog, mustBeInConversation));
             Commands.SetLayer.Execute("Sketch");
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
@@ -112,6 +113,9 @@ namespace SandRibbon
             App.Now("Started MeTL");
         }
         private void noop(object unused) { }
+        private void ShowEditSlidesDialog(object unused) {
+            new SlidesEditingDialog().ShowDialog();
+        }
         private void SetInkCanvasMode(object unused)
         {
             setLayer("Sketch");

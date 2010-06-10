@@ -210,6 +210,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\SlidesEditingDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Submissions\ScreenshotSubmission.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -470,6 +474,9 @@
     <Compile Include="Components\SlideNavigationControls.xaml.cs">
       <DependentUpon>SlideNavigationControls.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\SlidesEditingDialog.xaml.cs">
+      <DependentUpon>SlidesEditingDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Submissions\ScreenshotSubmission.xaml.cs">
       <DependentUpon>ScreenshotSubmission.xaml</DependentUpon>
     </Compile>
@@ -479,6 +486,7 @@
     <Compile Include="DispatcherExtensions.cs" />
     <Compile Include="Providers\Colors.cs" />
     <Compile Include="Providers\ProviderMonitor.cs" />
+    <Compile Include="Providers\ThumbnailProvider.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
     <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">
       <DependentUpon>AnswerAQuiz.xaml</DependentUpon>
