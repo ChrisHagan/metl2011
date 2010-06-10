@@ -22,7 +22,7 @@ namespace SandRibbon.Utils.Connection
                     fullPath,
                     file);
                 var url = XElement.Parse(res).Attribute("url").Value;
-                return url;
+                return "https://" + url.Split(new[]{"://"}, System.StringSplitOptions.None)[1];
             }
             catch(WebException e)
             {

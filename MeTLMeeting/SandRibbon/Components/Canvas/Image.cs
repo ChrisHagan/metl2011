@@ -807,7 +807,7 @@ namespace SandRibbon.Components.Canvas
                                      };
             image.BeginAnimation(OpacityProperty, animationPulse);
             string hostedFileName;
-            if (!fileName.Contains("http://"))
+            if (!fileName.Contains("http"))
             {
                 hostedFileName = ResourceUploader.uploadResource(currentSlide.ToString(), fileName);
                 if (hostedFileName == "failed") return;
