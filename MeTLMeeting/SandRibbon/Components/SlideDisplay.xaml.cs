@@ -161,12 +161,11 @@ namespace SandRibbon.Components
                             new ThumbnailInformation
                                 {
                                     slideId = slide.id,
-                                    slideNumber = details.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1
+                                    slideNumber = details.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
+                                    Exposed=slide.exposed
                                 });
                     }
                 }
-                foreach (var thumb in thumbnailList)
-                    thumb.Exposed = isSlideExposed(thumb);
                 if(moveTo)
                 {
                     currentSlideIndex++;
