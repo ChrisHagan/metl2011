@@ -77,7 +77,6 @@ namespace SandRibbon.Components
            Dispatcher.adoptAsync(delegate
                                      {
                                          //The real location may not be a displayable thumb
-                                         exposeSlide(slide);
                                          realLocation = slide;
                                          var typeOfDestination =
                                              Globals.conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
@@ -100,7 +99,7 @@ namespace SandRibbon.Components
         {
             if(isAuthor) return;
 
-            //exposeSlide(where);
+            exposeSlide(where);
             if (!Globals.synched) return;
             var action = (Action) (() => Dispatcher.BeginInvoke((Action) delegate
                                          {
@@ -116,10 +115,8 @@ namespace SandRibbon.Components
             var teacherSlide = thumbnailList.Where(s => s.slideId == where).FirstOrDefault();
             if(teacherSlide != null)
             {
-                teacherSlide.exposed = true;
-                Dispatcher.adopt((Action) delegate {
-                                                       slides.ItemsSource = thumbnailList.Where(s => s.exposed);
-                });
+                foreach(var thumbnail in thumbnailList.Where(t => t.slideNumber <= teacherSlide.slideNumber))
+                    thumbnail.exposed = true; 
             }
         }
 
@@ -167,7 +164,7 @@ namespace SandRibbon.Components
                                 {
                                     slideId = slide.id,
                                     slideNumber = details.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
-                                    exposed = true //isSlideExposed(details, slide)
+                                    exposed = isSlideExposed(details, slide)
                                 });
                     }
                 }
