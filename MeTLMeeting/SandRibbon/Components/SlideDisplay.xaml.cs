@@ -31,6 +31,7 @@ namespace SandRibbon.Components
         public SlideDisplay()
         {
             InitializeComponent();
+            slides.ItemsSource = thumbnailList;
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(jid =>
@@ -77,6 +78,7 @@ namespace SandRibbon.Components
            Dispatcher.adoptAsync(delegate
                                      {
                                          //The real location may not be a displayable thumb
+                                         exposeSlide(slide);
                                          realLocation = slide;
                                          var typeOfDestination =
                                              Globals.conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
@@ -98,7 +100,6 @@ namespace SandRibbon.Components
         private void moveToTeacher(int where)
         {
             if(isAuthor) return;
-
             exposeSlide(where);
             if (!Globals.synched) return;
             var action = (Action) (() => Dispatcher.BeginInvoke((Action) delegate
@@ -107,19 +108,16 @@ namespace SandRibbon.Components
                                                  Commands.MoveTo.Execute(where);
                                          }));
             GlobalTimers.SetSyncTimer(action);
-             
         }
-
         private void exposeSlide(int where)
         {
-            var teacherSlide = thumbnailList.Where(s => s.slideId == where).FirstOrDefault();
-            if(teacherSlide != null)
+            Dispatcher.adopt(delegate
             {
-                foreach(var thumbnail in thumbnailList.Where(t => t.slideNumber <= teacherSlide.slideNumber))
-                    thumbnail.exposed = true; 
-            }
+                foreach (var teacherLocation in thumbnailList.Where(s => s.slideId == where).Select(t => t.slideNumber))
+                    foreach (var thumb in thumbnailList.Where(t => t.slideNumber <= teacherLocation))
+                        thumb.Exposed = true;
+            });
         }
-
         private bool slideInConversation(int slide)
         {
             var result = Globals.conversationDetails.Slides.Select(t => t.id).Contains(slide);
@@ -154,21 +152,21 @@ namespace SandRibbon.Components
                     isAuthor = true;
                 else
                     isAuthor = false;
-                var thumbs = new ObservableCollection<ThumbnailInformation>();
+                thumbnailList.Clear();
                 foreach (var slide in details.Slides)
                 {
                     if (slide.type == Slide.TYPE.SLIDE)
                     {
-                        thumbs.Add(
+                        thumbnailList.Add(
                             new ThumbnailInformation
                                 {
                                     slideId = slide.id,
-                                    slideNumber = details.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
-                                    exposed = isSlideExposed(details, slide)
+                                    slideNumber = details.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1
                                 });
                     }
                 }
-                slides.ItemsSource = thumbs.Where(s => s.exposed);
+                foreach (var thumb in thumbnailList)
+                    thumb.Exposed = isSlideExposed(thumb);
                 if(moveTo)
                 {
                     currentSlideIndex++;
@@ -177,25 +175,24 @@ namespace SandRibbon.Components
                 slides.SelectedIndex = currentSlideIndex;
                 if (slides.SelectedIndex == -1)
                     slides.SelectedIndex = 0;
-                thumbnailList = thumbs;
                 foreach (var thumb in thumbnailList)
                     loadThumbnail(thumb.slideId);
             });
-
         }
-
-        private bool isSlideExposed(ConversationDetails details, Slide slide)
+        private bool isSlideExposed(ThumbnailInformation slide)
         {
+            var isFirst = slide.slideNumber == 0;
+            var isPedagogicallyAbleToSeeSlides = Globals.pedagogy.code >= 3;
+            var isExposedIfNotCurrentSlide = isAuthor || isFirst || isPedagogicallyAbleToSeeSlides;
             try
             {
-                return Globals.slide == slide.id || isAuthor || details.Slides.IndexOf(slide) == 0 || Globals.pedagogy.code > 2;
+                return Globals.slide == slide.slideId || isExposedIfNotCurrentSlide;
             }
             catch (NotSetException)
-            {
-                return isAuthor || details.Slides.IndexOf(slide) == 0 || Globals.pedagogy.code > 2;
+            {//Don't have a current slide
+                return isExposedIfNotCurrentSlide;
             }
         }
-
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (((ListBox)sender).SelectedItem != null)

@@ -8,11 +8,11 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     x:Name="SlideMeasure" >
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
         <SandRibbonInterop:SlideViewingListBox
                      Grid.Row="1"
@@ -25,7 +25,7 @@
                 <DataTemplate DataType="{x:Type SandRibbonInterop:ThumbnailInformation}">
                     <Grid Name="slideItem" Width="{Binding ElementName=SlideMeasure, Path=ActualWidth}" 
                           Height="{Binding ElementName=SlideMeasure, Path=ActualWidth}" 
-                          Visibility="{Binding Path=exposed, Converter={x:Static my:Converters.BoolToVisibilityConverter}}">
+                          Visibility="{Binding Path=Exposed, Converter={x:Static my:Converters.BoolToVisibilityConverter}}">
                         <Rectangle Margin="6 6 30 6" Width="Auto" Height="Auto" Fill="{StaticResource BackgroundBlueGradient}" />
                         <Image Margin="10 10 34 10" Stretch="Uniform" Source="{Binding Path=thumbnail.ImageSource}"/>
                         <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
@@ -37,5 +37,5 @@
                 </DataTemplate>
             </SandRibbonInterop:SlideViewingListBox.ItemTemplate>
         </SandRibbonInterop:SlideViewingListBox>
-        </Grid>
+    </Grid>
 </UserControl>

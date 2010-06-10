@@ -553,7 +553,7 @@ namespace SandRibbon.Utils.Connection
         {
             stanza(new MeTLStanzas.DirtyInk(element));
         }
-        public void ReceiveCommand(string message)
+        public virtual void ReceiveCommand(string message)
         {
             try
             {

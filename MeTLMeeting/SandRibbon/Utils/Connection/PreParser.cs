@@ -84,6 +84,10 @@ namespace SandRibbon.Utils.Connection
             Commands.AllContentSent.Execute(location.currentSlide);
             Logger.Log(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
+        public override void ReceiveCommand(string message)
+        {//Preparsers don't care about commands, they're not a valid part of history.
+            return;
+        }
         public override void actOnScreenshotSubmission(TargettedSubmission submission)
         {
         }

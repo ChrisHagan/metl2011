@@ -8,24 +8,20 @@ using Divelements.SandRibbon;
 
 namespace SandRibbonInterop
 {
-    public class ThumbnailInformation : INotifyPropertyChanged
+    public class ThumbnailInformation : DependencyObject
     {
         public Slide.TYPE type { get; set; }
         public int slideId { get; set; }
         public int slideNumber { get; set; }
-        private ImageBrush thumbnailProperty;
-        public bool exposed;
-        public ImageBrush thumbnail
+        private ImageBrush thumbnailProperty { get; set; }
+        public bool Exposed
         {
-            get { return thumbnailProperty; }
-            set
-            {
-                thumbnailProperty = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("thumbnail"));
-            }
+            get { return (bool)GetValue(ExposedProperty); }
+            set { SetValue(ExposedProperty, value); }
         }
-        public event PropertyChangedEventHandler PropertyChanged;
+        public static readonly DependencyProperty ExposedProperty =
+            DependencyProperty.Register("Exposed", typeof(bool), typeof(ThumbnailInformation), new UIPropertyMetadata(false));
+        public ImageBrush thumbnail{get;set;}
     }
     public class PowerpointVideo : System.Windows.Controls.MediaElement
     {

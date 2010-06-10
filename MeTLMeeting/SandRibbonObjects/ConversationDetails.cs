@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace SandRibbonObjects
 {
-    public class ConversationDetails : CouchDocument, INotifyPropertyChanged
+    public class ConversationDetails : INotifyPropertyChanged
     {
         public ConversationDetails() : base()
         {
@@ -68,6 +68,7 @@ namespace SandRibbonObjects
         private static readonly string INDEX_TAG = "index";
         private static readonly string SLIDE_TAG = "slide";
         private static readonly string TYPE_TAG = "type";
+        private static readonly string EXPOSED_TAG = "exposed";
         public ConversationDetails ReadXml(XElement doc)
         {
             Title = doc.Element(TITLE_TAG).Value;
@@ -85,7 +86,8 @@ namespace SandRibbonObjects
                 author = d.Element(AUTHOR_TAG).Value,
                 id = Int32.Parse(d.Element(ID_TAG).Value),
                 index = Int32.Parse(d.Element(INDEX_TAG).Value),
-                type = d.Element(TYPE_TAG) == null ? Slide.TYPE.SLIDE : (Slide.TYPE)Enum.Parse(typeof(Slide.TYPE), d.Element(TYPE_TAG).Value)
+                type = d.Element(TYPE_TAG) == null ? Slide.TYPE.SLIDE : (Slide.TYPE)Enum.Parse(typeof(Slide.TYPE), d.Element(TYPE_TAG).Value),
+                exposed = d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true
             }).ToList();
             return this;
         }
@@ -104,52 +106,12 @@ namespace SandRibbonObjects
                     new XElement(AUTHOR_TAG, s.author),
                     new XElement(ID_TAG, s.id.ToString()),
                     new XElement(INDEX_TAG, s.index.ToString()),
+                    new XElement(EXPOSED_TAG, s.exposed.ToString()),
                     new XElement(TYPE_TAG, (s.type == null? Slide.TYPE.SLIDE:s.type).ToString()))));
-        }
-        public override void ReadJson(Newtonsoft.Json.Linq.JObject obj)
-        {
-            base.ReadJson(obj);
-            Title = obj["Title"].Value<string>();
-            Author = obj["Author"].Value<string>();
-            Created = obj["Created"].Value<System.DateTime>();
-            Tag = obj["Tag"].Value<string>();
-            Subject = obj["Subject"].Value<string>();
-            Jid = obj["Jid"].Value<string>();
-            var slideArray = obj["Slides"].Value<JArray>();
-            Slides = slideArray.Select<JToken, Slide>(o => {
-                var slide = new Slide();
-                slide.ReadJson((JObject)o);
-                return slide;
-            }).ToList();
-            if (obj["Permissions"] != null)
-                Permissions.ReadJson(obj["Permissions"].Value<JObject>());
-        }
-        public override void WriteJson(Newtonsoft.Json.JsonWriter writer)
-        {
-            base.WriteJson(writer);
-            writer.WritePropertyName("Title");
-            writer.WriteValue(Title);
-            writer.WritePropertyName("Author");
-            writer.WriteValue(Author);
-            writer.WritePropertyName("Created");
-            writer.WriteValue(Created);
-            writer.WritePropertyName("Tag");
-            writer.WriteValue(Tag);
-            writer.WritePropertyName("Subject");
-            writer.WriteValue(Subject);
-            writer.WritePropertyName("Jid");
-            writer.WriteValue(Jid);
-            writer.WritePropertyName("Slides");
-            writer.WriteStartArray();
-            foreach (var slide in Slides)
-                slide.WriteJsonObject(writer);
-            writer.WriteEndArray();
-            writer.WritePropertyName("Permissions");
-            Permissions.WriteJsonObject(writer);
         }
         public event PropertyChangedEventHandler PropertyChanged;
     }
-    public class Permissions : CouchDocument
+    public class Permissions
     {
         public static Permissions InferredTypeOf(Permissions permissions)
         {
@@ -209,48 +171,23 @@ namespace SandRibbonObjects
         private static string ALLSYNC = "usersAreCompulsorilySynced";
         public string conversationGroup = "";
         private static string CONVERSATIONGROUP = "conversationGroup";
-        public override void ReadJson(JObject obj)
-        {
-            if (obj[CANSHOUT] != null) studentCanPublish = obj[CANSHOUT].Value<bool>();
-            if (obj[CANFRIEND] != null) studentCanOpenFriends = obj[CANFRIEND].Value<bool>();
-            if (obj[ALLSYNC] != null) usersAreCompulsorilySynced = obj[ALLSYNC].Value<bool>();
-           // if (obj[CONVERSATIONGROUP] != null) conversationGroup = obj[CONVERSATIONGROUP].Value<string>();
-            Label = OPTIONS.Where(o =>
-                o.studentCanOpenFriends == studentCanOpenFriends &&
-                o.studentCanPublish == studentCanPublish &&
-                o.usersAreCompulsorilySynced == usersAreCompulsorilySynced).First().Label; 
-        }
-        public override void WriteJson(JsonWriter writer)
-        {
-            writer.WritePropertyName(CANSHOUT);
-            writer.WriteValue(studentCanPublish);
-            writer.WritePropertyName(CANFRIEND);
-            writer.WriteValue(studentCanOpenFriends);
-            writer.WritePropertyName(ALLSYNC);
-            writer.WriteValue(usersAreCompulsorilySynced);
-           // writer.WritePropertyName(CONVERSATIONGROUP);
-           // writer.WriteValue(conversationGroup);
-        }
         public Permissions ReadXml(XElement doc)
         {
             studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).Value);
             studentCanOpenFriends = Boolean.Parse(doc.Element(CANFRIEND).Value);
             usersAreCompulsorilySynced = Boolean.Parse(doc.Element(ALLSYNC).Value);
-           // conversationGroup = doc.Element(CONVERSATIONGROUP).Value;
             return this;
         }
         public XElement WriteXml()
         {
             return new XElement(PERMISSIONS_TAG,
-               // new XElement(CONVERSATIONGROUP, conversationGroup), // ST do be done when group moved to permissions
                 new XElement(CANSHOUT, studentCanPublish),
                 new XElement(CANFRIEND, studentCanOpenFriends),
                 new XElement(ALLSYNC, usersAreCompulsorilySynced));
         }
     }
-    public class Slide : CouchDocument
-    {/*This is a CouchDocument for the convenience of object serialization, not because we need Ids or Revisions.  
-      * The parent will take care of revisioning the entire tree.*/
+    public class Slide
+    {  
         public static int conversationFor(int id) {
             var sId = id.ToString();
             return Int32.Parse(string.Format("{0}00",sId.Substring(0,sId.Length-2)));
@@ -260,45 +197,10 @@ namespace SandRibbonObjects
         public int id;
         public int index;
         public TYPE type;
-        
-        public override void ReadJson(JObject obj)
-        {
-            author = obj["author"].Value<string>();
-            id = obj["id"].Value<int>();
-            index = obj["index"].Value<int>();
-            JToken dummy = null;
-            type = obj.TryGetValue("type", out dummy) ?
-                (TYPE)Enum.Parse(typeof(TYPE), 
-                obj["type"].Value<string>()) : TYPE.SLIDE;
-        }
-        public override void WriteJson(JsonWriter writer)
-        {
-            writer.WritePropertyName("author");
-            writer.WriteValue(author);
-            writer.WritePropertyName("id");
-            writer.WriteValue(id);
-            writer.WritePropertyName("index");
-            writer.WriteValue(index);
-            writer.WritePropertyName("type");
-            if (type == null) type = TYPE.SLIDE;
-            writer.WriteValue(type.ToString());
-        }
+        public bool exposed;
     }
-    public class ApplicationLevelInformation: CouchDocument
+    public class ApplicationLevelInformation
     {
         public int currentId;
-
-        public override void ReadJson(JObject obj)
-        {
-            base.ReadJson(obj);
-            currentId = obj["currentId"].Value<int>();
-        }
-        public override void WriteJson(JsonWriter writer)
-        {
-            base.WriteJson(writer);
-            writer.WritePropertyName("currentId");
-            writer.WriteValue(currentId);
-        }
     }
-
 }
