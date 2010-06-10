@@ -225,7 +225,7 @@ namespace SandRibbon.Components
                     thumbnailSource = loadedCachedImage(unknownSlidePath);
                 var brush = new ImageBrush(thumbnailSource);
                 var thumb = thumbnailList.Where(t => t.slideId == slideId).FirstOrDefault();
-                if (thumb != null) thumb.thumbnail = brush;
+                if (thumb != null) thumb.Thumbnail = brush;
             };
             if (Dispatcher.Thread != Thread.CurrentThread)
                 Dispatcher.BeginInvoke(doLoad);

@@ -27,7 +27,7 @@
                           Height="{Binding ElementName=SlideMeasure, Path=ActualWidth}" 
                           Visibility="{Binding Path=Exposed, Converter={x:Static my:Converters.BoolToVisibilityConverter}}">
                         <Rectangle Margin="6 6 30 6" Width="Auto" Height="Auto" Fill="{StaticResource BackgroundBlueGradient}" />
-                        <Image Margin="10 10 34 10" Stretch="Uniform" Source="{Binding Path=thumbnail.ImageSource}"/>
+                        <Image Margin="10 10 34 10" Stretch="Uniform" Source="{Binding Path=Thumbnail, Converter={x:Static my:Converters.ImageSourceExtractor}}"/>
                         <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
                             <Rectangle Fill="DarkBlue" RadiusX="12" RadiusY="12" Height="20" Width="20"/>
                             <Label HorizontalAlignment="Center" VerticalAlignment="Center" 

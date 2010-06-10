@@ -13,7 +13,13 @@ namespace SandRibbonInterop
         public Slide.TYPE type { get; set; }
         public int slideId { get; set; }
         public int slideNumber { get; set; }
-        private ImageBrush thumbnailProperty { get; set; }
+        public ImageBrush Thumbnail
+        {
+            get { return (ImageBrush)GetValue(ThumbnailProperty); }
+            set { SetValue(ThumbnailProperty, value); }
+        }
+        public static readonly DependencyProperty ThumbnailProperty = 
+            DependencyProperty.Register("Thumbnail", typeof(ImageBrush), typeof(ThumbnailInformation), new UIPropertyMetadata(null));
         public bool Exposed
         {
             get { return (bool)GetValue(ExposedProperty); }
@@ -21,7 +27,6 @@ namespace SandRibbonInterop
         }
         public static readonly DependencyProperty ExposedProperty =
             DependencyProperty.Register("Exposed", typeof(bool), typeof(ThumbnailInformation), new UIPropertyMetadata(false));
-        public ImageBrush thumbnail{get;set;}
     }
     public class PowerpointVideo : System.Windows.Controls.MediaElement
     {

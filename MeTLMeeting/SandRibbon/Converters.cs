@@ -44,6 +44,16 @@ namespace SandRibbon
         public static ExtractUrlAndConvertConverter ExtractUrlAndConvertConverter = new ExtractUrlAndConvertConverter();
         public static IndexInThisCollectionConverter IndexInThisCollectionConverter = new IndexInThisCollectionConverter();
         public static BoolToVisibilityConverter BoolToVisibilityConverter = new BoolToVisibilityConverter();
+        public static ImageSourceExtractor ImageSourceExtractor = new ImageSourceExtractor();
+    }
+    public class ImageSourceExtractor : IValueConverter {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+            if (value == null) return value;
+            return ((ImageBrush)value).ImageSource;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+            return value;
+        }
     }
     public class BoolToVisibilityConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
