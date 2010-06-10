@@ -11,38 +11,42 @@ namespace SandRibbon.Providers
     }
     public class HttpResourceProvider
     {
+        private static bool firstRun = true;
         private static WebClient client()
         {
-            var wc = new WebClient { Credentials = new NetworkCredential("exampleUsername", "examplePassword") };
-            return wc;
+            if (firstRun)
+            {
+                ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
+                ServicePointManager.DefaultConnectionLimit = 10;
+                firstRun = false;
+            }
+            return new WebClient { Credentials = new NetworkCredential("exampleUsername", "examplePassword") };
         }
         private static bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
-            return true;
+            if (cert.Subject == "E=nobody@nowhere.gondwanaland, CN=localhost, OU=Janitorial section, O=Hyber Inc., L=Yawstown, S=Gondwanaland, C=se"
+                && cert.Issuer == "E=nobody@nowhere.gondwanaland, CN=localhost, OU=Janitorial section, O=Hyber Inc., L=Yawstown, S=Gondwanaland, C=se")
+                return true;
+            return false;
         }
         public static string secureGetString(string resource)
         {
-            ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             return client().DownloadString(resource);
         }
         public static string insecureGetString(string resource)
         {
-            ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
-            return new WebClient().DownloadString(resource);
+            return client().DownloadString(resource);
         }
         public static string securePutData(string uri, byte[] data)
         {
-            ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             return decode(client().UploadData(uri, data));
         }
         public static byte[] secureGetData(string resource)
         {
-            ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             return client().DownloadData(resource);
         }
         public static string securePutFile(string uri, string filename)
         {
-            ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             return decode(client().UploadFile(uri, filename));
         }
         private static string decode(byte[] bytes)
