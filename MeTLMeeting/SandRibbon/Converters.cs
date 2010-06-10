@@ -43,6 +43,17 @@ namespace SandRibbon
         public static ConvertStringToImageSource ConvertStringToImageSource = new ConvertStringToImageSource();
         public static ExtractUrlAndConvertConverter ExtractUrlAndConvertConverter = new ExtractUrlAndConvertConverter();
         public static IndexInThisCollectionConverter IndexInThisCollectionConverter = new IndexInThisCollectionConverter();
+        public static BoolToVisibilityConverter BoolToVisibilityConverter = new BoolToVisibilityConverter();
+    }
+    public class BoolToVisibilityConverter : IValueConverter {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class IndexInThisCollectionConverter : IMultiValueConverter {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

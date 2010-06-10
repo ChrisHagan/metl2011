@@ -8,7 +8,7 @@
     <Grid>
         <quizzing:GoldPlaque Height="Auto"/>
         <Rectangle HorizontalAlignment="Stretch" Width="Auto" Height="Auto" VerticalAlignment="Stretch" Fill="{StaticResource ShinyHighlightBrush}" RadiusX="3" RadiusY="3" />
-        <SandRibbonInterop:RibbonPanel Orientation="Horizontal" Visibility="Hidden" x:Name="nav" HorizontalAlignment="Center" Margin="0 10 0 10">
+        <SandRibbonInterop:RibbonPanel Orientation="Horizontal" Visibility="Hidden" x:Name="nav" HorizontalAlignment="Center" Margin="0 0 0 0">
             <SandRibbonInterop:Button Text="Previous" Icon="\Resources\Previous.png" ToolTip="{StaticResource PreviousSlideToolTip}" Command="{x:Static api:Commands.MoveToPrevious}" />
             <SandRibbonInterop:Button Text="Sync" Icon="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{StaticResource SyncToolTip}" Click="toggleSync"/>
             <SandRibbonInterop:Button Text="Add Page" Icon="/Resources/NewSlide.png" ToolTip="{StaticResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
