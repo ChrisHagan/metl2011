@@ -54,7 +54,6 @@ namespace SandRibbon.Components
                     //YAAAAAY
             }
         }
-        
         private bool canAddSlide(object _slide)
         {
             try
@@ -105,8 +104,7 @@ namespace SandRibbon.Components
         }
         private bool slideInConversation(int slide)
         {
-            var result = Globals.conversationDetails.Slides.Select(t => t.id).Contains(slide);
-            return result;
+            return Globals.conversationDetails.Slides.Select(t => t.id).Contains(slide);
         }
         private bool isPrevious(object _object)
         {

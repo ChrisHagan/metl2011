@@ -25,7 +25,6 @@
                      OverridesDefaultStyle="False"
                      SelectionChanged="slides_SelectionChanged"
                      VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" x:Name="slides">
-            
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Viewbox Width="80" Height="80" Loaded="Viewbox_Loaded">
@@ -33,21 +32,6 @@
                     </Viewbox> 
                 </DataTemplate>
             </ListBox.ItemTemplate>
-            <!--SandRibbonInterop:SlideViewingListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type SandRibbonInterop:ThumbnailInformation}">
-                    <Grid Name="slideItem" Width="{Binding ElementName=SlideMeasure, Path=ActualWidth}" 
-                          Height="{Binding ElementName=SlideMeasure, Path=ActualWidth}" 
-                          Visibility="{Binding Path=Exposed, Converter={x:Static my:Converters.BoolToVisibilityConverter}}">
-                        <Rectangle Margin="6 6 30 6" Width="Auto" Height="Auto" Fill="{StaticResource BackgroundBlueGradient}" />
-                        <Image Margin="10 10 34 10" Stretch="Uniform" Source="{Binding Path=Thumbnail, Converter={x:Static my:Converters.ImageSourceExtractor}}"/>
-                        <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                            <Rectangle Fill="DarkBlue" RadiusX="12" RadiusY="12" Height="20" Width="20"/>
-                            <Label HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                   FontSize="10" Foreground="White" Content="{Binding Path=slideNumber}"/>
-                        </Grid>
-                    </Grid>
-                </DataTemplate>
-            </SandRibbonInterop:SlideViewingListBox.ItemTemplate-->
         </ListBox>
     </Grid>
 </UserControl>

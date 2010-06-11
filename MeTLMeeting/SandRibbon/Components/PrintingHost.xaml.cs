@@ -12,13 +12,11 @@ namespace SandRibbon.Components
 {
     public partial class PrintingHost : UserControl
     {
-        private int slideId;
         public static int THUMBNAIL_WIDTH = 512;
         public PrintingHost()
         {
             InitializeComponent();
             Commands.ThumbnailGenerated.RegisterCommand(new DelegateCommand<UnscaledThumbnailData>(ThumbnailGenerated));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
         }
         private void ThumbnailGenerated(UnscaledThumbnailData thumbData)
         {
@@ -31,10 +29,6 @@ namespace SandRibbon.Components
             stream.Close();
             saveUnscaledBitmapToDisk(ThumbnailPath(thumbData.id), frombitmap);
             Commands.ThumbnailAvailable.Execute(thumbData.id);
-        }
-        private void MoveTo(int slideId)
-        {
-            this.slideId = slideId;
         }
         public string ThumbnailPath(int id)
         {

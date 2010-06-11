@@ -288,7 +288,6 @@ namespace SandRibbon.Components.Canvas
         private bool canUseTextCommands(double arg)
         {
             return true;
-            //return canEdit && textBoxSelected;            
         }
         private void toggleStrikethrough(object obj)
         {

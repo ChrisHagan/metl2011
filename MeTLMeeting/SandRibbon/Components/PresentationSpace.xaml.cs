@@ -249,8 +249,6 @@ namespace SandRibbon.Components
                 mirror.Show();
                 Commands.SetDrawingAttributes.Execute(currentAttributes);
                 Commands.SetPrivacy.Execute(stack.handwriting.privacy);
-                //We rerequest the current slide data because we're not storing it in reusable form - it's in thread affine objects in the logical tree.
-                Commands.MoveTo.Execute(Globals.slide);
             }
             catch (NotSetException) { 
                 //Fine it's not time yet anyway.  I don't care.

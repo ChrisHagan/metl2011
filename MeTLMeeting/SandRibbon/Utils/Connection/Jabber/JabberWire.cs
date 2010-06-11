@@ -456,23 +456,12 @@ namespace SandRibbon.Utils.Connection
         }
         public void MoveTo(int where)
         {
-            try
-            {
-                var muc = new MucManager(conn);
-                muc.LeaveRoom(new Jid(string.Format("{0}@{1}", location.currentSlide, Constants.JabberWire.MUC)), credentials.name);
-                muc.LeaveRoom(new Jid(string.Format("{0}{1}@{2}", location.currentSlide, credentials.name, Constants.JabberWire.MUC)), credentials.name);
-            }
-            catch (Exception e)
-            {
-                Logger.Log("Attempted to leave room we weren't in: " + e.Message);
-            }
             location.currentSlide = where;
             joinRooms();
             HistoryProviderFactory.provider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser =>{
-                    Logger.Log(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
                     Commands.PreParserAvailable.Execute(finishedParser);
                 },
                 location.currentSlide.ToString());
@@ -502,7 +491,6 @@ namespace SandRibbon.Utils.Connection
         public void SendVideo(TargettedVideo video) 
         { 
             stanza(video.slide.ToString(), new MeTLStanzas.Video(video));
-            var a = 1;
         }
         public void SendAutoShape(TargettedAutoShape autoshape)
         {
@@ -521,7 +509,6 @@ namespace SandRibbon.Utils.Connection
             var quiz = new MeTLStanzas.Quiz(parameters);
             stanza(Globals.slide.ToString(), quiz);
         }
-
         private void SendQuizAnswer(QuizAnswer parameters)
         {
             var quiz = new MeTLStanzas.QuizResponse(parameters);
@@ -533,7 +520,6 @@ namespace SandRibbon.Utils.Connection
         }
         public bool CanWakeUp(string _param) {
             return true;
-            //return location != null && location.activeConversation != null;
         }
         public void WakeUp(string room) {
             foreach (var board in BoardManager.boards[room])
@@ -713,7 +699,6 @@ namespace SandRibbon.Utils.Connection
         {
             Commands.ReceiveScreenshotSubmission.Execute(submission);
         }
-
         public virtual void actOnVideoReceived(TargettedVideo video) 
         {
             Commands.ReceiveVideo.Execute(video);
