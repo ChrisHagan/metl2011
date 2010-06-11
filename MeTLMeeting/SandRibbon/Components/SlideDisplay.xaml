@@ -27,7 +27,7 @@
                      VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" x:Name="slides">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Viewbox Width="80" Height="80" Loaded="Viewbox_Loaded">
+                    <Viewbox Width="Auto" HorizontalAlignment="Stretch" Loaded="Viewbox_Loaded">
                         <components:UserCanvasStack x:Name="stack"/>
                     </Viewbox> 
                 </DataTemplate>

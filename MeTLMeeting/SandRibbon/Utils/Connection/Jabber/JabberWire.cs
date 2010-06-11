@@ -789,17 +789,11 @@ namespace SandRibbon.Utils.Connection
             {
                 var muc = new MucManager(conn);
                 muc.LeaveRoom(new Jid(location.activeConversation + "@" + Constants.JabberWire.MUC), credentials.name );
+                foreach (var slide in ConversationDetailsProviderFactory.Provider.DetailsOf(location.activeConversation).Slides.Select(s => s.id))
+                    muc.LeaveRoom(new Jid(slide + "@" + Constants.JabberWire.MUC), credentials.name);
             }
             location.activeConversation = room;
             joinRooms();
-            HistoryProviderFactory.provider.Retrieve<PreParser>(
-                onStart,
-                onProgress,
-                finishedParser =>{
-                    Logger.Log(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
-                    Commands.PreParserAvailable.Execute(finishedParser);
-                },
-                location.activeConversation.ToString());
         }
         private void handleSyncMoveReceived(string[] parts)
         {
