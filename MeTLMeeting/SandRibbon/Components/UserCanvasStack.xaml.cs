@@ -28,14 +28,12 @@ namespace SandRibbon.Components
             handwriting.Disable();
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(setTopLayer));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(loggedIn));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetLayer.Execute("Sketch");
             Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(ReceiveNewBubble));
         }
         public void ReceiveNewBubble(TargettedBubbleContext context) {
             if(context.target != handwriting.target) return;
-            Console.WriteLine("Received Bubble");
             var bubble = getBubble(context);
             Dispatcher.BeginInvoke((Action) delegate
                                     {
@@ -114,10 +112,6 @@ namespace SandRibbon.Components
         private bool canStudentPublish(ConversationDetails details)
         {
             return details.Permissions.studentCanPublish;
-        }
-        public void MoveTo(int slide)
-        {
-            Flush();
         }
         public void SetEditable(bool canEdit)
         {

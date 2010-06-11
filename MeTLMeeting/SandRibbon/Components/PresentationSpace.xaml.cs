@@ -285,6 +285,7 @@ namespace SandRibbon.Components
         private void MoveTo(int slide)
         {
             ClearAdorners();
+            stack.Flush();
         }
         private void ClearAdorners()
         {

@@ -12,6 +12,8 @@ using Majestic12;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
 using Ionic.Zip;
+using SandRibbonInterop.MeTLStanzas;
+using agsXMPP.Xml.Dom;
 
 namespace SandRibbon.Providers
 {
@@ -25,7 +27,7 @@ namespace SandRibbon.Providers
             {
                 lock (instanceLock)
                     if (instance == null)
-                        instance = new HttpHistoryProvider();
+                        instance = new CachedHistoryProvider();
                 return instance;
             }
         }
@@ -62,6 +64,44 @@ namespace SandRibbon.Providers
         ) where T : PreParser {
             this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{1}{0}", author,room));
             this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{0}/{1}", author,room));
+        }
+    }
+    public class CachedHistoryProvider : BaseHistoryProvider {
+        private Dictionary<string, PreParser> cache = new Dictionary<string,PreParser>();
+        public override void Retrieve<T>(Action retrievalBeginning, Action<int, int> retrievalProceeding, Action<T> retrievalComplete, string room)
+        {
+            if (!cache.ContainsKey(room))
+            {
+                new HttpHistoryProvider().Retrieve<PreParser>(
+                    delegate { },
+                    (_i, _j) => { },
+                    history =>
+                    {
+                        if (cache.ContainsKey(room))
+                            cache[room].merge<PreParser>(history);
+                        else
+                            cache[room] = history;
+                        Commands.PreParserAvailable.Execute(history);
+                    },
+                    room);
+            }
+            else {
+                retrievalComplete((T)cache[room]);
+            }
+        }
+        public void HandleMessage(string to, Element message) {
+            int room = 0;
+            try
+            {
+                room = Int32.Parse(to);
+            }
+            catch (FormatException)
+            {
+                return;
+            }
+            if (!cache.ContainsKey(room.ToString()))
+                cache[room.ToString()] = new PreParser(room);
+            cache[room.ToString()].ActOnUntypedMessage(message);
         }
     }
     public class HttpHistoryProvider : BaseHistoryProvider

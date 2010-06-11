@@ -8,20 +8,32 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     x:Name="SlideMeasure" >
+    <UserControl.Resources>
+        <core:String x:Key="defaultPrivacy">public</core:String>
+        <core:String x:Key="target">presentationSpace</core:String>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
-        <SandRibbonInterop:SlideViewingListBox
+        <ListBox
                      Grid.Row="1"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      OverridesDefaultStyle="False"
                      SelectionChanged="slides_SelectionChanged"
                      VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" x:Name="slides">
-            <SandRibbonInterop:SlideViewingListBox.ItemTemplate>
+            
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Viewbox Width="80" Height="80" Loaded="Viewbox_Loaded">
+                        <components:UserCanvasStack x:Name="stack"/>
+                    </Viewbox> 
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <!--SandRibbonInterop:SlideViewingListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type SandRibbonInterop:ThumbnailInformation}">
                     <Grid Name="slideItem" Width="{Binding ElementName=SlideMeasure, Path=ActualWidth}" 
                           Height="{Binding ElementName=SlideMeasure, Path=ActualWidth}" 
@@ -35,7 +47,7 @@
                         </Grid>
                     </Grid>
                 </DataTemplate>
-            </SandRibbonInterop:SlideViewingListBox.ItemTemplate>
-        </SandRibbonInterop:SlideViewingListBox>
+            </SandRibbonInterop:SlideViewingListBox.ItemTemplate-->
+        </ListBox>
     </Grid>
 </UserControl>

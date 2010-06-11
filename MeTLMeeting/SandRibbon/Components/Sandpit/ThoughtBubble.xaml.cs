@@ -67,7 +67,6 @@ namespace SandRibbon.Components.Sandpit
 
         private void PreParserAvailable(PreParser parser)
         {
-            Console.WriteLine(string.Format("Bubble:{0} received a preparser", room));
             thought.stack.handwriting.ReceiveStrokes(parser.ink);
             thought.stack.images.ReceiveImages(parser.images.Values);
             foreach (var text in parser.text.Values)

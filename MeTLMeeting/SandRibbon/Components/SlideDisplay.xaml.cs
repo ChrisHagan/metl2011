@@ -17,6 +17,7 @@ using SandRibbonInterop;
 using SandRibbonObjects;
 using SandRibbon.Providers.Structure;
 using Divelements.SandRibbon;
+using SandRibbon.Utils.Connection;
 
 namespace SandRibbon.Components
 {
@@ -41,7 +42,6 @@ namespace SandRibbon.Components
                 slides.ScrollIntoView(slides.SelectedIndex);
             }));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(Display));
-            Commands.ThumbnailAvailable.RegisterCommand(new DelegateCommand<int>(loadThumbnail));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
@@ -54,6 +54,7 @@ namespace SandRibbon.Components
                     //YAAAAAY
             }
         }
+        
         private bool canAddSlide(object _slide)
         {
             try
@@ -69,7 +70,6 @@ namespace SandRibbon.Components
         }
         private void addSlide(object _slide)
         {
-            Commands.CreateThumbnail.Execute(Globals.slide);
             ConversationDetailsProviderFactory.Provider.AppendSlideAfter(Globals.slide, Globals.conversationDetails.Jid);
             moveTo = true;
         }
@@ -77,8 +77,6 @@ namespace SandRibbon.Components
         {
            Dispatcher.adoptAsync(delegate
                                      {
-                                         //The real location may not be a displayable thumb
-                                         exposeSlide(slide);
                                          realLocation = slide;
                                          var typeOfDestination =
                                              Globals.conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
@@ -88,35 +86,22 @@ namespace SandRibbon.Components
                                          {
                                              slides.SelectedIndex =
                                                  thumbnailList.Select(s => s.slideId).ToList().IndexOf(slide);
-                                             if (slides.SelectedIndex != -1)
-                                                 currentSlideIndex = slides.SelectedIndex;
                                          }
                                          slides.ScrollIntoView(slides.SelectedItem);
                                      });
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
-
         }
         private void moveToTeacher(int where)
         {
             if(isAuthor) return;
-            exposeSlide(where);
             if (!Globals.synched) return;
             var action = (Action) (() => Dispatcher.BeginInvoke((Action) delegate
                                          {
                                              if (thumbnailList.Where( t => t.slideId == where).Count()==1)
-                                                 Commands.MoveTo.Execute(where);
+                                               Commands.MoveTo.Execute(where);
                                          }));
             GlobalTimers.SetSyncTimer(action);
-        }
-        private void exposeSlide(int where)
-        {
-            Dispatcher.adopt(delegate
-            {
-                foreach (var teacherLocation in thumbnailList.Where(s => s.slideId == where).Select(t => t.slideNumber))
-                    foreach (var thumb in thumbnailList.Where(t => t.slideNumber <= teacherLocation))
-                        thumb.Exposed = true;
-            });
         }
         private bool slideInConversation(int slide)
         {
@@ -162,7 +147,7 @@ namespace SandRibbon.Components
                                 {
                                     slideId = slide.id,
                                     slideNumber = details.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
-                                    Exposed=slide.exposed
+                                    Exposed = slide.exposed
                                 });
                     }
                 }
@@ -174,9 +159,27 @@ namespace SandRibbon.Components
                 slides.SelectedIndex = currentSlideIndex;
                 if (slides.SelectedIndex == -1)
                     slides.SelectedIndex = 0;
-                foreach (var thumb in thumbnailList)
-                    loadThumbnail(thumb.slideId);
             });
+        }
+        private void Viewbox_Loaded(object sender, RoutedEventArgs e)
+        {
+            var source = (Viewbox)sender;
+            var thumb = (ThumbnailInformation)source.DataContext;
+            var stack = (UserCanvasStack)source.Child;
+            stack.handwriting.currentSlide = thumb.slideId;
+            stack.images.currentSlide = thumb.slideId;
+            stack.text.currentSlide = thumb.slideId;
+            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(
+               parser=>
+               { 
+                   if (parser.location.currentSlide == thumb.slideId){
+                        stack.handwriting.ReceiveStrokes(parser.ink);
+                        stack.images.ReceiveImages(parser.images.Values);
+                        foreach (var text in parser.text.Values)
+                            stack.text.ReceiveTextBox(text);
+                    }
+               }));
+            Commands.SneakInto.Execute(thumb.slideId.ToString());
         }
         private bool isSlideExposed(ThumbnailInformation slide)
         {
@@ -194,31 +197,17 @@ namespace SandRibbon.Components
         }
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (((ListBox)sender).SelectedItem != null)
+            var source = (ListBox)sender;
+            if (source.SelectedItem != null)
             {
-                if(e.RemovedItems.Count > 0){//If we're moving FROM somewhere
-                    var oldThumb = e.RemovedItems[0];
-                    Commands.CreateThumbnail.Execute(((ThumbnailInformation)oldThumb).slideId);
-                }
-                var newThumb = (ThumbnailInformation)(((ListBox)sender).SelectedItem);
-                var proposedIndex =((ListBox) sender).SelectedIndex;
-                var proposedId =newThumb.slideId;
+                var proposedIndex =source.SelectedIndex;
+                var proposedId = ((ThumbnailInformation)source.SelectedItem).slideId;
                 if (proposedId == currentSlideId) return;
-                Logger.Log("At {0} moving to {1}", currentSlideId, newThumb.slideId);
                 currentSlideIndex = proposedIndex;
                 currentSlideId = proposedId;
-                Commands.MoveTo.Execute( newThumb.slideId);
+                Commands.MoveTo.Execute(currentSlideId);
                 slides.ScrollIntoView(slides.SelectedItem);
             }
         }
-        private void loadThumbnail(int slideId)
-        {
-            Dispatcher.adoptAsync(delegate
-            {
-                foreach(var thumb in thumbnailList.Where(t => t.slideId == slideId))
-                    thumb.Thumbnail = ThumbnailProvider.get(slideId);
-            });
-        }
-        
     }
 }

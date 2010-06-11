@@ -661,53 +661,54 @@ namespace SandRibbon.Utils.Connection
                 Logger.Log(message.ToString());
                 return;
             }
+            if (message.SelectSingleElement("body") != null)
+            {
+                ReceiveCommand(message.SelectSingleElement("body").InnerXml);
+                return;
+            }
+            ((CachedHistoryProvider)HistoryProviderFactory.provider).HandleMessage(message.GetAttribute("from").Split('@')[0], message);
+            if (Application.Current == null) return;
+            Application.Current.Dispatcher.adoptAsync(
+                ()=>
+                    ActOnUntypedMessage(message));
+        }
+        public virtual void ActOnUntypedMessage(Element message) { 
             foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
                 actOnStrokeReceived(ink.Stroke);
-            if (Application.Current == null) return;
-            var action = (System.Action)delegate
+            foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
+                actOnScreenshotSubmission(submission.parameters);
+            foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
+                actOnTextReceived(box.Box);
+            foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
+                actOnImageReceived(image.Img);
+            foreach (var autoshape in message.SelectElements<MeTLStanzas.AutoShape>(true))
+                actOnAutoShapeReceived(autoshape.autoshape);
+            foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
+                actOnQuizReceived(quiz.parameters);
+            foreach (var quizAnswer in message.SelectElements<MeTLStanzas.QuizResponse>(true))
+                actOnQuizAnswerReceived(quizAnswer.parameters);
+            foreach (var liveWindow in message.SelectElements<MeTLStanzas.LiveWindow>(true))
+                actOnLiveWindowReceived(liveWindow.parameters);
+            foreach (var dirtyLiveWindow in message.SelectElements<MeTLStanzas.DirtyLiveWindow>(true))
+                actOnDirtyLiveWindowReceived(dirtyLiveWindow.element);
+            foreach (var dirtyText in message.SelectElements<MeTLStanzas.DirtyText>(true))
+                actOnDirtyTextReceived(dirtyText);
+            foreach (var dirtyInk in message.SelectElements<MeTLStanzas.DirtyInk>(true))
+                actOnDirtyStrokeReceived(dirtyInk);
+            foreach (var dirtyImage in message.SelectElements<MeTLStanzas.DirtyImage>(true))
+                actOnDirtyImageReceived(dirtyImage);
+            foreach (var dirtyAutoShape in message.SelectElements<MeTLStanzas.DirtyAutoshape>(true))
+                actOnDirtyAutoshapeReceived(dirtyAutoShape);
+            foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
+                actOnBubbleReceived(bubble.context);
+            foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
             {
-                foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
-                    actOnScreenshotSubmission(submission.parameters);
-                foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
-                    actOnTextReceived(box.Box);
-                foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
-                    actOnImageReceived(image.Img);
-                foreach (var autoshape in message.SelectElements<MeTLStanzas.AutoShape>(true))
-                    actOnAutoShapeReceived(autoshape.autoshape);
-                foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
-                    actOnQuizReceived(quiz.parameters);
-                foreach (var quizAnswer in message.SelectElements<MeTLStanzas.QuizResponse>(true))
-                    actOnQuizAnswerReceived(quizAnswer.parameters);
-                foreach (var liveWindow in message.SelectElements<MeTLStanzas.LiveWindow>(true))
-                    actOnLiveWindowReceived(liveWindow.parameters);
-                foreach (var dirtyLiveWindow in message.SelectElements<MeTLStanzas.DirtyLiveWindow>(true))
-                    actOnDirtyLiveWindowReceived(dirtyLiveWindow.element);
-                foreach (var dirtyText in message.SelectElements<MeTLStanzas.DirtyText>(true))
-                    actOnDirtyTextReceived(dirtyText);
-                foreach (var dirtyInk in message.SelectElements<MeTLStanzas.DirtyInk>(true))
-                    actOnDirtyStrokeReceived(dirtyInk);
-                foreach (var dirtyImage in message.SelectElements<MeTLStanzas.DirtyImage>(true))
-                    actOnDirtyImageReceived(dirtyImage);
-                foreach (var dirtyAutoShape in message.SelectElements<MeTLStanzas.DirtyAutoshape>(true))
-                    actOnDirtyAutoshapeReceived(dirtyAutoShape);
-                foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
-                    actOnBubbleReceived(bubble.context);
-                foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
-                {
-                    var vid = video.Vid;
-                    actOnVideoReceived(vid);
-                }
-                foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
-                    actOnDirtyVideoReceived(dirtyVideo);
-            };
-            if (Application.Current.Dispatcher.Thread != Thread.CurrentThread)
-                Application.Current.Dispatcher.BeginInvoke(action);
-            else
-                action();
-            if (message.SelectSingleElement("body") != null)
-                ReceiveCommand(message.SelectSingleElement("body").InnerXml);
+                var vid = video.Vid;
+                actOnVideoReceived(vid);
+            }
+            foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
+                actOnDirtyVideoReceived(dirtyVideo);
         }
-
         public virtual void actOnScreenshotSubmission(TargettedSubmission submission)
         {
             Commands.ReceiveScreenshotSubmission.Execute(submission);
