@@ -35,16 +35,11 @@ namespace SandRibbon.Components.SimpleImpl
 
         private void setDefaults(object obj)
         {
-            Console.WriteLine("Switcher"); 
-            var action = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 Commands.SetLayer.Execute("Sketch");
                 Pen.IsChecked = true;
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(action);
-            else
-                action();
+            });
         }
     }
 }

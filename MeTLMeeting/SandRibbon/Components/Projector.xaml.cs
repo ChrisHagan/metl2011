@@ -92,7 +92,7 @@ namespace SandRibbon.Components
         }
         private void setProjectionLayers()
         {
-            var doSetProjectionLayers = (Action) delegate
+            Dispatcher.adoptAsync(delegate
                                                      {
                                                          var projectorImages = stack.images;
                                                          var projectorText = stack.text;
@@ -109,11 +109,7 @@ namespace SandRibbon.Components
                                                              canvas.EditingMode = InkCanvasEditingMode.None;
                                                              canvas.Opacity = 1;
                                                          }
-                                                     };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doSetProjectionLayers);
-            else
-                doSetProjectionLayers();
+                                                     });
         }
         private static Stroke strokeInProgress;
         private static Projector instance;

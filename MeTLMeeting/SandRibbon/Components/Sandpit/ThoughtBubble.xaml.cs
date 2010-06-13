@@ -151,7 +151,7 @@ namespace SandRibbon.Components.Sandpit
                 thoughtView.Width = ((System.Windows.Controls.Canvas)Parent).ActualWidth;
                 thoughtView.Height = ((System.Windows.Controls.Canvas)Parent).ActualHeight;
                 RLWViewBox.Visibility = Visibility.Visible;
-                Dispatcher.BeginInvoke((Action) delegate
+                Dispatcher.adoptAsync(delegate
                 {
                     setThoughtAccess(true);
                 });

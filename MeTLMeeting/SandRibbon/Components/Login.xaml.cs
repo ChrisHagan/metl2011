@@ -195,7 +195,7 @@ namespace SandRibbon.Components
             {
                 Commands.LoggedIn.RegisterCommand(new DelegateCommand<string>((username) =>
                 {//Technically this will mean that every time we login we will go here, this app session.
-                    Dispatcher.BeginInvoke((Action)delegate
+                    Dispatcher.adoptAsync((Action)delegate
                     {
                         var destination = Application.Current.Properties["destination"].ToString();
                         var iDestination = Int32.Parse(destination);

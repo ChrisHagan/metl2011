@@ -31,7 +31,7 @@ namespace SandRibbon.Components
                             conn.AutoAgents = false;
                             conn.OnReadXml += (_sender,xml)=>{
                                 if(Application.Current != null)
-                                    Application.Current.Dispatcher.BeginInvoke((Action)delegate
+                                    Application.Current.Dispatcher.adoptAsync((Action)delegate
                                     {
                                         server.ok=true;
                                     });

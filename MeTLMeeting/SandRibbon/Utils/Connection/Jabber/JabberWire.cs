@@ -456,6 +456,8 @@ namespace SandRibbon.Utils.Connection
         }
         public void MoveTo(int where)
         {
+            new MucManager(conn).LeaveRoom(
+                new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), Constants.JabberWire.MUC, jid.Resource), credentials.name);
             location.currentSlide = where;
             joinRooms();
             HistoryProviderFactory.provider.Retrieve<PreParser>(

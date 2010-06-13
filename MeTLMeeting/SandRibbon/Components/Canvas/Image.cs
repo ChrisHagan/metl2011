@@ -184,24 +184,18 @@ namespace SandRibbon.Components.Canvas
         }
         private void ReceiveImage(TargettedImage image)
         {
-            Action doAdd = () => AddImage(image.image);
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doAdd);
-            else
-                doAdd();
+            Dispatcher.adoptAsync(delegate{
+                AddImage(image.image);
+            });
         }
         private void ReceiveVideo(TargettedVideo video)
         {
-            Action doAdd = () =>
+            Dispatcher.adoptAsync(delegate
             {
                 video.video.MediaElement.LoadedBehavior = MediaState.Manual;
                 video.video.MediaElement.ScrubbingEnabled = true;
                 AddVideo(video.video);
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doAdd);
-            else
-                doAdd();
+            });
         }
         public void AddVideo(SandRibbonInterop.Video element)
         {
@@ -216,13 +210,15 @@ namespace SandRibbon.Components.Canvas
         }
         private void ensureAllImagesHaveCorrectPrivacy()
         {
-            var images = new List<System.Windows.Controls.Image>();
-            foreach (var child in Children)
-                if (child is System.Windows.Controls.Image)
-                    images.Add((System.Windows.Controls.Image)child);
-            foreach (System.Windows.Controls.Image image in images)
-                if (image.tag().privacy == "private")
-                    addPrivateRegion(image);
+            Dispatcher.adoptAsync(delegate{
+                var images = new List<System.Windows.Controls.Image>();
+                foreach (var child in Children)
+                    if (child is System.Windows.Controls.Image)
+                        images.Add((System.Windows.Controls.Image)child);
+                foreach (System.Windows.Controls.Image image in images)
+                    if (image.tag().privacy == "private")
+                        addPrivateRegion(image);
+            });
         }
         private void addPrivateRegion(System.Windows.Controls.Image image)
         {
@@ -262,25 +258,17 @@ namespace SandRibbon.Components.Canvas
 
         private void doDirtyImage(string imageId)
         {
-            Action doDirty = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 dirtyImage(imageId);
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDirty);
-            else
-                doDirty();
+            });
         }
         private void doDirtyVideo(string imageId)
         {
-            Action doDirty = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 dirtyVideo(imageId);
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDirty);
-            else
-                doDirty();
+            });
         }
 
         private void dirtyImage(string imageId)
@@ -343,15 +331,12 @@ namespace SandRibbon.Components.Canvas
         }
         public void FlushImages()
         {
-            var flush = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 Background = Brushes.Transparent;
                 Children.Clear();
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(flush);
-            else
-                flush();
+            });
+           
         }
         protected override void HandlePaste()
         {

@@ -126,11 +126,14 @@ namespace SandRibbon
         }
         private void PowerPointLoadFinished(object unused)
         {
-            Dispatcher.BeginInvoke((Action)(finishedPowerpoint));
+            Dispatcher.adoptAsync((finishedPowerpoint));
         }
         private void PowerPointProgress(string progress)
         {
-            Dispatcher.BeginInvoke((Action)(() => showPowerPointProgress(progress)));
+            Dispatcher.adoptAsync(delegate
+            {
+                showPowerPointProgress(progress);
+            });
         }
         private void ChangeTab(string which)
         {
@@ -263,14 +266,10 @@ namespace SandRibbon
             var username = myFile.ReadToEnd();
             MessageBox.Show("Logging in as {0}", username);
             JabberWire.SwitchServer("staging");
-            var doDetails = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 Title = username + " MeTL waiting for wakeup";
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDetails);
-            else
-                doDetails();
+            });
             Commands.SetIdentity.Execute(new JabberWire.Credentials { authorizedGroups = new List<JabberWire.AuthorizedGroup>(), name = username, password = "examplePassword" });
         }
         private static object reconnectionLock = new object();
@@ -342,7 +341,7 @@ namespace SandRibbon
         {
             if (userInformation.policy.isAuthor && userInformation.policy.isSynced)
                 Commands.SendSyncMove.Execute(slide);
-            var moveTo = (Action)delegate
+            Dispatcher.adoptAsync(delegate
                                      {
                                          if (canvas.Visibility == Visibility.Collapsed)
                                              canvas.Visibility = Visibility.Visible;
@@ -350,11 +349,7 @@ namespace SandRibbon
                                          scroll.Height = Double.NaN;
                                          canvas.Width = Double.NaN;
                                          canvas.Height = Double.NaN;
-                                     };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(moveTo);
-            else
-                moveTo();
+                                     });
             CommandManager.InvalidateRequerySuggested();
         }
 
@@ -440,7 +435,7 @@ namespace SandRibbon
             {
                 //We're not anywhere yet so update away
             }
-            var doUpdate = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 userInformation.location.availableSlides = details.Slides.Select(s => s.id).ToList();
                 HideTutorial();
@@ -448,11 +443,7 @@ namespace SandRibbon
                 var isAuthor = (details.Author != null) && details.Author == userInformation.credentials.name;
                 userInformation.policy.isAuthor = isAuthor;
                 Commands.RequerySuggested();
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doUpdate);
-            else
-                doUpdate();
+            });
         }
         private void UpdateTitle()
         {
@@ -777,23 +768,15 @@ namespace SandRibbon
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
         private void sleep(object _obj)
         {
-            var doHide = (Action)Hide;
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doHide);
-            else
-                doHide();
+            Dispatcher.adoptAsync(delegate { Hide(); });
         }
         private void wakeUp(object _obj)
         {
-            var doShow = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 Show();
                 WindowState = System.Windows.WindowState.Maximized;
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doShow);
-            else
-                doShow();
+            });
         }
         private void minimizeWindow()
         {

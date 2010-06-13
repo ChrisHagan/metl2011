@@ -19,12 +19,17 @@
         </Grid.RowDefinitions>
         <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
         <ListBox
-                     Grid.Row="1"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                     OverridesDefaultStyle="False"
-                     SelectionChanged="slides_SelectionChanged"
-                     VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" x:Name="slides">
+             Grid.Row="1"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+             ScrollViewer.VerticalScrollBarVisibility="Auto"
+             OverridesDefaultStyle="False"
+             SelectionChanged="slides_SelectionChanged"
+             VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" x:Name="slides">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Viewbox Width="Auto" HorizontalAlignment="Stretch" Loaded="Viewbox_Loaded">

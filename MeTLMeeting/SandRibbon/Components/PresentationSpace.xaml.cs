@@ -101,7 +101,7 @@ namespace SandRibbon.Components
             {
                 if (Globals.conversationDetails.Author == Globals.me) return;
                 if (Globals.conversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
-                Dispatcher.BeginInvoke((Action) delegate
+                Dispatcher.adoptAsync((Action) delegate
                             {
                                 var adorner = GetAdorner();
                                 AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner,new SyncDisplay()));
@@ -287,16 +287,13 @@ namespace SandRibbon.Components
         }
         private void ClearAdorners()
         {
-            var doClear = (Action)delegate
+            Dispatcher.adoptAsync(delegate
                           {
                               removeAdornerItems(this);
                               ClearPrivacy();
                               removeSyncDisplay();
-                          };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doClear);
-            else
-                doClear();
+                          });
+            
         }
         private void removeSyncDisplay()
         {

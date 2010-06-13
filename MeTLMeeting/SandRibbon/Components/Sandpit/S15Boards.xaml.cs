@@ -145,7 +145,7 @@ namespace SandRibbon.Components.Sandpit
         }
         public void Display()
         {//We only display the details of our current conversation (or the one we're entering)
-            var doDisplay = (Action)delegate
+           Dispatcher.adoptAsync(delegate
             {
 
                 var thumbs = new ObservableCollection<SandRibbonInterop.ThumbnailInformation>();
@@ -162,11 +162,8 @@ namespace SandRibbon.Components.Sandpit
                     }
                 }
                 slides.ItemsSource = thumbs;
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDisplay);
-            else
-                doDisplay();
+            });
+            
             Commands.RequerySuggested(Commands.MoveTo);
         }
         private void slideItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

@@ -166,34 +166,27 @@ namespace SandRibbon.Components.Canvas
             if (receivedStrokes.Count() == 0) return;
             if (receivedStrokes.First().slide != currentSlide) return;
             var strokeTarget = target;
-            var doStrokes = (Action)delegate
-            {
-                var count = receivedStrokes.Count();
-                Console.WriteLine("Received Stroke(s)");
-                var start = SandRibbonObjects.DateTimeFactory.Now();
-                var newStrokes = new StrokeCollection(
-                    receivedStrokes.Where(ts=> ts.target == strokeTarget)
-                    .Where(s=>s.privacy == "public" || s.author == Globals.me)
-                    .Select(s=>s.stroke)
-                    .Where(s=>!(this.strokes.Contains(s.sum()))));
-                        Strokes.Add(newStrokes);
-                this.strokes.AddRange(newStrokes.Select(s=>s.sum()));
-                
-                foreach(var stroke in receivedStrokes)
+            Dispatcher.adoptAsync(
+                delegate
                 {
-                    if (stroke.privacy == "private")
-                        if (stroke.target == target)
-                            addPrivateRegion(stroke.stroke);
-                }
-                var duration = SandRibbonObjects.DateTimeFactory.Now() - start;
-                HandWriting.strokeReceiptDurations.Add(duration);
-                if(count > 1)
-                    Logger.Log(string.Format("Handwriting.ReceiveStrokes: {0} strokes took {1}", receivedStrokes.Count(), duration));
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doStrokes);
-            else
-                doStrokes();
+                    var start = SandRibbonObjects.DateTimeFactory.Now();
+                    var newStrokes = new StrokeCollection(
+                        receivedStrokes.Where(ts=> ts.target == strokeTarget)
+                        .Where(s=>s.privacy == "public" || s.author == Globals.me)
+                        .Select(s=>s.stroke)
+                        .Where(s=>!(this.strokes.Contains(s.sum()))));
+                            Strokes.Add(newStrokes);
+                    this.strokes.AddRange(newStrokes.Select(s=>s.sum()));
+                    
+                    foreach(var stroke in receivedStrokes)
+                    {
+                        if (stroke.privacy == "private")
+                            if (stroke.target == target)
+                                addPrivateRegion(stroke.stroke);
+                    }
+                    var duration = SandRibbonObjects.DateTimeFactory.Now() - start;
+                    HandWriting.strokeReceiptDurations.Add(duration);
+                });
         }
         #region eventHandlers
         private void addPrivateRegion(Stroke stroke)
@@ -347,11 +340,7 @@ namespace SandRibbon.Components.Canvas
         }
         public void FlushStrokes()
         {
-            var doFlush = (Action)delegate { Strokes.Clear(); };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doFlush);
-            else
-                doFlush();
+            Dispatcher.adoptAsync(delegate { Strokes.Clear(); });
             strokes = new List<StrokeChecksum>();
         }
         public void Disable()
@@ -404,7 +393,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (targettedDirtyStrokes.Count() == 0) return;
             if (!(targettedDirtyStrokes.First().target.Equals(target)) || targettedDirtyStrokes.First().slide != currentSlide) return;
-            var doReceiveDirty = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 var dirtyChecksums = targettedDirtyStrokes.Select(t => t.identifier);
                 var presentDirtyStrokes = Strokes.Where(s => dirtyChecksums.Contains(s.sum().checksum.ToString())).ToList();
@@ -414,11 +403,7 @@ namespace SandRibbon.Components.Canvas
                     strokes.Remove(stroke.sum());
                     Strokes.Remove(stroke);
                 }
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doReceiveDirty);
-            else
-                doReceiveDirty();
+            });
         }
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
         {

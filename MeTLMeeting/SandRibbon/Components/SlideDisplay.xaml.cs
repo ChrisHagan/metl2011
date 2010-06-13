@@ -95,7 +95,7 @@ namespace SandRibbon.Components
         {
             if(isAuthor) return;
             if (!Globals.synched) return;
-            var action = (Action) (() => Dispatcher.BeginInvoke((Action) delegate
+            var action = (Action) (() => Dispatcher.adoptAsync((Action) delegate
                                          {
                                              if (thumbnailList.Where( t => t.slideId == where).Count()==1)
                                                Commands.MoveTo.Execute(where);

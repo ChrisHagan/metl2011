@@ -27,7 +27,7 @@ namespace SandRibbon.Components
         }
         private void updateTitleBar(int id)
         {
-            Dispatcher.BeginInvoke((Action)delegate {
+            Dispatcher.adoptAsync((Action)delegate {
                 try
                 {
                     notes.Text = string.Format("Page {0} Notes",

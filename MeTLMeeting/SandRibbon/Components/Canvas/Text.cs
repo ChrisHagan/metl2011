@@ -118,7 +118,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
-            var doDirtyText = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 for (int i = 0; i < Children.Count; i++)
                 {
@@ -126,11 +126,7 @@ namespace SandRibbon.Components.Canvas
                     if (element.identifier.Equals(currentTextbox.tag().id))
                         Children.Remove(currentTextbox);
                 }
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDirtyText);
-            else
-                doDirtyText();
+            });
         }
         private bool textboxSelectedProperty;
 
@@ -228,7 +224,9 @@ namespace SandRibbon.Components.Canvas
         }
         public void FlushText()
         {
-            Dispatcher.BeginInvoke((Action)(() => Children.Clear()));
+            Dispatcher.adoptAsync(delegate{
+                Children.Clear();
+            });
         }
         private void resetTextbox(object obj)
         {
@@ -443,11 +441,11 @@ namespace SandRibbon.Components.Canvas
             {
                 typingTimer = new Timer(delegate
                 {
-                    Dispatcher.BeginInvoke((Action)(() =>
+                    Dispatcher.adoptAsync(delegate
                                                     {
                                                         sendText((TextBox)sender);
                                                         typingTimer = null;
-                                                    }));
+                                                    });
                 }, null, 600, Timeout.Infinite);
             }
             else
@@ -512,22 +510,18 @@ namespace SandRibbon.Components.Canvas
             if(targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box)) return;//I never want my live text to collide with me.
             if (targettedBox.slide == currentSlide && (targettedBox.privacy == "private" && Globals.me == "Projector"))
             {
-                var doProjector = (Action) delegate
+                Dispatcher.adoptAsync(delegate
                                                {
                                                    removeDoomedTextBoxes(targettedBox);
-                                               };
-                if (Thread.CurrentThread == Dispatcher.Thread)
-                    Dispatcher.BeginInvoke(doProjector);
-                else
-                    doProjector();
+                                               });
             }
 
             if (targettedBox.slide == currentSlide &&(targettedBox.privacy == "public" || targettedBox.author == Globals.me))
             {
-                if (Thread.CurrentThread != Dispatcher.Thread)
-                    Dispatcher.BeginInvoke((Action)delegate { doText(targettedBox); });
-                else
-                    doText(targettedBox);
+                Dispatcher.adoptAsync(delegate 
+                { 
+                    doText(targettedBox); 
+                });
             }
         }
 

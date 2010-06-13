@@ -182,7 +182,7 @@ namespace SandRibbon.Utils.Connection
         }
         private void HandlePrint(List<InkCanvas> visuals)
         {
-            Application.Current.Dispatcher.BeginInvoke((System.Action)delegate
+            Application.Current.Dispatcher.adoptAsync((System.Action)delegate
               {
                   var printer = new PrintDialog { PageRangeSelection = PageRangeSelection.AllPages };
                   var result = printer.ShowDialog();

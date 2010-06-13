@@ -111,7 +111,7 @@ namespace SandRibbon.Providers
             Logger.Log(string.Format("HttpHistoryProvider.Retrieve: Beginning retrieve for {0}", room));
             var accumulatingParser = (T)Activator.CreateInstance(typeof(T), PreParser.ParentRoom(room));
             if(retrievalBeginning != null)
-                Application.Current.Dispatcher.BeginInvoke(retrievalBeginning);
+                Application.Current.Dispatcher.adoptAsync(retrievalBeginning);
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
@@ -151,7 +151,7 @@ namespace SandRibbon.Providers
         }
         protected virtual void parseHistoryItem(string item, JabberWire wire)
         {//This takes all the time
-            Application.Current.Dispatcher.BeginInvoke((Action)delegate
+            Application.Current.Dispatcher.adoptAsync((Action)delegate
             {//Creating and event setting on the dispatcher thread?  Might be expensive, might not.  Needs bench.
                 var history = item + "</logCollection>";
                 var parser = new StreamParser();

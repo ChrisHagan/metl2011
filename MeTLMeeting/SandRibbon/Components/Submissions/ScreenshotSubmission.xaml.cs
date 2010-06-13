@@ -33,7 +33,7 @@ namespace SandRibbon.Components.Submissions
 
         private void conversationChanged(object details)
         {
-            Dispatcher.BeginInvoke((Action) delegate
+            Dispatcher.adoptAsync( delegate
                                                 {
                                                     try
                                                     {

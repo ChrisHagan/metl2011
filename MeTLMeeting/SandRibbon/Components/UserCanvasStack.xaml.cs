@@ -35,7 +35,7 @@ namespace SandRibbon.Components
         public void ReceiveNewBubble(TargettedBubbleContext context) {
             if(context.target != handwriting.target) return;
             var bubble = getBubble(context);
-            Dispatcher.BeginInvoke((Action) delegate
+            Dispatcher.adoptAsync( delegate
                                     {
                                         if (bubble != null)
                                         {
@@ -97,7 +97,7 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-           Dispatcher.BeginInvoke((Action) delegate
+           Dispatcher.adoptAsync( delegate
            {
                var editingMode = isAuthor(details) || canStudentPublish(details);
                handwriting.SetCanEdit(editingMode);

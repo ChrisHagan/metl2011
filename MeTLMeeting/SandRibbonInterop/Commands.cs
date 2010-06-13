@@ -255,6 +255,14 @@ namespace SandRibbon
                     .Select(f => (CompositeCommand)f.GetValue(null));
             }
         }
+        public static IEnumerable<ICommand> allHandlers() 
+        {
+            var handlers = new List<ICommand>();
+            foreach (var command in all)
+                foreach (var handler in command.RegisteredCommands)
+                    handlers.Add(handler);
+            return handlers.ToList();
+        }
         public static void UnregisterAllCommands() {
             foreach (var command in all)
                 foreach (var handler in command.RegisteredCommands)
