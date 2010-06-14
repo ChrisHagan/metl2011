@@ -5,6 +5,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using SandRibbonObjects;
 using Divelements.SandRibbon;
+using System.Windows.Controls;
 
 namespace SandRibbonInterop
 {
@@ -13,13 +14,13 @@ namespace SandRibbonInterop
         public Slide.TYPE type { get; set; }
         public int slideId { get; set; }
         public int slideNumber { get; set; }
-        public ImageBrush Thumbnail
+        public Visual Canvas
         {
-            get { return (ImageBrush)GetValue(ThumbnailProperty); }
-            set { SetValue(ThumbnailProperty, value); }
+            get { return (Visual)GetValue(CanvasProperty); }
+            set { SetValue(CanvasProperty, value); }
         }
-        public static readonly DependencyProperty ThumbnailProperty = 
-            DependencyProperty.Register("Thumbnail", typeof(ImageBrush), typeof(ThumbnailInformation), new UIPropertyMetadata(null));
+        public static readonly DependencyProperty CanvasProperty = 
+            DependencyProperty.Register("Canvas", typeof(Visual), typeof(ThumbnailInformation), new UIPropertyMetadata(null));
         public bool Exposed
         {
             get { return (bool)GetValue(ExposedProperty); }

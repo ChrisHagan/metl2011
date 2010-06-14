@@ -68,6 +68,25 @@ namespace SandRibbon.Providers
     }
     public class CachedHistoryProvider : BaseHistoryProvider {
         private Dictionary<string, PreParser> cache = new Dictionary<string,PreParser>();
+        private int measure<T>(int acc, T item){
+            return acc + item.ToString().Length;
+        }
+        public static long cacheSize {
+            get {/*Warning: This does not calculate the size you would expect.  It's been left in here mostly as a breakpoint - we're
+                not storing XML at this point, but in memory structures*/
+                return ((CachedHistoryProvider)HistoryProviderFactory.provider).cacheTotalSize;
+            }
+        }
+        private long cacheTotalSize{
+            get
+            {
+                return cache.Values.Aggregate(0, (acc, parser) => 
+                    acc + 
+                        parser.ink.Aggregate(0,measure<TargettedStroke>)+
+                        parser.images.Values.Aggregate(0,measure<TargettedImage>)+
+                        parser.text.Values.Aggregate(0,measure<TargettedTextBox>));
+            }
+        }
         public override void Retrieve<T>(Action retrievalBeginning, Action<int, int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
             if (!cache.ContainsKey(room))

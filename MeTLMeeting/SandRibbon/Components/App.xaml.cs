@@ -98,7 +98,6 @@ namespace SandRibbon
                 e.Exception.Message,
                 e.Exception.InnerException == null? 
                     "No inner exception": e.Exception.InnerException.Message));
-            throw e.Exception.InnerException;
         }
         private void AncilliaryButton_Click(object sender, RoutedEventArgs e)
         {

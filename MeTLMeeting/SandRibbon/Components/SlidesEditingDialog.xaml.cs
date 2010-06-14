@@ -26,8 +26,7 @@ namespace SandRibbon.Components
             var slides = Globals.slides.Select(s=>new ThumbnailInformation{ 
                 Exposed=s.exposed,
                 slideId=s.id,
-                slideNumber=s.index+1,
-                Thumbnail=ThumbnailProvider.get(s.id)
+                slideNumber=s.index+1
             });
             exposed.ItemsSource = slides;
             modes.ItemsSource=availableModes;

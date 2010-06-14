@@ -18,6 +18,9 @@ using SandRibbonObjects;
 using SandRibbon.Providers.Structure;
 using Divelements.SandRibbon;
 using SandRibbon.Utils.Connection;
+using System.Collections.Generic;
+using System.Windows.Ink;
+using System.Drawing;
 
 namespace SandRibbon.Components
 {
@@ -26,6 +29,7 @@ namespace SandRibbon.Components
         public int currentSlideIndex = -1;
         public int currentSlideId = -1;
         public ObservableCollection<ThumbnailInformation> thumbnailList = new ObservableCollection<ThumbnailInformation>();
+        public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
         public bool isAuthor = false;
         private bool moveTo;
         private int realLocation;
@@ -45,6 +49,7 @@ namespace SandRibbon.Components
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
+            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             try
             {
                 Display(Globals.conversationDetails);
@@ -53,6 +58,12 @@ namespace SandRibbon.Components
             {
                     //YAAAAAY
             }
+        }
+        private void PreParserAvailable(PreParser parser) {
+            var id = parser.location.currentSlide;
+            parsers[id] = parser;
+            if (ThumbListBox.visibleContainers.ContainsKey(id))
+                ThumbListBox.Add(id, parser);
         }
         private bool canAddSlide(object _slide)
         {
@@ -129,6 +140,8 @@ namespace SandRibbon.Components
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
+            foreach (var slide in details.Slides)
+                Commands.SneakInto.Execute(slide.id.ToString());
             Dispatcher.adoptAsync((Action)delegate
             {
                 if (Globals.me == details.Author)
@@ -159,26 +172,6 @@ namespace SandRibbon.Components
                     slides.SelectedIndex = 0;
             });
         }
-        private void Viewbox_Loaded(object sender, RoutedEventArgs e)
-        {
-            var source = (Viewbox)sender;
-            var thumb = (ThumbnailInformation)source.DataContext;
-            var stack = (UserCanvasStack)source.Child;
-            stack.handwriting.currentSlide = thumb.slideId;
-            stack.images.currentSlide = thumb.slideId;
-            stack.text.currentSlide = thumb.slideId;
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(
-               parser=>
-               { 
-                   if (parser.location.currentSlide == thumb.slideId){
-                        stack.handwriting.ReceiveStrokes(parser.ink);
-                        stack.images.ReceiveImages(parser.images.Values);
-                        foreach (var text in parser.text.Values)
-                            stack.text.ReceiveTextBox(text);
-                    }
-               }));
-            Commands.SneakInto.Execute(thumb.slideId.ToString());
-        }
         private bool isSlideExposed(ThumbnailInformation slide)
         {
             var isFirst = slide.slideNumber == 0;
@@ -206,6 +199,40 @@ namespace SandRibbon.Components
                 Commands.MoveTo.Execute(currentSlideId);
                 slides.ScrollIntoView(slides.SelectedItem);
             }
+        }
+        private void Rectangle_Loaded(object sender, RoutedEventArgs e)
+        {
+            var rect = (FrameworkElement)sender;
+        }
+        private void CleanUp(object sender, CleanUpVirtualizedItemEventArgs e)
+        {
+            var a = 1;
+        }
+    }
+    public class ThumbListBox : ListBox {
+        public static Dictionary<int, ListBoxItem> visibleContainers = new Dictionary<int, ListBoxItem>();
+        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
+        {
+            var slide = (ThumbnailInformation)item;
+            var container = (ListBoxItem)element;
+            visibleContainers.Remove(slide.slideId);
+            Console.WriteLine(string.Format("- {0} containers onscreen", visibleContainers.Count()));
+        }
+        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        {
+            var slide = (ThumbnailInformation)item;
+            var container = (ListBoxItem)element;
+            visibleContainers[slide.slideId] = container;
+            if (SlideDisplay.parsers.ContainsKey(slide.slideId))
+                Add(slide.slideId, SlideDisplay.parsers[slide.slideId]);
+            Console.WriteLine(string.Format("+ {0} containers onscreen", visibleContainers.Count()));
+        }
+        public static void Add(int id, PreParser parser) {
+            if (!visibleContainers.ContainsKey(id)) return;
+            visibleContainers[id].Content = new Viewbox { 
+                Child = parser.ToVisual(),
+                Width=80,
+                Height=80};
         }
     }
 }

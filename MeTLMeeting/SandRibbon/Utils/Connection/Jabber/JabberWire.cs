@@ -741,7 +741,6 @@ namespace SandRibbon.Utils.Connection
         {
             Commands.ReceiveQuiz.Execute(quiz);
         }
-
         public virtual void actOnQuizAnswerReceived(QuizAnswer answer)
         {
             Commands.ReceiveQuizAnswer.Execute(answer);
