@@ -59,7 +59,7 @@
                                     <KeyBinding Key="Enter" Command="{x:Static components:ConversationSearchBox.Search}"/>
                                 </TextBox.InputBindings>
                             </TextBox>
-                            <Button Command="{x:Static components:ConversationSearchBox.Search}" Content="Search" Grid.Column="1" Grid.Row="0"/>
+                            <Button Command="{x:Static components:ConversationSearchBox.Search}" Content="Search" Grid.Column="1" Grid.Row="0" x:Name="searchConversations"/>
                             <Button x:Name="HideConversationSearchBoxButton" Grid.Column="1" Grid.Row="1" Command="{x:Static api:Commands.HideConversationSearchBox}" Margin="10,0,0,0" Visibility="Collapsed" CommandManager.CanExecute="HideConversationSearchBoxButton_CanExecute" Content="Return to current conversation"/>
                         </Grid>
                         <Label Visibility="Collapsed" Foreground="DarkGray" x:Name="ResultsCount"/>

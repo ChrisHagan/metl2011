@@ -73,7 +73,7 @@ namespace SandRibbon.Utils
         }
         private void ShowCreateConversationDialog(object o)
         {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.CREATE).ShowDialog();
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.CREATE).Show();
         }
         private void ImportPowerpoint(object o)
         {

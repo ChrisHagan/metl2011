@@ -22,6 +22,12 @@ namespace Functional
             Assert.IsNotNull(result, string.Format("{0}[{1}] unexpectedly null", element.GetCurrentPropertyValue(AutomationElement.AutomationIdProperty), type.Name));
             return result;
         }
+        public static AutomationElement FullDescendant(this AutomationElement element, Type type)
+        {
+            var result = element.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, type.FullName));
+            Assert.IsNotNull(result, string.Format("{0}[{1}] unexpectedly null", element.GetCurrentPropertyValue(AutomationElement.AutomationIdProperty), type.FullName));
+            return result;
+        }
         public static AutomationElementCollection Descendants(this AutomationElement element, Type type)
         {
             var result = element.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, type.Name));

@@ -50,18 +50,35 @@ namespace Functional
         XNamespace METL = "monash:metl";
         Random RANDOM = new Random();
         [TestMethod]
-        public void LocateAndLogin()
+        public void LocateAndLoginTeacher()
         {
             int userSuffix = 22;
-            foreach(var obj in windows)
+            var window = (AutomationElement) windows[0];
+            var name = string.Format("dhag{0}",userSuffix++);
+            new Login(window).username(name).password("mon4sh2008");
+            new Login((AutomationElement)window).submit();
+        }
+        [TestMethod]
+        public void LocateAndLoginStudent()
+        {
+            if (windows.Count >= 2)
             {
-                var window = (AutomationElement)obj;
+                int userSuffix = 23;
+                var window = (AutomationElement) windows[1];
                 var name = string.Format("dhag{0}",userSuffix++);
-                new Login(window).username(name).password("mon4sh2008").submit();
-                new ApplicationPopup(windows[0]).AllConversations().enter("automation test");
-                PeriodicallyInjectContent(windows[0], 150, name);
+                new Login(window).username(name).password("mon4sh2008");
+                new Login((AutomationElement)window).submit();   
             }
         }
+        [TestMethod]
+        public void CreateConversation()
+        {
+            var window = windows[0];
+            new ApplicationPopup(window).CreateConversation()
+                .title(string.Format("Automated{0}", DateTime.Now)).createType(1)
+                .powerpointType(2).file(@"C:\Users\monash\Desktop\beards.ppt").create();
+        }
+
         Timer timer;
         [TestMethod]
         public void PeriodicallyInjectContent(AutomationElement window, int interval, string name)

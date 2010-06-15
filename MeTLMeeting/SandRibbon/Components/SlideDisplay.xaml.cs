@@ -63,7 +63,10 @@ namespace SandRibbon.Components
             var id = parser.location.currentSlide;
             parsers[id] = parser;
             if (ThumbListBox.visibleContainers.ContainsKey(id))
-                ThumbListBox.Add(id, parser);
+                Dispatcher.adoptAsync(delegate
+                                          {
+                                              ThumbListBox.Add(id, parser);
+                                          });
         }
         private bool canAddSlide(object _slide)
         {

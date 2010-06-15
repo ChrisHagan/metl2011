@@ -4,7 +4,8 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:my="clr-namespace:SandRibbon"
-    MinWidth="380" 
+    MinWidth="380"
+    x:Name="createConversation"
     Loaded="Window_Loaded" ShowInTaskbar="True" WindowStartupLocation="CenterScreen"
     Title="Configure new MeTL Conversation">
     <Border Background="{StaticResource BackgroundBlueGradient}">

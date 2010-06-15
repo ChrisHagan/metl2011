@@ -134,7 +134,6 @@ namespace SandRibbon.Components
             string TempUsername = username.Text;
             string AuthcateUsername = username.Text;
 #if DEBUG
-            MessageBox.Show("Debug: Special MeTL");
             JabberWire.SwitchServer("staging");
 #else
             ConfigurationProvider.instance.isStaging = false;

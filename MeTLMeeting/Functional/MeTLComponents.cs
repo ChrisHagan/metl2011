@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
+using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Controls.Primitives;
+using SandRibbon.Components;
 using Keys = System.Windows.Forms.SendKeys;
 using System.Windows.Automation;
+using Button=System.Windows.Forms.Button;
 
 namespace Functional
 {
@@ -51,7 +53,7 @@ namespace Functional
         {
             _parent = parent;
         }
-        private void open()
+        public void open()
         {
             var buttons = _parent.Children(typeof(Button));
             var appButton = buttons[3];
@@ -82,27 +84,84 @@ namespace Functional
             var children = post.Aggregate("",(acc,item)=>acc+" "+item.Current.ClassName+":"+item.Current.AutomationId);
             return new ConversationPicker(post.Where(e => e.Current.ClassName == "SimpleConversationFilterer").First());
         }
+
+        public  ConversationPicker CreateConversation()
+        {
+            open();
+            var popup = _parent.Descendant(typeof(Popup));
+            var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
+            var prev = popup.Descendants();
+            ConversationPicker picker = null;
+            try
+            {
+                var menu = menuItems[0];
+                var post = popup.Descendants().Except(prev);
+                menu.Invoke();
+                picker = new ConversationPicker(AutomationElement
+                                                .RootElement
+                                                .FindFirst(TreeScope.Children, 
+                                                            new PropertyCondition(AutomationElement.AutomationIdProperty, 
+                                                            "createConversation")));
+            }
+            catch(Exception e) { }
+            
+            return picker;
+
+        }
     }
     public class ConversationPicker
     {
-        private AutomationElementCollection _conversations;
+        private AutomationElement _title;
+        private AutomationElement _restriction;
+        private AutomationElement _creationType;
+        private AutomationElement _file;
+        private AutomationElement _importType;
+        private AutomationElement _create;
+
         public ConversationPicker(AutomationElement parent)
         {
-            var children = parent.Descendants().Aggregate("",(acc,item)=>acc+" "+item.Current.ClassName+":"+item.Current.AutomationId);
-            _conversations = parent.Descendant("conversations").Descendants(typeof(Button));
+            _title = parent.Descendant("conversationNameTextBox");
+            _creationType = parent.Descendant("startingContentSelector");
+            _file = parent.Descendant("importFileTextBox");
+            _importType = parent.Descendant("importSelector");
+            _create = parent.Descendant("CommitButton");
+        }
+        public ConversationPicker title (string value)
+        {
+            _title.Value("");
+            _title.SetFocus();
+            _title.Value(value);
+            return this;
+        }
+        public ConversationPicker file(string value)
+        {
+            _file.Value("");
+            _file.SetFocus();
+            _file.Value(value);
+            return this;
+        }
+        public ConversationPicker createType(int position)
+        {
+            ((SelectionItemPattern)_creationType.Children(typeof(ListBoxItem))[position]
+                .GetCurrentPattern(SelectionItemPattern.Pattern)).Select();
+            return this;
+        }
+        public ConversationPicker powerpointType(int position)
+        {
+            ((SelectionItemPattern)_importType.Children(typeof(ListBoxItem))[position]
+                .GetCurrentPattern(SelectionItemPattern.Pattern)).Select();
+            return this;
         }
         public void enter(string title)
         {
-            foreach (var conversation in _conversations)
-            {
-                var conversationTitle = ((AutomationElement)conversation).GetCurrentPropertyValue(AutomationElement.NameProperty);
-                if (title.Equals(conversationTitle))
-                {
-                    ((AutomationElement)conversation).Invoke();
-                    return;
-                }
-            }
-            Assert.Fail(string.Format("Attempted to enter a nonexistent conversation called {0}", title)); 
+        }
+
+        public void create()
+        {
+            _title.SetFocus();
+            _file.SetFocus();
+            _title.SetFocus();
+            _create.Invoke();
         }
     }
     public class UserCanvasStack
@@ -156,6 +215,7 @@ namespace Functional
                 _privacyTools.Value(value);
             }
         }
+      
         public UserCanvasStack(AutomationElement parent, string target)
         {
             _privacyTools = parent.Descendant("privacyTools");
@@ -165,16 +225,39 @@ namespace Functional
             _images = _stack.Descendant("images");
         }
     }
-    public class SyncButton
+    public  class ConversationSearcher
     {
-        private AutomationElement _button;
-        public SyncButton(AutomationElement parent)
+        private AutomationElement _searchField;
+        private AutomationElement _searchButton;
+        private AutomationElement _link;
+        private AutomationElement _searchResults;
+        private AutomationElement _recommendedConversations;
+        private AutomationElement _parent;
+        public ConversationSearcher(AutomationElement parent)
         {
-            _button = parent.Descendant("syncButton");
+            _parent = parent;
+            _searchField = parent.Descendant("SearchInput");
+            _searchButton = parent.Descendant("searchConversations");
+            _recommendedConversations = parent.Descendant("recommendedConversationsLabel");
         }
-        public void Toggle()
+        public ConversationSearcher searchField(string value)
         {
-            _button.Invoke();
+            _searchField.Value("");
+            _searchField.SetFocus();
+            _searchField.Value(value);
+
+            return this;
+        }
+        public ConversationSearcher Search()
+        {
+            new ApplicationPopup(_parent).open();
+            _searchButton.Invoke();
+            return this;
+        }
+        public ConversationSearcher GetResults()
+        {
+            _searchResults = _parent.Descendant("SearchResults");
+            return this;
         }
     }
     public class AddSlideButton

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Ink;
@@ -9,25 +10,38 @@ using System.Windows.Automation;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using Functional;
-using SandRibbon.Components;
 
 namespace HeadfulClassRoom
 {
     class Program
     {
-        public static int population = 4;
+        public static int population = 1;
         public static Dictionary<AutomationElement, string> usernames = new Dictionary<AutomationElement, string>();
         private static Random RANDOM = new Random();
         static void Main(string[] args)
         {
             try
             {
-                foreach(var i in Enumerable.Range(0,population))
+                try
+                {
+                    File.Delete(Directory.GetCurrentDirectory() + "\\Workspace\\state.xml");
+                }
+                catch(Exception e)
+                {
+                    
+                }
+                foreach (var i in Enumerable.Range(0, population))
+                {
                     Process.Start(@"MeTL.exe");
+                }
                 AutomationElementCollection windows;
                 while (true)
                 {
-                    windows = AutomationElement.RootElement.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "ribbonWindow"));
+                    windows = AutomationElement
+                        .RootElement
+                        .FindAll(TreeScope.Children, 
+                                    new PropertyCondition(AutomationElement.AutomationIdProperty, 
+                                    "ribbonWindow"));
                     if (windows.Count >= population)
                         break;
                     Thread.Sleep(250);
@@ -42,8 +56,7 @@ namespace HeadfulClassRoom
                 var y = 0;
                 for (int i = 0; i < windows.Count; i++)
                 {
-                    var window = (AutomationElement)windows[i];
-                    window.SetPosition(width, height, x, y);
+                    var window = windows[i];
                     x += width;
                     if (x > screenWidth - width)
                     {
@@ -52,17 +65,17 @@ namespace HeadfulClassRoom
                     }
                 }
                 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                foreach (var window in windows)
+                foreach (AutomationElement window in windows)
                 {
-                    var name = string.Format("Admirable{0}{1}at{2}", chars[RANDOM.Next(chars.Length)],chars[RANDOM.Next(chars.Length)], DateTime.Now.Millisecond);
-                    new Functional.Login((AutomationElement)window).username(name).password("noPassword");
+                    var name = string.Format("dhag{0}", 20);
+
+                    new Functional.Login(window).username(name).password("mon4sh2008");
+                    window.SetPosition(width, height, x, y);
                 }
                 foreach (var window in windows)
                     new Functional.Login((AutomationElement)window).submit();
                 foreach (var window in windows)
-                    enterConversation(window);
-                foreach (var window in windows)
-                    new SyncButton((AutomationElement)window).Toggle();
+                    joinConversation(window);
                 Console.ReadLine();
             }
             catch (Exception e)
@@ -70,6 +83,24 @@ namespace HeadfulClassRoom
                 MessageBox.Show(e.Message);
             }
         }
+        private static void joinConversation(object windowObject)
+        {
+            var window = (AutomationElement) windowObject;
+            var search = new ConversationSearcher(window);
+            search.searchField("Automated").Search();
+            search.GetResults();
+
+        }
+
+        private static void createConversation(object windowObject)
+        {
+            var window = (AutomationElement) windowObject;
+            new ApplicationPopup(window).CreateConversation()
+                .title(string.Format("Automated{0}", DateTime.Now)).createType(1)
+                .powerpointType(2).file(@"C:\Users\monash\Desktop\beards.ppt").create();
+                //create(string.Format("Automated{0}", DateTime.Now), @"C:\\Users\\monash\\Desktop\\beards.ppt");
+        }
+
         private static void enterConversation(object windowObject)
         {
             var window = (AutomationElement)windowObject;

@@ -60,6 +60,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MeTL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\SandRibbon\bin\Debug\MeTL.exe</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\SandRibbon\lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
@@ -112,10 +117,6 @@
     <ProjectReference Include="..\Functional\Functional.csproj">
       <Project>{EEA9F528-4885-4D7E-8BDC-914FA52370C7}</Project>
       <Name>Functional</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SandRibbon\SandRibbon.csproj">
-      <Project>{0213D150-6485-4F40-AF80-5AC5E8BB10CC}</Project>
-      <Name>SandRibbon</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -179,12 +180,18 @@
     <Content Include="Resources\SelectShiny.png" />
     <Content Include="Resources\ShinyEraser.png" />
     <Content Include="Resources\ShinyRefresh.png" />
-    <Content Include="Resources\Slide_Not_Loaded.png" />
+    <Content Include="Resources\Slide_Not_Loaded.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\strikethrough.png" />
     <Content Include="Resources\subscript.png" />
     <Content Include="Resources\superscript.png" />
-    <Content Include="Resources\SyncGreen.png" />
-    <Content Include="Resources\SyncRed.png" />
+    <Content Include="Resources\SyncGreen.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\SyncRed.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\SyncShiny.png" />
     <Content Include="Resources\underline.png" />
     <Content Include="Resources\UndoShiny.png" />

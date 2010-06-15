@@ -323,6 +323,10 @@ namespace SandRibbon
                 Console.WriteLine("window1");
                 Commands.LoggedIn.Execute(userInformation.credentials.name);
                 var details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
+                if (details.Author == Globals.me)
+                    Commands.SetPrivacy.Execute("public");
+                else
+                    Commands.SetPrivacy.Execute("private");
                 applyPermissions(details.Permissions);
                 Commands.UpdateConversationDetails.Execute(details);
                 Logger.Log("Joined conversation " + title);
