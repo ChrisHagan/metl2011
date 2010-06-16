@@ -164,8 +164,14 @@ namespace SandRibbon.Providers
                 {
                     Commands.AllContentRetrieved.Execute(room);
                     Logger.Log(string.Format("{0} retrieval complete at historyProvider", room));
-                    Application.Current.Dispatcher.Invoke(retrievalComplete, (T)accumulatingParser);
-                };
+                    try
+                    {
+                        Application.Current.Dispatcher.Invoke(retrievalComplete, (T)accumulatingParser);
+                    }
+                    catch (Exception ex) {
+                    //    Logger.Log("Exception on the retrievalComplete section: "+ex.Message.ToString()); 
+                    }
+                    };
             worker.RunWorkerAsync(null);
         }
         protected virtual void parseHistoryItem(string item, JabberWire wire)

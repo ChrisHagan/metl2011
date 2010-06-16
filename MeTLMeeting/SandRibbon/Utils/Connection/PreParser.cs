@@ -30,16 +30,16 @@ namespace SandRibbon.Utils.Connection
         public InkCanvas ToVisual()
         {
             var canvas = new InkCanvas();
-            foreach (var stroke in ink)
-                canvas.Strokes.Add(stroke.stroke);
             foreach (var image in images)
                 canvas.Children.Add(image.Value.image);
-            foreach (var textbox in text)
-                canvas.Children.Add(textbox.Value.box);
             foreach (var shape in autoshapes)
                 canvas.Children.Add(shape.Value.autoshape);
             foreach (var video in videos)
                 canvas.Children.Add(video.Value.video);
+            foreach (var textbox in text)
+                canvas.Children.Add(textbox.Value.box);
+            foreach (var stroke in ink)
+                canvas.Strokes.Add(stroke.stroke);
             return canvas;
         }
         public T merge<T>(T otherParser) where T : PreParser

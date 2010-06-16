@@ -56,12 +56,17 @@ namespace SandRibbon.Components
             }
             catch (NotSetException)
             {
-                    //YAAAAAY
+                //YAAAAAY
             }
         }
-        private void PreParserAvailable(PreParser parser) {
+        private void PreParserAvailable(PreParser parser)
+        {
             var id = parser.location.currentSlide;
             parsers[id] = parser;
+            if (Globals.conversationDetails.Slides.Where(s => s.id == id).Count() == 0)
+            {
+                ThumbListBox.visibleContainers.Clear();
+            }
             if (ThumbListBox.visibleContainers.ContainsKey(id))
                 Dispatcher.adoptAsync(delegate
                                           {
@@ -76,7 +81,7 @@ namespace SandRibbon.Components
                 if (String.IsNullOrEmpty(Globals.me) || details == null) return false;
                 return (details.Permissions.studentCanPublish || details.Author == Globals.me);
             }
-            catch(NotSetException e)
+            catch (NotSetException e)
             {
                 return false;
             }
@@ -88,31 +93,31 @@ namespace SandRibbon.Components
         }
         private void MoveTo(int slide)
         {
-           Dispatcher.adoptAsync(delegate
-                                     {
-                                         realLocation = slide;
-                                         var typeOfDestination =
-                                             Globals.conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
-                                                 FirstOrDefault();
-                                         var currentSlide = (ThumbnailInformation) slides.SelectedItem;
-                                         if (currentSlide == null || currentSlide.slideId != slide)
-                                         {
-                                             slides.SelectedIndex =
-                                                 thumbnailList.Select(s => s.slideId).ToList().IndexOf(slide);
-                                         }
-                                         slides.ScrollIntoView(slides.SelectedItem);
-                                     });
+            Dispatcher.adoptAsync(delegate
+                                      {
+                                          realLocation = slide;
+                                          var typeOfDestination =
+                                              Globals.conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
+                                                  FirstOrDefault();
+                                          var currentSlide = (ThumbnailInformation)slides.SelectedItem;
+                                          /*if (currentSlide == null || currentSlide.slideId != slide)
+                                          {
+                                              slides.SelectedIndex =
+                                                  thumbnailList.Select(s => s.slideId).ToList().IndexOf(slide);
+                                          }*/
+                                          slides.ScrollIntoView(slides.SelectedItem);
+                                      });
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
         }
         private void moveToTeacher(int where)
         {
-            if(isAuthor) return;
+            if (isAuthor) return;
             if (!Globals.synched) return;
-            var action = (Action) (() => Dispatcher.adoptAsync((Action) delegate
+            var action = (Action)(() => Dispatcher.adoptAsync((Action)delegate
                                          {
-                                             if (thumbnailList.Where( t => t.slideId == where).Count()==1)
-                                               Commands.MoveTo.Execute(where);
+                                             if (thumbnailList.Where(t => t.slideId == where).Count() == 1)
+                                                 Commands.MoveTo.Execute(where);
                                          }));
             GlobalTimers.SetSyncTimer(action);
         }
@@ -127,13 +132,13 @@ namespace SandRibbon.Components
         private void moveToPrevious(object _object)
         {
             var previousIndex = slides.SelectedIndex - 1;
-            if(previousIndex < 0) return;
+            if (previousIndex < 0) return;
             slides.SelectedIndex = previousIndex;
             slides.ScrollIntoView(slides.SelectedItem);
         }
         private bool isNext(object _object)
         {
-            return (slides != null && slides.SelectedIndex < thumbnailList.Count() - 1); 
+            return (slides != null && slides.SelectedIndex < thumbnailList.Count() - 1);
         }
         private void moveToNext(object _object)
         {
@@ -165,7 +170,7 @@ namespace SandRibbon.Components
                                 });
                     }
                 }
-                if(moveTo)
+                if (moveTo)
                 {
                     currentSlideIndex++;
                     moveTo = false;
@@ -194,7 +199,7 @@ namespace SandRibbon.Components
             var source = (ListBox)sender;
             if (source.SelectedItem != null)
             {
-                var proposedIndex =source.SelectedIndex;
+                var proposedIndex = source.SelectedIndex;
                 var proposedId = ((ThumbnailInformation)source.SelectedItem).slideId;
                 if (proposedId == currentSlideId) return;
                 currentSlideIndex = proposedIndex;
@@ -203,21 +208,15 @@ namespace SandRibbon.Components
                 slides.ScrollIntoView(slides.SelectedItem);
             }
         }
-        private void Rectangle_Loaded(object sender, RoutedEventArgs e)
-        {
-            var rect = (FrameworkElement)sender;
-        }
-        private void CleanUp(object sender, CleanUpVirtualizedItemEventArgs e)
-        {
-            var a = 1;
-        }
     }
-    public class ThumbListBox : ListBox {
+    public class ThumbListBox : ListBox
+    {
         public static Dictionary<int, ListBoxItem> visibleContainers = new Dictionary<int, ListBoxItem>();
         protected override void ClearContainerForItemOverride(DependencyObject element, object item)
         {
             var slide = (ThumbnailInformation)item;
             var container = (ListBoxItem)element;
+            container.Content = null;
             visibleContainers.Remove(slide.slideId);
             Console.WriteLine(string.Format("- {0} containers onscreen", visibleContainers.Count()));
         }
@@ -230,12 +229,10 @@ namespace SandRibbon.Components
                 Add(slide.slideId, SlideDisplay.parsers[slide.slideId]);
             Console.WriteLine(string.Format("+ {0} containers onscreen", visibleContainers.Count()));
         }
-        public static void Add(int id, PreParser parser) {
+        public static void Add(int id, PreParser parser)
+        {
             if (!visibleContainers.ContainsKey(id)) return;
-            visibleContainers[id].Content = new Viewbox { 
-                Child = parser.ToVisual(),
-                Width=80,
-                Height=80};
+            visibleContainers[id].Content = parser.ToVisual();
         }
     }
 }

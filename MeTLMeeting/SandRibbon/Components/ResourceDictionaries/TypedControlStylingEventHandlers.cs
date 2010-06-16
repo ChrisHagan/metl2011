@@ -14,6 +14,7 @@ namespace SandRibbon.Components.ResourceDictionaries
         public void Video_Play(object sender, RoutedEventArgs e)
         {
             var MediaElement = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext).MediaElement;
+            MediaElement.LoadedBehavior = MediaState.Manual;
             if (MediaElement.Clock != null)
             {
                 if (MediaElement.Clock.CurrentTime.HasValue)
@@ -28,12 +29,14 @@ namespace SandRibbon.Components.ResourceDictionaries
         public void Video_Pause(object sender, RoutedEventArgs e)
         {
             var MediaElement = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext).MediaElement;
+            MediaElement.LoadedBehavior = MediaState.Manual;
             MediaElement.Clock.Controller.Pause();
             //MediaElement.Pause();
         }
         public void Video_Mute(object sender, RoutedEventArgs e)
         {
             var MediaElement = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext).MediaElement;
+            MediaElement.LoadedBehavior = MediaState.Manual;
             if (MediaElement.IsMuted)
                 MediaElement.IsMuted = false;
             else MediaElement.IsMuted = true;

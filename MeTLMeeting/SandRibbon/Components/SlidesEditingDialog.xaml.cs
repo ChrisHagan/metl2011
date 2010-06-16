@@ -16,7 +16,7 @@ using SandRibbonInterop;
 
 namespace SandRibbon.Components
 {
-    public partial class SlidesEditingDialog
+    public partial class SlidesEditingDialog : Window
     {
         private readonly static string[] availableModes = new string[]{"Sharing", "Rearranging"};
         private static string mode = availableModes[0];

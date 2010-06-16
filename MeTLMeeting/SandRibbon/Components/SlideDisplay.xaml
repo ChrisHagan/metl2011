@@ -11,6 +11,7 @@
     <UserControl.Resources>
         <core:String x:Key="defaultPrivacy">public</core:String>
         <core:String x:Key="target">presentationSpace</core:String>
+        <core:Double x:Key="thumbAspect">0.75</core:Double>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -21,21 +22,55 @@
         <components:ThumbListBox
              Grid.Row="1"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-             ScrollViewer.VerticalScrollBarVisibility="Auto"
+             ScrollViewer.VerticalScrollBarVisibility="Visible"
              OverridesDefaultStyle="False"
              SelectionChanged="slides_SelectionChanged"
-             VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" x:Name="slides"
-             VirtualizingStackPanel.CleanUpVirtualizedItem="CleanUp">
-             <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Viewbox HorizontalAlignment="Stretch" Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}" Width="Auto">
-                    </Viewbox>
-                </DataTemplate>
-             </ListBox.ItemTemplate>
+             VerticalAlignment="Stretch" Height="Auto" 
+             Background="Transparent"
+             HorizontalAlignment="Stretch" Width="Auto" x:Name="slides"
+             VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="Height" Value="100"/>
-                    <Setter Property="Width" Value="120"/>
+                    <Setter Property="Height">
+                        <Setter.Value>
+                            <MultiBinding Converter="{x:Static my:Converters.multiply}">
+                                <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
+                                <Binding Source="{StaticResource thumbAspect}"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Width" Value="Auto"/>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border
+                                    Name="Border" Margin="1" 
+                                    Padding="5" Background="{StaticResource BackgroundBlueGradient}"
+                                    SnapsToDevicePixels="true" CornerRadius="2">
+                                    <Grid>
+                                        <Viewbox IsHitTestVisible="False">
+                                            <ContentPresenter />
+                                        </Viewbox>
+                                        <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
+                                                HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
+                                                VerticalAlignment="Bottom" 
+                                                BorderThickness="1">
+                                            <Label Content="{Binding Path=slideNumber}"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedGradient}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource MouseOverGradient}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </ListBox.ItemContainerStyle>
         </components:ThumbListBox>
