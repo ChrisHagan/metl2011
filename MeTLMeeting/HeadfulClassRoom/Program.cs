@@ -15,7 +15,7 @@ namespace HeadfulClassRoom
 {
     class Program
     {
-        public static int population = 1;
+        public static int population = 2;
         public static Dictionary<AutomationElement, string> usernames = new Dictionary<AutomationElement, string>();
         private static Random RANDOM = new Random();
         static void Main(string[] args)
@@ -64,6 +64,7 @@ namespace HeadfulClassRoom
                         y += height;
                     }
                 }
+                /*
                 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 foreach (AutomationElement window in windows)
                 {
@@ -75,7 +76,12 @@ namespace HeadfulClassRoom
                 foreach (var window in windows)
                     new Functional.Login((AutomationElement)window).submit();
                 foreach (var window in windows)
+                {
                     joinConversation(window);
+                    moveForward(window);
+                }
+                 */
+                
                 Console.ReadLine();
             }
             catch (Exception e)
@@ -83,12 +89,19 @@ namespace HeadfulClassRoom
                 MessageBox.Show(e.Message);
             }
         }
+
+        private static void moveForward(object obj)
+        {
+            var window = (AutomationElement) obj;
+            window.pause(500);
+            new SlideNavigation(window).Forward();
+        }
+
         private static void joinConversation(object windowObject)
         {
             var window = (AutomationElement) windowObject;
             var search = new ConversationSearcher(window);
             search.searchField("Automated").Search();
-            search.GetResults();
 
         }
 

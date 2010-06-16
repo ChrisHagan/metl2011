@@ -216,6 +216,12 @@ namespace SandRibbon.Components
                 lastSearch = searchText;
                 var matchingItems = specificSearch(searchText);
                 SearchResults.ItemsSource = convertToSummaries(matchingItems);
+
+                if(Globals.me.Contains("dhag") && searchText.Contains("automatedconversation"))
+                {
+                    Commands.JoinConversation.Execute(matchingItems.Last().Jid);
+                    return;
+                }
                 updateConversationCount(matchingItems.Count);
                 SearchResults.Visibility = Visibility.Visible;
                 ResultsCount.Visibility = Visibility.Visible;

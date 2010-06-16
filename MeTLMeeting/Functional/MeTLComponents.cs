@@ -218,11 +218,19 @@ namespace Functional
       
         public UserCanvasStack(AutomationElement parent, string target)
         {
-            _privacyTools = parent.Descendant("privacyTools");
             _stack = parent.Descendant(target);
             _handwriting = _stack.Descendant("handwriting");
             _text = _stack.Descendant("text");
             _images = _stack.Descendant("images");
+        }
+    }
+    public class Ribbon
+    {
+        private AutomationElement _ImageTools;
+
+        public Ribbon(AutomationElement parent)
+        {
+            _ImageTools = parent.Descendant("addMedia");
         }
     }
     public  class ConversationSearcher
@@ -260,16 +268,35 @@ namespace Functional
             return this;
         }
     }
-    public class AddSlideButton
+    public class SlideNavigation 
     {
-        private AutomationElement _button;
-        public AddSlideButton(AutomationElement parent)
+        private AutomationElement _forward;
+        private AutomationElement _back;
+        private AutomationElement _add;
+        private AutomationElement _sync;
+
+        public SlideNavigation(AutomationElement parent)
         {
-            _button = parent.Descendant("addSlideButton");
+            _forward = parent.Descendant("moveToNext");
+            _back = parent.Descendant("moveToPrevious");
+            _add = parent.Descendant("addSlideButton");
+            _sync = parent.Descendant("syncButton");
         }
         public void Add()
         {
-            _button.Invoke();
+            _add.Invoke();
+        }
+        public void Back()
+        {
+            _back.Invoke();
+        }
+        public void Forward()
+        {
+            _forward.Invoke();
+        }
+        public void Sync()
+        {
+            _sync.Invoke();
         }
     }
     public class Login
