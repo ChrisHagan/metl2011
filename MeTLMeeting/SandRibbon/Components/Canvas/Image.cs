@@ -991,13 +991,15 @@ namespace SandRibbon.Components.Canvas
         }
         public void SetValue(string value)
         {
+            Image.dropImageOnCanvas(value, new Point(0,0), 1);
+            /*
             Image.ParseInjectedStream(value, element => Image.Dispatcher.adopt((Action)delegate
-                                                                                            {
-                                                                                                foreach (var image in element.SelectElements<MeTLStanzas.Image>(true))
-                                                                                                {
-                                                                                                    Image.dropImageOnCanvas(image.source.ToString(), new Point { X = image.x, Y = image.y }, 1);
-                                                                                                }
-                                                                                            }));
+                                        {
+                                            foreach (var image in element.SelectElements<MeTLStanzas.Image>(true))
+                                            {
+                                                //Image.dropImageOnCanvas(image.source.ToString(), new Point { X = image.x, Y = image.y }, 1);
+                                            }
+                                                                                            }));**/
         }
         bool IValueProvider.IsReadOnly
         {
