@@ -470,7 +470,8 @@ namespace SandRibbon.Utils.Connection
             HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser => finishedParser.Regurgitate(),
+                finishedParser => 
+                    finishedParser.Regurgitate(),
                 credentials.name,
                 location.currentSlide.ToString());
         }

@@ -219,13 +219,6 @@ namespace SandRibbon.Components
             foreach (var video in parser.videos)
             {
                 var srVideo = ((TargettedVideo)video.Value).video;
-                /*{
-                    MediaElement = ((TargettedVideo)video.Value).video.MediaElement,
-                    VideoSource = ((TargettedVideo)video.Value).video.MediaElement.Source,
-                    Duration = ((TargettedVideo)video.Value).video.MediaElement.NaturalDuration,
-                    Position = ((TargettedVideo)video.Value).video.Position,
-                    X = ;
-                };*/
                 srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
                 srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
                 srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
