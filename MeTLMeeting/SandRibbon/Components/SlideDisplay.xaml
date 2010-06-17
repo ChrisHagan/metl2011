@@ -27,8 +27,7 @@
              SelectionChanged="slides_SelectionChanged"
              VerticalAlignment="Stretch" Height="Auto" 
              Background="Transparent"
-             HorizontalAlignment="Stretch" Width="Auto" x:Name="slides"
-             VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
+             HorizontalAlignment="Stretch" Width="Auto" x:Name="slides">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="Height">

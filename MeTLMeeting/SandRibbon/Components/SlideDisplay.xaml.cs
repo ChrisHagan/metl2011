@@ -59,18 +59,42 @@ namespace SandRibbon.Components
                 //YAAAAAY
             }
         }
+        private bool IsParserNotEmpty(PreParser parser)
+        {
+            return (parser.images.Count > 0
+                || parser.ink.Count > 0
+                || parser.text.Count > 0
+                || parser.videos.Count > 0
+                || parser.bubbleList.Count > 0
+                || parser.autoshapes.Count > 0);
+        }
+        private bool isParserPrivate(PreParser parser)
+        {
+            if (parser.ink.Where(s => s.privacy == "private").Count() > 0)
+                return true;
+            if (parser.text.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            if (parser.images.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            if (parser.videos.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            if (parser.autoshapes.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            return false;
+        }
         private void PreParserAvailable(PreParser parser)
         {
             var id = parser.location.currentSlide;
-            parsers[id] = parser;
-            if (Globals.conversationDetails.Slides.Where(s => s.id == id).Count() == 0)
+            if (isParserPrivate(parser)) return;
+            if (IsParserNotEmpty(parser))
             {
-                ThumbListBox.visibleContainers.Clear();
+                parsers[id] = parser;
             }
             if (ThumbListBox.visibleContainers.ContainsKey(id))
                 Dispatcher.adoptAsync(delegate
                                           {
-                                              ThumbListBox.Add(id, parser);
+                                              if (parsers.ContainsKey(id))
+                                                  ThumbListBox.Add(id, parsers[id]);
                                           });
         }
         private bool canAddSlide(object _slide)
@@ -91,6 +115,15 @@ namespace SandRibbon.Components
             ConversationDetailsProviderFactory.Provider.AppendSlideAfter(Globals.slide, Globals.conversationDetails.Jid);
             moveTo = true;
         }
+        private bool isSlideInSlideDisplay(int slide)
+        {
+            bool isTrue = false;
+            foreach (ThumbnailInformation info in slides.Items)
+            {
+                if (info.slideId == slide) isTrue = true;
+            }
+            return isTrue;
+        }
         private void MoveTo(int slide)
         {
             Dispatcher.adoptAsync(delegate
@@ -99,13 +132,16 @@ namespace SandRibbon.Components
                                           var typeOfDestination =
                                               Globals.conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
                                                   FirstOrDefault();
-                                          var currentSlide = (ThumbnailInformation)slides.SelectedItem;
-                                          /*if (currentSlide == null || currentSlide.slideId != slide)
+                                          if (isSlideInSlideDisplay(slide))
                                           {
-                                              slides.SelectedIndex =
-                                                  thumbnailList.Select(s => s.slideId).ToList().IndexOf(slide);
-                                          }*/
-                                          slides.ScrollIntoView(slides.SelectedItem);
+                                              var currentSlide = (ThumbnailInformation)slides.SelectedItem;
+                                              if (currentSlide == null || currentSlide.slideId != slide)
+                                              {
+                                                  slides.SelectedIndex =
+                                                      thumbnailList.Select(s => s.slideId).ToList().IndexOf(slide);
+                                                  slides.ScrollIntoView(slides.SelectedItem);
+                                              }
+                                          }
                                       });
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
