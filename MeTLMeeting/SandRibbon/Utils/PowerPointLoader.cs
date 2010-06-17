@@ -48,7 +48,7 @@ namespace SandRibbon.Utils
         public PowerPointLoader()
         {
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation));
-            Commands.ShowCreateConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowCreateConversationDialog));
+            Commands.CreateConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowCreateConversationDialog));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.UploadPowerpoint.RegisterCommand(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
         }

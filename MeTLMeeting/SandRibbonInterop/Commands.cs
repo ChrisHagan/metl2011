@@ -193,9 +193,11 @@ namespace SandRibbon
         public static CompositeCommand PostRetrievedHistoryPortion = new CompositeCommand();
         public static CompositeCommand SetSync = new CompositeCommand();
         public static CompositeCommand AddSlide = new CompositeCommand();
-        public static CompositeCommand ShowCreateConversationDialog = new CompositeCommand();
+        public static CompositeCommand PreCreateConversation = new CompositeCommand();
+        public static CompositeCommand CreateConversationDialog = new CompositeCommand();
         public static CompositeCommand ShowEditSlidesDialog = new CompositeCommand();
         public static CompositeCommand CreateConversation = new CompositeCommand();
+        public static CompositeCommand PreEditConversation = new CompositeCommand();
         public static CompositeCommand EditConversation = new CompositeCommand();
         public static CompositeCommand ImportPowerpoint = new CompositeCommand();
         public static CompositeCommand UploadPowerpoint = new CompositeCommand();
@@ -207,6 +209,7 @@ namespace SandRibbon
         public static CompositeCommand AllContentSent = new CompositeCommand();
         public static CompositeCommand AllContentRetrieved = new CompositeCommand();
         public static CompositeCommand CanEdit = new CompositeCommand();
+        public static CompositeCommand PreShowPrintConversationDialog = new CompositeCommand();
         public static CompositeCommand ShowPrintConversationDialog = new CompositeCommand();
         public static CompositeCommand PrintConversation = new CompositeCommand();
         public static CompositeCommand PrintConversationHandout = new CompositeCommand();

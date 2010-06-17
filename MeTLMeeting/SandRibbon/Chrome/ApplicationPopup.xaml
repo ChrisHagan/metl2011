@@ -11,10 +11,10 @@
             <components:SimpleConversationSelector x:Name="recentDocuments" />
         </StackPanel>
     </sr:ApplicationPopup.RecentDocumentsControl>
-    <sr:MenuItem Text="New conversation" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.ShowCreateConversationDialog}"/>
+    <sr:MenuItem Text="New conversation" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.PreCreateConversation}"/>
     <sr:MenuItem Text="Open conversation" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}"/>
-    <sr:MenuItem Text="Edit current conversation" ToolTip="{StaticResource EditConversationToolTip}" Command="{x:Static api:Commands.EditConversation}" />
-    <sr:MenuItem Text="Print conversation" ToolTip="{StaticResource PrintHandoutToolTip}" Command="{x:Static api:Commands.ShowPrintConversationDialog}" />
+    <sr:MenuItem Text="Edit current conversation" ToolTip="{StaticResource EditConversationToolTip}" Command="{x:Static api:Commands.PreEditConversation}" />
+    <!--<sr:MenuItem Text="Print conversation" ToolTip="{StaticResource PrintHandoutToolTip}" Command="{x:Static api:Commands.PreShowPrintConversationDialog}" />-->
     <sr:MenuItem Text="Help" ToolTip="{StaticResource HelpToolTip}" >
         <sr:RibbonPopup>
             <MenuItem ToolTip="{StaticResource AboutToolTip}" FontSize="12" Width="Auto" Height="Auto" Header="About Monash MeTL" Click="OpenAboutMeTLBrowser" />

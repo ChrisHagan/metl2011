@@ -73,8 +73,9 @@ namespace SandRibbon
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerPoint, mustBeLoggedIn));
             Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(StartPowerPointLoad, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(CreateConversation));
-            Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeInConversation));
+            Commands.PreShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowPrintConversationDialog));
+            Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(CreateConversation));
+            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
@@ -224,13 +225,20 @@ namespace SandRibbon
                     break;
             }
         }
+        private void ShowPrintConversationDialog(object _unused)
+        {
+            ShowPowerpointBlocker("Printing Dialog Open");
+            Commands.ShowPrintConversationDialog.Execute(null);
+        }
         private void CreateConversation(object _unused)
         {
             ShowPowerpointBlocker("Creating Conversation Dialog Open");
+            Commands.CreateConversationDialog.Execute(null);
         }
         private void EditConversation(object _unused)
         {
             ShowPowerpointBlocker("Editing Conversation Dialog Open");
+            Commands.EditConversation.Execute(null);
         }
         private void SetIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
         {
@@ -477,7 +485,7 @@ namespace SandRibbon
         private void finishedPowerpoint()
         {
             ProgressDisplay.Children.Clear();
-            InputBlocker.Visibility = Visibility.Visible;
+            InputBlocker.Visibility = Visibility.Collapsed;
             HideProgressBlocker();
         }
         private void connect(string username, string pass, int location, string conversation)

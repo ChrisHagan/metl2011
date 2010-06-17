@@ -10,9 +10,9 @@
     Title="Configure new MeTL Conversation">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
-            <Button Command="api:Commands.ShowEditSlidesDialog" DockPanel.Dock="Bottom">
+            <!--<Button Command="api:Commands.ShowEditSlidesDialog" DockPanel.Dock="Bottom">
                 <TextBlock Text="Edit slides" />
-            </Button>
+            </Button>-->
             <Border DockPanel.Dock="Bottom" Padding="10" Background="{StaticResource BackgroundBlueGradient}" >
                 <Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
