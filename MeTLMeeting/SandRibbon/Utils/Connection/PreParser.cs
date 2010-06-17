@@ -45,22 +45,26 @@ namespace SandRibbon.Utils.Connection
         public T merge<T>(T otherParser) where T : PreParser
         {
             var returnParser = (T)Activator.CreateInstance(typeof(T), location.currentSlide);
-            foreach (var parser in new[] { this, otherParser })
+            foreach (var parser in new[] { otherParser, this})
             {
                 returnParser.ink.AddRange(parser.ink);
                 returnParser.quizzes.AddRange(parser.quizzes);
                 returnParser.quizAnswers.AddRange(parser.quizAnswers);
                 foreach (var kv in parser.text)
-                    returnParser.text.Add(kv.Key, kv.Value);
+                    if (!returnParser.text.ContainsKey(kv.Key))
+                        returnParser.text.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.images)
                     if(!returnParser.images.ContainsKey(kv.Key))
                         returnParser.images.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.autoshapes)
-                    returnParser.autoshapes.Add(kv.Key, kv.Value);
+                    if(!returnParser.autoshapes.ContainsKey(kv.Key))
+                        returnParser.autoshapes.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.liveWindows)
-                    returnParser.liveWindows.Add(kv.Key, kv.Value);
+                    if (!returnParser.liveWindows.ContainsKey(kv.Key))
+                        returnParser.liveWindows.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.videos)
-                    returnParser.videos.Add(kv.Key, kv.Value);
+                    if (!returnParser.videos.ContainsKey(kv.Key))
+                        returnParser.videos.Add(kv.Key, kv.Value);
             }
             return returnParser;
         }
