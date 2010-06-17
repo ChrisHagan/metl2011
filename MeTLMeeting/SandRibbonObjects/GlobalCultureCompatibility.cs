@@ -22,6 +22,7 @@ namespace SandRibbonObjects
         public static System.DateTime Now()
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
+            // I got a security permissions here once.  MSCorLib of course.
             return System.DateTime.Now;
         }
         public string ToString()
