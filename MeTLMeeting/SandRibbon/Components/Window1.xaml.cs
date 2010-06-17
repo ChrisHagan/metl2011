@@ -343,7 +343,7 @@ namespace SandRibbon
         }
         private void MoveTo(int slide)
         {
-            if (userInformation.policy.isAuthor && userInformation.policy.isSynced)
+            if ((userInformation.policy.isAuthor && userInformation.policy.isSynced) || (Globals.synched && userInformation.policy.isAuthor))
                 Commands.SendSyncMove.Execute(slide);
             Dispatcher.adoptAsync(delegate
                                      {

@@ -32,10 +32,11 @@ namespace SandRibbon.Components
             Commands.SetLayer.Execute("Sketch");
             Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(ReceiveNewBubble));
         }
-        public void ReceiveNewBubble(TargettedBubbleContext context) {
-            if(context.target != handwriting.target) return;
+        public void ReceiveNewBubble(TargettedBubbleContext context)
+        {
+            if (context.target != handwriting.target) return;
             var bubble = getBubble(context);
-            Dispatcher.adoptAsync( delegate
+            Dispatcher.adoptAsync(delegate
                                     {
                                         if (bubble != null)
                                         {
@@ -55,38 +56,39 @@ namespace SandRibbon.Components
             {
                 return null;
             }
-            var thoughtBubble = new ThoughtBubble();
-            Dispatcher.adopt((Action) delegate
+            ThoughtBubble thoughtBubble = null; 
+            Dispatcher.adopt((Action)delegate
                {
-                        var ids = bubble.context.Select(c => c.id);
-                        var relevantStrokes = getStrokesRelevantTo(ids);
-                        var relevantChildren = getChildrenRelevantTo(ids);
-                        if (relevantChildren.Count > 0 || relevantStrokes.Count > 0)
-                        {
-                            thoughtBubble = new ThoughtBubble
-                                                    {
-                                                        childContext = relevantChildren,
-                                                        strokeContext = relevantStrokes,
-                                                        parent = bubble.slide,
-                                                        conversation = Globals.conversationDetails.Jid,
-                                                        room = bubble.thoughtSlide
-                                                    };
-                            thoughtBubble.overrideCanvasDefaults();
-                            thoughtBubble.relocate();
+                   thoughtBubble = new ThoughtBubble();
+                   var ids = bubble.context.Select(c => c.id);
+                   var relevantStrokes = getStrokesRelevantTo(ids);
+                   var relevantChildren = getChildrenRelevantTo(ids);
+                   if (relevantChildren.Count > 0 || relevantStrokes.Count > 0)
+                   {
+                       thoughtBubble = new ThoughtBubble
+                                               {
+                                                   childContext = relevantChildren,
+                                                   strokeContext = relevantStrokes,
+                                                   parent = bubble.slide,
+                                                   conversation = Globals.conversationDetails.Jid,
+                                                   room = bubble.thoughtSlide
+                                               };
+                       thoughtBubble.overrideCanvasDefaults();
+                       thoughtBubble.relocate();
 
-                        }
+                   }
                });
             return thoughtBubble.conversation != null ? thoughtBubble : null;
         }
         private List<Stroke> getStrokesRelevantTo(IEnumerable<String> ids)
         {
-            return handwriting.Strokes.Where(s=>ids.Contains(s.startingSum().ToString())).ToList();
+            return handwriting.Strokes.Where(s => ids.Contains(s.startingSum().ToString())).ToList();
         }
         private List<FrameworkElement> getChildrenRelevantTo(IEnumerable<String> ids)
         {
             var elements = images.Children.ToList();
             elements.AddRange(text.Children.ToList());
-            return elements.ToList().Select(c => 
+            return elements.ToList().Select(c =>
                 ((FrameworkElement)c)).Where(c => c.Tag != null && ids.Contains(c.Tag.ToString()))
                 .ToList();
         }
@@ -97,13 +99,13 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-           Dispatcher.adoptAsync( delegate
-           {
-               var editingMode = isAuthor(details) || canStudentPublish(details);
-               handwriting.SetCanEdit(editingMode);
-               text.SetCanEdit(editingMode);
-               images.SetCanEdit(editingMode);
-           });
+            Dispatcher.adoptAsync(delegate
+            {
+                var editingMode = isAuthor(details) || canStudentPublish(details);
+                handwriting.SetCanEdit(editingMode);
+                text.SetCanEdit(editingMode);
+                images.SetCanEdit(editingMode);
+            });
         }
         private bool isAuthor(ConversationDetails details)
         {
@@ -137,9 +139,9 @@ namespace SandRibbon.Components
                     canvasStack.Children.Remove(handwriting);
                     break;
             }
-            foreach(var layer in canvasStack.Children)
+            foreach (var layer in canvasStack.Children)
             {
-                ((UIElement) layer).Opacity = .8;    
+                ((UIElement)layer).Opacity = .8;
             }
             if (currentCanvas == null) return;
             currentCanvas.Opacity = 1.0;
@@ -173,7 +175,8 @@ namespace SandRibbon.Components
     {
         private static string AUTOMATION_ID = "UserCanvasStack";
         private string target { get { return UserCanvasStack().handwriting.target; } }
-        public UserCanvasStackAutomationPeer(UserCanvasStack stack) : base(stack)
+        public UserCanvasStackAutomationPeer(UserCanvasStack stack)
+            : base(stack)
         {
         }
         public UserCanvasStack UserCanvasStack()
