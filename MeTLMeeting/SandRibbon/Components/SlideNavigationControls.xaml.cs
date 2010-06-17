@@ -55,7 +55,9 @@ namespace SandRibbon.Components
                 source = new BitmapImage(synced);
                 try
                 {
-                    Commands.MoveTo.Execute((int)Globals.teacherSlide);
+                    var teacherSlide = (int)Globals.teacherSlide;
+                    if (Globals.location.availableSlides.Contains(teacherSlide))
+                        Commands.MoveTo.Execute((int)Globals.teacherSlide);
                 }
                 catch (NotSetException){ }
             }
