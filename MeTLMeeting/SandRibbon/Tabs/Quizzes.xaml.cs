@@ -35,10 +35,30 @@ namespace SandRibbon.Tabs
             Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(ReceiveQuizAnswer));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(updateConversationDetails));
             quizzes.ItemsSource = activeQuizes;
+            
+        }
+        private void updateConversationDetails(object obj)
+        {
+            Dispatcher.adoptAsync(delegate
+                                      {
+                                          try
+                                          {
+                                              if (Globals.isAuthor)
+                                                  createQuiz.Visibility = Visibility.Visible;
+                                              else
+                                                  createQuiz.Visibility = Visibility.Collapsed;
+                                          }
+                                          catch (NotSetException)
+                                          {
+                                          }
+                                      });
+            
         }
         private void preparserAvailable(PreParser preParser)
         {
+
             foreach(var quiz in preParser.quizzes)
                 ReceiveQuiz(quiz);
             foreach(var answer in preParser.quizAnswers)

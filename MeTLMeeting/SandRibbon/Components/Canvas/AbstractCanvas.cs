@@ -42,6 +42,7 @@ namespace SandRibbon.Components.Canvas
         public string actualPrivacy;
         public string target;
         public bool canEdit;
+        private int setSlide = -1;
         public int currentSlide
         {
             get {
@@ -53,7 +54,19 @@ namespace SandRibbon.Components.Canvas
             }
 
         }
-        private int setSlide = -1;
+
+        private string author = "none";
+        public string me
+        {
+            get
+            {
+                return author == "none" ? Globals.me : author;
+            }
+            set
+            {
+                author = value;
+            }
+        }
         
         private bool affectedByPrivacy { get { return target == "presentationSpace"; } }
         public string privacy{get{return affectedByPrivacy?actualPrivacy:defaultPrivacy;}}

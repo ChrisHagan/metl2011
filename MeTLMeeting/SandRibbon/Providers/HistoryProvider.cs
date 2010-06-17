@@ -100,7 +100,8 @@ namespace SandRibbon.Providers
                             cache[room].merge<PreParser>(history);
                         else
                             cache[room] = history;
-                        Commands.PreParserAvailable.Execute(history);
+                        //Commands.PreParserAvailable.Execute(history);
+                        retrievalComplete((T)cache[room]);
                     },
                     room);
             }

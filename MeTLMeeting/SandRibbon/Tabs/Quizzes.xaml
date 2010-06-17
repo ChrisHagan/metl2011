@@ -14,7 +14,7 @@
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Collapsed" Priority="9"/>
         </sr:RibbonGroup.Variants>
-        <Button Click="CreateQuiz">Create Quiz</Button>
+        <Button Click="CreateQuiz" Visibility="Collapsed" x:Name="createQuiz">Create Quiz</Button>
         <ItemsControl x:Name="quizzes">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
