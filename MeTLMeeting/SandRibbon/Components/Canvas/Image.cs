@@ -664,7 +664,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {
-            if (target == "presentationSpace" && canEdit && Globals.me != "Projector")
+            if (target == "presentationSpace" && canEdit && me != "projector")
             {
                 var fileBrowser = new OpenFileDialog
                                                  {

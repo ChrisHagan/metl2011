@@ -15,7 +15,7 @@ namespace HeadfulClassRoom
 {
     class Program
     {
-        public static int population = 2;
+        public static int population = 1;
         public static Dictionary<AutomationElement, string> usernames = new Dictionary<AutomationElement, string>();
         private static Random RANDOM = new Random();
         static void Main(string[] args)
@@ -64,7 +64,7 @@ namespace HeadfulClassRoom
                         y += height;
                     }
                 }
-                /*
+                
                 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 foreach (AutomationElement window in windows)
                 {
@@ -77,10 +77,9 @@ namespace HeadfulClassRoom
                     new Functional.Login((AutomationElement)window).submit();
                 foreach (var window in windows)
                 {
-                    joinConversation(window);
-                    moveForward(window);
+                    ChangeTabs(window);
                 }
-                 */
+                
                 
                 Console.ReadLine();
             }
@@ -88,6 +87,17 @@ namespace HeadfulClassRoom
             {
                 MessageBox.Show(e.Message);
             }
+        }
+
+        private static void ChangeTabs(object obj)
+        {
+                    var theseWindows = AutomationElement
+                        .RootElement
+                        .FindAll(TreeScope.Children, 
+                                    new PropertyCondition(AutomationElement.AutomationIdProperty, 
+                                    "ribbonWindow"));
+            var window = theseWindows[0];
+            new Ribbon(window);
         }
 
         private static void moveForward(object obj)

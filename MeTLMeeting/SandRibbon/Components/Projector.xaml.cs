@@ -106,6 +106,9 @@ namespace SandRibbon.Components
             catch (Exception)
             {
             }
+            stack.handwriting.me = "projector";
+            stack.images.me = "projector";
+            stack.text.me = "projector";
         }
         private void setProjectionLayers()
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using Divelements.SandRibbon;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Controls.Primitives;
 using SandRibbon.Components;
@@ -85,6 +86,29 @@ namespace Functional
             return new ConversationPicker(post.Where(e => e.Current.ClassName == "SimpleConversationFilterer").First());
         }
 
+        public  ConversationPicker EditConversation()
+        {
+            open();
+            var popup = _parent.Descendant(typeof(Popup));
+            var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
+            var prev = popup.Descendants();
+            ConversationPicker picker = null;
+            try
+            {
+                var menu = menuItems[2];
+                var post = popup.Descendants().Except(prev);
+                menu.Invoke();
+                picker = new ConversationPicker(AutomationElement
+                                                .RootElement
+                                                .FindFirst(TreeScope.Children, 
+                                                            new PropertyCondition(AutomationElement.AutomationIdProperty, 
+                                                            "createConversation")));
+            }
+            catch(Exception e) { }
+            
+            return picker;
+
+        }
         public  ConversationPicker CreateConversation()
         {
             open();
@@ -121,6 +145,7 @@ namespace Functional
         public ConversationPicker(AutomationElement parent)
         {
             _title = parent.Descendant("conversationNameTextBox");
+            _restriction = parent.Descendant("conversationSubjectListBox");
             _creationType = parent.Descendant("startingContentSelector");
             _file = parent.Descendant("importFileTextBox");
             _importType = parent.Descendant("importSelector");
@@ -155,7 +180,14 @@ namespace Functional
         public void enter(string title)
         {
         }
-
+        public void update()
+        {
+            _title.SetFocus();
+            ((SelectionItemPattern)_restriction.Children(typeof(ListBoxItem))[0]
+                .GetCurrentPattern(SelectionItemPattern.Pattern)).Select();
+            _title.SetFocus();
+            _create.Invoke();
+        }
         public void create()
         {
             _title.SetFocus();
@@ -227,10 +259,11 @@ namespace Functional
     public class Ribbon
     {
         private AutomationElement _ImageTools;
+        private AutomationElement _feedback;
 
         public Ribbon(AutomationElement parent)
         {
-            _ImageTools = parent.Descendant("addMedia");
+            _feedback = parent.Descendants(typeof(RibbonTab))[0];
         }
     }
     public  class ConversationSearcher

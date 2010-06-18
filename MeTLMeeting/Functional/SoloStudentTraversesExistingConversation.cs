@@ -61,6 +61,7 @@ namespace Functional
             TeacherAdd();
             InjectContent();
             TeacherMoveForward();
+            EditConversation();
             for (var i = 0; i < 5; i++)
             {
                 InjectContent();
@@ -142,6 +143,12 @@ namespace Functional
             new ApplicationPopup(window).CreateConversation()
                 .title(string.Format("AutomatedConversation{0}", DateTime.Now)).createType(1)
                 .powerpointType(2).file(@"C:\Users\monash\Desktop\beards.ppt").create();
+        }
+        [TestMethod]
+        public void EditConversation()
+        {
+            var window = windows[0];
+            new ApplicationPopup(window).EditConversation().title("AutomatedConversationEdited").update();
         }
         [TestMethod]
         public void JoinConversationTeacher()

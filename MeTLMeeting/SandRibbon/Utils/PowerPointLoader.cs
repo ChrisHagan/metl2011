@@ -69,7 +69,7 @@ namespace SandRibbon.Utils
         }
         private void EditConversation(object o)
         {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.EDIT).ShowDialog();
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.EDIT).Show();
         }
         private void ShowCreateConversationDialog(object o)
         {
@@ -77,7 +77,7 @@ namespace SandRibbon.Utils
         }
         private void ImportPowerpoint(object o)
         {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).ShowDialog();
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).Show();
         }
         public void LoadPowerpointAsFlatSlides(string file, ConversationDetails details, int MagnificationRating)
         {

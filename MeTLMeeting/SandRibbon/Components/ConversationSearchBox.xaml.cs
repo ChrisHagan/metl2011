@@ -219,6 +219,7 @@ namespace SandRibbon.Components
 
                 if(Globals.me.Contains("dhag") && searchText.Contains("automatedconversation"))
                 {
+                    matchingItems.Select(c => c.Created).ToList().Sort();
                     Commands.JoinConversation.Execute(matchingItems.Last().Jid);
                     return;
                 }
