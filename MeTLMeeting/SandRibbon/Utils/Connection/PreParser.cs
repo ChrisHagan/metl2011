@@ -34,8 +34,9 @@ namespace SandRibbon.Utils.Connection
                 canvas.Children.Add(image.Value.image);
             foreach (var shape in autoshapes)
                 canvas.Children.Add(shape.Value.autoshape);
-            foreach (var video in videos)
-                canvas.Children.Add(video.Value.video);
+            //Videos currently disabled.
+            //foreach (var video in videos)
+            //    canvas.Children.Add(video.Value.video);
             foreach (var textbox in text)
                 canvas.Children.Add(textbox.Value.box);
             foreach (var stroke in ink)
@@ -62,9 +63,10 @@ namespace SandRibbon.Utils.Connection
                 foreach (var kv in parser.liveWindows)
                     if (!returnParser.liveWindows.ContainsKey(kv.Key))
                         returnParser.liveWindows.Add(kv.Key, kv.Value);
-                foreach (var kv in parser.videos)
-                    if (!returnParser.videos.ContainsKey(kv.Key))
-                        returnParser.videos.Add(kv.Key, kv.Value);
+                //Videos currently disabled.
+                //foreach (var kv in parser.videos)
+                //    if (!returnParser.videos.ContainsKey(kv.Key))
+                //        returnParser.videos.Add(kv.Key, kv.Value);
             }
             return returnParser;
         }
@@ -83,8 +85,9 @@ namespace SandRibbon.Utils.Connection
                 Commands.ReceiveQuizAnswer.Execute(answer);
             foreach (var window in liveWindows.Values)
                 Commands.ReceiveLiveWindow.Execute(window);
-            foreach (var video in videos.Values)
-                Commands.ReceiveVideo.Execute(video);
+            //Videos currently disabled.
+            //foreach (var video in videos.Values)
+            //    Commands.ReceiveVideo.Execute(video);
             Commands.AllContentSent.Execute(location.currentSlide);
             Logger.Log(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
@@ -171,7 +174,8 @@ namespace SandRibbon.Utils.Connection
         }
         public override void actOnVideoReceived(TargettedVideo video)
         {
-            videos[video.id]=video;
+            //Videos currently disabled
+            //videos[video.id]=video;
         }
         public override void actOnBubbleReceived(TargettedBubbleContext bubble)
         {

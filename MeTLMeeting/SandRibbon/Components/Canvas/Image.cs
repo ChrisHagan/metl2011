@@ -190,6 +190,8 @@ namespace SandRibbon.Components.Canvas
         }
         private void ReceiveVideo(TargettedVideo video)
         {
+            //videos currently disabled.  Remove the return to re-enable.
+            return;
             Dispatcher.adoptAsync(delegate
             {
                 video.video.MediaElement.LoadedBehavior = MediaState.Manual;
