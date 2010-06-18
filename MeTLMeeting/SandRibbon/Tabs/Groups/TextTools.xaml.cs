@@ -95,13 +95,13 @@ namespace SandRibbon.Components
         private void textColorSelected(object sender, ColorEventArgs e)
         {
             ColourPickerBorder.BorderBrush = new SolidColorBrush(e.Color);
-            ColourSelection.Visibility = Visibility.Collapsed;
+            ((System.Windows.Controls.Primitives.Popup)ColourSelection.Parent).IsOpen = false;
             Commands.SetTextColor.Execute(e.Color);
         }
 
         private void ShowColourSelector(object sender, RoutedEventArgs e)
         {
-            ColourSelection.Visibility = Visibility.Visible;
+            ((System.Windows.Controls.Primitives.Popup)ColourSelection.Parent).IsOpen = true;
         }
     }
 }

@@ -29,9 +29,9 @@
                 <SandRibbonInterop:CheckBox x:Name="TextStrikethroughButton" Icon="..\..\Resources\strikethrough.png" Text="S" ToolTip="{StaticResource StrikeThroughToolTip}" Command ="{x:Static api:Commands.ToggleStrikethrough}" InternalButtonSize="Small"/>
                 <SandRibbonInterop:Button ToolTip="{StaticResource ClearFormattingToolTip}" Icon="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Text="Clear Formatting" Command="{x:Static api:Commands.RestoreTextDefaults}" InternalButtonSize="Small"/>
                 <Border x:Name="ColourPickerBorder" BorderBrush="Black" BorderThickness="2">
-                    <SandRibbonInterop:DoubleButton Click="ShowColourSelector"  x:Name="FontColourButton" Icon="..\..\Resources\changeFontColour.png" Text="C" ToolTip="{StaticResource FontColourToolTip}" InternalButtonSize="Small">
+                    <SandRibbonInterop:DoubleButton Click="ShowColourSelector" x:Name="FontColourButton" Icon="..\..\Resources\changeFontColour.png" Text="C" ToolTip="{StaticResource FontColourToolTip}" InternalButtonSize="Small">
                         <SandRibbonInterop:DoubleButton.Popup>
-                            <Border x:Name="ColourSelection"  Background="{StaticResource BackgroundBlueGradient}" Padding="2">
+                            <Border x:Name="ColourSelection"  Background="{StaticResource BackgroundBlueGradient}" Visibility="Visible" Padding="2">
                                 <StackPanel>
                                     <Label Content="Font Colour"/>
                                     <sr:ColorPicker ColorPicked="textColorSelected" >

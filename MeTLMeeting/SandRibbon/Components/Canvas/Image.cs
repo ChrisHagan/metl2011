@@ -761,6 +761,8 @@ namespace SandRibbon.Components.Canvas
                     dropImageOnCanvas(fileName, pos, count);
                     break;
                 case FileType.Video:
+                    MessageBox.Show("The object you're trying to import is a video.  At present, MeTL does not support videos.");
+                    return;
                     dropVideoOnCanvas(fileName, pos, count);
                     break;
             }
