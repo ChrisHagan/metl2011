@@ -55,8 +55,7 @@ namespace SandRibbon.Components.ResourceDictionaries
             MediaElement.MediaOpened += new RoutedEventHandler(MediaElement_MediaOpened);
             MediaElement.LoadedBehavior = MediaState.Manual;
             MediaElement.Source = MediaElementCache.LocalSource(MediaElement.Source);
-            MediaElement.Play();
-            //Video_Play(sender, new RoutedEventArgs());
+            Video_Play(sender, new RoutedEventArgs());
         }
         private bool MouseDown = false;
         private bool Updating = true;
