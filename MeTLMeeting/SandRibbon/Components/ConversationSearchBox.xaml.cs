@@ -219,8 +219,8 @@ namespace SandRibbon.Components
 
                 if(Globals.me.Contains("dhag") && searchText.Contains("automatedconversation"))
                 {
-                    matchingItems.Select(c => c.Created).ToList().Sort();
-                    Commands.JoinConversation.Execute(matchingItems.Last().Jid);
+                    var list = matchingItems.OrderBy(c => c.Created).Select(c => c);
+                    Commands.JoinConversation.Execute(list.Last().Jid);
                     return;
                 }
                 updateConversationCount(matchingItems.Count);

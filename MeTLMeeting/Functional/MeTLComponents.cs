@@ -266,6 +266,47 @@ namespace Functional
             _feedback = parent.Descendants(typeof(RibbonTab))[0];
         }
     }
+    public class SubmissionViewer
+    {
+        private AutomationElement _submissionList;
+        private AutomationElement _import;
+        public SubmissionViewer(AutomationElement _obj)
+        {
+              var parent = AutomationElement
+                                                .RootElement
+                                                .FindFirst(TreeScope.Children, 
+                                                            new PropertyCondition(AutomationElement.AutomationIdProperty, 
+                                                            "viewSubmissions"));
+            _submissionList = parent.Descendant("submissions");
+            _import = parent.Descendant("importSelectedSubmission");
+        }
+        public void import()
+        {
+            ((SelectionItemPattern)_submissionList.Children(typeof(ListBoxItem))[0]
+                .GetCurrentPattern(SelectionItemPattern.Pattern)).Select();
+            _import.Invoke();
+        }
+    }
+    public class Submission
+    {
+        private AutomationElement _submit;
+        private AutomationElement _view;
+
+        public Submission(AutomationElement parent)
+        {
+            _submit = parent.Descendant("submitSubmission");
+            _view= parent.Descendant("viewSubmission");
+
+        }
+        public void view()
+        {
+            _view.Invoke();
+        }
+        public void submit()
+        {
+            _submit.Invoke();
+        }
+    }
     public  class ConversationSearcher
     {
         private AutomationElement _searchField;

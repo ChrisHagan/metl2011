@@ -4,6 +4,7 @@
     xmlns:SandRibbon="clr-namespace:SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     Title="View Submissions"
+    x:Name="viewSubmissions"
     SizeToContent="WidthAndHeight">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ImportSubmission}" Executed="importSubmission" CanExecute="canImportSubmission"/>
@@ -35,7 +36,7 @@
                     </Viewbox>
                 </StackPanel>
             </StackPanel>
-            <Button Command="{x:Static api:Commands.ImportSubmission}" HorizontalAlignment="Right">Import selected submission</Button>
+            <Button x:Name="importSelectedSubmission" Command="{x:Static api:Commands.ImportSubmission}" HorizontalAlignment="Right">Import selected submission</Button>
         </StackPanel>
     </Border>
 </Window>

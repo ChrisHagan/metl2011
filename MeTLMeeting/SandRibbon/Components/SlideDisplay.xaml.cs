@@ -41,6 +41,15 @@ namespace SandRibbon.Components
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(jid =>
             {
+                try
+                {
+                    foreach (var slide in Globals.conversationDetails.Slides)
+                        Commands.SneakInto.Execute(slide.id.ToString());
+                }
+                catch (NotSetException e)
+                {
+                }
+                
                 currentSlideIndex = 0;
                 slides.SelectedIndex = 0;
                 slides.ScrollIntoView(slides.SelectedIndex);
@@ -50,8 +59,11 @@ namespace SandRibbon.Components
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
+
             try
             {
+                foreach (var slide in Globals.conversationDetails.Slides)
+                    Commands.SneakInto.Execute(slide.id.ToString());
                 Display(Globals.conversationDetails);
             }
             catch (NotSetException)
@@ -184,8 +196,7 @@ namespace SandRibbon.Components
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
-            foreach (var slide in details.Slides)
-                Commands.SneakInto.Execute(slide.id.ToString());
+           
             Dispatcher.adoptAsync((Action)delegate
             {
                 if (Globals.me == details.Author)

@@ -58,6 +58,7 @@ namespace SandRibbon.Components.Submissions
                });
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
             Commands.AddSlide.Execute(null);
+            this.Close();
         }
 
         private void canImportSubmission(object sender, CanExecuteRoutedEventArgs e)

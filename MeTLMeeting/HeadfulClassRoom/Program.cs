@@ -15,7 +15,7 @@ namespace HeadfulClassRoom
 {
     class Program
     {
-        public static int population = 1;
+        public static int population = 2;
         public static Dictionary<AutomationElement, string> usernames = new Dictionary<AutomationElement, string>();
         private static Random RANDOM = new Random();
         static void Main(string[] args)
@@ -64,11 +64,11 @@ namespace HeadfulClassRoom
                         y += height;
                     }
                 }
-                
+                /*
                 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 foreach (AutomationElement window in windows)
                 {
-                    var name = string.Format("dhag{0}", 20);
+                    var name = string.Format("dhag{0}", 22);
 
                     new Functional.Login(window).username(name).password("mon4sh2008");
                     window.SetPosition(width, height, x, y);
@@ -77,10 +77,14 @@ namespace HeadfulClassRoom
                     new Functional.Login((AutomationElement)window).submit();
                 foreach (var window in windows)
                 {
-                    ChangeTabs(window);
+                    joinConversation(window);
                 }
+                Thread.Sleep(2000);
+                submitAScreenShot(windows[1]);    
+                new Submission(windows[0]).view();
+                ImportScreenshot(windows[0]);
                 
-                
+                */
                 Console.ReadLine();
             }
             catch (Exception e)
@@ -89,15 +93,15 @@ namespace HeadfulClassRoom
             }
         }
 
-        private static void ChangeTabs(object obj)
+        private static void submitAScreenShot(object obj)
         {
-                    var theseWindows = AutomationElement
-                        .RootElement
-                        .FindAll(TreeScope.Children, 
-                                    new PropertyCondition(AutomationElement.AutomationIdProperty, 
-                                    "ribbonWindow"));
-            var window = theseWindows[0];
-            new Ribbon(window);
+            var window = (AutomationElement) obj;
+            new Submission(window).submit(); 
+        }
+
+        private static void ImportScreenshot(object obj)
+        {
+            new SubmissionViewer((AutomationElement)obj).import();
         }
 
         private static void moveForward(object obj)
@@ -111,7 +115,7 @@ namespace HeadfulClassRoom
         {
             var window = (AutomationElement) windowObject;
             var search = new ConversationSearcher(window);
-            search.searchField("Automated").Search();
+            search.searchField("AutomatedConversation").Search();
 
         }
 

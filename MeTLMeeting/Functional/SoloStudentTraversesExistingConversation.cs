@@ -52,25 +52,53 @@ namespace Functional
         [TestMethod] 
         public void SUPERTEST()
         {
-            LocateAndLoginTeacher();
-            LocateAndLoginStudent();
-            JoinConversationTeacher();
-            JoinConversationStudent();
+            LocateAndLogin();
+            Thread.Sleep(2000);
+            JoinConversation();
+            Thread.Sleep(2000);
             StudentSync();
             InjectContent();
             TeacherAdd();
             InjectContent();
             TeacherMoveForward();
             EditConversation();
+            Thread.Sleep(2000);
             for (var i = 0; i < 5; i++)
             {
                 InjectContent();
                 TeacherMoveForward();
             }
-            TeacherMoveBack();
-            TeacherMoveBack();
+            Thread.Sleep(3000);
+            InjectStudentStrokes();
+            Thread.Sleep(2000);
+            StudentSubmitScreenshot();
+            Thread.Sleep(2000);
+            TeacherViewSubmissions();
+            Thread.Sleep(2000);
+            TeacherImportSubmission();
 
 
+        }
+        [TestMethod]
+        public void TeacherConversationCreation()
+        {
+            LocateAndLogin();
+            CreateConversation();
+        }
+        [TestMethod]
+        public void StudentSubmitScreenshot()
+        {
+            new Submission(windows[1]).submit();
+        }
+        [TestMethod]
+        public void TeacherViewSubmissions()
+        {
+            new Submission(windows[0]).view();
+        }
+        [TestMethod]
+        public void TeacherImportSubmission()
+        {
+            new SubmissionViewer(windows[0]).import();
         }
         [TestMethod]
         public void justTeacher()
@@ -88,24 +116,14 @@ namespace Functional
             TeacherMoveBack();
         }
         [TestMethod]
-        public void LocateAndLoginTeacher()
+        public void LocateAndLogin()
         {
             int userSuffix = 22;
-            var window = (AutomationElement) windows[0];
-            var name = string.Format("dhag{0}",userSuffix++);
-            new Login(window).username(name).password("mon4sh2008");
-            new Login((AutomationElement)window).submit();
-        }
-        [TestMethod]
-        public void LocateAndLoginStudent()
-        {
-            if (windows.Count >= 2)
+            foreach (AutomationElement window in windows)
             {
-                int userSuffix = 23;
-                var window = (AutomationElement) windows[1];
-                var name = string.Format("dhag{0}",userSuffix++);
+                var name = string.Format("dhag{0}", userSuffix++);
                 new Login(window).username(name).password("mon4sh2008");
-                new Login((AutomationElement)window).submit();   
+                new Login((AutomationElement) window).submit();
             }
         }
         [TestMethod]
@@ -151,49 +169,13 @@ namespace Functional
             new ApplicationPopup(window).EditConversation().title("AutomatedConversationEdited").update();
         }
         [TestMethod]
-        public void JoinConversationTeacher()
+        public void JoinConversation()
         {
-            var window = windows[0];
-            var search = new ConversationSearcher(window);
-            search.searchField("AutomatedConversation").Search();
-        }
-        [TestMethod]
-        public void JoinConversationStudent()
-        {
-            var window = windows[1];
-            var search = new ConversationSearcher(window);
-            search.searchField("AutomatedConversation").Search();
-        }
-        Timer timer;
-        [TestMethod]
-        public void PeriodicallyInjectContent(AutomationElement window, int interval, string name)
-        {
-            var presentationSpace = new UserCanvasStack(window, "canvas");
-            Random random = new Random();
-            var strokes = File.ReadAllLines(@"availableStrokes.txt");
-            var x = 20;
-            var y = 0;
-            var color = randomColor();
-            var xLimit = random.Next(8000, 20000);
-            timer = new Timer((_state) =>
+            foreach (AutomationElement window in windows)
             {
-                x += 60;
-                if (x > xLimit)
-                {
-                    x = 0;
-                    y += 100;
-                }
-                if (random.Next(6) == 1)
-                    return;//Space
-                var sourcePoints = strokes[random.Next(strokes.Count())].Split(' ');
-                var relocatedStroke = new StringBuilder();
-                for (int i = 0; i < sourcePoints.Count(); )
-                    relocatedStroke.AppendFormat(" {0} {1} {2}", 
-                        Double.Parse(sourcePoints[i++])+x, 
-                        Double.Parse(sourcePoints[i++])+y, 
-                        (int)(255*Double.Parse(sourcePoints[i++])));
-                presentationSpace.Ink = stroke(name, randomColor(), 3, relocatedStroke.ToString().Trim());
-            }, null, 0, interval);
+                var search = new ConversationSearcher(window);
+                search.searchField("AutomatedConversation").Search();
+            }
         }
         [TestMethod]
         public void InjectContent()
@@ -206,7 +188,13 @@ namespace Functional
         public void InjectStrokes()
         {
             var presentationSpace = new UserCanvasStack(windows[0], "canvas");
-            presentationSpace.Ink = ink("dhag22", 30,0);
+            presentationSpace.Ink = ink("dhag22", 30,0, "public");
+        }
+        [TestMethod]
+        public void InjectStudentStrokes()
+        {
+            var presentationSpace = new UserCanvasStack(windows[1], "canvas");
+            presentationSpace.Ink = ink("dhag23", 100,100, "private");
         }
         [TestMethod]
         public void InjectText()
@@ -273,18 +261,18 @@ namespace Functional
                 B = buff[2]
             };
         }
-        public string ink(string author, int start, int yOffset)
+        public string ink(string author, int start, int yOffset, string privacy)
         {
-            return ink(author, start, randomColor(), yOffset);
+            return ink(author, start, randomColor(), yOffset, privacy);
         }
-        private string ink(string author, int start, Color color, int yOffset)
+        private string ink(string author, int start, Color color, int yOffset, string privacy)
         {
             var pressure = 80;
             var length = 300;
             return stroke(author, color, 3.0, Enumerable.Range(start, length).Aggregate("",
-                (acc,i)=>acc+string.Format("{0} {1} {2} ", i, yOffset+Math.Round(i*RANDOM.NextDouble(),2),pressure)).Trim());
+                (acc,i)=>acc+string.Format("{0} {1} {2} ", i, yOffset+Math.Round(i*RANDOM.NextDouble(),2),pressure)).Trim(), privacy);
         }
-        private string stroke(string author, Color color, double thickness, string points)
+        private string stroke(string author, Color color, double thickness, string points, string privacy)
         {//PRIVACY IS NOT CONTROLLED BY THIS STROKE.  IT IS IGNORED.
             return (
                 new XElement("strokeCollection",
@@ -296,7 +284,7 @@ namespace Functional
                             new XElement(METL+"thickness", thickness),
                             new XElement(METL+"highlight", "False"),
                             new XElement(METL+"author", author),
-                            new XElement(METL+"privacy", "public"),
+                            new XElement(METL+"privacy", privacy),
                             new XElement(METL+"target", target),
                             new XElement(METL+"slide", slide))))).ToString(SaveOptions.DisableFormatting);
         }

@@ -339,7 +339,15 @@ namespace SandRibbon
                 Commands.UpdateConversationDetails.Execute(details);
                 Logger.Log("Joined conversation " + title);
                 Commands.RequerySuggested(Commands.SetConversationPermissions);
+                if (automatedTest(details.Title))
+                    ribbon.SelectedTab = ribbon.Tabs[1];
             });
+        }
+
+        private bool automatedTest(string conversationName)
+        {
+            if (Globals.me.Contains("dhag") && conversationName.ToLower().Contains("automated")) return true;
+            return false;
         }
         private string messageFor(ConversationDetails details)
         {
@@ -790,16 +798,6 @@ namespace SandRibbon
                 WindowState = System.Windows.WindowState.Maximized;
             });
         }
-        private void minimizeWindow()
-        {
-            Hide();
-            if (m_notifyIcon != null)
-                m_notifyIcon.ShowBalloonTip(2000);
-        }
-        void CheckTrayIcon()
-        {
-            ShowTrayIcon(!IsVisible);
-        }
         void ShowTrayIcon(bool show)
         {
             if (m_notifyIcon != null)
@@ -893,4 +891,5 @@ namespace SandRibbon
             updateCurrentPenAfterZoomChanged();
         }
     }
+
 }
