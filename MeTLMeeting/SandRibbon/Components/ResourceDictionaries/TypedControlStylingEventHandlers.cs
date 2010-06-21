@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Data;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components.ResourceDictionaries
 {
@@ -19,18 +20,18 @@ namespace SandRibbon.Components.ResourceDictionaries
         }
         public void Video_Play(object sender, RoutedEventArgs e)
         {
-            var MediaElement = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext).MediaElement;
-            MediaElement.LoadedBehavior = MediaState.Manual;
-            if (MediaElement.Clock != null)
+            var newMediaElement = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext).MediaElement;
+            newMediaElement.LoadedBehavior = MediaState.Manual;
+            if (newMediaElement.Clock != null)
             {
-                if (MediaElement.Clock.CurrentTime.HasValue)
-                    MediaElement.Clock.Controller.Seek(MediaElement.Clock.CurrentTime.Value, System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
+                if (newMediaElement.Clock.CurrentTime.HasValue)
+                    newMediaElement.Clock.Controller.Seek(newMediaElement.Clock.CurrentTime.Value, System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
                 else 
-                    MediaElement.Clock.Controller.Seek(new TimeSpan(0,0,0), System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
-                MediaElement.Clock.Controller.Resume();
+                    newMediaElement.Clock.Controller.Seek(new TimeSpan(0,0,0), System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
+                newMediaElement.Clock.Controller.Resume();
                 //MediaElement.Clock.Controller.
             }
-            MediaElement.Play();
+            newMediaElement.Play();
         }
         public void Video_Pause(object sender, RoutedEventArgs e)
         {
@@ -52,7 +53,10 @@ namespace SandRibbon.Components.ResourceDictionaries
             var MediaElement = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext).MediaElement;
             MediaElement.DataContext = (System.Windows.Controls.Slider)sender;
             MediaElement.MediaOpened += new RoutedEventHandler(MediaElement_MediaOpened);
-            Video_Play(sender, new RoutedEventArgs());
+            MediaElement.LoadedBehavior = MediaState.Manual;
+            MediaElement.Source = MediaElementCache.LocalSource(MediaElement.Source);
+            MediaElement.Play();
+            //Video_Play(sender, new RoutedEventArgs());
         }
         private bool MouseDown = false;
         private bool Updating = true;

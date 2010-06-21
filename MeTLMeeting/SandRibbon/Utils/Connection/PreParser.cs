@@ -35,8 +35,8 @@ namespace SandRibbon.Utils.Connection
             foreach (var shape in autoshapes)
                 canvas.Children.Add(shape.Value.autoshape);
             //Videos currently disabled.
-            //foreach (var video in videos)
-            //    canvas.Children.Add(video.Value.video);
+            foreach (var video in videos)
+                canvas.Children.Add(video.Value.video);
             foreach (var textbox in text)
                 canvas.Children.Add(textbox.Value.box);
             foreach (var stroke in ink)
@@ -64,9 +64,9 @@ namespace SandRibbon.Utils.Connection
                     if (!returnParser.liveWindows.ContainsKey(kv.Key))
                         returnParser.liveWindows.Add(kv.Key, kv.Value);
                 //Videos currently disabled.
-                //foreach (var kv in parser.videos)
-                //    if (!returnParser.videos.ContainsKey(kv.Key))
-                //        returnParser.videos.Add(kv.Key, kv.Value);
+                foreach (var kv in parser.videos)
+                    if (!returnParser.videos.ContainsKey(kv.Key))
+                        returnParser.videos.Add(kv.Key, kv.Value);
             }
             return returnParser;
         }
@@ -86,8 +86,8 @@ namespace SandRibbon.Utils.Connection
             foreach (var window in liveWindows.Values)
                 Commands.ReceiveLiveWindow.Execute(window);
             //Videos currently disabled.
-            //foreach (var video in videos.Values)
-            //    Commands.ReceiveVideo.Execute(video);
+            foreach (var video in videos.Values)
+                Commands.ReceiveVideo.Execute(video);
             Commands.AllContentSent.Execute(location.currentSlide);
             Logger.Log(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
@@ -175,7 +175,7 @@ namespace SandRibbon.Utils.Connection
         public override void actOnVideoReceived(TargettedVideo video)
         {
             //Videos currently disabled
-            //videos[video.id]=video;
+            videos[video.id]=video;
         }
         public override void actOnBubbleReceived(TargettedBubbleContext bubble)
         {
