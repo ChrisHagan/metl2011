@@ -69,6 +69,9 @@ namespace Functional
                 TeacherMoveForward();
             }
             Thread.Sleep(3000);
+            OpenQuiz();
+            Thread.Sleep(2000);
+            CreateQuiz();
             InjectStudentStrokes();
             Thread.Sleep(2000);
             StudentSubmitScreenshot();
@@ -78,6 +81,16 @@ namespace Functional
             TeacherImportSubmission();
 
 
+        }
+        [TestMethod]
+        private void OpenQuiz()
+        {
+            new Quiz(windows[0]).open();
+        }
+        [TestMethod]
+        private void CreateQuiz()
+        {
+            new QuizCreate().options().create();
         }
         [TestMethod]
         public void TeacherConversationCreation()

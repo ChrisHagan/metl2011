@@ -266,6 +266,48 @@ namespace Functional
             _feedback = parent.Descendants(typeof(RibbonTab))[0];
         }
     }
+    public class Quiz
+    {
+        private AutomationElement _open;
+        public Quiz(AutomationElement parent)
+        {
+            _open = parent.Descendant("createQuiz");    
+        }
+        public void open()
+        {
+            _open.Invoke();
+        }
+    }
+    public class QuizCreate
+    {
+        private AutomationElement _create;
+        private AutomationElement _title;
+        private AutomationElementCollection _options;
+        public QuizCreate()
+        {
+            
+              var parent = AutomationElement.RootElement
+                                            .FindFirst(TreeScope.Children, 
+                                                        new PropertyCondition(AutomationElement.AutomationIdProperty, 
+                                                        "createAQuiz"));
+            _create = parent.Descendant("quizCommitButton");
+            _options = parent.Descendants(typeof (TextBox));
+        }
+        public QuizCreate options()
+        {
+            var count = 0;
+            foreach(AutomationElement element in _options)
+            {
+                element.Value(count.ToString());
+                count++;
+            }
+            return this;
+        }
+        public void create()
+        {
+            _create.Invoke();
+        }
+    }
     public class SubmissionViewer
     {
         private AutomationElement _submissionList;
@@ -287,6 +329,8 @@ namespace Functional
             _import.Invoke();
         }
     }
+
+
     public class Submission
     {
         private AutomationElement _submit;

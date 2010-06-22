@@ -28,7 +28,9 @@ namespace SandRibbon.Quizzing
         public CreateAQuiz()
         {
             InitializeComponent();
+
             options.First().color = AllColors.all[0];
+
         }
         private void help(object sender, RoutedEventArgs e)
         {
@@ -49,11 +51,11 @@ namespace SandRibbon.Quizzing
         }
         private void canCreateQuizQuestion(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = title != null && !(string.IsNullOrEmpty(title.Text) || title.Text == CreateAQuiz.PROMPT_TEXT);
+            e.CanExecute = quizTitle != null && !(string.IsNullOrEmpty(quizTitle.Text) || quizTitle.Text == CreateAQuiz.PROMPT_TEXT);
         }
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
-            var quiz = new QuizQuestion {title = title.Text, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks};
+            var quiz = new QuizQuestion { title = quizTitle.Text, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks };
             foreach(object obj in quizQuestions.Items)
             {
                 var answer = (Option)obj;
@@ -61,6 +63,10 @@ namespace SandRibbon.Quizzing
                     quiz.options.Add(answer);
             }
             Commands.SendQuiz.Execute(quiz);
+            options = new ObservableCollection<Option>
+                                                     {
+                                                         new Option {name = "A" }
+                                                     };
             this.Close();
         }
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)

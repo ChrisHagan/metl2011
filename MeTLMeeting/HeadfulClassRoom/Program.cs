@@ -66,10 +66,11 @@ namespace HeadfulClassRoom
                 }
                 /*
                 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                int user = 22;
                 foreach (AutomationElement window in windows)
                 {
-                    var name = string.Format("dhag{0}", 22);
-
+                    var name = string.Format("dhag{0}", user);
+                    user++;
                     new Functional.Login(window).username(name).password("mon4sh2008");
                     window.SetPosition(width, height, x, y);
                 }
@@ -79,13 +80,15 @@ namespace HeadfulClassRoom
                 {
                     joinConversation(window);
                 }
-                Thread.Sleep(2000);
-                submitAScreenShot(windows[1]);    
-                new Submission(windows[0]).view();
-                ImportScreenshot(windows[0]);
+                Thread.Sleep(3000);
+                openAQuiz((AutomationElement)windows[0]);
+                Thread.Sleep(1000);
+                createAQuiz();
+
+                answerAQuiz(windows[1]);
                 
-                */
-                Console.ReadLine();
+                 */
+                 Console.ReadLine();
             }
             catch (Exception e)
             {
@@ -93,6 +96,20 @@ namespace HeadfulClassRoom
             }
         }
 
+        private static void answerAQuiz(AutomationElement element)
+        {
+            new Quiz(element);
+        }
+
+        private static void openAQuiz(AutomationElement element)
+        {
+            new Quiz(element).open();
+            Thread.Sleep(1000);
+        }
+        private static void createAQuiz()
+        {
+            new QuizCreate().options().create();
+        }
         private static void submitAScreenShot(object obj)
         {
             var window = (AutomationElement) obj;

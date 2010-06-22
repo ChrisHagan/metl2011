@@ -11,7 +11,7 @@
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">5</core:String>    
     </sr:RibbonTab.Resources>
-    <sr:RibbonGroup Header="Multiple Choice Quiz" ShowDialogLauncher="False">
+    <sr:RibbonGroup Header="Multiple Choice Quiz" x:Name="quizRibbonGroup" ShowDialogLauncher="False">
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Collapsed" Priority="9"/>
         </sr:RibbonGroup.Variants>
