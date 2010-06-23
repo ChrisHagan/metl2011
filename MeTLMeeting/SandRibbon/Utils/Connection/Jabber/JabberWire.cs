@@ -655,7 +655,12 @@ namespace SandRibbon.Utils.Connection
                 ReceiveCommand(message.SelectSingleElement("body").InnerXml);
                 return;
             }
-            ((CachedHistoryProvider)HistoryProviderFactory.provider).HandleMessage(message.GetAttribute("from").Split('@')[0], message);
+            try
+            {
+                ((CachedHistoryProvider) HistoryProviderFactory.provider).HandleMessage(
+                    message.GetAttribute("from").Split('@')[0], message);
+            }
+            catch(Exception e) { }
             if (Application.Current == null) return;
             Application.Current.Dispatcher.adoptAsync(
                 ()=>
