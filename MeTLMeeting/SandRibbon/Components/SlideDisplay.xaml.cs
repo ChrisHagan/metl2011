@@ -196,7 +196,9 @@ namespace SandRibbon.Components
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
-           
+            
+           foreach (var slide in Globals.conversationDetails.Slides.Where(s => !thumbnailList.Select(t => t.slideId).Contains(s.id)))
+                Commands.SneakInto.Execute(slide.id.ToString());
             Dispatcher.adoptAsync((Action)delegate
             {
                 if (Globals.me == details.Author)
