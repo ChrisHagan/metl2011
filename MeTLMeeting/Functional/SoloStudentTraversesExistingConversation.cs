@@ -216,6 +216,14 @@ namespace Functional
             presentationSpace.Text = "Some TEXT";
         }
         [TestMethod]
+        public void stressTestImages()
+        {
+            for(var i =0; i < 80; i++)
+            {
+                InjectImages();
+            }
+        }
+        [TestMethod]
         public void InjectImages()
         {
             var presentationSpace = new UserCanvasStack(windows[0], "canvas");
