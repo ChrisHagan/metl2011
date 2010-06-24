@@ -101,7 +101,7 @@ namespace SandRibbon.Components
             {
                 if (Globals.conversationDetails.Author == Globals.me) return;
                 if (Globals.conversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
-                Dispatcher.BeginInvoke((Action) delegate
+                Dispatcher.adoptAsync((Action) delegate
                             {
                                 var adorner = GetAdorner();
                                 AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner,new SyncDisplay()));
@@ -219,13 +219,6 @@ namespace SandRibbon.Components
             foreach (var video in parser.videos)
             {
                 var srVideo = ((TargettedVideo)video.Value).video;
-                /*{
-                    MediaElement = ((TargettedVideo)video.Value).video.MediaElement,
-                    VideoSource = ((TargettedVideo)video.Value).video.MediaElement.Source,
-                    Duration = ((TargettedVideo)video.Value).video.MediaElement.NaturalDuration,
-                    Position = ((TargettedVideo)video.Value).video.Position,
-                    X = ;
-                };*/
                 srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
                 srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
                 srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
@@ -249,8 +242,6 @@ namespace SandRibbon.Components
                 mirror.Show();
                 Commands.SetDrawingAttributes.Execute(currentAttributes);
                 Commands.SetPrivacy.Execute(stack.handwriting.privacy);
-                //We rerequest the current slide data because we're not storing it in reusable form - it's in thread affine objects in the logical tree.
-                Commands.MoveTo.Execute(Globals.slide);
             }
             catch (NotSetException) { 
                 //Fine it's not time yet anyway.  I don't care.
@@ -285,19 +276,17 @@ namespace SandRibbon.Components
         private void MoveTo(int slide)
         {
             ClearAdorners();
+            stack.Flush();
         }
         private void ClearAdorners()
         {
-            var doClear = (Action)delegate
+            Dispatcher.adoptAsync(delegate
                           {
                               removeAdornerItems(this);
                               ClearPrivacy();
                               removeSyncDisplay();
-                          };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doClear);
-            else
-                doClear();
+                          });
+            
         }
         private void removeSyncDisplay()
         {
