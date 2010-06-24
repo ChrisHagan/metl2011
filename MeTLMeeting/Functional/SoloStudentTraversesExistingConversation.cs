@@ -49,49 +49,146 @@ namespace Functional
         string slide = "483401";
         XNamespace METL = "monash:metl";
         Random RANDOM = new Random();
+        [TestMethod] 
+        public void SUPERTEST()
+        {
+            LocateAndLogin();
+            Thread.Sleep(2000);
+            JoinConversation();
+            Thread.Sleep(2000);
+            StudentSync();
+            InjectContent();
+            TeacherAdd();
+            InjectContent();
+            TeacherMoveForward();
+            EditConversation();
+            Thread.Sleep(2000);
+            for (var i = 0; i < 5; i++)
+            {
+                InjectContent();
+                TeacherMoveForward();
+            }
+            Thread.Sleep(3000);
+            OpenQuiz();
+            Thread.Sleep(2000);
+            CreateQuiz();
+            InjectStudentStrokes();
+            Thread.Sleep(2000);
+            StudentSubmitScreenshot();
+            Thread.Sleep(2000);
+            TeacherViewSubmissions();
+            Thread.Sleep(2000);
+            TeacherImportSubmission();
+
+
+        }
+        [TestMethod]
+        private void OpenQuiz()
+        {
+            new Quiz(windows[0]).open();
+        }
+        [TestMethod]
+        private void CreateQuiz()
+        {
+            new QuizCreate().options().create();
+        }
+        [TestMethod]
+        public void TeacherConversationCreation()
+        {
+            LocateAndLogin();
+            CreateConversation();
+        }
+        [TestMethod]
+        public void StudentSubmitScreenshot()
+        {
+            new Submission(windows[1]).submit();
+        }
+        [TestMethod]
+        public void TeacherViewSubmissions()
+        {
+            new Submission(windows[0]).view();
+        }
+        [TestMethod]
+        public void TeacherImportSubmission()
+        {
+            new SubmissionViewer(windows[0]).import();
+        }
+        [TestMethod]
+        public void justTeacher()
+        {
+            InjectContent();
+            TeacherAdd();
+            InjectContent();
+            TeacherMoveForward();
+            for (var i = 0; i < 5; i++)
+            {
+                InjectContent();
+                TeacherMoveForward();
+            }
+            TeacherMoveBack();
+            TeacherMoveBack();
+        }
         [TestMethod]
         public void LocateAndLogin()
         {
             int userSuffix = 22;
-            foreach(var obj in windows)
+            foreach (AutomationElement window in windows)
             {
-                var window = (AutomationElement)obj;
-                var name = string.Format("dhag{0}",userSuffix++);
-                new Login(window).username(name).password("mon4sh2008").submit();
-                new ApplicationPopup(windows[0]).AllConversations().enter("automation test");
-                PeriodicallyInjectContent(windows[0], 150, name);
+                var name = string.Format("dhag{0}", userSuffix++);
+                new Login(window).username(name).password("mon4sh2008");
+                new Login((AutomationElement) window).submit();
             }
         }
-        Timer timer;
         [TestMethod]
-        public void PeriodicallyInjectContent(AutomationElement window, int interval, string name)
+        public void TeacherMoveForward()
         {
-            var presentationSpace = new UserCanvasStack(window, "presentationSpace");
-            Random random = new Random();
-            var strokes = File.ReadAllLines(@"availableStrokes.txt");
-            var x = 20;
-            var y = 0;
-            var color = randomColor();
-            var xLimit = random.Next(8000, 20000);
-            timer = new Timer((_state) =>
+            var window = windows[0];
+            window.pause(500);
+            new SlideNavigation(window).Forward();
+        }
+        [TestMethod]
+        public void TeacherMoveBack()
+        {
+            var window = windows[0];
+            window.pause(500);
+            new SlideNavigation(window).Back();
+        }
+        [TestMethod]
+        public void TeacherAdd()
+        {
+            var window = windows[0];
+            window.pause(500);
+            new SlideNavigation(window).Add();
+        }
+        [TestMethod]
+        public void StudentSync()
+        {
+            var window = windows[1];
+            window.pause(500);
+            new SlideNavigation(window).Sync();
+        }
+        [TestMethod]
+        public void CreateConversation()
+        {
+            var window = windows[0];
+            new ApplicationPopup(window).CreateConversation()
+                .title(string.Format("AutomatedConversation{0}", DateTime.Now)).createType(1)
+                .powerpointType(2).file(@"C:\Users\monash\Desktop\beards.ppt").create();
+        }
+        [TestMethod]
+        public void EditConversation()
+        {
+            var window = windows[0];
+            new ApplicationPopup(window).EditConversation().title("AutomatedConversationEdited").update();
+        }
+        [TestMethod]
+        public void JoinConversation()
+        {
+            foreach (AutomationElement window in windows)
             {
-                x += 60;
-                if (x > xLimit)
-                {
-                    x = 0;
-                    y += 100;
-                }
-                if (random.Next(6) == 1)
-                    return;//Space
-                var sourcePoints = strokes[random.Next(strokes.Count())].Split(' ');
-                var relocatedStroke = new StringBuilder();
-                for (int i = 0; i < sourcePoints.Count(); )
-                    relocatedStroke.AppendFormat(" {0} {1} {2}", 
-                        Double.Parse(sourcePoints[i++])+x, 
-                        Double.Parse(sourcePoints[i++])+y, 
-                        (int)(255*Double.Parse(sourcePoints[i++])));
-                presentationSpace.Ink = stroke(name, randomColor(), 3, relocatedStroke.ToString().Trim());
-            }, null, 0, interval);
+                var search = new ConversationSearcher(window);
+                search.searchField("AutomatedConversation").Search();
+            }
         }
         [TestMethod]
         public void InjectContent()
@@ -103,29 +200,35 @@ namespace Functional
         [TestMethod]
         public void InjectStrokes()
         {
-            var presentationSpace = new UserCanvasStack(windows[0], "presentationSpace");
-            presentationSpace.Privacy = "public";
-            presentationSpace.Ink = ink("dhag22", 30,0);
-            presentationSpace.Privacy = "private";
-            presentationSpace.Ink = ink("dhag22", 40,50);
+            var presentationSpace = new UserCanvasStack(windows[0], "canvas");
+            presentationSpace.Ink = ink("dhag22", 30,0, "public");
+        }
+        [TestMethod]
+        public void InjectStudentStrokes()
+        {
+            var presentationSpace = new UserCanvasStack(windows[1], "canvas");
+            presentationSpace.Ink = ink("dhag23", 100,100, "private");
         }
         [TestMethod]
         public void InjectText()
         {
-            var presentationSpace = new UserCanvasStack(windows[0], "presentationSpace");
-            presentationSpace.Privacy = "public";
-            presentationSpace.Text = text("dhag22", "public", "Please wait...", 80,RANDOM.Next(5000));
-            presentationSpace.Privacy = "private";
-            presentationSpace.Text = text("dhag22", "private", "METL IS GENERATING PRIVATE CONTENT", 150,RANDOM.Next(300));
+            var presentationSpace = new UserCanvasStack(windows[0], "canvas");
+            presentationSpace.Text = "Some TEXT";
+        }
+        [TestMethod]
+        public void stressTestImages()
+        {
+            for(var i =0; i < 80; i++)
+            {
+                InjectImages();
+            }
         }
         [TestMethod]
         public void InjectImages()
         {
-            var presentationSpace = new UserCanvasStack(windows[0], "presentationSpace");
-            presentationSpace.Privacy = "public";
-            presentationSpace.Images = image("dhag22", @"C:\sandRibbon\SandRibbon\Automation\Resources\pictureOne.png", 80,RANDOM.Next(200));
-            presentationSpace.Privacy = "private";
-            presentationSpace.Images = image("dhag22", @"C:\sandRibbon\SandRibbon\Automation\Resources\pictureTwo.jpg", 150,RANDOM.Next(300));
+            var presentationSpace = new UserCanvasStack(windows[0], "canvas");
+            presentationSpace.Images = @"C:\specialMeTL\robot.jpg"; 
+            //presentationSpace.Images = image("dhag22", @"http://i144.photobucket.com/albums/r181/jssst21/mortalwombatbannercopy.jpg", 80, RANDOM.Next(200));
         }
         private string image(string author, string url, int x, int y)
         {//THIS WILL NOT CONTROL PRIVACY
@@ -179,18 +282,18 @@ namespace Functional
                 B = buff[2]
             };
         }
-        public string ink(string author, int start, int yOffset)
+        public string ink(string author, int start, int yOffset, string privacy)
         {
-            return ink(author, start, randomColor(), yOffset);
+            return ink(author, start, randomColor(), yOffset, privacy);
         }
-        private string ink(string author, int start, Color color, int yOffset)
+        private string ink(string author, int start, Color color, int yOffset, string privacy)
         {
             var pressure = 80;
             var length = 300;
             return stroke(author, color, 3.0, Enumerable.Range(start, length).Aggregate("",
-                (acc,i)=>acc+string.Format("{0} {1} {2} ", i, yOffset+Math.Round(i*RANDOM.NextDouble(),2),pressure)).Trim());
+                (acc,i)=>acc+string.Format("{0} {1} {2} ", i, yOffset+Math.Round(i*RANDOM.NextDouble(),2),pressure)).Trim(), privacy);
         }
-        private string stroke(string author, Color color, double thickness, string points)
+        private string stroke(string author, Color color, double thickness, string points, string privacy)
         {//PRIVACY IS NOT CONTROLLED BY THIS STROKE.  IT IS IGNORED.
             return (
                 new XElement("strokeCollection",
@@ -202,7 +305,7 @@ namespace Functional
                             new XElement(METL+"thickness", thickness),
                             new XElement(METL+"highlight", "False"),
                             new XElement(METL+"author", author),
-                            new XElement(METL+"privacy", "public"),
+                            new XElement(METL+"privacy", privacy),
                             new XElement(METL+"target", target),
                             new XElement(METL+"slide", slide))))).ToString(SaveOptions.DisableFormatting);
         }

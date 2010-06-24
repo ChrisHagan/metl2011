@@ -58,7 +58,7 @@ namespace SandRibbon.Components
 
         private void AddMessage(TextBox msg)
         {
-            Dispatcher.BeginInvoke((Action)delegate
+            Dispatcher.adoptAsync(delegate
                                           {
                                               var block = new TextBlock
                                               {
@@ -74,7 +74,6 @@ namespace SandRibbon.Components
         {
             messageField.Text = "";
         }
-
         private void receiveChatMessage(TargettedTextBox box)
         {
             var textBox = box.box;

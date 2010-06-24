@@ -45,7 +45,7 @@ namespace SandRibbon.Chrome
             try
             {
                 var details = Globals.conversationDetails;
-                var doDetails = (Action) delegate
+                Dispatcher.adoptAsync(delegate
                                              {
                                                  try
                                                  {
@@ -59,11 +59,7 @@ namespace SandRibbon.Chrome
                                                  catch (NotSetException)
                                                  {
                                                  }
-                                             };
-                if (Thread.CurrentThread != Dispatcher.Thread)
-                    Dispatcher.BeginInvoke(doDetails);
-                else
-                    doDetails();
+                                             });
             }
             catch(NotSetException)
             {

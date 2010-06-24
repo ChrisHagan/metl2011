@@ -42,6 +42,7 @@ namespace SandRibbon.Components.Canvas
         public string actualPrivacy;
         public string target;
         public bool canEdit;
+        private int setSlide = -1;
         public int currentSlide
         {
             get {
@@ -53,7 +54,19 @@ namespace SandRibbon.Components.Canvas
             }
 
         }
-        private int setSlide = -1;
+
+        private string author = "none";
+        public string me
+        {
+            get
+            {
+                return author == "none" ? Globals.me : author;
+            }
+            set
+            {
+                author = value;
+            }
+        }
         
         private bool affectedByPrivacy { get { return target == "presentationSpace"; } }
         public string privacy{get{return affectedByPrivacy?actualPrivacy:defaultPrivacy;}}
@@ -70,7 +83,7 @@ namespace SandRibbon.Components.Canvas
                 HandleCopy()));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) =>
                                                                             HandleCut()));
-            Loaded += (_sender, _args) => this.Dispatcher.BeginInvoke((Action)delegate{
+            Loaded += (_sender, _args) => this.Dispatcher.adoptAsync(delegate{
               if(target == null)
                 {
                     target = (string) FindResource("target");
@@ -80,9 +93,7 @@ namespace SandRibbon.Components.Canvas
                 }
             });
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
-
         }
-
         public void DoWithCurrentSelection(Action<SelectedIdentity> todo)
         {
             foreach (var stroke in GetSelectedStrokes())
@@ -102,7 +113,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void SetPrivacy(string p)
         {
-            var doPrivacy = (Action) delegate
+            Dispatcher.adoptAsync(delegate
                                          {
                                              actualPrivacy = p;
                                              try
@@ -116,11 +127,7 @@ namespace SandRibbon.Components.Canvas
                                              {
                                                  //YAY
                                              }
-                                         };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doPrivacy);
-            else
-                doPrivacy();
+                                         });
         }
         private PresentationSpace context;
         protected void addPrivateRegion(IEnumerable<Point> figure)
@@ -142,7 +149,7 @@ namespace SandRibbon.Components.Canvas
         }
         protected void ClearAdorners()
         {
-            Dispatcher.BeginInvoke((Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 var adornerLayer = AdornerLayer.GetAdornerLayer(this);
                 if (adornerLayer == null) return;

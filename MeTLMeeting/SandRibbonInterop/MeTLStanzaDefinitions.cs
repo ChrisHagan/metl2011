@@ -1011,6 +1011,7 @@ namespace SandRibbonInterop.MeTLStanzas
             public SandRibbonInterop.Video forceEvaluation() {
                 var video = new MediaElement { 
                     Tag = this.tag,
+                    LoadedBehavior = MediaState.Manual,
                     Source = new Uri(this.source, UriKind.RelativeOrAbsolute)
                 };
                 var srVideo = new SandRibbonInterop.Video { 

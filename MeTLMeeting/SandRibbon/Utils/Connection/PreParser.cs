@@ -30,37 +30,43 @@ namespace SandRibbon.Utils.Connection
         public InkCanvas ToVisual()
         {
             var canvas = new InkCanvas();
-            foreach (var stroke in ink)
-                canvas.Strokes.Add(stroke.stroke);
             foreach (var image in images)
                 canvas.Children.Add(image.Value.image);
-            foreach (var textbox in text)
-                canvas.Children.Add(textbox.Value.box);
             foreach (var shape in autoshapes)
                 canvas.Children.Add(shape.Value.autoshape);
+            //Videos currently disabled.
             foreach (var video in videos)
                 canvas.Children.Add(video.Value.video);
+            foreach (var textbox in text)
+                canvas.Children.Add(textbox.Value.box);
+            foreach (var stroke in ink)
+                canvas.Strokes.Add(stroke.stroke);
             return canvas;
         }
         public T merge<T>(T otherParser) where T : PreParser
         {
             var returnParser = (T)Activator.CreateInstance(typeof(T), location.currentSlide);
-            foreach (var parser in new[] { this, otherParser })
+            foreach (var parser in new[] { otherParser, this})
             {
                 returnParser.ink.AddRange(parser.ink);
                 returnParser.quizzes.AddRange(parser.quizzes);
                 returnParser.quizAnswers.AddRange(parser.quizAnswers);
                 foreach (var kv in parser.text)
-                    returnParser.text.Add(kv.Key, kv.Value);
+                    if (!returnParser.text.ContainsKey(kv.Key))
+                        returnParser.text.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.images)
                     if(!returnParser.images.ContainsKey(kv.Key))
                         returnParser.images.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.autoshapes)
-                    returnParser.autoshapes.Add(kv.Key, kv.Value);
+                    if(!returnParser.autoshapes.ContainsKey(kv.Key))
+                        returnParser.autoshapes.Add(kv.Key, kv.Value);
                 foreach (var kv in parser.liveWindows)
-                    returnParser.liveWindows.Add(kv.Key, kv.Value);
+                    if (!returnParser.liveWindows.ContainsKey(kv.Key))
+                        returnParser.liveWindows.Add(kv.Key, kv.Value);
+                //Videos currently disabled.
                 foreach (var kv in parser.videos)
-                    returnParser.videos.Add(kv.Key, kv.Value);
+                    if (!returnParser.videos.ContainsKey(kv.Key))
+                        returnParser.videos.Add(kv.Key, kv.Value);
             }
             return returnParser;
         }
@@ -79,6 +85,7 @@ namespace SandRibbon.Utils.Connection
                 Commands.ReceiveQuizAnswer.Execute(answer);
             foreach (var window in liveWindows.Values)
                 Commands.ReceiveLiveWindow.Execute(window);
+            //Videos currently disabled.
             foreach (var video in videos.Values)
                 Commands.ReceiveVideo.Execute(video);
             Commands.AllContentSent.Execute(location.currentSlide);
@@ -167,6 +174,7 @@ namespace SandRibbon.Utils.Connection
         }
         public override void actOnVideoReceived(TargettedVideo video)
         {
+            //Videos currently disabled
             videos[video.id]=video;
         }
         public override void actOnBubbleReceived(TargettedBubbleContext bubble)

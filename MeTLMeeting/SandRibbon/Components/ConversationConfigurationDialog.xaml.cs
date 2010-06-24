@@ -205,6 +205,7 @@ namespace SandRibbon.Components
         }
         private void Close(object sender, RoutedEventArgs e)
         {
+            Commands.PowerPointLoadFinished.Execute(null);
             this.Close();
         }
         private void startingContentListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

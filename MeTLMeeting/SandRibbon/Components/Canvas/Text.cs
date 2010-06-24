@@ -118,7 +118,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
-            var doDirtyText = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 for (int i = 0; i < Children.Count; i++)
                 {
@@ -126,11 +126,7 @@ namespace SandRibbon.Components.Canvas
                     if (element.identifier.Equals(currentTextbox.tag().id))
                         Children.Remove(currentTextbox);
                 }
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDirtyText);
-            else
-                doDirtyText();
+            });
         }
         private bool textboxSelectedProperty;
 
@@ -228,7 +224,9 @@ namespace SandRibbon.Components.Canvas
         }
         public void FlushText()
         {
-            Dispatcher.BeginInvoke((Action)(() => Children.Clear()));
+            Dispatcher.adoptAsync(delegate{
+                Children.Clear();
+            });
         }
         private void resetTextbox(object obj)
         {
@@ -288,7 +286,6 @@ namespace SandRibbon.Components.Canvas
         private bool canUseTextCommands(double arg)
         {
             return true;
-            //return canEdit && textBoxSelected;            
         }
         private void toggleStrikethrough(object obj)
         {
@@ -345,7 +342,7 @@ namespace SandRibbon.Components.Canvas
             myTextBox = box;
             box.Focus();
         }
-        private TextBox createNewTextbox()
+        public TextBox createNewTextbox()
         {
             var box = new TextBox();
             box.tag(new TextTag
@@ -444,11 +441,11 @@ namespace SandRibbon.Components.Canvas
             {
                 typingTimer = new Timer(delegate
                 {
-                    Dispatcher.BeginInvoke((Action)(() =>
+                    Dispatcher.adoptAsync(delegate
                                                     {
                                                         sendText((TextBox)sender);
                                                         typingTimer = null;
-                                                    }));
+                                                    });
                 }, null, 600, Timeout.Infinite);
             }
             else
@@ -513,22 +510,18 @@ namespace SandRibbon.Components.Canvas
             if(targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box)) return;//I never want my live text to collide with me.
             if (targettedBox.slide == currentSlide && (targettedBox.privacy == "private" && Globals.me == "Projector"))
             {
-                var doProjector = (Action) delegate
+                Dispatcher.adoptAsync(delegate
                                                {
                                                    removeDoomedTextBoxes(targettedBox);
-                                               };
-                if (Thread.CurrentThread == Dispatcher.Thread)
-                    Dispatcher.BeginInvoke(doProjector);
-                else
-                    doProjector();
+                                               });
             }
 
             if (targettedBox.slide == currentSlide &&(targettedBox.privacy == "public" || targettedBox.author == Globals.me))
             {
-                if (Thread.CurrentThread != Dispatcher.Thread)
-                    Dispatcher.BeginInvoke((Action)delegate { doText(targettedBox); });
-                else
-                    doText(targettedBox);
+                Dispatcher.adoptAsync(delegate 
+                { 
+                    doText(targettedBox); 
+                });
             }
         }
 
@@ -557,20 +550,26 @@ namespace SandRibbon.Components.Canvas
         }
         public void doText(TargettedTextBox targettedBox)
         {
-            if(targettedBox.target != target) return;
-            if(targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box)) return;//I never want my live text to collide with me.
-            if (targettedBox.slide == currentSlide && (targettedBox.privacy == "public" || targettedBox.author == Globals.me))
-            {
+            Dispatcher.adoptAsync(delegate
+                                      {
+                                          if (targettedBox.target != target) return;
+                                          if (targettedBox.author == Globals.me &&
+                                              alreadyHaveThisTextBox(targettedBox.box))
+                                              return; //I never want my live text to collide with me.
+                                          if (targettedBox.slide == currentSlide &&
+                                              (targettedBox.privacy == "public" || targettedBox.author == Globals.me))
+                                          {
 
-                Console.WriteLine("Received textbox");
-                var box = targettedBox.box;
-                removeDoomedTextBoxes(targettedBox);
-                Children.Add(applyDefaultAttributes(box));
-                if (!(targettedBox.author == Globals.me && focusable))
-                    box.Focusable = false;
-                if (targettedBox.privacy == "private" && targettedBox.target == target)
-                    addPrivateRegion(box);
-            }
+                                              Console.WriteLine("Received textbox");
+                                              var box = targettedBox.box;
+                                              removeDoomedTextBoxes(targettedBox);
+                                              Children.Add(applyDefaultAttributes(box));
+                                              if (!(targettedBox.author == Globals.me && focusable))
+                                                  box.Focusable = false;
+                                              if (targettedBox.privacy == "private" && targettedBox.target == target)
+                                                  addPrivateRegion(box);
+                                          }
+                                      });
         }
         private void addPrivateRegion(TextBox text)
         {
@@ -667,15 +666,10 @@ namespace SandRibbon.Components.Canvas
         }
         public void SetValue(string value)
         {
-            Text.ParseInjectedStream(value, element =>{
-                Text.Dispatcher.adopt((Action)delegate
-                {
-                    foreach (var text in element.SelectElements<MeTLStanzas.TextBox>(true))
-                    {
-                        Text.sendText(text.Box.box);
-                    }
-                });
-            });
+            var box = Text.createNewTextbox();
+            box.Text = value;
+            box.FontSize = 36;
+            Text.sendText(box);
         }
         bool IValueProvider.IsReadOnly
         {

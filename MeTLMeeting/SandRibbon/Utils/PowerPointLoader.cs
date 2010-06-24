@@ -48,7 +48,7 @@ namespace SandRibbon.Utils
         public PowerPointLoader()
         {
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation));
-            Commands.ShowCreateConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowCreateConversationDialog));
+            Commands.CreateConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowCreateConversationDialog));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.UploadPowerpoint.RegisterCommand(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
         }
@@ -69,15 +69,15 @@ namespace SandRibbon.Utils
         }
         private void EditConversation(object o)
         {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.EDIT).ShowDialog();
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.EDIT).Show();
         }
         private void ShowCreateConversationDialog(object o)
         {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.CREATE).ShowDialog();
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.CREATE).Show();
         }
         private void ImportPowerpoint(object o)
         {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).ShowDialog();
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).Show();
         }
         public void LoadPowerpointAsFlatSlides(string file, ConversationDetails details, int MagnificationRating)
         {
@@ -227,13 +227,14 @@ namespace SandRibbon.Utils
         private void sendPublicTextBoxes(int id, IEnumerable<XElement> shapes)
         {
             wire.SneakInto(id.ToString());
+            int shapeCount = 0;
             foreach (var text in shapes)
             {
                 var newText = new TextBox();
                 newText.Text = text.Attribute("content").Value;
                 InkCanvas.SetLeft(newText, Double.Parse(text.Attribute("x").Value));
                 InkCanvas.SetTop(newText, Double.Parse(text.Attribute("y").Value));
-                var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + Globals.me;
+                var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + Globals.me + shapeCount++;
                 var font = text.Descendants("font").ElementAt(0);
                 var privacy = text.Attribute("privacy").Value.ToString();
                 newText.FontFamily = new FontFamily(font.Attribute("family").Value);
@@ -311,7 +312,7 @@ namespace SandRibbon.Utils
                         {
                             author = me,
                             privacy = "private",
-                            id = string.Format("{0}:{1}{2}", me, DateTimeFactory.Now(), shapeCount)
+                            id = string.Format("{0}:{1}{2}", me, DateTimeFactory.Now(), shapeCount++)
                         });
                 ;
                 wire.SendTextbox(new TargettedTextBox

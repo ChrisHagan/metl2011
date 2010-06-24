@@ -456,30 +456,22 @@ namespace SandRibbon.Utils.Connection
         }
         public void MoveTo(int where)
         {
-            try
-            {
-                var muc = new MucManager(conn);
-                muc.LeaveRoom(new Jid(string.Format("{0}@{1}", location.currentSlide, Constants.JabberWire.MUC)), credentials.name);
-                muc.LeaveRoom(new Jid(string.Format("{0}{1}@{2}", location.currentSlide, credentials.name, Constants.JabberWire.MUC)), credentials.name);
-            }
-            catch (Exception e)
-            {
-                Logger.Log("Attempted to leave room we weren't in: " + e.Message);
-            }
+            new MucManager(conn).LeaveRoom(
+                new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), Constants.JabberWire.MUC, jid.Resource), credentials.name);
             location.currentSlide = where;
             joinRooms();
             HistoryProviderFactory.provider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser =>{
-                    Logger.Log(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
                     Commands.PreParserAvailable.Execute(finishedParser);
                 },
                 location.currentSlide.ToString());
             HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser => finishedParser.Regurgitate(),
+                finishedParser => 
+                    finishedParser.Regurgitate(),
                 credentials.name,
                 location.currentSlide.ToString());
         }
@@ -502,7 +494,6 @@ namespace SandRibbon.Utils.Connection
         public void SendVideo(TargettedVideo video) 
         { 
             stanza(video.slide.ToString(), new MeTLStanzas.Video(video));
-            var a = 1;
         }
         public void SendAutoShape(TargettedAutoShape autoshape)
         {
@@ -521,7 +512,6 @@ namespace SandRibbon.Utils.Connection
             var quiz = new MeTLStanzas.Quiz(parameters);
             stanza(Globals.slide.ToString(), quiz);
         }
-
         private void SendQuizAnswer(QuizAnswer parameters)
         {
             var quiz = new MeTLStanzas.QuizResponse(parameters);
@@ -533,7 +523,6 @@ namespace SandRibbon.Utils.Connection
         }
         public bool CanWakeUp(string _param) {
             return true;
-            //return location != null && location.activeConversation != null;
         }
         public void WakeUp(string room) {
             foreach (var board in BoardManager.boards[room])
@@ -661,58 +650,63 @@ namespace SandRibbon.Utils.Connection
                 Logger.Log(message.ToString());
                 return;
             }
+            if (message.SelectSingleElement("body") != null)
+            {
+                ReceiveCommand(message.SelectSingleElement("body").InnerXml);
+                return;
+            }
+            try
+            {
+                ((CachedHistoryProvider) HistoryProviderFactory.provider).HandleMessage(
+                    message.GetAttribute("from").Split('@')[0], message);
+            }
+            catch(Exception e) { }
+            if (Application.Current == null) return;
+            Application.Current.Dispatcher.adoptAsync(
+                ()=>
+                    ActOnUntypedMessage(message));
+        }
+        public virtual void ActOnUntypedMessage(Element message) { 
             foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
                 actOnStrokeReceived(ink.Stroke);
-            if (Application.Current == null) return;
-            var action = (System.Action)delegate
+            foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
+                actOnScreenshotSubmission(submission.parameters);
+            foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
+                actOnTextReceived(box.Box);
+            foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
+                actOnImageReceived(image.Img);
+            foreach (var autoshape in message.SelectElements<MeTLStanzas.AutoShape>(true))
+                actOnAutoShapeReceived(autoshape.autoshape);
+            foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
+                actOnQuizReceived(quiz.parameters);
+            foreach (var quizAnswer in message.SelectElements<MeTLStanzas.QuizResponse>(true))
+                actOnQuizAnswerReceived(quizAnswer.parameters);
+            foreach (var liveWindow in message.SelectElements<MeTLStanzas.LiveWindow>(true))
+                actOnLiveWindowReceived(liveWindow.parameters);
+            foreach (var dirtyLiveWindow in message.SelectElements<MeTLStanzas.DirtyLiveWindow>(true))
+                actOnDirtyLiveWindowReceived(dirtyLiveWindow.element);
+            foreach (var dirtyText in message.SelectElements<MeTLStanzas.DirtyText>(true))
+                actOnDirtyTextReceived(dirtyText);
+            foreach (var dirtyInk in message.SelectElements<MeTLStanzas.DirtyInk>(true))
+                actOnDirtyStrokeReceived(dirtyInk);
+            foreach (var dirtyImage in message.SelectElements<MeTLStanzas.DirtyImage>(true))
+                actOnDirtyImageReceived(dirtyImage);
+            foreach (var dirtyAutoShape in message.SelectElements<MeTLStanzas.DirtyAutoshape>(true))
+                actOnDirtyAutoshapeReceived(dirtyAutoShape);
+            foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
+                actOnBubbleReceived(bubble.context);
+            foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
             {
-                foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
-                    actOnScreenshotSubmission(submission.parameters);
-                foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
-                    actOnTextReceived(box.Box);
-                foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
-                    actOnImageReceived(image.Img);
-                foreach (var autoshape in message.SelectElements<MeTLStanzas.AutoShape>(true))
-                    actOnAutoShapeReceived(autoshape.autoshape);
-                foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
-                    actOnQuizReceived(quiz.parameters);
-                foreach (var quizAnswer in message.SelectElements<MeTLStanzas.QuizResponse>(true))
-                    actOnQuizAnswerReceived(quizAnswer.parameters);
-                foreach (var liveWindow in message.SelectElements<MeTLStanzas.LiveWindow>(true))
-                    actOnLiveWindowReceived(liveWindow.parameters);
-                foreach (var dirtyLiveWindow in message.SelectElements<MeTLStanzas.DirtyLiveWindow>(true))
-                    actOnDirtyLiveWindowReceived(dirtyLiveWindow.element);
-                foreach (var dirtyText in message.SelectElements<MeTLStanzas.DirtyText>(true))
-                    actOnDirtyTextReceived(dirtyText);
-                foreach (var dirtyInk in message.SelectElements<MeTLStanzas.DirtyInk>(true))
-                    actOnDirtyStrokeReceived(dirtyInk);
-                foreach (var dirtyImage in message.SelectElements<MeTLStanzas.DirtyImage>(true))
-                    actOnDirtyImageReceived(dirtyImage);
-                foreach (var dirtyAutoShape in message.SelectElements<MeTLStanzas.DirtyAutoshape>(true))
-                    actOnDirtyAutoshapeReceived(dirtyAutoShape);
-                foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
-                    actOnBubbleReceived(bubble.context);
-                foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
-                {
-                    var vid = video.Vid;
-                    actOnVideoReceived(vid);
-                }
-                foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
-                    actOnDirtyVideoReceived(dirtyVideo);
-            };
-            if (Application.Current.Dispatcher.Thread != Thread.CurrentThread)
-                Application.Current.Dispatcher.BeginInvoke(action);
-            else
-                action();
-            if (message.SelectSingleElement("body") != null)
-                ReceiveCommand(message.SelectSingleElement("body").InnerXml);
+                var vid = video.Vid;
+                actOnVideoReceived(vid);
+            }
+            foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
+                actOnDirtyVideoReceived(dirtyVideo);
         }
-
         public virtual void actOnScreenshotSubmission(TargettedSubmission submission)
         {
             Commands.ReceiveScreenshotSubmission.Execute(submission);
         }
-
         public virtual void actOnVideoReceived(TargettedVideo video) 
         {
             Commands.ReceiveVideo.Execute(video);
@@ -753,7 +747,6 @@ namespace SandRibbon.Utils.Connection
         {
             Commands.ReceiveQuiz.Execute(quiz);
         }
-
         public virtual void actOnQuizAnswerReceived(QuizAnswer answer)
         {
             Commands.ReceiveQuizAnswer.Execute(answer);
@@ -803,17 +796,11 @@ namespace SandRibbon.Utils.Connection
             {
                 var muc = new MucManager(conn);
                 muc.LeaveRoom(new Jid(location.activeConversation + "@" + Constants.JabberWire.MUC), credentials.name );
+                foreach (var slide in ConversationDetailsProviderFactory.Provider.DetailsOf(location.activeConversation).Slides.Select(s => s.id))
+                    muc.LeaveRoom(new Jid(slide + "@" + Constants.JabberWire.MUC), credentials.name);
             }
             location.activeConversation = room;
             joinRooms();
-            HistoryProviderFactory.provider.Retrieve<PreParser>(
-                onStart,
-                onProgress,
-                finishedParser =>{
-                    Logger.Log(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
-                    Commands.PreParserAvailable.Execute(finishedParser);
-                },
-                location.activeConversation.ToString());
         }
         private void handleSyncMoveReceived(string[] parts)
         {

@@ -6,6 +6,7 @@
     xmlns:SandRibbon="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     Title="Create a quiz" 
     ShowInTaskbar="False"
+    x:Name="createAQuiz"
     WindowStartupLocation="CenterOwner"
     SizeToContent="WidthAndHeight">
     <Window.CommandBindings>
@@ -16,7 +17,7 @@
             <Border DockPanel.Dock="Bottom" Padding="10" Background="{StaticResource BackgroundBlueGradient}" >
                 <Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button x:Name="CommitButton" Content="Create" Command="{x:Static SandRibbon:Commands.CreateQuizStructure}"/>
+                        <Button x:Name="quizCommitButton" Content="Create" Command="{x:Static SandRibbon:Commands.CreateQuizStructure}"/>
                         <Button Click="Close" Content="Cancel"/>
                     </StackPanel>
                 </Grid>
@@ -31,7 +32,7 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Label FontWeight="Bold" Grid.Row="0">Title</Label>
-                        <TextBox FontWeight="Bold" Grid.Row="1" Width="300" x:Name="title" Text="{x:Static q:CreateAQuiz.PROMPT_TEXT}" />
+                        <TextBox FontWeight="Bold" Grid.Row="1" Width="300" x:Name="quizTitle" Text="{x:Static q:CreateAQuiz.PROMPT_TEXT}" />
                         <Label FontWeight="Bold" Grid.Row="2">Question (optional)</Label>
                         <TextBox Grid.Row="3" Height="90" Width="300" x:Name="question" AcceptsReturn="True"></TextBox>
                     </Grid>

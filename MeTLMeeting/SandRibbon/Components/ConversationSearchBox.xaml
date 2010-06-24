@@ -59,7 +59,7 @@
                                     <KeyBinding Key="Enter" Command="{x:Static components:ConversationSearchBox.Search}"/>
                                 </TextBox.InputBindings>
                             </TextBox>
-                            <Button Command="{x:Static components:ConversationSearchBox.Search}" Content="Search" Grid.Column="1" Grid.Row="0"/>
+                            <Button Command="{x:Static components:ConversationSearchBox.Search}" Content="Search" Grid.Column="1" Grid.Row="0" x:Name="searchConversations"/>
                             <Button x:Name="HideConversationSearchBoxButton" Grid.Column="1" Grid.Row="1" Command="{x:Static api:Commands.HideConversationSearchBox}" Margin="10,0,0,0" Visibility="Collapsed" CommandManager.CanExecute="HideConversationSearchBoxButton_CanExecute" Content="Return to current conversation"/>
                         </Grid>
                         <Label Visibility="Collapsed" Foreground="DarkGray" x:Name="ResultsCount"/>
@@ -69,27 +69,30 @@
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <ItemsControl Grid.Column="0" x:Name="SearchResults" HorizontalAlignment="Left" Margin="20,0,0,0" Visibility="Collapsed">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
-                                        <Label FontSize="14" Foreground="Blue" Cursor="Hand" PreviewMouseUp="SelectConversation_MouseDown" Content="{Binding Path=title}" Tag="{Binding Path=jid}">
-                                            <Label.Template>
-                                                <ControlTemplate TargetType="{x:Type Label}">
-                                                    <ContentPresenter Content="{TemplateBinding Content}"/>
-                                                    <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="FontWeight" Value="Bold"/>
-                                                        </Trigger>
-                                                    </ControlTemplate.Triggers>
-                                                </ControlTemplate>
-                                            </Label.Template>
-                                        </Label>
-                                        <Label HorizontalAlignment="Left" Margin="20,0,0,0" Content="{Binding Path=description}"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        <Grid x:Name="resultGoHere">
+                            <TextBlock Visibility="Collapsed" x:Name="testing">HI</TextBlock>
+                            <ItemsControl Grid.Column="0" x:Name="SearchResults" HorizontalAlignment="Left" Margin="20,0,0,0" Visibility="Collapsed">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
+                                            <Label FontSize="14" Foreground="Blue" Cursor="Hand" PreviewMouseUp="SelectConversation_MouseDown" Content="{Binding Path=title}" Tag="{Binding Path=jid}">
+                                                <Label.Template>
+                                                    <ControlTemplate TargetType="{x:Type Label}">
+                                                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Label.Template>
+                                            </Label>
+                                            <Label HorizontalAlignment="Left" Margin="20,0,0,0" Content="{Binding Path=description}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
                         <StackPanel Grid.Column="1">
                             <Label x:Name="recommendedConversationsLabel" Cursor="Hand" PreviewMouseUp="recommendedConversations_PreviewMouseDown">[+] Recommended conversations</Label>
                             <StackPanel x:Name="recommendedConversations" Visibility="Collapsed" Margin="20,0,0,0">

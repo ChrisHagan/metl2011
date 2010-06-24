@@ -717,8 +717,8 @@
                                 <Image Name="icon" Width="40" Source="{TemplateBinding Icon}" HorizontalAlignment="Center"/>
                                 <TextBlock Name="text" Text="{TemplateBinding Text}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <Button Name="AncilliaryButton" Content="." Margin="0,0,0,0" Height="Auto" VerticalAlignment="Stretch"/>
-                            <Popup Child="{TemplateBinding Popup}" StaysOpen="False" PopupAnimation="Fade"/>
+                            <Button DataContext="{Binding ElementName=DoubleButtonPopup}" Click="OpenDoubleButtonPopup" Content="." Margin="0,0,0,0" Height="Auto" VerticalAlignment="Stretch"/>
+                            <Popup Name="DoubleButtonPopup" Child="{TemplateBinding Popup}" StaysOpen="False" PopupAnimation="Fade"/>
                         </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -746,9 +746,10 @@
                             <Setter TargetName="border" Property="Background" Value="{StaticResource PressedGradient}" />
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PressedBorderBrush}"/>
                         </MultiTrigger>
-                        <Trigger Property="SandRibbonInterop:DoubleButton.IsEnabled" Value="false">
+                        <Trigger Property="SandRibbonInterop:DoubleButton.IsEnabled" Value="False">
                             <Setter TargetName="icon" Property="Opacity" Value="0.2"/>
                             <Setter TargetName="text" Property="Opacity" Value="0.2"/>
+                            <Setter TargetName="DoubleButtonPopup" Property="IsOpen" Value="False"/>
                         </Trigger>
                         <Trigger Property="SandRibbonInterop:DoubleButton.ParentActiveVariant" Value="Large">
                             <Setter Property="SandRibbonInterop:DoubleButton.InternalButtonSize" Value="Large"/>

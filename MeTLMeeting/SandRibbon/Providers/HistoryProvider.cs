@@ -12,6 +12,8 @@ using Majestic12;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
 using Ionic.Zip;
+using SandRibbonInterop.MeTLStanzas;
+using agsXMPP.Xml.Dom;
 
 namespace SandRibbon.Providers
 {
@@ -25,7 +27,7 @@ namespace SandRibbon.Providers
             {
                 lock (instanceLock)
                     if (instance == null)
-                        instance = new HttpHistoryProvider();
+                        instance = new CachedHistoryProvider();
                 return instance;
             }
         }
@@ -64,6 +66,78 @@ namespace SandRibbon.Providers
             this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{0}/{1}", author,room));
         }
     }
+    public class CachedHistoryProvider : BaseHistoryProvider {
+        private Dictionary<string, PreParser> cache = new Dictionary<string,PreParser>();
+        private int measure<T>(int acc, T item){
+            return acc + item.ToString().Length;
+        }
+        public static long cacheSize {
+            get {/*Warning: This does not calculate the size you would expect.  It's been left in here mostly as a breakpoint - we're
+                not storing XML at this point, but in memory structures*/
+                return ((CachedHistoryProvider)HistoryProviderFactory.provider).cacheTotalSize;
+            }
+        }
+        private long cacheTotalSize{
+            get
+            {
+                return cache.Values.Aggregate(0, (acc, parser) => 
+                    acc + 
+                        parser.ink.Aggregate(0,measure<TargettedStroke>)+
+                        parser.images.Values.Aggregate(0,measure<TargettedImage>)+
+                        parser.text.Values.Aggregate(0,measure<TargettedTextBox>));
+            }
+        }
+        public override void Retrieve<T>(Action retrievalBeginning, Action<int, int> retrievalProceeding, Action<T> retrievalComplete, string room)
+        {
+            if (!cache.ContainsKey(room) || isPrivateRoom(room))
+            {
+                new HttpHistoryProvider().Retrieve<PreParser>(
+                    delegate { },
+                    (_i, _j) => { },
+                    history =>
+                    {
+                        if (cache.ContainsKey(room))
+                            cache[room].merge<PreParser>(history);
+                        else
+                            cache[room] = history;
+                        //Commands.PreParserAvailable.Execute(history);
+                        retrievalComplete((T)cache[room]);
+                    },
+                    room);
+            }
+            else {
+                retrievalComplete((T)cache[room]);
+            }
+        }
+
+        private bool isPrivateRoom(string room)
+        {
+            try
+            {
+                var parsedRoom = int.Parse(room);
+                return false;
+            }
+            catch(FormatException)
+            {
+                return true;
+            }
+        }
+
+        public void HandleMessage(string to, Element message) {
+            int room = 0;
+            try
+            {
+                room = Int32.Parse(to);
+            }
+            catch (FormatException)
+            {
+                return;
+            }
+            if (!cache.ContainsKey(room.ToString()))
+                cache[room.ToString()] = new PreParser(room);
+            cache[room.ToString()].ActOnUntypedMessage(message);
+        }
+    }
     public class HttpHistoryProvider : BaseHistoryProvider
     {
         public override void Retrieve<T>(Action retrievalBeginning, Action<int,int> retrievalProceeding, Action<T> retrievalComplete, string room)
@@ -71,7 +145,7 @@ namespace SandRibbon.Providers
             Logger.Log(string.Format("HttpHistoryProvider.Retrieve: Beginning retrieve for {0}", room));
             var accumulatingParser = (T)Activator.CreateInstance(typeof(T), PreParser.ParentRoom(room));
             if(retrievalBeginning != null)
-                Application.Current.Dispatcher.BeginInvoke(retrievalBeginning);
+                Application.Current.Dispatcher.adoptAsync(retrievalBeginning);
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
@@ -105,13 +179,19 @@ namespace SandRibbon.Providers
                 {
                     Commands.AllContentRetrieved.Execute(room);
                     Logger.Log(string.Format("{0} retrieval complete at historyProvider", room));
-                    Application.Current.Dispatcher.Invoke(retrievalComplete, (T)accumulatingParser);
-                };
+                    try
+                    {
+                        Application.Current.Dispatcher.Invoke(retrievalComplete, (T)accumulatingParser);
+                    }
+                    catch (Exception ex) {
+                    //    Logger.Log("Exception on the retrievalComplete section: "+ex.Message.ToString()); 
+                    }
+                    };
             worker.RunWorkerAsync(null);
         }
         protected virtual void parseHistoryItem(string item, JabberWire wire)
         {//This takes all the time
-            Application.Current.Dispatcher.BeginInvoke((Action)delegate
+            Application.Current.Dispatcher.adoptAsync((Action)delegate
             {//Creating and event setting on the dispatcher thread?  Might be expensive, might not.  Needs bench.
                 var history = item + "</logCollection>";
                 var parser = new StreamParser();

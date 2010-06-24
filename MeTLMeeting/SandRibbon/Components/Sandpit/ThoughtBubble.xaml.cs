@@ -67,7 +67,6 @@ namespace SandRibbon.Components.Sandpit
 
         private void PreParserAvailable(PreParser parser)
         {
-            Console.WriteLine(string.Format("Bubble:{0} received a preparser", room));
             thought.stack.handwriting.ReceiveStrokes(parser.ink);
             thought.stack.images.ReceiveImages(parser.images.Values);
             foreach (var text in parser.text.Values)
@@ -152,7 +151,7 @@ namespace SandRibbon.Components.Sandpit
                 thoughtView.Width = ((System.Windows.Controls.Canvas)Parent).ActualWidth;
                 thoughtView.Height = ((System.Windows.Controls.Canvas)Parent).ActualHeight;
                 RLWViewBox.Visibility = Visibility.Visible;
-                Dispatcher.BeginInvoke((Action) delegate
+                Dispatcher.adoptAsync(delegate
                 {
                     setThoughtAccess(true);
                 });

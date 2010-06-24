@@ -8,34 +8,70 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     x:Name="SlideMeasure" >
+    <UserControl.Resources>
+        <core:String x:Key="defaultPrivacy">public</core:String>
+        <core:String x:Key="target">presentationSpace</core:String>
+        <core:Double x:Key="thumbAspect">0.75</core:Double>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
-        <SandRibbonInterop:SlideViewingListBox
-                     Grid.Row="1"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                     OverridesDefaultStyle="False"
-                     SelectionChanged="slides_SelectionChanged"
-                     VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" x:Name="slides">
-            <SandRibbonInterop:SlideViewingListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type SandRibbonInterop:ThumbnailInformation}">
-                    <Grid Name="slideItem" Width="{Binding ElementName=SlideMeasure, Path=ActualWidth}" 
-                          Height="{Binding ElementName=SlideMeasure, Path=ActualWidth}" 
-                          Visibility="{Binding Path=Exposed, Converter={x:Static my:Converters.BoolToVisibilityConverter}}">
-                        <Rectangle Margin="6 6 30 6" Width="Auto" Height="Auto" Fill="{StaticResource BackgroundBlueGradient}" />
-                        <Image Margin="10 10 34 10" Stretch="Uniform" Source="{Binding Path=Thumbnail, Converter={x:Static my:Converters.ImageSourceExtractor}}"/>
-                        <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                            <Rectangle Fill="DarkBlue" RadiusX="12" RadiusY="12" Height="20" Width="20"/>
-                            <Label HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                   FontSize="10" Foreground="White" Content="{Binding Path=slideNumber}"/>
-                        </Grid>
-                    </Grid>
-                </DataTemplate>
-            </SandRibbonInterop:SlideViewingListBox.ItemTemplate>
-        </SandRibbonInterop:SlideViewingListBox>
+        <components:ThumbListBox
+             Grid.Row="1"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+             ScrollViewer.VerticalScrollBarVisibility="Visible"
+             OverridesDefaultStyle="False"
+             SelectionChanged="slides_SelectionChanged"
+             VerticalAlignment="Stretch" Height="Auto" 
+             Background="Transparent"
+             HorizontalAlignment="Stretch" Width="Auto" x:Name="slides">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Height">
+                        <Setter.Value>
+                            <MultiBinding Converter="{x:Static my:Converters.multiply}">
+                                <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
+                                <Binding Source="{StaticResource thumbAspect}"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Width" Value="Auto"/>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border
+                                    Name="Border" Margin="1" 
+                                    Padding="5" Background="{StaticResource BackgroundBlueGradient}"
+                                    SnapsToDevicePixels="true" CornerRadius="2">
+                                    <Grid>
+                                        <Viewbox IsHitTestVisible="False">
+                                            <ContentPresenter />
+                                        </Viewbox>
+                                        <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
+                                                HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
+                                                VerticalAlignment="Bottom" 
+                                                BorderThickness="1">
+                                            <Label Content="{Binding Path=slideNumber}"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedGradient}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource MouseOverGradient}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </components:ThumbListBox>
     </Grid>
 </UserControl>

@@ -40,7 +40,7 @@ namespace SandRibbon.Components
         }
         public void SetPopulation(List<Friend> newPopulation)
         {
-            Dispatcher.BeginInvoke((Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 foreach (var friend in newPopulation)
                     AddFriend(friend);
@@ -55,7 +55,10 @@ namespace SandRibbon.Components
         }
         public void Join(string who)
         {
-            Dispatcher.BeginInvoke((Action)(() => SetPopulation(new List<Friend> {new Friend {Name = who}})));
+            Dispatcher.adoptAsync(
+                delegate{
+                    SetPopulation(new List<Friend> {new Friend {Name = who}});
+                });
         }
         public void Flush()
         {
@@ -74,7 +77,7 @@ namespace SandRibbon.Components
         }
         public void Ping(string who, int where)
         {
-            Dispatcher.BeginInvoke((Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 var friend = ensure(who, where);
                 friend.Ping();
@@ -84,7 +87,7 @@ namespace SandRibbon.Components
         }
         public void Move(string who, int where)
         {
-            Dispatcher.BeginInvoke((Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 var friend = ensure(who, where);
                 friend.MoveTo(where);

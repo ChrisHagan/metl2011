@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Utility;
+using SandRibbon.Providers;
 using SandRibbon.Utils.Connection;
 using System.Collections.Generic;
 using SandRibbonInterop;
@@ -72,6 +73,8 @@ namespace SandRibbon.Components
             stack.images.EditingModeChanged += modeChanged;
             stack.text.EditingModeChanged += modeChanged;
         }
+
+
         private void Projector_MouseLeave(object sender, MouseEventArgs e)
         {
             PenUp();
@@ -89,10 +92,27 @@ namespace SandRibbon.Components
         private void setLayer(object obj)
         {
             setProjectionLayers();
+            try
+            {
+                
+            HistoryProviderFactory.provider.Retrieve<PreParser>(
+                null,
+                null,
+                finishedParser =>{
+                    PreParserAvailable(finishedParser);
+                },
+                Globals.slide.ToString());
+            }
+            catch (Exception)
+            {
+            }
+            stack.handwriting.me = "projector";
+            stack.images.me = "projector";
+            stack.text.me = "projector";
         }
         private void setProjectionLayers()
         {
-            var doSetProjectionLayers = (Action) delegate
+            Dispatcher.adoptAsync(delegate
                                                      {
                                                          var projectorImages = stack.images;
                                                          var projectorText = stack.text;
@@ -109,11 +129,7 @@ namespace SandRibbon.Components
                                                              canvas.EditingMode = InkCanvasEditingMode.None;
                                                              canvas.Opacity = 1;
                                                          }
-                                                     };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doSetProjectionLayers);
-            else
-                doSetProjectionLayers();
+                                                     });
         }
         private static Stroke strokeInProgress;
         private static Projector instance;
@@ -122,8 +138,10 @@ namespace SandRibbon.Components
         private static Color deleteColor = Colors.Red;
         private static string currentMode;
         private static string privacy;
-        private void PreParserAvailable(PreParser parser)
+        public void PreParserAvailable(PreParser parser)
         {
+
+            stack.Flush();
             stack.handwriting.ReceiveStrokes(parser.ink);
             stack.images.ReceiveImages(parser.images.Values);
             foreach (var text in parser.text.Values)

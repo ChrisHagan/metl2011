@@ -184,24 +184,20 @@ namespace SandRibbon.Components.Canvas
         }
         private void ReceiveImage(TargettedImage image)
         {
-            Action doAdd = () => AddImage(image.image);
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doAdd);
-            else
-                doAdd();
+            Dispatcher.adoptAsync(delegate{
+                AddImage(image.image);
+            });
         }
         private void ReceiveVideo(TargettedVideo video)
         {
-            Action doAdd = () =>
+            //videos currently disabled.  Remove the return to re-enable.
+            return;
+            Dispatcher.adoptAsync(delegate
             {
                 video.video.MediaElement.LoadedBehavior = MediaState.Manual;
                 video.video.MediaElement.ScrubbingEnabled = true;
                 AddVideo(video.video);
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doAdd);
-            else
-                doAdd();
+            });
         }
         public void AddVideo(SandRibbonInterop.Video element)
         {
@@ -216,13 +212,15 @@ namespace SandRibbon.Components.Canvas
         }
         private void ensureAllImagesHaveCorrectPrivacy()
         {
-            var images = new List<System.Windows.Controls.Image>();
-            foreach (var child in Children)
-                if (child is System.Windows.Controls.Image)
-                    images.Add((System.Windows.Controls.Image)child);
-            foreach (System.Windows.Controls.Image image in images)
-                if (image.tag().privacy == "private")
-                    addPrivateRegion(image);
+            Dispatcher.adoptAsync(delegate{
+                var images = new List<System.Windows.Controls.Image>();
+                foreach (var child in Children)
+                    if (child is System.Windows.Controls.Image)
+                        images.Add((System.Windows.Controls.Image)child);
+                foreach (System.Windows.Controls.Image image in images)
+                    if (image.tag().privacy == "private")
+                        addPrivateRegion(image);
+            });
         }
         private void addPrivateRegion(System.Windows.Controls.Image image)
         {
@@ -262,25 +260,17 @@ namespace SandRibbon.Components.Canvas
 
         private void doDirtyImage(string imageId)
         {
-            Action doDirty = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 dirtyImage(imageId);
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDirty);
-            else
-                doDirty();
+            });
         }
         private void doDirtyVideo(string imageId)
         {
-            Action doDirty = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 dirtyVideo(imageId);
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDirty);
-            else
-                doDirty();
+            });
         }
 
         private void dirtyImage(string imageId)
@@ -343,15 +333,12 @@ namespace SandRibbon.Components.Canvas
         }
         public void FlushImages()
         {
-            var flush = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 Background = Brushes.Transparent;
                 Children.Clear();
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(flush);
-            else
-                flush();
+            });
+           
         }
         protected override void HandlePaste()
         {
@@ -679,7 +666,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {
-            if (target == "presentationSpace" && canEdit && Globals.me != "Projector")
+            if (target == "presentationSpace" && canEdit && me != "projector")
             {
                 var fileBrowser = new OpenFileDialog
                                                  {
@@ -776,6 +763,8 @@ namespace SandRibbon.Components.Canvas
                     dropImageOnCanvas(fileName, pos, count);
                     break;
                 case FileType.Video:
+                    MessageBox.Show("The object you're trying to import is a video.  At present, MeTL does not support videos.");
+                    return;
                     dropVideoOnCanvas(fileName, pos, count);
                     break;
             }
@@ -1006,13 +995,15 @@ namespace SandRibbon.Components.Canvas
         }
         public void SetValue(string value)
         {
+            Image.dropImageOnCanvas(value, new Point(0,0), 1);
+            /*
             Image.ParseInjectedStream(value, element => Image.Dispatcher.adopt((Action)delegate
-                                                                                            {
-                                                                                                foreach (var image in element.SelectElements<MeTLStanzas.Image>(true))
-                                                                                                {
-                                                                                                    Image.dropImageOnCanvas(image.source.ToString(), new Point { X = image.x, Y = image.y }, 1);
-                                                                                                }
-                                                                                            }));
+                                        {
+                                            foreach (var image in element.SelectElements<MeTLStanzas.Image>(true))
+                                            {
+                                                //Image.dropImageOnCanvas(image.source.ToString(), new Point { X = image.x, Y = image.y }, 1);
+                                            }
+                                                                                            }));**/
         }
         bool IValueProvider.IsReadOnly
         {

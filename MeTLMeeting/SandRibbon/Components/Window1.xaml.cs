@@ -73,8 +73,9 @@ namespace SandRibbon
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerPoint, mustBeLoggedIn));
             Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(StartPowerPointLoad, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(CreateConversation));
-            Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeInConversation));
+            Commands.PreShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowPrintConversationDialog));
+            Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(CreateConversation));
+            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
@@ -126,11 +127,14 @@ namespace SandRibbon
         }
         private void PowerPointLoadFinished(object unused)
         {
-            Dispatcher.BeginInvoke((Action)(finishedPowerpoint));
+            Dispatcher.adoptAsync((finishedPowerpoint));
         }
         private void PowerPointProgress(string progress)
         {
-            Dispatcher.BeginInvoke((Action)(() => showPowerPointProgress(progress)));
+            Dispatcher.adoptAsync(delegate
+            {
+                showPowerPointProgress(progress);
+            });
         }
         private void ChangeTab(string which)
         {
@@ -221,13 +225,20 @@ namespace SandRibbon
                     break;
             }
         }
+        private void ShowPrintConversationDialog(object _unused)
+        {
+            ShowPowerpointBlocker("Printing Dialog Open");
+            Commands.ShowPrintConversationDialog.Execute(null);
+        }
         private void CreateConversation(object _unused)
         {
             ShowPowerpointBlocker("Creating Conversation Dialog Open");
+            Commands.CreateConversationDialog.Execute(null);
         }
         private void EditConversation(object _unused)
         {
             ShowPowerpointBlocker("Editing Conversation Dialog Open");
+            Commands.EditConversation.Execute(null);
         }
         private void SetIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
         {
@@ -263,14 +274,10 @@ namespace SandRibbon
             var username = myFile.ReadToEnd();
             MessageBox.Show("Logging in as {0}", username);
             JabberWire.SwitchServer("staging");
-            var doDetails = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 Title = username + " MeTL waiting for wakeup";
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doDetails);
-            else
-                doDetails();
+            });
             Commands.SetIdentity.Execute(new JabberWire.Credentials { authorizedGroups = new List<JabberWire.AuthorizedGroup>(), name = username, password = "examplePassword" });
         }
         private static object reconnectionLock = new object();
@@ -324,11 +331,23 @@ namespace SandRibbon
                 Console.WriteLine("window1");
                 Commands.LoggedIn.Execute(userInformation.credentials.name);
                 var details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
+                if (details.Author == Globals.me)
+                    Commands.SetPrivacy.Execute("public");
+                else
+                    Commands.SetPrivacy.Execute("private");
                 applyPermissions(details.Permissions);
                 Commands.UpdateConversationDetails.Execute(details);
                 Logger.Log("Joined conversation " + title);
                 Commands.RequerySuggested(Commands.SetConversationPermissions);
+                if (automatedTest(details.Title))
+                    ribbon.SelectedTab = ribbon.Tabs[1];
             });
+        }
+
+        private bool automatedTest(string conversationName)
+        {
+            if (Globals.me.Contains("dhag") && conversationName.ToLower().Contains("automated")) return true;
+            return false;
         }
         private string messageFor(ConversationDetails details)
         {
@@ -340,9 +359,9 @@ namespace SandRibbon
         }
         private void MoveTo(int slide)
         {
-            if (userInformation.policy.isAuthor && userInformation.policy.isSynced)
+            if ((userInformation.policy.isAuthor && userInformation.policy.isSynced) || (Globals.synched && userInformation.policy.isAuthor))
                 Commands.SendSyncMove.Execute(slide);
-            var moveTo = (Action)delegate
+            Dispatcher.adoptAsync(delegate
                                      {
                                          if (canvas.Visibility == Visibility.Collapsed)
                                              canvas.Visibility = Visibility.Visible;
@@ -350,11 +369,7 @@ namespace SandRibbon
                                          scroll.Height = Double.NaN;
                                          canvas.Width = Double.NaN;
                                          canvas.Height = Double.NaN;
-                                     };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(moveTo);
-            else
-                moveTo();
+                                     });
             CommandManager.InvalidateRequerySuggested();
         }
 
@@ -440,7 +455,7 @@ namespace SandRibbon
             {
                 //We're not anywhere yet so update away
             }
-            var doUpdate = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 userInformation.location.availableSlides = details.Slides.Select(s => s.id).ToList();
                 HideTutorial();
@@ -448,11 +463,7 @@ namespace SandRibbon
                 var isAuthor = (details.Author != null) && details.Author == userInformation.credentials.name;
                 userInformation.policy.isAuthor = isAuthor;
                 Commands.RequerySuggested();
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doUpdate);
-            else
-                doUpdate();
+            });
         }
         private void UpdateTitle()
         {
@@ -482,7 +493,7 @@ namespace SandRibbon
         private void finishedPowerpoint()
         {
             ProgressDisplay.Children.Clear();
-            InputBlocker.Visibility = Visibility.Visible;
+            InputBlocker.Visibility = Visibility.Collapsed;
             HideProgressBlocker();
         }
         private void connect(string username, string pass, int location, string conversation)
@@ -777,33 +788,15 @@ namespace SandRibbon
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
         private void sleep(object _obj)
         {
-            var doHide = (Action)Hide;
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doHide);
-            else
-                doHide();
+            Dispatcher.adoptAsync(delegate { Hide(); });
         }
         private void wakeUp(object _obj)
         {
-            var doShow = (Action)delegate
+            Dispatcher.adoptAsync(delegate
             {
                 Show();
                 WindowState = System.Windows.WindowState.Maximized;
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doShow);
-            else
-                doShow();
-        }
-        private void minimizeWindow()
-        {
-            Hide();
-            if (m_notifyIcon != null)
-                m_notifyIcon.ShowBalloonTip(2000);
-        }
-        void CheckTrayIcon()
-        {
-            ShowTrayIcon(!IsVisible);
+            });
         }
         void ShowTrayIcon(bool show)
         {
@@ -898,4 +891,5 @@ namespace SandRibbon
             updateCurrentPenAfterZoomChanged();
         }
     }
+
 }
