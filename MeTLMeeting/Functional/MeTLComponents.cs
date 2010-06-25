@@ -7,6 +7,7 @@ using Divelements.SandRibbon;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Controls.Primitives;
 using SandRibbon.Components;
+using SandRibbon.Quizzing;
 using Keys = System.Windows.Forms.SendKeys;
 using System.Windows.Automation;
 using Button=System.Windows.Forms.Button;
@@ -269,13 +270,46 @@ namespace Functional
     public class Quiz
     {
         private AutomationElement _open;
+        private AutomationElement _parent;
         public Quiz(AutomationElement parent)
         {
+            _parent = parent;
             _open = parent.Descendant("createQuiz");    
         }
         public void open()
         {
             _open.Invoke();
+        }
+
+        public void openQuiz()
+        {
+            var allButtons = _parent.Descendants(typeof (Button));
+            foreach(AutomationElement button in allButtons)
+            {
+                if(button.Current.Name.ToLower().Contains("quiz: 1"))
+                {
+                    button.Invoke();
+                    return;
+                }
+            }
+        }
+    }
+    public class QuizAnswer
+    {
+        private AutomationElement _buttons;
+        public QuizAnswer()
+        {
+             var parent = AutomationElement.RootElement
+                                        .FindFirst(TreeScope.Children, 
+                                                    new PropertyCondition(AutomationElement.AutomationIdProperty, 
+                                                    "answerAQuiz"));
+            _buttons = parent.Descendant("quizOptions"); 
+        }
+        public void answer()
+        {
+
+            ((SelectionItemPattern)_buttons.Children(typeof(ListBoxItem))[0]
+                .GetCurrentPattern(SelectionItemPattern.Pattern)).Select();
         }
     }
     public class QuizCreate

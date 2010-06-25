@@ -6,11 +6,3 @@ C:\sandRibbon\SandRibbonObjects\bin\Release\Newtonsoft.Json.dll
 C:\sandRibbon\SandRibbonObjects\obj\Release\ResolveAssemblyReference.cache
 C:\sandRibbon\SandRibbonObjects\obj\Release\SandRibbonObjects.dll
 C:\sandRibbon\SandRibbonObjects\obj\Release\SandRibbonObjects.pdb
-C:\specialMeTL\MeTLMeeting\SandRibbonObjects\bin\Release\SandRibbonObjects.dll
-C:\specialMeTL\MeTLMeeting\SandRibbonObjects\bin\Release\SandRibbonObjects.pdb
-C:\specialMeTL\MeTLMeeting\SandRibbonObjects\bin\Release\agsXMPP.dll
-C:\specialMeTL\MeTLMeeting\SandRibbonObjects\bin\Release\Divan.dll
-C:\specialMeTL\MeTLMeeting\SandRibbonObjects\bin\Release\Newtonsoft.Json.dll
-C:\specialMeTL\MeTLMeeting\SandRibbonObjects\obj\Release\ResolveAssemblyReference.cache
-C:\specialMeTL\MeTLMeeting\SandRibbonObjects\obj\Release\SandRibbonObjects.dll
-C:\specialMeTL\MeTLMeeting\SandRibbonObjects\obj\Release\SandRibbonObjects.pdb

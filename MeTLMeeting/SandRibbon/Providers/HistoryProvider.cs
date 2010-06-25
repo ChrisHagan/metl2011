@@ -97,7 +97,7 @@ namespace SandRibbon.Providers
                     history =>
                     {
                         if (cache.ContainsKey(room))
-                            cache[room].merge<PreParser>(history);
+                            cache[room] = cache[room].merge<PreParser>(history);
                         else
                             cache[room] = history;
                         //Commands.PreParserAvailable.Execute(history);

@@ -63,8 +63,7 @@ namespace HeadfulClassRoom
                         x = 0;
                         y += height;
                     }
-                }
-                /*
+                }/*
                 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 int user = 22;
                 foreach (AutomationElement window in windows)
@@ -78,6 +77,7 @@ namespace HeadfulClassRoom
                     new Functional.Login((AutomationElement)window).submit();
                 foreach (var window in windows)
                 {
+                    Thread.Sleep(1000);
                     joinConversation(window);
                 }
                 Thread.Sleep(3000);
@@ -85,9 +85,10 @@ namespace HeadfulClassRoom
                 Thread.Sleep(1000);
                 createAQuiz();
 
-                answerAQuiz(windows[1]);
-                
-                 */
+                openQuizToAnswer(windows[1]);
+                Thread.Sleep(1000);
+                answerQuiz(windows[1]);
+ */
                  Console.ReadLine();
             }
             catch (Exception e)
@@ -96,9 +97,21 @@ namespace HeadfulClassRoom
             }
         }
 
-        private static void answerAQuiz(AutomationElement element)
+        private static void answerQuiz(AutomationElement element)
         {
-            new Quiz(element);
+            new QuizAnswer().answer();
+        }
+
+        private static void openQuizToAnswer(AutomationElement element)
+        {
+            var elements = AutomationElement
+                        .RootElement
+                        .FindAll(TreeScope.Children, 
+                                    new PropertyCondition(AutomationElement.AutomationIdProperty, 
+                                    "ribbonWindow"));
+            Thread.Sleep(1000);
+            foreach(AutomationElement window in elements)
+                new Quiz(window).openQuiz();
         }
 
         private static void openAQuiz(AutomationElement element)

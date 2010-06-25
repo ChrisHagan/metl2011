@@ -94,13 +94,30 @@ namespace SandRibbon.Components
                 return true;
             return false;
         }
+        private bool isMyPrivateParser(PreParser parser)
+        {
+            if (parser.ink.Where(s => s.privacy == "private" && s.author == Globals.me).Count() > 0)
+                return true;
+            if (parser.text.Where(s => s.Value.privacy == "private" && s.Value.author == Globals.me).Count() > 0)
+                return true;
+            if (parser.images.Where(s => s.Value.privacy == "private" && s.Value.author == Globals.me).Count() > 0)
+                return true;
+            if (parser.videos.Where(s => s.Value.privacy == "private" && s.Value.author == Globals.me).Count() > 0)
+                return true;
+            if (parser.autoshapes.Where(s => s.Value.privacy == "private" && s.Value.author == Globals.me).Count() > 0)
+                return true;
+            return false;
+        }
         private void PreParserAvailable(PreParser parser)
         {
             var id = parser.location.currentSlide;
-            if (isParserPrivate(parser)) return;
+            if (isParserPrivate(parser) && !isMyPrivateParser(parser)) return;
             if (IsParserNotEmpty(parser))
             {
-                parsers[id] = parser;
+                if (parsers.ContainsKey(id))
+                    parsers[id] = parsers[id].merge(parser);
+                else
+                    parsers[id] = parser;
             }
             if (ThumbListBox.visibleContainers.ContainsKey(id))
                 Dispatcher.adoptAsync(delegate
@@ -109,6 +126,7 @@ namespace SandRibbon.Components
                                                   ThumbListBox.Add(id, parsers[id]);
                                           });
         }
+
         private bool canAddSlide(object _slide)
         {
             try

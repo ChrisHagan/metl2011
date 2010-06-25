@@ -5,15 +5,16 @@
     xmlns:sr="clr-namespace:SandRibbon"
     WindowStyle="ToolWindow"
     Topmost="True"
+    x:Name="answerAQuiz"
     Title="Answer Quiz">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <StackPanel Orientation="Vertical"> 
             <Label Content="{Binding Path=title, Converter={x:Static quiz:AnswerAQuiz.TitleConverter}}" />
             <Label Content="{Binding Path=question, Converter={x:Static quiz:AnswerAQuiz.QuestionConverter}}" />
-            <ListBox SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}">
+            <ListBox x:Name="quizOptions" SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" >
+                        <StackPanel Orientation="Horizontal" x:Name="quizAnswers">
                             <quiz:QuizButton />
                             <Label Content="{Binding Path=optionText}" />
                         </StackPanel>

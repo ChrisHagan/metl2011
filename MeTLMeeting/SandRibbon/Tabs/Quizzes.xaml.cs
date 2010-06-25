@@ -36,8 +36,13 @@ namespace SandRibbon.Tabs
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(updateConversationDetails));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
             quizzes.ItemsSource = activeQuizes;
             
+        }
+        private void joinConversation(object obj)
+        {
+            activeQuizes = new ObservableCollection<QuizQuestion>();
         }
         private void updateConversationDetails(object obj)
         {
@@ -66,7 +71,6 @@ namespace SandRibbon.Tabs
         }
         private void MoveTo(object obj)
         {
-            activeQuizes = new ObservableCollection<QuizQuestion>();
             quizzes.ItemsSource = activeQuizes;
         }
         private void ReceiveQuizAnswer(QuizAnswer answer)

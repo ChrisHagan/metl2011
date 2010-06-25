@@ -48,7 +48,7 @@ namespace SandRibbon.Utils.Connection
             var returnParser = (T)Activator.CreateInstance(typeof(T), location.currentSlide);
             foreach (var parser in new[] { otherParser, this})
             {
-                returnParser.ink.AddRange(parser.ink);
+                returnParser.ink.AddRange(parser.ink.Where(s => !returnParser.ink.Contains(s)));
                 returnParser.quizzes.AddRange(parser.quizzes);
                 returnParser.quizAnswers.AddRange(parser.quizAnswers);
                 foreach (var kv in parser.text)

@@ -63,15 +63,12 @@ namespace Functional
             TeacherMoveForward();
             EditConversation();
             Thread.Sleep(2000);
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 3; i++)
             {
                 InjectContent();
                 TeacherMoveForward();
             }
             Thread.Sleep(3000);
-            OpenQuiz();
-            Thread.Sleep(2000);
-            CreateQuiz();
             InjectStudentStrokes();
             Thread.Sleep(2000);
             StudentSubmitScreenshot();
@@ -79,8 +76,36 @@ namespace Functional
             TeacherViewSubmissions();
             Thread.Sleep(2000);
             TeacherImportSubmission();
-
-
+            Thread.Sleep(2000);
+            OpenQuiz();
+            Thread.Sleep(1000);
+            CreateQuiz();
+            Thread.Sleep(2000);
+            openQuizToAnswer();
+            Thread.Sleep(3000);
+            answerAQuiz();
+        }
+        [TestMethod]
+        public void TeacherConversationCreation()
+        {
+            LocateAndLogin();
+            CreateConversation();
+        }
+        [TestMethod]
+        private void openQuizToAnswer()
+        {
+            var elements = AutomationElement
+                        .RootElement
+                        .FindAll(TreeScope.Children, 
+                                    new PropertyCondition(AutomationElement.AutomationIdProperty, 
+                                    "ribbonWindow"));
+            foreach(AutomationElement window in elements)
+                new Quiz(window).openQuiz();
+        }
+        [TestMethod]
+        private void answerAQuiz()
+        {
+            new QuizAnswer().answer();
         }
         [TestMethod]
         private void OpenQuiz()
@@ -92,12 +117,7 @@ namespace Functional
         {
             new QuizCreate().options().create();
         }
-        [TestMethod]
-        public void TeacherConversationCreation()
-        {
-            LocateAndLogin();
-            CreateConversation();
-        }
+
         [TestMethod]
         public void StudentSubmitScreenshot()
         {
