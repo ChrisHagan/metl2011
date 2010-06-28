@@ -281,8 +281,8 @@ namespace SandRibbon.Components
                 var proposedIndex = source.SelectedIndex;
                 var proposedId = ((ThumbnailInformation)source.SelectedItem).slideId;
                 if (proposedId == currentSlideId) return;
-                if(currentSlideId != -1)
-                    Commands.SneakInto.Execute(currentSlideId.ToString());
+   //             if(currentSlideId != -1)
+   //                 Commands.SneakInto.Execute(currentSlideId.ToString());
                 currentSlideIndex = proposedIndex;
                 currentSlideId = proposedId;
                 Commands.MoveTo.Execute(currentSlideId);
@@ -299,7 +299,6 @@ namespace SandRibbon.Components
             var container = (ListBoxItem)element;
             container.Content = null;
             visibleContainers.Remove(slide.slideId);
-            Console.WriteLine(string.Format("- {0} containers onscreen", visibleContainers.Count()));
         }
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
         {

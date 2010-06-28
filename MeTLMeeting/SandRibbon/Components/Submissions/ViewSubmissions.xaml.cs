@@ -40,14 +40,35 @@ namespace SandRibbon.Components.Submissions
         {
             submissionList.Add(submission);
         }
-
+        private bool IsParserNotEmpty(PreParser parser)
+        {
+            return (parser.images.Count > 0
+                || parser.ink.Count > 0
+                || parser.text.Count > 0
+                || parser.videos.Count > 0
+                || parser.bubbleList.Count > 0
+                || parser.autoshapes.Count > 0);
+        }
+        private bool isParserPrivate(PreParser parser)
+        {
+            if (parser.ink.Where(s => s.privacy == "private").Count() > 0)
+                return true;
+            if (parser.text.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            if (parser.images.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            if (parser.videos.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            if (parser.autoshapes.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            return false;
+        }
         private void importSubmission(object sender, ExecutedRoutedEventArgs e)
         {
             var item = submissions.SelectedItem;
             DelegateCommand<PreParser> onPreparserAvailable = null;
             onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
                {
-                   
                    Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
                    var image = (TargettedSubmission) item;
                    Commands.ImageDropped.Execute(new ImageDrop { 
