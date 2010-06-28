@@ -786,6 +786,12 @@ namespace SandRibbon.Utils.Connection
                     Commands.PreParserAvailable.Execute(finishedParser);
                 },
                 room);
+            HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
+                onStart,
+                onProgress,
+                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                credentials.name,
+                room);
         }
         public void SneakOutOf(string room)
         {

@@ -96,9 +96,9 @@ namespace SandRibbon.Providers
                     (_i, _j) => { },
                     history =>
                     {
-                        if (cache.ContainsKey(room))
+                        /*if (cache.ContainsKey(room))
                             cache[room] = cache[room].merge<PreParser>(history);
-                        else
+                        else&*/
                             cache[room] = history;
                         //Commands.PreParserAvailable.Execute(history);
                         retrievalComplete((T)cache[room]);

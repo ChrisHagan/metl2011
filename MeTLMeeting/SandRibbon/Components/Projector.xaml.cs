@@ -141,12 +141,40 @@ namespace SandRibbon.Components
         public void PreParserAvailable(PreParser parser)
         {
 
-            stack.Flush();
-            stack.handwriting.ReceiveStrokes(parser.ink);
-            stack.images.ReceiveImages(parser.images.Values);
-            foreach (var text in parser.text.Values)
-                stack.text.doText(text);
+            if (!isPrivate(parser) && IsParserNotEmpty(parser))
+            {
+                stack.Flush();
+                stack.handwriting.ReceiveStrokes(parser.ink);
+                stack.images.ReceiveImages(parser.images.Values);
+                foreach (var text in parser.text.Values)
+                    stack.text.doText(text);
+            }
         }
+        private bool IsParserNotEmpty(PreParser parser)
+        {
+            return (parser.images.Count > 0
+                    || parser.ink.Count > 0
+                    || parser.text.Count > 0
+                    || parser.videos.Count > 0
+                    || parser.bubbleList.Count > 0
+                    || parser.autoshapes.Count > 0);
+        }
+
+        private bool isPrivate(PreParser parser)
+        {
+            if (parser.ink.Where(s => s.privacy == "private").Count() > 0)
+                return true;
+            if (parser.text.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            if (parser.images.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            if (parser.videos.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            if (parser.autoshapes.Where(s => s.Value.privacy == "private").Count() > 0)
+                return true;
+            return false;
+        }
+
         private void SetInkCanvasMode(string mode)
         {
             currentMode = mode;

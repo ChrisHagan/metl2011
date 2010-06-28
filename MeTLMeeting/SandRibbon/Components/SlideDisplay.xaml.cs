@@ -30,6 +30,7 @@ namespace SandRibbon.Components
         public int currentSlideId = -1;
         public ObservableCollection<ThumbnailInformation> thumbnailList = new ObservableCollection<ThumbnailInformation>();
         public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
+        public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
         public bool isAuthor = false;
         private bool moveTo;
         private int realLocation;
@@ -111,19 +112,29 @@ namespace SandRibbon.Components
         private void PreParserAvailable(PreParser parser)
         {
             var id = parser.location.currentSlide;
-            if (isParserPrivate(parser) && !isMyPrivateParser(parser)) return;
+            var myPrivateParser = isMyPrivateParser(parser);
+            if (isParserPrivate(parser) && !myPrivateParser) return;
             if (IsParserNotEmpty(parser))
             {
-                if (parsers.ContainsKey(id))
-                    parsers[id] = parsers[id].merge(parser);
-                else
+                if (!myPrivateParser)
+                {
                     parsers[id] = parser;
+                }
+                else
+                {
+                    privateParsers[id] = parser;
+                }
             }
             if (ThumbListBox.visibleContainers.ContainsKey(id))
                 Dispatcher.adoptAsync(delegate
                                           {
                                               if (parsers.ContainsKey(id))
-                                                  ThumbListBox.Add(id, parsers[id]);
+                                              {
+                                                  if(privateParsers.ContainsKey(id))
+                                                    ThumbListBox.Add(id, parsers[id].merge(privateParsers[id]));
+                                                  else
+                                                    ThumbListBox.Add(id, parsers[id]);
+                                              }
                                           });
         }
 
@@ -158,6 +169,7 @@ namespace SandRibbon.Components
         {
             Dispatcher.adoptAsync(delegate
                                       {
+
                                           realLocation = slide;
                                           var typeOfDestination =
                                               Globals.conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
@@ -269,6 +281,8 @@ namespace SandRibbon.Components
                 var proposedIndex = source.SelectedIndex;
                 var proposedId = ((ThumbnailInformation)source.SelectedItem).slideId;
                 if (proposedId == currentSlideId) return;
+                if(currentSlideId != -1)
+                    Commands.SneakInto.Execute(currentSlideId.ToString());
                 currentSlideIndex = proposedIndex;
                 currentSlideId = proposedId;
                 Commands.MoveTo.Execute(currentSlideId);

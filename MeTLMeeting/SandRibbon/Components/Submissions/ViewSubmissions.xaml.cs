@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Canvas;
+using SandRibbon.Utils.Connection;
 using SandRibbonInterop.MeTLStanzas;
 
 namespace SandRibbon.Components.Submissions
@@ -43,9 +44,10 @@ namespace SandRibbon.Components.Submissions
         private void importSubmission(object sender, ExecutedRoutedEventArgs e)
         {
             var item = submissions.SelectedItem;
-            DelegateCommand<object> onPreparserAvailable = null;
-            onPreparserAvailable = new DelegateCommand<object>((_obj) =>
+            DelegateCommand<PreParser> onPreparserAvailable = null;
+            onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
                {
+                   
                    Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
                    var image = (TargettedSubmission) item;
                    Commands.ImageDropped.Execute(new ImageDrop { 

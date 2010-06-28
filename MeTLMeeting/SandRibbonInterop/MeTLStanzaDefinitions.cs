@@ -1110,7 +1110,6 @@ namespace SandRibbonInterop.MeTLStanzas
                 };
                 InkCanvas.SetLeft(image, this.x);
                 InkCanvas.SetTop(image, this.y);
-                Console.WriteLine(string.Format("Reified and laid out image {0}", this.tag));
                 return image;
             }
             public static ImageSource GetCachedImage(string url)
