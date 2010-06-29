@@ -75,8 +75,15 @@ namespace SandRibbon.Tabs
         }
         private void ReceiveQuizAnswer(QuizAnswer answer)
         {
-            if(answers.ContainsKey(answer.id))
+            if (answers.ContainsKey(answer.id))
+            {
+                if(answers[answer.id].Where(a => a.answerer == answer.answerer).Count() > 0)
+                {
+                    var oldAnswer = answers[answer.id].Where(a => a.answerer == answer.answerer).First();
+                    answers[answer.id].Remove(oldAnswer);
+                }
                 answers[answer.id].Add(answer);
+            }
             else
             {
                 var newList = new ObservableCollection<QuizAnswer>();

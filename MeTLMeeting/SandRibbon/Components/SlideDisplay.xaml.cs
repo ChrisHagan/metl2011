@@ -281,13 +281,28 @@ namespace SandRibbon.Components
                 var proposedIndex = source.SelectedIndex;
                 var proposedId = ((ThumbnailInformation)source.SelectedItem).slideId;
                 if (proposedId == currentSlideId) return;
-   //             if(currentSlideId != -1)
+     //           if (currentSlideId != -1)
+       //             updateThumbnails(currentSlideId.ToString());
    //                 Commands.SneakInto.Execute(currentSlideId.ToString());
                 currentSlideIndex = proposedIndex;
                 currentSlideId = proposedId;
                 Commands.MoveTo.Execute(currentSlideId);
                 slides.ScrollIntoView(slides.SelectedItem);
             }
+        }
+        private void updateThumbnails(string room)
+        {
+            HistoryProviderFactory.provider.Retrieve<PreParser>(
+                null,
+                null,
+                PreParserAvailable,
+                room);
+            HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
+                null ,
+                null,
+                PreParserAvailable,
+                Globals.me,
+                room);
         }
     }
     public class ThumbListBox : ListBox
