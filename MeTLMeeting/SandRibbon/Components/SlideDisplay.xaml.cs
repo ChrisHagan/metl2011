@@ -281,15 +281,17 @@ namespace SandRibbon.Components
                 var proposedIndex = source.SelectedIndex;
                 var proposedId = ((ThumbnailInformation)source.SelectedItem).slideId;
                 if (proposedId == currentSlideId) return;
-     //           if (currentSlideId != -1)
-       //             updateThumbnails(currentSlideId.ToString());
-   //                 Commands.SneakInto.Execute(currentSlideId.ToString());
+                if (currentSlideId != -1)
+                    updateThumbnails(currentSlideId.ToString());
                 currentSlideIndex = proposedIndex;
                 currentSlideId = proposedId;
                 Commands.MoveTo.Execute(currentSlideId);
                 slides.ScrollIntoView(slides.SelectedItem);
             }
         }
+        //this needs to happen here instead of using the preparser as it will interfere with 
+        //screenshot submission if we do it that way. 
+
         private void updateThumbnails(string room)
         {
             HistoryProviderFactory.provider.Retrieve<PreParser>(

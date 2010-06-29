@@ -28,7 +28,14 @@ namespace SandRibbon.Components.Submissions
         {
             InitializeComponent();
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(recieveSubmission));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
         }
+
+        private void joinConversation(object obj)
+        {
+            submissionList = new ObservableCollection<TargettedSubmission>();
+        }
+
         public ViewSubmissions(List<TargettedSubmission> userSubmissions):this()
         {
             foreach (var list in userSubmissions)
