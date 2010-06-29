@@ -18,9 +18,6 @@ using SandRibbonInterop.MeTLStanzas;
 
 namespace SandRibbon.Components.Submissions
 {
-    /// <summary>
-    /// Interaction logic for ViewSubmissions.xaml
-    /// </summary>
     public partial class ViewSubmissions : Window
     {
         public ObservableCollection<TargettedSubmission> submissionList = new ObservableCollection<TargettedSubmission>();
@@ -30,7 +27,6 @@ namespace SandRibbon.Components.Submissions
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(recieveSubmission));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
         }
-
         private void joinConversation(object obj)
         {
             submissionList = new ObservableCollection<TargettedSubmission>();
@@ -46,29 +42,6 @@ namespace SandRibbon.Components.Submissions
         private void recieveSubmission(TargettedSubmission submission)
         {
             submissionList.Add(submission);
-        }
-        private bool IsParserNotEmpty(PreParser parser)
-        {
-            return (parser.images.Count > 0
-                || parser.ink.Count > 0
-                || parser.text.Count > 0
-                || parser.videos.Count > 0
-                || parser.bubbleList.Count > 0
-                || parser.autoshapes.Count > 0);
-        }
-        private bool isParserPrivate(PreParser parser)
-        {
-            if (parser.ink.Where(s => s.privacy == "private").Count() > 0)
-                return true;
-            if (parser.text.Where(s => s.Value.privacy == "private").Count() > 0)
-                return true;
-            if (parser.images.Where(s => s.Value.privacy == "private").Count() > 0)
-                return true;
-            if (parser.videos.Where(s => s.Value.privacy == "private").Count() > 0)
-                return true;
-            if (parser.autoshapes.Where(s => s.Value.privacy == "private").Count() > 0)
-                return true;
-            return false;
         }
         private void importSubmission(object sender, ExecutedRoutedEventArgs e)
         {
@@ -90,7 +63,6 @@ namespace SandRibbon.Components.Submissions
             Commands.AddSlide.Execute(null);
             this.Close();
         }
-
         private void canImportSubmission(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = submissions.SelectedItem != null;

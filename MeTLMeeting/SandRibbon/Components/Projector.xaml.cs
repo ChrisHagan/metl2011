@@ -138,11 +138,14 @@ namespace SandRibbon.Components
         private static Color deleteColor = Colors.Red;
         private static string currentMode;
         private static string privacy;
+        private int parserCount = 0;
         public void PreParserAvailable(PreParser parser)
         {
-
-            if (!isPrivate(parser) && IsParserNotEmpty(parser))
+            //we receive 3 preparsers for each moveto, 1 for public 2 for private, current file format and legacy one
+            parserCount++;
+            if (!isPrivate(parser) && IsParserNotEmpty(parser) || parserCount == 3)
             {
+                parserCount = 0;
                 stack.Flush();
                 stack.handwriting.ReceiveStrokes(parser.ink);
                 stack.images.ReceiveImages(parser.images.Values);

@@ -207,6 +207,7 @@ namespace Functional
             foreach (AutomationElement window in windows)
             {
                 var search = new ConversationSearcher(window);
+                Thread.Sleep(1000);
                 search.searchField("AutomatedConversation").Search();
             }
         }
