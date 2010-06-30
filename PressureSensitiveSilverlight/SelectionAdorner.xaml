@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="SilverlightApplication1.SelectionAdorner"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    Background="Transparent">
+    <Grid x:Name="LayoutRoot" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="5"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5"/>
+            <RowDefinition/>
+            <RowDefinition Height="5"/>
+        </Grid.RowDefinitions>
+        <Rectangle x:Name="UpBorder" Tag="up" Grid.Row="0" Grid.Column="1" Cursor="SizeNS" Fill="Red" 
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <Rectangle x:Name="DownBorder" Tag="down" Grid.Row="2" Grid.Column="1" Cursor="SizeNS" Fill="Red"
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <Rectangle x:Name="LeftBorder" Tag="left" Grid.Row="1" Grid.Column="0" Cursor="SizeWE" Fill="Red"
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <Rectangle x:Name="RightBorder" Tag="right" Grid.Row="1" Grid.Column="2" Cursor="SizeWE" Fill="Red"
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <Rectangle x:Name="CenterBorder" Tag="move" Grid.Row="1" Grid.Column="1" Cursor="Arrow" Fill="Transparent"
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+    </Grid>
+</UserControl>
