@@ -13,19 +13,35 @@
             <RowDefinition/>
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
-        <Rectangle x:Name="UpBorder" Tag="up" Grid.Row="0" Grid.Column="1" Cursor="SizeNS" Fill="Red" 
+        <Rectangle x:Name="NBorder" Tag="North" Grid.Row="0" Grid.Column="1" Cursor="SizeNS" Fill="Red" 
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-        <Rectangle x:Name="DownBorder" Tag="down" Grid.Row="2" Grid.Column="1" Cursor="SizeNS" Fill="Red"
+        <Rectangle x:Name="NEBorder" Tag="NorthEast" Grid.Row="0" Grid.Column="2" Cursor="SizeNS" Fill="Red" 
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-        <Rectangle x:Name="LeftBorder" Tag="left" Grid.Row="1" Grid.Column="0" Cursor="SizeWE" Fill="Red"
+        <Rectangle x:Name="EBorder" Tag="East" Grid.Row="1" Grid.Column="2" Cursor="SizeWE" Fill="Red"
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-        <Rectangle x:Name="RightBorder" Tag="right" Grid.Row="1" Grid.Column="2" Cursor="SizeWE" Fill="Red"
+        <Rectangle x:Name="SEBorder" Tag="SouthEast" Grid.Row="2" Grid.Column="2" Cursor="SizeWE" Fill="Red"
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <Rectangle x:Name="SBorder" Tag="South" Grid.Row="2" Grid.Column="1" Cursor="SizeNS" Fill="Red"
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <Rectangle x:Name="SWBorder" Tag="SouthWest" Grid.Row="2" Grid.Column="0" Cursor="SizeNS" Fill="Red"
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <Rectangle x:Name="WBorder" Tag="West" Grid.Row="1" Grid.Column="0" Cursor="SizeWE" Fill="Red"
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <Rectangle x:Name="NWBorder" Tag="NorthWest" Grid.Row="0" Grid.Column="0" Cursor="SizeWE" Fill="Red"
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>

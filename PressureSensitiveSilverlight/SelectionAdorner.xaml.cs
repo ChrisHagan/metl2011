@@ -17,9 +17,9 @@ namespace SilverlightApplication1
     {
         private StrokeCollection referencedStrokes = new StrokeCollection();
         private StrokeCollection replacementStrokes = new StrokeCollection();
-        private InkPresenter referencedCanvas;
+        private InkCanvas referencedCanvas;
 
-        public SelectionAdorner(StrokeCollection selectedStrokes, InkPresenter inkcanvas)
+        public SelectionAdorner(StrokeCollection selectedStrokes, InkCanvas inkcanvas)
         {
             InitializeComponent();
             referencedStrokes = selectedStrokes;
@@ -32,6 +32,7 @@ namespace SilverlightApplication1
             bool firstShape = true;
             foreach (Stroke stroke in referencedStrokes)
             {
+                addStylingToStroke(stroke);
                 var bounds = stroke.GetBounds();
                 if (firstShape)
                 {
@@ -59,13 +60,13 @@ namespace SilverlightApplication1
         }
         private void resetColors()
         {
-            foreach (Rectangle border in new FrameworkElement[] { UpBorder, DownBorder, RightBorder, LeftBorder })
+            foreach (Rectangle border in new FrameworkElement[] { NBorder, NEBorder, EBorder, SEBorder, SBorder, SWBorder, WBorder, NWBorder })
             {
                 border.Fill = red;
             }
         }
 
-        private enum resizingMode { up, left, down, right, move, none };
+        private enum resizingMode { North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest, move, none };
         private resizingMode currentResizingMode = resizingMode.none;
         private Point origin;
         private Point destination;
@@ -73,22 +74,42 @@ namespace SilverlightApplication1
         {
             var offset = new Point(destination.X - origin.X, destination.Y - origin.Y);
             var oldSelection = new Rect(Canvas.GetLeft(this), Canvas.GetTop(this), this.Width, this.Height);
-            var newSelection = new Rect(oldSelection.X,oldSelection.Y,oldSelection.Width,oldSelection.Height);
+            var newSelection = new Rect(oldSelection.X, oldSelection.Y, oldSelection.Width, oldSelection.Height);
             switch (currentResizingMode)
             {
-                case resizingMode.left:
-                    newSelection.Width -= offset.X;
-                    newSelection.X += offset.X;
-                    break;
-                case resizingMode.up:
+                case resizingMode.North:
                     newSelection.Height -= offset.Y;
                     newSelection.Y += offset.Y;
                     break;
-                case resizingMode.right:
+                case resizingMode.NorthEast:
+                    newSelection.Height -= offset.Y;
+                    newSelection.Y += offset.Y;
                     newSelection.Width += offset.X;
                     break;
-                case resizingMode.down:
+                case resizingMode.East:
+                    newSelection.Width += offset.X;
+                    break;
+                case resizingMode.SouthEast:
                     newSelection.Height += offset.Y;
+                    newSelection.Width += offset.X;
+                    break;
+                case resizingMode.South:
+                    newSelection.Height += offset.Y;
+                    break;
+                case resizingMode.SouthWest:
+                    newSelection.Height += offset.Y;
+                    newSelection.Width -= offset.X;
+                    newSelection.X += offset.X;
+                    break;
+                case resizingMode.West:
+                    newSelection.Width -= offset.X;
+                    newSelection.X += offset.X;
+                    break;
+                case resizingMode.NorthWest:
+                    newSelection.Height -= offset.Y;
+                    newSelection.Y += offset.Y;
+                    newSelection.Width -= offset.X;
+                    newSelection.X += offset.X;
                     break;
                 case resizingMode.move:
                     newSelection.X += offset.X;
@@ -107,6 +128,7 @@ namespace SilverlightApplication1
                 WidthFactor = newSelection.Width / oldSelection.Width;
             if (oldSelection.Height != newSelection.Height)
                 HeightFactor = newSelection.Height / oldSelection.Height;
+            removeStylingFromStrokes();
             foreach (Stroke stroke in referencedStrokes)
             {
                 var newSpc = new StylusPointCollection();
@@ -119,6 +141,8 @@ namespace SilverlightApplication1
                     newSpc.Add(newSp);
                 }
                 var newStroke = new Stroke(newSpc);
+                newStroke.DrawingAttributes.Color = stroke.DrawingAttributes.Color;
+                newStroke.DrawingAttributes.OutlineColor = stroke.DrawingAttributes.OutlineColor;
                 newStroke.DrawingAttributes.Height = stroke.DrawingAttributes.Height;
                 newStroke.DrawingAttributes.Width = stroke.DrawingAttributes.Width;
                 removingStrokes.Add(stroke);
@@ -126,6 +150,7 @@ namespace SilverlightApplication1
                 referencedCanvas.Strokes.Remove(stroke);
                 referencedCanvas.Strokes.Add(newStroke);
             }
+            referencedCanvas.eventHandler_ReplaceStrokes(removingStrokes, replacementStrokes);
             referencedStrokes.Clear();
             foreach (Stroke stroke in replacementStrokes)
                 referencedStrokes.Add(stroke);
@@ -158,5 +183,33 @@ namespace SilverlightApplication1
             resetColors();
             currentResizingMode = resizingMode.none;
         }
+        private void addStylingToStroke(Stroke stroke)
+        {
+            /*
+            if (stroke.DrawingAttributes.OutlineColor == Colors.Transparent)
+            {
+                stroke.DrawingAttributes.OutlineColor = stroke.DrawingAttributes.Color;
+                var invertedColor = stroke.DrawingAttributes.Color;
+                invertedColor.R = Convert.ToByte(255 - (int)invertedColor.R);
+                invertedColor.G = Convert.ToByte(255 - (int)invertedColor.G);
+                invertedColor.B = Convert.ToByte(255 - (int)invertedColor.B);
+                stroke.DrawingAttributes.Color = invertedColor;
+            }
+             */
+        }
+        public void removeStylingFromStrokes()
+        {
+            /*
+            foreach (Stroke stroke in referencedStrokes)
+            {
+                if (stroke.DrawingAttributes.OutlineColor != Colors.Transparent)
+                {
+                    stroke.DrawingAttributes.Color = stroke.DrawingAttributes.OutlineColor;
+                    stroke.DrawingAttributes.OutlineColor = Colors.Transparent;
+                }
+            }
+            */
+        }
+
     }
 }

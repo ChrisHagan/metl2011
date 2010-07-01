@@ -70,6 +70,9 @@
     <Compile Include="SelectionAdorner.xaml.cs">
       <DependentUpon>SelectionAdorner.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InkCanvas.xaml.cs">
+      <DependentUpon>InkCanvas.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -81,6 +84,10 @@
       <Generator>MSBuild:MarkupCompilePass1</Generator>
     </Page>
     <Page Include="SelectionAdorner.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:MarkupCompilePass1</Generator>
+    </Page>
+    <Page Include="InkCanvas.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:MarkupCompilePass1</Generator>
     </Page>

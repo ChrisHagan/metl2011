@@ -23,3 +23,18 @@ C:\Users\Dave\Documents\Visual Studio 2008\Projects\PressureSensitiveSilverlight
 C:\Users\Dave\Documents\Visual Studio 2008\Projects\PressureSensitiveSilverlight\obj\Debug\SilverlightApplication1.pdb
 C:\Users\Dave\Documents\Visual Studio 2008\Projects\PressureSensitiveSilverlight\obj\Debug\XapCacheFile.xml
 C:\Users\Dave\Documents\Visual Studio 2008\Projects\PressureSensitiveSilverlight\obj\Debug\SelectionAdorner.g.cs
+C:\Users\Dave\Documents\Visual Studio 2008\Projects\PressureSensitiveSilverlight\obj\Debug\InkCanvas.g.cs
+C:\specialMeTL\PressureSensitiveSilverlight\Bin\Debug\AppManifest.xaml
+C:\specialMeTL\PressureSensitiveSilverlight\Bin\Debug\SilverlightApplication1.dll
+C:\specialMeTL\PressureSensitiveSilverlight\Bin\Debug\SilverlightApplication1.pdb
+C:\specialMeTL\PressureSensitiveSilverlight\Bin\Debug\SilverlightApplication1.xap
+C:\specialMeTL\PressureSensitiveSilverlight\Bin\Debug\TestPage.html
+C:\specialMeTL\PressureSensitiveSilverlight\obj\Debug\ResolveAssemblyReference.cache
+C:\specialMeTL\PressureSensitiveSilverlight\obj\Debug\App.g.cs
+C:\specialMeTL\PressureSensitiveSilverlight\obj\Debug\MainPage.g.cs
+C:\specialMeTL\PressureSensitiveSilverlight\obj\Debug\SelectionAdorner.g.cs
+C:\specialMeTL\PressureSensitiveSilverlight\obj\Debug\InkCanvas.g.cs
+C:\specialMeTL\PressureSensitiveSilverlight\obj\Debug\SilverlightApplication1.g.resources
+C:\specialMeTL\PressureSensitiveSilverlight\obj\Debug\SilverlightApplication1.dll
+C:\specialMeTL\PressureSensitiveSilverlight\obj\Debug\SilverlightApplication1.pdb
+C:\specialMeTL\PressureSensitiveSilverlight\obj\Debug\XapCacheFile.xml
