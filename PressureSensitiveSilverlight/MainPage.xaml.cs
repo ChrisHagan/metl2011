@@ -72,11 +72,14 @@ namespace SilverlightApplication1
         }
         private void inkcanvas_strokesReplaced(object sender, StrokesChangedEventArgs e)
         {
-            /*   if (e.addedStrokes == null) return;
-               string stringMessage = "stroke collected:";
+            /* if (e.addedStrokes == null) return;
+               string stringMessage = "strokes collected:";
                foreach (Stroke stroke in e.addedStrokes)
+                   {
+                   stringMessage += " stroke:
                    foreach (StylusPoint sp in stroke.StylusPoints)
                        stringMessage += "(" + sp.X + "," + sp.Y + "," + sp.PressureFactor + "),";
+               }
                MessageBox.Show(stringMessage);
            */
         }
@@ -86,6 +89,19 @@ namespace SilverlightApplication1
                string stringMessage = "stroke collected:";
                    foreach (StylusPoint sp in e.stroke.StylusPoints)
                        stringMessage += "(" + sp.X + "," + sp.Y + "," + sp.PressureFactor + "),";
+               MessageBox.Show(stringMessage);
+           */
+        }
+        private void inkcanvas_selectedStrokesChanged(object sender, StrokesChangedEventArgs e)
+        {
+            /*   if (e.addedStrokes == null) return;
+               string stringMessage = "strokes collected:";
+               foreach (Stroke stroke in e.addedStrokes)
+                   {
+                   stringMessage += " stroke:
+                   foreach (StylusPoint sp in stroke.StylusPoints)
+                       stringMessage += "(" + sp.X + "," + sp.Y + "," + sp.PressureFactor + "),";
+               }
                MessageBox.Show(stringMessage);
            */
         }

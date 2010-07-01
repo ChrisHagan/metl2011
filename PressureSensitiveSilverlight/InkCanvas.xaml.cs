@@ -13,6 +13,17 @@ using System.Windows.Ink;
 
 namespace SilverlightApplication1
 {
+    #region eventHandlers
+    public delegate void StrokeCollectedEventHandler(object sender, StrokeAddedEventArgs e);
+    public class StrokeAddedEventArgs : EventArgs
+    {
+        public Stroke stroke;
+        public StrokeAddedEventArgs(Stroke newStroke)
+        {
+            stroke = newStroke;
+        }
+    }
+    public delegate void SelectedStrokesChangedEventHandler(object sender, StrokesChangedEventArgs e);
     public delegate void StrokesChangedEventHandler(object sender, StrokesChangedEventArgs e);
     public class StrokesChangedEventArgs : EventArgs
     {
@@ -24,15 +35,7 @@ namespace SilverlightApplication1
             removedStrokes = newlyRemovedStrokes;
         }
     }
-    public delegate void StrokeCollectedEventHandler(object sender, StrokeAddedEventArgs e);
-    public class StrokeAddedEventArgs : EventArgs
-    {
-        public Stroke stroke;
-        public StrokeAddedEventArgs(Stroke newStroke)
-        {
-            stroke = newStroke;
-        }
-    }
+    #endregion
     public partial class InkCanvas : UserControl
     {
         public InkCanvas()
@@ -56,10 +59,15 @@ namespace SilverlightApplication1
                 }
             }
         }
-
+        #region inkCanvasEvents
         public event StrokesChangedEventHandler StrokesChanged;
         public event StrokeCollectedEventHandler StrokeCollected;
+        public event SelectedStrokesChangedEventHandler SelectedStrokesChanged;
 
+        protected virtual void OnSelectedStrokesChanged(StrokesChangedEventArgs e)
+        {
+            SelectedStrokesChanged(this, e);
+        }
         protected virtual void OnStrokesChanged(StrokesChangedEventArgs e)
         {
             StrokesChanged(this, e);
@@ -67,6 +75,10 @@ namespace SilverlightApplication1
         protected virtual void OnStrokeCollected(StrokeAddedEventArgs e)
         {
             StrokeCollected(this, e);
+        }
+        public void eventHandler_ReplaceSelectedStrokes(StrokeCollection oldStrokes, StrokeCollection newStrokes)
+        {
+            OnSelectedStrokesChanged(new StrokesChangedEventArgs(oldStrokes,newStrokes));
         }
         public void eventHandler_ReplaceStrokes(StrokeCollection oldStrokes, StrokeCollection newStrokes)
         {
@@ -76,7 +88,7 @@ namespace SilverlightApplication1
         {
             OnStrokeCollected(new StrokeAddedEventArgs(newStroke));
         }
-
+        #endregion
         private System.Windows.Ink.Stroke newStroke;
         private Color[] colors = new Color[] { Colors.Black, 
                 Colors.White, Colors.Red, Colors.Blue, Colors.Green,
@@ -203,6 +215,7 @@ namespace SilverlightApplication1
 
         private void trySelectStroke(StylusPointCollection spc)
         {
+            StrokeCollection currentSelectedStrokes = selectedStrokes;
             tempIndex++;
             if (tempIndex != skipFactor) return;
             tempIndex = 0;
@@ -232,6 +245,8 @@ namespace SilverlightApplication1
                     createAdorner(selectedStrokes);
                 else
                     clearAdorners();
+                if (!currentSelectedStrokes.All(t => selectedStrokes.Contains(t)) && selectedStrokes.All(t => currentSelectedStrokes.Contains(t)))
+                    eventHandler_ReplaceSelectedStrokes(currentSelectedStrokes, selectedStrokes);
             }
         }
         private bool isStrokeContainedByPolygon(Stroke stroke, Rect currentShapeBounds)
@@ -250,28 +265,28 @@ namespace SilverlightApplication1
                 }
             if (strokeContainedinBounds)
             {
-                    var hitPointCount = 0;
-                    int speedFactor = 1;
-                    int tempIndex = 0;
-                    var hitPointThreshold = (stroke.StylusPoints.Count() / speedFactor) * .75;
-                    foreach (StylusPoint sp in stroke.StylusPoints)
+                var hitPointCount = 0;
+                int speedFactor = 1;
+                int tempIndex = 0;
+                var hitPointThreshold = (stroke.StylusPoints.Count() / speedFactor) * .75;
+                foreach (StylusPoint sp in stroke.StylusPoints)
+                {
+                    tempIndex++;
+                    if (tempIndex == speedFactor)
                     {
-                        tempIndex++;
-                        if (tempIndex == speedFactor)
+                        tempIndex = 0;
+                        var spPoint = new Point(sp.X, sp.Y);
+                        if (polyHitTest(currentSelectionShape.Points.ToArray(), spPoint))
                         {
-                            tempIndex = 0;
-                            var spPoint = new Point(sp.X, sp.Y);
-                            if (polyHitTest(currentSelectionShape.Points.ToArray(), spPoint))
-                            {
-                                hitPointCount++;
-                            }
+                            hitPointCount++;
                         }
                     }
-                    if (hitPointCount > hitPointThreshold)
-                    {
-                        isContained = true;
-                    }
                 }
+                if (hitPointCount > hitPointThreshold)
+                {
+                    isContained = true;
+                }
+            }
             return isContained;
         }
         private void tryEraseStroke(StylusPointCollection spc)

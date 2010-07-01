@@ -10,6 +10,7 @@
                 <custom:InkCanvas x:Name="inkcanvas" 
                               StrokeCollected="inkcanvas_strokeCollected"
                               StrokesChanged="inkcanvas_strokesReplaced"
+                              SelectedStrokesChanged="inkcanvas_selectedStrokesChanged"
                               HorizontalAlignment="Stretch" Width="Auto" Height="Auto" VerticalAlignment="Stretch"
                               />
             </Grid>

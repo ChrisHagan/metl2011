@@ -151,6 +151,7 @@ namespace SilverlightApplication1
                 referencedCanvas.Strokes.Add(newStroke);
             }
             referencedCanvas.eventHandler_ReplaceStrokes(removingStrokes, replacementStrokes);
+            referencedCanvas.eventHandler_ReplaceSelectedStrokes(removingStrokes, replacementStrokes);
             referencedStrokes.Clear();
             foreach (Stroke stroke in replacementStrokes)
                 referencedStrokes.Add(stroke);
