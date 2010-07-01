@@ -4,50 +4,94 @@
     Background="Transparent">
     <Grid x:Name="LayoutRoot" >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="10"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="5"/>
+            <RowDefinition Height="10"/>
             <RowDefinition/>
-            <RowDefinition Height="5"/>
+            <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
-        <Rectangle x:Name="NBorder" Tag="North" Grid.Row="0" Grid.Column="1" Cursor="SizeNS" Fill="Red" 
+        <Rectangle Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0"
+                   Fill="#50000000" Stroke="#50FFFFFF" StrokeThickness="3"
+                   Tag="move" Cursor="Hand" 
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-        <Rectangle x:Name="NEBorder" Tag="NorthEast" Grid.Row="0" Grid.Column="2" Cursor="SizeNS" Fill="Red" 
+        <Rectangle Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="1" 
+                   Fill="#50000000" Stroke="#50FFFFFF" StrokeThickness="3"
+                   Tag="move" Cursor="Hand" 
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-        <Rectangle x:Name="EBorder" Tag="East" Grid.Row="1" Grid.Column="2" Cursor="SizeWE" Fill="Red"
+        <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+                   Fill="#50000000" Stroke="#50FFFFFF" StrokeThickness="3"
+                   Tag="move" Cursor="Hand" 
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-        <Rectangle x:Name="SEBorder" Tag="SouthEast" Grid.Row="2" Grid.Column="2" Cursor="SizeWE" Fill="Red"
+        <Rectangle Grid.Row="1" Grid.RowSpan="2" Grid.Column="0"
+                   Fill="#50000000" Stroke="#50FFFFFF" StrokeThickness="3"
+                   Tag="move" Cursor="Hand" 
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-        <Rectangle x:Name="SBorder" Tag="South" Grid.Row="2" Grid.Column="1" Cursor="SizeNS" Fill="Red"
+        <Rectangle x:Name="NBorder" Tag="North" Grid.Row="0" Grid.Column="1" 
+                   Height="10" Width="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Cursor="Hand" Fill="Red" 
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-        <Rectangle x:Name="SWBorder" Tag="SouthWest" Grid.Row="2" Grid.Column="0" Cursor="SizeNS" Fill="Red"
+        <Rectangle x:Name="NEBorder" Tag="NorthEast" Grid.Row="0" Grid.Column="2" 
+                   Height="100" Width="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Cursor="Hand" Fill="Red" 
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-        <Rectangle x:Name="WBorder" Tag="West" Grid.Row="1" Grid.Column="0" Cursor="SizeWE" Fill="Red"
+        <Rectangle x:Name="EBorder" Tag="East" Grid.Row="1" Grid.Column="2" 
+                   Height="10" Width="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Cursor="Hand" Fill="Red"
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-        <Rectangle x:Name="NWBorder" Tag="NorthWest" Grid.Row="0" Grid.Column="0" Cursor="SizeWE" Fill="Red"
+        <Rectangle x:Name="SEBorder" Tag="SouthEast" Grid.Row="2" Grid.Column="2" 
+                   Height="10" Width="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Cursor="Hand" Fill="Red"
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
-        <Rectangle x:Name="CenterBorder" Tag="move" Grid.Row="1" Grid.Column="1" Cursor="Arrow" Fill="Transparent"
+        <Rectangle x:Name="SBorder" Tag="South" Grid.Row="2" Grid.Column="1" 
+                   Height="10" Width="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Cursor="Hand" Fill="Red"
                    MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
                    MouseMove="Rectangle_MouseMove"
                    MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <Rectangle x:Name="SWBorder" Tag="SouthWest" Grid.Row="2" Grid.Column="0" 
+                   Height="10" Width="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Cursor="Hand" Fill="Red"
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <Rectangle x:Name="WBorder" Tag="West" Grid.Row="1" Grid.Column="0" 
+                   Height="10" Width="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Cursor="Hand" Fill="Red"
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <Rectangle x:Name="NWBorder" Tag="NorthWest" Grid.Row="0" Grid.Column="0" 
+                   Height="10" Width="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Cursor="Hand" Fill="Red"
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+        <!--
+        <Rectangle x:Name="CenterBorder" Grid.Row="1" Grid.Column="1" 
+                   Fill="Transparent"
+                   Tag="move" Cursor="Arrow" 
+                   MouseLeftButtonDown="Rectangle_MouseLeftButtonDown"
+                   MouseMove="Rectangle_MouseMove"
+                   MouseLeftButtonUp="Rectangle_MouseLeftButtonUp"/>
+    -->
     </Grid>
 </UserControl>

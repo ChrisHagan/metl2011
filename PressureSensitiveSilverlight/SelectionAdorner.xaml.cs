@@ -36,16 +36,16 @@ namespace SilverlightApplication1
                 var bounds = stroke.GetBounds();
                 if (firstShape)
                 {
-                    selectedBound.X = bounds.Left;
-                    selectedBound.Y = bounds.Top;
+                    selectedBound.X = bounds.Left - 5;
+                    selectedBound.Y = bounds.Top - 5;
                     firstShape = false;
                 }
                 var points = new Point[] { new Point(bounds.Left, bounds.Top), new Point(bounds.Right, bounds.Bottom) };
                 foreach (Point point in points)
                     selectedBound.Union(point);
             }
-            this.Width = selectedBound.Width;
-            this.Height = selectedBound.Height;
+            this.Width = selectedBound.Width + 10;
+            this.Height = selectedBound.Height + 10;
             Canvas.SetLeft(this, selectedBound.X);
             Canvas.SetTop(this, selectedBound.Y);
         }
@@ -54,7 +54,7 @@ namespace SilverlightApplication1
 
         private void setColor(Rectangle sender)
         {
-            if (sender == CenterBorder)
+            if(((FrameworkElement)sender).Tag.ToString() == "move")
                 return;
             sender.Fill = blue;
         }
