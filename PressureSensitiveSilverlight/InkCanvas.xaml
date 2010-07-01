@@ -4,9 +4,11 @@
     <Grid x:Name="LayoutRoot" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <InkPresenter x:Name="inkLayer"
                       MouseMove="InkPresenter_MouseMove" 
-                          MouseLeftButtonUp="InkPresenter_MouseLeftButtonUp" 
-                          MouseLeftButtonDown="InkPresenter_MouseLeftButtonDown"
-                          Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White"/>
+                      MouseLeftButtonUp="InkPresenter_MouseLeftButtonUp" 
+                      MouseLeftButtonDown="InkPresenter_MouseLeftButtonDown"
+                      Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#00000000"
+                      >
+        </InkPresenter>
         <Canvas x:Name="adornerLayer" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/> 
     </Grid>
 </UserControl>

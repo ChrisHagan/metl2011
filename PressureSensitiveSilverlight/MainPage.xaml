@@ -6,10 +6,13 @@
     mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="480">
     <Grid x:Name="LayoutRoot">
         <Border BorderBrush="DarkBlue" BorderThickness="2" Padding="5" CornerRadius="5" Background="LightBlue">
-            <custom:InkCanvas x:Name="inkcanvas" 
+            <Grid Background="White">
+                <custom:InkCanvas x:Name="inkcanvas" 
                               StrokeCollected="inkcanvas_strokeCollected"
                               StrokesChanged="inkcanvas_strokesReplaced"
-                              HorizontalAlignment="Stretch" Width="Auto" Height="Auto" VerticalAlignment="Stretch"/>
+                              HorizontalAlignment="Stretch" Width="Auto" Height="Auto" VerticalAlignment="Stretch"
+                              />
+            </Grid>
         </Border>
         <Border x:Name="PenControls" HorizontalAlignment="Left" VerticalAlignment="Top" 
                 BorderBrush="DarkBlue" BorderThickness="2" Padding="5" CornerRadius="5" Background="LightBlue">
