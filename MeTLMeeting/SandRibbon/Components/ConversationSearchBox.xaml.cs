@@ -55,7 +55,6 @@ namespace SandRibbon.Components
         }
         private void JoinConversation(object o)
         {
-            Console.WriteLine("search box");
             CloseConversationSearchBox();
         }
         private void CloseConversationSearchBox()
@@ -276,7 +275,7 @@ namespace SandRibbon.Components
                             Int32.Parse(searchTerm);
                             isNumber = true;
                         }
-                        catch
+                        catch(FormatException e)
                         {
                         }
                         if (!String.IsNullOrEmpty(searchTerm) && isNumber)

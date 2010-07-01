@@ -13,6 +13,7 @@ using Functional;
 
 namespace HeadfulClassRoom
 {
+    /*PLEASE NOTE THIS NEEDS TO BE RUN IN DEBUG MODE FOR IT TO WORK*/
     class Program
     {
         public static int population = 2;

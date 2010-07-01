@@ -33,7 +33,6 @@ namespace SandRibbon.Chrome
         }
         private void JoinConversation(string _jid)
         {
-            Console.WriteLine("status bar");
             showDetails();
         }
         private void UpdateConversationDetails(ConversationDetails _details) 

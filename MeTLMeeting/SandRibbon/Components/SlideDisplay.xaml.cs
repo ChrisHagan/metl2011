@@ -324,7 +324,6 @@ namespace SandRibbon.Components
             if (SlideDisplay.parsers.ContainsKey(slide.slideId))
                 Add(slide.slideId, SlideDisplay.parsers[slide.slideId]);
             else Add(slide.slideId, new PreParser(slide.slideId));
-            Console.WriteLine(string.Format("+ {0} containers onscreen", visibleContainers.Count()));
         }
         public static void Add(int id, PreParser parser)
         {

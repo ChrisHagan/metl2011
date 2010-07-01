@@ -800,7 +800,6 @@ namespace SandRibbon.Utils.Connection
         }
         public void JoinConversation(string room)
         {
-            Console.WriteLine("Jabber");
             if(location.activeConversation != null)
             {
                 var muc = new MucManager(conn);

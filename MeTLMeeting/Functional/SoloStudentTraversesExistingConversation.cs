@@ -86,6 +86,34 @@ namespace Functional
             answerAQuiz();
         }
         [TestMethod]
+        public void InjectContentAndMove()
+        {
+            InjectContent();
+            TeacherMoveForward();
+        }
+        [TestMethod]
+        public void ScreenshotSubmissions()
+        {
+            InjectStudentStrokes();
+            Thread.Sleep(1000);
+            StudentSubmitScreenshot();
+            Thread.Sleep(1000);
+            TeacherViewSubmissions();
+            Thread.Sleep(1000);
+            TeacherImportSubmission();
+        }
+        [TestMethod]
+        public void QuizCreationAndAnswering()
+        {
+            OpenQuiz();
+            Thread.Sleep(1000);
+            CreateQuiz();
+            Thread.Sleep(2000);
+            openQuizToAnswer();
+            Thread.Sleep(3000);
+            answerAQuiz();
+        }
+        [TestMethod]
         public void TeacherConversationCreation()
         {
             LocateAndLogin();
@@ -147,6 +175,14 @@ namespace Functional
             }
             TeacherMoveBack();
             TeacherMoveBack();
+        }
+        [TestMethod]
+        public void StudentJoin()
+        {
+            var window = windows[1]; 
+            var search = new ConversationSearcher(window);
+            Thread.Sleep(1000);
+            search.searchField("AutomatedConversation").Search();
         }
         [TestMethod]
         public void LocateAndLogin()

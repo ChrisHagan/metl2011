@@ -560,7 +560,6 @@ namespace SandRibbon.Components.Canvas
                                               (targettedBox.privacy == "public" || targettedBox.author == Globals.me))
                                           {
 
-                                              Console.WriteLine("Received textbox");
                                               var box = targettedBox.box;
                                               removeDoomedTextBoxes(targettedBox);
                                               Children.Add(applyDefaultAttributes(box));

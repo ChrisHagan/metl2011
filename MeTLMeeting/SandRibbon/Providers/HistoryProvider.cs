@@ -117,7 +117,7 @@ namespace SandRibbon.Providers
                 var parsedRoom = int.Parse(room);
                 return false;
             }
-            catch(FormatException)
+            catch(FormatException e)
             {
                 return true;
             }
@@ -129,7 +129,7 @@ namespace SandRibbon.Providers
             {
                 room = Int32.Parse(to);
             }
-            catch (FormatException)
+            catch (FormatException e)
             {
                 return;
             }
