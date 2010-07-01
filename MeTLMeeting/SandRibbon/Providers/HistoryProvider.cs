@@ -112,27 +112,15 @@ namespace SandRibbon.Providers
 
         private bool isPrivateRoom(string room)
         {
-            try
-            {
-                var parsedRoom = int.Parse(room);
-                return false;
-            }
-            catch(FormatException e)
-            {
-                return true;
-            }
+            var validChar = new[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+            if (!room.All(s=>(validChar.Contains(s)))) return true;
+            return false;
+            
         }
 
         public void HandleMessage(string to, Element message) {
-            int room = 0;
-            try
-            {
-                room = Int32.Parse(to);
-            }
-            catch (FormatException e)
-            {
-                return;
-            }
+            if(isPrivateRoom(to)) return;
+            var room = Int32.Parse(to);
             if (!cache.ContainsKey(room.ToString()))
                 cache[room.ToString()] = new PreParser(room);
             cache[room.ToString()].ActOnUntypedMessage(message);

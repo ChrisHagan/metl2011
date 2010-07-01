@@ -291,16 +291,17 @@ namespace SandRibbon.Components
         }
         //this needs to happen here instead of using the preparser as it will interfere with 
         //screenshot submission if we do it that way. 
+
         private void updateThumbnails(string room)
         {
             HistoryProviderFactory.provider.Retrieve<PreParser>(
-                null,
-                null,
+                JabberWire.dontDoAnything,
+                JabberWire.dontDoAnything,
                 PreParserAvailable,
                 room);
             HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
-                null ,
-                null,
+                JabberWire.dontDoAnything,
+                JabberWire.dontDoAnything,
                 PreParserAvailable,
                 Globals.me,
                 room);
