@@ -328,9 +328,9 @@ namespace SandRibbon
         {
             ProviderMonitor.HealthCheck(() =>
             {
-                Console.WriteLine("window1");
                 Commands.LoggedIn.Execute(userInformation.credentials.name);
                 var details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
+                RecentConversationProvider.addRecentConversation(details, Globals.me);
                 if (details.Author == Globals.me)
                     Commands.SetPrivacy.Execute("public");
                 else
@@ -873,9 +873,16 @@ namespace SandRibbon
         {
             public int Compare(FrameworkElement anX, FrameworkElement aY)
             {
-                var x = Int32.Parse((string)anX.FindResource("preferredDisplayIndex"));
-                var y = Int32.Parse((string)aY.FindResource("preferredDisplayIndex"));
-                return x - y;
+                try
+                {
+                    var x = Int32.Parse((string) anX.FindResource("preferredDisplayIndex"));
+                    var y = Int32.Parse((string) aY.FindResource("preferredDisplayIndex"));
+                    return x - y;
+                }
+                catch(FormatException e)
+                {
+                    return 0;
+                }
             }
         }
         private void updateCurrentPenAfterZoomChanged()

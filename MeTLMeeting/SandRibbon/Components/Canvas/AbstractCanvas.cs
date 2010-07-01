@@ -182,10 +182,18 @@ namespace SandRibbon.Components.Canvas
             }
             Commands.SetLayer.Execute("Insert");
             var pos = e.GetPosition(this);
+            //lets try for a 4xN grid
             for (var i = 0; i < fileNames.Count(); i++)
             {
                 var filename = fileNames[i];
+                var image = Image.createImageFromUri(new Uri(filename, UriKind.RelativeOrAbsolute));
                 Commands.ImageDropped.Execute(new ImageDrop {filename = filename, point = pos, target = target, position = i});
+                pos.X += image.Width;
+                if ((i+1) % 4 == 0)
+                {
+                    pos.X = 0;
+                    pos.Y += (image.Height + 30);
+                }
             }
             e.Handled = true;
         }

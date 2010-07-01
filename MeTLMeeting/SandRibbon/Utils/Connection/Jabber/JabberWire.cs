@@ -422,9 +422,17 @@ namespace SandRibbon.Utils.Connection
             Worm.heart.Interval = TimeSpan.FromMilliseconds(15000);
             Commands.RetrievedHistoryPortion.Execute(new[] { 0, 20 });
         }
+
+        public static void dontDoAnything()
+        {
+        }
+
+        public static void dontDoAnything(int _obj, int _obj2)
+        {
+        }
         private void onProgress(int upTo, int outOf)
         {
-            Commands.RetrievedHistoryPortion.Execute(new[] { upTo, outOf });
+            //Commands.RetrievedHistoryPortion.Execute(new[] { upTo, outOf });
         }
         private void retrieveHistory(string room)
         {
@@ -800,7 +808,6 @@ namespace SandRibbon.Utils.Connection
         }
         public void JoinConversation(string room)
         {
-            Console.WriteLine("Jabber");
             if(location.activeConversation != null)
             {
                 var muc = new MucManager(conn);

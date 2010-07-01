@@ -201,7 +201,6 @@ namespace SandRibbon.Components.Canvas
         }
         public void AddVideo(SandRibbonInterop.Video element)
         {
-            Console.WriteLine("Received Media Element");
             if (!videoExistsOnCanvas(element))
             {
                 Children.Add(element);

@@ -70,7 +70,6 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Grid x:Name="resultGoHere">
-                            <TextBlock Visibility="Collapsed" x:Name="testing">HI</TextBlock>
                             <ItemsControl Grid.Column="0" x:Name="SearchResults" HorizontalAlignment="Left" Margin="20,0,0,0" Visibility="Collapsed">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>

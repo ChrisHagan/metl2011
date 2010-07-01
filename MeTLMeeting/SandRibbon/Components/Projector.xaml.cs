@@ -96,8 +96,8 @@ namespace SandRibbon.Components
             {
                 
             HistoryProviderFactory.provider.Retrieve<PreParser>(
-                null,
-                null,
+                JabberWire.dontDoAnything,
+                JabberWire.dontDoAnything,
                 finishedParser =>{
                     PreParserAvailable(finishedParser);
                 },

@@ -354,7 +354,6 @@ namespace SandRibbon.Tabs.Groups
         }
         private void setDefaults(object obj)
         {
-            Console.WriteLine("Pen"); 
             Draw.IsChecked = true;
             Commands.SetInkCanvasMode.Execute("Ink");
         }
