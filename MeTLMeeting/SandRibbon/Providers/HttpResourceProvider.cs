@@ -11,6 +11,10 @@ namespace SandRibbon.Providers
     }
     public class HttpResourceProvider
     {
+        private static readonly string MeTLCertificateSubject = "E=nobody@nowhere.gondwanaland, CN=localhost, OU=Janitorial section, O=Hyber Inc., L=Yawstown, S=Gondwanaland, C=se";
+        private static readonly string MeTLCertificateIssuer = "E=nobody@nowhere.gondwanaland, CN=localhost, OU=Janitorial section, O=Hyber Inc., L=Yawstown, S=Gondwanaland, C=se";
+        private static readonly string MonashCertificateSubject = "CN=my.monash.edu.au, OU=ITS, O=Monash University, L=Clayton, S=Victoria, C=AU";
+        private static readonly string MonashCertificateIssuer = "E=premium-server@thawte.com, CN=Thawte Premium Server CA, OU=Certification Services Division, O=Thawte Consulting cc, L=Cape Town, S=Western Cape, C=ZA";
         private static bool firstRun = true;
         private static WebClient client()
         {
@@ -24,8 +28,8 @@ namespace SandRibbon.Providers
         }
         private static bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
-            if (cert.Subject == "E=nobody@nowhere.gondwanaland, CN=localhost, OU=Janitorial section, O=Hyber Inc., L=Yawstown, S=Gondwanaland, C=se"
-                && cert.Issuer == "E=nobody@nowhere.gondwanaland, CN=localhost, OU=Janitorial section, O=Hyber Inc., L=Yawstown, S=Gondwanaland, C=se")
+            if ((cert.Subject == MonashCertificateSubject && cert.Issuer == MonashCertificateIssuer)
+                ||(cert.Subject == MeTLCertificateSubject && cert.Issuer == MeTLCertificateIssuer))
                 return true;
             return false;
         }

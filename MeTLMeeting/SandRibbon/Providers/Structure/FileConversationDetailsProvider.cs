@@ -9,7 +9,6 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using SandRibbon.Utils.Connection;
 using SandRibbonObjects;
-using Majestic12;
 using System.Text.RegularExpressions;
 using SandRibbon.Utils;
 using System.Threading;

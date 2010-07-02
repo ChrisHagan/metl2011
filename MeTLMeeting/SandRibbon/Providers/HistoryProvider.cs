@@ -8,7 +8,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using agsXMPP.Xml;
-using Majestic12;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
 using Ionic.Zip;
