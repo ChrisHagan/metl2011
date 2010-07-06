@@ -333,7 +333,7 @@ namespace SandRibbon.Components
                     if (a is UIAdorner && ((UIAdorner)a).contentType == typeof(System.Windows.Controls.Canvas))
                         return;
             var adorner = new UIAdorner(this, canvas);
-            var marquee = new Rectangle { Fill = Brushes.Purple };
+            var marquee = new Rectangle { Fill = Brushes.Purple, Opacity = 0.4 };
             canvas.Background = new SolidColorBrush { Color = Colors.Wheat, Opacity = 0.1 };
             canvas.Children.Add(marquee);
             bool mouseDown = false;
