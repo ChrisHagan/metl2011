@@ -41,7 +41,7 @@
             </DrawingBrush>
         </StackPanel.Resources>
         <SandRibbonInterop:RadioButton x:Name="Draw" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
-        <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectToolTip}"  Icon="\Resources\SelectShiny.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
+        <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectToolTip}"  Icon="\Resources\LassooSelectShiny.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
         <SandRibbonInterop:RadioButton ToolTip="{StaticResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
         <ListBox x:Name="defaultColours" SelectionChanged="ChangeColorFromPreset" Background="Transparent" 
                  ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Padding="0" BorderBrush="Transparent">

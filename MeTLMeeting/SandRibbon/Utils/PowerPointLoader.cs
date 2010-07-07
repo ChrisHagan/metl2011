@@ -100,7 +100,7 @@ namespace SandRibbon.Utils
                 var thumbnailStartId = conversation.Slides.First().id;
                 foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
                 {
-                    var slidePath = Directory.GetCurrentDirectory() + "\\" +  new PrintingHost().ThumbnailPath(thumbnailStartId++);
+                    var slidePath = Directory.GetCurrentDirectory() + "\\" + new PrintingHost().ThumbnailPath(thumbnailStartId++);
                     foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                     {
                         shape.Visible = MsoTriState.msoFalse;
@@ -234,6 +234,10 @@ namespace SandRibbon.Utils
                 newText.Text = text.Attribute("content").Value;
                 InkCanvas.SetLeft(newText, Double.Parse(text.Attribute("x").Value));
                 InkCanvas.SetTop(newText, Double.Parse(text.Attribute("y").Value));
+                if (text.Attributes("height").Count() > 0)
+                    newText.Height = Double.Parse(text.Attribute("height").Value);
+                if (text.Attributes("width").Count() > 0)
+                    newText.Width = Double.Parse(text.Attribute("width").Value);
                 var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + Globals.me + shapeCount++;
                 var font = text.Descendants("font").ElementAt(0);
                 var privacy = text.Attribute("privacy").Value.ToString();
@@ -474,12 +478,19 @@ namespace SandRibbon.Utils
                 }
                 else
                 {
-                    shape.Export(file, exportFormat, backgroundWidth, backgroundHeight, exportMode);
-                    xSlide.Add(new XElement("shape",
-                        new XAttribute("x", x * Magnification),
-                        new XAttribute("y", y * Magnification),
-                        new XAttribute("privacy", "public"),
-                        new XAttribute("snapshot", file)));
+                    if (shape.HasTextFrame == MsoTriState.msoTrue &&
+                        shape.TextFrame.HasText == MsoTriState.msoTrue &&
+                        !String.IsNullOrEmpty(shape.TextFrame.TextRange.Text))
+                        addPublicText(xSlide, shape, "public", Magnification);
+                    else
+                    {
+                        shape.Export(file, exportFormat, backgroundWidth, backgroundHeight, exportMode);
+                        xSlide.Add(new XElement("shape",
+                            new XAttribute("x", x * Magnification),
+                            new XAttribute("y", y * Magnification),
+                            new XAttribute("privacy", "public"),
+                            new XAttribute("snapshot", file)));
+                    }
                 }
         }
 
@@ -500,6 +511,8 @@ namespace SandRibbon.Utils
                         new XAttribute("content", textFrame.TextRange.Text.Replace('\v', '\n')),
                         new XAttribute("x", shape.Left * Magnification),
                         new XAttribute("y", shape.Top * Magnification),
+                        new XAttribute("width", shape.Width * Magnification),
+                        new XAttribute("height", shape.Height * Magnification),
                         new XElement("font",
                             new XAttribute("family", safeFont),
                             new XAttribute("size", textFrame.TextRange.Font.Size * Magnification),

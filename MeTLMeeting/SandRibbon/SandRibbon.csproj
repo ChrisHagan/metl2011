@@ -780,6 +780,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\homeloo_gear_clock_2.jpg" />
+    <Resource Include="Resources\LassooSelectShiny.png" />
     <Content Include="Resources\Pen.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
