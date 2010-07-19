@@ -280,7 +280,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>D8oegPdp4i+utIHPaX/bf6fc7Oc=</dsig:DigestValue>
+        <dsig:DigestValue>SKVeLUz4+SgFNHv3EELFztyxqfQ=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

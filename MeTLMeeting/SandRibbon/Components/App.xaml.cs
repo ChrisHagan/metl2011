@@ -22,6 +22,7 @@ namespace SandRibbon
             var now = DateTime.Now;
             var s = string.Format("{2} {0}:{1}", now, now.Millisecond, title);
             Logger.Log(s);
+            Console.WriteLine(s);
             return s;
         }
         static App() {

@@ -16,6 +16,7 @@ using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using SandRibbon.Components.Sandpit;
+using agsXMPP.protocol.iq.disco;
 
 namespace SandRibbon.Utils.Connection
 {/*SPECIAL METL*/
@@ -219,36 +220,21 @@ namespace SandRibbon.Utils.Connection
             }
             var populatedConversations = new List<ConversationDetails>();
             var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
-            foreach (string currentRoom in currentRooms)
+            int dummy;
+            var conversationJids = currentRooms.Where(r=>Int32.TryParse(r, out dummy))
+                .Select(r=>Int32.Parse(r))
+                .Where(r=>Slide.conversationFor(r)==r).Distinct().Select(r=>r.ToString());
+            foreach (ConversationDetails conversation in conversations.Where(c=>conversationJids.Contains(c.Jid)))
             {
-                foreach (ConversationDetails conversation in conversations)
+                var discoOccupants = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
+                discoOccupants.To = new Jid(conversation.Jid.ToString() + "@" + Constants.JabberWire.MUC);
+                var IQResponse = conn.IqGrabber.SendIq(discoOccupants);
+                if( IQResponse.Query.ChildNodes.ToArray()
+                    .Where(n=>n is agsXMPP.protocol.iq.disco.DiscoItem)
+                    .Select(di=>((DiscoItem)di).Name.Split('@')[0])
+                    .Any(name=> name.Contains(conversation.Author)))
                 {
-                    bool ownerIsInConversation = false;
-                    var populatedSlides = conversation.Slides.Where(s => currentRooms.Contains(s.id.ToString())).ToList();
-                    foreach (Slide slide in populatedSlides)
-                    {
-                        if (!ownerIsInConversation)
-                        {
-                            var discoOccupants = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
-                            discoOccupants.To = new Jid(slide.id.ToString() + "@" + Constants.JabberWire.MUC);
-                            var IQResponse = conn.IqGrabber.SendIq(discoOccupants);
-                            var onlineUsers = new List<string>();
-                            foreach (object item in IQResponse.Query.ChildNodes.ToArray())
-                            {
-                                if (item.GetType().Equals(typeof(agsXMPP.protocol.iq.disco.DiscoItem)))
-                                {
-                                    var name = ((agsXMPP.protocol.iq.disco.DiscoItem)item).Name.ToString();
-                                    var splitName = name.Split('@');
-                                    onlineUsers.Add(splitName[0]);
-                                }
-                            }
-                            foreach (string name in onlineUsers)
-                                if (name.Contains(slide.author))
-                                    ownerIsInConversation = true;
-                        }
-                    }
-                    if (ownerIsInConversation && !populatedConversations.Contains(conversation))
-                        populatedConversations.Add(conversation);
+                    populatedConversations.Add(conversation);
                 }
             }
             Commands.receiveCurrentClasses.Execute(populatedConversations);
