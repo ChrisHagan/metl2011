@@ -599,7 +599,9 @@
     <Compile Include="Providers\ConfigurationProvider.cs" />
     <Compile Include="Providers\Globals.cs" />
     <Compile Include="Providers\HistoryProvider.cs" />
-    <Compile Include="Providers\HttpResourceProvider.cs" />
+    <Compile Include="Providers\HttpResourceProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Providers\RecentConversationProvider.cs" />
     <Compile Include="Providers\Structure\ConversationDetailsProviderFactory.cs" />
     <Compile Include="Providers\Structure\FileConversationDetailsProvider.cs" />
