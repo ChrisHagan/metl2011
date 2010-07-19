@@ -25,6 +25,7 @@ namespace SandRibbon.Components
         private List<ConversationSummary> myOwnedConversationsSource;
         private List<ConversationSummary> myRecentConversationsSource;
         private List<ConversationSummary> allConversationsSource;
+        private List<ConversationSummary> currentlyTeachingConversationsSource;
 
         public ConversationSearchBox()
         {
@@ -34,6 +35,7 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox, CanShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
+            Commands.receiveCurrentClasses.RegisterCommand(new DelegateCommand<object>(receiveCurrentClasses));
             Loaded += new RoutedEventHandler(ConversationSearchBox_Loaded);
         }
 
@@ -79,6 +81,8 @@ namespace SandRibbon.Components
                 updateMyOwnedConversations();
                 updateMyRecentConversationsSource();
                 updateMyRecommendedConversationsSource();
+                Commands.getCurrentClasses.Execute(null);
+                updateCurrentlyTeachingConversations();
                 if (!string.IsNullOrEmpty(lastSearch))
                 {
                     searchFor((lastSearch).ToLower());
@@ -91,8 +95,10 @@ namespace SandRibbon.Components
             myRecommendedConversationsItemsControl.ItemsSource = null;
             SearchResults.ItemsSource = null;
             myRecentConversationsItemsControl.ItemsSource = null;
+            currentlyTeachingConversationsItemsControl.ItemsSource = null;
             myOwnedConversationsItemsControl.Items.Clear();
             myRecommendedConversationsItemsControl.Items.Clear();
+            currentlyTeachingConversationsItemsControl.Items.Clear();
             SearchResults.Items.Clear();
             if (allConversations != null)
                 allConversations.Clear();
@@ -104,6 +110,8 @@ namespace SandRibbon.Components
                 myRecentConversationsSource.Clear();
             if (allConversationsSource != null)
                 allConversationsSource.Clear();
+            if (currentlyTeachingConversationsSource != null)
+                currentlyTeachingConversationsSource.Clear();
         }
 
         private void updateMyRecommendedConversationsSource()
@@ -166,9 +174,19 @@ namespace SandRibbon.Components
                 updateMyOwnedConversations();
                 updateMyRecentConversationsSource();
                 updateMyRecommendedConversationsSource();
+                updateCurrentlyTeachingConversations();
             }
         }
 
+        private void updateCurrentlyTeachingConversations()
+        {
+            if (allConversations.Count == 0)
+                DoUpdateAllConversations();
+            currentlyTeachingConversationsItemsControl.ItemsSource = currentlyTeachingConversationsSource;
+            if (currentlyTeachingConversationsSource != null && currentlyTeachingConversationsSource.Count > 0)
+            currentlyTeachingConversationsCount.Content = "(" + currentlyTeachingConversationsSource.Count.ToString() + ")";
+        }
+        
         private void updateMyOwnedConversations()
         {
             if (allConversations.Count == 0)
@@ -200,7 +218,19 @@ namespace SandRibbon.Components
             myRecentConversationsItemsControl.ItemsSource = myRecentConversationsSource;
             myRecentConversationsItemsControl.Visibility = Visibility.Visible;
         }
-
+        private void showCurrentlyTeachingConversations()
+        {
+            Commands.getCurrentClasses.Execute(null);
+            currentlyTeachingConversationsItemsControl.ItemsSource = currentlyTeachingConversationsSource;
+            currentlyTeachingConversationsItemsControl.Visibility = Visibility.Visible;
+        }
+        private void receiveCurrentClasses(object obj)
+        {
+            var currentconversations = (List<SandRibbonObjects.ConversationDetails>)obj;
+            currentlyTeachingConversationsSource = null;
+            currentlyTeachingConversationsSource = convertToSummaries(currentconversations);
+            updateCurrentlyTeachingConversations();
+        }
         private void searchFor(string searchText)
         {
             if (string.IsNullOrEmpty(searchText))
@@ -353,6 +383,7 @@ namespace SandRibbon.Components
                 updateMyOwnedConversations();
                 updateMyRecentConversationsSource();
                 updateMyRecommendedConversationsSource();
+                updateCurrentlyTeachingConversations();
                 recommendedConversations.Visibility = Visibility.Visible;
                 recommendedConversationsLabel.Content = "[-] Recommended conversations";
             }
@@ -399,6 +430,19 @@ namespace SandRibbon.Components
             {
                 myRecentConversationsItemsControl.Visibility = Visibility.Collapsed;
                 myRecentConversationsLabel.Content = "[+] Conversations I've recently visited";
+            }
+        }
+        private void currentlyTeachingConversations_PreviewMouseDown(object sender, MouseEventArgs e)
+        {
+            if (currentlyTeachingConversationsItemsControl.Visibility == Visibility.Collapsed)
+            {
+                showCurrentlyTeachingConversations();
+                currentlyTeachingConversationsLabel.Content = "[-] Conversations currently being taught";
+            }
+            else
+            {
+                currentlyTeachingConversationsItemsControl.Visibility = Visibility.Collapsed;
+                currentlyTeachingConversationsLabel.Content = "[+] Conversations currently being taught";
             }
         }
 

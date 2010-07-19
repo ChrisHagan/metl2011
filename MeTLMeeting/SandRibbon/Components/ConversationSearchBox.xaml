@@ -195,6 +195,31 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
+                                <StackPanel Orientation="Horizontal" Cursor="Hand" PreviewMouseUp="currentlyTeachingConversations_PreviewMouseDown">
+                                    <Label x:Name="currentlyTeachingConversationsLabel">[+] Conversations currently being taught</Label>
+                                    <Label x:Name="currentlyTeachingConversationsCount"/>
+                                </StackPanel>
+                                <ItemsControl x:Name="currentlyTeachingConversationsItemsControl" HorizontalAlignment="Left" Margin="20,0,0,0" Visibility="Collapsed">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
+                                                <Label FontSize="14" Foreground="Blue" Cursor="Hand" PreviewMouseUp="SelectConversation_MouseDown" Content="{Binding Path=title}" Tag="{Binding Path=jid}">
+                                                    <Label.Template>
+                                                        <ControlTemplate TargetType="{x:Type Label}">
+                                                            <ContentPresenter Content="{TemplateBinding Content}"/>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Label.Template>
+                                                </Label>
+                                                <Label HorizontalAlignment="Left" Margin="20,0,0,0" Content="{Binding Path=description}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </StackPanel>
                         </StackPanel>
                     </Grid>

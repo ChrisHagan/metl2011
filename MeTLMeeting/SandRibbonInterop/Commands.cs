@@ -27,6 +27,11 @@ namespace SandRibbon
     }
     public class Commands
     {
+        #region currentClasses
+        public static CompositeCommand getCurrentClasses = new CompositeCommand();
+        public static CompositeCommand receiveCurrentClasses = new CompositeCommand();
+        #endregion
+
         #region Sandpit
         public static CompositeCommand SendWakeUp = new CompositeCommand();
         public static CompositeCommand SendSleep = new CompositeCommand();

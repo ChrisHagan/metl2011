@@ -35,7 +35,7 @@ namespace SandRibbon.Utils.Connection
         {
             public string name;
             public string password;
-            public List<AuthorizedGroup> authorizedGroups; 
+            public List<AuthorizedGroup> authorizedGroups;
         }
         public class AuthorizedGroup
         {
@@ -93,7 +93,8 @@ namespace SandRibbon.Utils.Connection
             public Location location;
             public Policy policy;
         }
-        public class BoardMove {
+        public class BoardMove
+        {
             public string boardUsername;
             public int roomJid;
         }
@@ -142,8 +143,8 @@ namespace SandRibbon.Utils.Connection
 
         }
         public static void LookupServer()
-        {    
-            if(Constants.JabberWire.SERVER == null)
+        {
+            if (Constants.JabberWire.SERVER == null)
                 try
                 {
                     Constants.JabberWire.SERVER = ConfigurationProvider.instance.SERVER;
@@ -156,7 +157,7 @@ namespace SandRibbon.Utils.Connection
                 }
                 finally
                 {
-                    Logger.Log(string.Format("Logged into MeTL server {0}", Constants.JabberWire.SERVER)); 
+                    Logger.Log(string.Format("Logged into MeTL server {0}", Constants.JabberWire.SERVER));
                 }
         }
         public JabberWire()
@@ -196,8 +197,64 @@ namespace SandRibbon.Utils.Connection
             Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
+            Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
         }
-        private void SendNewBubble(TargettedBubbleContext selection){
+        public void getCurrentClasses(object _unused)
+        {
+            var currentRooms = new List<string>();
+            if (conn != null)
+            {
+                var discoIq = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
+                discoIq.To = new Jid(Constants.JabberWire.MUC);
+                var IQResponse = conn.IqGrabber.SendIq(discoIq);
+                foreach (object item in IQResponse.Query.ChildNodes.ToArray())
+                {
+                    if (item.GetType().Equals(typeof(agsXMPP.protocol.iq.disco.DiscoItem)))
+                    {
+                        var name = ((agsXMPP.protocol.iq.disco.DiscoItem)item).Name.ToString();
+                        name = name.Remove(name.Length - 4);
+                        currentRooms.Add(name);
+                    }
+                }
+            }
+            var populatedConversations = new List<ConversationDetails>();
+            var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+            foreach (string currentRoom in currentRooms)
+            {
+                foreach (ConversationDetails conversation in conversations)
+                {
+                    bool ownerIsInConversation = false;
+                    var populatedSlides = conversation.Slides.Where(s => currentRooms.Contains(s.id.ToString())).ToList();
+                    foreach (Slide slide in populatedSlides)
+                    {
+                        if (!ownerIsInConversation)
+                        {
+                            var discoOccupants = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
+                            discoOccupants.To = new Jid(slide.id.ToString() + "@" + Constants.JabberWire.MUC);
+                            var IQResponse = conn.IqGrabber.SendIq(discoOccupants);
+                            var onlineUsers = new List<string>();
+                            foreach (object item in IQResponse.Query.ChildNodes.ToArray())
+                            {
+                                if (item.GetType().Equals(typeof(agsXMPP.protocol.iq.disco.DiscoItem)))
+                                {
+                                    var name = ((agsXMPP.protocol.iq.disco.DiscoItem)item).Name.ToString();
+                                    var splitName = name.Split('@');
+                                    onlineUsers.Add(splitName[0]);
+                                }
+                            }
+                            foreach (string name in onlineUsers)
+                                if (name.Contains(slide.author))
+                                    ownerIsInConversation = true;
+                        }
+                    }
+                    if (ownerIsInConversation && !populatedConversations.Contains(conversation))
+                        populatedConversations.Add(conversation);
+                }
+            }
+            Commands.receiveCurrentClasses.Execute(populatedConversations);
+        }
+        private void SendNewBubble(TargettedBubbleContext selection)
+        {
             stanza(new MeTLStanzas.Bubble(selection));
         }
         private void setUpWire()
@@ -210,8 +267,9 @@ namespace SandRibbon.Utils.Connection
                 conn.AutoAgents = false;
             }
         }
-        private void SendPing(string who) {
-            directCommand(who,string.Format("{0} {1}",PING, credentials.name));
+        private void SendPing(string who)
+        {
+            directCommand(who, string.Format("{0} {1}", PING, credentials.name));
         }
         private Jid createJid(string username)
         {
@@ -219,7 +277,7 @@ namespace SandRibbon.Utils.Connection
         }
         private void SendWormMove(WormMove move)
         {
-            send(credentials.name, string.Format("{0} {1}", WORM,move.direction));
+            send(credentials.name, string.Format("{0} {1}", WORM, move.direction));
         }
         public void SendLiveWindow(LiveWindowSetup window)
         {
@@ -229,7 +287,7 @@ namespace SandRibbon.Utils.Connection
         {
             stanza(new MeTLStanzas.DirtyLiveWindow(dirty));
         }
-        public void SendMoveBoardToSlide(BoardMove boardMove) 
+        public void SendMoveBoardToSlide(BoardMove boardMove)
         {
             directCommand(boardMove.boardUsername, string.Format("{0} {1}", GO_TO_SLIDE, boardMove.roomJid));
         }
@@ -247,7 +305,7 @@ namespace SandRibbon.Utils.Connection
         }
         protected virtual void openConnection(string username)
         {
-            conn.Open(username, "examplePassword", DateTime.Now.Ticks.ToString(),1);
+            conn.Open(username, "examplePassword", DateTime.Now.Ticks.ToString(), 1);
         }
         private void OnLogin(object o)
         {
@@ -260,22 +318,22 @@ namespace SandRibbon.Utils.Connection
         }
         private void HandlerError(object sender, Exception ex)
         {
-            Logger.Log(string.Format("Handler error: {0}",ex.Message));
+            Logger.Log(string.Format("Handler error: {0}", ex.Message));
             Reset("Handler");
         }
         private void ElementError(object sender, Element element)
         {
-            Logger.Log(string.Format("Element error: {0}",element.ToString()));
+            Logger.Log(string.Format("Element error: {0}", element.ToString()));
             Reset("Element");
         }
         protected virtual void ReadXml(object sender, string xml)
         {
-            if(!xml.Contains("/WORM_MOVES"))
+            if (!xml.Contains("/WORM_MOVES"))
                 log("IN:" + xml);
         }
         protected virtual void WriteXml(object sender, string xml)
         {
-            if(!xml.Contains("/WORM_MOVES"))
+            if (!xml.Contains("/WORM_MOVES"))
                 log("OUT:" + xml);
         }
         private void OnClose(object sender)
@@ -343,7 +401,7 @@ namespace SandRibbon.Utils.Connection
         }
         private void joinRooms()
         {
-            var rooms = new []
+            var rooms = new[]
             {
                 Constants.JabberWire.GLOBAL,
                 new Jid(credentials.name, Constants.JabberWire.MUC, jid.Resource),
@@ -351,11 +409,11 @@ namespace SandRibbon.Utils.Connection
                 new Jid(location.currentSlide.ToString(), Constants.JabberWire.MUC,jid.Resource),
                 new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), Constants.JabberWire.MUC,jid.Resource)
             };
-            foreach(var room in rooms.Where(r=>r.User != null && r.User != "0"))
+            foreach (var room in rooms.Where(r => r.User != null && r.User != "0"))
             {
                 try
                 {
-                    joinRoom(room);         
+                    joinRoom(room);
                 }
                 catch (Exception e)
                 {
@@ -365,8 +423,8 @@ namespace SandRibbon.Utils.Connection
         }
         private void joinRoom(Jid room)
         {
-            var alias = credentials.name+conn.Resource;
-            new MucManager(conn).JoinRoom(room,alias,true);
+            var alias = credentials.name + conn.Resource;
+            new MucManager(conn).JoinRoom(room, alias, true);
             log(string.Format("Joined room {0}", room));
         }
         private void log(string message)
@@ -393,7 +451,7 @@ namespace SandRibbon.Utils.Connection
         public void stanza(string target, Element stanza)
         {
             var message = new Message();
-            string modifiedTarget = 
+            string modifiedTarget =
                 stanza.GetTag(MeTLStanzas.privacyTag) == "private" ?
                 string.Format("{0}{1}", target, stanza.GetTag("author")) : target;
             message.To = new Jid(string.Format("{0}@{1}", modifiedTarget, Constants.JabberWire.MUC));
@@ -414,7 +472,8 @@ namespace SandRibbon.Utils.Connection
         {
             send("global", message);
         }
-        private void directCommand(string target, string message) { 
+        private void directCommand(string target, string message)
+        {
             conn.Send(new Message(new Jid(target + "@" + Constants.JabberWire.SERVER), jid, MessageType.chat, message));
         }
         private void onStart()
@@ -441,7 +500,7 @@ namespace SandRibbon.Utils.Connection
                 onProgress,
                 null,
                 room);
-        }        
+        }
         public void SendDirtyText(TargettedDirtyElement element)
         {
             stanza(new MeTLStanzas.DirtyText(element));
@@ -471,7 +530,8 @@ namespace SandRibbon.Utils.Connection
             HistoryProviderFactory.provider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser =>{
+                finishedParser =>
+                {
                     Commands.PreParserAvailable.Execute(finishedParser);
                 },
                 location.currentSlide.ToString());
@@ -479,10 +539,10 @@ namespace SandRibbon.Utils.Connection
                 onStart,
                 onProgress,
                 finishedParser =>
-                    {
-                        Commands.PreParserAvailable.Execute(finishedParser);
-                        //finishedParser.Regurgitate(),
-                    },
+                {
+                    Commands.PreParserAvailable.Execute(finishedParser);
+                    //finishedParser.Regurgitate(),
+                },
                 credentials.name,
                 location.currentSlide.ToString());
         }
@@ -496,14 +556,14 @@ namespace SandRibbon.Utils.Connection
         }
         public void SendSyncMoveTo(int where)
         {
-            command(location.activeConversation,SYNC_MOVE + " " + where);
+            command(location.activeConversation, SYNC_MOVE + " " + where);
         }
         public void SendImage(TargettedImage image)
         {
             stanza(image.slide.ToString(), new MeTLStanzas.Image(image));
         }
-        public void SendVideo(TargettedVideo video) 
-        { 
+        public void SendVideo(TargettedVideo video)
+        {
             stanza(video.slide.ToString(), new MeTLStanzas.Video(video));
         }
         public void SendAutoShape(TargettedAutoShape autoshape)
@@ -512,7 +572,7 @@ namespace SandRibbon.Utils.Connection
         }
         private void SendChat(TargettedTextBox message)
         {
-           stanza(location.activeConversation, new MeTLStanzas.TextBox(message));
+            stanza(location.activeConversation, new MeTLStanzas.TextBox(message));
         }
         public void SendTextbox(TargettedTextBox box)
         {
@@ -532,20 +592,23 @@ namespace SandRibbon.Utils.Connection
         {
             command(UPDATE_CONVERSATION_DETAILS + " " + (jid));
         }
-        public bool CanWakeUp(string _param) {
+        public bool CanWakeUp(string _param)
+        {
             return true;
         }
-        public void WakeUp(string room) {
+        public void WakeUp(string room)
+        {
             foreach (var board in BoardManager.boards[room])
             {
                 directCommand(board.name, WAKEUP);
             }
         }
-        public void CommandBoardToMoveTo(string board, string slide) 
+        public void CommandBoardToMoveTo(string board, string slide)
         {
-            directCommand(board, string.Format("{0} {1}",GO_TO_SLIDE, slide));
+            directCommand(board, string.Format("{0} {1}", GO_TO_SLIDE, slide));
         }
-        public void GoToSleep(string room) {
+        public void GoToSleep(string room)
+        {
             foreach (var board in BoardManager.boards[room])
                 directCommand(room, SLEEP);
         }
@@ -590,14 +653,17 @@ namespace SandRibbon.Utils.Connection
                         break;
                 }
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Logger.Log(string.Format("Uncaught exception in ReceivedMessage: {0}", e.Message));
             }
         }
-        public virtual void handlePing(string[] parts) {
-            directCommand(parts[1], string.Format("{0} {1}",PONG,credentials.name));
+        public virtual void handlePing(string[] parts)
+        {
+            directCommand(parts[1], string.Format("{0} {1}", PONG, credentials.name));
         }
-        public virtual void handlePong(string[] parts) {
+        public virtual void handlePong(string[] parts)
+        {
             Commands.ReceivePong.Execute(parts[1]);
         }
         public virtual void handleGoToConversation(string[] parts)
@@ -640,15 +706,17 @@ namespace SandRibbon.Utils.Connection
         }
         public virtual void handleWakeUp(string[] parts)
         {
-             Application.Current.Dispatcher.adopt((Action)delegate{
+            Application.Current.Dispatcher.adopt((Action)delegate
+            {
                 Commands.ReceiveWakeUp.Execute(null);
-             }); 
+            });
         }
         public virtual void handleSleep(string[] parts)
         {
-             Application.Current.Dispatcher.adopt((Action)delegate{
+            Application.Current.Dispatcher.adopt((Action)delegate
+            {
                 Commands.ReceiveSleep.Execute(null);
-             });
+            });
         }
         public virtual void handleWormMoved(string[] parts)
         {
@@ -657,7 +725,8 @@ namespace SandRibbon.Utils.Connection
         public virtual void ReceivedMessage(object obj)
         {
             var message = (Element)obj;
-            if (message.GetAttribute("type") == "error") {
+            if (message.GetAttribute("type") == "error")
+            {
                 Logger.Log(message.ToString());
                 return;
             }
@@ -668,16 +737,17 @@ namespace SandRibbon.Utils.Connection
             }
             try
             {
-                ((CachedHistoryProvider) HistoryProviderFactory.provider).HandleMessage(
+                ((CachedHistoryProvider)HistoryProviderFactory.provider).HandleMessage(
                     message.GetAttribute("from").Split('@')[0], message);
             }
-            catch(Exception e) { }
+            catch (Exception e) { }
             if (Application.Current == null) return;
             Application.Current.Dispatcher.adoptAsync(
-                ()=>
+                () =>
                     ActOnUntypedMessage(message));
         }
-        public virtual void ActOnUntypedMessage(Element message) { 
+        public virtual void ActOnUntypedMessage(Element message)
+        {
             foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
                 actOnStrokeReceived(ink.Stroke);
             foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
@@ -718,7 +788,7 @@ namespace SandRibbon.Utils.Connection
         {
             Commands.ReceiveScreenshotSubmission.Execute(submission);
         }
-        public virtual void actOnVideoReceived(TargettedVideo video) 
+        public virtual void actOnVideoReceived(TargettedVideo video)
         {
             Commands.ReceiveVideo.Execute(video);
         }
@@ -748,7 +818,7 @@ namespace SandRibbon.Utils.Connection
         }
         public virtual void actOnImageReceived(TargettedImage image)
         {
-            Commands.ReceiveImage.Execute(new[]{image});
+            Commands.ReceiveImage.Execute(new[] { image });
         }
         public virtual void actOnAutoShapeReceived(TargettedAutoShape autoshape)
         {
@@ -768,7 +838,7 @@ namespace SandRibbon.Utils.Connection
         }
         public virtual void actOnTextReceived(TargettedTextBox box)
         {
-            if(box.target == "chat")
+            if (box.target == "chat")
                 Commands.ReceiveChatMessage.Execute(box);
             else
                 Commands.ReceiveTextBox.Execute(box);
@@ -789,7 +859,8 @@ namespace SandRibbon.Utils.Connection
             HistoryProviderFactory.provider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser =>{
+                finishedParser =>
+                {
                     Logger.Log(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
                     Commands.PreParserAvailable.Execute(finishedParser);
                 },
@@ -808,10 +879,10 @@ namespace SandRibbon.Utils.Connection
         }
         public void JoinConversation(string room)
         {
-            if(location.activeConversation != null)
+            if (location.activeConversation != null)
             {
                 var muc = new MucManager(conn);
-                muc.LeaveRoom(new Jid(location.activeConversation + "@" + Constants.JabberWire.MUC), credentials.name );
+                muc.LeaveRoom(new Jid(location.activeConversation + "@" + Constants.JabberWire.MUC), credentials.name);
                 foreach (var slide in ConversationDetailsProviderFactory.Provider.DetailsOf(location.activeConversation).Slides.Select(s => s.id))
                     muc.LeaveRoom(new Jid(slide + "@" + Constants.JabberWire.MUC), credentials.name);
             }
@@ -834,11 +905,11 @@ namespace SandRibbon.Utils.Connection
         }
         private bool isCurrentConversation(string jid)
         {
-            return location != null 
+            return location != null
                 && location.activeConversation != null
                 && location.activeConversation.Equals(jid);
         }
-        protected virtual void  handleUnknownMessage(string message)
+        protected virtual void handleUnknownMessage(string message)
         {
             log(string.Format("Received unknown message: {0}", message));
         }
