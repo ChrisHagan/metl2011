@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functional", "Functional\Fu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlidePostMortem", "SlidePostMortem\SlidePostMortem.csproj", "{28A1F00D-55E4-4A43-8C6D-65293F4CE384}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LectureMeTL", "LectureMeTL\LectureMeTL.csproj", "{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = SandRibbon2.vsmdi
@@ -65,6 +67,10 @@ Global
 		{28A1F00D-55E4-4A43-8C6D-65293F4CE384}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28A1F00D-55E4-4A43-8C6D-65293F4CE384}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28A1F00D-55E4-4A43-8C6D-65293F4CE384}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
