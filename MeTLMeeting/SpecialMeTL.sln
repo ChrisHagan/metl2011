@@ -18,8 +18,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeadfulClassRoom", "Headful
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeadlessClassroom", "HeadlessClassroom\HeadlessClassroom.csproj", "{7E07FB2D-87E4-4AA6-9B8D-7C4681526682}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoTest", "CryptoTest\CryptoTest.csproj", "{42D16EC6-044C-4D78-B027-E780D0AC0FC7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functional", "Functional\Functional.csproj", "{EEA9F528-4885-4D7E-8BDC-914FA52370C7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlidePostMortem", "SlidePostMortem\SlidePostMortem.csproj", "{28A1F00D-55E4-4A43-8C6D-65293F4CE384}"
@@ -55,10 +53,6 @@ Global
 		{7E07FB2D-87E4-4AA6-9B8D-7C4681526682}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E07FB2D-87E4-4AA6-9B8D-7C4681526682}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E07FB2D-87E4-4AA6-9B8D-7C4681526682}.Release|Any CPU.Build.0 = Release|Any CPU
-		{42D16EC6-044C-4D78-B027-E780D0AC0FC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42D16EC6-044C-4D78-B027-E780D0AC0FC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42D16EC6-044C-4D78-B027-E780D0AC0FC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42D16EC6-044C-4D78-B027-E780D0AC0FC7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EEA9F528-4885-4D7E-8BDC-914FA52370C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EEA9F528-4885-4D7E-8BDC-914FA52370C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEA9F528-4885-4D7E-8BDC-914FA52370C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
