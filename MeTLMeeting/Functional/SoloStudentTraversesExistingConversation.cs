@@ -226,10 +226,12 @@ namespace Functional
         [TestMethod]
         public void CreateConversation()
         {
-            var window = windows[0];
-            new ApplicationPopup(window).CreateConversation()
-                .title(string.Format("AutomatedConversation{0}", DateTime.Now)).createType(1)
-                .powerpointType(2).file(@"C:\Users\monash\Desktop\beards.ppt").create();
+            var popup = new ApplicationPopup(windows[0]).CreateConversation();
+            popup.title(string.Format("AutomatedConversation{0}", DateTime.Now));
+            popup.createType(1);
+            popup.powerpointType(1);
+            popup.file(@"C:\Users\monash\Desktop\beards.ppt");
+            popup.create();
         }
         [TestMethod]
         public void EditConversation()
