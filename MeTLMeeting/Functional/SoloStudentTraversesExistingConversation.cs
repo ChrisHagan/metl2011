@@ -190,7 +190,7 @@ namespace Functional
             int userSuffix = 22;
             foreach (AutomationElement window in windows)
             {
-                var name = string.Format("dhag{0}", userSuffix++);
+                var name = string.Format("Admirable{0}", userSuffix++);
                 new Login(window).username(name).password("mon4sh2008");
                 new Login((AutomationElement) window).submit();
             }
