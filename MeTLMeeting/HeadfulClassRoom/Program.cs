@@ -64,12 +64,13 @@ namespace HeadfulClassRoom
                         x = 0;
                         y += height;
                     }
-                }/*
+                }
+                return;
                 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 int user = 22;
                 foreach (AutomationElement window in windows)
                 {
-                    var name = string.Format("dhag{0}", user);
+                    var name = string.Format("Admirable{0}", user);
                     user++;
                     new Functional.Login(window).username(name).password("mon4sh2008");
                     window.SetPosition(width, height, x, y);
@@ -81,16 +82,8 @@ namespace HeadfulClassRoom
                     Thread.Sleep(1000);
                     joinConversation(window);
                 }
-                Thread.Sleep(3000);
-                openAQuiz((AutomationElement)windows[0]);
-                Thread.Sleep(1000);
-                createAQuiz();
-
-                openQuizToAnswer(windows[1]);
-                Thread.Sleep(1000);
-                answerQuiz(windows[1]);
- */
-                 Console.ReadLine();
+                
+             Console.ReadLine();
             }
             catch (Exception e)
             {

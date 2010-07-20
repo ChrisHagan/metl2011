@@ -346,7 +346,7 @@ namespace SandRibbon
 
         private bool automatedTest(string conversationName)
         {
-            if (Globals.me.Contains("dhag") && conversationName.ToLower().Contains("automated")) return true;
+            if (Globals.me.Contains("Admirable") && conversationName.ToLower().Contains("automated")) return true;
             return false;
         }
         private string messageFor(ConversationDetails details)

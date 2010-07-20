@@ -246,7 +246,7 @@ namespace SandRibbon.Components
                 var matchingItems = specificSearch(searchText);
                 SearchResults.ItemsSource = convertToSummaries(matchingItems);
 
-                if(Globals.me.Contains("dhag") && searchText.Contains("automatedconversation"))
+                if(Globals.me.Contains("Admirable") && searchText.Contains("automatedconversation"))
                 {
                     var list = matchingItems.OrderBy(c => c.Created).Select(c => c);
                     Commands.JoinConversation.Execute(list.Last().Jid);

@@ -32,7 +32,7 @@
                                         <Label FontWeight="Bold" Content="{Binding count, Converter={x:Static sr:Converters.BracketingConverter}}" HorizontalAlignment="Right"/>
                                     </StackPanel>
                                 </Grid>
-                                <Grid Grid.Column="1" HorizontalAlignment="Left">
+                                <Grid Grid.Column="1" HorizontalAlignment="Left" MaxWidth="300">
                                     <Grid.Width>
                                         <MultiBinding Converter="{x:Static sr:Converters.multiply}">
                                             <Binding ElementName="allResults" Path="ActualWidth" />
