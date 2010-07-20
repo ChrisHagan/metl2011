@@ -22,6 +22,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbon.Providers;
+using SandRibbon.Components.Canvas;
 
 namespace SandRibbon.Components
 {
@@ -226,7 +227,14 @@ namespace SandRibbon.Components
             } foreach (var bubble in parser.bubbleList)
                 stack.ReceiveNewBubble(bubble);
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
+            snapshot();
+        }
+        private void snapshot()
+        {
+            //Wouldn't it be nice if we could hide private content here.
+            stack.UpdateLayout();
             Commands.CreateThumbnail.Execute(Globals.slide);
+            //and show it again here.
         }
         private void MirrorPresentationSpace(Window1 parent)
         {

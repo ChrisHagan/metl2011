@@ -39,21 +39,6 @@ namespace SandRibbon.Providers
             var wc = new WebClientWithTimeout { Credentials = MeTLCredentials };
             return wc;
         }
-        private static HttpWebRequest request(string uri, string webmethod)
-        {
-            if (firstRun)
-            {
-                ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
-                ServicePointManager.DefaultConnectionLimit = 1000;
-                firstRun = false;
-            }
-            var hwq = (HttpWebRequest)WebRequest.Create(new System.Uri(uri));
-            hwq.Method = webmethod;
-            hwq.Credentials = MeTLCredentials;
-
-            hwq.Timeout = -1;
-            return hwq;
-        }
         private static bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
             if ((cert.Subject == MonashCertificateSubject && cert.Issuer == MonashCertificateIssuer)
@@ -65,14 +50,6 @@ namespace SandRibbon.Providers
         }
         public static string secureGetString(string resource)
         {
-            /*
-            var response = request(resource, "GET").GetResponse();
-            var responseStream = response.GetResponseStream();
-            var responseBuffer = new byte[response.ContentLength];
-            responseStream.Read(responseBuffer, 0, Convert.ToInt32(response.ContentLength));
-            var responseString = decode(responseBuffer);
-            return responseString;
-            */
             return client().DownloadString(resource);
         }
         public static bool exists(string resource)
@@ -93,58 +70,18 @@ namespace SandRibbon.Providers
 
         public static string insecureGetString(string resource)
         {
-            /*
-            var response = request(resource, "GET").GetResponse();
-            var responseStream = response.GetResponseStream();
-            var responseBuffer = new byte[response.ContentLength];
-            responseStream.Read(responseBuffer, 0, Convert.ToInt32(response.ContentLength));
-            var responseString = decode(responseBuffer);
-            return responseString;
-            */
             return client().DownloadString(resource);
         }
         public static string securePutData(string uri, byte[] data)
         {
-            /*
-            var rq = request(uri, "POST");
-            rq.ContentLength = data.Length;
-            System.IO.Stream contentStream = rq.GetRequestStream();
-            contentStream.Write(data, 0, data.Length);
-            contentStream.Close();
-            var response = rq.GetResponse();
-            var responseBuffer = new byte[response.ContentLength];
-            var responseStream = response.GetResponseStream();
-            responseStream.Read(responseBuffer, 0, Convert.ToInt32(response.ContentLength));
-            var responseString = decode(responseBuffer);
-            return responseString;
-            */
             return decode(client().UploadData(uri, data));
         }
         public static byte[] secureGetData(string resource)
         {
-            /*var response = request(resource, "GET").GetResponse();
-            var responseStream = response.GetResponseStream();
-            var responseBuffer = new byte[response.ContentLength];
-            responseStream.Read(responseBuffer, 0, Convert.ToInt32(response.ContentLength));
-            return responseBuffer;
-//          */
             return client().DownloadData(resource);
         }
         public static string securePutFile(string uri, string filename)
         {
-            /*
-            var data = System.IO.File.ReadAllBytes(filename);
-            var rq = request(uri, "POST");
-            rq.ContentType = "message/external-body";
-            rq.ContentLength = data.Length;
-            System.IO.Stream contentStream = rq.GetRequestStream();
-            contentStream.Write(data, 0, data.Length);
-            contentStream.Close();
-
-            var response = rq.GetResponse();
-
-            return response.GetResponseStream().ToString();
-            */
             return decode(client().UploadFile(uri, filename));
         }
         private static string decode(byte[] bytes)
