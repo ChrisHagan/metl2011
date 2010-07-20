@@ -226,6 +226,7 @@ namespace SandRibbon.Components
             } foreach (var bubble in parser.bubbleList)
                 stack.ReceiveNewBubble(bubble);
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
+            Commands.CreateThumbnail.Execute(Globals.slide);
         }
         private void MirrorPresentationSpace(Window1 parent)
         {

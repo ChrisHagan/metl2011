@@ -14,6 +14,13 @@ namespace SandRibbonInterop
         public Slide.TYPE type { get; set; }
         public int slideId { get; set; }
         public int slideNumber { get; set; }
+        public ImageBrush ThumbnailBrush
+        {
+            get { return (ImageBrush)GetValue(ThumbnailBrushProperty); }
+            set { SetValue(ThumbnailBrushProperty, value); }
+        }
+        public static readonly DependencyProperty ThumbnailBrushProperty =
+            DependencyProperty.Register("ThumbnailBrush", typeof(ImageBrush), typeof(ThumbnailInformation), new UIPropertyMetadata(null));
         public Visual Canvas
         {
             get { return (Visual)GetValue(CanvasProperty); }

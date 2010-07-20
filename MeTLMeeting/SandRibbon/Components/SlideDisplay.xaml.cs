@@ -42,15 +42,15 @@ namespace SandRibbon.Components
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(jid =>
             {
-                try
-                {
-                    foreach (var slide in Globals.conversationDetails.Slides)
-                        Commands.SneakInto.Execute(slide.id.ToString());
-                }
-                catch (NotSetException e)
-                {
-                }
-                
+                /*                try
+                                {
+                                    foreach (var slide in Globals.conversationDetails.Slides)
+                                        Commands.SneakInto.Execute(slide.id.ToString());
+                                }
+                                catch (NotSetException e)
+                                {
+                                }
+                */
                 currentSlideIndex = 0;
                 slides.SelectedIndex = 0;
                 slides.ScrollIntoView(slides.SelectedIndex);
@@ -60,11 +60,12 @@ namespace SandRibbon.Components
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
+            Commands.ThumbnailAvailable.RegisterCommand(new DelegateCommand<int>(ThumbnailAvailable));
 
             try
             {
-                foreach (var slide in Globals.conversationDetails.Slides)
-                    Commands.SneakInto.Execute(slide.id.ToString());
+                //                foreach (var slide in Globals.conversationDetails.Slides)
+                //                    Commands.SneakInto.Execute(slide.id.ToString());
                 Display(Globals.conversationDetails);
             }
             catch (NotSetException)
@@ -109,8 +110,18 @@ namespace SandRibbon.Components
                 return true;
             return false;
         }
+        private void ThumbnailAvailable(int slideId)
+        {
+            App.Now("Thumbnail available for " + slideId);
+            Dispatcher.adoptAsync(()=>
+            thumbnailList.Where(ti => ti.slideId == slideId).First().ThumbnailBrush = ThumbnailProvider.get(slideId));
+            App.Now("Thumbnail bound for " + slideId);
+        }
         private void PreParserAvailable(PreParser parser)
         {
+            //This fires when the content's available, not when it's on the presentation space. Sometimes this results in a blank capture.
+            //Commands.CreateThumbnail.Execute(Globals.slide);
+            /*
             var id = parser.location.currentSlide;
             var myPrivateParser = isMyPrivateParser(parser);
             if (isParserPrivate(parser) && !myPrivateParser) return;
@@ -136,6 +147,7 @@ namespace SandRibbon.Components
                                                     ThumbListBox.Add(id, parsers[id]);
                                               }
                                           });
+             */
         }
 
         private bool canAddSlide(object _slide)
@@ -226,9 +238,10 @@ namespace SandRibbon.Components
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
-            
-           foreach (var slide in Globals.conversationDetails.Slides.Where(s => !thumbnailList.Select(t => t.slideId).Contains(s.id)))
-                Commands.SneakInto.Execute(slide.id.ToString());
+
+            /*foreach (var slide in Globals.conversationDetails.Slides.Where(s => !thumbnailList.Select(t => t.slideId).Contains(s.id)))
+                 Commands.SneakInto.Execute(slide.id.ToString());
+             */
             Dispatcher.adoptAsync((Action)delegate
             {
                 if (Globals.me == details.Author)
@@ -236,6 +249,7 @@ namespace SandRibbon.Components
                 else
                     isAuthor = false;
                 thumbnailList.Clear();
+                App.Now("beginning creation of slideDisplay");
                 foreach (var slide in details.Slides)
                 {
                     if (slide.type == Slide.TYPE.SLIDE)
@@ -246,9 +260,14 @@ namespace SandRibbon.Components
                                     slideId = slide.id,
                                     slideNumber = details.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
                                     Exposed = slide.exposed
+                                    //ThumbnailBrush = ThumbnailProvider.get(slide.id)
                                 });
+                        ThumbnailAvailable(slide.id);
+                        App.Now("slideDisplay item created: " + slide.id);
                     }
                 }
+                App.Now("command handlers: " + Commands.allHandlers().Count().ToString());
+                App.Now("slideDisplay created");
                 if (moveTo)
                 {
                     currentSlideIndex++;
@@ -281,8 +300,11 @@ namespace SandRibbon.Components
                 var proposedIndex = source.SelectedIndex;
                 var proposedId = ((ThumbnailInformation)source.SelectedItem).slideId;
                 if (proposedId == currentSlideId) return;
+                /*
                 if (currentSlideId != -1)
                     updateThumbnails(currentSlideId.ToString());
+                
+                 */
                 currentSlideIndex = proposedIndex;
                 currentSlideId = proposedId;
                 Commands.MoveTo.Execute(currentSlideId);
