@@ -180,9 +180,7 @@ namespace Functional
         public void StudentJoin()
         {
             var window = windows[1]; 
-            var search = new ConversationSearcher(window);
-            Thread.Sleep(1000);
-            search.searchField("AutomatedConversation").Search();
+
         }
         [TestMethod]
         public void LocateAndLogin()
@@ -246,7 +244,15 @@ namespace Functional
             {
                 var search = new ConversationSearcher(window);
                 Thread.Sleep(1000);
-                search.searchField("AutomatedConversation").Search();
+                search.searchField("AutomatedConversation");
+
+            }
+            foreach (AutomationElement window in windows)
+            {
+                var search = new ConversationSearcher(window);
+                Thread.Sleep(1000);
+                search.Search();
+
             }
         }
         [TestMethod]
@@ -281,6 +287,11 @@ namespace Functional
             {
                 InjectImages();
             }
+        }
+        [TestMethod]
+        public void ChangeTab()
+        {
+            
         }
         [TestMethod]
         public void InjectImages()

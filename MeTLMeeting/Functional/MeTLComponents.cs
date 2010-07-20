@@ -257,16 +257,7 @@ namespace Functional
             _images = _stack.Descendant("images");
         }
     }
-    public class Ribbon
-    {
-        private AutomationElement _ImageTools;
-        private AutomationElement _feedback;
 
-        public Ribbon(AutomationElement parent)
-        {
-            _feedback = parent.Descendants(typeof(RibbonTab))[0];
-        }
-    }
     public class Quiz
     {
         private AutomationElement _open;

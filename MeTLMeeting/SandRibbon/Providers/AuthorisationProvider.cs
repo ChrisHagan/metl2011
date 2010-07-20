@@ -11,7 +11,7 @@ namespace SandRibbon.Providers
         public List<JabberWire.AuthorizedGroup> getEligibleGroups( string AuthcateName, string AuthcatePassword) 
         {
             if (AuthcateName.StartsWith(BackDoor.USERNAME_PREFIX)) 
-                return new List<JabberWire.AuthorizedGroup> { new JabberWire.AuthorizedGroup("Artificial person", "") };
+                return new List<JabberWire.AuthorizedGroup> { new JabberWire.AuthorizedGroup("Artificial person", ""),new JabberWire.AuthorizedGroup("Unrestricted", ""), new JabberWire.AuthorizedGroup(AuthcateName, "")  };
             var groups = new List<JabberWire.AuthorizedGroup>();
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
             string sXML = HttpResourceProvider.insecureGetString(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, Constants.JabberWire.SERVER));
