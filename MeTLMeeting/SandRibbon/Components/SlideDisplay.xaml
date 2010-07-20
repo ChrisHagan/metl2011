@@ -49,7 +49,9 @@
                                     SnapsToDevicePixels="true" CornerRadius="2">
                                     <Grid>
                                         <Viewbox IsHitTestVisible="False">
-                                            <ContentPresenter />
+                                            <Rectangle Height="200" Width="320" Fill="{Binding ThumbnailBrush}"/>
+                                            <!--<ContentPresenter Content="{Binding Canvas}" />
+                                        -->
                                         </Viewbox>
                                         <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"

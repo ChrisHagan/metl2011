@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Linq;
 using System;
 
 namespace SandRibbon.Providers
@@ -32,7 +33,7 @@ namespace SandRibbon.Providers
             if (firstRun)
             {
                 ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
-                ServicePointManager.DefaultConnectionLimit = 10;
+                ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
                 firstRun = false;
             }
             var wc = new WebClientWithTimeout { Credentials = MeTLCredentials };
@@ -43,7 +44,7 @@ namespace SandRibbon.Providers
             if (firstRun)
             {
                 ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
-                ServicePointManager.DefaultConnectionLimit = 10;
+                ServicePointManager.DefaultConnectionLimit = 1000;
                 firstRun = false;
             }
             var hwq = (HttpWebRequest)WebRequest.Create(new System.Uri(uri));
@@ -74,6 +75,22 @@ namespace SandRibbon.Providers
             */
             return client().DownloadString(resource);
         }
+        public static bool exists(string resource)
+        {
+            var request = (HttpWebRequest)HttpWebRequest.Create(resource);
+            request.Method = "HEAD";
+            request.Timeout = 30;
+            try
+            {
+                var response = request.GetResponse();
+                return true;
+            }
+            catch (WebException we)
+            {
+                return false;
+            }
+        }
+
         public static string insecureGetString(string resource)
         {
             /*

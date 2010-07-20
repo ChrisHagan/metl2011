@@ -16,12 +16,25 @@ namespace SandRibbon.Providers
             var directory = Directory.GetCurrentDirectory();
             var unknownSlidePath = directory + "\\Resources\\slide_Not_Loaded.png";
             var path = string.Format(@"{0}\thumbs\{1}\{2}.png", directory, Globals.me, id);
+            var serverPath = string.Format(@"https://{0}:1188/Resource/{1}/thumbs", Constants.JabberWire.SERVER, id);
+            var serverFile = string.Format(@"{0}/{1}.png", serverPath, id);
             ImageSource thumbnailSource;
-            if (File.Exists(path))
-                thumbnailSource = loadedCachedImage(path);
+            if (HttpResourceProvider.exists(serverFile))    
+                thumbnailSource = loadedCachedImage(serverFile);
             else
-                thumbnailSource = loadedCachedImage(unknownSlidePath);
-            return new ImageBrush(thumbnailSource);
+            {
+                if (File.Exists(path))
+                {
+                    thumbnailSource = loadedCachedImage(path);
+                    if (Globals.me == Globals.slides.Where(s => s.id == id).First().author)
+                        SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(path, id.ToString() + "/thumbs", "slideThumb.png");
+                }
+                else
+                    thumbnailSource = loadedCachedImage(unknownSlidePath);
+            }
+            App.Now("Thumbnail created for " + id); 
+            var imageBrush = new ImageBrush(thumbnailSource);
+            return imageBrush;
         }
         private static BitmapImage loadedCachedImage(string uri)
         {
@@ -37,7 +50,7 @@ namespace SandRibbon.Providers
             }
             catch (Exception e)
             {
-                Logger.Log("Loaded cached image failed on "+uri);
+                Logger.Log("Loaded cached image failed on " + uri);
             }
             return bi;
         }

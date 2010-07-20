@@ -44,7 +44,7 @@ namespace SandRibbon.Components
                 };
         public static void HealthCheck(Action healthyBehaviour)
         {
-            var currentStack = new System.Diagnostics.StackTrace();
+            //var currentStack = new System.Diagnostics.StackTrace();
             try
             {
                 foreach (var server in SERVERS)
@@ -76,7 +76,8 @@ namespace SandRibbon.Components
             }
             catch (Exception e)
             {
-                throw new Exception(currentStack.ToString(), e);
+                App.Now("Sorry, might not be able to throw the current callstack");
+                //  throw new Exception(currentStack.ToString(), e);
             }
         }
         private static void checkServers()

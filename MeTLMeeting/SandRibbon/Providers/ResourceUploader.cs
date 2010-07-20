@@ -18,11 +18,11 @@ namespace SandRibbon.Utils.Connection
             try
             {
                 var fullPath = string.Format("{0}?path=Resource/{1}&overwrite={2}", RESOURCE_SERVER_UPLOAD, path, overwrite);
-                var res = HttpResourceProvider.securePutFile(fullPath,file);
+                var res = HttpResourceProvider.securePutFile(fullPath, file);
                 var url = XElement.Parse(res).Attribute("url").Value;
-                return "https://" + url.Split(new[]{"://"}, System.StringSplitOptions.None)[1];
+                return "https://" + url.Split(new[] { "://" }, System.StringSplitOptions.None)[1];
             }
-            catch(WebException e)
+            catch (WebException e)
             {
                 MessageBox.Show("Cannot upload resource: " + e.Message);
             }
@@ -36,6 +36,16 @@ namespace SandRibbon.Utils.Connection
         {
             var url = string.Format("{0}?path={1}&overwrite={2}&filename={3}", RESOURCE_SERVER_UPLOAD, path, overwrite.ToString().ToLower(), name);
             var res = HttpResourceProvider.securePutData(url, resourceData);
+            return XElement.Parse(res).Attribute("url").Value;
+        }
+        public static string uploadResourceToPath(string localFile, string remotePath, string name)
+        {
+            return uploadResourceToPath(localFile, remotePath, name, true);
+        }
+        public static string uploadResourceToPath(string localFile, string remotePath, string name, bool overwrite)
+        {
+            var url = string.Format("{0}?path=Resource/{1}&overwrite={2}&filename={3}", RESOURCE_SERVER_UPLOAD, remotePath, overwrite.ToString().ToLower(), name);
+            var res = HttpResourceProvider.securePutFile(url, localFile);
             return XElement.Parse(res).Attribute("url").Value;
         }
         /*
