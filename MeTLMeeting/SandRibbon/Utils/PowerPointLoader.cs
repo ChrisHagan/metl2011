@@ -115,6 +115,8 @@ namespace SandRibbon.Utils
                         }
                         else shape.Visible = MsoTriState.msoTrue;
                     }
+                    createThumbnail(details, slide);
+                    
                     slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
                     var xSlide = new XElement("slide");
                     xSlide.Add(new XAttribute("index", slide.SlideIndex));
@@ -174,6 +176,14 @@ namespace SandRibbon.Utils
                 Commands.PowerPointLoadFinished.Execute(null);
             }
         }
+        private static void createThumbnail(ConversationDetails details, Microsoft.Office.Interop.PowerPoint.Slide slide)
+        {
+            int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
+            var slideThumbnailPath = Directory.GetCurrentDirectory() + "\\thumbs\\" + conversationSlideNumber + ".png";
+            slide.Export(slideThumbnailPath, "PNG", Convert.ToInt32(slide.Master.Width), Convert.ToInt32(slide.Master.Height));
+            SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(slideThumbnailPath, conversationSlideNumber + "/thumbs", "slideThumb.png");
+        }
+
         public void LoadPowerpoint(string file, ConversationDetails details)
         {
             var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
@@ -189,7 +199,7 @@ namespace SandRibbon.Utils
                 Commands.PowerPointProgress.Execute("Starting to parse powerpoint file");
                 foreach (var slide in ppt.Slides)
                 {
-                    importSlide(xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
+                    importSlide(details, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
                 }
                 Commands.PowerPointProgress.Execute("Finished parsing powerpoint, Beginning data upload");
                 var startingId = conversation.Slides.First().id;
@@ -350,7 +360,7 @@ namespace SandRibbon.Utils
         {
             return cond == MsoTriState.msoTrue;
         }
-        private static void importSlide(XElement xml, Microsoft.Office.Interop.PowerPoint.Slide slide)
+        private static void importSlide(ConversationDetails details, XElement xml, Microsoft.Office.Interop.PowerPoint.Slide slide)
         {
 
             var xSlide = new XElement("slide");
@@ -382,6 +392,7 @@ namespace SandRibbon.Utils
                         shape.Visible = MsoTriState.msoFalse;
                     else shape.Visible = MsoTriState.msoTrue;
                 }
+                createThumbnail(details, slide);
                 xSlide.Add(new XElement("shape",
                     new XAttribute("x", 0),
                     new XAttribute("y", 0),

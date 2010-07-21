@@ -21,17 +21,14 @@ namespace SandRibbon.Providers
             ImageSource thumbnailSource;
             if (File.Exists(path))
             {
-                if (Globals.me == Globals.slides.Where(s => s.id == id).First().author)
+                thumbnailSource = loadedCachedImage(path);
+                if (Globals.slides.Any(s=>s.author == Globals.me && s.id == id))
                     SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(path, id.ToString() + "/thumbs", "slideThumb.png");
             }
-            if (HttpResourceProvider.exists(serverFile))
-                thumbnailSource = loadedCachedImage(serverFile);
             else
             {
-                if (File.Exists(path))
-                {
-                    thumbnailSource = loadedCachedImage(path);
-                }
+                if (HttpResourceProvider.exists(serverFile))
+                    thumbnailSource = loadedCachedImage(serverFile);
                 else
                     thumbnailSource = loadedCachedImage(unknownSlidePath);
             }
