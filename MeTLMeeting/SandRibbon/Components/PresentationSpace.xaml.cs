@@ -37,7 +37,7 @@ namespace SandRibbon.Components
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
-            Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<Window1>( MirrorPresentationSpace, CanMirrorPresentationSpace));
+            Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.CreateThumbnail.RegisterCommand(new DelegateCommand<int>(CreateThumbnail));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
@@ -56,7 +56,7 @@ namespace SandRibbon.Components
             marquee.Width = this.ActualWidth;
             marquee.Height = this.ActualHeight;
 
-            var setup =new LiveWindowSetup
+            var setup = new LiveWindowSetup
                 {
                     frame = marquee,
                     origin = origin,
@@ -96,18 +96,18 @@ namespace SandRibbon.Components
         }
         private void setUpSyncDisplay(int slide)
         {
-            if(!Globals.synched) return;
+            if (!Globals.synched) return;
             try
             {
                 if (Globals.conversationDetails.Author == Globals.me) return;
                 if (Globals.conversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
-                Dispatcher.adoptAsync((Action) delegate
+                Dispatcher.adoptAsync((Action)delegate
                             {
                                 var adorner = GetAdorner();
-                                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner,new SyncDisplay()));
+                                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new SyncDisplay()));
                             });
             }
-            catch(NotSetException e)
+            catch (NotSetException e)
             {
                 //BOOOO
             }
@@ -122,7 +122,7 @@ namespace SandRibbon.Components
                 else
                     Commands.SetPrivacy.Execute("private");
             }
-            catch (NotSetException) 
+            catch (NotSetException)
             {
                 Commands.SetPrivacy.Execute("private");
             }
@@ -130,12 +130,12 @@ namespace SandRibbon.Components
         public FrameworkElement GetAdorner()
         {
             var element = (FrameworkElement)this;
-            while(element.Parent != null && !(element.Name == "adornerGrid"))
+            while (element.Parent != null && !(element.Name == "adornerGrid"))
                 element = (FrameworkElement)element.Parent;
-               
-            foreach(var child in ((Grid)element).Children)
-                if(((FrameworkElement)child).Name == "adorner")
-                   return (FrameworkElement)child;
+
+            foreach (var child in ((Grid)element).Children)
+                if (((FrameworkElement)child).Name == "adorner")
+                    return (FrameworkElement)child;
             return null;
         }
         private void generateScreenshot(long snapshotTime)
@@ -149,11 +149,11 @@ namespace SandRibbon.Components
                 context.DrawRectangle(new VisualBrush(stack), null,
                                       new Rect(new Point(), new Size(size, size)));
                 context.DrawText(new FormattedText(
-                    string.Format("{0}'s submission at {1}", Globals.me,new DateTime(snapshotTime)),
+                    string.Format("{0}'s submission at {1}", Globals.me, new DateTime(snapshotTime)),
                     CultureInfo.GetCultureInfo("en-us"),
                     FlowDirection.LeftToRight,
                     new Typeface("Arial"),
-                    24, 
+                    24,
                     Brushes.Black
                     ),
                     new Point(5, 10));
@@ -163,7 +163,7 @@ namespace SandRibbon.Components
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmap));
             var file = string.Format("{0}submission.png", Globals.me);
-            using(Stream stream = File.Create(file))
+            using (Stream stream = File.Create(file))
             {
                 encoder.Save(stream);
             }
@@ -194,10 +194,11 @@ namespace SandRibbon.Components
                 //The image is too large to thumbnail.  Just leave it be.
             }
         }
-        private Rect measureToAspect(double width, double height, double max) {
-            var dominantSide = height > width? height : width;
+        private Rect measureToAspect(double width, double height, double max)
+        {
+            var dominantSide = height > width ? height : width;
             var scalingFactor = max / dominantSide;
-            return new Rect(0, 0, width * scalingFactor, height * scalingFactor); 
+            return new Rect(0, 0, width * scalingFactor, height * scalingFactor);
         }
         private RenderTargetBitmap generateCapture(int side)
         {
@@ -227,8 +228,14 @@ namespace SandRibbon.Components
             } foreach (var bubble in parser.bubbleList)
                 stack.ReceiveNewBubble(bubble);
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
-            snapshot();
+            if (parser.location.currentSlide == Globals.location.currentSlide)
+                if (snapshotTimer == null)
+                    snapshotTimer = new Timer(delegate {
+                        Dispatcher.adoptAsync(delegate { snapshot(); }); 
+                    }, null, 600, Timeout.Infinite);
+                else snapshotTimer.Change(600, Timeout.Infinite);
         }
+        private Timer snapshotTimer;
         private void snapshot()
         {
             foreach (AbstractCanvas ac in stack.canvasStack.Children)
@@ -257,7 +264,8 @@ namespace SandRibbon.Components
                 Commands.SetDrawingAttributes.Execute(currentAttributes);
                 Commands.SetPrivacy.Execute(stack.handwriting.privacy);
             }
-            catch (NotSetException) { 
+            catch (NotSetException)
+            {
                 //Fine it's not time yet anyway.  I don't care.
             }
         }
@@ -281,11 +289,11 @@ namespace SandRibbon.Components
         }
         private void setSecondaryWindowBounds(Window w)
         {
-           System.Drawing.Rectangle r= getSecondaryScreenBounds();
-           w.Top = r.Top;
-           w.Left = r.Left;
-           w.Width = r.Width;
-           w.Height = r.Height;
+            System.Drawing.Rectangle r = getSecondaryScreenBounds();
+            w.Top = r.Top;
+            w.Left = r.Left;
+            w.Width = r.Width;
+            w.Height = r.Height;
         }
         private void MoveTo(int slide)
         {
@@ -300,17 +308,17 @@ namespace SandRibbon.Components
                               ClearPrivacy();
                               removeSyncDisplay();
                           });
-            
+
         }
         private void removeSyncDisplay()
         {
             var adorner = GetAdorner();
             var adornerLayer = AdornerLayer.GetAdornerLayer(adorner);
             var adorners = adornerLayer.GetAdorners(adorner);
-            if(adorners != null)
-                foreach(var element in adorners)
-                    if(element is UIAdorner)
-                        if(((UIAdorner)element).contentType.Name.Equals("SyncDisplay"))
+            if (adorners != null)
+                foreach (var element in adorners)
+                    if (element is UIAdorner)
+                        if (((UIAdorner)element).contentType.Name.Equals("SyncDisplay"))
                             adornerLayer.Remove(element);
         }
 
@@ -324,7 +332,7 @@ namespace SandRibbon.Components
         }
         private void ReceiveLiveWindow(LiveWindowSetup window)
         {
-            if (window.slide != Globals.slide|| window.author != Globals.me) return;
+            if (window.slide != Globals.slide || window.author != Globals.me) return;
             window.visualSource = stack;
             Commands.DugPublicSpace.Execute(window);
         }
@@ -332,11 +340,12 @@ namespace SandRibbon.Components
         {
             withDragMarquee(SendNewDig);
         }
-        private void InitiateGrabZoom(object _param) 
+        private void InitiateGrabZoom(object _param)
         {
-            withDragMarquee(marquee => {
+            withDragMarquee(marquee =>
+            {
                 Commands.SetZoomRect.Execute(marquee);
-            }); 
+            });
         }
         private void withDragMarquee(Action<Rectangle> doWithRect)
         {
@@ -352,22 +361,22 @@ namespace SandRibbon.Components
             canvas.Background = new SolidColorBrush { Color = Colors.Wheat, Opacity = 0.1 };
             canvas.Children.Add(marquee);
             bool mouseDown = false;
-            canvas.MouseDown += (sender, e)=>
+            canvas.MouseDown += (sender, e) =>
             {
                 var pos = e.GetPosition(canvas);
                 System.Windows.Controls.Canvas.SetLeft(marquee, pos.X);
                 System.Windows.Controls.Canvas.SetTop(marquee, pos.Y);
                 mouseDown = true;
             };
-            canvas.MouseUp += (sender, e)=>
+            canvas.MouseUp += (sender, e) =>
             {
                 mouseDown = false;
                 var pos = e.GetPosition(this);
                 var origin = new Point(pos.X - marquee.Width, pos.Y - marquee.Height);
-                doWithRect(marquee); 
+                doWithRect(marquee);
                 adornerLayer.Remove(adorner);
             };
-            canvas.MouseMove += (sender, e)=>
+            canvas.MouseMove += (sender, e) =>
             {
                 if (!mouseDown) return;
                 var pos = e.GetPosition(canvas);
@@ -439,15 +448,18 @@ namespace SandRibbon.Components
         }
         private void receiveQuiz(QuizQuestion details)
         {
-          
+
         }
         private System.Windows.Shapes.Path privacyAdorner = new System.Windows.Shapes.Path();
         public Brush privacyOverlay;
         public void ClearPrivacy()
         {
             var geometry = new PathGeometry();
-            privacyAdorner = new System.Windows.Shapes.Path { 
-                Fill = privacyOverlay,  Data=geometry};
+            privacyAdorner = new System.Windows.Shapes.Path
+            {
+                Fill = privacyOverlay,
+                Data = geometry
+            };
             geometry.FillRule = FillRule.Nonzero;
             var adornerLayer = AdornerLayer.GetAdornerLayer(this);
             if (adornerLayer == null) return;
@@ -467,15 +479,15 @@ namespace SandRibbon.Components
         {
             try
             {
-                if(Globals.pedagogy.code < 3) return;
-                privacyOverlay = new SolidColorBrush {Color = color, Opacity = 0.2};
+                if (Globals.pedagogy.code < 3) return;
+                privacyOverlay = new SolidColorBrush { Color = color, Opacity = 0.2 };
                 privacyAdorner.Fill = privacyOverlay;
                 RemovePrivateRegion(vertices);
-                var segments = vertices.Select(v => (PathSegment) new LineSegment(v, true));
+                var segments = vertices.Select(v => (PathSegment)new LineSegment(v, true));
                 if (privacyAdorner.Data == null) return;
-                ((PathGeometry) privacyAdorner.Data).Figures.Add(new PathFigure(vertices.First(), segments, true));
+                ((PathGeometry)privacyAdorner.Data).Figures.Add(new PathFigure(vertices.First(), segments, true));
             }
-            catch(NotSetException e)
+            catch (NotSetException e)
             {
             }
         }
@@ -485,12 +497,13 @@ namespace SandRibbon.Components
         }
         public void RemovePrivateRegion(IEnumerable<Point> vertices)
         {
-            if(vertices == null) return;
+            if (vertices == null) return;
             var sum = vertices.Aggregate(0.0, (acc, v) => acc + v.X + v.Y);
             var geometry = (PathGeometry)privacyAdorner.Data;
             if (geometry == null) return;
             var regionToRemove = geometry.Figures.Where(
-                f=>{
+                f =>
+                {
                     var figureSum = f.Segments.Select(s => ((LineSegment)s).Point).Aggregate(0.0, (acc, p) => acc + p.X + p.Y);
                     return Math.Abs(figureSum - sum) < 1;
                 }).ToList();
@@ -520,7 +533,7 @@ namespace SandRibbon.Components
     }
     public class PresentationSpaceAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
     {
-        public PresentationSpaceAutomationPeer(FrameworkElement parent):base(parent) {}
+        public PresentationSpaceAutomationPeer(FrameworkElement parent) : base(parent) { }
         public PresentationSpace PresentationSpace
         {
             get { return (PresentationSpace)base.Owner; }
