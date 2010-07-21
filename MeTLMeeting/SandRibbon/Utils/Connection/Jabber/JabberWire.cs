@@ -873,6 +873,12 @@ namespace SandRibbon.Utils.Connection
                     muc.LeaveRoom(new Jid(slide + "@" + Constants.JabberWire.MUC), credentials.name);
             }
             location.activeConversation = room;
+
+            HistoryProviderFactory.provider.Retrieve<PreParser>(
+                onStart,
+                onProgress,
+                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                room);
             joinRooms();
         }
         private void handleSyncMoveReceived(string[] parts)

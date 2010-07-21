@@ -63,7 +63,6 @@ namespace SandRibbon.Tabs
         }
         private void preparserAvailable(PreParser preParser)
         {
-
             foreach(var quiz in preParser.quizzes)
                 ReceiveQuiz(quiz);
             foreach(var answer in preParser.quizAnswers)
