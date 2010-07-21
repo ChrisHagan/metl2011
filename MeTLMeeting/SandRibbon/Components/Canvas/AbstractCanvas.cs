@@ -94,6 +94,9 @@ namespace SandRibbon.Components.Canvas
             });
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
         }
+        public abstract void showPrivateContent();
+        public abstract void hidePrivateContent();
+
         public void DoWithCurrentSelection(Action<SelectedIdentity> todo)
         {
             foreach (var stroke in GetSelectedStrokes())

@@ -967,6 +967,18 @@ namespace SandRibbon.Components.Canvas
             return true;
         }
         #endregion
+        public override void showPrivateContent()
+        {
+            foreach (UIElement child in Children)
+                if (child.GetType() == typeof(System.Windows.Controls.Image) && ((System.Windows.Controls.Image)child).tag().privacy == "private")
+                    child.Visibility = Visibility.Visible;
+        }
+        public override void hidePrivateContent()
+        {
+            foreach (UIElement child in Children)
+                if (child.GetType() == typeof(System.Windows.Controls.Image) && ((System.Windows.Controls.Image)child).tag().privacy == "private")
+                    child.Visibility = Visibility.Collapsed;
+        }
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
         {
             return new ImageAutomationPeer(this);

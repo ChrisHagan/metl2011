@@ -27,6 +27,7 @@ namespace SandRibbonInterop
         public string author;
         public string privacy;
         public double startingSum;
+        public string startingColor;
     }
     public struct StrokeChecksum
     {
@@ -101,18 +102,22 @@ namespace SandRibbonInterop
         private static Guid STROKE_TAG_GUID = Guid.NewGuid();
         private static Guid STROKE_PRIVACY_GUID = Guid.NewGuid();
         private static Guid STARTINGCHECKSUM = Guid.NewGuid();
+        private static Guid STARTING_COLOR = Guid.NewGuid();
+
         public static StrokeTag tag(this Stroke stroke)
         {
             return new StrokeTag
                        {
                            author = (string) stroke.GetPropertyData(STROKE_TAG_GUID),
                            privacy = (string) stroke.GetPropertyData(STROKE_PRIVACY_GUID),
-            };
+                           startingColor = (string) stroke.GetPropertyData(STARTING_COLOR)
+                       };
         }
         public static StrokeTag tag(this Stroke stroke, StrokeTag tag)
         {
             stroke.AddPropertyData(STROKE_TAG_GUID, tag.author);
             stroke.AddPropertyData(STROKE_PRIVACY_GUID, tag.privacy);
+            stroke.AddPropertyData(STARTING_COLOR, tag.startingColor.ToString());
             return tag;
         }
         private static Guid CHECKSUM = Guid.NewGuid();

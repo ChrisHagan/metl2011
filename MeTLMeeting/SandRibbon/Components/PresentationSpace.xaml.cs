@@ -231,10 +231,16 @@ namespace SandRibbon.Components
         }
         private void snapshot()
         {
-            //Wouldn't it be nice if we could hide private content here.
+            foreach (AbstractCanvas ac in stack.canvasStack.Children)
+            {
+                ac.hidePrivateContent();
+            }
             stack.UpdateLayout();
             Commands.CreateThumbnail.Execute(Globals.slide);
-            //and show it again here.
+            foreach (AbstractCanvas ac in stack.canvasStack.Children)
+            {
+                ac.showPrivateContent();
+            }
         }
         private void MirrorPresentationSpace(Window1 parent)
         {

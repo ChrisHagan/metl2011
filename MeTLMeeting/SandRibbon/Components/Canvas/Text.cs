@@ -630,6 +630,18 @@ namespace SandRibbon.Components.Canvas
             foreach(var element in listToCut)
                 Commands.SendDirtyText.Execute(element);
         }
+        public override void showPrivateContent()
+        {
+            foreach (UIElement child in Children)
+                if (child.GetType() == typeof(System.Windows.Controls.TextBox) && ((System.Windows.Controls.TextBox)child).tag().privacy == "private")
+                    child.Visibility = Visibility.Visible;
+        }
+        public override void hidePrivateContent()
+        {
+            foreach (UIElement child in Children)
+                if (child.GetType() == typeof(System.Windows.Controls.TextBox) && ((System.Windows.Controls.TextBox)child).tag().privacy == "private")
+                    child.Visibility = Visibility.Collapsed;
+        }
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
         {
             return new TextAutomationPeer(this);
