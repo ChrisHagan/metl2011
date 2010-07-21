@@ -19,20 +19,23 @@ namespace SandRibbon.Providers
             var serverPath = string.Format(@"https://{0}:1188/Resource/{1}/thumbs", Constants.JabberWire.SERVER, id);
             var serverFile = string.Format(@"{0}/{1}.png", serverPath, id);
             ImageSource thumbnailSource;
-            if (HttpResourceProvider.exists(serverFile))    
+            if (File.Exists(path))
+            {
+                if (Globals.me == Globals.slides.Where(s => s.id == id).First().author)
+                    SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(path, id.ToString() + "/thumbs", "slideThumb.png");
+            }
+            if (HttpResourceProvider.exists(serverFile))
                 thumbnailSource = loadedCachedImage(serverFile);
             else
             {
                 if (File.Exists(path))
                 {
                     thumbnailSource = loadedCachedImage(path);
-                    if (Globals.me == Globals.slides.Where(s => s.id == id).First().author)
-                        SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(path, id.ToString() + "/thumbs", "slideThumb.png");
                 }
                 else
                     thumbnailSource = loadedCachedImage(unknownSlidePath);
             }
-            App.Now("Thumbnail created for " + id); 
+            App.Now("Thumbnail created for " + id);
             var imageBrush = new ImageBrush(thumbnailSource);
             return imageBrush;
         }

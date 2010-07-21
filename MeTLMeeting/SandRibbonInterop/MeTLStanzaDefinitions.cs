@@ -500,7 +500,7 @@ namespace SandRibbonInterop.MeTLStanzas
                 get
                 {
                     var stroke = new Stroke(stringToPoints(GetTag(pointsTag)), new DrawingAttributes { Color = stringToColor(GetTag(colorTag)) });
-                    stroke.tag(new StrokeTag { author = GetTag("author"), privacy = GetTag(privacyTag) });
+                    stroke.tag(new StrokeTag { author = GetTag("author"), privacy = GetTag(privacyTag), startingColor = stroke.DrawingAttributes.Color.ToString()});
                     stroke.DrawingAttributes.IsHighlighter = Boolean.Parse(GetTag(highlighterTag));
                     stroke.DrawingAttributes.Width = Double.Parse(GetTag(thicknessTag));
                     stroke.DrawingAttributes.Height = Double.Parse(GetTag(thicknessTag));
@@ -573,6 +573,10 @@ namespace SandRibbonInterop.MeTLStanzas
             }
             public static Color stringToColor(string s)
             {
+                if (s.StartsWith("#"))
+                {
+                    return (Color)ColorConverter.ConvertFromString(s);
+                }
                 var colorInfo = s.Split(' ');
                 if (colorInfo.Count() % 4 != 0) throw new InvalidDataException("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.");
                 return new Color
