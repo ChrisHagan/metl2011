@@ -112,10 +112,8 @@ namespace SandRibbon.Components
         }
         private void ThumbnailAvailable(int slideId)
         {
-            App.Now("Thumbnail available for " + slideId);
             Dispatcher.adoptAsync(()=>
             thumbnailList.Where(ti => ti.slideId == slideId).First().ThumbnailBrush = ThumbnailProvider.get(slideId));
-            App.Now("Thumbnail bound for " + slideId);
         }
         private void PreParserAvailable(PreParser parser)
         {
@@ -249,7 +247,6 @@ namespace SandRibbon.Components
                 else
                     isAuthor = false;
                 thumbnailList.Clear();
-                App.Now("beginning creation of slideDisplay");
                 foreach (var slide in details.Slides)
                 {
                     if (slide.type == Slide.TYPE.SLIDE)
@@ -263,11 +260,8 @@ namespace SandRibbon.Components
                                     //ThumbnailBrush = ThumbnailProvider.get(slide.id)
                                 });
                         ThumbnailAvailable(slide.id);
-                        App.Now("slideDisplay item created: " + slide.id);
                     }
                 }
-                App.Now("command handlers: " + Commands.allHandlers().Count().ToString());
-                App.Now("slideDisplay created");
                 if (moveTo)
                 {
                     currentSlideIndex++;

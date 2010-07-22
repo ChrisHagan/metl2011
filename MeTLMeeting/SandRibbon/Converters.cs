@@ -18,6 +18,7 @@ namespace SandRibbon
 {
     public class Converters
     {
+        public static reverseQuizzesToVisibilityConverter reverseQuizzesToVisibilityConverter = new reverseQuizzesToVisibilityConverter();
         public static milisecondsToTimeConverter milisecondsToTimeConverter = new milisecondsToTimeConverter();
         public static videoMediaElementToMediaElementConverter videoMediaElementToMediaElementConverter = new videoMediaElementToMediaElementConverter();
         public static videoTimeSpanToDoubleSecondsConverter videoTimeSpanToDoubleSecondsConverter = new videoTimeSpanToDoubleSecondsConverter();
@@ -46,16 +47,36 @@ namespace SandRibbon
         public static BoolToVisibilityConverter BoolToVisibilityConverter = new BoolToVisibilityConverter();
         public static ImageSourceExtractor ImageSourceExtractor = new ImageSourceExtractor();
     }
-    public class ImageSourceExtractor : IValueConverter {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+    public class ImageSourceExtractor : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             if (value == null) return value;
             return ((ImageBrush)value).ImageSource;
         }
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             return value;
         }
     }
-    public class BoolToVisibilityConverter : IValueConverter {
+    public class reverseQuizzesToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int)
+            {
+                if ((int)value > 0)
+                    return Visibility.Collapsed;
+            }
+            return Visibility.Visible;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class BoolToVisibilityConverter : IValueConverter
+    {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (bool)value ? Visibility.Visible : Visibility.Collapsed;
@@ -65,7 +86,8 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
-    public class IndexInThisCollectionConverter : IMultiValueConverter {
+    public class IndexInThisCollectionConverter : IMultiValueConverter
+    {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Any(v => v == DependencyProperty.UnsetValue)) return 0;
@@ -78,14 +100,14 @@ namespace SandRibbon
             throw new NotImplementedException("You shouldn't be converting an IndexInThisCollection back to anything");
         }
     }
-    public class ExtractUrlAndConvertConverter:IValueConverter
+    public class ExtractUrlAndConvertConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
 
-            if(value == null) return value;
+            if (value == null) return value;
             var converter = new ConvertStringToImageSource();
-            return converter.Convert(((TargettedSubmission)value).url, null,null, null);
+            return converter.Convert(((TargettedSubmission)value).url, null, null, null);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -93,7 +115,8 @@ namespace SandRibbon
             return value;
         }
     }
-    public class BracketingConverter : IValueConverter {
+    public class BracketingConverter : IValueConverter
+    {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return string.Format("({0})", value);
@@ -103,7 +126,7 @@ namespace SandRibbon
             return value;
         }
     }
-    public class ConvertStringToImageSource: IValueConverter
+    public class ConvertStringToImageSource : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -120,9 +143,11 @@ namespace SandRibbon
             return value;
         }
     }
-    public class ColorToBrushConverter : IValueConverter {
+    public class ColorToBrushConverter : IValueConverter
+    {
         private static readonly int INCREMENT = 20;
-        private static Color modify(Func<byte,byte> action, Color color) {
+        private static Color modify(Func<byte, byte> action, Color color)
+        {
             return new Color
             {
                 A = color.A,
@@ -131,11 +156,13 @@ namespace SandRibbon
                 B = action(color.B)
             };
         }
-        private static Color highlightColor(Color color) { 
-            return modify(i=>(byte)Math.Min(255,i+INCREMENT*4), color);
+        private static Color highlightColor(Color color)
+        {
+            return modify(i => (byte)Math.Min(255, i + INCREMENT * 4), color);
         }
-        private static Color shadowColor(Color color) { 
-            return modify(i=>(byte)Math.Max(0,i-INCREMENT), color);
+        private static Color shadowColor(Color color)
+        {
+            return modify(i => (byte)Math.Max(0, i - INCREMENT), color);
         }
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -450,7 +477,7 @@ namespace SandRibbon
             TimeSpan me;
             if (meDuration.HasTimeSpan)
                 me = meDuration.TimeSpan;
-            else me = new TimeSpan(0,0,0);    
+            else me = new TimeSpan(0, 0, 0);
             return (double)(me.Hours * 3600) + (me.Minutes * 60) + (me.Seconds);
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -468,7 +495,7 @@ namespace SandRibbon
             int Seconds = System.Convert.ToInt32(Totalmilis / 1000);
             int Minutes = System.Convert.ToInt32(Seconds / 60);
             int Hours = System.Convert.ToInt32(Minutes / 60);
-            return new TimeSpan(Hours,Minutes,Seconds).ToString();
+            return new TimeSpan(Hours, Minutes, Seconds).ToString();
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
