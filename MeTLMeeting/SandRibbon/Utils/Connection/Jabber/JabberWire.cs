@@ -567,7 +567,7 @@ namespace SandRibbon.Utils.Connection
         public void SendQuiz(QuizQuestion parameters)
         {
             var quiz = new MeTLStanzas.Quiz(parameters);
-            stanza(Globals.slide.ToString(), quiz);
+            stanza(Globals.location.activeConversation, quiz);
         }
         private void SendQuizAnswer(QuizAnswer parameters)
         {
@@ -873,12 +873,6 @@ namespace SandRibbon.Utils.Connection
                     muc.LeaveRoom(new Jid(slide + "@" + Constants.JabberWire.MUC), credentials.name);
             }
             location.activeConversation = room;
-
-            HistoryProviderFactory.provider.Retrieve<PreParser>(
-                onStart,
-                onProgress,
-                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
-                room);
             joinRooms();
         }
         private void handleSyncMoveReceived(string[] parts)

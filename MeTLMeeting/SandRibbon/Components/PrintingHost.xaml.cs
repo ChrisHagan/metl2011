@@ -48,7 +48,8 @@ namespace SandRibbon.Components
         }
         private static void saveUnscaledBitmapToDisk(string path, Bitmap bitmap) { 
             using (var stream = File.Create(path))
-                bitmap.Save((Stream)stream, System.Drawing.Imaging.ImageFormat.Png);
+                if (stream.CanWrite)
+                    bitmap.Save((Stream)stream, System.Drawing.Imaging.ImageFormat.Png);
         }
         private static void saveScaledBitmapToDisk(string path, int width, int height, RenderTargetBitmap bitmap)
         {
