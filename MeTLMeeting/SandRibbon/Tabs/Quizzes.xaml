@@ -9,13 +9,19 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon">
     <sr:RibbonTab.Resources>
-        <core:String x:Key="preferredDisplayIndex">5</core:String>    
+        <core:String x:Key="preferredDisplayIndex">5</core:String>
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup Header="Multiple Choice Quiz" x:Name="quizRibbonGroup" ShowDialogLauncher="False">
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Collapsed" Priority="9"/>
         </sr:RibbonGroup.Variants>
         <Button Click="CreateQuiz" Visibility="Collapsed" x:Name="createQuiz">Create Quiz</Button>
+        <Label VerticalAlignment="Center" 
+               FontWeight="Bold"
+               FontSize="12px"
+               FontFamily="Verdana"
+               Visibility="{Binding ElementName=quizzes, Path=ItemsSource.Count, Converter={x:Static metl:Converters.reverseQuizzesToVisibilityConverter}}"
+               Content="No Quizzes"/>
         <ItemsControl x:Name="quizzes">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -38,7 +44,7 @@
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
-        </ItemsControl> 
+        </ItemsControl>
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Submission">
         <submissions:ScreenshotSubmission/>

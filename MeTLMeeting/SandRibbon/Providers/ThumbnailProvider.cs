@@ -32,7 +32,6 @@ namespace SandRibbon.Providers
                 else
                     thumbnailSource = loadedCachedImage(unknownSlidePath);
             }
-            App.Now("Thumbnail created for " + id);
             var imageBrush = new ImageBrush(thumbnailSource);
             return imageBrush;
         }
