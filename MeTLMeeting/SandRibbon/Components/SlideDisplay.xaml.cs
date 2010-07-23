@@ -200,6 +200,7 @@ namespace SandRibbon.Components
                 else
                     isAuthor = false;
                 thumbnailList.Clear();
+                Commands.SneakInto.Execute(details.Jid);
                 App.Now("beginning creation of slideDisplay");
                 foreach (var slide in details.Slides)
                 {
