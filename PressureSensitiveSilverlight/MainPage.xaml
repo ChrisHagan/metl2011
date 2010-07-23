@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="480">
     <Grid x:Name="LayoutRoot">
-        <Border BorderBrush="DarkBlue" BorderThickness="2" Padding="5" CornerRadius="5" Background="LightBlue">
+        <Border BorderBrush="DarkBlue" BorderThickness="2" Padding="5" CornerRadius="5" Background="Red">
             <Grid Background="White">
                 <custom:InkCanvas x:Name="inkcanvas" 
                               StrokeCollected="inkcanvas_strokeCollected"

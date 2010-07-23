@@ -19,20 +19,53 @@ namespace SilverlightApplication1
         private Color[] colors = new Color[] { Colors.Black, 
                 Colors.White, Colors.Red, Colors.Blue, Colors.Green,
                 Colors.Yellow, Colors.Gray};
-
+        public string me;
         public MainPage()
         {
             InitializeComponent();
             setupColourPicker();
             this.Loaded += new RoutedEventHandler(MainPage_Loaded);
         }
-
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            WaveManager.Wave.StateUpdated = StateUpdated;
-            WaveManager.Wave.ParticipantsUpdated = ParticipantsUpdated;
-            HtmlPage.RegisterScriptableObject("SilverlightApplication1", WaveManager.Wave);
+            if (WaveManager.Wave.IsInWaveContainer())
+            {
+                me = WaveManager.Wave.GetViewer().Id;
+                inkcanvas.StrokeCollected += addNewStrokeToWave;
+                MessageBox.Show("State: " + WaveManager.Wave.State.ToString());
+                WaveManager.Wave.StateUpdated = StateUpdated;
+                WaveManager.Wave.ParticipantsUpdated = ParticipantsUpdated;
+                HtmlPage.RegisterScriptableObject("SilverlightApplication1", WaveManager.Wave);
+            }
         }
+        private string StrokeToString(Stroke stroke)
+        {
+            var strokestring = "<stroke>";
+            strokestring += "<color>" + stroke.DrawingAttributes.Color.ToString() + "</color>";
+            strokestring += "<size>" + stroke.DrawingAttributes.Height.ToString() + "</size>";
+            strokestring += "<points>";
+            foreach (StylusPoint sp in stroke.StylusPoints)
+            {
+                strokestring += sp.X + "," + sp.Y + "," + sp.PressureFactor + " ";
+            }
+            strokestring.TrimEnd(new char[] { ' ' });
+            strokestring += "</points>";
+            strokestring += "</stroke>";
+            return strokestring;
+        }
+        private Stroke StringToStroke(string strokestring)
+        {
+            var stroke = new Stroke();
+            return stroke;
+        }
+        private void addNewStrokeToWave(object sender, StrokeAddedEventArgs e)
+        {
+            //var oldState = WaveManager.Wave.State.Get(me);
+            WaveManager.Wave.State.SubmitDelta(me, StrokeToString(e.stroke));
+            //var newState = WaveManager.Wave.State.Get(me);
+            //MessageBox.Show("Old state: "+oldState+"\r\nNew state: " + newState);
+        }
+
         private void StateUpdated(object sender, EventArgs e)
         {
             MessageBox.Show("State updated");
