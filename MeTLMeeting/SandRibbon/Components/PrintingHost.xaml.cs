@@ -17,6 +17,7 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Commands.ThumbnailGenerated.RegisterCommand(new DelegateCommand<UnscaledThumbnailData>(ThumbnailGenerated));
+            Commands.QuizResultsAvailableForSnapshot.RegisterCommand(new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated));
         }
         private void ThumbnailGenerated(UnscaledThumbnailData thumbData)
         {
@@ -29,6 +30,35 @@ namespace SandRibbon.Components
             stream.Close();
             saveUnscaledBitmapToDisk(ThumbnailPath(thumbData.id), frombitmap);
             Commands.ThumbnailAvailable.Execute(thumbData.id);
+        }
+        private void QuizResultsGenerated(UnscaledThumbnailData quizData)
+        {
+            var bitmap = BitmapFrame.Create(quizData.data);
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(bitmap);
+            var stream = new MemoryStream();
+            encoder.Save(stream);
+            var frombitmap = new Bitmap(stream);
+            stream.Close();
+            string path = QuizPath(quizData.id);
+            saveUnscaledBitmapToDisk(path, frombitmap);
+            Commands.QuizResultsSnapshotAvailable.Execute(path);
+        }
+        public string QuizPath(int id)
+        {
+            if (!Directory.Exists("quizzes"))
+                Directory.CreateDirectory("quizzes");
+            var fullPath = string.Format("quizzes\\{0}", Globals.me);
+            if (!Directory.Exists(fullPath))
+                Directory.CreateDirectory(fullPath);
+            int quiznumber = 0;
+            string path = string.Format("{0}\\{1}_{2}.png", fullPath, id, quiznumber);
+            while (File.Exists(path))
+            {
+                quiznumber++;
+                path = string.Format("{0}\\{1}_{2}.png", fullPath, id, quiznumber);
+            }   
+            return path;
         }
         public string ThumbnailPath(int id)
         {

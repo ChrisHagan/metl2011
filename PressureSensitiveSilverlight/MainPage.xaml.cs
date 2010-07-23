@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Ink;
+using System.Windows.Browser;
 
 namespace SilverlightApplication1
 {
@@ -23,6 +24,22 @@ namespace SilverlightApplication1
         {
             InitializeComponent();
             setupColourPicker();
+            this.Loaded += new RoutedEventHandler(MainPage_Loaded);
+        }
+
+        void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            WaveManager.Wave.StateUpdated = StateUpdated;
+            WaveManager.Wave.ParticipantsUpdated = ParticipantsUpdated;
+            HtmlPage.RegisterScriptableObject("SilverlightApplication1", WaveManager.Wave);
+        }
+        private void StateUpdated(object sender, EventArgs e)
+        {
+            MessageBox.Show("State updated");
+        }
+        private void ParticipantsUpdated(object sender, EventArgs e)
+        {
+            MessageBox.Show("Participants updated");
         }
         private void setupColourPicker()
         {

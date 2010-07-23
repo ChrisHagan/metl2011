@@ -55,6 +55,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyAutoShape));
             Commands.AddAutoShape.RegisterCommand(new DelegateCommand<object>(createNewAutoShape));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(addImageFromDisk));
+            Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(addImageFromQuizSnapshot));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<ImageDrop>((drop) =>
             {
                 try
@@ -662,6 +663,10 @@ namespace SandRibbon.Components.Canvas
                 foreach (var file in files)
                     handleDrop(file, new Point(0, 0), i++);
             });
+        }
+        private void addImageFromQuizSnapshot(string filename)
+        {
+            handleDrop(filename, new Point(10,10),1);
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {

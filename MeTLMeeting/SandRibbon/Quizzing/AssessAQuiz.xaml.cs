@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using SandRibbonInterop;
 using System.Collections.ObjectModel;
+using SandRibbon.Components;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Quizzing
 {
@@ -44,6 +46,25 @@ namespace SandRibbon.Quizzing
                     name=o.name
                 };
             });
+        }
+        private void SnapshotButton_Click(object sender, RoutedEventArgs e)
+        {
+            TimestampLabel.Text = "Results collected at:\r\n"+SandRibbonObjects.DateTimeFactory.Now().ToLocalTime().ToString();
+            SnapshotHost.UpdateLayout();
+            var dpi = 96;
+            var dimensions = new Rect(0, 0, ActualWidth, ActualHeight);
+            var bitmap = new RenderTargetBitmap((int)ActualWidth, (int)ActualHeight, dpi, dpi, PixelFormats.Default);
+            var dv = new DrawingVisual();
+            using (var context = dv.RenderOpen())
+                context.DrawRectangle(new VisualBrush(SnapshotHost), null, dimensions);
+            bitmap.Render(dv);
+            TimestampLabel.Text = "";
+            Commands.QuizResultsAvailableForSnapshot.Execute(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
     public class DisplayableResultSet 
