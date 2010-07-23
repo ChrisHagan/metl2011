@@ -61,43 +61,6 @@ namespace SandRibbon.Components
                 //YAAAAAY
             }
         }
-        private bool IsParserNotEmpty(PreParser parser)
-        {
-            return (parser.images.Count > 0
-                || parser.ink.Count > 0
-                || parser.text.Count > 0
-                || parser.videos.Count > 0
-                || parser.bubbleList.Count > 0
-                || parser.autoshapes.Count > 0);
-        }
-        private bool isParserPrivate(PreParser parser)
-        {
-            if (parser.ink.Where(s => s.privacy == "private").Count() > 0)
-                return true;
-            if (parser.text.Where(s => s.Value.privacy == "private").Count() > 0)
-                return true;
-            if (parser.images.Where(s => s.Value.privacy == "private").Count() > 0)
-                return true;
-            if (parser.videos.Where(s => s.Value.privacy == "private").Count() > 0)
-                return true;
-            if (parser.autoshapes.Where(s => s.Value.privacy == "private").Count() > 0)
-                return true;
-            return false;
-        }
-        private bool isMyPrivateParser(PreParser parser)
-        {
-            if (parser.ink.Where(s => s.privacy == "private" && s.author == Globals.me).Count() > 0)
-                return true;
-            if (parser.text.Where(s => s.Value.privacy == "private" && s.Value.author == Globals.me).Count() > 0)
-                return true;
-            if (parser.images.Where(s => s.Value.privacy == "private" && s.Value.author == Globals.me).Count() > 0)
-                return true;
-            if (parser.videos.Where(s => s.Value.privacy == "private" && s.Value.author == Globals.me).Count() > 0)
-                return true;
-            if (parser.autoshapes.Where(s => s.Value.privacy == "private" && s.Value.author == Globals.me).Count() > 0)
-                return true;
-            return false;
-        }
         private void ThumbnailAvailable(int slideId)
         {
             App.Now("Thumbnail available for " + slideId);
@@ -137,10 +100,6 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(delegate
                                       {
 
-                                          realLocation = slide;
-                                          var typeOfDestination =
-                                              Globals.conversationDetails.Slides.Where(s => s.id == slide).Select(s => s.type).
-                                                  FirstOrDefault();
                                           if (isSlideInSlideDisplay(slide))
                                           {
                                               var currentSlide = (ThumbnailInformation)slides.SelectedItem;
