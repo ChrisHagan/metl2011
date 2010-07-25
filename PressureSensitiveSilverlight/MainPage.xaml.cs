@@ -11,9 +11,14 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Ink;
 using System.Windows.Browser;
+using System.Collections.ObjectModel;
+using System.Threading;
+using System.Xml;
+using System.IO;
 
 namespace SilverlightApplication1
 {
+    [ScriptableType]
     public partial class MainPage : UserControl
     {
         private Color[] colors = new Color[] { Colors.Black, 
@@ -26,23 +31,30 @@ namespace SilverlightApplication1
             setupColourPicker();
             this.Loaded += new RoutedEventHandler(MainPage_Loaded);
         }
+        [ScriptableMember]
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (WaveManager.Wave.IsInWaveContainer())
+            try
             {
-                me = WaveManager.Wave.GetViewer().Id;
-                inkcanvas.StrokeCollected += addNewStrokeToWave;
-                MessageBox.Show("State: " + WaveManager.Wave.State.ToString());
-                WaveManager.Wave.StateUpdated = StateUpdated;
-                WaveManager.Wave.ParticipantsUpdated = ParticipantsUpdated;
-                HtmlPage.RegisterScriptableObject("SilverlightApplication1", WaveManager.Wave);
+                if (WaveManager.Wave.IsInWaveContainer())
+                {
+                    me = WaveManager.Wave.GetViewer().Id;
+                    WaveManager.Wave.StateUpdated = StateUpdated;
+                    WaveManager.Wave.ParticipantsUpdated = ParticipantsUpdated;
+                    HtmlPage.RegisterScriptableObject("SilverWave", WaveManager.Wave);
+                }
             }
+            catch (Exception ex)
+            {
+            }
+            //HtmlPage.Window.Invoke("attachSilverlight", new object[] { this });
         }
         private string StrokeToString(Stroke stroke)
         {
             var strokestring = "<stroke>";
             strokestring += "<color>" + stroke.DrawingAttributes.Color.ToString() + "</color>";
             strokestring += "<size>" + stroke.DrawingAttributes.Height.ToString() + "</size>";
+            strokestring += "<creator>" + me + "</creator>";
             strokestring += "<points>";
             foreach (StylusPoint sp in stroke.StylusPoints)
             {
@@ -55,24 +67,126 @@ namespace SilverlightApplication1
         }
         private Stroke StringToStroke(string strokestring)
         {
-            var stroke = new Stroke();
+            var PointCollection = new StylusPointCollection();
+            var strokeDrawingAttributes = new DrawingAttributes();
+            var reader = XmlReader.Create(new StringReader(strokestring));
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.Element)
+                {
+                    switch (reader.Name)
+                    {
+                        case "points":
+                            reader.Read();
+                            if (reader.NodeType == XmlNodeType.Text)
+                            {
+                                if (reader.HasValue)
+                                {
+                                    var pointCollectionString = reader.Value.Trim();
+                                    string[] points = pointCollectionString.Split(' ');
+                                    foreach (string point in points)
+                                    {
+                                        string[] members = point.Split(',');
+                                        var sp = new StylusPoint { X = double.Parse(members[0]), Y = double.Parse(members[1]), PressureFactor = float.Parse(members[2]) };
+                                        PointCollection.Add(sp);
+                                    }
+                                }
+                            }
+                            break;
+                        case "creator":
+                            break;
+                        case "size":
+                            reader.Read();
+                            if (reader.NodeType == XmlNodeType.Text)
+                            {
+                                if (reader.HasValue)
+                                {
+                                    var sizeValue = reader.Value;
+                                    var size = double.Parse(sizeValue);
+                                    strokeDrawingAttributes.Height = size;
+                                    strokeDrawingAttributes.Width = size;
+                                }
+                            } break;
+                        case "color":
+                            reader.Read();
+                            if (reader.NodeType == XmlNodeType.Text)
+                            {
+                                if (reader.HasValue)
+                                {
+                                    var colorValue = reader.Value;
+                                    var color = new Color
+                                    {
+                                        A = (byte)(Convert.ToUInt32(colorValue.Substring(1, 2), 16)),
+                                        R = (byte)(Convert.ToUInt32(colorValue.Substring(3, 2), 16)),
+                                        G = (byte)(Convert.ToUInt32(colorValue.Substring(5, 2), 16)),
+                                        B = (byte)(Convert.ToUInt32(colorValue.Substring(7, 2), 16))
+                                    };
+                                    strokeDrawingAttributes.Color = color;
+                                }
+                            }
+                            break;
+                        case "stroke":
+                            break;
+                    }
+                }
+            }
+            var stroke = new Stroke(PointCollection);
+            stroke.DrawingAttributes = strokeDrawingAttributes;
             return stroke;
         }
-        private void addNewStrokeToWave(object sender, StrokeAddedEventArgs e)
-        {
-            //var oldState = WaveManager.Wave.State.Get(me);
-            WaveManager.Wave.State.SubmitDelta(me, StrokeToString(e.stroke));
-            //var newState = WaveManager.Wave.State.Get(me);
-            //MessageBox.Show("Old state: "+oldState+"\r\nNew state: " + newState);
-        }
-
+        private int stateUpdateCount = 0;
         private void StateUpdated(object sender, EventArgs e)
         {
-            MessageBox.Show("State updated");
+            Dictionary<string, string> dict = WaveManager.Wave.State.Get();
+            StrokeCollection strokesToAdd = new StrokeCollection();
+            foreach (KeyValuePair<string, string> kvp in dict)
+            {
+                stateUpdateCount++;
+                if (kvp.Value.StartsWith("<stroke>"))
+                {
+                    string[] strokestrings = kvp.Value.Replace("</stroke><stroke>", "</stroke>|<stroke>").Split('|');
+                    int strokeCount = 0;
+
+                    foreach (string strokestring in strokestrings)
+                    {
+                        strokeCount++;
+                        strokesToAdd.Add(StringToStroke(strokestring));
+                    }
+                }
+            }
+            if (strokesToAdd.Count > 0)
+            {
+                inkcanvas.Strokes.Clear();
+                foreach (Stroke stroke in strokesToAdd)
+                    inkcanvas.Strokes.Add(stroke);
+            }
+            stateIndicator.Text = "s-upd: " + stateUpdateCount;
         }
+        private void showState(object sender, RoutedEventArgs e)
+        {
+            Dictionary<string, string> dict = WaveManager.Wave.State.Get();
+            string stringprep = "State Represented by: ";
+            int index = 0;
+            foreach (KeyValuePair<string, string> kvp in dict)
+            {
+                stringprep += "item[" + (index++) + "](K:" + kvp.Key + ",V:" + kvp.Value + ") ";
+            }
+            MessageBox.Show(stringprep);
+        }
+        private int participantsUpdateCount = 0;
         private void ParticipantsUpdated(object sender, EventArgs e)
         {
-            MessageBox.Show("Participants updated");
+            participantsUpdateCount++;
+            ObservableCollection<Participant> participants = WaveManager.Wave.GetParticipants();
+            string stringprep = "Participants in current wave: ";
+            int index = 0;
+            foreach (Participant participant in participants)
+            {
+                stringprep += "item[" + (index++) + "](Id:" + participant.Id +
+                    "Name:" + participant.DisplayName +
+                    "Thumb:" + participant.ThumbnailUrl + ") ";
+            }
+            participantsIndicator.Text = "p-upd: " + participantsUpdateCount + ", value: " + stringprep;
         }
         private void setupColourPicker()
         {
@@ -122,6 +236,9 @@ namespace SilverlightApplication1
         }
         private void inkcanvas_strokesReplaced(object sender, StrokesChangedEventArgs e)
         {
+            foreach (Stroke stroke in e.addedStrokes)
+                WaveManager.Wave.State.SubmitDelta("count", StrokeToString(stroke));
+
             /* if (e.addedStrokes == null) return;
                string stringMessage = "strokes collected:";
                foreach (Stroke stroke in e.addedStrokes)
@@ -133,14 +250,20 @@ namespace SilverlightApplication1
                MessageBox.Show(stringMessage);
            */
         }
+        [ScriptableMember]
+        private void incrementState(object sender, RoutedEventArgs e)
+        {
+            WaveManager.Wave.State.inc();
+        }
         private void inkcanvas_strokeCollected(object sender, StrokeAddedEventArgs e)
         {
-            /*   if (e.stroke == null) return;
-               string stringMessage = "stroke collected:";
-                   foreach (StylusPoint sp in e.stroke.StylusPoints)
-                       stringMessage += "(" + sp.X + "," + sp.Y + "," + sp.PressureFactor + "),";
-               MessageBox.Show(stringMessage);
-           */
+            var stringStroke = StrokeToString(e.stroke);
+            Dictionary<string, string> dict = WaveManager.Wave.State.Get();
+            foreach (KeyValuePair<string, string> kvp in dict.Where(pair => pair.Key.ToString().Equals("SLid")))
+            {
+                stringStroke += kvp.Value;
+            }
+            WaveManager.Wave.State.SubmitDelta("stroke", stringStroke);
         }
         private void inkcanvas_selectedStrokesChanged(object sender, StrokesChangedEventArgs e)
         {
