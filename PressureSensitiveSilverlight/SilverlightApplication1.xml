@@ -77,10 +77,10 @@ function buttonClicked() {
     wave.getState().submitDelta({SLid:SLdata});
     }
         </script>
-        <h3>InkCanvas 15</h3>
+        <h3>InkCanvas 16</h3>
 
       <div id="silverlightControlHost">
-      <input type=button value="Increment countState" id="butCount" onClick="buttonClicked()">
+      <input type=button value="Increment countState" id="butCount" onClick="buttonClicked()"></input>
 
 
       <object id="silverlightControl" 
