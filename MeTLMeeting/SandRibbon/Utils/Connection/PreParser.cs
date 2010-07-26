@@ -17,6 +17,7 @@ namespace SandRibbon.Utils.Connection
         public Dictionary<string, TargettedAutoShape> autoshapes = new Dictionary<string, TargettedAutoShape>();
         public List<TargettedStroke> ink = new List<TargettedStroke>();
         public List<QuizQuestion> quizzes = new List<QuizQuestion>();
+        public List<TargettedSubmission> submissions = new List<TargettedSubmission>();
         public List<QuizAnswer> quizAnswers = new List<QuizAnswer>();
         public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
@@ -97,6 +98,7 @@ namespace SandRibbon.Utils.Connection
         }
         public override void actOnScreenshotSubmission(TargettedSubmission submission)
         {
+            submissions.Add(submission);
         }
         public override void actOnDirtyImageReceived(SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyImage image)
         {

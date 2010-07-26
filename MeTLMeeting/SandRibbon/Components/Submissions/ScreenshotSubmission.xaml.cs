@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
+using SandRibbon.Utils.Connection;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 
@@ -28,7 +29,14 @@ namespace SandRibbon.Components.Submissions
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(conversationChanged));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
+            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             conversationChanged(null);
+        }
+
+        private void PreParserAvailable(PreParser parser)
+        {
+            foreach(var submission in parser.submissions)
+                receiveSubmission(submission);
         }
 
         private void conversationChanged(object details)
