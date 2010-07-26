@@ -47,7 +47,6 @@ namespace SilverlightApplication1
             catch (Exception ex)
             {
             }
-            //HtmlPage.Window.Invoke("attachSilverlight", new object[] { this });
         }
         private string StrokeToString(Stroke stroke)
         {
@@ -146,7 +145,6 @@ namespace SilverlightApplication1
                 {
                     string[] strokestrings = kvp.Value.Replace("</stroke><stroke>", "</stroke>|<stroke>").Split('|');
                     int strokeCount = 0;
-
                     foreach (string strokestring in strokestrings)
                     {
                         strokeCount++;
@@ -236,19 +234,22 @@ namespace SilverlightApplication1
         }
         private void inkcanvas_strokesReplaced(object sender, StrokesChangedEventArgs e)
         {
-            foreach (Stroke stroke in e.addedStrokes)
-                WaveManager.Wave.State.SubmitDelta("count", StrokeToString(stroke));
-
-            /* if (e.addedStrokes == null) return;
-               string stringMessage = "strokes collected:";
-               foreach (Stroke stroke in e.addedStrokes)
-                   {
-                   stringMessage += " stroke:
-                   foreach (StylusPoint sp in stroke.StylusPoints)
-                       stringMessage += "(" + sp.X + "," + sp.Y + "," + sp.PressureFactor + "),";
-               }
-               MessageBox.Show(stringMessage);
-           */
+            string stringStroke = "";
+            List<string> removedStrokes = new List<string>{};
+            foreach (Stroke removedStroke in e.removedStrokes)
+            {
+                var strokeToRemove = StrokeToString(removedStroke);
+                removedStrokes.Add(strokeToRemove);
+            }
+            Dictionary<string, string> dict = WaveManager.Wave.State.Get();
+            foreach (KeyValuePair<string, string> kvp in dict.Where(pair => pair.Key.ToString().Equals("SLid")))
+            {
+                if (!removedStrokes.Contains(kvp.Value))
+                    stringStroke += kvp.Value;
+            }
+            foreach (Stroke addedStroke in e.addedStrokes)
+                stringStroke += StrokeToString(addedStroke);
+            WaveManager.Wave.State.SubmitDelta("count", stringStroke);
         }
         [ScriptableMember]
         private void incrementState(object sender, RoutedEventArgs e)
