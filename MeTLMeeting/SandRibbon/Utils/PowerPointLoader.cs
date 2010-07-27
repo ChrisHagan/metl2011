@@ -120,6 +120,8 @@ namespace SandRibbon.Utils
                     slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
                     var xSlide = new XElement("slide");
                     xSlide.Add(new XAttribute("index", slide.SlideIndex));
+                    xSlide.Add(new XAttribute("defaultHeight", backgroundHeight));
+                    xSlide.Add(new XAttribute("defaultWidth", backgroundWidth));
                     xSlide.Add(new XElement("shape",
                     new XAttribute("x", 0),
                     new XAttribute("y", 0),
@@ -372,6 +374,8 @@ namespace SandRibbon.Utils
             var exportMode = PpExportMode.ppRelativeToSlide;
             var backgroundHeight = 540;
             var backgroundWidth = 720;
+            xSlide.Add(new XAttribute("defaultHeight", backgroundHeight));
+            xSlide.Add(new XAttribute("defaultWidth", backgroundWidth));
             double Magnification = 1;
             try
             {
