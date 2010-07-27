@@ -159,6 +159,7 @@ namespace SandRibbon
         public static CompositeCommand FontSizeChanged = new CompositeCommand();
         public static CompositeCommand NewTextCursorPosition = new CompositeCommand();
         public static CompositeCommand InitiateGrabZoom = new CompositeCommand();
+        public static CompositeCommand SetModeGrabMove = new CompositeCommand();
         public static CompositeCommand FitToView = new CompositeCommand();
         public static CompositeCommand FitToPageWidth= new CompositeCommand();
         #endregion
