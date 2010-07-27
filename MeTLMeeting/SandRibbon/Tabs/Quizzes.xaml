@@ -7,7 +7,7 @@
     xmlns:metl="clr-namespace:SandRibbon"
     xmlns:submissions="clr-namespace:SandRibbon.Components.Submissions"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
-    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon">
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon" Visibility="Collapsed">
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">5</core:String>
     </sr:RibbonTab.Resources>

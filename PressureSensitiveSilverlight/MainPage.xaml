@@ -32,10 +32,11 @@
                 <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
                     <Button Click="Erase" Content="Erase"/>
                     <Button Click="Select" Content="Select"/>
-                    <Button Click="showState" Content="ShowState"/>
-                    <Button Click="incrementState" Content="+"/>
-                    <TextBox x:Name="stateIndicator" Width="60"/>
-                    <TextBox x:Name="participantsIndicator" Width="60"/>
+                    <StackPanel x:Name="WaveControls" Orientation="Horizontal" Visibility="Collapsed">
+                        <Button Click="showState" Content="ShowState"/>
+                        <TextBox x:Name="stateIndicator" Width="60"/>
+                        <TextBox x:Name="participantsIndicator" Width="60"/>
+                    </StackPanel>
                     <ItemsControl x:Name="ColourPicker">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>

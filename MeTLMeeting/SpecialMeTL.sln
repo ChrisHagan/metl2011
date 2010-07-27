@@ -24,6 +24,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlidePostMortem", "SlidePos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LectureMeTL", "LectureMeTL\LectureMeTL.csproj", "{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentOnlyExperimentMeTL", "ContentOnlyExperimentMeTL\ContentOnlyExperimentMeTL.csproj", "{A0270D48-EFA2-4163-BA3E-A28BA5B5E8B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentAndStrokesExperimentMeTL", "ContentAndStrokesExperimentMeTL\ContentAndStrokesExperimentMeTL.csproj", "{42E45B0C-DDCD-434A-86A2-07845B842895}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = SandRibbon2.vsmdi
@@ -65,6 +69,14 @@ Global
 		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0270D48-EFA2-4163-BA3E-A28BA5B5E8B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0270D48-EFA2-4163-BA3E-A28BA5B5E8B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0270D48-EFA2-4163-BA3E-A28BA5B5E8B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0270D48-EFA2-4163-BA3E-A28BA5B5E8B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42E45B0C-DDCD-434A-86A2-07845B842895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42E45B0C-DDCD-434A-86A2-07845B842895}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42E45B0C-DDCD-434A-86A2-07845B842895}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42E45B0C-DDCD-434A-86A2-07845B842895}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

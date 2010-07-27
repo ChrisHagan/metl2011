@@ -34,18 +34,13 @@ namespace SilverlightApplication1
         [ScriptableMember]
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            try
+            if (WaveManager.Wave.IsInWaveContainer())
             {
-                if (WaveManager.Wave.IsInWaveContainer())
-                {
-                    me = WaveManager.Wave.GetViewer().Id;
-                    WaveManager.Wave.StateUpdated = StateUpdated;
-                    WaveManager.Wave.ParticipantsUpdated = ParticipantsUpdated;
-                    HtmlPage.RegisterScriptableObject("SilverWave", WaveManager.Wave);
-                }
-            }
-            catch (Exception ex)
-            {
+                me = WaveManager.Wave.GetViewer().Id;
+                WaveManager.Wave.StateUpdated = StateUpdated;
+                WaveManager.Wave.ParticipantsUpdated = ParticipantsUpdated;
+                HtmlPage.RegisterScriptableObject("SilverWave", WaveManager.Wave);
+                WaveControls.Visibility = Visibility.Visible;
             }
         }
         private string StrokeToString(Stroke stroke)
@@ -162,14 +157,17 @@ namespace SilverlightApplication1
         }
         private void showState(object sender, RoutedEventArgs e)
         {
-            Dictionary<string, string> dict = WaveManager.Wave.State.Get();
-            string stringprep = "State Represented by: ";
-            int index = 0;
-            foreach (KeyValuePair<string, string> kvp in dict)
+            if (WaveManager.Wave.IsInWaveContainer())
             {
-                stringprep += "item[" + (index++) + "](K:" + kvp.Key + ",V:" + kvp.Value + ") ";
+                Dictionary<string, string> dict = WaveManager.Wave.State.Get();
+                string stringprep = "State Represented by: ";
+                int index = 0;
+                foreach (KeyValuePair<string, string> kvp in dict)
+                {
+                    stringprep += "item[" + (index++) + "](K:" + kvp.Key + ",V:" + kvp.Value + ") ";
+                }
+                MessageBox.Show(stringprep);
             }
-            MessageBox.Show(stringprep);
         }
         private int participantsUpdateCount = 0;
         private void ParticipantsUpdated(object sender, EventArgs e)
@@ -234,37 +232,38 @@ namespace SilverlightApplication1
         }
         private void inkcanvas_strokesReplaced(object sender, StrokesChangedEventArgs e)
         {
-            string stringStroke = "";
-            List<string> removedStrokes = new List<string>{};
-            foreach (Stroke removedStroke in e.removedStrokes)
+            if (WaveManager.Wave.IsInWaveContainer())
             {
-                var strokeToRemove = StrokeToString(removedStroke);
-                removedStrokes.Add(strokeToRemove);
+                string stringStroke = "";
+                List<string> removedStrokes = new List<string> { };
+                foreach (Stroke removedStroke in e.removedStrokes)
+                {
+                    var strokeToRemove = StrokeToString(removedStroke);
+                    removedStrokes.Add(strokeToRemove);
+                }
+                Dictionary<string, string> dict = WaveManager.Wave.State.Get();
+                foreach (KeyValuePair<string, string> kvp in dict.Where(pair => pair.Key.ToString().Equals("SLid")))
+                {
+                    if (!removedStrokes.Contains(kvp.Value))
+                        stringStroke += kvp.Value;
+                }
+                foreach (Stroke addedStroke in e.addedStrokes)
+                    stringStroke += StrokeToString(addedStroke);
+                WaveManager.Wave.State.SubmitDelta("count", stringStroke);
             }
-            Dictionary<string, string> dict = WaveManager.Wave.State.Get();
-            foreach (KeyValuePair<string, string> kvp in dict.Where(pair => pair.Key.ToString().Equals("SLid")))
-            {
-                if (!removedStrokes.Contains(kvp.Value))
-                    stringStroke += kvp.Value;
-            }
-            foreach (Stroke addedStroke in e.addedStrokes)
-                stringStroke += StrokeToString(addedStroke);
-            WaveManager.Wave.State.SubmitDelta("count", stringStroke);
-        }
-        [ScriptableMember]
-        private void incrementState(object sender, RoutedEventArgs e)
-        {
-            WaveManager.Wave.State.inc();
         }
         private void inkcanvas_strokeCollected(object sender, StrokeAddedEventArgs e)
         {
-            var stringStroke = StrokeToString(e.stroke);
-            Dictionary<string, string> dict = WaveManager.Wave.State.Get();
-            foreach (KeyValuePair<string, string> kvp in dict.Where(pair => pair.Key.ToString().Equals("SLid")))
+            if (WaveManager.Wave.IsInWaveContainer())
             {
-                stringStroke += kvp.Value;
+                var stringStroke = StrokeToString(e.stroke);
+                Dictionary<string, string> dict = WaveManager.Wave.State.Get();
+                foreach (KeyValuePair<string, string> kvp in dict.Where(pair => pair.Key.ToString().Equals("SLid")))
+                {
+                    stringStroke += kvp.Value;
+                }
+                WaveManager.Wave.State.SubmitDelta("stroke", stringStroke);
             }
-            WaveManager.Wave.State.SubmitDelta("stroke", stringStroke);
         }
         private void inkcanvas_selectedStrokesChanged(object sender, StrokesChangedEventArgs e)
         {
