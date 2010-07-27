@@ -100,7 +100,7 @@
     <Content Include="Silverlight.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="SilverlightApplication1.xml">
+    <Content Include="Whiteboard.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="crossdomain.xml">

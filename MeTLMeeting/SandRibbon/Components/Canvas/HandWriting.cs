@@ -175,6 +175,8 @@ namespace SandRibbon.Components.Canvas
                     var newStrokes = new StrokeCollection(
                         receivedStrokes.Where(ts => ts.target == strokeTarget)
                         .Where(s => s.privacy == "public" || s.author == Globals.me)
+                    //    when uncommenting line above, remove line below.
+                    //    .Where(s => s.author == Globals.me)
                         .Select(s => s.stroke)
                         .Where(s => !(this.strokes.Contains(s.sum()))));
                     Strokes.Add(newStrokes);

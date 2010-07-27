@@ -61,7 +61,14 @@ namespace SilverlightApplication1
         /// <returns>True if the gadget runs inside a wave container. False otherwise.</returns>
         public bool IsInWaveContainer()
         {
-            return Convert.ToInt32(HtmlPage.Window.Eval("wave.isInWaveContainer()")) == 1;
+            try
+            {
+                return Convert.ToInt32(HtmlPage.Window.Eval("wave.isInWaveContainer()")) == 1;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         /// <summary>
