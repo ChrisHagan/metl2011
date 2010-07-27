@@ -45,6 +45,14 @@ namespace SandRibbon.Components
                 currentSlideIndex = 0;
                 slides.SelectedIndex = 0;
                 slides.ScrollIntoView(slides.SelectedIndex);
+                DelegateCommand<ConversationDetails> onConversationDetailsReady = null;
+                onConversationDetailsReady = new DelegateCommand<ConversationDetails>(details =>
+                                                  {
+                                                      Commands.UpdateConversationDetails.UnregisterCommand(onConversationDetailsReady);
+                                                      Commands.SneakInto.Execute(details.Jid);
+                                                  });
+                Commands.UpdateConversationDetails.RegisterCommand(onConversationDetailsReady);
+
             }));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(Display));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
@@ -159,7 +167,7 @@ namespace SandRibbon.Components
                 else
                     isAuthor = false;
                 thumbnailList.Clear();
-                Commands.SneakInto.Execute(details.Jid);
+                //Commands.SneakInto.Execute(details.Jid);
                 App.Now("beginning creation of slideDisplay");
                 foreach (var slide in details.Slides)
                 {

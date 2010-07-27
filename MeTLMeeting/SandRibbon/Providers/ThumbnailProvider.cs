@@ -45,7 +45,6 @@ namespace SandRibbon.Providers
                 bi.CacheOption = BitmapCacheOption.OnLoad;
                 bi.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                 bi.EndInit();
-                bi.Freeze();
             }
             catch (Exception e)
             {

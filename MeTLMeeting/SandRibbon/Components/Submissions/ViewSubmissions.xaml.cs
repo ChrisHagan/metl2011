@@ -25,9 +25,9 @@ namespace SandRibbon.Components.Submissions
         {
             InitializeComponent();
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(recieveSubmission));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
         }
-        private void joinConversation(object obj)
+        private void joinConversation(string obj)
         {
             submissionList = new ObservableCollection<TargettedSubmission>();
         }
