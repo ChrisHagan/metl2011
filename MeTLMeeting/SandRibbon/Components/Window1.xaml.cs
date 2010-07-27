@@ -845,6 +845,7 @@ namespace SandRibbon
                     case 2:
                         ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
                         RHSDrawerDefinition.Width = new GridLength(180);
+                        homeGroups.Add(new ZoomControlsHost());
                         break;
                     case 3:
                         homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());

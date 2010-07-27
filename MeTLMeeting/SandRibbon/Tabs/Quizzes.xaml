@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:metl="clr-namespace:SandRibbon"
+    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:submissions="clr-namespace:SandRibbon.Components.Submissions"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon">
@@ -22,29 +23,34 @@
                FontFamily="Verdana"
                Visibility="{Binding ElementName=quizzes, Path=ItemsSource.Count, Converter={x:Static metl:Converters.reverseQuizzesToVisibilityConverter}}"
                Content="No Quizzes"/>
-        <ItemsControl x:Name="quizzes">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Button x:Name="quiz" ToolTip="{Binding Path=title}" Click="quiz_Click">
-                            <Label Background="Transparent">
-                                <Label.Content>
-                                    <MultiBinding Converter="{x:Static metl:Converters.quizPositionConverter}" >
-                                        <Binding ElementName="quiz" Path="DataContext"/>
-                                        <Binding ElementName="quizzes" Path="ItemsSource"/>
-                                    </MultiBinding>
-                                </Label.Content>
-                            </Label>
-                        </Button>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" MaxWidth="600">
+            <ItemsControl x:Name="quizzes" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
+                            <Button x:Name="quiz" ToolTip="{Binding Path=title}" Click="quiz_Click" MaxWidth="100" >
+                                <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
+                                    <Label Background="Transparent">
+                                        <Label.Content>
+                                            <MultiBinding Converter="{x:Static metl:Converters.quizPositionConverter}" >
+                                                <Binding ElementName="quiz" Path="DataContext"/>
+                                                <Binding ElementName="quizzes" Path="ItemsSource"/>
+                                            </MultiBinding>
+                                        </Label.Content>
+                                    </Label>
+                                    <TextBlock FontSize="10" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
+                                </StackPanel>
+                            </Button>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Submission">
         <submissions:ScreenshotSubmission/>

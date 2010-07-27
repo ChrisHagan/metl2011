@@ -250,6 +250,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Tabs\Groups\ZoomControlsHost.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Tabs\Groups\PenColors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -511,6 +515,9 @@
     </Compile>
     <Compile Include="Quizzing\QuizButton.xaml.cs">
       <DependentUpon>QuizButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Groups\ZoomControlsHost.xaml.cs">
+      <DependentUpon>ZoomControlsHost.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Groups\PenColors.xaml.cs" />
     <Compile Include="Components\ConversationConfigurationDialog.xaml.cs">
