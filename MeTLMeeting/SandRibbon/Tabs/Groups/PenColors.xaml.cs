@@ -347,6 +347,7 @@ namespace SandRibbon.Tabs.Groups
             Commands.ReportStrokeAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((DrawingAttributes) => updatePreviousDrawingAttributes(DrawingAttributes)));
             Commands.ReportDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((drawingAttributes => receiveDrawingAttributesChanged(drawingAttributes))));
             SetupPreviousColoursWithDefaults();
+            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(changeInkCanvasMode));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(setDefaults));
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(setDefaults));
@@ -366,6 +367,13 @@ namespace SandRibbon.Tabs.Groups
             catch (NotSetException e)
             {
                 return false;
+            }
+        }
+        private void changeInkCanvasMode(string mode)
+        {
+            if (mode != "Ink")
+            {
+                defaultColours.SelectedIndex = -1;
             }
         }
         private void updateToolBox(string layer)
@@ -436,10 +444,13 @@ namespace SandRibbon.Tabs.Groups
         private void ChangeColorFromPreset(object sender, RoutedEventArgs e)
         {
             var listBox = ((ListBox)sender);
-            var IndexNumber = listBox.Items.IndexOf(listBox.SelectedItem);
-            var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[IndexNumber])).Attributes);
-            Commands.SetDrawingAttributes.Execute(drawingAttributes);
-            e.Handled = true;
+            if (listBox.SelectedItem != null)
+            {
+                var IndexNumber = listBox.Items.IndexOf(listBox.SelectedItem);
+                var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[IndexNumber])).Attributes);
+                Commands.SetDrawingAttributes.Execute(drawingAttributes);
+                e.Handled = true;
+            }
         }
         private bool OpeningPopup;
         private void OpenColourSettingPopup(object sender, RoutedEventArgs e)
