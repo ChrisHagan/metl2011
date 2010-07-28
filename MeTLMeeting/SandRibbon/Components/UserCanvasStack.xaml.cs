@@ -130,6 +130,10 @@ namespace SandRibbon.Components
                     currentCanvas = text;
                     canvasStack.Children.Remove(text);
                     break;
+                case "View":
+                    currentCanvas = viewCanvas;
+                    canvasStack.Children.Remove(viewCanvas);
+                    break;
                 case "Insert":
                     currentCanvas = images;
                     canvasStack.Children.Remove(images);

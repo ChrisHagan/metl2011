@@ -27,6 +27,9 @@ namespace SandRibbon.Components.SimpleImpl
                 case "Text":
                     Text.IsChecked = true;
                     break;
+                case "View":
+                    View.IsChecked = true;
+                    break;
                 default:
                     Pen.IsChecked = true;
                     break;

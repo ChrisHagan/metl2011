@@ -17,7 +17,6 @@
         <sr:GroupVariant Variant="Collapsed" Priority="5"/>
     </sr:RibbonGroup.Variants>
     <StackPanel Orientation="Horizontal">
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.SetModeGrabMove}" Text="Grab Move" Icon="\Resources\MagnifyingGlassShiny.png" />
         <SandRibbonInterop:Button Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="\Resources\MagnifyingGlassShiny.png" ToolTip="{DynamicResource GrabZoomToolTip}"/>
         <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}"/>
         <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToView}" Icon="\Resources\FitToView.png" Text="Fit to view" ToolTip="{DynamicResource FitToViewToolTip}"/>

@@ -103,6 +103,7 @@ namespace SandRibbon
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
             Commands.ShowEditSlidesDialog.RegisterCommand(new DelegateCommand<object>(ShowEditSlidesDialog, mustBeInConversation));
             Commands.SetLayer.Execute("Sketch");
+            Commands.MoveCanvasByDelta.RegisterCommand(new DelegateCommand<Point>(GrabMove));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -114,7 +115,8 @@ namespace SandRibbon
             App.Now("Started MeTL");
         }
         private void noop(object unused) { }
-        private void ShowEditSlidesDialog(object unused) {
+        private void ShowEditSlidesDialog(object unused)
+        {
             new SlidesEditingDialog().ShowDialog();
         }
         private void SetInkCanvasMode(object unused)
@@ -128,6 +130,13 @@ namespace SandRibbon
         private void PowerPointLoadFinished(object unused)
         {
             Dispatcher.adoptAsync((finishedPowerpoint));
+        }
+        private void GrabMove(Point moveDelta)
+        {
+            if (moveDelta.X != 0)
+                scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + moveDelta.X);
+            if (moveDelta.Y != 0)
+                scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y);
         }
         private void PowerPointProgress(string progress)
         {
@@ -814,13 +823,15 @@ namespace SandRibbon
             privacyTools.Children.Clear();
             RHSDrawerDefinition.Width = new GridLength(0);
         }
-        private GridSplitter split() {
-            return new GridSplitter { 
-                ShowsPreview=true,
-                VerticalAlignment=VerticalAlignment.Stretch,
-                Width=10,
-                Height=Double.NaN,
-                ResizeBehavior=GridResizeBehavior.PreviousAndNext
+        private GridSplitter split()
+        {
+            return new GridSplitter
+            {
+                ShowsPreview = true,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                Width = 10,
+                Height = Double.NaN,
+                ResizeBehavior = GridResizeBehavior.PreviousAndNext
             };
         }
         public void SetupUI(PedagogyLevel level)
@@ -877,11 +888,11 @@ namespace SandRibbon
             {
                 try
                 {
-                    var x = Int32.Parse((string) anX.FindResource("preferredDisplayIndex"));
-                    var y = Int32.Parse((string) aY.FindResource("preferredDisplayIndex"));
+                    var x = Int32.Parse((string)anX.FindResource("preferredDisplayIndex"));
+                    var y = Int32.Parse((string)aY.FindResource("preferredDisplayIndex"));
                     return x - y;
                 }
-                catch(FormatException e)
+                catch (FormatException e)
                 {
                     return 0;
                 }

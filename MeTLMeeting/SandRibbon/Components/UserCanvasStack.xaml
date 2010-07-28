@@ -7,6 +7,7 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop" >
     <Grid x:Name="canvasStack" Background="White">
+        <canvas:ViewCanvas x:Name="viewCanvas"/>
         <canvas:Image x:Name="images"/>
         <canvas:Text x:Name="text"/>
         <canvas:LiveInkCanvas x:Name="handwriting"/>
