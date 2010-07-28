@@ -838,6 +838,7 @@ namespace SandRibbon
                         break;
                     case 1:
                         tabs.Add(new Tabs.Quizzes());
+                        tabs.Add(new Tabs.Submissions());
                         homeGroups.Add(new EditingModes());
                         homeGroups.Add(new ToolBox());
                         homeGroups.Add(new TextTools());

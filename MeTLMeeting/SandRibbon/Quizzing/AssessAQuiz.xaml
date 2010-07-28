@@ -5,14 +5,20 @@
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     Topmost="True"
     WindowStyle="ToolWindow"
-    Title="{Binding Path=title}" SizeToContent="WidthAndHeight" >
+    Title="View quiz results" SizeToContent="WidthAndHeight" >
     <Border x:Name="allResults" >
         <StackPanel Orientation="Vertical">
             <StackPanel x:Name="SnapshotHost" Background="{StaticResource BackgroundBlueGradient}" >
                 <Grid Margin="10 10 10 30">
                     <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
                     <StackPanel>
-                        <Label FontWeight="Bold" Content="{Binding Path=question}" HorizontalAlignment="Center" />
+                        <Grid>
+                            <quiz:GoldPlaque/>
+                            <TextBlock Margin="4" MaxWidth="300"
+                                TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=title}"
+                                       HorizontalAlignment="Center" />
+                        </Grid>
+                        <TextBlock FontWeight="Bold" TextWrapping="WrapWithOverflow" Text="{Binding Path=question}" HorizontalAlignment="Center" />
                         <Label FontWeight="Bold" x:Name="responseCount" HorizontalAlignment="Center" />
                     </StackPanel>
                 </Grid>

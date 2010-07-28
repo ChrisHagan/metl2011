@@ -1,0 +1,27 @@
+﻿<sr:RibbonGroup x:Class="SandRibbon.Tabs.Groups.ZoomControlsHost"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    ShowDialogLauncher="False" Header="Zoom" Image="\Resources\Inking.png">
+    <sr:RibbonGroup.Resources>
+        <core:String x:Key="preferredDisplayIndex">8</core:String>
+    </sr:RibbonGroup.Resources>
+    <sr:RibbonGroup.Variants>
+        <sr:GroupVariant Variant="Small" Priority="2"/>
+        <sr:GroupVariant Variant="Medium" Priority="1"/>
+        <sr:GroupVariant Variant="Collapsed" Priority="5"/>
+    </sr:RibbonGroup.Variants>
+    <StackPanel Orientation="Horizontal">
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.SetModeGrabMove}" Text="Grab Move" Icon="\Resources\MagnifyingGlassShiny.png" />
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="\Resources\MagnifyingGlassShiny.png" ToolTip="{DynamicResource GrabZoomToolTip}"/>
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}"/>
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToView}" Icon="\Resources\FitToView.png" Text="Fit to view" ToolTip="{DynamicResource FitToViewToolTip}"/>
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToPageWidth}" Icon="\Resources\FitToPage.png" Text="Fit to page" ToolTip="{DynamicResource FitToPageToolTip}"/>
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}"/>
+    </StackPanel>
+</sr:RibbonGroup>           

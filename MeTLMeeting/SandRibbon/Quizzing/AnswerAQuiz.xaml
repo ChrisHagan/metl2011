@@ -8,9 +8,19 @@
     x:Name="answerAQuiz"
     Title="Answer Quiz">
     <Border Background="{StaticResource BackgroundBlueGradient}">
-        <StackPanel Orientation="Vertical"> 
-            <Label Content="{Binding Path=title, Converter={x:Static quiz:AnswerAQuiz.TitleConverter}}" />
-            <Label Content="{Binding Path=question, Converter={x:Static quiz:AnswerAQuiz.QuestionConverter}}" />
+        <StackPanel Orientation="Vertical">
+            <Grid Margin="10 10 10 30">
+                <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
+                <StackPanel>
+                    <Grid>
+                        <quiz:GoldPlaque/>
+                        <TextBlock Margin="4" MaxWidth="300"
+                                TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=title}"
+                                       HorizontalAlignment="Center" />
+                    </Grid>
+                    <TextBlock FontWeight="Bold" TextWrapping="WrapWithOverflow" Text="{Binding Path=question}" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Grid>
             <ListBox x:Name="quizOptions" SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
