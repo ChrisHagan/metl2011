@@ -34,7 +34,10 @@
                         <Label FontWeight="Bold" Grid.Row="0">Title</Label>
                         <TextBox FontWeight="Bold" Grid.Row="1" Width="300" x:Name="quizTitle" Text="{x:Static q:CreateAQuiz.PROMPT_TEXT}" />
                         <Label FontWeight="Bold" Grid.Row="2">Question (optional)</Label>
-                        <TextBox Grid.Row="3" Height="90" Width="300" x:Name="question" AcceptsReturn="True"></TextBox>
+                        <StackPanel  Grid.Row="3" x:Name="questionContainer" Orientation="Vertical">
+                            <TextBox Height="90" Width="300" x:Name="question" AcceptsReturn="True"></TextBox>
+                            <Button x:Name="screenshot" Click="screenshotAsAQuestion">Screenshot</Button>
+                        </StackPanel>
                     </Grid>
                     <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{x:Static q:CreateAQuiz.options}" Loaded="TextBox_GotFocus">
                         <ItemsControl.ItemTemplate>

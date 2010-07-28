@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Sandpit;
+using SandRibbon.Components.Submissions;
 using SandRibbon.Components.Utility;
 using SandRibbon.Quizzing;
 using SandRibbon.Utils.Connection;
@@ -47,7 +48,7 @@ namespace SandRibbon.Components
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
             Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
-            Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<long>(generateScreenshot));
+            Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
         }
         private void exploreBubble(ThoughtBubble thoughtBubble)
         {
@@ -138,7 +139,19 @@ namespace SandRibbon.Components
                     return (FrameworkElement)child;
             return null;
         }
-        private void generateScreenshot(long snapshotTime)
+        private void SendScreenShot(ScreenshotDetails details)
+        {
+            string hostedFileName = generateScreenshot(details);
+            if (hostedFileName == "failed")
+            {
+                MessageBox.Show("cannot upload submission");
+                return;
+            }
+            Commands.ScreenshotGenerated.Execute(hostedFileName);
+       
+        }
+
+        private string generateScreenshot(ScreenshotDetails details)
         {
             var dpi = 96;
             var size = 1024;
@@ -149,14 +162,14 @@ namespace SandRibbon.Components
                 context.DrawRectangle(new VisualBrush(stack), null,
                                       new Rect(new Point(), new Size(size, size)));
                 context.DrawText(new FormattedText(
-                    string.Format("{0}'s submission at {1}", Globals.me, new DateTime(snapshotTime)),
-                    CultureInfo.GetCultureInfo("en-us"),
-                    FlowDirection.LeftToRight,
-                    new Typeface("Arial"),
-                    24,
-                    Brushes.Black
-                    ),
-                    new Point(5, 10));
+                                     details.message,
+                                     CultureInfo.GetCultureInfo("en-us"),
+                                     FlowDirection.LeftToRight,
+                                     new Typeface("Arial"),
+                                     24,
+                                     Brushes.Black
+                                     ),
+                                 new Point(5, 10));
             }
             bitmap.Render(dv);
 
@@ -169,19 +182,10 @@ namespace SandRibbon.Components
             }
 
             var hostedFileName = ResourceUploader.uploadResource(Globals.slide.ToString(), file);
-            if (hostedFileName == "failed")
-            {
-                MessageBox.Show("cannot upload submission");
-                return;
-            }
-            Commands.SendScreenshotSubmission.Execute(new TargettedSubmission
-                                                          {
-                                                              author = Globals.me,
-                                                              url = hostedFileName,
-                                                              slide = Globals.slide,
-                                                              time = snapshotTime
-                                                          });
+
+            return hostedFileName;
         }
+
         private void CreateThumbnail(int id)
         {
             try

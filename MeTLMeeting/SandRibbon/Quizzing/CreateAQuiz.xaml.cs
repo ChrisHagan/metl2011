@@ -10,6 +10,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Components.Submissions;
 using SandRibbon.Providers;
 using SandRibbonInterop;
 using CheckBox=System.Windows.Controls.CheckBox;
@@ -21,29 +23,19 @@ namespace SandRibbon.Quizzing
     public partial class CreateAQuiz : Window
     {
         public static readonly string PROMPT_TEXT = "Please enter a quiz title";
+        private string url = "none";
         public static ObservableCollection<Option> options = new ObservableCollection<Option>
                                                      {
                                                          new Option {name = "A" }
                                                      };
-        public CreateAQuiz()
+        public CreateAQuiz(int count)
         {
             InitializeComponent();
-
+            quizTitle.Text = string.Format("Quiz {0}", count + 1);
             options.First().color = AllColors.all[0];
-
-        }
-        private void help(object sender, RoutedEventArgs e)
-        {
-            var finalImage = new Image();
-            BitmapImage helpImage = new BitmapImage();
-            helpImage.BeginInit();
-            helpImage.UriSource = new Uri("pack://application:,,,/MeTL;component/Resources/createAQuizHelp.PNG");
-            helpImage.EndInit();
-            finalImage.Source = helpImage;
-            new Window{
-                Content=finalImage,
-                SizeToContent=SizeToContent.WidthAndHeight
-            }.ShowDialog();
+            quizTitle.GotFocus += selectAll;
+            quizTitle.GotMouseCapture += selectAll;
+            quizTitle.GotKeyboardFocus += selectAll;
         }
         private void Close(object sender, RoutedEventArgs e)
         {
@@ -55,7 +47,7 @@ namespace SandRibbon.Quizzing
         }
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
-            var quiz = new QuizQuestion { title = quizTitle.Text, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks };
+            var quiz = new QuizQuestion { title = quizTitle.Text,url = url, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks };
             foreach(object obj in quizQuestions.Items)
             {
                 var answer = (Option)obj;
@@ -84,6 +76,39 @@ namespace SandRibbon.Quizzing
             };
             options.Add(newOption);
             ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption)).Opacity = 0.5;
+        }
+
+        private void screenshotAsAQuestion(object sender, RoutedEventArgs e)
+        {
+            DelegateCommand<string> gotScreenshot = null;
+            gotScreenshot = new DelegateCommand<string>(hostedFilename =>
+                            {
+                                Commands.ScreenshotGenerated.UnregisterCommand(gotScreenshot);
+                                url = hostedFilename;
+                                var image = new Image();
+                                BitmapImage source = new BitmapImage();
+                                source.BeginInit();
+                                source.UriSource = new Uri(hostedFilename);
+                                source.EndInit();
+                                image.Source = source;
+                                image.Width = 300;
+                                image.Height = 300;
+                                questionContainer.Children.Add(image);
+                                var slide = Globals.slides.Where(s => s.id == Globals.slide).First();
+                                quizTitle.Text = string.Format("Quiz referencing slide {0}", slide.index + 1);
+                            });
+            Commands.ScreenshotGenerated.RegisterCommand(gotScreenshot);
+            Commands.GenerateScreenshot.Execute(new ScreenshotDetails
+                                                    {
+                                                        time = DateTime.Now.Ticks,
+                                                        message = ""
+                                                    });
+        }
+
+        private void selectAll(object sender, RoutedEventArgs e)
+        {
+            quizTitle.SelectAll();
+
         }
     }
 }

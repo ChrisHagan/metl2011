@@ -17,6 +17,7 @@ using SandRibbon.Quizzing;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
 using SandRibbon.Providers;
+using Button=System.Windows.Controls.Button;
 
 namespace SandRibbon.Tabs
 {
@@ -51,9 +52,14 @@ namespace SandRibbon.Tabs
                                           try
                                           {
                                               if (Globals.isAuthor)
+                                              {
                                                   createQuiz.Visibility = Visibility.Visible;
+                                                  createQuiz.IsEnabled = true;
+                                              }
                                               else
+                                              {
                                                   createQuiz.Visibility = Visibility.Collapsed;
+                                              }
                                           }
                                           catch (NotSetException)
                                           {
@@ -99,7 +105,7 @@ namespace SandRibbon.Tabs
         }
         private void CreateQuiz(object sender, RoutedEventArgs e)
         {
-            new CreateAQuiz().Show();
+            new CreateAQuiz(activeQuizes.Count).Show();
         }
         private void quiz_Click(object sender, RoutedEventArgs e)
         {

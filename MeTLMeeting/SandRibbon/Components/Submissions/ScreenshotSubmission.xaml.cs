@@ -19,7 +19,11 @@ using SandRibbonObjects;
 
 namespace SandRibbon.Components.Submissions
 {
-
+    public class ScreenshotDetails
+    {
+        public string message;
+        public long time;
+    }
     public partial class ScreenshotSubmission : UserControl
     {
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
@@ -45,6 +49,7 @@ namespace SandRibbon.Components.Submissions
                                                 {
                                                     try
                                                     {
+                                                        submissionList = new List<TargettedSubmission>();
                                                         if (Globals.conversationDetails.Author == Globals.me)
                                                             amTeacher();
                                                         else
@@ -53,6 +58,7 @@ namespace SandRibbon.Components.Submissions
                                                     catch(NotSetException)
                                                     {
                                                     }
+      
                                                 });
         }
         private void amTeacher()
@@ -73,7 +79,26 @@ namespace SandRibbon.Components.Submissions
         }
         private void generateScreenshot(object sender, RoutedEventArgs e)
         {
-            Commands.GenerateScreenshot.Execute(DateTime.Now.Ticks);
+            var time = DateTime.Now.Ticks;
+            DelegateCommand<string> sendScreenshot = null;
+            sendScreenshot = new DelegateCommand<string>(hostedFileName =>
+                             {
+                                                                 
+                                 Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
+                                 Commands.SendScreenshotSubmission.Execute(new TargettedSubmission
+                                                                                  {
+                                                                                      author = Globals.me,
+                                                                                      url = hostedFileName,
+                                                                                      slide = Globals.slide,
+                                                                                      time = time 
+                                                                                  });
+                             });
+            Commands.SendScreenshotSubmission.RegisterCommand(sendScreenshot);
+            Commands.GenerateScreenshot.Execute(new ScreenshotDetails
+                                                    {
+                                                        time = time,
+                                                        message = string.Format("{0}'s submission at {1}", Globals.me, new DateTime(time)),
+                                                    });
         }
 
         private void viewSubmissions(object sender, RoutedEventArgs e)

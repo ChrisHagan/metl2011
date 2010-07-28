@@ -897,6 +897,8 @@ namespace SandRibbonInterop.MeTLStanzas
             public static readonly string QUESTION = "question";
             public static readonly string AUTHOR = "author";
             public static readonly string ID = "id";
+            public static readonly string URL = "url";
+
             public Quiz()
             {
                 this.Namespace = METL_NS;
@@ -918,6 +920,7 @@ namespace SandRibbonInterop.MeTLStanzas
                                    author = GetTag(AUTHOR),
                                    id = long.Parse(GetTag(ID))
                                };
+                    quiz.url = HasTag(URL) ? GetTag(URL) : "none";
                     foreach(var node in ChildNodes)
                     {
                         if(node.GetType() == typeof(QuizOption))
@@ -932,6 +935,7 @@ namespace SandRibbonInterop.MeTLStanzas
                     SetTag(QUESTION, value.question);
                     SetTag(AUTHOR, value.author);
                     SetTag(ID, value.id.ToString());
+                    SetTag(URL, value.url);
                     foreach(var option in value.options)
                     {
                         var optionElement= new QuizOption(option);

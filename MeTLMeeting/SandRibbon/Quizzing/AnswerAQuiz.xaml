@@ -18,6 +18,7 @@
                                 TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=title}"
                                        HorizontalAlignment="Center" />
                     </Grid>
+                    <Image Source="{Binding Path=url}" Width="200" Height="200"/>
                     <TextBlock FontWeight="Bold" TextWrapping="WrapWithOverflow" Text="{Binding Path=question}" HorizontalAlignment="Center" />
                 </StackPanel>
             </Grid>

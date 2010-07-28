@@ -14,6 +14,7 @@ namespace SandRibbonInterop
     public class QuizQuestion
     {
         public string title { get; set;}
+        public string url { get; set; }
         public string question { get; set;}
         public string author { get; set; }
         public List<Option> options { get; set; }

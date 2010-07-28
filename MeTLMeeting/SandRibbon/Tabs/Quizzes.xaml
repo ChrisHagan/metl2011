@@ -16,23 +16,26 @@
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Collapsed" Priority="9"/>
         </sr:RibbonGroup.Variants>
-        <Button Click="CreateQuiz" Visibility="Collapsed" x:Name="createQuiz">Create Quiz</Button>
-        <Label VerticalAlignment="Center" 
+        <StackPanel Orientation="Horizontal">
+            <Button Click="CreateQuiz" Visibility="Collapsed" x:Name="createQuiz">
+                <TextBlock>Create Quiz</TextBlock>
+            </Button>
+            <!--Label VerticalAlignment="Center" 
                FontWeight="Bold"
                FontSize="12px"
                FontFamily="Verdana"
                Visibility="{Binding ElementName=quizzes, Path=ItemsSource.Count, Converter={x:Static metl:Converters.reverseQuizzesToVisibilityConverter}}"
-               Content="No Quizzes"/>
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" MaxWidth="600">
-            <ScrollViewer.Template>
-                <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <ScrollContentPresenter Grid.Row="0" ContentSource="{TemplateBinding Content}"/>
-                        <ScrollBar Name="PART_HorizontalScrollBar"
+               Content="No Quizzes"/-->
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" MaxWidth="600">
+                <ScrollViewer.Template>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ScrollContentPresenter Grid.Row="0" ContentSource="{TemplateBinding Content}"/>
+                            <ScrollBar Name="PART_HorizontalScrollBar"
             Orientation="Horizontal"
             Grid.Row="1"
             Grid.Column="1"
@@ -41,49 +44,50 @@
             ViewportSize="{TemplateBinding ViewportWidth}"
             Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
 
-                    </Grid>
-                </ControlTemplate>
-            </ScrollViewer.Template>
-            <ItemsControl x:Name="quizzes" >
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
-                            <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
-                                <Button.ToolTip>
-                                    <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-                                        <Grid Margin="2">
-                                            <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                        </Grid>
+                    </ControlTemplate>
+                </ScrollViewer.Template>
+                <ItemsControl x:Name="quizzes" >
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
+                                <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
+                                    <Button.ToolTip>
+                                        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+                                            <Grid Margin="2">
+                                                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="\Resources\Ribbon-Quiz.png"/>
-                                            <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold"
+                                                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold"
                                                        Text="View quiz results"/>
-                                            <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Text="{Binding Path=title}"/>
-                                        </Grid>
-                                    </Border>
-                                </Button.ToolTip>
-                                <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="/Resources/Ribbon-Quiz.png" Height="15" Width="15"/>
-                                        <Label Background="Transparent">
-                                            <Label.Content>
-                                                <MultiBinding Converter="{x:Static metl:Converters.quizPositionConverter}" >
-                                                    <Binding ElementName="quiz" Path="DataContext"/>
-                                                    <Binding ElementName="quizzes" Path="ItemsSource"/>
-                                                </MultiBinding>
-                                            </Label.Content>
-                                        </Label>
+                                                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Text="{Binding Path=title}"/>
+                                            </Grid>
+                                        </Border>
+                                    </Button.ToolTip>
+                                    <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="/Resources/Ribbon-Quiz.png" Height="15" Width="15"/>
+                                            <Label Background="Transparent">
+                                                <Label.Content>
+                                                    <MultiBinding Converter="{x:Static metl:Converters.quizPositionConverter}" >
+                                                        <Binding ElementName="quiz" Path="DataContext"/>
+                                                        <Binding ElementName="quizzes" Path="ItemsSource"/>
+                                                    </MultiBinding>
+                                                </Label.Content>
+                                            </Label>
+                                        </StackPanel>
+                                        <TextBlock FontSize="10" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
                                     </StackPanel>
-                                    <TextBlock FontSize="10" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
-                                </StackPanel>
-                            </Button>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+                                </Button>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </StackPanel>
     </sr:RibbonGroup>
 </sr:RibbonTab>
