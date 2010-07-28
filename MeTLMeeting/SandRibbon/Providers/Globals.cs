@@ -11,15 +11,17 @@ namespace SandRibbon.Providers
 {
     public class Globals
     {
-        public static bool isAuthor 
+        public static bool isAuthor
         {
-            get 
+            get
             {
                 return me == conversationDetails.Author;
             }
         }
-        public static PedagogyLevel pedagogy {
-            get {
+        public static PedagogyLevel pedagogy
+        {
+            get
+            {
                 try
                 {
                     Commands.SetPedagogyLevel.lastValue();
@@ -45,7 +47,8 @@ namespace SandRibbon.Providers
                         availableSlides = conversationDetails.Slides.Select(s => s.id).ToList()
                     };
                 }
-                catch (NotSetException e) {
+                catch (NotSetException e)
+                {
                     throw e;
                 }
             }
@@ -54,7 +57,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                try{return ((DrawingAttributes)Commands.ReportDrawingAttributes.lastValue());}
+                try { return ((DrawingAttributes)Commands.ReportDrawingAttributes.lastValue()); }
                 catch (NotSetException)
                 {
                 }
@@ -91,8 +94,10 @@ namespace SandRibbon.Providers
                 return ((Utils.Connection.JabberWire.Credentials)credentials).authorizedGroups;
             }
         }
-        public static bool synched{
-            get {
+        public static bool synched
+        {
+            get
+            {
                 try
                 {
                     return (bool)Commands.SetSync.lastValue();
@@ -103,9 +108,9 @@ namespace SandRibbon.Providers
                 }
             }
         }
-        public static int teacherSlide 
+        public static int teacherSlide
         {
-            get 
+            get
             {
                 return (int)Commands.SyncedMoveRequested.lastValue();
             }

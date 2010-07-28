@@ -37,12 +37,22 @@ namespace SandRibbon.Tabs
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(updateConversationDetails));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
             quizzes.ItemsSource = activeQuizes;
-            
+
         }
-        private void joinConversation(object obj)
+        private void joinConversation(string jid)
         {
+            if (new SandRibbon.Providers.Structure.FileConversationDetailsProvider().DetailsOf(jid).Author == Globals.me)
+            {
+                quizResultsRibbonGroup.Header = "View results";
+                quizRibbonGroup.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                quizResultsRibbonGroup.Header = "Respond";
+                quizRibbonGroup.Visibility = Visibility.Collapsed;
+            }
             activeQuizes = new ObservableCollection<QuizQuestion>();
         }
         private void updateConversationDetails(object obj)
@@ -65,13 +75,13 @@ namespace SandRibbon.Tabs
                                           {
                                           }
                                       });
-            
+
         }
         private void preparserAvailable(PreParser preParser)
         {
-            foreach(var quiz in preParser.quizzes)
+            foreach (var quiz in preParser.quizzes)
                 ReceiveQuiz(quiz);
-            foreach(var answer in preParser.quizAnswers)
+            foreach (var answer in preParser.quizAnswers)
                 ReceiveQuizAnswer(answer);
         }
         private void MoveTo(object obj)
@@ -82,7 +92,7 @@ namespace SandRibbon.Tabs
         {
             if (answers.ContainsKey(answer.id))
             {
-                if(answers[answer.id].Where(a => a.answerer == answer.answerer).Count() > 0)
+                if (answers[answer.id].Where(a => a.answerer == answer.answerer).Count() > 0)
                 {
                     var oldAnswer = answers[answer.id].Where(a => a.answerer == answer.answerer).First();
                     answers[answer.id].Remove(oldAnswer);
@@ -109,7 +119,7 @@ namespace SandRibbon.Tabs
         }
         private void quiz_Click(object sender, RoutedEventArgs e)
         {
-            var thisQuiz = (QuizQuestion) ((FrameworkElement)sender).DataContext;
+            var thisQuiz = (QuizQuestion)((FrameworkElement)sender).DataContext;
             if (thisQuiz.author == Globals.me)
                 new AssessAQuiz(answers[thisQuiz.id], thisQuiz).Show();
             else
