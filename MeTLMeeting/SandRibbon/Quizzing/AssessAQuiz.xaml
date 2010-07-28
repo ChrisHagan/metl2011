@@ -19,6 +19,7 @@
                                        HorizontalAlignment="Center" />
                         </Grid>
                         <TextBlock FontWeight="Bold" TextWrapping="WrapWithOverflow" Text="{Binding Path=question}" HorizontalAlignment="Center" />
+                        <Image Source="{Binding Path=url}" Width="200" Height="200"/>
                         <Label FontWeight="Bold" x:Name="responseCount" HorizontalAlignment="Center" />
                     </StackPanel>
                 </Grid>
