@@ -9,9 +9,9 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Canvas;
 using SandRibbonInterop.Interfaces;
 
-namespace SandRibbon.Components
+namespace SandRibbon.Tabs.Groups
 {
-    public partial class TextTools : RibbonGroup, ITextTools 
+    public partial class TextTools : UserControl, ITextTools 
     {
         private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
         private List<string> fontList = new List<string> {"Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings"};

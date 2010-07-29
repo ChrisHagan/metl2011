@@ -844,14 +844,15 @@ namespace SandRibbon
                 {
                     case 0:
                         ClearUI();
-                        homeGroups.Add(new PenColors());
+                        homeGroups.Add(new EditingOptions());
+                        //homeGroups.Add(new PenColors());
                         break;
                     case 1:
                         tabs.Add(new Tabs.Quizzes());
                         tabs.Add(new Tabs.Submissions());
                         homeGroups.Add(new EditingModes());
-                        homeGroups.Add(new ToolBox());
-                        homeGroups.Add(new TextTools());
+                        //homeGroups.Add(new ToolBox());
+                        //homeGroups.Add(new TextTools());
                         break;
                     case 2:
                         ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
@@ -881,6 +882,8 @@ namespace SandRibbon
             ribbon.SelectedTab = home;
             CommandManager.InvalidateRequerySuggested();
             Commands.RequerySuggested();
+            Commands.SetLayer.Execute("Text");
+            Commands.SetLayer.Execute("Sketch");
         }
         private class PreferredDisplayIndexComparer : IComparer<FrameworkElement>
         {
@@ -909,6 +912,29 @@ namespace SandRibbon
         private void zoomConcernedControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             updateCurrentPenAfterZoomChanged();
+        }
+
+        private void fixAutoSizing(object sender, SizeChangedEventArgs e)
+        {
+            var lastValue = Commands.SetLayer.lastValue();
+            Commands.SetLayer.Execute("Sketch");
+            Commands.SetLayer.Execute("Text");
+            Commands.SetLayer.Execute(lastValue);
+            /*var currentTab = ribbon.SelectedTab;
+            if (currentTab != null)
+            {
+                Dictionary<RibbonGroup, Visibility> currentVisibility = new Dictionary<RibbonGroup, Visibility>();
+                foreach (RibbonGroup rg in currentTab.Items)
+                {
+                    currentVisibility[rg] = rg.Visibility;
+                    rg.Visibility = Visibility.Collapsed;
+                }
+                foreach (RibbonGroup rg in currentTab.Items)
+                {
+                    //rg.Visibility = Visibility.Visible;
+                    rg.Visibility = currentVisibility[rg];
+                }
+            }*/
         }
     }
 

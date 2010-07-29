@@ -37,7 +37,9 @@
         <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
     </sr:RibbonWindow.InputBindings>
     <sr:RibbonWindow.Ribbon>
-        <sr:Ribbon x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" ShowHelp="false" ApplicationButtonImage="\Resources\Ribbon-ApplicationButton.png">
+        <sr:Ribbon x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" 
+                   ShowHelp="false" ApplicationButtonImage="\Resources\Ribbon-ApplicationButton.png">
+                   <!--SizeChanged="fixAutoSizing">-->
             <sr:Ribbon.ToolBar>
                 <chrome:ToolBar />
             </sr:Ribbon.ToolBar>

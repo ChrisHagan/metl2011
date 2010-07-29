@@ -302,7 +302,7 @@ namespace SandRibbon.Tabs.Groups
             CurrentV = tempV;
         }
     }
-    public partial class PenColors : RibbonGroup, IPencilCaseDisplay
+    public partial class PenColors : UserControl, IPencilCaseDisplay
     {
         public static Half halfOfParent = new Half();
         public ObservableCollection<PenColors.DrawingAttributesEntry> previouslySelectedDrawingAttributes = new ObservableCollection<PenColors.DrawingAttributesEntry>();

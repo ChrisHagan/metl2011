@@ -1,4 +1,4 @@
-﻿<sr:RibbonGroup x:Class="SandRibbon.Components.TextTools"
+﻿<UserControl x:Class="SandRibbon.Tabs.Groups.TextTools"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
@@ -8,9 +8,6 @@
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     Loaded="setUpTools">
-    <sr:RibbonGroup.Resources>
-        <core:String x:Key="preferredDisplayIndex">2</core:String>    
-    </sr:RibbonGroup.Resources>
     <StackPanel Orientation="Horizontal" x:Name="LayoutRoot">
         <SandRibbonInterop:RibbonPanel>
             <SandRibbonInterop:Button ToolTip="{StaticResource CutToolTip}" Icon="..\..\Resources\cut.png" Text="Cut" Command="ApplicationCommands.Cut" InternalButtonSize="Small"/>
@@ -53,4 +50,4 @@
             <SandRibbonInterop:Button ToolTip="{StaticResource DecreaseFontSizeToolTip}" Icon="..\..\Resources\decreaseFontSize.png" x:Name="DecreaseFontSizeButton" Text="Decrease" Click="decreaseFont"/>
         </SandRibbonInterop:RibbonPanel>
     </StackPanel>
-</sr:RibbonGroup>
+</UserControl>

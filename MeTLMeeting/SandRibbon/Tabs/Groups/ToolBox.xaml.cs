@@ -5,7 +5,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace SandRibbon.Tabs.Groups
 {
-    public partial class ToolBox : Divelements.SandRibbon.RibbonGroup
+    public partial class ToolBox : UserControl
     {
         public ToolBox()
         {

@@ -35,7 +35,6 @@ namespace SandRibbon.Components.SimpleImpl
                     break;
             }
         }
-
         private void setDefaults(object obj)
         {
             Dispatcher.adoptAsync(delegate

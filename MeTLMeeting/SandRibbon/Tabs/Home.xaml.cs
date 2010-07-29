@@ -22,6 +22,5 @@ namespace SandRibbon.Tabs
             InitializeComponent();
             Commands.SetLayer.Execute("Sketch");
         }
-        
     }
 }

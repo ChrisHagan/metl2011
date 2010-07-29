@@ -1,5 +1,4 @@
-﻿<sr:RibbonGroup x:Class="SandRibbon.Tabs.Groups.ToolBox"
-    Header="Editing Actions"
+﻿<UserControl x:Class="SandRibbon.Tabs.Groups.ToolBox"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
@@ -8,14 +7,6 @@
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl" >
-    <sr:RibbonGroup.Resources>
-        <core:String x:Key="preferredDisplayIndex">1</core:String>
-    </sr:RibbonGroup.Resources>
-    <sr:RibbonGroup.Variants>
-        <sr:GroupVariant Variant="Small" Priority="4"/>
-        <sr:GroupVariant Variant="Medium" Priority="3"/>
-        <sr:GroupVariant Variant="Collapsed" Priority="5"/>
-    </sr:RibbonGroup.Variants>
     <StackPanel Orientation="Horizontal">
         <!--<SandRibbonInterop:RibbonPanel Tag="inkModes" x:Name="InkOptions" >
         </SandRibbonInterop:RibbonPanel>-->
@@ -29,4 +20,4 @@
             
         </SandRibbonInterop:RibbonPanel>
     </StackPanel>
-</sr:RibbonGroup>
+</UserControl>
