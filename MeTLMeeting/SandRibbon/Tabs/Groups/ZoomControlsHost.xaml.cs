@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Divelements.SandRibbon;
+using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace SandRibbon.Tabs.Groups
 {
@@ -20,6 +21,20 @@ namespace SandRibbon.Tabs.Groups
         public ZoomControlsHost()
         {
             InitializeComponent();
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(setLayer));
+        }
+
+        private void setLayer(string layer)
+        {
+            switch (layer)
+            {
+                case "View":
+                    View.IsChecked = true;
+                    break;
+                default:
+                    View.IsChecked = false;
+                    break;
+            }
         }
     }
 }

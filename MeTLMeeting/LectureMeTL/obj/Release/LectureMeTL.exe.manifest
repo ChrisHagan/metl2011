@@ -124,19 +124,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>5OZ2n5F5BhAGI6M/w38IMOWSV9Y=</dsig:DigestValue>
+        <dsig:DigestValue>zGaKVHp0qhq/dKCAy0gBq8n/3Iw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL.exe" size="2594304">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL.exe" size="2594816">
       <assemblyIdentity name="MeTL" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>om2joTfH+PkYrWBM97imNUTjJvY=</dsig:DigestValue>
+        <dsig:DigestValue>Obt/to3iFhHefBF0QPKgNro0EDk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -280,7 +280,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>YFS/l7qKOmZUN8fWBTl7q/UpRuk=</dsig:DigestValue>
+        <dsig:DigestValue>E0Qm/W8cupVMOT+LnbobBhMSWkE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

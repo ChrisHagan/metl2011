@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace SandRibbon.Components
 {
@@ -15,6 +16,7 @@ namespace SandRibbon.Components
             scroll = new ScrollViewer();
             scroll.SizeChanged += scrollChanged;
             scroll.ScrollChanged += scroll_ScrollChanged;
+            Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(ExtendBoth));
         }
         public void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
@@ -24,14 +26,26 @@ namespace SandRibbon.Components
         {
             adjustScrollers();
         }
-        private int INCREMENTAL_VALUE = 250;
+        private void ExtendBoth(object _unused)
+        {
+            doCanvasMoveDown();
+            doCanvasMoveRight();
+        }
         private void canvasMoveDown(object sender, RoutedEventArgs e)
         {
-            ((FrameworkElement)scroll.Content).Height = ((FrameworkElement)scroll.Content).ActualHeight + INCREMENTAL_VALUE;
+            doCanvasMoveDown();
         }
         private void canvasMoveRight(object sender, RoutedEventArgs e)
         {
-            ((FrameworkElement)scroll.Content).Width = ((FrameworkElement)scroll.Content).ActualWidth + INCREMENTAL_VALUE;
+            doCanvasMoveRight();
+        }
+        private void doCanvasMoveDown()
+        {
+            ((FrameworkElement)scroll.Content).Height = ((FrameworkElement)scroll.Content).ActualHeight * 1.2;
+        }
+        private void doCanvasMoveRight()
+        {
+            ((FrameworkElement)scroll.Content).Width = ((FrameworkElement)scroll.Content).ActualWidth * 1.2;
         }
         private void VScroll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {

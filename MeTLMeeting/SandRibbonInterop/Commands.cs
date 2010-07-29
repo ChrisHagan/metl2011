@@ -121,6 +121,7 @@ namespace SandRibbon
         public static RoutedCommand CreateQuizStructure = new RoutedCommand();
         public static RoutedCommand ZoomIn = new RoutedCommand();
         public static RoutedCommand ZoomOut = new RoutedCommand();
+        public static CompositeCommand ExtendCanvasBothWays = new CompositeCommand();
         #endregion
         #region ImageCanvas
         public static CompositeCommand ImageDropped = new CompositeCommand();
