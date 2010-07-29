@@ -6,7 +6,7 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     x:Class="SandRibbon.Tabs.Groups.MiniMap" >
     <sr:RibbonGroup.Resources>
-        <core:String x:Key="preferredDisplayIndex">6</core:String>    
+        <core:String x:Key="preferredDisplayIndex">7</core:String>    
     </sr:RibbonGroup.Resources>
     <sr:RibbonGroup.Variants>
         <sr:GroupVariant Variant="Collapsed" Priority="5"/>

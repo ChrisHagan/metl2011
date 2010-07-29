@@ -9,7 +9,7 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     ShowDialogLauncher="False" Header="Zoom" Image="\Resources\Inking.png">
     <sr:RibbonGroup.Resources>
-        <core:String x:Key="preferredDisplayIndex">8</core:String>
+        <core:String x:Key="preferredDisplayIndex">6</core:String>
     </sr:RibbonGroup.Resources>
     <sr:RibbonGroup.Variants>
         <sr:GroupVariant Variant="Small" Priority="2"/>

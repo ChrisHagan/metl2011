@@ -845,7 +845,6 @@ namespace SandRibbon
                     case 0:
                         ClearUI();
                         homeGroups.Add(new PenColors());
-                        homeGroups.Add(new MiniMap());
                         break;
                     case 1:
                         tabs.Add(new Tabs.Quizzes());
@@ -858,6 +857,7 @@ namespace SandRibbon
                         ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
                         RHSDrawerDefinition.Width = new GridLength(180);
                         homeGroups.Add(new ZoomControlsHost());
+                        homeGroups.Add(new MiniMap());
                         break;
                     case 3:
                         homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
