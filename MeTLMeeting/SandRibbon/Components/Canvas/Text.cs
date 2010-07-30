@@ -16,6 +16,12 @@ using SandRibbon.Utils;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 
+using System.Windows.Documents;
+using System.Windows.Ink;
+using System.Windows.Input.StylusPlugIns;
+using SandRibbonObjects;
+
+
 namespace SandRibbon.Components.Canvas
 {
     public class TextInformation : TagInformation
@@ -67,6 +73,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyText));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<String>(setupText));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
         }
         private void MoveTo(int _slide)
         {
@@ -76,12 +83,12 @@ namespace SandRibbon.Components.Canvas
         private void setupText(string layer)
         {
             focusable = layer == "Text";
-            foreach(var box in Children)
+            foreach (var box in Children)
             {
                 if (box.GetType() == typeof(TextBox))
                 {
-                    TextTag tag = ((TextBox) box).tag();
-                    ((TextBox) box).Focusable = focusable && (tag.author == Globals.me);
+                    TextTag tag = ((TextBox)box).tag();
+                    ((TextBox)box).Focusable = focusable && (tag.author == Globals.me);
                 }
             }
         }
@@ -91,10 +98,12 @@ namespace SandRibbon.Components.Canvas
             {
                 foreach (TextBox box in GetSelectedElements())
                 {
-                    UndoHistory.Queue(() => {
+                    UndoHistory.Queue(() =>
+                    {
                         sendTextWithoutHistory(box, box.tag().privacy);
-                    }, 
-                    () => {
+                    },
+                    () =>
+                    {
                         doDirtyText(box);
                     });
                     dirtyTextBoxWithoutHistory(box);
@@ -110,10 +119,10 @@ namespace SandRibbon.Components.Canvas
                 target = target,
                 privacy = box.tag().privacy,
                 author = Globals.me,
-                slide = currentSlide 
+                slide = currentSlide
             });
         }
-        
+
         private void receiveDirtyText(TargettedDirtyElement element)
         {
             if (!(element.target.Equals(target))) return;
@@ -170,8 +179,8 @@ namespace SandRibbon.Components.Canvas
         {
             foreach (var box in GetSelectedElements())
             {
-                myTextBox = (TextBox) box;
-                doDirtyText((TextBox) box);
+                myTextBox = (TextBox)box;
+                doDirtyText((TextBox)box);
             }
         }
         private void doDirtyText(TextBox box)
@@ -214,7 +223,7 @@ namespace SandRibbon.Components.Canvas
         public DelegateCommand<double> sizeChanged;
         public DelegateCommand<Color> colorChanged;
         public DelegateCommand<object> reset;
-        
+
         private void setInkCanvasMode(string modeString)
         {
             if (!canEdit)
@@ -224,7 +233,8 @@ namespace SandRibbon.Components.Canvas
         }
         public void FlushText()
         {
-            Dispatcher.adoptAsync(delegate{
+            Dispatcher.adoptAsync(delegate
+            {
                 Children.Clear();
             });
         }
@@ -248,7 +258,7 @@ namespace SandRibbon.Components.Canvas
                                family = box.FontFamily,
                                size = box.FontSize,
                            };
-            Commands.TextboxFocused.Execute(info); 
+            Commands.TextboxFocused.Execute(info);
             sendText(box);
         }
         private void setTextSize(double size)
@@ -289,7 +299,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void toggleStrikethrough(object obj)
         {
-            if(myTextBox == null) return;
+            if (myTextBox == null) return;
             var currentTextbox = myTextBox;
             if (!Children.Contains(currentTextbox)) return;
             var decorations = currentTextbox.TextDecorations.Select(s => s.Location).Where(t => t.ToString() == "Strikethrough");
@@ -302,15 +312,15 @@ namespace SandRibbon.Components.Canvas
         }
         private void toggleItalics(object obj)
         {
-            if(myTextBox == null) return;
-            var currentTextbox = myTextBox; 
+            if (myTextBox == null) return;
+            var currentTextbox = myTextBox;
             currentTextbox.FontStyle = currentTextbox.FontStyle == FontStyles.Italic ? FontStyles.Normal : FontStyles.Italic;
             sendText(currentTextbox);
             updateTools();
         }
         private void toggleUnderline(object obj)
         {
-            if(myTextBox == null) return;
+            if (myTextBox == null) return;
             var currentTextbox = myTextBox;
             if (!Children.Contains(currentTextbox)) return;
             var decorations = currentTextbox.TextDecorations.Select(s => s.Location).Where(t => t.ToString() == "Underline");
@@ -323,7 +333,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void toggleBold(object obj)
         {
-            if(myTextBox == null) return; 
+            if (myTextBox == null) return;
             var currentTextbox = myTextBox;
             currentTextbox.FontWeight = currentTextbox.FontWeight == FontWeights.Bold ? FontWeights.Normal : FontWeights.Bold;
             sendText(currentTextbox);
@@ -347,9 +357,9 @@ namespace SandRibbon.Components.Canvas
             var box = new TextBox();
             box.tag(new TextTag
                         {
-                            author = Globals.me, 
+                            author = Globals.me,
                             privacy = privacy,
-                            id =string.Format("{0}:{1}", Globals.me, SandRibbonObjects.DateTimeFactory.Now())
+                            id = string.Format("{0}:{1}", Globals.me, SandRibbonObjects.DateTimeFactory.Now())
                         });
             box.FontFamily = currentFamily;
             box.FontSize = currentSize;
@@ -357,7 +367,7 @@ namespace SandRibbon.Components.Canvas
             box.LostFocus += (_sender, _args) =>
             {
                 myTextBox = null;
-                
+
             };
             return applyDefaultAttributes(box);
         }
@@ -386,7 +396,7 @@ namespace SandRibbon.Components.Canvas
                                                        target = target,
                                                        privacy = currentTag.privacy,
                                                        author = Globals.me,
-                                                       slide =currentSlide 
+                                                       slide = currentSlide
                                                    });
                 currentTag.privacy = privacy;
                 box.tag(currentTag);
@@ -416,7 +426,7 @@ namespace SandRibbon.Components.Canvas
         {
             bool strikethrough = false;
             bool underline = false;
-            if(myTextBox.TextDecorations.Count > 0)
+            if (myTextBox.TextDecorations.Count > 0)
             {
                 strikethrough = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
                 underline = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "underline";
@@ -456,16 +466,22 @@ namespace SandRibbon.Components.Canvas
         }
         public void sendText(TextBox box)
         {
+            sendText(box,Globals.privacy);
+        }
+        public void sendText(TextBox box,string intendedPrivacy)
+        {
             UndoHistory.Queue(
-            () => {
+            () =>
+            {
                 dirtyTextBoxWithoutHistory(box);
-            }, 
-            () => {
+            },
+            () =>
+            {
                 sendText(box);
             });
             GlobalTimers.resetSyncTimer();
-            sendTextWithoutHistory(box, Globals.privacy);
-//            sendTextWithoutHistory(box, box.tag().privacy);
+            sendTextWithoutHistory(box, intendedPrivacy);
+            //            sendTextWithoutHistory(box, box.tag().privacy);
         }
         private void sendTextWithoutHistory(TextBox box, string thisPrivacy)
         {
@@ -482,8 +498,8 @@ namespace SandRibbon.Components.Canvas
 
         private void setAppropriatePrivacyHalo(TextBox box)
         {
-            if(!Children.Contains(box)) return;
-            if(privacy == "private")
+            if (!Children.Contains(box)) return;
+            if (privacy == "private")
                 addPrivateRegion(box);
             else
                 removePrivateRegion(box);
@@ -507,8 +523,8 @@ namespace SandRibbon.Components.Canvas
         }
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
-            if(targettedBox.target != target) return;
-            if(targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box) && me != "projector") return;//I never want my live text to collide with me.
+            if (targettedBox.target != target) return;
+            if (targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box) && me != "projector") return;//I never want my live text to collide with me.
             if (targettedBox.slide == currentSlide && (targettedBox.privacy == "private" || me == "projector"))
             {
                 Dispatcher.adoptAsync(delegate
@@ -517,11 +533,11 @@ namespace SandRibbon.Components.Canvas
                                                });
             }
 
-            if (targettedBox.slide == currentSlide &&(targettedBox.privacy == "public" || (targettedBox.author == Globals.me && me != "projector")))
+            if (targettedBox.slide == currentSlide && (targettedBox.privacy == "public" || (targettedBox.author == Globals.me && me != "projector")))
             {
-                Dispatcher.adoptAsync(delegate 
-                { 
-                    doText(targettedBox); 
+                Dispatcher.adoptAsync(delegate
+                {
+                    doText(targettedBox);
                 });
             }
         }
@@ -532,9 +548,9 @@ namespace SandRibbon.Components.Canvas
             var doomedChildren = new List<FrameworkElement>();
             foreach (var child in Children)
             {
-                if(child is TextBox)
-                    if(((TextBox)child).tag().id.Equals(box.tag().id))
-                        doomedChildren.Add((FrameworkElement) child);
+                if (child is TextBox)
+                    if (((TextBox)child).tag().id.Equals(box.tag().id))
+                        doomedChildren.Add((FrameworkElement)child);
             }
             foreach (var child in doomedChildren)
                 Children.Remove(child);
@@ -581,10 +597,10 @@ namespace SandRibbon.Components.Canvas
         }
         public static IEnumerable<Point> getTextPoints(TextBox text)
         {
-            if(text == null) return null;
+            if (text == null) return null;
             var y = InkCanvas.GetTop(text);
             var x = InkCanvas.GetLeft(text);
-            var width = text.FontSize*text.Text.Count();
+            var width = text.FontSize * text.Text.Count();
             var height = (text.Text.Where(l => l.Equals('\n')).Count() + 1) * text.FontSize + 2;
             return new[]
             {
@@ -604,7 +620,7 @@ namespace SandRibbon.Components.Canvas
                 SetLeft(box, 15);
                 SetTop(box, 15);
                 box.Text = Clipboard.GetText();
-                
+
             }
         }
         protected override void HandleCopy()
@@ -625,10 +641,10 @@ namespace SandRibbon.Components.Canvas
                                       target = target,
                                       privacy = box.tag().privacy,
                                       author = Globals.me,
-                                      slide =currentSlide 
+                                      slide = currentSlide
                                   });
             }
-            foreach(var element in listToCut)
+            foreach (var element in listToCut)
                 Commands.SendDirtyText.Execute(element);
         }
         public override void showPrivateContent()
@@ -647,6 +663,22 @@ namespace SandRibbon.Components.Canvas
         {
             return new TextAutomationPeer(this);
         }
+        private void changeSelectedItemsPrivacy(string newPrivacy)
+        {
+            if (me != "projector")
+            {
+                foreach (System.Windows.Controls.TextBox textBox in GetSelectedElements().ToList().Where(i =>
+                    i is System.Windows.Controls.TextBox
+                    && ((System.Windows.Controls.TextBox)i).tag().privacy != newPrivacy))
+                {
+                    var oldTag = ((TextBox)textBox).tag();
+                    oldTag.privacy = newPrivacy;
+                    dirtyTextBoxWithoutHistory(textBox);
+                    ((TextBox)textBox).tag(oldTag);
+                    sendText(textBox,newPrivacy);
+                }
+            }
+        }
     }
     public static class TextBoxExtensions
     {
@@ -661,7 +693,7 @@ namespace SandRibbon.Components.Canvas
     public class TextAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
     {
         public TextAutomationPeer(Text owner)
-            : base(owner) {}
+            : base(owner) { }
         public override object GetPattern(PatternInterface patternInterface)
         {
             if (patternInterface == PatternInterface.Value)
@@ -689,19 +721,20 @@ namespace SandRibbon.Components.Canvas
         }
         string IValueProvider.Value
         {
-            get {
+            get
+            {
                 var text = Text;
                 var sb = new StringBuilder("<text>");
-                foreach(var toString in from UIElement box in text.Children
-                    select new MeTLStanzas.TextBox(new TargettedTextBox
-                    {
-                        author = Globals.me,
-                        privacy = text.privacy,
-                        slide = Globals.slide,
-                        box = (TextBox) box, 
-                        target = text.target
-                    }).ToString())
-                sb.Append(toString);
+                foreach (var toString in from UIElement box in text.Children
+                                         select new MeTLStanzas.TextBox(new TargettedTextBox
+                                         {
+                                             author = Globals.me,
+                                             privacy = text.privacy,
+                                             slide = Globals.slide,
+                                             box = (TextBox)box,
+                                             target = text.target
+                                         }).ToString())
+                    sb.Append(toString);
                 sb.Append("</text>");
                 return sb.ToString();
             }

@@ -124,19 +124,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>yrrfw2LwZonQVqaXmQN5Jz1n7Yc=</dsig:DigestValue>
+        <dsig:DigestValue>0ofQGCctcMNUuZJj9NXwNgF2CSM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL.exe" size="2597888">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL.exe" size="2600448">
       <assemblyIdentity name="MeTL" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>bB/30QEjG2lYlg7/m+3gwUdZ3JQ=</dsig:DigestValue>
+        <dsig:DigestValue>AJu7/i8jNszf9OFUsxl02fHU8nI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -280,19 +280,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>E0Qm/W8cupVMOT+LnbobBhMSWkE=</dsig:DigestValue>
+        <dsig:DigestValue>TZGG4GCg/UEtCc6B0IXyNKJp4hg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SandRibbonObjects.dll" size="14848">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SandRibbonObjects.dll" size="15360">
       <assemblyIdentity name="SandRibbonObjects" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>6Q5P+G0mj6IX2dPm9bBI8U1R/58=</dsig:DigestValue>
+        <dsig:DigestValue>UgTUkTexjwFBB2ll/ms6GquFTeY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

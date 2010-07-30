@@ -96,6 +96,7 @@ namespace SandRibbon.Components.Canvas
             });
             Commands.SetPenColor.RegisterCommand(colorChangedCommand);
             Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
+            Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ReceiveStrokes.RegisterCommand(
                 new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
@@ -175,8 +176,8 @@ namespace SandRibbon.Components.Canvas
                     var newStrokes = new StrokeCollection(
                         receivedStrokes.Where(ts => ts.target == strokeTarget)
                         .Where(s => s.privacy == "public" || (s.author == Globals.me && me != "projector"))
-                    //    when uncommenting line above, remove line below.
-                    //    .Where(s => s.author == Globals.me)
+                        //    when uncommenting line above, remove line below.
+                        //    .Where(s => s.author == Globals.me)
                         .Select(s => s.stroke)
                         .Where(s => !(this.strokes.Contains(s.sum()))));
                     Strokes.Add(newStrokes);
@@ -301,7 +302,11 @@ namespace SandRibbon.Components.Canvas
         }
         public void doMyStrokeAdded(Stroke stroke)
         {
-            doMyStrokeAddedExceptHistory(stroke, privacy);
+            doMyStrokeAdded(stroke, privacy);
+        }
+        public void doMyStrokeAdded(Stroke stroke, string intendedPrivacy)
+        {
+            doMyStrokeAddedExceptHistory(stroke, intendedPrivacy);
             UndoHistory.Queue(
                 () =>
                 {
@@ -427,6 +432,20 @@ namespace SandRibbon.Components.Canvas
                 if (stroke.tag().privacy == "private")
                 {
                     stroke.DrawingAttributes.Color = Colors.Transparent;
+                }
+            }
+        }
+        private void changeSelectedItemsPrivacy(string newPrivacy)
+        {
+            if (me != "projector")
+            {
+                foreach (Stroke stroke in GetSelectedStrokes().ToList().Where(i => i is Stroke && i.tag().privacy != newPrivacy))
+                {
+                    var oldTag = ((Stroke)stroke).tag();
+                    doMyStrokeRemoved(stroke);
+                    var newStroke = stroke.Clone();
+                    ((Stroke)newStroke).tag(new StrokeTag {author = oldTag.author,privacy=newPrivacy,startingColor=oldTag.startingColor,startingSum=oldTag.startingSum});
+                    doMyStrokeAdded(newStroke,newPrivacy);
                 }
             }
         }

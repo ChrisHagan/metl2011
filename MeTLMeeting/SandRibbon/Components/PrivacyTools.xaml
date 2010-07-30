@@ -16,5 +16,7 @@
         <Border BorderBrush="Black" BorderThickness="1" CornerRadius="3">-->
             <interop:Button Text="Become Public" Icon="..\Resources\Ribbon-Public.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public"/>
         <!--</Border>-->
+        <interop:Button Text="Make selection Public" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="public"/>
+        <interop:Button Text="Make selection Private" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="private"/>
     </StackPanel>
 </UserControl>

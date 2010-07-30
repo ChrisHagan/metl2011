@@ -97,6 +97,7 @@ namespace SandRibbon
         #endregion
         #region InkCanvas
         public static CompositeCommand SetInkCanvasMode = new CompositeCommand();
+        public static CompositeCommand SetPrivacyOfItems = new CompositeCommand();
         public static CompositeCommand GotoThread = new CompositeCommand();
         public static CompositeCommand SetPenColor = new CompositeCommand();
         public static CompositeCommand AddForeignThread = new CompositeCommand();

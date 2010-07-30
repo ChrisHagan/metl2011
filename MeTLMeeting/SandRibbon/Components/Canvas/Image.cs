@@ -56,6 +56,7 @@ namespace SandRibbon.Components.Canvas
             Commands.AddAutoShape.RegisterCommand(new DelegateCommand<object>(createNewAutoShape));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(addImageFromDisk));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(addImageFromQuizSnapshot));
+            Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<ImageDrop>((drop) =>
             {
                 try
@@ -114,7 +115,7 @@ namespace SandRibbon.Components.Canvas
                                                                         target = target,
                                                                         privacy = image.tag().privacy,
                                                                         author = image.tag().author,
-                                                                        slide =currentSlide 
+                                                                        slide = currentSlide
                                                                     });
                             });
 
@@ -124,7 +125,7 @@ namespace SandRibbon.Components.Canvas
                                                             target = target,
                                                             privacy = image.tag().privacy,
                                                             author = Globals.me,
-                                                            slide = currentSlide 
+                                                            slide = currentSlide
                                                         });
                     }
                     if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "SandRibbonInterop.AutoShape")
@@ -136,7 +137,7 @@ namespace SandRibbon.Components.Canvas
                             target = target,
                             privacy = privacy,
                             author = Globals.me,
-                            slide = currentSlide 
+                            slide = currentSlide
                         });
                     }
                     if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "SandRibbonInterop.Video")
@@ -148,7 +149,7 @@ namespace SandRibbon.Components.Canvas
                             target = target,
                             privacy = privacy,
                             author = Globals.me,
-                            slide = currentSlide 
+                            slide = currentSlide
                         });
                     }
                     if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "SandRibbonInterop.RenderedLiveWindow")
@@ -160,7 +161,7 @@ namespace SandRibbon.Components.Canvas
                             target = target,
                             privacy = privacy,
                             author = Globals.me,
-                            slide = currentSlide 
+                            slide = currentSlide
                         });
                     }
                 }
@@ -186,7 +187,8 @@ namespace SandRibbon.Components.Canvas
         }
         private void ReceiveImage(TargettedImage image)
         {
-            Dispatcher.adoptAsync(delegate{
+            Dispatcher.adoptAsync(delegate
+            {
                 AddImage(image.image);
             });
         }
@@ -213,7 +215,8 @@ namespace SandRibbon.Components.Canvas
         }
         private void ensureAllImagesHaveCorrectPrivacy()
         {
-            Dispatcher.adoptAsync(delegate{
+            Dispatcher.adoptAsync(delegate
+            {
                 var images = new List<System.Windows.Controls.Image>();
                 foreach (var child in Children)
                     if (child is System.Windows.Controls.Image)
@@ -339,7 +342,7 @@ namespace SandRibbon.Components.Canvas
                 Background = Brushes.Transparent;
                 Children.Clear();
             });
-           
+
         }
         protected override void HandlePaste()
         {
@@ -402,7 +405,7 @@ namespace SandRibbon.Components.Canvas
                         target = target,
                         privacy = ((System.Windows.Controls.Image)image).tag().privacy,
                         author = Globals.me,
-                        slide =currentSlide 
+                        slide = currentSlide
                     });
             }
             foreach (var element in listToCut)
@@ -538,7 +541,7 @@ namespace SandRibbon.Components.Canvas
                         target = target,
                         privacy = ((System.Windows.Controls.Image)selectedImage).tag().privacy,
                         author = Globals.me,
-                        slide = currentSlide 
+                        slide = currentSlide
                     });
                 }
                 else if (selectedImage is RenderedLiveWindow)
@@ -553,7 +556,7 @@ namespace SandRibbon.Components.Canvas
                                 identifier = (string)((Rectangle)rect).Tag,
                                 target = target,
                                 privacy = "private",
-                                slide = currentSlide 
+                                slide = currentSlide
                             });
                     }
                 }
@@ -612,7 +615,7 @@ namespace SandRibbon.Components.Canvas
             });
         }
         #endregion
-/*        #region Video
+        /*        #region Video
         private SandRibbonInterop.Video newVideo(System.Uri Source)
         {
             var MeTLVideo = new SandRibbonInterop.Video()
@@ -622,7 +625,7 @@ namespace SandRibbon.Components.Canvas
             return MeTLVideo;
         }
         #endregion
-  */  
+  */
         #region AutoShapes
         private void createNewAutoShape(object obj)
         {
@@ -667,7 +670,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void addImageFromQuizSnapshot(string filename)
         {
-            handleDrop(filename, new Point(10,10),1);
+            handleDrop(filename, new Point(10, 10), 1);
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {
@@ -735,7 +738,7 @@ namespace SandRibbon.Components.Canvas
                                                                 target = target,
                                                                 privacy = video.tag().privacy,
                                                                 author = video.tag().author,
-                                                                slide = currentSlide 
+                                                                slide = currentSlide
                                                             });
                     },
                     () =>
@@ -841,7 +844,7 @@ namespace SandRibbon.Components.Canvas
                                                             target = target,
                                                             privacy = hostedImage.tag().privacy,
                                                             author = hostedImage.tag().author,
-                                                            slide =currentSlide 
+                                                            slide = currentSlide
                                                         });
                 },
                 () =>
@@ -917,7 +920,7 @@ namespace SandRibbon.Components.Canvas
                 if (video is SandRibbonInterop.Video)
                     if (videoCompare((SandRibbonInterop.Video)video, testVideo))
                         return true;
-             return false;
+            return false;
         }
         private bool imageExistsOnCanvas(System.Windows.Controls.Image testImage)
         {
@@ -989,6 +992,36 @@ namespace SandRibbon.Components.Canvas
         {
             return new ImageAutomationPeer(this);
         }
+        private void changeSelectedItemsPrivacy(string newPrivacy)
+        {
+            if (me != "projector")
+            {
+                foreach (System.Windows.Controls.Image image in GetSelectedElements().ToList().Where(i =>
+                    i is System.Windows.Controls.Image
+                    && ((System.Windows.Controls.Image)i).tag().privacy != newPrivacy))
+                {
+                    var oldTag = ((System.Windows.Controls.Image)image).tag();
+                    Commands.SendDirtyImage.Execute(new TargettedDirtyElement
+                    {
+                        identifier = ((System.Windows.Controls.Image)image).tag().id,
+                        target = target,
+                        privacy = ((System.Windows.Controls.Image)image).tag().privacy,
+                        author = Globals.me,
+                        slide = currentSlide
+                    });
+                    oldTag.privacy = newPrivacy;
+                    ((System.Windows.Controls.Image)image).tag(oldTag);
+                    Commands.SendImage.Execute(new TargettedImage
+                    {
+                        author = Globals.me,
+                        slide = currentSlide,
+                        privacy = newPrivacy,
+                        target = target,
+                        image = (System.Windows.Controls.Image)image
+                    });
+                }
+            }
+        }
     }
     class ImageAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
     {
@@ -1012,7 +1045,7 @@ namespace SandRibbon.Components.Canvas
         }
         public void SetValue(string value)
         {
-            Image.dropImageOnCanvas(value, new Point(0,0), 1);
+            Image.dropImageOnCanvas(value, new Point(0, 0), 1);
             /*
             Image.ParseInjectedStream(value, element => Image.Dispatcher.adopt((Action)delegate
                                         {
