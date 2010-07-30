@@ -174,7 +174,7 @@ namespace SandRibbon.Components.Canvas
                     var start = SandRibbonObjects.DateTimeFactory.Now();
                     var newStrokes = new StrokeCollection(
                         receivedStrokes.Where(ts => ts.target == strokeTarget)
-                        .Where(s => s.privacy == "public" || s.author == Globals.me)
+                        .Where(s => s.privacy == "public" || (s.author == Globals.me && me != "projector"))
                     //    when uncommenting line above, remove line below.
                     //    .Where(s => s.author == Globals.me)
                         .Select(s => s.stroke)

@@ -60,7 +60,7 @@ namespace SandRibbon.Components.Canvas
             {
                 try
                 {
-                    if (drop.target.Equals(target) && Globals.me != "Projector")
+                    if (drop.target.Equals(target) && me != "projector")
                         handleDrop(drop.filename, drop.point, drop.position);
                 }
                 catch (NotSetException e)
@@ -181,7 +181,7 @@ namespace SandRibbon.Components.Canvas
         {
             return !(image.slide != currentSlide ||
                 !(image.target.Equals(target)) ||
-                (!(image.privacy == "public" || image.author == Globals.me)));
+                (!(image.privacy == "public" || (image.author == Globals.me && me != "projector"))));
         }
         private void ReceiveImage(TargettedImage image)
         {

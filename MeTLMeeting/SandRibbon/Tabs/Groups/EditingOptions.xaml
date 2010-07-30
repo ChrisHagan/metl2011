@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:groups="clr-namespace:SandRibbon.Tabs.Groups"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
@@ -19,5 +20,6 @@
         <groups:ToolBox x:Name="toolBox"/>
         <groups:PenColors x:Name="penColors"/>
         <groups:TextTools x:Name="textTools"/>
+        <components:PrivacyTools x:Name="ribbonPrivacyTools" Visibility="Collapsed"/>   
     </StackPanel >
 </sr:RibbonGroup>           

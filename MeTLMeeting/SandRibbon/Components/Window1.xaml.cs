@@ -865,7 +865,7 @@ namespace SandRibbon
                         homeGroups.Add(new Notes());
                         tabs.Add(new Tabs.Analytics());
                         tabs.Add(new Tabs.Plugins());
-                        privacyTools.Children.Add(new PrivacyTools());
+                        //privacyTools.Children.Add(new PrivacyTools());
                         break;
                     default:
                         break;

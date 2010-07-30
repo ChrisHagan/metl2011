@@ -464,7 +464,8 @@ namespace SandRibbon.Components.Canvas
                 sendText(box);
             });
             GlobalTimers.resetSyncTimer();
-            sendTextWithoutHistory(box, box.tag().privacy);
+            sendTextWithoutHistory(box, Globals.privacy);
+//            sendTextWithoutHistory(box, box.tag().privacy);
         }
         private void sendTextWithoutHistory(TextBox box, string thisPrivacy)
         {
@@ -507,8 +508,8 @@ namespace SandRibbon.Components.Canvas
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
             if(targettedBox.target != target) return;
-            if(targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box)) return;//I never want my live text to collide with me.
-            if (targettedBox.slide == currentSlide && (targettedBox.privacy == "private" && Globals.me == "Projector"))
+            if(targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box) && me != "projector") return;//I never want my live text to collide with me.
+            if (targettedBox.slide == currentSlide && (targettedBox.privacy == "private" || me == "projector"))
             {
                 Dispatcher.adoptAsync(delegate
                                                {
@@ -516,7 +517,7 @@ namespace SandRibbon.Components.Canvas
                                                });
             }
 
-            if (targettedBox.slide == currentSlide &&(targettedBox.privacy == "public" || targettedBox.author == Globals.me))
+            if (targettedBox.slide == currentSlide &&(targettedBox.privacy == "public" || (targettedBox.author == Globals.me && me != "projector")))
             {
                 Dispatcher.adoptAsync(delegate 
                 { 

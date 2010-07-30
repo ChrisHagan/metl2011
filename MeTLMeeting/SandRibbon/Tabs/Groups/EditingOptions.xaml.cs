@@ -13,6 +13,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Divelements.SandRibbon;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers.Structure;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Tabs.Groups
 {
@@ -22,6 +24,17 @@ namespace SandRibbon.Tabs.Groups
         {
             InitializeComponent();
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(switchTools));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(updatePrivacyTools));
+        }
+        private void updatePrivacyTools(string jid)
+        {
+            try
+            {
+                if (new FileConversationDetailsProvider().DetailsOf(jid).Author == Globals.me || Globals.pedagogy.code > 2)
+                    ribbonPrivacyTools.Visibility = Visibility.Visible;
+                else { ribbonPrivacyTools.Visibility = Visibility.Collapsed; }
+            }
+            catch (Exception ex) { }
         }
         private void switchTools(string mode)
         {
@@ -49,11 +62,10 @@ namespace SandRibbon.Tabs.Groups
             }
         }
         private void hideAll() {
-            foreach (FrameworkElement child in LayoutRoot.Children)
+            foreach (FrameworkElement child in new FrameworkElement[]{penColors,textTools,toolBox})
             {
                 child.Visibility = Visibility.Collapsed;
             }
         }
-
     }
 }

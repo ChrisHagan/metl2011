@@ -10,11 +10,11 @@
     AutomationProperties.AutomationId="privacyTools"
     >
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="3">
+        <!--<Border BorderBrush="Black" BorderThickness="1" CornerRadius="3">-->
             <interop:Button Text="Become Private" Icon="..\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>    
-        </Border>
-        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="3">
+        <!--</Border>
+        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="3">-->
             <interop:Button Text="Become Public" Icon="..\Resources\Ribbon-Public.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public"/>
-        </Border>
+        <!--</Border>-->
     </StackPanel>
 </UserControl>
