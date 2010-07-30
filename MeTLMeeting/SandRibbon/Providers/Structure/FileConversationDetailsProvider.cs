@@ -75,7 +75,9 @@ namespace SandRibbon.Providers.Structure
                                     author = details.Author,
                                     id = slideId,
                                     index = position + 1,
-                                    type = type
+                                    type = type,
+                                    defaultHeight = 540,
+                                    defaultWidth = 720
                                 };
                 foreach (var existingSlide in details.Slides)
                     if (existingSlide.index >= slide.index)

@@ -151,7 +151,13 @@ namespace SandRibbon.Utils
                 Commands.PowerPointProgress.Execute("Finished parsing powerpoint, Beginning data upload");
                 var startingId = conversation.Slides.First().id;
                 var index = 0;
-                conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide { author = Globals.me, id = startingId++, index = index++ }).ToList();
+                conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide { 
+                    author = Globals.me, 
+                    id = startingId++, 
+                    index = index++, 
+                    defaultHeight = float.Parse(d.Attribute("defaultHeight").Value),
+                    defaultWidth = float.Parse(d.Attribute("defaultWidth").Value)
+                }).ToList();
                 provider.Update(conversation);
                 var xmlSlides = xml.Descendants("slide");
                 for (int i = 0; i < xmlSlides.Count(); i++)

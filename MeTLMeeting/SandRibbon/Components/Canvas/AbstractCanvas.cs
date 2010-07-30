@@ -92,6 +92,7 @@ namespace SandRibbon.Components.Canvas
                     context = getContext();
                 }
             });
+
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
         }
         public abstract void showPrivateContent();

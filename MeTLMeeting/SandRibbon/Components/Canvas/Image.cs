@@ -173,7 +173,8 @@ namespace SandRibbon.Components.Canvas
         }
         public void ReceiveImages(IEnumerable<TargettedImage> images)
         {
-            foreach (var image in images.Where(i => shouldDisplay(i)))
+            var safeImages = images.Where(shouldDisplay);
+            foreach (var image in safeImages)
                 ReceiveImage(image);
             ensureAllImagesHaveCorrectPrivacy();
         }

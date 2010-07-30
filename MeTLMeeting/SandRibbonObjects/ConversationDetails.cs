@@ -69,6 +69,9 @@ namespace SandRibbonObjects
         private static readonly string SLIDE_TAG = "slide";
         private static readonly string TYPE_TAG = "type";
         private static readonly string EXPOSED_TAG = "exposed";
+        private static readonly string DEFAULT_WIDTH = "defaultWidth";
+        private static readonly string DEFAULT_HEIGHT = "defaultHeight";
+
         public ConversationDetails ReadXml(XElement doc)
         {
             Title = doc.Element(TITLE_TAG).Value;
@@ -87,7 +90,9 @@ namespace SandRibbonObjects
                 id = Int32.Parse(d.Element(ID_TAG).Value),
                 index = Int32.Parse(d.Element(INDEX_TAG).Value),
                 type = d.Element(TYPE_TAG) == null ? Slide.TYPE.SLIDE : (Slide.TYPE)Enum.Parse(typeof(Slide.TYPE), d.Element(TYPE_TAG).Value),
-                exposed = d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true
+                exposed = d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true,
+                defaultHeight = d.Element(DEFAULT_HEIGHT) != null ? float.Parse(d.Element(DEFAULT_HEIGHT).Value) : 720,
+                defaultWidth = d.Element(DEFAULT_WIDTH) != null ? float.Parse(d.Element(DEFAULT_WIDTH).Value) : 540,
             }).ToList();
             return this;
         }
@@ -106,6 +111,8 @@ namespace SandRibbonObjects
                     new XElement(AUTHOR_TAG, s.author),
                     new XElement(ID_TAG, s.id.ToString()),
                     new XElement(INDEX_TAG, s.index.ToString()),
+                    new XElement(DEFAULT_HEIGHT, s.defaultHeight),
+                    new XElement(DEFAULT_WIDTH, s.defaultWidth),
                     new XElement(EXPOSED_TAG, s.exposed.ToString()),
                     new XElement(TYPE_TAG, (s.type == null? Slide.TYPE.SLIDE:s.type).ToString()))));
         }
@@ -193,6 +200,9 @@ namespace SandRibbonObjects
             return Int32.Parse(string.Format("{0}00",sId.Substring(0,sId.Length-2)));
         }
         public enum TYPE { SLIDE, POLL, THOUGHT };
+
+        public float defaultWidth;
+        public float defaultHeight;
         public string author;
         public int id;
         public int index;

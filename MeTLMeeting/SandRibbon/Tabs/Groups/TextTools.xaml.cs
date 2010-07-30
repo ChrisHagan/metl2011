@@ -7,6 +7,7 @@ using System.Windows.Media;
 using Divelements.SandRibbon;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Canvas;
+using SandRibbon.Providers;
 using SandRibbonInterop.Interfaces;
 
 namespace SandRibbon.Tabs.Groups
@@ -25,12 +26,18 @@ namespace SandRibbon.Tabs.Groups
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
             Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(update));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
         }
+
+        private void moveTo(object obj)
+        {
+            fontSize.SelectedItem = generateDefaultFontSize();
+        }   
 
         private void restoreTextDefaults(object obj)
         {
             ColourPickerBorder.BorderBrush = Brushes.Black;
-            fontSize.SelectedItem = 12;
+            fontSize.SelectedItem = 10;
             fontFamily.SelectedItem = "Arial";
         }
 
@@ -46,6 +53,7 @@ namespace SandRibbon.Tabs.Groups
 
         private void updateToolBox(string layer)
         {
+            fontSize.SelectedItem = generateDefaultFontSize();
             if (layer == "Text")
                 Visibility = Visibility.Visible;
             else
@@ -54,9 +62,25 @@ namespace SandRibbon.Tabs.Groups
         private void setUpTools(object sender, RoutedEventArgs e)
         {
             fontFamily.SelectedItem = "Arial";
-            fontSize.SelectedItem = 10.0;
+            fontSize.SelectedItem = generateDefaultFontSize();
         }
-      
+        private const double defaultWidth  = 720;
+        private const double defaultFontSize = 24.0;
+        private static double generateDefaultFontSize()
+        {
+            try
+            {
+                var currentSlide = Globals.slides.Where(s => s.id == Globals.slide).First();
+                var multiply = (currentSlide.defaultWidth/defaultWidth) > 0
+                                     ? (int)(currentSlide.defaultWidth/defaultWidth) : 1;
+                return defaultFontSize* multiply;
+            }
+            catch(NotSetException e)
+            {
+                return defaultFontSize;
+            }
+        }
+
         private void decreaseFont(object sender, RoutedEventArgs e)
         {
             if(fontSize.ItemsSource == null) return; 

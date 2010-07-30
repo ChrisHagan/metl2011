@@ -17,6 +17,7 @@ namespace SandRibbon.Components
             scroll.SizeChanged += scrollChanged;
             scroll.ScrollChanged += scroll_ScrollChanged;
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(ExtendBoth));
+            
         }
         public void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {

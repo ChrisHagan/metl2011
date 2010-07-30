@@ -6,7 +6,7 @@
     xmlns:canvas="clr-namespace:SandRibbon.Components.Canvas"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop" >
-    <Grid x:Name="canvasStack" Background="White">
+    <Grid MinHeight="540" MinWidth="720"  x:Name="canvasStack" Background="White">
         <canvas:ViewCanvas x:Name="viewCanvas"/>
         <canvas:Image x:Name="images"/>
         <canvas:Text x:Name="text"/>
