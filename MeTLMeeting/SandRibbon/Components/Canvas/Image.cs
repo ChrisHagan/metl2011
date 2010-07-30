@@ -22,6 +22,7 @@ using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
+using System.Windows.Media.Effects;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -222,17 +223,22 @@ namespace SandRibbon.Components.Canvas
                     if (child is System.Windows.Controls.Image)
                         images.Add((System.Windows.Controls.Image)child);
                 foreach (System.Windows.Controls.Image image in images)
-                    if (image.tag().privacy == "private")
-                        addPrivateRegion(image);
+                    ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                /*if (image.tag().privacy == "private")
+                        addPrivateRegion(image);*/
             });
         }
         private void addPrivateRegion(System.Windows.Controls.Image image)
         {
-            addPrivateRegion(getImagePoints(image));
+            if (image != null && image is System.Windows.Controls.Image)
+                ApplyPrivacyStylingToElement(image, image.tag().privacy);
+            //addPrivateRegion(getImagePoints(image));
         }
         private void removePrivateRegion(System.Windows.Controls.Image image)
         {
-            removePrivateRegion(getImagePoints(image));
+            if (image != null && image is System.Windows.Controls.Image)
+                RemovePrivacyStylingFromElement(image);
+            //removePrivateRegion(getImagePoints(image));
         }
         public static IEnumerable<Point> getImagePoints(System.Windows.Controls.Image image)
         {
@@ -315,6 +321,7 @@ namespace SandRibbon.Components.Canvas
                 {
                     image.Margin = new Thickness(PADDING, PADDING, PADDING, PADDING);
                     Children.Add(image);
+                    //ApplyPrivacyStylingToElement(image, image.tag().privacy);
                 }
             }
             catch (Exception e)

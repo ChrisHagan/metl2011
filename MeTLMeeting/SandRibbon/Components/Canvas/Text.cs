@@ -127,6 +127,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
+            if (myTextBox != null && element.identifier == myTextBox.tag().id) return;
             Dispatcher.adoptAsync(delegate
             {
                 for (int i = 0; i < Children.Count; i++)
@@ -388,7 +389,7 @@ namespace SandRibbon.Components.Canvas
         {
             var box = (TextBox)sender;
             var currentTag = box.tag();
-            if (currentTag.privacy != privacy)
+            if (currentTag.privacy != Globals.privacy)
             {
                 Commands.SendDirtyText.Execute(new TargettedDirtyElement
                                                    {
@@ -447,6 +448,8 @@ namespace SandRibbon.Components.Canvas
         public static Timer typingTimer = null;
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
+            var box = (TextBox)sender;
+            ApplyPrivacyStylingToElement(box, box.tag().privacy);
             if (typingTimer == null)
             {
                 typingTimer = new Timer(delegate
@@ -466,9 +469,9 @@ namespace SandRibbon.Components.Canvas
         }
         public void sendText(TextBox box)
         {
-            sendText(box,Globals.privacy);
+            sendText(box, Globals.privacy);
         }
-        public void sendText(TextBox box,string intendedPrivacy)
+        public void sendText(TextBox box, string intendedPrivacy)
         {
             UndoHistory.Queue(
             () =>
@@ -485,7 +488,12 @@ namespace SandRibbon.Components.Canvas
         }
         private void sendTextWithoutHistory(TextBox box, string thisPrivacy)
         {
-            setAppropriatePrivacyHalo(box);
+            RemovePrivacyStylingFromElement(box);
+            if (box.tag().privacy != Globals.privacy)
+                dirtyTextBoxWithoutHistory(box);
+            var oldTextTag = box.tag();
+            var newTextTag = new TextTag { id = oldTextTag.id, privacy = thisPrivacy, author = oldTextTag.author };
+            box.tag(newTextTag);
             Commands.SendTextBox.Execute(new TargettedTextBox
             {
                 box = box,
@@ -524,7 +532,13 @@ namespace SandRibbon.Components.Canvas
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
             if (targettedBox.target != target) return;
-            if (targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box) && me != "projector") return;//I never want my live text to collide with me.
+            if (targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box) && me != "projector")
+            {
+                var box = textBoxFromId(targettedBox.identity);
+                if (box is TextBox)
+                    ApplyPrivacyStylingToElement(box, box.tag().privacy);
+                return;
+            }//I never want my live text to collide with me.
             if (targettedBox.slide == currentSlide && (targettedBox.privacy == "private" || me == "projector"))
             {
                 Dispatcher.adoptAsync(delegate
@@ -565,6 +579,13 @@ namespace SandRibbon.Components.Canvas
                     if (((TextBox)text).tag().id == boxId && ((TextBox)text).tag().privacy == privacy) return true;
             return false;
         }
+        private TextBox textBoxFromId(string boxId)
+        {
+            foreach (var text in Children)
+                if (text is TextBox)
+                    if (((TextBox)text).tag().id == boxId && ((TextBox)text).tag().privacy == privacy) return (TextBox)text;
+            return null;
+        }
         public void doText(TargettedTextBox targettedBox)
         {
             Dispatcher.adoptAsync(delegate
@@ -589,11 +610,19 @@ namespace SandRibbon.Components.Canvas
         }
         private void addPrivateRegion(TextBox text)
         {
-            addPrivateRegion(getTextPoints(text));
+            if (text != null && text is TextBox)
+            {
+                var textPrivacy = text.tag().privacy;
+                ApplyPrivacyStylingToElement(text, textPrivacy);
+            }
+            //ApplyPrivacyStylingToElement(text,text.tag().privacy);
+            //addPrivateRegion(getTextPoints(text));
         }
         private void removePrivateRegion(TextBox text)
         {
-            removePrivateRegion(getTextPoints(text));
+            if (text != null && text is TextBox)
+                RemovePrivacyStylingFromElement(text);
+            //removePrivateRegion(getTextPoints(text));
         }
         public static IEnumerable<Point> getTextPoints(TextBox text)
         {
@@ -675,7 +704,7 @@ namespace SandRibbon.Components.Canvas
                     oldTag.privacy = newPrivacy;
                     dirtyTextBoxWithoutHistory(textBox);
                     ((TextBox)textBox).tag(oldTag);
-                    sendText(textBox,newPrivacy);
+                    sendText(textBox, newPrivacy);
                 }
             }
         }

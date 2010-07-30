@@ -9,14 +9,10 @@
     Margin="0 0 30 0"
     AutomationProperties.AutomationId="privacyTools"
     >
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-        <!--<Border BorderBrush="Black" BorderThickness="1" CornerRadius="3">-->
-            <interop:Button Text="Become Private" Icon="..\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>    
-        <!--</Border>
-        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="3">-->
-            <interop:Button Text="Become Public" Icon="..\Resources\Ribbon-Public.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public"/>
-        <!--</Border>-->
+    <interop:RibbonPanel>
+        <interop:Button Text="Become Private" Icon="..\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>
+        <interop:Button Text="Become Public" Icon="..\Resources\Ribbon-Public.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public"/>
         <interop:Button Text="Make selection Public" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="public"/>
         <interop:Button Text="Make selection Private" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="private"/>
-    </StackPanel>
+    </interop:RibbonPanel>
 </UserControl>

@@ -18,7 +18,7 @@ using SandRibbon.Components.Sandpit;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbon.Components.Utility;
 using System.Windows.Ink;
-using Point=System.Windows.Point;
+using Point = System.Windows.Point;
 using SandRibbon.Providers;
 
 namespace SandRibbon.Components.Canvas
@@ -45,9 +45,10 @@ namespace SandRibbon.Components.Canvas
         private int setSlide = -1;
         public int currentSlide
         {
-            get {
+            get
+            {
                 return setSlide == -1 ? Globals.slide : setSlide;
-            } 
+            }
             set
             {
                 setSlide = value;
@@ -67,27 +68,29 @@ namespace SandRibbon.Components.Canvas
                 author = value;
             }
         }
-        
+
         private bool affectedByPrivacy { get { return target == "presentationSpace"; } }
-        public string privacy{get{return affectedByPrivacy?actualPrivacy:defaultPrivacy;}}
+        public string privacy { get { return affectedByPrivacy ? actualPrivacy : defaultPrivacy; } }
         public delegate void ChildrenChangedHandler(DependencyObject visualAdded, DependencyObject visualRemoved);
         public event ChildrenChangedHandler ChildrenChanged;
-        public AbstractCanvas():base()
+        public AbstractCanvas()
+            : base()
         {
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
-            DragOver+=ImageDragOver;
-            Drop+=ImagesDrop;
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender,args)=> 
+            DragOver += ImageDragOver;
+            Drop += ImagesDrop;
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) =>
                 HandlePaste()));
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (sender,args)=> 
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (sender, args) =>
                 HandleCopy()));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) =>
                                                                             HandleCut()));
-            Loaded += (_sender, _args) => this.Dispatcher.adoptAsync(delegate{
-              if(target == null)
+            Loaded += (_sender, _args) => this.Dispatcher.adoptAsync(delegate
+            {
+                if (target == null)
                 {
-                    target = (string) FindResource("target");
-                    defaultPrivacy = (string) FindResource("defaultPrivacy");
+                    target = (string)FindResource("target");
+                    defaultPrivacy = (string)FindResource("defaultPrivacy");
                     actualPrivacy = defaultPrivacy;
                     context = getContext();
                 }
@@ -96,17 +99,19 @@ namespace SandRibbon.Components.Canvas
         }
         public abstract void showPrivateContent();
         public abstract void hidePrivateContent();
-        
+
         public void DoWithCurrentSelection(Action<SelectedIdentity> todo)
         {
             foreach (var stroke in GetSelectedStrokes())
-                todo(new SelectedIdentity{
-                    id=stroke.startingSum().ToString(),
+                todo(new SelectedIdentity
+                {
+                    id = stroke.startingSum().ToString(),
                     target = this.target
                 });
             foreach (var element in GetSelectedElements())
-                todo(new SelectedIdentity {
-                    id=(string)((FrameworkElement)element).Tag,
+                todo(new SelectedIdentity
+                {
+                    id = (string)((FrameworkElement)element).Tag,
                     target = this.target
                 });
         }
@@ -126,11 +131,39 @@ namespace SandRibbon.Components.Canvas
                                                                Globals.conversationDetails.Author == Globals.me;
                                                  SetCanEdit(canEdit);
                                              }
-                                             catch(NotSetException e)
+                                             catch (NotSetException e)
                                              {
                                                  //YAY
                                              }
                                          });
+        }
+        protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
+        {
+                if (privacy == "private")
+                    element.Effect = Effects.privacyShadowEffect;
+                else
+                    element.Effect = null;
+        }
+        protected void RemovePrivacyStylingFromElement(FrameworkElement element)
+        {
+            element.Effect = null;
+        }
+        protected void ApplyPrivacyStylingToStroke(Stroke stroke, string privacy)
+        {
+            if (privacy == "private")
+                stroke.DrawingAttributes.Color = Colors.Red;
+            else
+                stroke.DrawingAttributes.Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor);
+        }
+        protected void RemovePrivacyStylingFromStroke(Stroke stroke)
+        {
+            try
+            {
+                if (stroke.tag().startingColor != null)
+                    stroke.DrawingAttributes.Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor);
+            }
+            catch (Exception ex)
+            { }
         }
         private PresentationSpace context;
         protected void addPrivateRegion(IEnumerable<Point> figure)
@@ -146,7 +179,7 @@ namespace SandRibbon.Components.Canvas
         private PresentationSpace getContext()
         {
             DependencyObject parent = this;
-            while(!(parent is PresentationSpace) && parent != null)
+            while (!(parent is PresentationSpace) && parent != null)
                 parent = LogicalTreeHelper.GetParent(parent);
             return (PresentationSpace)parent;
         }
@@ -166,11 +199,11 @@ namespace SandRibbon.Components.Canvas
         {
             e.Effects = DragDropEffects.None;
             var fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            if(fileNames == null) return;
+            if (fileNames == null) return;
             foreach (string fileName in fileNames)
             {
                 FileType type = Image.GetFileType(fileName);
-                if(new[]{FileType.Image,FileType.Video}.Contains(type))
+                if (new[] { FileType.Image, FileType.Video }.Contains(type))
                     e.Effects = DragDropEffects.Copy;
             }
             e.Handled = true;
@@ -178,7 +211,7 @@ namespace SandRibbon.Components.Canvas
         void ImagesDrop(object sender, DragEventArgs e)
         {
             var fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            if(fileNames == null)
+            if (fileNames == null)
             {
                 MessageBox.Show("Cannot Drop this onto the canvas");
                 return;
@@ -190,9 +223,9 @@ namespace SandRibbon.Components.Canvas
             {
                 var filename = fileNames[i];
                 var image = Image.createImageFromUri(new Uri(filename, UriKind.RelativeOrAbsolute));
-                Commands.ImageDropped.Execute(new ImageDrop {filename = filename, point = pos, target = target, position = i});
+                Commands.ImageDropped.Execute(new ImageDrop { filename = filename, point = pos, target = target, position = i });
                 pos.X += image.Width;
-                if ((i+1) % 4 == 0)
+                if ((i + 1) % 4 == 0)
                 {
                     pos.X = 0;
                     pos.Y += (image.Height + 30);
@@ -206,20 +239,22 @@ namespace SandRibbon.Components.Canvas
             AllowDrop = canEdit;
             CanEditChanged();
         }
-        protected bool inMeeting() {
+        protected bool inMeeting()
+        {
             try
             {
                 return Permissions.InferredTypeOf(Globals.conversationDetails.Permissions) == Permissions.MEETING_PERMISSIONS;
             }
-            catch (NotSetException) {
+            catch (NotSetException)
+            {
                 return false;
             }
         }
-        protected override void  OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
+        protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
         {
-         	 base.OnVisualChildrenChanged(visualAdded, visualRemoved);
-             if(ChildrenChanged != null)
-                 ChildrenChanged(visualAdded, visualRemoved);
+            base.OnVisualChildrenChanged(visualAdded, visualRemoved);
+            if (ChildrenChanged != null)
+                ChildrenChanged(visualAdded, visualRemoved);
         }
         protected abstract void HandlePaste();
         protected abstract void HandleCopy();
