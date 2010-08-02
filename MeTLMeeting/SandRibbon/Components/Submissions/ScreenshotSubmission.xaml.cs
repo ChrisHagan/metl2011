@@ -99,6 +99,7 @@ namespace SandRibbon.Components.Submissions
                                                         time = time,
                                                         message = string.Format("{0}'s submission at {1}", Globals.me, new DateTime(time)),
                                                     });
+            MessageBox.Show("Submission sent to " + Globals.conversationDetails.Author);
         }
 
         private void viewSubmissions(object sender, RoutedEventArgs e)
