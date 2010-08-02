@@ -32,6 +32,7 @@ namespace SandRibbon.Components.Canvas
             this.PreviewMouseDown += setMouseMode;
             this.PreviewMouseMove += mouseDrag;
             this.PreviewMouseUp += clearMouseMode;
+            this.MouseLeave += mouseLeave;
             target = "";
         }
         private Point oldPosition;
@@ -58,6 +59,10 @@ namespace SandRibbon.Components.Canvas
                     }
                     break;
             }
+        }
+        private void mouseLeave(object sender, MouseEventArgs e)
+        {
+            currentViewMode = ViewModes.None;
         }
         private void clearMouseMode(object sender, MouseButtonEventArgs e)
         {
