@@ -93,7 +93,7 @@ namespace SandRibbon.Quizzing
                                 image.Source = source;
                                 image.Width = 300;
                                 image.Height = 300;
-                                questionContainer.Children.Add(image);
+                                questionSnapshotContainer.Children.Add(image);
                                 var slide = Globals.slides.Where(s => s.id == Globals.slide).First();
                                 quizTitle.Text = string.Format("Quiz referencing slide {0}", slide.index + 1);
                             });

@@ -35,7 +35,16 @@
                         <TextBox FontWeight="Bold" Grid.Row="1" Width="300" x:Name="quizTitle" Text="{x:Static q:CreateAQuiz.PROMPT_TEXT}" />
                         <Label FontWeight="Bold" Grid.Row="2">Question (optional)</Label>
                         <StackPanel  Grid.Row="3" x:Name="questionContainer" Orientation="Vertical">
-                            <TextBox Height="90" Width="300" x:Name="question" AcceptsReturn="True"></TextBox>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled">
+                                    <TextBox MaxHeight="300" MinWidth="100" Width="300" x:Name="question" AcceptsReturn="True"></TextBox>
+                                </ScrollViewer>
+                                <Grid Grid.Column="1" x:Name="questionSnapshotContainer"/>
+                            </Grid>
                             <Button x:Name="screenshot" Click="screenshotAsAQuestion">Screenshot</Button>
                         </StackPanel>
                     </Grid>

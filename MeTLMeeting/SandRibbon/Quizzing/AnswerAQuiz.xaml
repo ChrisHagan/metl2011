@@ -18,8 +18,19 @@
                                 TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=title}"
                                        HorizontalAlignment="Center" />
                     </Grid>
-                    <Image Source="{Binding Path=url}" Width="200" Height="200"/>
-                    <TextBlock FontWeight="Bold" TextWrapping="WrapWithOverflow" Text="{Binding Path=question}" HorizontalAlignment="Center" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled">
+                            <TextBlock MaxHeight="300"
+                                           FontWeight="Bold" TextWrapping="WrapWithOverflow" 
+                                           Text="{Binding Path=question}" HorizontalAlignment="Center" />
+                        </ScrollViewer>
+                        <Image Grid.Column="1" Source="{Binding Path=url}" Width="300" Height="300"/>
+                    </Grid>
                 </StackPanel>
             </Grid>
             <ListBox x:Name="quizOptions" SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}">
