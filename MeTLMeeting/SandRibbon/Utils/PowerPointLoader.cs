@@ -69,15 +69,15 @@ namespace SandRibbon.Utils
         }
         private void EditConversation(object o)
         {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.EDIT).Show();
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.EDIT).ShowDialog();
         }
         private void ShowCreateConversationDialog(object o)
         {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.CREATE).Show();
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.CREATE).ShowDialog();
         }
         private void ImportPowerpoint(object o)
         {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).Show();
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).ShowDialog();
         }
         public void LoadPowerpointAsFlatSlides(string file, ConversationDetails details, int MagnificationRating)
         {

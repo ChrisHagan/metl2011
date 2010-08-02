@@ -7,7 +7,7 @@
     MinWidth="380"
     x:Name="createConversation"
     Loaded="Window_Loaded" ShowInTaskbar="True" WindowStartupLocation="CenterScreen"
-    Title="Configure new MeTL Conversation">
+    Title="Configure new MeTL Conversation" Closing="createConversation_Closing">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
             <!--<Button Command="api:Commands.ShowEditSlidesDialog" DockPanel.Dock="Bottom">

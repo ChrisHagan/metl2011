@@ -203,6 +203,7 @@ namespace SandRibbon.Components
                 this.Close();
             }
         }
+
         private void Close(object sender, RoutedEventArgs e)
         {
             Commands.PowerPointLoadFinished.Execute(null);
@@ -265,6 +266,11 @@ namespace SandRibbon.Components
                 }
             }
             e.CanExecute = canExecute;
+        }
+
+        private void createConversation_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Commands.PowerPointLoadFinished.Execute(null);
         }
     }
 }
