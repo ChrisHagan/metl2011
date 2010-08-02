@@ -15,7 +15,7 @@
             <Grid MaxHeight="450">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition MaxWidth="325"/>
-                    <ColumnDefinition MinWidth="200"/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <ListBox x:Name="submissions" SelectionMode="Single" Background ="Transparent" 
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -34,9 +34,9 @@
                 </ListBox>
                 <Grid Grid.Column="1">
                     <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top">Preview</Label>
-                    <Viewbox Margin="0,35,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >
+                    <Viewbox Margin="0,35,0,0" Stretch="Fill" MaxWidth ="600" VerticalAlignment="Top" HorizontalAlignment="Left" >
                         <Image x:Name="previewImage" Source="{Binding ElementName=submissions, Path=SelectedItem, 
-                        Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" />
+                        Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" Width="300"/>
                     </Viewbox>
                 </Grid>
             </Grid>

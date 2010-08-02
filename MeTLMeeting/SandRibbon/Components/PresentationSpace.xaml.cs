@@ -244,13 +244,13 @@ namespace SandRibbon.Components
         {
             foreach (AbstractCanvas ac in stack.canvasStack.Children)
             {
-                ac.hidePrivateContent();
+                //ac.hidePrivateContent();
             }
             stack.UpdateLayout();
             Commands.CreateThumbnail.Execute(Globals.slide);
             foreach (AbstractCanvas ac in stack.canvasStack.Children)
             {
-                ac.showPrivateContent();
+                //ac.showPrivateContent();
             }
         }
         private void MirrorPresentationSpace(Window1 parent)

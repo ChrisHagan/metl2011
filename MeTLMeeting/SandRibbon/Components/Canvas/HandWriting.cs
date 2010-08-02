@@ -100,7 +100,14 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveStrokes.RegisterCommand(
                 new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
         }
+
+        private void MoveTo(object obj)
+        {
+            privacyDictionary = new Dictionary<double, Stroke>();
+        }
+
         private void HandWriting_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             DefaultPenAttributes();
@@ -191,16 +198,50 @@ namespace SandRibbon.Components.Canvas
                                 //addPrivateRegion(stroke.stroke);
                     }
                     var duration = SandRibbonObjects.DateTimeFactory.Now() - start;
-                    HandWriting.strokeReceiptDurations.Add(duration);
+                    strokeReceiptDurations.Add(duration);
                 });
         }
-        #region eventHandlers
-        private void addPrivateRegion(Stroke stroke)
+
+        private void RemovePrivacyStylingFromStroke(Stroke stroke)
         {
-            ApplyPrivacyStylingToStroke(stroke, stroke.tag().privacy);
-            //var bounds = stroke.GetBounds();
-            //addPrivateRegion(new[] { bounds.TopLeft, bounds.TopRight, bounds.BottomRight, bounds.BottomLeft });
+            try
+            {
+                if (stroke.tag().startingColor != null)
+                {
+
+                    stroke.DrawingAttributes.Color = (Color) ColorConverter.ConvertFromString(stroke.tag().startingColor);
+                    if(privacyDictionary.Keys.Where(k => k == stroke.sum().checksum).Count() == 0) return;
+                    Strokes.Remove(privacyDictionary[stroke.sum().checksum]);
+                    privacyDictionary.Remove(stroke.sum().checksum);
+                }
+            }
+            catch (Exception e)
+            { }
         }
+        private Dictionary<double, Stroke> privacyDictionary = new Dictionary<double, Stroke>();
+        private void ApplyPrivacyStylingToStroke(Stroke stroke, string privacy)
+        {
+            if (privacy == "private")
+            {
+                if(privacyDictionary.Keys.Where(k => k == stroke.sum().checksum).Count() != 0) return;
+                var privacyStroke = new Stroke(stroke.StylusPoints);
+                privacyStroke.tag(new StrokeTag { author = "Privacy", privacy = "private", startingColor = stroke.DrawingAttributes.Color.ToString() });
+                privacyStroke.DrawingAttributes = new DrawingAttributes
+                                           {
+                                               Color = stroke.DrawingAttributes.Color,
+                                               Width = stroke.DrawingAttributes.Width * 2,
+                                               Height = stroke.DrawingAttributes.Height * 2,
+                                               IsHighlighter = true
+                                           };
+                privacyStroke.startingSum(privacyStroke.sum().checksum);
+                privacyDictionary[stroke.sum().checksum] = (privacyStroke);
+                Strokes.Add(privacyStroke);
+                stroke.DrawingAttributes.Color = Colors.White;
+            }
+            else
+                stroke.DrawingAttributes.Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor);
+        }
+        #region eventHandlers
         private void selectionChanged(object sender, EventArgs e)
         {
         }
@@ -424,7 +465,8 @@ namespace SandRibbon.Components.Canvas
         }
         public override void showPrivateContent()
         {
-            foreach (Stroke stroke in Strokes)
+            var currentStrokes = Strokes.Clone();
+            foreach (Stroke stroke in currentStrokes)
             {
                 if (stroke.tag().privacy == "private")
                 {
@@ -447,16 +489,14 @@ namespace SandRibbon.Components.Canvas
         }
         private void changeSelectedItemsPrivacy(string newPrivacy)
         {
-            if (me != "projector")
+            if (me == "projector") return;
+            foreach (Stroke stroke in GetSelectedStrokes().ToList().Where(i => i is Stroke && i.tag().privacy != newPrivacy))
             {
-                foreach (Stroke stroke in GetSelectedStrokes().ToList().Where(i => i is Stroke && i.tag().privacy != newPrivacy))
-                {
-                    var oldTag = ((Stroke)stroke).tag();
-                    doMyStrokeRemoved(stroke);
-                    var newStroke = stroke.Clone();
-                    ((Stroke)newStroke).tag(new StrokeTag {author = oldTag.author,privacy=newPrivacy,startingColor=oldTag.startingColor,startingSum=oldTag.startingSum});
-                    doMyStrokeAdded(newStroke,newPrivacy);
-                }
+                var oldTag = ((Stroke)stroke).tag();
+                doMyStrokeRemoved(stroke);
+                var newStroke = stroke.Clone();
+                ((Stroke)newStroke).tag(new StrokeTag {author = oldTag.author,privacy=newPrivacy,startingColor=oldTag.startingColor,startingSum=oldTag.startingSum});
+                doMyStrokeAdded(newStroke,newPrivacy);
             }
         }
 

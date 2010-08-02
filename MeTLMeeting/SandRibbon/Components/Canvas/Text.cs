@@ -529,6 +529,7 @@ namespace SandRibbon.Components.Canvas
                 sendText(box);
             }
         }
+
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
             if (targettedBox.target != target) return;

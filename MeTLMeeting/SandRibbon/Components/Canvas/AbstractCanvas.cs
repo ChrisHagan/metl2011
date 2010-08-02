@@ -148,23 +148,7 @@ namespace SandRibbon.Components.Canvas
         {
             element.Effect = null;
         }
-        protected void ApplyPrivacyStylingToStroke(Stroke stroke, string privacy)
-        {
-            if (privacy == "private")
-                stroke.DrawingAttributes.Color = Colors.Red;
-            else
-                stroke.DrawingAttributes.Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor);
-        }
-        protected void RemovePrivacyStylingFromStroke(Stroke stroke)
-        {
-            try
-            {
-                if (stroke.tag().startingColor != null)
-                    stroke.DrawingAttributes.Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor);
-            }
-            catch (Exception ex)
-            { }
-        }
+
         private PresentationSpace context;
         protected void addPrivateRegion(IEnumerable<Point> figure)
         {
