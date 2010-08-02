@@ -365,30 +365,30 @@ namespace SandRibbon.Components
             canvas.Background = new SolidColorBrush { Color = Colors.Wheat, Opacity = 0.1 };
             canvas.Children.Add(marquee);
             bool mouseDown = false;
+            Point origin = new Point(-1,-1);
             canvas.MouseDown += (sender, e) =>
             {
                 var pos = e.GetPosition(canvas);
                 System.Windows.Controls.Canvas.SetLeft(marquee, pos.X);
                 System.Windows.Controls.Canvas.SetTop(marquee, pos.Y);
+                origin = pos;
                 mouseDown = true;
             };
             canvas.MouseUp += (sender, e) =>
             {
                 mouseDown = false;
-                var pos = e.GetPosition(this);
-                var origin = new Point(pos.X - marquee.Width, pos.Y - marquee.Height);
                 doWithRect(marquee);
                 adornerLayer.Remove(adorner);
             };
             canvas.MouseMove += (sender, e) =>
             {
-                if (!mouseDown) return;
+                if (!mouseDown || origin.X == -1 || origin.Y == -1) return;
                 var pos = e.GetPosition(canvas);
-                var prevX = System.Windows.Controls.Canvas.GetLeft(marquee);
-                var prevY = System.Windows.Controls.Canvas.GetTop(marquee);
-                marquee.Width = Math.Max(prevX, pos.X) - Math.Min(prevX, pos.X);
-                marquee.Height = Math.Max(prevY, pos.Y) - Math.Min(prevY, pos.Y);
-            };
+                System.Windows.Controls.Canvas.SetLeft(marquee,Math.Min(origin.X,pos.X));
+                System.Windows.Controls.Canvas.SetTop(marquee,Math.Min(origin.Y,pos.Y));
+                marquee.Width = Math.Max(origin.X,pos.X) - Math.Min(origin.X,pos.X);
+                marquee.Height = Math.Max(origin.Y, pos.Y) - Math.Min(origin.Y, pos.Y);
+                };
             canvas.MouseLeave += (_sender, _args) => adornerLayer.Remove(adorner);
             adornerLayer.Add(adorner);
         }
