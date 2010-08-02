@@ -65,6 +65,7 @@ namespace SandRibbon.Components.Submissions
         }
         private void canImportSubmission(object sender, CanExecuteRoutedEventArgs e)
         {
+            if (submissions != null)
             e.CanExecute = submissions.SelectedItem != null;
         }
     }

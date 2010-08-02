@@ -10,33 +10,36 @@
         <CommandBinding Command="{x:Static api:Commands.ImportSubmission}" Executed="importSubmission" CanExecute="canImportSubmission"/>
     </Window.CommandBindings>
     <Border Background="{StaticResource BackgroundBlueGradient}">
-        <StackPanel Orientation="Vertical" >
-            <StackPanel Orientation="Horizontal">
-                <ScrollViewer>
-                    <ListBox x:Name="submissions" SelectionMode="Single" Background ="Transparent" MaxHeight="600">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel MaxWidth="300"></WrapPanel>
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Viewbox Width="100" Height="100">
-                                    <Image Source="{Binding Path=url, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" ToolTip="{Binding Path=author}"/>
-                                </Viewbox>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </ScrollViewer>
-                <StackPanel Orientation="Vertical">
-                    <Label>Preview</Label>
-                    <Viewbox Width="350" Height="250">
+        <DockPanel>
+            <Button DockPanel.Dock="Bottom" x:Name="importSelectedSubmission" Command="{x:Static api:Commands.ImportSubmission}" HorizontalAlignment="Right">Import selected submission</Button>
+            <Grid MaxHeight="450">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="325"/>
+                    <ColumnDefinition MinWidth="200"/>
+                </Grid.ColumnDefinitions>
+                <ListBox x:Name="submissions" SelectionMode="Single" Background ="Transparent" 
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel IsItemsHost="True" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Viewbox Width="100" Height="100">
+                                <Image Source="{Binding Path=url, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" ToolTip="{Binding Path=author}"/>
+                            </Viewbox>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Grid Grid.Column="1">
+                    <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top">Preview</Label>
+                    <Viewbox Margin="0,35,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" >
                         <Image x:Name="previewImage" Source="{Binding ElementName=submissions, Path=SelectedItem, 
                         Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" />
                     </Viewbox>
-                </StackPanel>
-            </StackPanel>
-            <Button x:Name="importSelectedSubmission" Command="{x:Static api:Commands.ImportSubmission}" HorizontalAlignment="Right">Import selected submission</Button>
-        </StackPanel>
+                </Grid>
+            </Grid>
+        </DockPanel>
     </Border>
 </Window>
