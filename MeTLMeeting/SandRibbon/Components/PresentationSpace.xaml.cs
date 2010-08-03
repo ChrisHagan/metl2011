@@ -244,14 +244,20 @@ namespace SandRibbon.Components
         {
             foreach (AbstractCanvas ac in stack.canvasStack.Children)
             {
-                //ac.hidePrivateContent();
+                ac.hidePrivateContent();
             }
-            stack.UpdateLayout();
+            //stack.UpdateLayout();
+            DelegateCommand<object> thumbnailGenerated = null;
+            thumbnailGenerated = new DelegateCommand<object>(obj =>
+                                 {
+                                     Commands.ThumbnailAvailable.UnregisterCommand(thumbnailGenerated);
+                                     foreach (AbstractCanvas ac in stack.canvasStack.Children)
+                                     {
+                                         ac.showPrivateContent();
+                                     }
+                                 });
+            Commands.ThumbnailAvailable.RegisterCommand(thumbnailGenerated);
             Commands.CreateThumbnail.Execute(Globals.slide);
-            foreach (AbstractCanvas ac in stack.canvasStack.Children)
-            {
-                //ac.showPrivateContent();
-            }
         }
         private void MirrorPresentationSpace(Window1 parent)
         {
