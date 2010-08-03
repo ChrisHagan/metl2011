@@ -94,6 +94,7 @@ namespace SandRibbon
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
+            Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(OriginalView));
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.SetZoomRect.RegisterCommand(new DelegateCommand<Rectangle>(SetZoomRect));
             Commands.ChangePenSize.RegisterCommand(new DelegateCommand<object>(AdjustPenSizeAccordingToZoom));
@@ -583,6 +584,13 @@ namespace SandRibbon
         {
             var report = (int[])e.Parameter;
             progress.Show(report[0], report[1]);
+        }
+        private void OriginalView(object _unused)
+        {
+            var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).First();
+            scroll.Width = currentSlide.defaultWidth;
+            scroll.Height = currentSlide.defaultHeight;
+            scroll.ScrollToLeftEnd();
         }
         private void FitToView(object _unused)
         {

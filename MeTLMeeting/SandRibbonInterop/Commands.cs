@@ -118,6 +118,7 @@ namespace SandRibbon
         public static CompositeCommand SendDirtyStroke = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyStrokes = new CompositeCommand();
         public static CompositeCommand SetPrivacy = new CompositeCommand();
+        public static CompositeCommand OriginalView = new CompositeCommand();
         public static RoutedCommand Flush = new RoutedCommand();
         public static RoutedCommand CreateQuizStructure = new RoutedCommand();
         public static RoutedCommand ZoomIn = new RoutedCommand();

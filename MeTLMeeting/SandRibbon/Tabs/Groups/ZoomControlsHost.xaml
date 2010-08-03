@@ -24,5 +24,6 @@
         <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToPageWidth}" Icon="\Resources\FitToPage.png" Text="Fit to page" ToolTip="{DynamicResource FitToPageToolTip}"/>
         <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}"/>
         <SandRibbonInterop:Button Command="{x:Static api:Commands.ExtendCanvasBothWays}" Text="Extend Canvas" Icon="\Resources\Ribbon-ZoomIn.png"/>
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.OriginalView}" Text="Original View" Icon="\Resources\Ribbon-ZoomIn.png"/>
     </SandRibbonInterop:RibbonPanel>
 </sr:RibbonGroup>           
