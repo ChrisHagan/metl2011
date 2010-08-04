@@ -22,8 +22,12 @@ namespace SandRibbon.Tabs.Groups
         {
             InitializeComponent();
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(setLayer));
+            Commands.EndGrabZoom.RegisterCommand(new DelegateCommand<object>(EndGrabZoom));
         }
-
+        private void EndGrabZoom(object _unused)
+        {
+            GrabZoomButton.IsChecked = false;
+        }
         private void setLayer(string layer)
         {
             switch (layer)

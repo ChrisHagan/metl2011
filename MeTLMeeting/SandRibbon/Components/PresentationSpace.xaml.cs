@@ -149,7 +149,7 @@ namespace SandRibbon.Components
                 return;
             }
             Commands.ScreenshotGenerated.Execute(hostedFileName);
-       
+
         }
 
         private string generateScreenshot(ScreenshotDetails details)
@@ -235,8 +235,9 @@ namespace SandRibbon.Components
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
             if (parser.location.currentSlide == Globals.location.currentSlide)
                 if (snapshotTimer == null)
-                    snapshotTimer = new Timer(delegate {
-                        Dispatcher.adoptAsync(delegate { snapshot(); }); 
+                    snapshotTimer = new Timer(delegate
+                    {
+                        Dispatcher.adoptAsync(delegate { snapshot(); });
                     }, null, 600, Timeout.Infinite);
                 else snapshotTimer.Change(600, Timeout.Infinite);
         }
@@ -355,6 +356,7 @@ namespace SandRibbon.Components
         {
             withDragMarquee(marquee =>
             {
+                Commands.EndGrabZoom.Execute(null);
                 Commands.SetZoomRect.Execute(marquee);
             });
         }
@@ -372,7 +374,7 @@ namespace SandRibbon.Components
             canvas.Background = new SolidColorBrush { Color = Colors.Wheat, Opacity = 0.1 };
             canvas.Children.Add(marquee);
             bool mouseDown = false;
-            Point origin = new Point(-1,-1);
+            Point origin = new Point(-1, -1);
             canvas.MouseDown += (sender, e) =>
             {
                 var pos = e.GetPosition(canvas);
@@ -391,12 +393,16 @@ namespace SandRibbon.Components
             {
                 if (!mouseDown || origin.X == -1 || origin.Y == -1) return;
                 var pos = e.GetPosition(canvas);
-                System.Windows.Controls.Canvas.SetLeft(marquee,Math.Min(origin.X,pos.X));
-                System.Windows.Controls.Canvas.SetTop(marquee,Math.Min(origin.Y,pos.Y));
-                marquee.Width = Math.Max(origin.X,pos.X) - Math.Min(origin.X,pos.X);
+                System.Windows.Controls.Canvas.SetLeft(marquee, Math.Min(origin.X, pos.X));
+                System.Windows.Controls.Canvas.SetTop(marquee, Math.Min(origin.Y, pos.Y));
+                marquee.Width = Math.Max(origin.X, pos.X) - Math.Min(origin.X, pos.X);
                 marquee.Height = Math.Max(origin.Y, pos.Y) - Math.Min(origin.Y, pos.Y);
-                };
-            canvas.MouseLeave += (_sender, _args) => adornerLayer.Remove(adorner);
+            };
+            canvas.MouseLeave += (_sender, _args) =>
+            {
+                adornerLayer.Remove(adorner);
+                Commands.EndGrabZoom.Execute(null);
+            };
             adornerLayer.Add(adorner);
         }
         private void SendNewDig(Rectangle marquee)

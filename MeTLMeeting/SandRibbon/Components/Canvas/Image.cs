@@ -56,7 +56,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyAutoShape));
             Commands.AddAutoShape.RegisterCommand(new DelegateCommand<object>(createNewAutoShape));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(addImageFromDisk));
-            Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(addImageFromQuizSnapshot));
+            Commands.PlaceQuizSnapshot.RegisterCommand(new DelegateCommand<string>(addImageFromQuizSnapshot));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<ImageDrop>((drop) =>
             {
@@ -683,13 +683,44 @@ namespace SandRibbon.Components.Canvas
         {
             if (target == "presentationSpace" && canEdit && me != "projector")
             {
+                //I bet this next bit is really bad form, but apparently these calls don't always work on different operating systems etcetera.
+                string initialDirectory = "c:\\";
+                try
+                {
+                    initialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                }
+                catch (Exception ex)
+                {
+                    try
+                    {
+                        initialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    }
+                    catch (Exception ex1)
+                    {
+                        try
+                        {
+                            initialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                        }
+                        catch (Exception ex2)
+                        {
+                            try
+                            {
+                                initialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+                            }
+                            catch (Exception ex3)
+                            {
+                            }
+                        }
+                    }
+                }
+
                 var fileBrowser = new OpenFileDialog
-                                                 {
-                                                     InitialDirectory = "c:\\",
-                                                     Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
-                                                     FilterIndex = 2,
-                                                     RestoreDirectory = true
-                                                 };
+                                             {
+                                                 InitialDirectory = initialDirectory,
+                                                 Filter = "Image files(*.jpeg;*.gif;*.bmp;*.jpg;*.png)|*.jpeg;*.gif;*.bmp;*.jpg;*.png|All files (*.*)|*.*",
+                                                 FilterIndex = 1,
+                                                 RestoreDirectory = true
+                                             };
                 var dialogResult = fileBrowser.ShowDialog();
                 if (dialogResult == true)
                     withResources(fileBrowser.FileNames);

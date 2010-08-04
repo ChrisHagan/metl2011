@@ -8,41 +8,43 @@
     x:Name="answerAQuiz"
     Title="Answer Quiz">
     <Border Background="{StaticResource BackgroundBlueGradient}">
-        <StackPanel Orientation="Vertical">
-            <Grid Margin="10 10 10 30">
-                <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
-                <StackPanel>
-                    <Grid>
-                        <quiz:GoldPlaque/>
-                        <TextBlock Margin="4" MaxWidth="300"
+        <ScrollViewer>
+            <StackPanel Orientation="Vertical">
+                <Grid Margin="10 10 10 30">
+                    <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
+                    <StackPanel>
+                        <Grid>
+                            <quiz:GoldPlaque/>
+                            <TextBlock Margin="4" MaxWidth="300"
                                 TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=title}"
                                        HorizontalAlignment="Center" />
-                    </Grid>
+                        </Grid>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled">
-                            <TextBlock MaxHeight="300"
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled">
+                                <TextBlock MaxHeight="300"
                                            FontWeight="Bold" TextWrapping="WrapWithOverflow" 
                                            Text="{Binding Path=question}" HorizontalAlignment="Center" />
-                        </ScrollViewer>
-                        <Image Grid.Column="1" Source="{Binding Path=url}" Width="300" Height="300"/>
-                    </Grid>
-                </StackPanel>
-            </Grid>
-            <ListBox x:Name="quizOptions" SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal" x:Name="quizAnswers">
-                            <quiz:QuizButton />
-                            <Label Content="{Binding Path=optionText}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate> 
-            </ListBox>
-        </StackPanel> 
+                            </ScrollViewer>
+                            <Image Grid.Column="1" Source="{Binding Path=url}" Width="300" Height="300"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+                <ListBox x:Name="quizOptions" SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" x:Name="quizAnswers">
+                                <quiz:QuizButton />
+                                <Label Content="{Binding Path=optionText}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </ScrollViewer>
     </Border>
 </Window>

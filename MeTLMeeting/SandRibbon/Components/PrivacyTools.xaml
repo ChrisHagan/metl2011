@@ -10,9 +10,11 @@
     AutomationProperties.AutomationId="privacyTools"
     >
     <interop:RibbonPanel>
-        <interop:Button Text="Become Private" Icon="..\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>
+        <interop:CheckBox x:Name="WorkPubliclyButton" Text="Work Publicly" Icon="..\Resources\Ribbon-Public.png" ToolTip="{DynamicResource WorkPubliclyToolTip}" ClickMode="Release" Click="CheckBox_Click"/>
+        <!--<interop:Button Text="Become Private" Icon="..\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>
         <interop:Button Text="Become Public" Icon="..\Resources\Ribbon-Public.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public"/>
         <interop:Button Text="Make selection Public" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="public"/>
         <interop:Button Text="Make selection Private" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="private"/>
-    </interop:RibbonPanel>
+    -->
+        </interop:RibbonPanel>
 </UserControl>
