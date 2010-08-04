@@ -64,6 +64,7 @@ namespace SandRibbon.Components
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
+            if(!canSetPrivacy("private")) return;
             var thisButton = ((CheckBox)sender);
             if (thisButton.IsChecked == true)
             {
