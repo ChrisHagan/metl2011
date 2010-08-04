@@ -24,17 +24,6 @@ namespace SandRibbon.Tabs.Groups
         {
             InitializeComponent();
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(switchTools));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(updatePrivacyTools));
-        }
-        private void updatePrivacyTools(string jid)
-        {
-            try
-            {
-                if (new FileConversationDetailsProvider().DetailsOf(jid).Author == Globals.me || Globals.pedagogy.code > 2)
-                    ribbonPrivacyTools.Visibility = Visibility.Visible;
-                else { ribbonPrivacyTools.Visibility = Visibility.Collapsed; }
-            }
-            catch (Exception ex) { }
         }
         private void switchTools(string mode)
         {
@@ -44,12 +33,12 @@ namespace SandRibbon.Tabs.Groups
             {
                 case "Sketch":
                     penColors.Visibility = Visibility.Visible;
-                    Header = "Drawing Tools";
+                    Header = "Ink Tools";
                     break;
                 case "Text":
                     toolBox.Visibility = Visibility.Visible;
                     textTools.Visibility = Visibility.Visible;
-                    Header = "Writing Tools";
+                    Header = "Text Tools";
                     break;
                 case "Insert":
                     toolBox.Visibility = Visibility.Visible;

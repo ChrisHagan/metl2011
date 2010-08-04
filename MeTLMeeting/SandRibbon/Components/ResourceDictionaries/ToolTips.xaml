@@ -96,7 +96,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Add Page"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Add a new page to this conversation, after your current page.  You can only do this if you are allowed to publish in this conversation." />
+                           Text="Add a new page after the current page." />
             </Grid>
         </Border>
     </ToolTip>
@@ -106,9 +106,11 @@
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="..\..\Resources\SyncShiny.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
-                           Text="Synchronize" />
+                           Text="Link to or unlink from the teacher's current location." />
+                <!--
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="If you own this conversation, then by locking this button, you will send a message to viewers of this conversation that will allow them to follow you as you move from one page to another.  If you do not own this conversation, then by locking this button, you will follow the owner to another page when they move to another page.  If this is unlocked, then you will not pull or be pulled by the owner of the conversation."/>
+                           Text="."/>
+                -->
             </Grid>
         </Border>
     </ToolTip>
@@ -132,7 +134,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Add Image"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Add an image from your computer into MeTL, on the presentation space."/>
+                           Text="Add an image to the slide."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -144,13 +146,15 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Image Mode"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Change to Image Mode, so that you can add new images or edit existing images."/>
+                           Text="In this mode you can insert pictures."/>
             </Grid>
         </Border>
     </ToolTip>
 
 
 
+    
+    
     <ToolTip x:Key="RestoreCanvasToolTip" >
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
@@ -171,7 +175,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Extend Canvas"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Width="300" 
-                           Text="Add additional blank space to the canvas in this direction.  You can also extend the canvas simply by adding content that extends beyond the current canvas size.  For example, if you draw an ink stroke that begins inside the canvas, but extends past the edges, the canvas will add space to include the entire stroke."/>
+                           Text="Add extra blank space to the page."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -232,7 +236,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Zoom In" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Increase the magnification on the main page.  This setting only applies to you, and helps you read small print."/>
+                           Text="Zoom in on this page."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -245,7 +249,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Zoom Out" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Decrease the magnification on the main page.  This setting applies only to you, and helps you see the entire page at once."/>
+                           Text="Zoom out on this page."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -437,7 +441,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Undo"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Undo the last change that you made to the page."/>
+                           Text="Undo the last change that you made on this page."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -450,7 +454,32 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Redo"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Redo the Last Change that you Undid from the page."/>
+                           Text="Redo the Last Change that you Undid on this page."/>
+            </Grid>
+        </Border>
+    </ToolTip>
+
+    <ToolTip x:Key="CreateQuizToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\RedoShiny.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                           Text="Create a new quiz"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Create a multiple-choice quiz."/>
+            </Grid>
+        </Border>
+    </ToolTip>
+    <ToolTip x:Key="WorkPubliclyToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\MagnifyingGlassShiny.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
+                           Text="Work Publicly"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Display new changes publicly."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -539,7 +568,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Draw Digital Ink" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Use the stylus connected to your tablet-PC to draw directly on the screen."/>
+                           Text="In this mode, you can draw on the screen."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -552,7 +581,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Erase Digital Ink" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Remove digital ink that you've drawn on the screen.  If the stylus on your tablet PC has an eraser attachment on the opposite end of it, then you can use that instead."/>
+                           Text="Erase whole ink strokes."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -564,7 +593,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Select Text" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Select textboxes that you've placed, so that you can move them around or resize them."/>
+                           Text="Move or resize your text containers."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -576,7 +605,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Select Digital Ink" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Select digital ink that you've drawn on the screen, so that you can move it around or resize it.  This tool also has another useful function:  If you select ink that other people have drawn, then you can see who drew it by looking at your friends console."/>
+                           Text="Circle your ink to select it."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -617,7 +646,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Cut" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Cut the selected object out of the page and put it in the sytem clipboard.  You can paste objects from the system clipboard into a variety of different programs."/>
+                           Text="Cut the selection to the clipboard."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -630,7 +659,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Copy" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Copy the selected object from the page and put it in the sytem clipboard.  You can paste objects from the system clipboard into a variety of different programs."/>
+                           Text="Copy the selection to the clipboard."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -642,7 +671,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Paste" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Paste the contents of the system clipboard into MeTL, at your current location."/>
+                           Text="Paste the contents of the clipboard."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -654,7 +683,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Font Family" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Change the family of your font."/>
+                           Text="Change the font of your text."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -666,7 +695,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Type" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Enter Text Mode.  When you click on the canvas, you will create a textbox at that location.  To edit a textbox that you created, hover over it and use the text-cursor to select the location to be edited."/>
+                           Text="Click on the page to start typing there."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -690,7 +719,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Increase Font Size" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Increase your current font size to the next size in the list."/>
+                           Text="Increase your font size."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -702,7 +731,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Decrease Font Size" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Decrease your current font size to the next size in the list."/>
+                           Text="Decrease your font size."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -724,9 +753,9 @@
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="..\..\Resources\bold.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           Text="Bold" FontSize="14" FontWeight="Bold"/>
+                           Text="Bold (Ctrl+B)" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Use bold text.  Bold text is the text that is heavier than normal text."/>
+                           Text="Use bold text."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -736,9 +765,9 @@
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="..\..\Resources\italic.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           Text="Italic" FontSize="14" FontWeight="Bold"/>
+                           Text="Italic (Ctrl+I)" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Use italic text.  Italic text is the text that is slanted."/>
+                           Text="Use italic text."/>
             </Grid>
         </Border>
     </ToolTip>
@@ -748,7 +777,7 @@
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="..\..\Resources\underline.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           Text="Underline" FontSize="14" FontWeight="Bold"/>
+                           Text="Underline (Ctrl+U)" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
                            Text="Underline your text."/>
             </Grid>
@@ -814,6 +843,18 @@
             </Grid>
         </Border>
     </ToolTip>
+    <ToolTip x:Key="GrabMoveToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\subscript.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                           Text="Move page" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Move the page on the screen" />
+            </Grid>
+        </Border>
+    </ToolTip>
     <ToolTip x:Key="GrabZoomToolTip" >
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
@@ -822,7 +863,7 @@
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Grab zoom" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Draw a rectangle to zoom in on" />
+                           Text="Select an area to zoom in on" />
             </Grid>
         </Border>
     </ToolTip>
@@ -832,7 +873,7 @@
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="..\..\Resources\subscript.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           Text="Fit to screen" FontSize="14" FontWeight="Bold"/>
+                           Text="Show all" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
                            Text="Fit the entire page on the screen"/>
             </Grid>
