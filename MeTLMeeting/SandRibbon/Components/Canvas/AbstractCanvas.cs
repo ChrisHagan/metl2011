@@ -101,6 +101,7 @@ namespace SandRibbon.Components.Canvas
         public FrameworkElement GetAdorner()
         {
             var element = (FrameworkElement)this;
+            return (FrameworkElement)element.Parent;
             while (element.Parent != null && !(element.Name == "adornerGrid"))
                 element = (FrameworkElement)element.Parent;
 
@@ -111,11 +112,11 @@ namespace SandRibbon.Components.Canvas
         }
         protected void AbstractCanvas_SelectionChanged(object sender, EventArgs e)
         {
-                /*Dispatcher.adoptAsync((Action)delegate
+                Dispatcher.adoptAsync((Action)delegate
                             {
                                 var adorner = GetAdorner();
                                 AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(GetSelectionBounds())));
-                            });*/
+                            });
         }
         public abstract void showPrivateContent();
         public abstract void hidePrivateContent();
