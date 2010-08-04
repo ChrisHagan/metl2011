@@ -11,14 +11,14 @@
     <deploymentProvider codebase="http://metl.adm.monash.edu.au/LectureMeTL/LectureMeTL.application" />
   </deployment>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="LectureMeTL.exe.manifest" size="19853">
+    <dependentAssembly dependencyType="install" codebase="LectureMeTL.exe.manifest" size="19854">
       <assemblyIdentity name="LectureMeTL.exe" version="1.0.0.8" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>gKpyhiujTE8Nn5vslwhw4HVTqK4=</dsig:DigestValue>
+        <dsig:DigestValue>krhM9BVa11zdvcpT6+Ft7u7Kh7I=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

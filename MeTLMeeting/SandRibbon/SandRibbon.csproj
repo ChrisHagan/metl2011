@@ -836,9 +836,8 @@
     <Content Include="Resources\Spectrum.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <SplashScreen Include="Resources\splashScreen.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </SplashScreen>
+    <None Include="Resources\splashScreen.png">
+    </None>
     <Content Include="Resources\SyncGreen.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

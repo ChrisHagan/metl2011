@@ -293,6 +293,10 @@ namespace SandRibbon.Utils
                 hostedImage.Source = bitmap;
                 InkCanvas.SetLeft(hostedImage, Double.Parse(shape.Attribute("x").Value));
                 InkCanvas.SetTop(hostedImage, Double.Parse(shape.Attribute("y").Value));
+                if (shape.Attributes("height").Count() > 0)
+                    hostedImage.Height = Double.Parse(shape.Attribute("height").Value);
+                if (shape.Attributes("width").Count() > 0)
+                    hostedImage.Width = Double.Parse(shape.Attribute("width").Value);
                 hostedImage.tag(new ImageTag
                                     {
                                         id = string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now(), shapeCount++),
@@ -466,6 +470,8 @@ namespace SandRibbon.Utils
                             xSlide.Add(new XElement("shape",
                                 new XAttribute("x", x * Magnification),
                                 new XAttribute("y", y * Magnification),
+                                new XAttribute("height", shape.Height * Magnification),
+                                new XAttribute("width", shape.Width * Magnification),
                                 new XAttribute("privacy", "private"),
                                 new XAttribute("snapshot", file)));
                         }

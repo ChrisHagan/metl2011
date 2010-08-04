@@ -63,6 +63,8 @@ namespace SandRibbon.Components
                     CommitButton.Content = "Create Conversation";
                     Height = 400;
                     Width = 800;
+                    if (startingContentSelector != null && startingContentSelector.Items.Count > 0)
+                        startingContentSelector.SelectedIndex = 0;
                     if (details == null)
                         details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
@@ -87,6 +89,8 @@ namespace SandRibbon.Components
                     importSelector.SelectedItem = importSelector.Items[0];
                     Height = 400;
                     Width = 800;
+                    if (startingContentSelector != null && startingContentSelector.Items.Count > 1)
+                        startingContentSelector.SelectedIndex = 1;
                     if (details == null)
                         details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;

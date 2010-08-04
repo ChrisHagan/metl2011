@@ -117,26 +117,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LectureMeTL.exe" size="6144">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LectureMeTL.exe" size="67584">
       <assemblyIdentity name="LectureMeTL" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>UPAExpFQQrQDnRSDOrrZ7Qlo8DM=</dsig:DigestValue>
+        <dsig:DigestValue>DzJhN44vdN9c1nPQGfq02Hbp70I=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL.exe" size="2610688">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL.exe" size="2549760">
       <assemblyIdentity name="MeTL" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>lwL2oxuEuiF1aaaAh5MHBZ3a598=</dsig:DigestValue>
+        <dsig:DigestValue>YIF44MaE78XkmB9Nlpl2IYY462A=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -280,7 +280,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>VNCRUfqyfhG1ctk04CU8iF6DtdM=</dsig:DigestValue>
+        <dsig:DigestValue>ieiXfl9FmkEOaeCMkzW0Ot9gkog=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -292,7 +292,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>Sk8WM2YAwplEeboneOgScEP8vVI=</dsig:DigestValue>
+        <dsig:DigestValue>b79YOkfcfGdYoMzSNIMjPiMxiIA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
