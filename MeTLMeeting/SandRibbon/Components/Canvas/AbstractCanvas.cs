@@ -112,11 +112,12 @@ namespace SandRibbon.Components.Canvas
         }
         protected void AbstractCanvas_SelectionChanged(object sender, EventArgs e)
         {
+            /*
                 Dispatcher.adoptAsync((Action)delegate
                             {
                                 var adorner = GetAdorner();
                                 AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(GetSelectionBounds())));
-                            });
+                            });*/
         }
         public abstract void showPrivateContent();
         public abstract void hidePrivateContent();
