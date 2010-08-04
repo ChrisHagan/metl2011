@@ -210,6 +210,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Components\PrivacyToggleButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\SlideDisplay.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -488,6 +492,9 @@
       <DependentUpon>Pedagogicometer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Pedagogicometry\PedagogyLevel.cs" />
+    <Compile Include="Components\PrivacyToggleButton.xaml.cs">
+      <DependentUpon>PrivacyToggleButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ResourceDictionaries\TypedControlStylingEventHandlers.cs" />
     <Compile Include="Components\SlideDisplay.xaml.cs">
       <DependentUpon>SlideDisplay.xaml</DependentUpon>

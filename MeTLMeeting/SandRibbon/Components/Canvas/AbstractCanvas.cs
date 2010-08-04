@@ -85,6 +85,7 @@ namespace SandRibbon.Components.Canvas
                 HandleCopy()));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) =>
                                                                             HandleCut()));
+            SelectionChanged += new EventHandler(AbstractCanvas_SelectionChanged);
             Loaded += (_sender, _args) => this.Dispatcher.adoptAsync(delegate
             {
                 if (target == null)
@@ -96,6 +97,25 @@ namespace SandRibbon.Components.Canvas
                 }
             });
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
+        }
+        public FrameworkElement GetAdorner()
+        {
+            var element = (FrameworkElement)this;
+            while (element.Parent != null && !(element.Name == "adornerGrid"))
+                element = (FrameworkElement)element.Parent;
+
+            foreach (var child in ((Grid)element).Children)
+                if (((FrameworkElement)child).Name == "adorner")
+                    return (FrameworkElement)child;
+            return null;
+        }
+        protected void AbstractCanvas_SelectionChanged(object sender, EventArgs e)
+        {
+                /*Dispatcher.adoptAsync((Action)delegate
+                            {
+                                var adorner = GetAdorner();
+                                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(GetSelectionBounds())));
+                            });*/
         }
         public abstract void showPrivateContent();
         public abstract void hidePrivateContent();

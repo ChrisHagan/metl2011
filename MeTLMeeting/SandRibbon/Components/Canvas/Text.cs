@@ -9,6 +9,7 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
@@ -109,6 +110,15 @@ namespace SandRibbon.Components.Canvas
                     dirtyTextBoxWithoutHistory(box);
                 }
             }
+        }
+        protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
+        {
+            if(element.GetType() != typeof(TextBox)) return;
+            var box = (TextBox) element;
+                if (privacy == "private")
+                    element.Effect = new DropShadowEffect { BlurRadius = 50, Color = (Color) ColorConverter.ConvertFromString(box.Foreground.ToString()), ShadowDepth = 0, Opacity = 1 };
+                else
+                    element.Effect = null;
         }
         private void dirtyTextBoxWithoutHistory(TextBox box)
         {
