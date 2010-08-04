@@ -565,23 +565,6 @@ namespace SandRibbon
         {
             Commands.PostRetrievedHistoryPortion.Execute(e.Parameter);
         }
-        /*
-        private void toggleFriendsVisibility(object _param)
-        {
-            if (friends.Visibility == Visibility.Visible)
-                hideFriends();
-            else
-                showFriends();
-        }
-        private void showFriends()
-        {
-            SetVisibilityOf(friends, Visibility.Visible);
-        }
-        private void hideFriends()
-        {
-            SetVisibilityOf(friends, Visibility.Collapsed);
-        }
-         */
         private static void SetVisibilityOf(UIElement target, Visibility visibility)
         {
             target.Visibility = visibility;
@@ -598,6 +581,7 @@ namespace SandRibbon
         private void OriginalView(object _unused)
         {
             var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).First();
+            if(currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
             scroll.Width = currentSlide.defaultWidth;
             scroll.Height = currentSlide.defaultHeight;
             scroll.ScrollToLeftEnd();

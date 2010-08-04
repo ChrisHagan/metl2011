@@ -221,7 +221,9 @@ namespace SandRibbon.Providers.Structure
                 {
                     author = details.Author,
                     id = id + 1,
-                    type = Slide.TYPE.SLIDE
+                    type = Slide.TYPE.SLIDE,
+                    defaultHeight = 540,
+                    defaultWidth = 720
                 });
             }
             details.Created = DateTimeFactory.Now();
