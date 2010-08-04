@@ -869,7 +869,7 @@ namespace SandRibbon
                     case 1:
                         tabs.Add(new Tabs.Quizzes());
                         tabs.Add(new Tabs.Submissions());
-                        homeGroups.Add(new Tabs.Groups.PrivacyTools());
+                        homeGroups.Add(new PrivacyToolsHost());
                         homeGroups.Add(new EditingModes());
                         //homeGroups.Add(new ToolBox());
                         //homeGroups.Add(new TextTools());

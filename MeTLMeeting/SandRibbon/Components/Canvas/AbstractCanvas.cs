@@ -96,7 +96,20 @@ namespace SandRibbon.Components.Canvas
                     context = getContext();
                 }
             });
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(ClearSelectionOnLayerChanged));
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
+        }
+        private void ClearSelectionOnLayerChanged(object _unused)
+        {
+            if (this.GetSelectedElements().Count > 0 || this.GetSelectedStrokes().Count > 0)
+            {
+                this.Select(null, null);
+                try
+                {
+                    Commands.SetInkCanvasMode.Execute(Commands.SetInkCanvasMode.lastValue());
+                }
+                catch (Exception) { }
+            }
         }
         public FrameworkElement GetAdorner()
         {
@@ -161,10 +174,10 @@ namespace SandRibbon.Components.Canvas
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
-                if (privacy == "private")
-                    element.Effect = Effects.privacyShadowEffect;
-                else
-                    element.Effect = null;
+            if (privacy == "private")
+                element.Effect = Effects.privacyShadowEffect;
+            else
+                element.Effect = null;
         }
         protected void RemovePrivacyStylingFromElement(FrameworkElement element)
         {

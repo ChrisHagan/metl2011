@@ -254,7 +254,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Groups\PrivacyTools.xaml">
+    <Page Include="Tabs\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -536,8 +536,8 @@
     <Compile Include="Quizzing\QuizButton.xaml.cs">
       <DependentUpon>QuizButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\PrivacyTools.xaml.cs">
-      <DependentUpon>PrivacyTools.xaml</DependentUpon>
+    <Compile Include="Tabs\Groups\PrivacyToolsHost.xaml.cs">
+      <DependentUpon>PrivacyToolsHost.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Groups\EditingOptions.xaml.cs">
       <DependentUpon>EditingOptions.xaml</DependentUpon>

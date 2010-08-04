@@ -34,6 +34,11 @@ namespace SandRibbon.Components.Canvas
             this.PreviewMouseUp += clearMouseMode;
             this.MouseLeave += mouseLeave;
             target = "";
+            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(setInkCanvasMode));
+        }
+        private void setInkCanvasMode(object _unused)
+        {
+            this.EditingMode = InkCanvasEditingMode.None;
         }
         private Point oldPosition;
         private void setMouseMode(object sender, MouseButtonEventArgs e)
