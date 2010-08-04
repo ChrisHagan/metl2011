@@ -9,10 +9,5 @@ namespace LectureMeTL
 {
     public partial class App : Application
     {
-        App()
-        {
-            this.Shutdown();
-            System.Diagnostics.Process.Start("metl.exe");
-        }
     }
 }
