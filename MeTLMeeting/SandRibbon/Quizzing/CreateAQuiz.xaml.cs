@@ -110,5 +110,10 @@ namespace SandRibbon.Quizzing
             quizTitle.SelectAll();
 
         }
+
+        private void createAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Commands.UnblockInput.Execute(null);
+        }
     }
 }

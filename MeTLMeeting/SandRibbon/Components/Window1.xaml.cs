@@ -105,6 +105,8 @@ namespace SandRibbon
             Commands.ShowEditSlidesDialog.RegisterCommand(new DelegateCommand<object>(ShowEditSlidesDialog, mustBeInConversation));
             Commands.SetLayer.Execute("Sketch");
             Commands.MoveCanvasByDelta.RegisterCommand(new DelegateCommand<Point>(GrabMove));
+            Commands.BlockInput.RegisterCommand(new DelegateCommand<string>(BlockInput));
+            Commands.UnblockInput.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -249,6 +251,14 @@ namespace SandRibbon
         {
             ShowPowerpointBlocker("Editing Conversation Dialog Open");
             Commands.EditConversation.Execute(null);
+        }
+        private void BlockInput(string message)
+        {
+            ShowPowerpointBlocker(message);
+        }
+        private void UnblockInput(object _unused)
+        {
+            Dispatcher.adoptAsync((finishedPowerpoint));
         }
         private void SetIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
         {
@@ -591,6 +601,7 @@ namespace SandRibbon
             scroll.Width = currentSlide.defaultWidth;
             scroll.Height = currentSlide.defaultHeight;
             scroll.ScrollToLeftEnd();
+            scroll.ScrollToTop();
         }
         private void FitToView(object _unused)
         {
@@ -858,6 +869,7 @@ namespace SandRibbon
                     case 1:
                         tabs.Add(new Tabs.Quizzes());
                         tabs.Add(new Tabs.Submissions());
+                        homeGroups.Add(new Tabs.Groups.PrivacyTools());
                         homeGroups.Add(new EditingModes());
                         //homeGroups.Add(new ToolBox());
                         //homeGroups.Add(new TextTools());

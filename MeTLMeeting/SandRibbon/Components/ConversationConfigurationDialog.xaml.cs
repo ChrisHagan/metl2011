@@ -137,14 +137,19 @@ namespace SandRibbon.Components
         }
         private bool checkConversation(ConversationDetails proposedDetails)
         {
-            if (proposedDetails == null) return false;
-            if (extantConversations == null) return false;
+            if (proposedDetails == null) {return false;}
+            if (extantConversations == null) { return false; }
             proposedDetails.Title = proposedDetails.Title.Trim();
             var currentDetails = details;
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
             var thisTitleIsNotTaken = dialogMode == ConversationConfigurationMode.EDIT ? true :
                 (extantConversations.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).Count() == 0);
             var IAmTheAuthor = (details.Author == Globals.me);
+            string ErrorText = "";
+            if (!thisIsAValidTitle) { ErrorText += "Invalid conversation title.  "; }
+            if (!thisTitleIsNotTaken) { ErrorText += "Conversation title already used.  "; }
+            if (!IAmTheAuthor) { ErrorText += "You do not have permission to edit this conversation.  "; }
+            errorText.Content = ErrorText;
             return thisIsAValidTitle && thisTitleIsNotTaken && IAmTheAuthor;
         }
         private void selectChoice(object sender, RoutedEventArgs e)
@@ -161,12 +166,13 @@ namespace SandRibbon.Components
                     {
                         try
                         {
-                            Commands.UploadPowerpoint.Execute(new PowerpointSpec {
-                                File=importFile,
-                                Details=details,
-                                Type=importType,
-                                Magnification= importType == (PowerPointLoader.PowerpointImportType)Enum.Parse(typeof(PowerPointLoader.PowerpointImportType),"HighDefImage") ? magnification : 1
-                        });
+                            Commands.UploadPowerpoint.Execute(new PowerpointSpec
+                            {
+                                File = importFile,
+                                Details = details,
+                                Type = importType,
+                                Magnification = importType == (PowerPointLoader.PowerpointImportType)Enum.Parse(typeof(PowerPointLoader.PowerpointImportType), "HighDefImage") ? magnification : 1
+                            });
                         }
                         catch (Exception e)
                         {
@@ -255,14 +261,14 @@ namespace SandRibbon.Components
                         break;
                     case ConversationConfigurationMode.EDIT:
                         if (checkConversation(details))
-                            canExecute = true; 
-                            break;
+                            canExecute = true;
+                        break;
                     case ConversationConfigurationMode.CREATE:
                         if (checkConversation(details))
-                            canExecute = true; 
-                            break;
+                            canExecute = true;
+                        break;
                     default:
-                            break;
+                        break;
                 }
             }
             e.CanExecute = canExecute;
