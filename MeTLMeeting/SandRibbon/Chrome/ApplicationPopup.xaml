@@ -3,11 +3,15 @@
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     OptionsText="Resume" ExitText="Quit MeTL">
     <sr:ApplicationPopup.RecentDocumentsControl>
         <StackPanel Width="350">
-            <TextBlock Text="Recent conversations" />
+            <Grid>
+                <quiz:GoldPlaque/>
+                <TextBlock Margin="20,4,4,4" FontSize="14" FontFamily="Verdana" FontWeight="Bold" Text="Recent conversations" />
+            </Grid>
             <components:SimpleConversationSelector x:Name="recentDocuments" />
         </StackPanel>
     </sr:ApplicationPopup.RecentDocumentsControl>
@@ -17,10 +21,10 @@
     <!--<sr:MenuItem Text="Print conversation" ToolTip="{StaticResource PrintHandoutToolTip}" Command="{x:Static api:Commands.PreShowPrintConversationDialog}" />-->
     <sr:MenuItem Text="Help" ToolTip="{StaticResource HelpToolTip}" >
         <sr:RibbonPopup>
-            <MenuItem ToolTip="{StaticResource AboutToolTip}" FontSize="12" Width="Auto" Height="Auto" Header="About Monash MeTL" Click="OpenAboutMeTLBrowser" />
-            <MenuItem ToolTip="{StaticResource ReportBugToolTip}" FontSize="12" Width="Auto" Height="Auto" Header="Report Bug" Click="OpenReportBugBrowser" />
-            <MenuItem ToolTip="{StaticResource EULAToolTip}" FontSize="12" Header="Usage Conditions" Click="OpenEULABrowser" />
-            <MenuItem ToolTip="{StaticResource TutorialToolTip}"  FontSize="12" Click="OpenTutorialBrowser" Header="Tutorial"/>
+            <MenuItem ToolTip="{StaticResource ReportBugToolTip}" FontSize="12" Width="Auto" Height="Auto" Header="Report a Bug" Click="OpenReportBugBrowser" />
+            <MenuItem ToolTip="{StaticResource EULAToolTip}" FontSize="12" Header="Terms and Conditions" Click="OpenEULABrowser" />
+            <MenuItem ToolTip="{StaticResource TutorialToolTip}"  FontSize="12" Click="OpenTutorialBrowser" Header="Online Help"/>
+            <MenuItem ToolTip="{StaticResource AboutToolTip}" FontSize="12" Width="Auto" Height="Auto" Header="Information about Monash MeTL" Click="OpenAboutMeTLBrowser" />
         </sr:RibbonPopup>
     </sr:MenuItem>
     <sr:MenuItem Text="Logout" Command="{x:Static api:Commands.LogOut}"/>

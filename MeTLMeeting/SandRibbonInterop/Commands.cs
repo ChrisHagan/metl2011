@@ -94,6 +94,8 @@ namespace SandRibbon
         public static CompositeCommand ReceiveQuizAnswer = new CompositeCommand();
         public static CompositeCommand QuizResultsAvailableForSnapshot = new CompositeCommand();
         public static CompositeCommand QuizResultsSnapshotAvailable = new CompositeCommand();
+        public static CompositeCommand PlaceQuizSnapshot = new CompositeCommand();
+
         #endregion
         #region InkCanvas
         public static CompositeCommand SetInkCanvasMode = new CompositeCommand();
@@ -163,6 +165,7 @@ namespace SandRibbon
         public static CompositeCommand FontSizeChanged = new CompositeCommand();
         public static CompositeCommand NewTextCursorPosition = new CompositeCommand();
         public static CompositeCommand InitiateGrabZoom = new CompositeCommand();
+        public static CompositeCommand EndGrabZoom = new CompositeCommand();
         public static CompositeCommand MoveCanvasByDelta = new CompositeCommand();
         public static CompositeCommand FitToView = new CompositeCommand();
         public static CompositeCommand FitToPageWidth= new CompositeCommand();
@@ -220,6 +223,8 @@ namespace SandRibbon
         public static CompositeCommand PowerPointProgress = new CompositeCommand();
         public static CompositeCommand AllContentSent = new CompositeCommand();
         public static CompositeCommand AllContentRetrieved = new CompositeCommand();
+        public static CompositeCommand BlockInput = new CompositeCommand();
+        public static CompositeCommand UnblockInput = new CompositeCommand();
         public static CompositeCommand CanEdit = new CompositeCommand();
         public static CompositeCommand PreShowPrintConversationDialog = new CompositeCommand();
         public static CompositeCommand ShowPrintConversationDialog = new CompositeCommand();

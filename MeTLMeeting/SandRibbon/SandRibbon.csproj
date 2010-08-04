@@ -250,6 +250,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Tabs\Groups\PrivacyTools.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Tabs\Groups\EditingOptions.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -524,6 +528,9 @@
     </Compile>
     <Compile Include="Quizzing\QuizButton.xaml.cs">
       <DependentUpon>QuizButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Groups\PrivacyTools.xaml.cs">
+      <DependentUpon>PrivacyTools.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Groups\EditingOptions.xaml.cs">
       <DependentUpon>EditingOptions.xaml</DependentUpon>

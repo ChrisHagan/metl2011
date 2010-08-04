@@ -326,7 +326,7 @@ namespace SandRibbon.Tabs.Groups
             new DrawingAttributes{Color = Colors.Red, IsHighlighter = false, Height = 2,Width = 2},
             new DrawingAttributes{Color = Colors.Blue, IsHighlighter = false, Height = 2,Width = 2},
             new DrawingAttributes{Color = Colors.Green, IsHighlighter = false, Height = 3,Width = 3},
-            new DrawingAttributes{Color = Colors.Cyan, IsHighlighter = true, Height = 10,Width = 10},
+            new DrawingAttributes{Color = Colors.Cyan, IsHighlighter = true, Height = 25,Width = 25},
             new DrawingAttributes{Color = Colors.Yellow, IsHighlighter = true, Height = 25,Width = 25}
         };
         private DrawingAttributes[] usefulDrawingAttributes = new DrawingAttributes[] {

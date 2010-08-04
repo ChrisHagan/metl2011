@@ -16,6 +16,7 @@ namespace SandRibbon.Components
         public static readonly DependencyProperty PrivateProperty =
             DependencyProperty.Register("Private", typeof(string), typeof(PrivacyTools), new UIPropertyMetadata("public"));
         public static PrivacyEnablementChecker PrivacySetterIsEnabled = new PrivacyEnablementChecker();
+        
         public PrivacyTools()
         {
             InitializeComponent();
@@ -48,6 +49,10 @@ namespace SandRibbon.Components
         {
             Dispatcher.adoptAsync((Action) delegate
                                          {
+                                             if (p == "public")
+                                                 WorkPubliclyButton.IsChecked = true;
+                                             else
+                                                 WorkPubliclyButton.IsChecked = false;
                                              SetValue(PrivateProperty, p);
                                              Commands.RequerySuggested(Commands.SetPrivacy);
                                          });
@@ -55,6 +60,17 @@ namespace SandRibbon.Components
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
         {
             return new PrivacyToolsAutomationPeer(this);
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            var thisButton = ((CheckBox)sender);
+            if (thisButton.IsChecked == true)
+            {
+                Commands.SetPrivacy.Execute("public");
+            }
+            else
+                Commands.SetPrivacy.Execute("private");
         }
     }
     class PrivacyToolsAutomationPeer : FrameworkElementAutomationPeer, IValueProvider

@@ -93,7 +93,7 @@
                             </ItemsControl>
                         </Grid>
                         <StackPanel Grid.Column="1">
-                            <Label x:Name="recommendedConversationsLabel" Cursor="Hand" PreviewMouseUp="recommendedConversations_PreviewMouseDown">[+] Recommended conversations</Label>
+                            <Label x:Name="recommendedConversationsLabel" Cursor="Hand" PreviewMouseUp="recommendedConversations_PreviewMouseDown">[+] Browse conversations</Label>
                             <StackPanel x:Name="recommendedConversations" Visibility="Collapsed" Margin="20,0,0,0">
                                 <StackPanel Orientation="Horizontal" Cursor="Hand" PreviewMouseUp="allConversations_PreviewMouseDown">
                                     <Label x:Name="allConversationsLabel" >[+] All Conversations</Label>

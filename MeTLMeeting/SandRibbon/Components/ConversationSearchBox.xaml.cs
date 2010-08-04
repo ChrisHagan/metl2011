@@ -385,12 +385,12 @@ namespace SandRibbon.Components
                 updateMyRecommendedConversationsSource();
                 updateCurrentlyTeachingConversations();
                 recommendedConversations.Visibility = Visibility.Visible;
-                recommendedConversationsLabel.Content = "[-] Recommended conversations";
+                recommendedConversationsLabel.Content = "[-] Browse conversations";
             }
             else
             {
                 recommendedConversations.Visibility = Visibility.Collapsed;
-                recommendedConversationsLabel.Content = "[+] Recommended conversations";
+                recommendedConversationsLabel.Content = "[+] Browse conversations";
             }
         }
         private void allConversations_PreviewMouseDown(object sender, MouseEventArgs e)

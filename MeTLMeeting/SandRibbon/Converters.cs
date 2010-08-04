@@ -18,6 +18,9 @@ namespace SandRibbon
 {
     public class Converters
     {
+        public static privacyToBoolConverter privacyToBoolConverter = new privacyToBoolConverter();
+        public static availablePenTitleConverter availablePenTitleConverter = new availablePenTitleConverter();
+        public static availablePenDropDownConverter availablePenDropDownConverter = new availablePenDropDownConverter();
         public static reverseQuizzesToVisibilityConverter reverseQuizzesToVisibilityConverter = new reverseQuizzesToVisibilityConverter();
         public static milisecondsToTimeConverter milisecondsToTimeConverter = new milisecondsToTimeConverter();
         public static videoMediaElementToMediaElementConverter videoMediaElementToMediaElementConverter = new videoMediaElementToMediaElementConverter();
@@ -47,6 +50,22 @@ namespace SandRibbon
         public static BoolToVisibilityConverter BoolToVisibilityConverter = new BoolToVisibilityConverter();
         public static ImageSourceExtractor ImageSourceExtractor = new ImageSourceExtractor();
     }
+    public class privacyToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (String.IsNullOrEmpty(value.ToString())) return false;
+            if (value.ToString() == "public") return true;
+            else return false;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool && (bool)value)
+                return "public";
+            return "private";
+        }
+    }
+
     public class ImageSourceExtractor : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -59,6 +78,38 @@ namespace SandRibbon
             return value;
         }
     }
+
+    public class availablePenTitleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool && (bool)value)
+            {
+                return "Use this highlighter";
+            }
+            return "Use this pen";
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class availablePenDropDownConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool && (bool)value)
+            {
+                    return "Modify this highlighter";
+            }
+            return "Modify this pen";
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
     public class reverseQuizzesToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

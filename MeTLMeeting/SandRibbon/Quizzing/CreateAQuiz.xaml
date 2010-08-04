@@ -8,6 +8,7 @@
     ShowInTaskbar="False"
     x:Name="createAQuiz"
     WindowStartupLocation="CenterOwner"
+        Closing="createAQuiz_Closing"
     SizeToContent="WidthAndHeight">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static SandRibbon:Commands.CreateQuizStructure}" Executed="CreateQuizQuestion" CanExecute="canCreateQuizQuestion"/>
@@ -41,7 +42,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled">
-                                    <TextBox MaxHeight="300" MinWidth="100" Width="300" x:Name="question" AcceptsReturn="True"></TextBox>
+                                    <TextBox MaxHeight="300" MinWidth="100" Width="300" x:Name="question" AcceptsReturn="True" TextWrapping="WrapWithOverflow"></TextBox>
                                 </ScrollViewer>
                                 <Grid Grid.Column="1" x:Name="questionSnapshotContainer"/>
                             </Grid>

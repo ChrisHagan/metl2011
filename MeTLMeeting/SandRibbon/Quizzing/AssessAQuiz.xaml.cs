@@ -60,6 +60,7 @@ namespace SandRibbon.Quizzing
             bitmap.Render(dv);
             TimestampLabel.Text = "";
             Commands.QuizResultsAvailableForSnapshot.Execute(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+            this.Close();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

@@ -20,6 +20,5 @@
         <groups:ToolBox x:Name="toolBox"/>
         <groups:PenColors x:Name="penColors"/>
         <groups:TextTools x:Name="textTools"/>
-        <components:PrivacyTools x:Name="ribbonPrivacyTools" Visibility="Collapsed"/>   
     </StackPanel >
 </sr:RibbonGroup>           
