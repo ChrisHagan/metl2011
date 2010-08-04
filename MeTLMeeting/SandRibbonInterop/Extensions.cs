@@ -28,6 +28,7 @@ namespace SandRibbonInterop
         public string privacy;
         public double startingSum;
         public string startingColor;
+        public bool isHighlighter;
     }
     public struct StrokeChecksum
     {
@@ -103,6 +104,7 @@ namespace SandRibbonInterop
         private static Guid STROKE_PRIVACY_GUID = Guid.NewGuid();
         private static Guid STARTINGCHECKSUM = Guid.NewGuid();
         private static Guid STARTING_COLOR = Guid.NewGuid();
+        private static Guid IS_HIGHLIGHTER = Guid.NewGuid();
 
         public static StrokeTag tag(this Stroke stroke)
         {
@@ -110,7 +112,8 @@ namespace SandRibbonInterop
                        {
                            author = (string) stroke.GetPropertyData(STROKE_TAG_GUID),
                            privacy = (string) stroke.GetPropertyData(STROKE_PRIVACY_GUID),
-                           startingColor = (string) stroke.GetPropertyData(STARTING_COLOR)
+                           startingColor = (string) stroke.GetPropertyData(STARTING_COLOR),
+                           isHighlighter = (bool) stroke.GetPropertyData(IS_HIGHLIGHTER)
                        };
         }
         public static StrokeTag tag(this Stroke stroke, StrokeTag tag)
@@ -118,6 +121,7 @@ namespace SandRibbonInterop
             stroke.AddPropertyData(STROKE_TAG_GUID, tag.author);
             stroke.AddPropertyData(STROKE_PRIVACY_GUID, tag.privacy);
             stroke.AddPropertyData(STARTING_COLOR, tag.startingColor.ToString());
+            stroke.AddPropertyData(IS_HIGHLIGHTER, tag.isHighlighter);
             return tag;
         }
         private static Guid CHECKSUM = Guid.NewGuid();

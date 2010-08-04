@@ -278,8 +278,8 @@ namespace SandRibbon.Components.Canvas
                 {
                     if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
                     {
-                        Strokes.Remove(stroke);
                         removeStrokeFromPrivacyDictionary(stroke);
+                        Strokes.Remove(stroke);
                         strokes.Remove(stroke.sum());
                         doMyStrokeRemoved(stroke);
                     }
@@ -361,7 +361,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (!strokes.Contains(stroke.sum()))
                 strokes.Add(stroke.sum());
-            stroke.tag(new StrokeTag { author = Globals.me, privacy = thisPrivacy, startingColor = stroke.DrawingAttributes.Color.ToString() });
+            stroke.tag(new StrokeTag { author = Globals.me, privacy = thisPrivacy, startingColor = stroke.DrawingAttributes.Color.ToString(), isHighlighter = stroke.DrawingAttributes.IsHighlighter });
             SendTargettedStroke(stroke, thisPrivacy);
             ApplyPrivacyStylingToStroke(stroke, thisPrivacy);
         }
@@ -446,11 +446,19 @@ namespace SandRibbon.Components.Canvas
                 {
                     var stroke = presentDirtyStrokes[i];
                     strokes.Remove(stroke.sum());
-                    Strokes.Remove(stroke);
                     removeStrokeFromPrivacyDictionary(stroke);
+                    Strokes.Remove(stroke);
 
                 }
             });
+        }
+       private Dictionary<double, Stroke> privacyDictionary = new Dictionary<double, Stroke>();
+        private void ApplyPrivacyStylingToStroke(Stroke stroke, string privacy)
+        {
+            if (privacy == "private")
+                addPrivacyStylingToStroke(stroke);
+            else
+                RemovePrivacyStylingFromStroke(stroke);
         }
         private void RemovePrivacyStylingFromStroke(Stroke stroke)
         {
@@ -461,6 +469,8 @@ namespace SandRibbon.Components.Canvas
 
                     stroke.DrawingAttributes.Color = (Color) ColorConverter.ConvertFromString(stroke.tag().startingColor);
                     if(privacyDictionary.Keys.Where(k => k == stroke.sum().checksum).Count() == 0) return;
+                    stroke.DrawingAttributes.IsHighlighter =
+                        privacyDictionary[stroke.sum().checksum].tag().isHighlighter;
                     Strokes.Remove(privacyDictionary[stroke.sum().checksum]);
                     privacyDictionary.Remove(stroke.sum().checksum);
                 }
@@ -468,19 +478,11 @@ namespace SandRibbon.Components.Canvas
             catch (Exception e)
             { }
         }
-        private Dictionary<double, Stroke> privacyDictionary = new Dictionary<double, Stroke>();
-        private void ApplyPrivacyStylingToStroke(Stroke stroke, string privacy)
-        {
-            if (privacy == "private")
-                addPrivacyStylingToStroke(stroke);
-            else
-                RemovePrivacyStylingFromStroke(stroke);
-        }
         private void addPrivacyStylingToStroke(Stroke stroke)
         {
             if(privacyDictionary.Keys.Where(k => k == stroke.sum().checksum).Count() != 0) return;
             var privacyStroke = new Stroke(stroke.StylusPoints);
-            privacyStroke.tag(new StrokeTag { author = "Privacy", privacy = "private", startingColor = stroke.DrawingAttributes.Color.ToString() });
+            privacyStroke.tag(new StrokeTag { author = "Privacy", privacy = "private", startingColor = stroke.DrawingAttributes.Color.ToString(), isHighlighter = stroke.DrawingAttributes.IsHighlighter});
             privacyStroke.DrawingAttributes = new DrawingAttributes
                                                   {
                                                       Color = (Color) ColorConverter.ConvertFromString(stroke.tag().startingColor),
@@ -489,6 +491,7 @@ namespace SandRibbon.Components.Canvas
                                                       IsHighlighter = true
                                                   };
             stroke.DrawingAttributes.Color = Colors.White;
+            stroke.DrawingAttributes.IsHighlighter = false;
             privacyStroke.startingSum(privacyStroke.sum().checksum);
             privacyDictionary[stroke.sum().checksum] = (privacyStroke);
             Strokes.Add(privacyStroke);
