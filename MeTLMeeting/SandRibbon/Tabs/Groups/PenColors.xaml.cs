@@ -518,6 +518,16 @@ namespace SandRibbon.Tabs.Groups
             defaultColours.Items.Refresh();
             InvokeAlteredPreset(PresetToUpdate);
         }
+        private void SizeUp(object sender, MouseButtonEventArgs e)
+        {
+            var CurrentPreset = Int32.Parse(ColourSettingPopup.Tag.ToString());
+            InvokeAlteredPreset(CurrentPreset);
+        }
+        private void ColourUp(object sender, MouseButtonEventArgs e)
+        {
+            var CurrentPreset = Int32.Parse(ColourSettingPopup.Tag.ToString());
+            InvokeAlteredPreset(CurrentPreset);
+        }
 
         public class DrawingAttributesEntry
         {

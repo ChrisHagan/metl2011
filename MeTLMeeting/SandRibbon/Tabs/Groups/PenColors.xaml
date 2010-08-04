@@ -115,7 +115,8 @@
                         </ListBox.ItemsPanel>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                <Grid PreviewMouseUp="ColourUp"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                         Width="Auto" Height="Auto" Background="Transparent">
                                     <Rectangle Fill="{Binding}" Margin="3" IsHitTestVisible="False"/>
                                 </Grid>
@@ -133,7 +134,7 @@
                         </ListBox.ItemsPanel>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid 
+                                <Grid PreviewMouseUp="SizeUp"
                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                         Width="Auto" Height="Auto" Background="Transparent">
                                     <Rectangle Margin="2"
