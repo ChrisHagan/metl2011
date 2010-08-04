@@ -124,19 +124,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>DzJhN44vdN9c1nPQGfq02Hbp70I=</dsig:DigestValue>
+        <dsig:DigestValue>xUIMXf2QzrQVodZ3NSpOh5kYW1k=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL.exe" size="2549760">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MeTL.exe" size="2550272">
       <assemblyIdentity name="MeTL" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>YIF44MaE78XkmB9Nlpl2IYY462A=</dsig:DigestValue>
+        <dsig:DigestValue>YBE10yPs8S723RGwmFCLxLV3rK0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

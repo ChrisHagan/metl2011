@@ -125,6 +125,8 @@ namespace SandRibbon.Utils
                     xSlide.Add(new XElement("shape",
                     new XAttribute("x", 0),
                     new XAttribute("y", 0),
+                    new XAttribute("height",backgroundHeight),
+                    new XAttribute("width", backgroundWidth),
                     new XAttribute("privacy", "public"),
                     new XAttribute("snapshot", slidePath)));
                     xml.Add(xSlide);
@@ -444,8 +446,8 @@ namespace SandRibbon.Utils
         {
             var shape = (Microsoft.Office.Interop.PowerPoint.Shape)shapeObj;
             var file = currentWorkingDirectory + "\\background" + (++resource).ToString() + ".jpg";
-            var x = shape.Left * Magnification;
-            var y = shape.Top * Magnification;
+            var x = shape.Left;
+            var y = shape.Top;
             string tags;
             if (shape.Type == MsoShapeType.msoInkComment)
                 tags = shape.Tags.ToString();
@@ -499,6 +501,8 @@ namespace SandRibbon.Utils
                         xSlide.Add(new XElement("shape",
                             new XAttribute("x", x * Magnification),
                             new XAttribute("y", y * Magnification),
+                            new XAttribute("height", shape.Height * Magnification),
+                            new XAttribute("width", shape.Width * Magnification),
                             new XAttribute("privacy", "public"),
                             new XAttribute("snapshot", file)));
                     }
@@ -515,6 +519,8 @@ namespace SandRibbon.Utils
                         xSlide.Add(new XElement("shape",
                             new XAttribute("x", x * Magnification),
                             new XAttribute("y", y * Magnification),
+                            new XAttribute("height", shape.Height * Magnification),
+                            new XAttribute("width", shape.Width * Magnification),
                             new XAttribute("privacy", "public"),
                             new XAttribute("snapshot", file)));
                     }

@@ -683,37 +683,16 @@ namespace SandRibbon.Components.Canvas
         {
             if (target == "presentationSpace" && canEdit && me != "projector")
             {
-                //I bet this next bit is really bad form, but apparently these calls don't always work on different operating systems etcetera.
                 string initialDirectory = "c:\\";
-                try
-                {
-                    initialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-                }
-                catch (Exception ex)
-                {
+                foreach (var path in new[] { Environment.SpecialFolder.MyPictures,Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })
                     try
                     {
-                        initialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                        initialDirectory = Environment.GetFolderPath(path);
+                        break;
                     }
-                    catch (Exception ex1)
+                    catch (Exception)
                     {
-                        try
-                        {
-                            initialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                        }
-                        catch (Exception ex2)
-                        {
-                            try
-                            {
-                                initialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
-                            }
-                            catch (Exception ex3)
-                            {
-                            }
-                        }
                     }
-                }
-
                 var fileBrowser = new OpenFileDialog
                                              {
                                                  InitialDirectory = initialDirectory,

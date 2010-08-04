@@ -110,9 +110,20 @@ namespace SandRibbon.Components
         }
         private void BrowseFiles(object sender, RoutedEventArgs e)
         {
+
+            string initialDirectory = "c:\\";
+            foreach (var path in new[] { Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })
+                try
+                {
+                    initialDirectory = Environment.GetFolderPath(path);
+                    break;
+                }
+                catch (Exception)
+                {
+                }
             var fileBrowser = new OpenFileDialog
             {
-                InitialDirectory = "c:\\",
+                InitialDirectory = initialDirectory,
                 Filter = "PowerPoint files (*.ppt, *.pptx)|*.ppt; *.pptx|All files (*.*)|*.*",
                 FilterIndex = 0,
                 RestoreDirectory = true,
@@ -133,6 +144,15 @@ namespace SandRibbon.Components
         private void UpdateImportFile(object sender, TextChangedEventArgs e)
         {
             importFile = ((TextBox)sender).Text;
+            string importFileName = importFile.Split(new char[] { '\\' }).LastOrDefault();
+            if (conversationNameTextBox != null && conversationNameTextBox.Text == "Please enter title here")
+            {
+                if (importFileName.EndsWith(".ppt"))
+                    importFileName = importFileName.Substring(0, importFileName.Length - 4);
+                else if (importFileName.EndsWith(".pptx"))
+                    importFileName = importFileName.Substring(0, importFileName.Length - 5);
+                conversationNameTextBox.Text = importFileName;
+            }
         }
         private void UpdateConversationTitle(object sender, TextChangedEventArgs e)
         {
@@ -141,7 +161,7 @@ namespace SandRibbon.Components
         }
         private bool checkConversation(ConversationDetails proposedDetails)
         {
-            if (proposedDetails == null) {return false;}
+            if (proposedDetails == null) { return false; }
             if (extantConversations == null) { return false; }
             proposedDetails.Title = proposedDetails.Title.Trim();
             var currentDetails = details;

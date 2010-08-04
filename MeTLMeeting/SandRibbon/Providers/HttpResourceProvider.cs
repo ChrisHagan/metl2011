@@ -41,6 +41,7 @@ namespace SandRibbon.Providers
         }
         private static bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
+            if (cert == null) return false;
             if ((cert.Subject == MonashCertificateSubject && cert.Issuer == MonashCertificateIssuer)
                 || (cert.Subject == StagingMeTLCertificateSubject && cert.Issuer == StagingMeTLCertificateIssuer)
                 || (cert.Subject == ReifierMeTLCertificateSubject && cert.Issuer == ReifierMeTLCertificateIssuer)
