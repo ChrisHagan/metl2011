@@ -79,6 +79,7 @@ namespace SandRibbon.Components.Canvas
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             DragOver += ImageDragOver;
             Drop += ImagesDrop;
+            PreviewKeyDown += AbstractCanvas_KeyDown;
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) =>
                 HandlePaste()));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (sender, args) =>
@@ -99,6 +100,12 @@ namespace SandRibbon.Components.Canvas
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(ClearSelectionOnLayerChanged));
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<object>(ItemsPrivacyChange));
+        }
+
+        void AbstractCanvas_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+                ClearAdorners();
         }
 
         private void ItemsPrivacyChange(object obj)

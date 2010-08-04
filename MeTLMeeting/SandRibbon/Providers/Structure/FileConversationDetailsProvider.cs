@@ -109,7 +109,9 @@ namespace SandRibbon.Providers.Structure
                 {
                     author = details.Author,
                     id = slideId,
-                    index = details.Slides.Count
+                    index = details.Slides.Count,
+                    defaultHeight = 540,
+                    defaultWidth = 720
                 });
                 Update(details);
                 return details;
