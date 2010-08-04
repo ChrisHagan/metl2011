@@ -49,6 +49,7 @@ namespace SandRibbon.Components.Canvas
             };
             PreviewKeyDown += keyPressed;
             SelectionMoving += dirtyText;
+            SelectionChanged += selectionChanged;
             SelectionChanging += selectingText;
             SelectionResizing += dirtyText;
             SelectionResized += SendTextBoxes;
@@ -75,7 +76,27 @@ namespace SandRibbon.Components.Canvas
             Commands.SetLayer.RegisterCommand(new DelegateCommand<String>(setupText));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
+            Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
         }
+
+        private void deleteSelectedItems(object obj)
+        {
+            foreach (TextBox box in GetSelectedElements())
+            {
+                UndoHistory.Queue(() =>
+                {
+                    sendTextWithoutHistory(box, box.tag().privacy);
+                },
+                () =>
+                {
+                    doDirtyText(box);
+                });
+                dirtyTextBoxWithoutHistory(box);
+            }
+            ClearAdorners();
+        }
+
+
         private void MoveTo(int _slide)
         {
             myTextBox = null;
@@ -170,6 +191,27 @@ namespace SandRibbon.Components.Canvas
                 colorChanged.RaiseCanExecuteChanged();
                 reset.RaiseCanExecuteChanged();
             }
+        }
+
+        private void selectionChanged(object sender, EventArgs e)
+        {
+            var selectedElements = GetSelectedElements();
+            if (selectedElements.Count == 0)
+            {
+                ClearAdorners();
+                return;
+            }
+            var publicElements = selectedElements.Where(t => ((TextBox) t).tag().privacy.ToLower() == "public").ToList();
+            string privacyChoice;
+            if (publicElements.Count == 0)
+                privacyChoice = "show";
+            else if (publicElements.Count == selectedElements.Count)
+                privacyChoice = "hide";
+            else
+                privacyChoice = "both";
+            var adorner = GetAdorner();
+            AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
+
         }
         private void selectingText(object sender, InkCanvasSelectionChangingEventArgs e)
         {

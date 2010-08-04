@@ -82,6 +82,7 @@ namespace SandRibbon
         public static CompositeCommand SendDirtyLiveWindow = new CompositeCommand();
         public static CompositeCommand ReceiveLiveWindow = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyLiveWindow = new CompositeCommand();
+        public static CompositeCommand DeleteSelectedItems = new CompositeCommand();
         public static CompositeCommand Relogin = new CompositeCommand();
         public static CompositeCommand HideInputBlocker = new CompositeCommand();
         #region Quizzing

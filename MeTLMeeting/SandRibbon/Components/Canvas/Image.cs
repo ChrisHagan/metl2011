@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -16,6 +17,7 @@ using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
@@ -46,6 +48,7 @@ namespace SandRibbon.Components.Canvas
             SelectionMoved += transmitImageAltered;
             SelectionMoving += dirtyImage;
             SelectionChanging += selectingImages;
+            SelectionChanged += selectionChanged;
             SelectionResizing += dirtyImage;
             SelectionResized += transmitImageAltered;
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<IEnumerable<TargettedImage>>(ReceiveImages));
@@ -72,7 +75,16 @@ namespace SandRibbon.Components.Canvas
             }));
             Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyLiveWindow));
             Commands.DugPublicSpace.RegisterCommand(new DelegateCommand<LiveWindowSetup>(DugPublicSpace));
+            Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedImages));
         }
+
+        private void deleteSelectedImages(object obj)
+        {
+            deleteImages();
+            ClearAdorners();
+        }
+
+
         private void ReceiveDirtyLiveWindow(TargettedDirtyElement dirtyElement)
         {
             if (target != dirtyElement.target) return;
@@ -87,15 +99,21 @@ namespace SandRibbon.Components.Canvas
         {
             if (e.Key == Key.Delete)
             {
-                var numberOfImages = GetSelectedElements().Count;
-                for (var i = 0; i < numberOfImages; i++)
+                deleteImages();
+            }
+        }
+
+        private void deleteImages()
+        {
+            var numberOfImages = GetSelectedElements().Count;
+            for (var i = 0; i < numberOfImages; i++)
+            {
+                if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "System.Windows.Controls.Image")
                 {
-                    if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "System.Windows.Controls.Image")
-                    {
-                        var image = (System.Windows.Controls.Image)GetSelectedElements().ElementAt(i);
-                        if (image.tag().privacy == "private") removePrivateRegion(image);
-                        UndoHistory.Queue(
-                            () =>
+                    var image = (System.Windows.Controls.Image)GetSelectedElements().ElementAt(i);
+                    if (image.tag().privacy == "private") removePrivateRegion(image);
+                    UndoHistory.Queue(
+                        () =>
                             {
                                 AddImage(image);
                                 Commands.SendImage.Execute(new TargettedImage
@@ -107,7 +125,7 @@ namespace SandRibbon.Components.Canvas
                                                                    image = image
                                                                });
                             },
-                            () =>
+                        () =>
                             {
                                 Children.Remove(image);
                                 Commands.SendDirtyImage.Execute(new TargettedDirtyElement
@@ -120,7 +138,7 @@ namespace SandRibbon.Components.Canvas
                                                                     });
                             });
 
-                        Commands.SendDirtyImage.Execute(new TargettedDirtyElement
+                    Commands.SendDirtyImage.Execute(new TargettedDirtyElement
                                                         {
                                                             identifier = image.tag().id,
                                                             target = target,
@@ -128,46 +146,46 @@ namespace SandRibbon.Components.Canvas
                                                             author = Globals.me,
                                                             slide = currentSlide
                                                         });
-                    }
-                    if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "SandRibbonInterop.AutoShape")
-                    {
-                        var autoshape = (SandRibbonInterop.AutoShape)GetSelectedElements().ElementAt(i);
-                        Commands.SendDirtyAutoShape.Execute(new TargettedDirtyElement
-                        {
-                            identifier = autoshape.Tag.ToString(),
-                            target = target,
-                            privacy = privacy,
-                            author = Globals.me,
-                            slide = currentSlide
-                        });
-                    }
-                    if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "SandRibbonInterop.Video")
-                    {
-                        var video = (SandRibbonInterop.Video)GetSelectedElements().ElementAt(i);
-                        Commands.SendDirtyVideo.Execute(new TargettedDirtyElement
-                        {
-                            identifier = video.Tag.ToString(),
-                            target = target,
-                            privacy = privacy,
-                            author = Globals.me,
-                            slide = currentSlide
-                        });
-                    }
-                    if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "SandRibbonInterop.RenderedLiveWindow")
-                    {
-                        var liveWindow = (SandRibbonInterop.RenderedLiveWindow)GetSelectedElements().ElementAt(i);
-                        Commands.SendDirtyLiveWindow.Execute(new TargettedDirtyElement
-                        {
-                            identifier = ((Rectangle)((RenderedLiveWindow)liveWindow).Rectangle).Tag.ToString(),
-                            target = target,
-                            privacy = privacy,
-                            author = Globals.me,
-                            slide = currentSlide
-                        });
-                    }
+                }
+                if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "SandRibbonInterop.AutoShape")
+                {
+                    var autoshape = (SandRibbonInterop.AutoShape)GetSelectedElements().ElementAt(i);
+                    Commands.SendDirtyAutoShape.Execute(new TargettedDirtyElement
+                                                            {
+                                                                identifier = autoshape.Tag.ToString(),
+                                                                target = target,
+                                                                privacy = privacy,
+                                                                author = Globals.me,
+                                                                slide = currentSlide
+                                                            });
+                }
+                if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "SandRibbonInterop.Video")
+                {
+                    var video = (SandRibbonInterop.Video)GetSelectedElements().ElementAt(i);
+                    Commands.SendDirtyVideo.Execute(new TargettedDirtyElement
+                                                        {
+                                                            identifier = video.Tag.ToString(),
+                                                            target = target,
+                                                            privacy = privacy,
+                                                            author = Globals.me,
+                                                            slide = currentSlide
+                                                        });
+                }
+                if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "SandRibbonInterop.RenderedLiveWindow")
+                {
+                    var liveWindow = (SandRibbonInterop.RenderedLiveWindow)GetSelectedElements().ElementAt(i);
+                    Commands.SendDirtyLiveWindow.Execute(new TargettedDirtyElement
+                                                             {
+                                                                 identifier = ((Rectangle)((RenderedLiveWindow)liveWindow).Rectangle).Tag.ToString(),
+                                                                 target = target,
+                                                                 privacy = privacy,
+                                                                 author = Globals.me,
+                                                                 slide = currentSlide
+                                                             });
                 }
             }
         }
+
         protected override void CanEditChanged()
         {
             canEdit = base.canEdit;
@@ -447,6 +465,35 @@ namespace SandRibbon.Components.Canvas
                 }
             }
             return myImages;
+        }
+        private void selectionChanged(object sender, EventArgs e)
+        {
+            var selectedElements = GetSelectedElements();
+            if (selectedElements.Count == 0)
+            {
+                ClearAdorners();
+                return;
+            }
+            var publicElements = new List<UIElement>();
+            foreach(UIElement image in selectedElements)
+            {
+                if (image.GetType().ToString() == "System.Windows.Controls.Image")
+                {
+                    var imageInfo = JsonConvert.DeserializeObject<ImageInformation>(((System.Windows.Controls.Image)image).Tag.ToString());
+                    if (!imageInfo.isPrivate )
+                        publicElements.Add(image); 
+                }
+            }
+            string privacyChoice;
+            if (publicElements.Count == 0)
+                privacyChoice = "show";
+            else if (publicElements.Count == selectedElements.Count)
+                privacyChoice = "hide";
+            else
+                privacyChoice = "both";
+            var adorner = GetAdorner();
+            AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
+
         }
         private void transmitImageAltered(object sender, EventArgs e)
         {

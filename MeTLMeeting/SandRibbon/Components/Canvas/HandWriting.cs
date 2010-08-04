@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Input.StylusPlugIns;
 using System.Windows.Media;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbonInterop;
@@ -97,17 +98,20 @@ namespace SandRibbon.Components.Canvas
             Commands.SetPenColor.RegisterCommand(colorChangedCommand);
             Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
-            Commands.ReceiveStrokes.RegisterCommand(
-                new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
+            Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
+            Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
         }
-
+        private void deleteSelectedItems(object obj)
+        {
+            deleteSelectedStrokes(null, null);
+            ClearAdorners();
+        }
         private void MoveTo(object obj)
         {
             privacyDictionary = new Dictionary<double, Stroke>();
         }
-
         private void HandWriting_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             DefaultPenAttributes();
@@ -206,6 +210,25 @@ namespace SandRibbon.Components.Canvas
         #region eventHandlers
         private void selectionChanged(object sender, EventArgs e)
         {
+                Dispatcher.adoptAsync((Action)delegate
+                            {
+                                var selectedStrokes = GetSelectedStrokes();
+                                if(selectedStrokes.Count() == 0)
+                                {
+                                    ClearAdorners();
+                                    return;
+                                }
+                                var publicStrokes = selectedStrokes.Where(s => s.tag().privacy.ToLower() == "public").ToList();
+                                string privacyChoice;
+                                if (publicStrokes.Count == 0)
+                                    privacyChoice = "show";
+                                else if (publicStrokes.Count == selectedStrokes.Count)
+                                    privacyChoice = "hide";
+                                else
+                                    privacyChoice = "both";
+                                var adorner = GetAdorner();
+                                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
+                            });
         }
         public StrokeCollection GetSelectedStrokes()
         {

@@ -19,11 +19,40 @@ namespace SandRibbon.Components
     /// </summary>
     public partial class PrivacyToggleButton : UserControl
     {
-        public PrivacyToggleButton(Rect bounds)
+        public PrivacyToggleButton(string mode, Rect bounds)
         {
             InitializeComponent();
-            System.Windows.Controls.Canvas.SetLeft(privacyButton, bounds.Right);
-            System.Windows.Controls.Canvas.SetTop(privacyButton, bounds.Top);
+            System.Windows.Controls.Canvas.SetLeft(privacyButtons, bounds.Right);
+            System.Windows.Controls.Canvas.SetTop(privacyButtons, bounds.Top);
+            if (mode == "show")
+            {
+                showButton.Visibility = Visibility.Visible;
+                hideButton.Visibility = Visibility.Collapsed;
+            
+            }
+            else if(mode == "hide")
+            {
+                showButton.Visibility = Visibility.Collapsed;
+                hideButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                showButton.Visibility = Visibility.Visible;
+                hideButton.Visibility = Visibility.Visible;
+            }
+        }
+        private void showContent(object sender, RoutedEventArgs e)
+        {
+            Commands.SetPrivacyOfItems.Execute("public");
+        }
+        private void hideContent(object sender, RoutedEventArgs e)
+        {
+            Commands.SetPrivacyOfItems.Execute("private");
+        }
+
+        private void deleteContent(object sender, RoutedEventArgs e)
+        {
+            Commands.DeleteSelectedItems.Execute(null);
         }
     }
 }

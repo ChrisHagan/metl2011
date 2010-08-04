@@ -3,6 +3,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     >
     <Canvas>
-        <Button x:Name="privacyButton">Show</Button>
+        <StackPanel Margin="10, 0, 0, 0" x:Name="privacyButtons" Orientation="Vertical" Background="{StaticResource BackgroundBlueGradient}" >
+            <Button x:Name="deleteButton" Click="deleteContent">
+                <Label Content="Delete"/>
+            </Button>
+            <Button x:Name="hideButton" Click="hideContent">
+                <Label Content="Hide"/>
+            </Button>
+            <Button x:Name="showButton" Click="showContent">
+                <Label Content="Show"/>
+            </Button>
+        </StackPanel>
     </Canvas>
 </UserControl>

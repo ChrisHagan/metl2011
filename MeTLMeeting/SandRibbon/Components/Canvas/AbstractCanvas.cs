@@ -98,6 +98,25 @@ namespace SandRibbon.Components.Canvas
             });
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(ClearSelectionOnLayerChanged));
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
+            Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<object>(ItemsPrivacyChange));
+        }
+
+        private void ItemsPrivacyChange(object obj)
+        {
+            ClearAdorners();
+        }
+
+        protected void ClearAdorners()
+        {
+            Dispatcher.adoptAsync(delegate
+            {
+                var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                if (adornerLayer == null) return;
+                var adorners = adornerLayer.GetAdorners(this);
+                if (adorners != null)
+                    foreach (var adorner in adorners)
+                        adornerLayer.Remove(adorner);
+            });
         }
         private void ClearSelectionOnLayerChanged(object _unused)
         {
@@ -114,7 +133,7 @@ namespace SandRibbon.Components.Canvas
         public FrameworkElement GetAdorner()
         {
             var element = (FrameworkElement)this;
-            return (FrameworkElement)element.Parent;
+            return (FrameworkElement)element;
             while (element.Parent != null && !(element.Name == "adornerGrid"))
                 element = (FrameworkElement)element.Parent;
 
@@ -125,12 +144,7 @@ namespace SandRibbon.Components.Canvas
         }
         protected void AbstractCanvas_SelectionChanged(object sender, EventArgs e)
         {
-            /*
-                Dispatcher.adoptAsync((Action)delegate
-                            {
-                                var adorner = GetAdorner();
-                                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(GetSelectionBounds())));
-                            });*/
+
         }
         public abstract void showPrivateContent();
         public abstract void hidePrivateContent();
@@ -202,18 +216,7 @@ namespace SandRibbon.Components.Canvas
                 parent = LogicalTreeHelper.GetParent(parent);
             return (PresentationSpace)parent;
         }
-        protected void ClearAdorners()
-        {
-            Dispatcher.adoptAsync(delegate
-            {
-                var adornerLayer = AdornerLayer.GetAdornerLayer(this);
-                if (adornerLayer == null) return;
-                var adorners = adornerLayer.GetAdorners(this);
-                if (adorners != null)
-                    foreach (var adorner in adorners)
-                        adornerLayer.Remove(adorner);
-            });
-        }
+
         void ImageDragOver(object sender, DragEventArgs e)
         {
             e.Effects = DragDropEffects.None;
