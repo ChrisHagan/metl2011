@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -25,6 +25,11 @@ using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using System.Windows.Media.Effects;
+using Brushes=System.Windows.Media.Brushes;
+using Color=System.Windows.Media.Color;
+using Point=System.Windows.Point;
+using Rectangle=System.Windows.Shapes.Rectangle;
+using Size=System.Windows.Size;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -231,6 +236,31 @@ namespace SandRibbon.Components.Canvas
                 InkCanvas.SetLeft(element, element.X);
                 InkCanvas.SetTop(element, element.Y);
             }
+        }
+        protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
+        {
+            if(element.GetType() != typeof(System.Windows.Controls.Image)) return;
+            var uri = new Uri(((System.Windows.Controls.Image) element).Source.ToString(), UriKind.RelativeOrAbsolute);
+            var ms = new MemoryStream();
+            var encoder = new BmpBitmapEncoder();
+            encoder.Frames.Add((BitmapFrame.Create(uri)));
+            encoder.Save(ms);
+            var image = System.Drawing.Image.FromStream(ms);
+            var bmp = new Bitmap(image);
+            var color = bmp.GetPixel(0, 0);
+            Color privacyColor = new Color();
+            if (color.Name == Colors.White.ToString())
+                privacyColor = Colors.Black;
+            else
+            {
+                privacyColor.R = color.R;
+                privacyColor.G = color.G;
+                privacyColor.B = color.B;
+            }
+            if (privacy == "private")
+                element.Effect =new DropShadowEffect { BlurRadius = 50, Color = privacyColor, ShadowDepth = 0, Opacity = 1 };
+            else
+                element.Effect = null;
         }
         private void ensureAllImagesHaveCorrectPrivacy()
         {
@@ -474,16 +504,7 @@ namespace SandRibbon.Components.Canvas
                 ClearAdorners();
                 return;
             }
-            var publicElements = new List<UIElement>();
-            foreach(UIElement image in selectedElements)
-            {
-                if (image.GetType().ToString() == "System.Windows.Controls.Image")
-                {
-                    var imageInfo = JsonConvert.DeserializeObject<ImageInformation>(((System.Windows.Controls.Image)image).Tag.ToString());
-                    if (!imageInfo.isPrivate )
-                        publicElements.Add(image); 
-                }
-            }
+            var publicElements = selectedElements.Where(i => ((System.Windows.Controls.Image) i).tag().privacy.ToLower() == "public").ToList();  
             string privacyChoice;
             if (publicElements.Count == 0)
                 privacyChoice = "show";
