@@ -144,7 +144,10 @@ namespace SandRibbon.Components.Canvas
             if(element.GetType() != typeof(TextBox)) return;
             var box = (TextBox) element;
                 if (privacy == "private")
-                    element.Effect = new DropShadowEffect { BlurRadius = 50, Color = (Color) ColorConverter.ConvertFromString(box.Foreground.ToString()), ShadowDepth = 0, Opacity = 1 };
+                    element.Effect = new DropShadowEffect { BlurRadius = 50, 
+                        //Color = (Color) ColorConverter.ConvertFromString(box.Foreground.ToString()), 
+                        Color = Colors.Black,
+                        ShadowDepth = 0, Opacity = 1 };
                 else
                     element.Effect = null;
         }

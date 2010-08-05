@@ -108,7 +108,7 @@
                     <Label>Restricted to:</Label>
                     <ListBox x:Name="conversationSubjectListBox"></ListBox>
                     <Label Height="25">Title:</Label>
-                    <TextBox x:Name="conversationNameTextBox" TextChanged="UpdateConversationTitle"></TextBox>
+                    <TextBox x:Name="conversationNameTextBox" GotFocus="selectAll" GotKeyboardFocus="selectAll"  GotMouseCapture="selectAll" TextChanged="UpdateConversationTitle"></TextBox>
                 </StackPanel>
             </ScrollViewer>
         </DockPanel>

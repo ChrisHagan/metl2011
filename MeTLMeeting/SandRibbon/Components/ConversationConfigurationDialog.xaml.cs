@@ -302,5 +302,10 @@ namespace SandRibbon.Components
         {
             Commands.PowerPointLoadFinished.Execute(null);
         }
+
+        private void selectAll(object sender, RoutedEventArgs e)
+        {
+            conversationNameTextBox.SelectAll();
+        }
     }
 }

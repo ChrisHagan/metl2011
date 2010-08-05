@@ -209,6 +209,7 @@ namespace SandRibbon.Components.Canvas
         protected void RemovePrivacyStylingFromElement(FrameworkElement element)
         {
             element.Effect = null;
+            element.Opacity = 1;
         }
 
         private PresentationSpace context;

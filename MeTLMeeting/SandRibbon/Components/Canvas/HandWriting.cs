@@ -205,14 +205,11 @@ namespace SandRibbon.Components.Canvas
                     strokeReceiptDurations.Add(duration);
                 });
         }
-
-
         #region eventHandlers
         private void selectionChanged(object sender, EventArgs e)
         {
                 Dispatcher.adoptAsync((Action)addAdorners);
         }
-
         private void addAdorners()
         {
             ClearAdorners();

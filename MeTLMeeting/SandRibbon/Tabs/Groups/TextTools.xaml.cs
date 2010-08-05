@@ -53,7 +53,6 @@ namespace SandRibbon.Tabs.Groups
 
         private void updateToolBox(string layer)
         {
-            fontSize.SelectedItem = generateDefaultFontSize();
             if (layer == "Text")
                 Visibility = Visibility.Visible;
             else

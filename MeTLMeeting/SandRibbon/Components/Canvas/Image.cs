@@ -241,28 +241,11 @@ namespace SandRibbon.Components.Canvas
             if(privacy != "private")
             {
                 element.Effect = null;
+                element.Opacity = 1;
                 return;
             }
-            if(element.GetType() != typeof(System.Windows.Controls.Image)) return;
-            var uri = new Uri(((System.Windows.Controls.Image) element).Source.ToString(), UriKind.RelativeOrAbsolute);
-            var ms = new MemoryStream();
-            var encoder = new BmpBitmapEncoder();
-            encoder.Frames.Add((BitmapFrame.Create(uri)));
-            encoder.Save(ms);
-            var image = System.Drawing.Image.FromStream(ms);
-            var bmp = new Bitmap(image);
-            var color = bmp.GetPixel(0, 0);
-            Color privacyColor = new Color();
-            if (Colors.White.ToString().ToLower().Contains(color.Name))
-                privacyColor = Colors.Black;
-            else
-            {
-                privacyColor.A = color.A;
-                privacyColor.R = color.R;
-                privacyColor.G = color.G;
-                privacyColor.B = color.B;
-            }
-            element.Effect =new DropShadowEffect { BlurRadius = 50, Color = privacyColor, ShadowDepth = 0, Opacity = 1 };
+            element.Effect =new DropShadowEffect { BlurRadius = 50, Color = Colors.Black, ShadowDepth = 0, Opacity = 1 };
+            element.Opacity = 0.7;
         }
         private void ensureAllImagesHaveCorrectPrivacy()
         {
