@@ -12,7 +12,7 @@
         </SandRibbonInterop:RibbonPanel>-->
         <SandRibbonInterop:RibbonPanel x:Name="TextOptions" >
             <SandRibbonInterop:RadioButton ToolTip="{StaticResource TextBoxToolTip}" Icon="\Resources\PlaceTextBox.png" Text="Type" Command="api:Commands.SetTextCanvasMode" CommandParameter="None"  IsChecked="True"/>
-            <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectTextBoxToolTip}" Icon="\Resources\LassooSelectShiny.png" Text="Select" Command="api:Commands.SetTextCanvasMode" CommandParameter="Select" />
+            <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectTextBoxToolTip}" Icon="\Resources\SelectText.png" Text="Select" Command="api:Commands.SetTextCanvasMode" CommandParameter="Select" />
         </SandRibbonInterop:RibbonPanel>
         <SandRibbonInterop:RibbonPanel x:Name="ImageOptions">
             <SandRibbonInterop:Button ToolTip="{StaticResource AddImageToolTip}"  x:Name="addMedia" Icon="\Resources\AddImage.png" Text="Add Picture" Command="api:Commands.AddImage"/>

@@ -6,6 +6,6 @@
         <StackPanel x:Name="StatusRight" Orientation="Horizontal">
         <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="..\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}" InternalButtonSize="Small"/>
         <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="..\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}" InternalButtonSize="Small"/>
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="..\Resources\MagnifyingGlassShiny.png" ToolTip="{DynamicResource GrabZoomToolTip}" InternalButtonSize="Small"/>
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="..\Resources\GrabZoom.png" ToolTip="{DynamicResource GrabZoomToolTip}" InternalButtonSize="Small"/>
         </StackPanel>
 </UserControl>

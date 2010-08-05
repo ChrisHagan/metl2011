@@ -8,7 +8,7 @@
     <SandRibbonInterop:RibbonPanel>
         <SandRibbonInterop:RadioButton Visibility="Collapsed" x:Name="View" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\MagnifyingGlassShiny.png" Text="View" Command="api:Commands.SetLayer" CommandParameter="View" />
         <SandRibbonInterop:RadioButton x:Name="Pen" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\RedPenShiny.png" Text="Ink" Command="api:Commands.SetLayer" CommandParameter="Sketch" IsChecked="True"/>
-        <SandRibbonInterop:RadioButton x:Name="Text" ToolTip="{StaticResource TextBoxToolTip}" Icon="\Resources\fontFamily.png" Text="Text" Command="api:Commands.SetLayer" CommandParameter="Text" />
+        <SandRibbonInterop:RadioButton x:Name="Text" ToolTip="{StaticResource TextBoxToolTip}" Icon="\Resources\TextMode.png" Text="Text" Command="api:Commands.SetLayer" CommandParameter="Text" />
         <SandRibbonInterop:RadioButton x:Name="Image" ToolTip="{StaticResource ImageModeToolTip}" Icon="\Resources\ImageMode.png" Text="Image" Command="api:Commands.SetLayer" CommandParameter="Insert" />
     </SandRibbonInterop:RibbonPanel>
 </UserControl>

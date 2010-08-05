@@ -814,11 +814,21 @@
     <Content Include="Resources\AddVideo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\BenHead.png" />
+    <Resource Include="Resources\BlackPenShiny.png" />
+    <Resource Include="Resources\BluePenShiny.png" />
+    <Resource Include="Resources\ColorBars.png" />
+    <Resource Include="Resources\colourpicker.png" />
+    <Resource Include="Resources\createAQuizHelp.PNG" />
+    <Resource Include="Resources\ExtendCanvas.png" />
+    <Resource Include="Resources\GrabZoom.png" />
+    <Resource Include="Resources\Hand tool.png" />
     <Content Include="Resources\Highlighter.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\homeloo_gear_clock_2.jpg" />
     <Resource Include="Resources\LassooSelectShiny.png" />
+    <Resource Include="Resources\MeTLLogo-bronze.ico" />
     <Content Include="Resources\Pen.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -827,6 +837,10 @@
     <Content Include="Resources\Ribbon-Palette.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\SelectInk.png" />
+    <Resource Include="Resources\SelectText.png" />
+    <Resource Include="Resources\showAll.png" />
+    <Resource Include="Resources\showOriginal.png" />
     <Content Include="Resources\Slide_Not_Loaded.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -844,6 +858,8 @@
     <Content Include="Resources\SyncRed.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\TextMode.png" />
+    <Resource Include="Resources\thoughtOutline.png" />
     <Resource Include="Resources\underline.png" />
     <Resource Include="Resources\UndoShiny.png" />
     <Resource Include="Resources\SyncShiny.png" />
@@ -853,22 +869,22 @@
   <ItemGroup>
     <PublishFile Include="Microsoft.Vbe.Interop">
       <Visible>False</Visible>
+      <PublishState>Auto</PublishState>
+      <IncludeHash>False</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Auto</PublishState>
-      <IncludeHash>False</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
     <PublishFile Include="office">
       <Visible>False</Visible>
+      <PublishState>Auto</PublishState>
+      <IncludeHash>False</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Auto</PublishState>
-      <IncludeHash>False</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
   </ItemGroup>
