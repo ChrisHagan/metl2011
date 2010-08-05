@@ -6,6 +6,7 @@
     WindowStyle="ToolWindow"
     Topmost="True"
     x:Name="answerAQuiz"
+    MaxHeight="400"
     Title="Answer Quiz">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <ScrollViewer>
@@ -30,7 +31,7 @@
                                            FontWeight="Bold" TextWrapping="WrapWithOverflow" 
                                            Text="{Binding Path=question}" HorizontalAlignment="Center" />
                             </ScrollViewer>
-                            <Image Grid.Column="1" Source="{Binding Path=url}" Width="300" Height="300"/>
+                            <Image Grid.Column="1" Source="{Binding Path=url}" MaxWidth="300" MaxHeight="300"/>
                         </Grid>
                     </StackPanel>
                 </Grid>
