@@ -97,9 +97,15 @@ namespace SandRibbon.Components.Canvas
                     context = getContext();
                 }
             });
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(ClearSelectionOnLayerChanged));
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<object>(ItemsPrivacyChange));
+        }
+
+        private void moveTo(object obj)
+        {
+            ClearAdorners();
         }
 
         void AbstractCanvas_KeyDown(object sender, KeyEventArgs e)

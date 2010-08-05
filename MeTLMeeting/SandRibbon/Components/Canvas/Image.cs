@@ -107,7 +107,6 @@ namespace SandRibbon.Components.Canvas
                 deleteImages();
             }
         }
-
         private void deleteImages()
         {
             var numberOfImages = GetSelectedElements().Count;
@@ -275,15 +274,7 @@ namespace SandRibbon.Components.Canvas
                         images.Add((System.Windows.Controls.Image)child);
                 foreach (System.Windows.Controls.Image image in images)
                     ApplyPrivacyStylingToElement(image, image.tag().privacy);
-                /*if (image.tag().privacy == "private")
-                        addPrivateRegion(image);*/
             });
-        }
-        private void addPrivateRegion(System.Windows.Controls.Image image)
-        {
-            if (image != null && image is System.Windows.Controls.Image)
-                ApplyPrivacyStylingToElement(image, image.tag().privacy);
-            //addPrivateRegion(getImagePoints(image));
         }
         private void removePrivateRegion(System.Windows.Controls.Image image)
         {
@@ -501,6 +492,11 @@ namespace SandRibbon.Components.Canvas
         }
         private void selectionChanged(object sender, EventArgs e)
         {
+            addAdorner();
+        }
+
+        private void addAdorner()
+        {
             var selectedElements = GetSelectedElements();
             if (selectedElements.Count == 0)
             {
@@ -517,8 +513,8 @@ namespace SandRibbon.Components.Canvas
                 privacyChoice = "both";
             var adorner = GetAdorner();
             AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
-
         }
+
         private void transmitImageAltered(object sender, EventArgs e)
         {
             foreach (UIElement selectedImage in GetSelectedElements())
@@ -602,6 +598,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void doDirtySelection()
         {
+            ClearAdorners();
             foreach (UIElement selectedImage in GetSelectedElements())
             {
                 var imageTag = ((FrameworkElement)selectedImage).Tag;

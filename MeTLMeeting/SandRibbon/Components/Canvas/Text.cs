@@ -49,10 +49,12 @@ namespace SandRibbon.Components.Canvas
             };
             PreviewKeyDown += keyPressed;
             SelectionMoving += dirtyText;
+            SelectionMoved += textMoved;
             SelectionChanged += selectionChanged;
             SelectionChanging += selectingText;
             SelectionResizing += dirtyText;
             SelectionResized += SendTextBoxes;
+            SelectionResized += textMoved;
             toggleFontBold = new DelegateCommand<object>(toggleBold, canUseTextCommands);
             Commands.ToggleBold.RegisterCommand(toggleFontBold);
             toggleFontItalic = new DelegateCommand<object>(toggleItalics, canUseTextCommands);
@@ -77,6 +79,11 @@ namespace SandRibbon.Components.Canvas
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
+        }
+
+        private void textMoved(object sender, EventArgs e)
+        {
+            addAdorners();
         }
 
         private void deleteSelectedItems(object obj)
@@ -195,6 +202,10 @@ namespace SandRibbon.Components.Canvas
 
         private void selectionChanged(object sender, EventArgs e)
         {
+            addAdorners();
+        }
+        private void addAdorners()
+        {
             var selectedElements = GetSelectedElements();
             if (selectedElements.Count == 0)
             {
@@ -211,8 +222,8 @@ namespace SandRibbon.Components.Canvas
                 privacyChoice = "both";
             var adorner = GetAdorner();
             AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
-
         }
+
         private void selectingText(object sender, InkCanvasSelectionChangingEventArgs e)
         {
             e.SetSelectedElements(filterMyText(e.GetSelectedElements()));
@@ -230,6 +241,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void dirtyText(object sender, InkCanvasSelectionEditingEventArgs e)
         {
+            ClearAdorners();
             foreach (var box in GetSelectedElements())
             {
                 myTextBox = (TextBox)box;

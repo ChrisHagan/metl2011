@@ -210,26 +210,26 @@ namespace SandRibbon.Components.Canvas
         #region eventHandlers
         private void selectionChanged(object sender, EventArgs e)
         {
-                Dispatcher.adoptAsync((Action)delegate
-                            {
-                                var selectedStrokes = GetSelectedStrokes();
-                                if(selectedStrokes.Count() == 0)
-                                {
-                                    ClearAdorners();
-                                    return;
-                                }
-                                var publicStrokes = selectedStrokes.Where(s => s.tag().privacy.ToLower() == "public").ToList();
-                                string privacyChoice;
-                                if (publicStrokes.Count == 0)
-                                    privacyChoice = "show";
-                                else if (publicStrokes.Count == selectedStrokes.Count)
-                                    privacyChoice = "hide";
-                                else
-                                    privacyChoice = "both";
-                                var adorner = GetAdorner();
-                                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
-                            });
+                Dispatcher.adoptAsync((Action)addAdorners);
         }
+
+        private void addAdorners()
+        {
+            ClearAdorners();
+            var selectedStrokes = GetSelectedStrokes();
+            if(selectedStrokes.Count() == 0)  return; 
+            var publicStrokes = selectedStrokes.Where(s => s.tag().privacy.ToLower() == "public").ToList();
+            string privacyChoice;
+            if (publicStrokes.Count == 0)
+                privacyChoice = "show";
+            else if (publicStrokes.Count == selectedStrokes.Count)
+                privacyChoice = "hide";
+            else
+                privacyChoice = "both";
+            var adorner = GetAdorner();
+            AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
+        }
+
         public StrokeCollection GetSelectedStrokes()
         {
             return filter(base.GetSelectedStrokes(), Globals.me);
@@ -239,6 +239,7 @@ namespace SandRibbon.Components.Canvas
             var selectedStrokes = e.GetSelectedStrokes();
             var myStrokes = filter(selectedStrokes, Globals.me);
             e.SetSelectedStrokes(myStrokes);
+            ClearAdorners();
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
@@ -264,6 +265,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void doMyStrokeRemoved(Stroke stroke)
         {
+            ClearAdorners();
             doMyStrokeRemovedExceptHistory(stroke);
             UndoHistory.Queue(
                 () =>
@@ -309,6 +311,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void transmitSelectionAltered(object sender, EventArgs e)
         {
+            addAdorners();
             foreach (var stroke in GetSelectedStrokes())
                 doMyStrokeAdded(stroke);
         }
