@@ -7,9 +7,10 @@
     Title="Create a quiz" 
     ShowInTaskbar="False"
     x:Name="createAQuiz"
-        MaxHeight="400"
+        MaxHeight="600"
     WindowStartupLocation="CenterOwner"
         Closing="createAQuiz_Closing"
+        Loaded="createAQuiz_Loaded"
     SizeToContent="WidthAndHeight">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static SandRibbon:Commands.CreateQuizStructure}" Executed="CreateQuizQuestion" CanExecute="canCreateQuizQuestion"/>
@@ -54,9 +55,9 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
-                                    <q:GoldPlaque/>
+                                    <q:GoldPlaque PreviewMouseDown="QuizButton_PreviewMouseUp" />
                                     <StackPanel Orientation="Horizontal">
-                                        <q:QuizButton />
+                                        <q:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" />
                                         <TextBox Margin="0 5 20 5" Width="300" Text="{Binding Path=optionText}" GotFocus="TextBox_GotFocus"/>
                                         <Button Click="RemoveQuizAnswer">X</Button>
                                     </StackPanel>

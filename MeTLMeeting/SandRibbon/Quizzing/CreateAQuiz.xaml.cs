@@ -14,7 +14,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Submissions;
 using SandRibbon.Providers;
 using SandRibbonInterop;
-using CheckBox=System.Windows.Controls.CheckBox;
+using CheckBox = System.Windows.Controls.CheckBox;
 using System.Collections.ObjectModel;
 using WPFColors = System.Windows.Media.Colors;
 
@@ -26,7 +26,8 @@ namespace SandRibbon.Quizzing
         private string url = "none";
         public static ObservableCollection<Option> options = new ObservableCollection<Option>
                                                      {
-                                                         new Option {name = "A", optionText = "A"}
+                                                         new Option {name = "A",optionText = "A"},
+                                                         new Option {name = "B",optionText = "B"}
                                                      };
         public CreateAQuiz(int count)
         {
@@ -47,24 +48,52 @@ namespace SandRibbon.Quizzing
         }
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
-            var quiz = new QuizQuestion { title = quizTitle.Text,url = url, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks };
-            foreach(object obj in quizQuestions.Items)
+            var quiz = new QuizQuestion { title = quizTitle.Text, url = url, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks };
+            foreach (object obj in quizQuestions.Items)
             {
                 var answer = (Option)obj;
                 if (!string.IsNullOrEmpty(answer.optionText))
                     quiz.options.Add(answer);
             }
             Commands.SendQuiz.Execute(quiz);
-            options = new ObservableCollection<Option>
-                                                     {
-                                                         new Option {name = "A", optionText = "A"}
-                                                     };
             this.Close();
+        }
+        private void QuizButton_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement)
+            {
+                tryPrefillOption((FrameworkElement)sender);
+            }
         }
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            var emptyOptions = options.Where(o=>string.IsNullOrEmpty(o.optionText));
-            if(emptyOptions.Count() > 1) return;
+            if (sender is FrameworkElement)
+            {
+                tryPrefillOption((FrameworkElement)sender);
+            }
+        }
+        private void tryPrefillOption(FrameworkElement sender)
+        {
+            var currentOption = sender.DataContext;
+            if (currentOption is Option)
+            {
+                var co = ((Option)currentOption);
+                if (string.IsNullOrEmpty(co.optionText))
+                {
+                    co.optionText = co.name;
+                }
+                AddNewEmptyOption();
+            }
+        }
+        private bool shouldAddNewEmptyOption()
+        {
+            var emptyOptions = options.Where(o => string.IsNullOrEmpty(o.optionText));
+            if (emptyOptions.Count() == 0) return true;
+            return false;
+        }
+        private void AddNewEmptyOption()
+        {
+            if (!shouldAddNewEmptyOption()) return;
             foreach (var option in options)
                 ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(option)).Opacity = 1;
             var newOption = new Option
@@ -72,11 +101,14 @@ namespace SandRibbon.Quizzing
                 name = new String(new[]{
                     (char)(options.Last().name.ToCharArray()[0]+1)
                 }).ToUpper(),
-                color = AllColors.all.ElementAt(AllColors.all.IndexOf(options.Last().color)+1)
+                color = AllColors.all.ElementAt(AllColors.all.IndexOf(options.Last().color) + 1)
             };
-            newOption.optionText = newOption.name;
-            options.Add(newOption);
-            ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption)).Opacity = 0.5;
+            //newOption.optionText = newOption.name;
+            if (shouldAddNewEmptyOption())
+            {
+                options.Add(newOption);
+                ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption)).Opacity = 0.5;
+            }
         }
         private void RemoveQuizAnswer(object sender, RoutedEventArgs e)
         {
@@ -115,10 +147,24 @@ namespace SandRibbon.Quizzing
             quizTitle.SelectAll();
 
         }
-
+        private void refreshCollection()
+        {
+            options = new ObservableCollection<Option>
+                                                     {
+                                                         new Option {name = "A",optionText = "A"},
+                                                         new Option {name = "B",optionText = "B"}
+                                                     };
+        }
         private void createAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            refreshCollection();
             Commands.UnblockInput.Execute(null);
         }
+
+        private void createAQuiz_Loaded(object sender, RoutedEventArgs e)
+        {
+            AddNewEmptyOption();
+        }
+
     }
 }

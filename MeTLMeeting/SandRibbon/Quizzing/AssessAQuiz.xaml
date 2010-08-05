@@ -5,7 +5,7 @@
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     Topmost="True"
     WindowStyle="ToolWindow"
-    MaxHeight="400"
+    MaxHeight="600"
     Title="View quiz results" SizeToContent="WidthAndHeight" >
     <Border x:Name="allResults" >
         <DockPanel>
