@@ -726,7 +726,9 @@ namespace SandRibbon.Utils.Connection
                 ((CachedHistoryProvider)HistoryProviderFactory.provider).HandleMessage(
                     message.GetAttribute("from").Split('@')[0], message);
             }
-            catch (Exception e) { }
+            catch (Exception e) { 
+                Console.WriteLine(e.Message); 
+            }
             if (Application.Current == null) return;
             Application.Current.Dispatcher.adoptAsync(
                 () =>

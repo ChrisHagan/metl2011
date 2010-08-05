@@ -17,17 +17,17 @@
         <sr:GroupVariant Variant="Collapsed" Priority="5"/>
     </sr:RibbonGroup.Variants>
     <SandRibbonInterop:RibbonPanel>
-        <SandRibbonInterop:RadioButton x:Name="View" Icon="\Resources\MagnifyingGlassShiny.png" Text="Move" Command="api:Commands.SetLayer" CommandParameter="View" ToolTip="{DynamicResource GrabMoveToolTip}"/>
+        <SandRibbonInterop:RadioButton x:Name="View" Icon="\Resources\Hand tool.png" Text="Move" Command="api:Commands.SetLayer" CommandParameter="View" ToolTip="{DynamicResource GrabMoveToolTip}"/>
         <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}"/>
         <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}"/>
         <Grid>
-        <SandRibbonInterop:RadioButton x:Name="GrabZoomButton" Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="\Resources\MagnifyingGlassShiny.png" ToolTip="{DynamicResource GrabZoomToolTip}"/>
+        <SandRibbonInterop:RadioButton x:Name="GrabZoomButton" Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="\Resources\GrabZoom.png" ToolTip="{DynamicResource GrabZoomToolTip}"/>
         </Grid>
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToView}" Icon="\Resources\FitToView.png" Text="Show all" ToolTip="{DynamicResource FitToViewToolTip}"/>
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.OriginalView}" Text="Show slide" Icon="\Resources\ShowOriginal.png"/>
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToView}" Icon="\Resources\ShowAll.png" Text="Show all" ToolTip="{DynamicResource FitToViewToolTip}"/>
         <!--
         <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToPageWidth}" Icon="\Resources\FitToPage.png" Text="Fit to page" ToolTip="{DynamicResource FitToPageToolTip}"/>
         -->
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.ExtendCanvasBothWays}" Text="Extend Canvas" Icon="\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ExtendCanvasToolTip}"/>
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.OriginalView}" Text="Original View" Icon="\Resources\Ribbon-ZoomIn.png"/>
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.ExtendCanvasBothWays}" Text="Extend Canvas" Icon="\Resources\ExtendCanvas.png" ToolTip="{DynamicResource ExtendCanvasToolTip}"/>
     </SandRibbonInterop:RibbonPanel>
 </sr:RibbonGroup>           

@@ -54,6 +54,7 @@ namespace SandRibbon.Components.Submissions
                                                             amTeacher();
                                                         else
                                                             amStudent();
+                                                        Commands.SneakInto.Execute(Globals.conversationDetails.Jid);
                                                     }
                                                     catch(NotSetException)
                                                     {

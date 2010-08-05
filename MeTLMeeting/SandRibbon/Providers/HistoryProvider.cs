@@ -88,9 +88,11 @@ namespace SandRibbon.Providers
         }
         public override void Retrieve<T>(Action retrievalBeginning, Action<int, int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
-            if (!cache.ContainsKey(room) || isPrivateRoom(room))
+            /*if (!cache.ContainsKey(room) || isPrivateRoom(room))
             {
-                new HttpHistoryProvider().Retrieve<PreParser>(
+                
+             */
+            new HttpHistoryProvider().Retrieve<PreParser>(
                     delegate { },
                     (_i, _j) => { },
                     history =>
@@ -103,10 +105,10 @@ namespace SandRibbon.Providers
                         retrievalComplete((T)cache[room]);
                     },
                     room);
-            }
+            /*}
             else {
                 retrievalComplete((T)cache[room]);
-            }
+            }*/
         }
 
         private bool isPrivateRoom(string room)
