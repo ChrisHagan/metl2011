@@ -26,7 +26,7 @@ namespace SandRibbon.Quizzing
         private string url = "none";
         public static ObservableCollection<Option> options = new ObservableCollection<Option>
                                                      {
-                                                         new Option {name = "A" }
+                                                         new Option {name = "A", optionText = "A"}
                                                      };
         public CreateAQuiz(int count)
         {
@@ -57,7 +57,7 @@ namespace SandRibbon.Quizzing
             Commands.SendQuiz.Execute(quiz);
             options = new ObservableCollection<Option>
                                                      {
-                                                         new Option {name = "A" }
+                                                         new Option {name = "A", optionText = "A"}
                                                      };
             this.Close();
         }
@@ -74,6 +74,7 @@ namespace SandRibbon.Quizzing
                 }).ToUpper(),
                 color = AllColors.all.ElementAt(AllColors.all.IndexOf(options.Last().color)+1)
             };
+            newOption.optionText = newOption.name;
             options.Add(newOption);
             ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption)).Opacity = 0.5;
         }
