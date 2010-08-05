@@ -71,9 +71,9 @@ namespace SandRibbon.Providers
                                 authorizedGroups=new AuthorisationProvider().getEligibleGroups(values[0],values[1])
                             });
                     break;
-                    case "JoinConversation":
+                    /*case "JoinConversation":
                         Commands.JoinConversation.Execute(param.Attribute("conversation").Value);
-                    break;
+                    break;*/
                         /*
                     case "MoveTo":
                         DelegateCommand<object> onJoin = null;

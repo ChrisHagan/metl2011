@@ -32,12 +32,12 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://metl.adm.monash.edu.au/LectureMeTL/</InstallUrl>
-    <ProductName>Lecture MeTL</ProductName>
+    <ProductName>MeTL Presenter</ProductName>
     <PublisherName>Monash University eEducation Centre</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>8</ApplicationRevision>
+    <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -233,17 +233,16 @@
     </PublishFile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SandRibbon\SandRibbon.csproj">
-      <Project>{0213D150-6485-4F40-AF80-5AC5E8BB10CC}</Project>
-      <Name>SandRibbon</Name>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="Window1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SandRibbon\SandRibbon.csproj">
+      <Project>{0213D150-6485-4F40-AF80-5AC5E8BB10CC}</Project>
+      <Name>SandRibbon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

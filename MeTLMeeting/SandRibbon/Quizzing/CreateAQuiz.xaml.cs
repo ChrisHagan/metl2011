@@ -78,7 +78,11 @@ namespace SandRibbon.Quizzing
             options.Add(newOption);
             ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption)).Opacity = 0.5;
         }
-
+        private void RemoveQuizAnswer(object sender, RoutedEventArgs e)
+        {
+            var owner = ((FrameworkElement)sender).DataContext;
+            options.Remove((Option)owner);
+        }
         private void screenshotAsAQuestion(object sender, RoutedEventArgs e)
         {
             DelegateCommand<string> gotScreenshot = null;

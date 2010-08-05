@@ -6,9 +6,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     VerticalAlignment="Top"
     HorizontalAlignment="Right"
-    Margin="0 0 30 0"
     AutomationProperties.AutomationId="privacyTools"
     >
+    <!--Margin="0 0 30 0"-->
     <interop:RibbonPanel>
         <interop:CheckBox x:Name="WorkPubliclyButton" Text="Work Publicly" Icon="..\Resources\Ribbon-Public.png" ToolTip="{DynamicResource WorkPubliclyToolTip}" ClickMode="Release" Click="CheckBox_Click"/>
         <!--<interop:Button Text="Become Private" Icon="..\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>

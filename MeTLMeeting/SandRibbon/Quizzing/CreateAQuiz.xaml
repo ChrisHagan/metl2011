@@ -53,10 +53,11 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
-                                    <q:GoldPlaque />
+                                    <q:GoldPlaque/>
                                     <StackPanel Orientation="Horizontal">
                                         <q:QuizButton />
                                         <TextBox Margin="0 5 20 5" Width="300" Text="{Binding Path=optionText}" GotFocus="TextBox_GotFocus"/>
+                                        <Button Click="RemoveQuizAnswer">X</Button>
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>
