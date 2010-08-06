@@ -1089,6 +1089,7 @@ namespace SandRibbon.Components.Canvas
                     });
                 }
             }
+            Select(new List<UIElement>());
         }
     }
     class ImageAutomationPeer : FrameworkElementAutomationPeer, IValueProvider

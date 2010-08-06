@@ -533,6 +533,7 @@ namespace SandRibbon.Components.Canvas
                 ((Stroke)newStroke).tag(new StrokeTag {author = oldTag.author,privacy=newPrivacy,startingColor=oldTag.startingColor,startingSum=oldTag.startingSum});
                 doMyStrokeAdded(newStroke,newPrivacy);
             }
+            Select(new StrokeCollection());
         }
 
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()

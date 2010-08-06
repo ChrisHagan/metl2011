@@ -775,6 +775,8 @@ namespace SandRibbon.Components.Canvas
                     sendText(textBox, newPrivacy);
                 }
             }
+            Select(new List<UIElement>());
+
         }
     }
     public static class TextBoxExtensions
