@@ -18,7 +18,7 @@
         </sr:RibbonGroup.Variants>
         <StackPanel Orientation="Horizontal">
             <SandRibbonInterop:Button Click="CreateQuiz" Visibility="Collapsed" ToolTip="{DynamicResource CreateQuizToolTip}"
-                                      x:Name="createQuiz" Icon="\Resources\Ribbon-Quiz.png" Text="New"/>
+                                      x:Name="createQuiz" Icon="\Resources\NewQuiz.png" Text="New"/>
         </StackPanel>
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Results" x:Name="quizResultsRibbonGroup" ShowDialogLauncher="False">

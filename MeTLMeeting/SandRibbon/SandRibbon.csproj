@@ -823,12 +823,18 @@
     <Resource Include="Resources\ExtendCanvas.png" />
     <Resource Include="Resources\GrabZoom.png" />
     <Resource Include="Resources\Hand tool.png" />
+    <Resource Include="Resources\AttachSnapshot.png" />
+    <Resource Include="Resources\Delete.png" />
+    <Resource Include="Resources\ExactPowerpoint.png" />
+    <Resource Include="Resources\FlexiblePowerpoint.png" />
+    <Resource Include="Resources\Hide.png" />
     <Content Include="Resources\Highlighter.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\homeloo_gear_clock_2.jpg" />
     <Resource Include="Resources\LassooSelectShiny.png" />
     <Resource Include="Resources\MeTLLogo-bronze.ico" />
+    <Resource Include="Resources\NewQuiz.png" />
     <Content Include="Resources\Pen.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -841,6 +847,7 @@
     <Resource Include="Resources\SelectText.png" />
     <Resource Include="Resources\showAll.png" />
     <Resource Include="Resources\showOriginal.png" />
+    <Resource Include="Resources\Show.png" />
     <Content Include="Resources\Slide_Not_Loaded.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -858,6 +865,7 @@
     <Content Include="Resources\SyncRed.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Whiteboard.png" />
     <Resource Include="Resources\TextMode.png" />
     <Resource Include="Resources\thoughtOutline.png" />
     <Resource Include="Resources\underline.png" />
@@ -869,22 +877,22 @@
   <ItemGroup>
     <PublishFile Include="Microsoft.Vbe.Interop">
       <Visible>False</Visible>
-      <PublishState>Auto</PublishState>
-      <IncludeHash>False</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Auto</PublishState>
+      <IncludeHash>False</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
     <PublishFile Include="office">
       <Visible>False</Visible>
-      <PublishState>Auto</PublishState>
-      <IncludeHash>False</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Auto</PublishState>
+      <IncludeHash>False</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
   </ItemGroup>
