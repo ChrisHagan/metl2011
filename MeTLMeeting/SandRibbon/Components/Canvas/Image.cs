@@ -197,7 +197,7 @@ namespace SandRibbon.Components.Canvas
         }
         public void ReceiveImages(IEnumerable<TargettedImage> images)
         {
-            var safeImages = images.Where(shouldDisplay);
+            var safeImages = images.Where(shouldDisplay).ToList();
             foreach (var image in safeImages)
                 ReceiveImage(image);
             ensureAllImagesHaveCorrectPrivacy();
@@ -238,6 +238,7 @@ namespace SandRibbon.Components.Canvas
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
+            if(!Globals.isAuthor) return;
             if(privacy != "private")
             {
                 element.Effect = null;
@@ -1089,6 +1090,7 @@ namespace SandRibbon.Components.Canvas
                     });
                 }
             }
+            Select(new List<UIElement>());
         }
     }
     class ImageAutomationPeer : FrameworkElementAutomationPeer, IValueProvider

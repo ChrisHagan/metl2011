@@ -79,7 +79,11 @@ namespace SandRibbon
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.FitToView.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.SetTutorialVisibility.RegisterCommand(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
@@ -454,6 +458,11 @@ namespace SandRibbon
                 return false;
             }
         }
+        private bool conversationSearchMustBeClosed(object _obj)
+        {
+            return currentConversationSearchBox.Visibility == Visibility.Collapsed && mustBeInConversation(null);
+        }
+
         private bool mustBeInConversation(object _arg)
         {
             try
@@ -620,7 +629,7 @@ namespace SandRibbon
         }
         private void canZoomIn(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = !(scroll == null);
+            e.CanExecute = !(scroll == null) && mustBeInConversation(null) && conversationSearchMustBeClosed(null);
         }
         private void canZoomOut(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -642,7 +651,7 @@ namespace SandRibbon
                 {
                     e.CanExecute = vTrue;
                 }
-                e.CanExecute = (hTrue || vTrue);
+                e.CanExecute = (hTrue || vTrue) && mustBeInConversation(null) && conversationSearchMustBeClosed(null);
             }
         }
         private void adornerGrid_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -141,6 +141,7 @@ namespace SandRibbon.Components.Canvas
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
+            if(!Globals.isAuthor) return;
             if(element.GetType() != typeof(TextBox)) return;
             var box = (TextBox) element;
                 if (privacy == "private")
@@ -775,6 +776,8 @@ namespace SandRibbon.Components.Canvas
                     sendText(textBox, newPrivacy);
                 }
             }
+            Select(new List<UIElement>());
+
         }
     }
     public static class TextBoxExtensions

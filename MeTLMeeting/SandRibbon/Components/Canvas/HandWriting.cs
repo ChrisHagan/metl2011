@@ -455,6 +455,7 @@ namespace SandRibbon.Components.Canvas
        private Dictionary<double, Stroke> privacyDictionary = new Dictionary<double, Stroke>();
         private void ApplyPrivacyStylingToStroke(Stroke stroke, string privacy)
         {
+            if(!Globals.isAuthor) return;
             if (privacy == "private")
                 addPrivacyStylingToStroke(stroke);
             else
@@ -462,6 +463,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void RemovePrivacyStylingFromStroke(Stroke stroke)
         {
+            if(!Globals.isAuthor) return;
             try
             {
                 if (stroke.tag().startingColor != null)
@@ -503,7 +505,7 @@ namespace SandRibbon.Components.Canvas
             {
                 if (stroke.tag().privacy == "private")
                 {
-                    stroke.DrawingAttributes.Color = SandRibbonInterop.MeTLStanzas.MeTLStanzas.Ink.stringToColor(stroke.tag().startingColor);
+                    Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First().DrawingAttributes.Color = SandRibbonInterop.MeTLStanzas.MeTLStanzas.Ink.stringToColor(stroke.tag().startingColor);
                     if (Globals.isAuthor)
                         ApplyPrivacyStylingToStroke(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First(), stroke.tag().privacy);
                 }
@@ -533,6 +535,7 @@ namespace SandRibbon.Components.Canvas
                 ((Stroke)newStroke).tag(new StrokeTag {author = oldTag.author,privacy=newPrivacy,startingColor=oldTag.startingColor,startingSum=oldTag.startingSum});
                 doMyStrokeAdded(newStroke,newPrivacy);
             }
+            Select(new StrokeCollection());
         }
 
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
