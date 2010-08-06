@@ -47,6 +47,7 @@ namespace SandRibbon.Components
         {
             DoUpdateAllConversations();
             this.Visibility = Visibility.Visible;
+            Commands.RequerySuggested();
         }
         private bool CanShowConversationSearchBox(object o) {
             return this.Visibility != Visibility.Visible;
