@@ -54,5 +54,15 @@ namespace SandRibbon.Components
         {
             Commands.DeleteSelectedItems.Execute(null);
         }
+        public class PrivacyToggleButtonInfo
+        {
+            public string privacyChoice;
+            public Rect ElementBounds;
+            public PrivacyToggleButtonInfo(string privacy, Rect bounds)
+            {
+                privacyChoice = privacy;
+                ElementBounds = bounds;
+            }
+        }
     }
 }

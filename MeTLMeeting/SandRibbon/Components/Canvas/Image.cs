@@ -495,8 +495,10 @@ namespace SandRibbon.Components.Canvas
                 privacyChoice = "hide";
             else
                 privacyChoice = "both";
-            var adorner = GetAdorner();
+            Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
+            /*var adorner = GetAdorner();
             AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
+        */
         }
 
         private void transmitImageAltered(object sender, EventArgs e)

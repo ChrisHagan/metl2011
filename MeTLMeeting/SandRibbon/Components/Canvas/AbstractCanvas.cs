@@ -121,7 +121,8 @@ namespace SandRibbon.Components.Canvas
 
         protected void ClearAdorners()
         {
-            Dispatcher.adoptAsync(delegate
+            Commands.RemovePrivacyAdorners.Execute(null);
+            /*Dispatcher.adoptAsync(delegate
             {
                 var adornerLayer = AdornerLayer.GetAdornerLayer(this);
                 if (adornerLayer == null) return;
@@ -129,7 +130,7 @@ namespace SandRibbon.Components.Canvas
                 if (adorners != null)
                     foreach (var adorner in adorners)
                         adornerLayer.Remove(adorner);
-            });
+            });*/
         }
         private void ClearSelectionOnLayerChanged(object _unused)
         {

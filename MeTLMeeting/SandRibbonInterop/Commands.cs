@@ -32,6 +32,9 @@ namespace SandRibbon
         public static CompositeCommand receiveCurrentClasses = new CompositeCommand();
         #endregion
 
+        public static CompositeCommand AddPrivacyToggleButton = new CompositeCommand();
+        public static CompositeCommand RemovePrivacyAdorners = new CompositeCommand();
+
         #region Sandpit
         public static CompositeCommand SendWakeUp = new CompositeCommand();
         public static CompositeCommand SendSleep = new CompositeCommand();

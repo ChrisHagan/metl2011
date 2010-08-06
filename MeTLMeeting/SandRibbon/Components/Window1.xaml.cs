@@ -27,6 +27,8 @@ using SandRibbon.Tabs.Groups;
 using System.Collections;
 using System.Windows.Ink;
 using System.Collections.ObjectModel;
+using SandRibbon.Components.Utility;
+using System.Windows.Documents;
 
 namespace SandRibbon
 {
@@ -111,6 +113,8 @@ namespace SandRibbon
             Commands.MoveCanvasByDelta.RegisterCommand(new DelegateCommand<Point>(GrabMove));
             Commands.BlockInput.RegisterCommand(new DelegateCommand<string>(BlockInput));
             Commands.UnblockInput.RegisterCommand(new DelegateCommand<object>(UnblockInput));
+            Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
+            Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -129,6 +133,46 @@ namespace SandRibbon
         private void SetInkCanvasMode(object unused)
         {
             setLayer("Sketch");
+        }
+        private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
+        {
+            var adorner = ((FrameworkElement)canvasViewBox);
+            var adornerRect = new Rect(canvas.TranslatePoint(info.ElementBounds.TopLeft, canvasViewBox), canvas.TranslatePoint(info.ElementBounds.BottomRight, canvasViewBox));
+            //adorner.Children.Add(new PrivacyToggleButton(info.privacyChoice, adornerRect));
+            if (adornerRect.Right < 0 || adornerRect.Right > canvasViewBox.ActualWidth
+                || adornerRect.Top < 0 || adornerRect.Top > canvasViewBox.ActualHeight) return;
+            AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(info.privacyChoice, adornerRect)));
+        }
+        private Adorner[] getPrivacyAdorners()
+        {
+            var adornerLayer = AdornerLayer.GetAdornerLayer(canvasViewBox);
+            if (adornerLayer == null) return null;
+            return adornerLayer.GetAdorners(canvasViewBox);
+        }
+        private void UpdatePrivacyAdorners()
+        {
+            var privacyAdorners = getPrivacyAdorners();
+            RemovePrivacyAdorners(null);
+            if (privacyAdorners != null && privacyAdorners.Count() > 0)
+                try
+                {
+                    var lastValue = Commands.AddPrivacyToggleButton.lastValue();
+                    if (lastValue != null)
+                        AddPrivacyButton((PrivacyToggleButton.PrivacyToggleButtonInfo)lastValue);
+                }
+                catch (NotSetException) { }
+        }
+        private void RemovePrivacyAdorners(object _unused)
+        {
+            Dispatcher.adoptAsync(delegate
+            {
+                var adorners = getPrivacyAdorners();
+                var adornerLayer = AdornerLayer.GetAdornerLayer(canvasViewBox);
+                if (adorners != null)
+                    foreach (var adorner in adorners)
+                        adornerLayer.Remove(adorner);
+            });
+
         }
         private void ProxyMirrorPresentationSpace(object unused)
         {
@@ -590,7 +634,7 @@ namespace SandRibbon
         private void OriginalView(object _unused)
         {
             var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).First();
-            if(currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
+            if (currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
             scroll.Width = currentSlide.defaultWidth;
             scroll.Height = currentSlide.defaultHeight;
             scroll.ScrollToLeftEnd();
@@ -924,6 +968,7 @@ namespace SandRibbon
         }
         private void zoomConcernedControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            UpdatePrivacyAdorners();
             updateCurrentPenAfterZoomChanged();
         }
 
@@ -948,6 +993,12 @@ namespace SandRibbon
                     rg.Visibility = currentVisibility[rg];
                 }
             }*/
+        }
+
+        private void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            UpdatePrivacyAdorners();
+            updateCurrentPenAfterZoomChanged();
         }
     }
 
