@@ -61,8 +61,6 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Create Conversation";
-                    Height = 400;
-                    Width = 800;
                     if (startingContentSelector != null && startingContentSelector.Items.Count > 0)
                         startingContentSelector.SelectedIndex = 0;
                     if (details == null)
@@ -72,8 +70,6 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Update Conversation";
-                    Height = 400;
-                    Width = 380;
                     details = ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation);
                     PopulateFields();
                     if (details == null)
@@ -86,9 +82,6 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Visible;
                     CommitButton.Content = "Import powerpoint into Conversation";
-                    importSelector.SelectedItem = importSelector.Items[0];
-                    Height = 400;
-                    Width = 800;
                     if (startingContentSelector != null && startingContentSelector.Items.Count > 1)
                         startingContentSelector.SelectedIndex = 1;
                     if (details == null)
@@ -98,8 +91,6 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Delete Conversation";
-                    Height = 400;
-                    Width = 380;
                     if (details == null)
                     {
                         MessageBox.Show("No valid conversation currently selected.  Please ensure you are in a conversation you own when deleting a conversation.");
@@ -178,8 +169,23 @@ namespace SandRibbon.Components
         }
         private void selectChoice(object sender, RoutedEventArgs e)
         {
-            var choice = ((FrameworkElement)sender).Tag;
-            importType = (PowerPointLoader.PowerpointImportType)Enum.Parse(typeof(PowerPointLoader.PowerpointImportType), choice.ToString());
+            switch (((FrameworkElement)sender).Tag.ToString())
+            {
+                case "whiteboard":
+                    dialogMode = ConversationConfigurationMode.CREATE;
+                    UpdateDialogBoxAppearance();
+                    break;
+                case "editable":
+                    dialogMode = ConversationConfigurationMode.IMPORT;
+                    UpdateDialogBoxAppearance();
+                    importType = PowerPointLoader.PowerpointImportType.Shapes;
+                    break;
+                case "highquality":
+                    dialogMode = ConversationConfigurationMode.IMPORT;
+                    importType = PowerPointLoader.PowerpointImportType.HighDefImage;
+                    UpdateDialogBoxAppearance();
+                    break;
+            }
         }
         private void handleConversationDialogueCompletion()
         {
@@ -263,7 +269,7 @@ namespace SandRibbon.Components
         private void AttachHandlers()
         {
             conversationSubjectListBox.SelectionChanged += conversationSubjectListBox_SelectionChanged;
-            startingContentSelector.SelectionChanged += startingContentListBox_SelectionChanged;
+            //startingContentSelector.SelectionChanged += startingContentListBox_SelectionChanged;
             CommitButton.Command = CompleteConversationDialog;
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
