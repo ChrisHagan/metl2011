@@ -38,7 +38,6 @@ namespace SandRibbon.Components
             Commands.receiveCurrentClasses.RegisterCommand(new DelegateCommand<object>(receiveCurrentClasses));
             Loaded += new RoutedEventHandler(ConversationSearchBox_Loaded);
         }
-
         void ConversationSearchBox_Loaded(object sender, RoutedEventArgs e)
         {
             DoUpdateAllConversations();
