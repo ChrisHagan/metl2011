@@ -64,7 +64,7 @@
                                 <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
                                     <StackPanel Orientation="Horizontal">
                                         <Image Source="/Resources/Ribbon-Quiz.png" Height="15" Width="15"/>
-                                        <Label Background="Transparent">
+                                        <Label FontSize="10" Background="Transparent">
                                             <Label.Content>
                                                 <MultiBinding Converter="{x:Static metl:Converters.quizPositionConverter}" >
                                                     <Binding ElementName="quiz" Path="DataContext"/>
@@ -73,7 +73,7 @@
                                             </Label.Content>
                                         </Label>
                                     </StackPanel>
-                                    <TextBlock FontSize="10" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
+                                    <TextBlock FontSize="8" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
                                 </StackPanel>
                             </Button>
                         </Border>
