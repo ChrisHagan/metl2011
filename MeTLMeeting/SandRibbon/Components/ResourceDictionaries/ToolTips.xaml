@@ -60,7 +60,7 @@
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="\Resources\Show.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
-                           Text="Artist's palette"/>
+                           Text="Show"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
                            Text="Show this selected content so that it is visible to everyone."/>
             </Grid>

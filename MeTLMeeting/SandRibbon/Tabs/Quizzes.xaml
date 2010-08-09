@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:metl="clr-namespace:SandRibbon"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:submissions="clr-namespace:SandRibbon.Components.Submissions"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
@@ -17,12 +18,14 @@
             <sr:GroupVariant Variant="Collapsed" Priority="9"/>
         </sr:RibbonGroup.Variants>
         <StackPanel Orientation="Horizontal">
-            <SandRibbonInterop:Button Click="CreateQuiz" Visibility="Collapsed" ToolTip="{DynamicResource CreateQuizToolTip}"
+            <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
+            <SandRibbonInterop:Button IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" 
+                Click="CreateQuiz" Visibility="Collapsed" ToolTip="{DynamicResource CreateQuizToolTip}"
                                       x:Name="createQuiz" Icon="\Resources\NewQuiz.png" Text="New"/>
         </StackPanel>
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Results" x:Name="quizResultsRibbonGroup" ShowDialogLauncher="False">
-        <Label VerticalAlignment="Center" 
+        <Label VerticalAlignment="Center" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                FontWeight="Bold"
                FontSize="12px"
                FontFamily="Verdana"
@@ -49,7 +52,7 @@
                     </Grid>
                 </ControlTemplate>
             </ScrollViewer.Template>
-            <ItemsControl x:Name="quizzes" >
+            <ItemsControl x:Name="quizzes" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>

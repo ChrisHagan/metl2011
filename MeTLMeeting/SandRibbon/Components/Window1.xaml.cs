@@ -77,7 +77,8 @@ namespace SandRibbon
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowPrintConversationDialog));
             Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(CreateConversation));
-            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeInConversation));
+            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
+            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
@@ -115,6 +116,8 @@ namespace SandRibbon
             Commands.UnblockInput.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
+            Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -512,6 +515,17 @@ namespace SandRibbon
             try
             {
                 return Globals.location.activeConversation != null;
+            }
+            catch (NotSetException)
+            {
+                return false;
+            }
+        }
+        private bool mustBeAuthor(object _arg)
+        {
+            try
+            {
+                return Globals.isAuthor;
             }
             catch (NotSetException)
             {

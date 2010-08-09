@@ -10,7 +10,10 @@
     >
     <!--Margin="0 0 30 0"-->
     <interop:RibbonPanel>
-        <interop:CheckBox x:Name="WorkPubliclyButton" Text="Work Publicly" Icon="..\Resources\Ribbon-Public.png" ToolTip="{DynamicResource WorkPubliclyToolTip}" ClickMode="Release" Click="CheckBox_Click"/>
+        <interop:Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
+        <interop:CheckBox x:Name="WorkPubliclyButton" Text="Work Publicly" Icon="..\Resources\Ribbon-Public.png" 
+                          ToolTip="{DynamicResource WorkPubliclyToolTip}" ClickMode="Release" Click="CheckBox_Click"
+                          IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
         <!--<interop:Button Text="Become Private" Icon="..\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>
         <interop:Button Text="Become Public" Icon="..\Resources\Ribbon-Public.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public"/>
         <interop:Button Text="Make selection Public" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="public"/>
