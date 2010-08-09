@@ -186,11 +186,43 @@
             </Grid>
         </Border>
     </ToolTip>
+    <ToolTip x:Key="TextModeToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\TextMode.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                           Text="Text Mode" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="In this mode you can type."/>
+            </Grid>
+        </Border>
+    </ToolTip>
+    <ToolTip x:Key="ViewSubmissionToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\ViewSubmission.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                           Text="View submissions" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="View any submissions students have sent you in this conversation."/>
+            </Grid>
+        </Border>
+    </ToolTip>
 
-
-
-    
-    
+    <ToolTip x:Key="SubmitSubmissionToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\SendSubmission.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                           Text="Send Submission" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Submit a snapshot of your screen to the teacher."/>
+            </Grid>
+        </Border>
+    </ToolTip>
     <ToolTip x:Key="RestoreCanvasToolTip" >
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
@@ -206,8 +238,8 @@
     <ToolTip x:Key="ExtendCanvasToolTip" >
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
-                <!--<Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\sampleImage.png"/>-->
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\ExtendCanvas.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Extend Canvas"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Width="300" 
@@ -268,7 +300,7 @@
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\MagnifyingGlassShiny.png"/>
+                       Source="..\..\Resources\Ribbon-ZoomIn.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Zoom In" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
@@ -281,7 +313,7 @@
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\MagnifyingGlassShiny.png"/>
+                       Source="..\..\Resources\Ribbon-ZoomOut.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Zoom Out" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
@@ -499,7 +531,7 @@
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\RedoShiny.png"/>
+                       Source="..\..\Resources\NewQuiz.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Create a new quiz"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
@@ -511,7 +543,7 @@
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\MagnifyingGlassShiny.png"/>
+                       Source="..\..\Resources\Ribbon-Public.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
                            Text="Work Publicly"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
@@ -625,7 +657,7 @@
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\SelectShiny.png"/>
+                       Source="..\..\Resources\SelectText.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Select Text" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
@@ -637,7 +669,7 @@
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\SelectShiny.png"/>
+                       Source="..\..\Resources\SelectInk.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Select Digital Ink" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
@@ -727,7 +759,7 @@
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\fontFamily.png"/>
+                       Source="..\..\Resources\PlaceTextBox.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Type" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
@@ -883,7 +915,7 @@
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\subscript.png"/>
+                       Source="..\..\Resources\Hand tool.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Move page" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
@@ -895,7 +927,7 @@
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\subscript.png"/>
+                       Source="..\..\Resources\GrabZoom.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Grab zoom" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
@@ -907,7 +939,7 @@
         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
             <Grid Margin="2">
                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\subscript.png"/>
+                       Source="..\..\Resources\ShowAll.png"/>
                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Text="Show all" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
@@ -924,6 +956,18 @@
                            Text="Fit to page" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
                            Text="Fit the width of the page to the screen"/>
+            </Grid>
+        </Border>
+    </ToolTip>
+    <ToolTip x:Key="ShowSlideToolTip" >
+        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+            <Grid Margin="2">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                       Source="..\..\Resources\ShowOriginal.png"/>
+                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                           Text="Show slide" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
+                           Text="Show the original view of the page"/>
             </Grid>
         </Border>
     </ToolTip>

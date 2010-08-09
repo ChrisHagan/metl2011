@@ -21,5 +21,5 @@ pause
 pscp.exe -r -pw bananaman "C:\specialMeTL\MeTLMeeting\LectureMeTL\publish\Application Files" deploy@reviver.adm.monash.edu.au:/srv/racecarDeploy/LectureMeTL/
 pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\LectureMeTL\publish\index.html" deploy@reviver.adm.monash.edu.au:/srv/racecarDeploy/LectureMeTL/
 pscp.exe -r -pw bananaman "C:\specialMeTL\MeTLMeeting\LectureMeTL\publish\office2007piaredist" deploy@reviver.adm.monash.edu.au:/srv/racecarDeploy/LectureMeTL/
-pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\LectureMeTL\publish\LectureMeTL.application" deploy@reviver.adm.monash.edu.au:/srv/racecarDeploy/LectureMeTL/
+pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\LectureMeTL\publish\MeTL Presenter.application" deploy@reviver.adm.monash.edu.au:/srv/racecarDeploy/LectureMeTL/
 pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\LectureMeTL\publish\setup.exe" deploy@reviver.adm.monash.edu.au:/srv/racecarDeploy/LectureMeTL/

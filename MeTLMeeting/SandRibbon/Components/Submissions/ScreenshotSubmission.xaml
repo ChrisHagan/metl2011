@@ -7,9 +7,11 @@
         <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
         <SandRibbonInterop:Button x:Name="submitSubmission" 
                 Text="Submit a screenshot" Icon="\Resources\SendSubmission.png"
-                Click="generateScreenshot" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                Click="generateScreenshot" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
+                                  ToolTip="{StaticResource SubmitSubmissionToolTip}"/>
         <SandRibbonInterop:Button x:Name="viewSubmission" Click="viewSubmissions" 
                                   Text="View Submissions" Icon="\Resources\ViewSubmission.png"
-                                  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                                  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
+                                  ToolTip="{StaticResource ViewSubmissionToolTip}"/>
     </StackPanel>
 </UserControl>

@@ -23,7 +23,7 @@
         <Grid>
         <SandRibbonInterop:RadioButton x:Name="GrabZoomButton" Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="\Resources\GrabZoom.png" ToolTip="{DynamicResource GrabZoomToolTip}"/>
         </Grid>
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.OriginalView}" Text="Show slide" Icon="\Resources\ShowOriginal.png"/>
+        <SandRibbonInterop:Button Command="{x:Static api:Commands.OriginalView}" Text="Show slide" Icon="\Resources\ShowOriginal.png" ToolTip="{DynamicResource ShowSlideToolTip}"/>
         <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToView}" Icon="\Resources\ShowAll.png" Text="Show all" ToolTip="{DynamicResource FitToViewToolTip}"/>
         <!--
         <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToPageWidth}" Icon="\Resources\FitToPage.png" Text="Fit to page" ToolTip="{DynamicResource FitToPageToolTip}"/>
