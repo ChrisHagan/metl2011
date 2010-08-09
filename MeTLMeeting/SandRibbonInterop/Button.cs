@@ -678,7 +678,8 @@ namespace SandRibbonInterop
             if (Items != null && Items.Count > 0)
             {
                 var container = ItemContainerGenerator.ContainerFromItem(Items[Items.Count - 1]);
-                ((FrameworkElement)container).BringIntoView();
+                if (container != null)
+                    ((FrameworkElement)container).BringIntoView();
             }
         }
     }
