@@ -829,6 +829,8 @@
     <Resource Include="Resources\ExactPowerpoint.png" />
     <Resource Include="Resources\FlexiblePowerpoint.png" />
     <Resource Include="Resources\Hide.png" />
+    <Resource Include="Resources\ArtistEasel.png" />
+    <Resource Include="Resources\ArtistPalette.png" />
     <Content Include="Resources\Highlighter.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
