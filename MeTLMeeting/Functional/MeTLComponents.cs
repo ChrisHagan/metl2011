@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Controls;
-using Divelements.SandRibbon;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Controls.Primitives;
-using SandRibbon.Components;
-using SandRibbon.Quizzing;
 using Keys = System.Windows.Forms.SendKeys;
 using System.Windows.Automation;
 using Button=System.Windows.Forms.Button;

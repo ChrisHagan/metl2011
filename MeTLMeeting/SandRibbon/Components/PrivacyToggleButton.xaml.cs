@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
@@ -24,7 +25,12 @@ namespace SandRibbon.Components
             InitializeComponent();
             System.Windows.Controls.Canvas.SetLeft(privacyButtons, bounds.Right);
             System.Windows.Controls.Canvas.SetTop(privacyButtons, bounds.Top);
-            if (mode == "show")
+            if(!Globals.isAuthor)
+            {
+                showButton.Visibility = Visibility.Collapsed;
+                hideButton.Visibility = Visibility.Collapsed;
+            }
+            else if (mode == "show")
             {
                 showButton.Visibility = Visibility.Visible;
                 hideButton.Visibility = Visibility.Collapsed;
