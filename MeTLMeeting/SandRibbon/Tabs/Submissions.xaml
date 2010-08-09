@@ -12,7 +12,12 @@
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">6</core:String>
     </sr:RibbonTab.Resources>
-    <sr:RibbonGroup Header="Submission" ShowDialogLauncher="False">
+    <sr:RibbonGroup Header="Submission" ShowDialogLauncher="False" Image="\Resources\Submissions.png">
+        <sr:RibbonGroup.Variants>
+            <sr:GroupVariant Variant="Small" Priority="2"/>
+            <sr:GroupVariant Variant="Medium" Priority="1"/>
+            <sr:GroupVariant Variant="Collapsed" Priority="3"/>
+        </sr:RibbonGroup.Variants>
         <submissions:ScreenshotSubmission/>
     </sr:RibbonGroup>
 </sr:RibbonTab>

@@ -843,6 +843,8 @@
     </Content>
     <Resource Include="Resources\PenIn.png" />
     <Resource Include="Resources\PenOut.png" />
+    <Resource Include="Resources\QuizResults.png" />
+    <Resource Include="Resources\Quizzes.png" />
     <Content Include="Resources\Ribbon-Palette.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -851,6 +853,7 @@
     <Resource Include="Resources\showAll.png" />
     <Resource Include="Resources\showOriginal.png" />
     <Resource Include="Resources\Show.png" />
+    <Resource Include="Resources\SendSubmission.png" />
     <Content Include="Resources\Slide_Not_Loaded.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -862,12 +865,14 @@
     </Content>
     <None Include="Resources\splashScreen.png">
     </None>
+    <Resource Include="Resources\Submissions.png" />
     <Content Include="Resources\SyncGreen.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\SyncRed.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\ViewSubmission.png" />
     <Resource Include="Resources\Whiteboard.png" />
     <Resource Include="Resources\TextMode.png" />
     <Resource Include="Resources\thoughtOutline.png" />

@@ -113,7 +113,7 @@ namespace SandRibbon.Tabs
             if (!answers.ContainsKey(quiz.id))
                 answers[quiz.id] = new ObservableCollection<QuizAnswer>();
             activeQuizes.Add(quiz);
-            quizzesScrollContainer.ScrollToRightEnd();
+            quizzes.ScrollToEnd();
         }
         private void CreateQuiz(object sender, RoutedEventArgs e)
         {

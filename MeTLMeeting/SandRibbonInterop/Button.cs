@@ -26,7 +26,7 @@ namespace SandRibbonInterop
             get { return (Visual)GetValue(CanvasProperty); }
             set { SetValue(CanvasProperty, value); }
         }
-        public static readonly DependencyProperty CanvasProperty = 
+        public static readonly DependencyProperty CanvasProperty =
             DependencyProperty.Register("Canvas", typeof(Visual), typeof(ThumbnailInformation), new UIPropertyMetadata(null));
         public bool Exposed
         {
@@ -184,13 +184,13 @@ namespace SandRibbonInterop
             get { return (double)GetValue(HeightProperty); }
             set { SetValue(HeightProperty, value); }
         }
-        
-        
-        
-        
+
+
+
+
         public static readonly DependencyProperty PositionProperty =
             DependencyProperty.Register("Position", typeof(TimeSpan), typeof(Thumb), new UIPropertyMetadata(null));
-        
+
         public System.Windows.Controls.MediaElement MediaElement
         {
             get { return (System.Windows.Controls.MediaElement)GetValue(MediaElementProperty); }
@@ -550,7 +550,7 @@ namespace SandRibbonInterop
         public Visibility visibility { get; set; }
         public int column { get; set; }
     }
-    
+
     public class NonRibbonButton : System.Windows.Controls.Button
     {
         public string Text
@@ -663,5 +663,23 @@ namespace SandRibbonInterop
         public static readonly DependencyProperty ParentActiveVariantProperty =
             DependencyProperty.Register("ParentActiveVariant", typeof(Divelements.SandRibbon.RibbonGroupVariant), typeof(SlideViewingListBox), new UIPropertyMetadata(Divelements.SandRibbon.RibbonGroupVariant.Large));
 
+    }
+    public class QuizContainer : System.Windows.Controls.ItemsControl
+    {
+        public RibbonGroupVariant ParentActiveVariant
+        {
+            get { return (Divelements.SandRibbon.RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
+            set { SetValue(ParentActiveVariantProperty, value); }
+        }
+        public static readonly DependencyProperty ParentActiveVariantProperty =
+            DependencyProperty.Register("ParentActiveVariant", typeof(Divelements.SandRibbon.RibbonGroupVariant), typeof(QuizContainer), new UIPropertyMetadata(Divelements.SandRibbon.RibbonGroupVariant.Large));
+        public void ScrollToEnd()
+        {
+            if (Items != null && Items.Count > 0)
+            {
+                var container = ItemContainerGenerator.ContainerFromItem(Items[Items.Count - 1]);
+                ((FrameworkElement)container).BringIntoView();
+            }
+        }
     }
 }
