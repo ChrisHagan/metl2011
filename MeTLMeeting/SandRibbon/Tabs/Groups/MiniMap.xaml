@@ -9,7 +9,7 @@
         <core:String x:Key="preferredDisplayIndex">7</core:String>    
     </sr:RibbonGroup.Resources>
     <sr:RibbonGroup.Variants>
-        <sr:GroupVariant Variant="Collapsed" Priority="5"/>
+        <sr:GroupVariant Variant="Collapsed" Priority="1"/>
     </sr:RibbonGroup.Variants>
     <StackPanel Orientation="Horizontal">
         <Viewbox x:Name="minimapContainer" Height="65" Width="100" MouseDown="Viewbox_MouseDown" MouseMove="Viewbox_MouseMove">

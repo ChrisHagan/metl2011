@@ -7,14 +7,14 @@
     xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
-    ShowDialogLauncher="False" Header="Zoom" Image="\Resources\Inking.png">
+    ShowDialogLauncher="False" Header="Zoom" Image="\Resources\MagnifyingGlassShiny.png">
     <sr:RibbonGroup.Resources>
         <core:String x:Key="preferredDisplayIndex">6</core:String>
     </sr:RibbonGroup.Resources>
     <sr:RibbonGroup.Variants>
-        <sr:GroupVariant Variant="Small" Priority="2"/>
-        <sr:GroupVariant Variant="Medium" Priority="1"/>
-        <sr:GroupVariant Variant="Collapsed" Priority="5"/>
+        <sr:GroupVariant Variant="Small" Priority="5"/>
+        <sr:GroupVariant Variant="Medium" Priority="3"/>
+        <sr:GroupVariant Variant="Collapsed" Priority="7"/>
     </sr:RibbonGroup.Variants>
     <SandRibbonInterop:RibbonPanel>
         <SandRibbonInterop:RadioButton x:Name="View" Icon="\Resources\Hand tool.png" Text="Move" Command="api:Commands.SetLayer" CommandParameter="View" ToolTip="{DynamicResource GrabMoveToolTip}"/>

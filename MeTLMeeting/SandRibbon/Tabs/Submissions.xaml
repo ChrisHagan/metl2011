@@ -8,11 +8,11 @@
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:submissions="clr-namespace:SandRibbon.Components.Submissions"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
-    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon">
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon" >
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">6</core:String>
     </sr:RibbonTab.Resources>
-    <sr:RibbonGroup Header="Submission">
+    <sr:RibbonGroup Header="Submission" ShowDialogLauncher="False">
         <submissions:ScreenshotSubmission/>
     </sr:RibbonGroup>
 </sr:RibbonTab>

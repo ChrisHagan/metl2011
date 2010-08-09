@@ -9,9 +9,9 @@
         <core:String x:Key="preferredDisplayIndex">0</core:String>    
     </sr:RibbonGroup.Resources>
     <sr:RibbonGroup.Variants>
-        <sr:GroupVariant Variant="Small" Priority="2"/>
-        <sr:GroupVariant Variant="Medium" Priority="1"/>
-        <sr:GroupVariant Variant="Collapsed" Priority="5"/>
+        <sr:GroupVariant Variant="Small" Priority="12"/>
+        <sr:GroupVariant Variant="Medium" Priority="11"/>
+        <sr:GroupVariant Variant="Collapsed" Priority="13"/>
     </sr:RibbonGroup.Variants>
     <simple:SimpleModeSwitcher x:Name="modes"/>
 </sr:RibbonGroup>           
