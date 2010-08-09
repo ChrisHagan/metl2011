@@ -239,7 +239,7 @@ namespace SandRibbon.Components
                     {
                         Dispatcher.adoptAsync(delegate { snapshot(); });
                     }, null, 600, Timeout.Infinite);
-                else snapshotTimer.Change(600, Timeout.Infinite);
+                else snapshotTimer.Change(900, Timeout.Infinite);
         }
         private Timer snapshotTimer;
         private void snapshot()

@@ -411,9 +411,12 @@ namespace SandRibbon.Components.Canvas
         {
             var strokesBeforePaste = Strokes.Select(s => s).ToList();
             Paste();
-            var newStrokes = Strokes.Where(s => !strokesBeforePaste.Contains(s));
+            var newStrokes = Strokes.Where(s => !strokesBeforePaste.Contains(s)).ToList();
             foreach (var stroke in newStrokes)
+            {
+                stroke.DrawingAttributes.Color = (Color) ColorConverter.ConvertFromString(stroke.tag().startingColor);
                 doMyStrokeAdded(stroke);
+            }
         }
         protected override void HandleCopy()
         {
