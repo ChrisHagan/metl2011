@@ -14,8 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>MeTLPresenterIcon.ico</ApplicationIcon>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <ManifestCertificateThumbprint>9D376C83EF21D14B39A43F622E49CEC028B51018</ManifestCertificateThumbprint>
     <ManifestKeyFile>LectureMeTL_TemporaryKey.pfx</ManifestKeyFile>
@@ -143,6 +142,8 @@
     <Content Include="MeTL.exe.manifest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="MeTLPresenterIcon.ico" />
+    <Resource Include="MeTLPresenterSplashScreen.png" />
     <Content Include="Resources\AddVideo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

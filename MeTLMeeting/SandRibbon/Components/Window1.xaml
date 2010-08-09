@@ -12,10 +12,10 @@
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:widgets="clr-namespace:SandRibbon.Widgets"
     AllowDrop="True"
-    Title="MeTL"
+    Title="MeTL Presenter"
     x:Name="ribbonWindow"
     WindowState="Maximized"
-    Icon="..\Resources\MeTL.ico">
+    Icon="..\Resources\MeTLLogo-bronze.ico">
     <sr:RibbonWindow.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ZoomIn}" CanExecute="canZoomIn" Executed="doZoomIn" />
         <CommandBinding Command="{x:Static api:Commands.ZoomOut}" CanExecute="canZoomOut" Executed="doZoomOut" />

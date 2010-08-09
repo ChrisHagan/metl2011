@@ -10,7 +10,7 @@ echo "Update Location"
 echo to: http://metl.adm.monash.edu/LectureMeTL/
 echo Options -
 echo Product name:
-echo Lecture MeTL
+echo MeTL Presenter
 echo Suite name:
 echo {leave blank}
 echo
