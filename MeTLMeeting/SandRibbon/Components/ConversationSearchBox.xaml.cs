@@ -63,6 +63,7 @@ namespace SandRibbon.Components
         {
             HideConversationSearchBoxButton.Visibility = Visibility.Visible;
             this.Visibility = Visibility.Collapsed;
+            Commands.RequerySuggested();
         }
         private void UpdateAllConversations(SandRibbonObjects.ConversationDetails details)
         {

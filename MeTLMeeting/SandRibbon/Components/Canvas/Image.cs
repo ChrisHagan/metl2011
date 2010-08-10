@@ -88,8 +88,6 @@ namespace SandRibbon.Components.Canvas
             deleteImages();
             ClearAdorners();
         }
-
-
         private void ReceiveDirtyLiveWindow(TargettedDirtyElement dirtyElement)
         {
             if (target != dirtyElement.target) return;

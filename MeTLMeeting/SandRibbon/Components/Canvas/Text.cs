@@ -146,15 +146,14 @@ namespace SandRibbon.Components.Canvas
             var box = (TextBox) element;
                 if (privacy == "private")
                     element.Effect = new DropShadowEffect { BlurRadius = 50, 
-                        //Color = (Color) ColorConverter.ConvertFromString(box.Foreground.ToString()), 
                         Color = Colors.Black,
                         ShadowDepth = 0, Opacity = 1 };
                 else
-                    element.Effect = null;
+                   RemovePrivacyStylingFromElement(element); 
         }
         private void dirtyTextBoxWithoutHistory(TextBox box)
         {
-            removePrivateRegion(box);
+            RemovePrivacyStylingFromElement(box);
             Commands.SendDirtyText.Execute(new TargettedDirtyElement
             {
                 identifier = box.tag().id,
@@ -315,7 +314,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void resetText(TextBox box)
         {
-            removePrivateRegion(box);
+            RemovePrivacyStylingFromElement(box);
             currentColor = Colors.Black;
             box.FontWeight = FontWeights.Normal;
             box.FontStyle = FontStyles.Normal;
@@ -333,10 +332,9 @@ namespace SandRibbon.Components.Canvas
         }
         private void setTextSize(double size)
         {
-            removePrivateRegion(myTextBox);
             currentSize = size;
             if (myTextBox == null) return;
-            removePrivateRegion(myTextBox);
+            RemovePrivacyStylingFromElement(myTextBox);
             myTextBox.FontSize = size;
             myTextBox.Focus();
             sendText(myTextBox);
@@ -576,10 +574,7 @@ namespace SandRibbon.Components.Canvas
         private void setAppropriatePrivacyHalo(TextBox box)
         {
             if (!Children.Contains(box)) return;
-            if (privacy == "private")
-                addPrivateRegion(box);
-            else
-                removePrivateRegion(box);
+            ApplyPrivacyStylingToElement(box, privacy);
         }
 
         public void RemoveTextboxWithTag(string tag)
@@ -605,7 +600,7 @@ namespace SandRibbon.Components.Canvas
             if (targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box) && me != "projector")
             {
                 var box = textBoxFromId(targettedBox.identity);
-                if (box is TextBox)
+                if (box!= null)
                     ApplyPrivacyStylingToElement(box, box.tag().privacy);
                 return;
             }//I never want my live text to collide with me.
@@ -652,8 +647,8 @@ namespace SandRibbon.Components.Canvas
         private TextBox textBoxFromId(string boxId)
         {
             foreach (var text in Children)
-                if (text is TextBox)
-                    if (((TextBox)text).tag().id == boxId && ((TextBox)text).tag().privacy == privacy) return (TextBox)text;
+                if (text.GetType() == typeof(TextBox))
+                    if (((TextBox)text).tag().id == boxId) return (TextBox)text;
             return null;
         }
         public void doText(TargettedTextBox targettedBox)
@@ -673,26 +668,9 @@ namespace SandRibbon.Components.Canvas
                                               Children.Add(applyDefaultAttributes(box));
                                               if (!(targettedBox.author == Globals.me && focusable))
                                                   box.Focusable = false;
-                                              if (targettedBox.privacy == "private" && targettedBox.target == target)
-                                                  addPrivateRegion(box);
+                                              ApplyPrivacyStylingToElement(box, targettedBox.privacy);
                                           }
                                       });
-        }
-        private void addPrivateRegion(TextBox text)
-        {
-            if (text != null && text is TextBox)
-            {
-                var textPrivacy = text.tag().privacy;
-                ApplyPrivacyStylingToElement(text, textPrivacy);
-            }
-            //ApplyPrivacyStylingToElement(text,text.tag().privacy);
-            //addPrivateRegion(getTextPoints(text));
-        }
-        private void removePrivateRegion(TextBox text)
-        {
-            if (text != null && text is TextBox)
-                RemovePrivacyStylingFromElement(text);
-            //removePrivateRegion(getTextPoints(text));
         }
         public static IEnumerable<Point> getTextPoints(TextBox text)
         {

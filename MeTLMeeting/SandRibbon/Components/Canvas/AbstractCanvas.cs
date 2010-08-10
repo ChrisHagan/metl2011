@@ -94,7 +94,7 @@ namespace SandRibbon.Components.Canvas
                     target = (string)FindResource("target");
                     defaultPrivacy = (string)FindResource("defaultPrivacy");
                     actualPrivacy = defaultPrivacy;
-                    context = getContext();
+                    //context = getContext();
                 }
             });
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
@@ -212,26 +212,6 @@ namespace SandRibbon.Components.Canvas
             element.Effect = null;
             element.Opacity = 1;
         }
-
-        private PresentationSpace context;
-        protected void addPrivateRegion(IEnumerable<Point> figure)
-        {
-            if (context == null) return;
-            context.AddPrivateRegion(figure);
-        }
-        protected void removePrivateRegion(IEnumerable<Point> figure)
-        {
-            if (context == null) return;
-            context.RemovePrivateRegion(figure);
-        }
-        private PresentationSpace getContext()
-        {
-            DependencyObject parent = this;
-            while (!(parent is PresentationSpace) && parent != null)
-                parent = LogicalTreeHelper.GetParent(parent);
-            return (PresentationSpace)parent;
-        }
-
         void ImageDragOver(object sender, DragEventArgs e)
         {
             e.Effects = DragDropEffects.None;
