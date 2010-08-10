@@ -664,6 +664,17 @@ namespace SandRibbonInterop
             DependencyProperty.Register("ParentActiveVariant", typeof(Divelements.SandRibbon.RibbonGroupVariant), typeof(SlideViewingListBox), new UIPropertyMetadata(Divelements.SandRibbon.RibbonGroupVariant.Large));
 
     }
+    public class PenColorsListBox : System.Windows.Controls.ListBox
+    {
+        public RibbonGroupVariant ParentActiveVariant
+        {
+            get { return (Divelements.SandRibbon.RibbonGroupVariant)GetValue(ParentActiveVariantProperty); }
+            set { SetValue(ParentActiveVariantProperty, value); }
+        }
+        public static readonly DependencyProperty ParentActiveVariantProperty =
+            DependencyProperty.Register("ParentActiveVariant", typeof(Divelements.SandRibbon.RibbonGroupVariant), typeof(PenColorsListBox), new UIPropertyMetadata(Divelements.SandRibbon.RibbonGroupVariant.Large));
+
+    }
     public class QuizContainer : System.Windows.Controls.ItemsControl
     {
         public RibbonGroupVariant ParentActiveVariant
