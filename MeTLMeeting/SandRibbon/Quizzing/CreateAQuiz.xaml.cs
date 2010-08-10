@@ -44,7 +44,10 @@ namespace SandRibbon.Quizzing
         }
         private void canCreateQuizQuestion(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = quizTitle != null && !(string.IsNullOrEmpty(quizTitle.Text) || quizTitle.Text == CreateAQuiz.PROMPT_TEXT);
+            if(quizTitle == null) return;
+            var quizTitleIsntDefault = quizTitle.Text != CreateAQuiz.PROMPT_TEXT ;
+            var activeOptions = options.Where(o => o.optionText.Length > 0).ToList();
+            e.CanExecute = (quizTitle != null && quizTitleIsntDefault) && activeOptions.Count >= 2;
         }
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
@@ -109,11 +112,13 @@ namespace SandRibbon.Quizzing
                 options.Add(newOption);
                 ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption)).Opacity = 0.5;
             }
+            Commands.RequerySuggested();
         }
         private void RemoveQuizAnswer(object sender, RoutedEventArgs e)
         {
             var owner = ((FrameworkElement)sender).DataContext;
             options.Remove((Option)owner);
+            CommandManager.InvalidateRequerySuggested();
         }
         private void screenshotAsAQuestion(object sender, RoutedEventArgs e)
         {
