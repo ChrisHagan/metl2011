@@ -115,7 +115,7 @@ namespace SandRibbon.Components.Canvas
                 if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "System.Windows.Controls.Image")
                 {
                     var image = (System.Windows.Controls.Image)GetSelectedElements().ElementAt(i);
-                    if (image.tag().privacy == "private") removePrivateRegion(image);
+                    ApplyPrivacyStylingToElement(image, image.tag().privacy);
                     UndoHistory.Queue(
                         () =>
                             {
@@ -241,8 +241,7 @@ namespace SandRibbon.Components.Canvas
             if(!Globals.isAuthor) return;
             if(privacy != "private")
             {
-                element.Effect = null;
-                element.Opacity = 1;
+                RemovePrivacyStylingFromElement(element);
                 return;
             }
             element.Effect =new DropShadowEffect { BlurRadius = 50, Color = Colors.Black, ShadowDepth = 0, Opacity = 1 };
@@ -259,12 +258,6 @@ namespace SandRibbon.Components.Canvas
                 foreach (System.Windows.Controls.Image image in images)
                     ApplyPrivacyStylingToElement(image, image.tag().privacy);
             });
-        }
-        private void removePrivateRegion(System.Windows.Controls.Image image)
-        {
-            if (image != null && image is System.Windows.Controls.Image)
-                RemovePrivacyStylingFromElement(image);
-            //removePrivateRegion(getImagePoints(image));
         }
         public static IEnumerable<Point> getImagePoints(System.Windows.Controls.Image image)
         {
@@ -428,15 +421,16 @@ namespace SandRibbon.Components.Canvas
         {
             var listToCut = new List<TargettedDirtyElement>();
 
-            foreach (var image in GetSelectedElements().Where(e => e is System.Windows.Controls.Image))
+            foreach (var element in GetSelectedElements().Where(e => e is System.Windows.Controls.Image))
             {
-                if (((System.Windows.Controls.Image)image).tag().privacy == "private") removePrivateRegion(((System.Windows.Controls.Image)image));
-                Clipboard.SetImage((BitmapSource)((System.Windows.Controls.Image)image).Source);
+                var image = (System.Windows.Controls.Image) element;
+                ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                Clipboard.SetImage((BitmapSource)image.Source);
                 listToCut.Add(new TargettedDirtyElement
                     {
-                        identifier = ((System.Windows.Controls.Image)image).tag().id,
+                        identifier = image.tag().id,
                         target = target,
-                        privacy = ((System.Windows.Controls.Image)image).tag().privacy,
+                        privacy = image.tag().privacy,
                         author = Globals.me,
                         slide = currentSlide
                     });
@@ -595,7 +589,8 @@ namespace SandRibbon.Components.Canvas
                 if (selectedImage is System.Windows.Controls.Image)
                 {
                     var image = (System.Windows.Controls.Image)selectedImage;
-                    if (image.tag().privacy == "private") removePrivateRegion(image);
+
+                    ApplyPrivacyStylingToElement(image, image.tag().privacy);
                     Commands.SendDirtyImage.Execute(new TargettedDirtyElement
                     {
                         identifier = ((System.Windows.Controls.Image)selectedImage).tag().id,
