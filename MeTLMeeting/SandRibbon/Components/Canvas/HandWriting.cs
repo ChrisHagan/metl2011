@@ -223,8 +223,6 @@ namespace SandRibbon.Components.Canvas
                 privacyChoice = "hide";
             else
                 privacyChoice = "both";
-        //    var adorner = GetAdorner();
-        //    AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
             Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
         }
 
@@ -412,11 +410,13 @@ namespace SandRibbon.Components.Canvas
             var strokesBeforePaste = Strokes.Select(s => s).ToList();
             Paste();
             var newStrokes = Strokes.Where(s => !strokesBeforePaste.Contains(s)).ToList();
+            ClearAdorners();
             foreach (var stroke in newStrokes)
             {
                 stroke.DrawingAttributes.Color = (Color) ColorConverter.ConvertFromString(stroke.tag().startingColor);
-                doMyStrokeAdded(stroke);
+                doMyStrokeAdded(stroke, stroke.tag().privacy);
             }
+            addAdorners();
         }
         protected override void HandleCopy()
         {

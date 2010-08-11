@@ -45,7 +45,7 @@ namespace SandRibbon.Quizzing
         private void canCreateQuizQuestion(object sender, CanExecuteRoutedEventArgs e)
         {
             if(quizTitle == null) return;
-            var quizTitleIsntDefault = quizTitle.Text != CreateAQuiz.PROMPT_TEXT ;
+            var quizTitleIsntDefault = quizTitle.Text != PROMPT_TEXT ;
             var activeOptions = options.Where(o => o.optionText.Length > 0).ToList();
             e.CanExecute = (quizTitle != null && quizTitleIsntDefault) && activeOptions.Count >= 2;
         }
@@ -106,7 +106,6 @@ namespace SandRibbon.Quizzing
                 }).ToUpper(),
                 color = AllColors.all.ElementAt(AllColors.all.IndexOf(options.Last().color) + 1)
             };
-            //newOption.optionText = newOption.name;
             if (shouldAddNewEmptyOption())
             {
                 options.Add(newOption);

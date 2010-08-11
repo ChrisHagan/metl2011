@@ -100,7 +100,7 @@ namespace Functional
                                                             new PropertyCondition(AutomationElement.AutomationIdProperty, 
                                                             "createConversation")));
             }
-            catch(Exception e) { }
+            catch(Exception ) { }
             
             return picker;
 
@@ -123,7 +123,7 @@ namespace Functional
                                                             new PropertyCondition(AutomationElement.AutomationIdProperty, 
                                                             "createConversation")));
             }
-            catch(Exception e) { }
+            catch(Exception ) { }
             
             return picker;
 
