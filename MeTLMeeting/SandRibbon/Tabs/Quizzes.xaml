@@ -55,9 +55,9 @@
                                         <Grid Margin="2">
                                             <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="\Resources\Ribbon-Quiz.png"/>
-                                            <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold"
+                                            <TextBlock Margin="30,0,0,0" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold"
                                                        Text="View quiz results"/>
-                                            <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Text="{Binding Path=title}"/>
+                                            <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Foreground="Black" Text="{Binding Path=title}"/>
                                         </Grid>
                                     </Border>
                                 </Button.ToolTip>

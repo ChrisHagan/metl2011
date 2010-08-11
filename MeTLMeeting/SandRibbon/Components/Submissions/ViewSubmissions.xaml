@@ -11,7 +11,7 @@
     </Window.CommandBindings>
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
-            <Button DockPanel.Dock="Bottom" x:Name="importSelectedSubmission" Command="{x:Static api:Commands.ImportSubmission}" HorizontalAlignment="Right">Display submission</Button>
+            <Button DockPanel.Dock="Bottom" x:Name="importSelectedSubmission" ToolTip="{StaticResource DisplaySubmissionToolTip}" Command="{x:Static api:Commands.ImportSubmission}" HorizontalAlignment="Right">Display submission</Button>
             <Grid MaxHeight="450">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition MaxWidth="325"/>

@@ -694,4 +694,53 @@ namespace SandRibbonInterop
             }
         }
     }
+    public class MeTLImageToolTip : System.Windows.Controls.ToolTip
+    {
+        public string TitleText
+        {
+            get { return (string)GetValue(TitleTextProperty); }
+            set { SetValue(TitleTextProperty, value); }
+        }
+        public static readonly DependencyProperty TitleTextProperty =
+            DependencyProperty.Register("TitleText", typeof(string), typeof(MeTLImageToolTip), new UIPropertyMetadata(""));
+        public string ContentText
+        {
+            get { return (string)GetValue(ContentTextProperty); }
+            set { SetValue(ContentTextProperty, value); }
+        }
+        public static readonly DependencyProperty ContentTextProperty =
+            DependencyProperty.Register("ContentText", typeof(string), typeof(MeTLImageToolTip), new UIPropertyMetadata(""));
+        public ImageSource ImageSource
+        {
+            get { return (ImageSource)GetValue(ImageSourceProperty); }
+            set { SetValue(ImageSourceProperty, value); }
+        }
+        public static readonly DependencyProperty ImageSourceProperty =
+            DependencyProperty.Register("ImageSource", typeof(ImageSource), typeof(MeTLImageToolTip), new UIPropertyMetadata(null));
+    }
+    public class MeTLContentToolTip : System.Windows.Controls.ToolTip
+    {
+        public string TitleText
+        {
+            get { return (string)GetValue(TitleTextProperty); }
+            set { SetValue(TitleTextProperty, value); }
+        }
+        public static readonly DependencyProperty TitleTextProperty =
+            DependencyProperty.Register("TitleText", typeof(string), typeof(MeTLImageToolTip), new UIPropertyMetadata(""));
+        public string ContentText
+        {
+            get { return (string)GetValue(ContentTextProperty); }
+            set { SetValue(ContentTextProperty, value); }
+        }
+        public static readonly DependencyProperty ContentTextProperty =
+            DependencyProperty.Register("ContentText", typeof(string), typeof(MeTLImageToolTip), new UIPropertyMetadata(""));
+        public FrameworkElement ContentElement
+        {
+            get { return (FrameworkElement)GetValue(ContentElementProperty); }
+            set { SetValue(ContentElementProperty, value); }
+        }
+        public static readonly DependencyProperty ContentElementProperty =
+            DependencyProperty.Register("ImageSource", typeof(FrameworkElement), typeof(MeTLImageToolTip), new UIPropertyMetadata(null));
+    }
+
 }

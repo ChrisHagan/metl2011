@@ -42,21 +42,21 @@
                                     <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
-                            <ListBoxItem x:Name="WhiteboardListBoxItem" Tag="whiteboard" Selected="selectChoice">
-                                <StackPanel>
+                            <ListBoxItem x:Name="WhiteboardListBoxItem" Tag="whiteboard" Selected="selectChoice" ToolTip="{StaticResource BlankWhiteboardConversationTypeToolTip}">
+                                <StackPanel >
                                     <Image Height="50" Width="50" Source="..\Resources\Whiteboard.png"/>
                                     <Label HorizontalAlignment="Center" FontWeight="Bold" Content="Blank"/>
                                     <Label HorizontalAlignment="Center" Content="Whiteboard"/>
                                 </StackPanel>
                             </ListBoxItem>
-                            <ListBoxItem x:Name="EditablePowerpointListBoxItem" Tag="editable" Selected="selectChoice">
+                            <ListBoxItem x:Name="EditablePowerpointListBoxItem" Tag="editable" Selected="selectChoice" ToolTip="{StaticResource EditablePowerpointConversationTypeToolTip}">
                                 <StackPanel>
                                     <Image Height="50" Width="50" Source="..\Resources\FlexiblePowerpoint.png"/>
                                     <Label HorizontalAlignment="Center" FontWeight="Bold" Content="Editable"/>
                                     <Label HorizontalAlignment="Center" Content="Powerpoint"/>
                                 </StackPanel>
                             </ListBoxItem>
-                            <ListBoxItem x:Name="HighQualityPowerpointListBoxItem" Tag="highquality" Selected="selectChoice">
+                            <ListBoxItem x:Name="HighQualityPowerpointListBoxItem" Tag="highquality" Selected="selectChoice" ToolTip="{StaticResource ExactPowerpointConversationTypeToolTip}">
                                 <StackPanel>
                                     <Image Height="50" Width="50" Source="..\Resources\ExactPowerpoint.png"/>
                                     <Label HorizontalAlignment="Center" FontWeight="Bold" Content="High Quality"/>
