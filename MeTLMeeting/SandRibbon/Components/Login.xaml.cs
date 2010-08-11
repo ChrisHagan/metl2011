@@ -33,7 +33,7 @@ namespace SandRibbon.Components
         public string Version { get; set; }
         public string ReleaseNotes { 
             get {
-                var releaseNotes = HttpResourceProvider.insecureGetString("http://metl.adm.monash.edu.au/MeTL/releaseNotes.txt");
+                var releaseNotes = HttpResourceProvider.insecureGetString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
                 if (!string.IsNullOrEmpty(releaseNotes))
                     releaseNotesViewer.Visibility = Visibility.Visible;
                 else
