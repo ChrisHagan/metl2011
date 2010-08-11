@@ -78,17 +78,20 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type SandRibbonInterop:MeTLImageToolTip}">
-                    <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-                        <Grid Margin="2">
-                            <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                    <Border Padding="4" CornerRadius="2" Background="{StaticResource BackgroundBlueGradient}"
+                            BorderBrush="DarkGray" BorderThickness="1">
+                        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
+                            <Grid Margin="2">
+                                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                        Source="{TemplateBinding ImageSource}"/>
-                            <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
+                                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                           FontFamily="Verdana" FontSize="14" FontWeight="Bold" Foreground="Black"
                            Text="{TemplateBinding TitleText}"/>
-                            <TextBlock Margin="0,30,0,0" TextWrapping="Wrap"
-                           FontSize="10" FontWeight="Regular" Foreground="Black"
+                                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap"
+                           FontFamily="Verdana" FontSize="10" FontWeight="Regular" Foreground="Black"
                            Text="{TemplateBinding ContentText}"/>
-                        </Grid>
+                            </Grid>
+                        </Border>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -99,17 +102,21 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type SandRibbonInterop:MeTLContentToolTip}">
-                    <Border Background="{StaticResource BackgroundBlueGradient}" 
+                    <Border Padding="4" CornerRadius="2" Background="{StaticResource BackgroundBlueGradient}"
                             BorderBrush="DarkGray" BorderThickness="1">
-                        <Grid Margin="2">
-                            <ContentPresenter Content="{TemplateBinding ContentElement}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" />
-                            <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
+                        <Border Background="{StaticResource BackgroundBlueGradient}" 
+                            BorderBrush="DarkGray" BorderThickness="1">
+                            <Grid Margin="2">
+                                <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
+                                              Content="{TemplateBinding ContentElement}"/>
+                                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                           FontFamily="Verdana" FontSize="14" FontWeight="Bold" Foreground="Black"
                            Text="{TemplateBinding TitleText}"/>
-                            <TextBlock Margin="0,30,0,0" TextWrapping="Wrap"
-                           FontSize="10" FontWeight="Regular" Foreground="Black"
+                                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap"
+                           FontFamily="Verdana" FontSize="10" FontWeight="Regular" Foreground="Black"
                            Text="{TemplateBinding ContentText}"/>
-                        </Grid>
+                            </Grid>
+                        </Border>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

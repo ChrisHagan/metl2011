@@ -38,79 +38,72 @@
                FontFamily="Verdana"
                Visibility="{Binding ElementName=quizzes, Path=ItemsSource.Count, Converter={x:Static metl:Converters.reverseQuizzesToVisibilityConverter}}"
                Content="There are currently no quizzes for this conversation"/>
-            <SandRibbonInterop:QuizContainer x:Name="quizzes" 
+        <SandRibbonInterop:QuizContainer x:Name="quizzes" 
                 ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
                 IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}">
-                <SandRibbonInterop:QuizContainer.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
-                    </ItemsPanelTemplate>
-                </SandRibbonInterop:QuizContainer.ItemsPanel>
-                <SandRibbonInterop:QuizContainer.ItemTemplate>
-                    <DataTemplate>
-                        <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
-                            <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
-                                <Button.ToolTip>
-                                    <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-                                        <Grid Margin="2">
-                                            <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="\Resources\Ribbon-Quiz.png"/>
-                                            <TextBlock Margin="30,0,0,0" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold"
-                                                       Text="View quiz results"/>
-                                            <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Foreground="Black" Text="{Binding Path=title}"/>
-                                        </Grid>
-                                    </Border>
-                                </Button.ToolTip>
-                                <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="/Resources/Ribbon-Quiz.png" Height="15" Width="15"/>
-                                        <Label FontSize="10" Background="Transparent">
-                                            <Label.Content>
-                                                <MultiBinding Converter="{x:Static metl:Converters.quizPositionConverter}" >
-                                                    <Binding ElementName="quiz" Path="DataContext"/>
-                                                    <Binding ElementName="quizzes" Path="ItemsSource"/>
-                                                </MultiBinding>
-                                            </Label.Content>
-                                        </Label>
-                                    </StackPanel>
-                                    <TextBlock FontSize="8" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
+            <SandRibbonInterop:QuizContainer.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
+                </ItemsPanelTemplate>
+            </SandRibbonInterop:QuizContainer.ItemsPanel>
+            <SandRibbonInterop:QuizContainer.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
+                        <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
+                            <Button.ToolTip>
+                                <SandRibbonInterop:MeTLImageToolTip TitleText="View quiz results" ImageSource="\Resources\Ribbon-Quiz.png"
+                                                                        ContentText="{Binding Path=title}"/>
+                            </Button.ToolTip>
+                            <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/Resources/Ribbon-Quiz.png" Height="15" Width="15"/>
+                                    <Label FontSize="10" Background="Transparent">
+                                        <Label.Content>
+                                            <MultiBinding Converter="{x:Static metl:Converters.quizPositionConverter}" >
+                                                <Binding ElementName="quiz" Path="DataContext"/>
+                                                <Binding ElementName="quizzes" Path="ItemsSource"/>
+                                            </MultiBinding>
+                                        </Label.Content>
+                                    </Label>
                                 </StackPanel>
-                            </Button>
-                        </Border>
-                    </DataTemplate>
-                </SandRibbonInterop:QuizContainer.ItemTemplate>
-                <SandRibbonInterop:QuizContainer.Template>
-                    <ControlTemplate>
-                        <Border BorderBrush="DarkGray" BorderThickness="1" Padding="1">
-                            <ScrollViewer Name="Scroller" Background="White" Foreground="DarkGray" >
-                                <StackPanel Name="slideStack" Orientation="Horizontal" IsItemsHost="True"/>
-                            </ScrollViewer>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="SandRibbonInterop:QuizContainer.ParentActiveVariant" Value="Small">
-                                <Setter TargetName="Scroller" Property="Width" Value="100"/>
-                                <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                                <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible"/>
-                                <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-                                <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Vertical"/>
-                            </Trigger>
-                            <Trigger Property="SandRibbonInterop:QuizContainer.ParentActiveVariant" Value="Medium">
-                                <Setter TargetName="Scroller" Property="Width" Value="300"/>
-                                <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                                <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-                                <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
-                                <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
-                            </Trigger>
-                            <Trigger Property="SandRibbonInterop:QuizContainer.ParentActiveVariant" Value="Large">
-                                <Setter TargetName="Scroller" Property="Width" Value="600"/>
-                                <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                                <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-                                <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
-                                <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </SandRibbonInterop:QuizContainer.Template>
-            </SandRibbonInterop:QuizContainer>
+                                <TextBlock FontSize="8" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+                </DataTemplate>
+            </SandRibbonInterop:QuizContainer.ItemTemplate>
+            <SandRibbonInterop:QuizContainer.Template>
+                <ControlTemplate>
+                    <Border BorderBrush="DarkGray" BorderThickness="1" Padding="1">
+                        <ScrollViewer Name="Scroller" Background="White" Foreground="DarkGray" >
+                            <StackPanel Name="slideStack" Orientation="Horizontal" IsItemsHost="True"/>
+                        </ScrollViewer>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="SandRibbonInterop:QuizContainer.ParentActiveVariant" Value="Small">
+                            <Setter TargetName="Scroller" Property="Width" Value="100"/>
+                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
+                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible"/>
+                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Vertical"/>
+                        </Trigger>
+                        <Trigger Property="SandRibbonInterop:QuizContainer.ParentActiveVariant" Value="Medium">
+                            <Setter TargetName="Scroller" Property="Width" Value="300"/>
+                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
+                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
+                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
+                        </Trigger>
+                        <Trigger Property="SandRibbonInterop:QuizContainer.ParentActiveVariant" Value="Large">
+                            <Setter TargetName="Scroller" Property="Width" Value="600"/>
+                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
+                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
+                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </SandRibbonInterop:QuizContainer.Template>
+        </SandRibbonInterop:QuizContainer>
     </sr:RibbonGroup>
 </sr:RibbonTab>

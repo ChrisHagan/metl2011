@@ -3,107 +3,9 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:my="clr-namespace:SandRibbon.Components.SimpleImpl">
-
-    <!-- This is a sample tooltip.
-    
-    <ToolTip x:Key="sampleToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\sampleImage.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top"  FontSize="14" FontWeight="Bold" 
-                           Text="sampleHeading"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="sampleBody"/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    -->
-    <!--
-        <ToolTip x:Key="ArtistPaletteToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="\Resources\Ribbon-Palette.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Artist's palette"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Open the custom colour palette.  You can alter your colour by changing the Red, Green and Blue values, by changing the Hue, Saturation or Value values or by selecting a colour directly from the swatch.  Also, you can change the thickness of the pen, or change the pen into a highlighter."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-<ToolTip x:Key="DisplaySubmissionToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="\Resources\Ribbon-LivePreviewDraft02.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Show submission"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Foreground="Black"
-                           Text="Import this submission onto a new slide, so that you can show it publicly."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <ToolTip x:Key="BlankWhiteboardConversationTypeToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="\Resources\Whiteboard.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Blank Whiteboard"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="A new empty MeTL conversation."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <ToolTip x:Key="EditablePowerpointConversationTypeToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="\Resources\FlexiblePowerpoint.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Editable Powerpoint"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="A new MeTL conversation, created from a powerpoint file.  The individual objects from the powerpoint can be moved around and edited."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    
-
-    <ToolTip x:Key="ExactPowerpointConversationTypeToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="\Resources\ExactPowerpoint.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="High Quality Powerpoint"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="A new MeTL conversation, created from a powerpoint file.  The powerpoint will be imported in high quality, exactly as it appeared in powerpoint.  Objects imported from powerpoint will not be editable."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <ToolTip x:Key="AttachCurrentSlideToQuizToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="\Resources\AttachSnapshot.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Attach snapshot"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Include an image of your current slide in this quiz."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-
-
-
-    -->
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ResetPenToDefaultToolTip" 
+                                        TitleText="Reset pen"
+                                        ContentText="Return this pen to its original colour and width."/>
     <SandRibbonInterop:MeTLImageToolTip x:Key="DisplaySubmissionToolTip" 
                                         TitleText="Show submission"
                                         ImageSource="\Resources\Ribbon-LivePreviewDraft02.png" 
@@ -128,1343 +30,311 @@
                                         TitleText="Artist's palette"
                                         ImageSource="\Resources\Ribbon-Palette.png" 
                                         ContentText="Open the custom colour palette.  You can alter your colour by changing the Red, Green and Blue values, by changing the Hue, Saturation or Value values or by selecting a colour directly from the swatch.  Also, you can change the thickness of the pen, or change the pen into a highlighter."/>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="DeleteContentToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="\Resources\Delete.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Delete"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Delete this selected content."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="HideContentToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="\Resources\Hide.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Hide"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Hide this selected content so that it is only visible to you."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="ShowContentToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="\Resources\Show.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Show"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Show this selected content so that it is visible to everyone."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="ClosePopupToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Close Palette"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Foreground="Black"
-                           Text="Close the custom colour palette."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="StickyPopupToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="PenOut.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Sticky Popup"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Change the palette so that it stays open.  When the drawing pin is pushed in, the palette will remain open.  When the drawing pin is pulled out, the palette will close whenever you click your mouse or stylus outside the palette."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="NextSlideToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Next.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Next Page"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Move to the next page in the conversation."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="AddLiveWindowToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Ribbon-LivePreviewDraft02.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Add LiveWindow"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Create a LiveWindow on your personal notepad.  A livewindow is a copy of the presentation space, but as the presentation space changes, so will your LiveWindow.  When you create a LiveWindow, you determine what it is focused on, and how large it is.  You can have many LiveWindows in your personal notes, and you can move them around in Image Mode."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="PreviousSlideToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Previous.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Previous Page"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Move to the previous page in the conversation."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="AddSlideToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\NewSlide.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Add Page"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Add a new page after the current page." />
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="SyncToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\SyncShiny.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Link to or unlink from the teacher's current location." />
-                <!--
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="."/>
-                -->
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="AddVideoToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\AddVideo.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Add Video"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Add a video from your computer into MeTL, on the presentation space."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="AddImageToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\AddImage.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Add Image"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Add an image to the slide."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="ImageModeToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\ImageMode.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Image Mode"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="In this mode you can insert pictures."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="TextModeToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\TextMode.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Text Mode"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="In this mode you can type."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="ViewSubmissionToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\ViewSubmission.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="View submissions"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="View any submissions students have sent you in this conversation."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="SubmitSubmissionToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\SendSubmission.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Send Submission"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Submit a snapshot of your screen to the teacher."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="RestoreCanvasToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Ribbon-FitCanvas.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Restore Canvas"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="This will zoom all the way out, allowing you to see the entire canvas at once."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="ExtendCanvasToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\ExtendCanvas.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Extend Canvas"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" Width="300" 
-                           Text="Add extra blank space to the page."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="CreateMeetingToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Ribbon-Meeting.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Create Meeting"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="In meeting style, MeTL will allow all participants equal rights over all content.  Participants will be able to add, move or remove annotations, regardless of who originally placed the annotations.  They will be free to collaborate on any page in the conversation."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="CreateTutorialToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Ribbon-Tutorial.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Tutorial"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="In tutorial style, MeTL will allow your students to collaborate with each other directly on each page.  They will be free to navigate throughout the conversation and they will be able to manage their friends subscriptions."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="CreateLectureToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Ribbon-Lecture.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Lecture"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="In lecture style, MeTL will ensure that your students are always on the same page as you.  You will be able to write directly on each page, but your students will not.  They will be able to write only in their private note area."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="RemainTheSameToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Ribbon-Lecture.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Remain the same"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Leave this conversation in the same style and commit all other changes"/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="ZoomInToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Ribbon-ZoomIn.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Zoom In"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Zoom in on this page."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="ZoomOutToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Ribbon-ZoomOut.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Zoom Out" />
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Zoom out on this page."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="ApplicationMenuToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\homeloo_gear_clock_2.jpg"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Monash MeTL Application Menu" />
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Open the application menu to view options for this application, for the conversation, to get help, and to logout."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="ConversationListingToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Enter Conversation"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Select a conversation to join.  Please note, some conversations disable certain features of this program, such as making public notes or being able to view notes made by other participants."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="EditConversationToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Edit Conversation"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Edit the current conversation.  You may only do this if you created the conversation."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="CreateConversationToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Create Conversation"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Create a conversation.  Firstly, enter the name of your conversation.  If the name already exists, you will not be able to create the conversation, and the create buttons will be disabled.  Then, select which type of conversation you would like to create.  You can change the settings of your conversation at a later time."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="ImportConversationToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Import Conversation"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Import a Microsoft Powerpoint file into MeTL."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="ExportConversationToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Export Conversation"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Export a conversation from MeTL into another format, such as .xps or .pdf."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="PrintConversationToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Print Conversation"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Send your current conversation with private notes to a system-available printer."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="PrintHandoutToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Print Conversation"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Send your current conversation to a system-available printer."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="HelpToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Help"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Find out more about how to use MeTL"/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="AboutToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="About"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Find out about Monash MeTL."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="ReportBugToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Report a Bug"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Report a bug in Monash MeTL.  Bugs are problems with programs, and the best thing you can do when you find a problem with MeTL is let us know, so we can get to work fixing it."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="EULAToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Terms and Conditions"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="When you use Monash MeTL, you are bound by an End User License Agreement.  We take your privacy seriously - you can read here to find out what you are entitled to, and what you are obligated to do, while using this program."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="TutorialToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Tutorial"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Review the Instructional Tutorial for MeTL."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="LogoutToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Slide_Not_Loaded.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Logout of MeTL"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Log out of MeTL.  If you would like to log in as a different user, you should log out."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="UndoToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\UndoShiny.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Undo"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Undo the last change that you made on this page."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="RedoToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\RedoShiny.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Redo"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Redo the Last Change that you Undid on this page."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="CreateQuizToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\NewQuiz.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Create a new quiz"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Create a multiple-choice quiz."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="WorkPubliclyToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Ribbon-Public.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Work Publicly"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Display new changes publicly."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="EditingFindToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\MagnifyingGlassShiny.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Find text"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Search through the text in this page for a phrase."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="EditingReplaceToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\MagnifyingGlassShiny.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Replace Text"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Search for occurances of a particular phrase that you have typed, and replace them."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="EditingSelectToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\MagnifyingGlassShiny.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Select Text"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Find and select all occurances of a particular phrase, whether you wrote it or not."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="SearchFriendsToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\MagnifyingGlassShiny.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Search Friends"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Search through all the users of MeTL for participants who meet specific criteria."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="AddFriendToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\AnonHead.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Add Friend"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Add a particular participant of MeTL to your friends console."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-
-    <ToolTip x:Key="RemoveFriendToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\AnonHead.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Remove Friend"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Remove a particular participant of MeTL from your friends console."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <!--SimplePenTools-->
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="PenToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\RedPenShiny.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Draw Digital Ink"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="In this mode, you can draw on the screen."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="EraserToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\ShinyEraser.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Erase Digital Ink"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Erase whole ink strokes."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="SelectTextBoxToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\SelectText.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Select Text"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Move or resize your text containers."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="SelectToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\SelectInk.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Select Digital Ink"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Circle your ink to select it."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-
-    <!--Window1-->
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="FriendsToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\friendsplaceholder.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Open Friends"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Sort your friends and engage in a conversation wide-chat"/>
-            </Grid>
-        </Border>
-    </ToolTip>
-
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="NotesToolTip">
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\resources\scratchpadplaceholderyellownotepad.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Open Private Notes"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Open your notes.  The notes you write here will be automatically saved to the server, so that when you next join this page you will recover your notes."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-
-    <!--SimpleTextTools-->
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="CutToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\cut.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Cut"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Cut the selection to the clipboard."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="CopyToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\copy.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Copy"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Copy the selection to the clipboard."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="PasteToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\paste.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Paste"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Paste the contents of the clipboard."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="FontFamilyToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\fontFamily.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Font Family"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Change the font of your text."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="TextBoxToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\PlaceTextBox.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Type"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Click on the page to start typing there."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="FontSizeToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\fontSize.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Font Size"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Change the size of your font."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="IncreaseFontSizeToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\increaseFontSize.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Increase Font Size"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Increase your font size."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="DecreaseFontSizeToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\decreaseFontSize.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Decrease Font Size"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Decrease your font size."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="ClearFormattingToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\clearFormatting.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Clear Formatting"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Remove any styling from the currently selected text."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="BoldToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\bold.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Bold (Ctrl+B)"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Use bold text."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="ItalicToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\italic.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Italic (Ctrl+I)"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Use italic text."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="UnderlineToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\underline.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Underline (Ctrl+U)"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Underline your text."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="StrikeThroughToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\strikethrough.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Strike-through"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Strike-through your current text."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="DecreaseIndentToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\decreaseIndent.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Decrease Indent"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Decrease the indentation of your current paragraph, or your currently selected paragraphs."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="IncreaseIndentToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\increaseIndent.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Increase Indent"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Increase the indentation of your current paragraph, or your currently selected paragraphs."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="SuperScriptToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\superscript.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Superscript"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Elevate your text to superscript.  Superscript is smaller text that lives on a sub-line above the normal line of text."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="SubScriptToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\subscript.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Subscript"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Denigrate your text to subscript.  Subscript is smaller text that lives on a sub-line below the normal line of text."/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="GrabMoveToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\Hand tool.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Move page"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Move the page on the screen" />
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="GrabZoomToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\GrabZoom.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Grab zoom"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Select an area to zoom in on" />
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="FitToViewToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\ShowAll.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Show all"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Fit the entire page on the screen"/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="FitToPageToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\subscript.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Fit to page"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Fit the width of the page to the screen"/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="ShowSlideToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\ShowOriginal.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Show slide"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Show the original view of the page"/>
-            </Grid>
-        </Border>
-    </ToolTip>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="" 
-                                        TitleText=""
-                                        ImageSource="" 
-                                        ContentText=""/>
-    <ToolTip x:Key="FontColourToolTip" >
-        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-            <Grid Margin="2">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="..\..\Resources\changeFontColour.png"/>
-                <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           FontSize="14" FontWeight="Bold" Foreground="Black"
-                           Text="Font Colour"/>
-                <TextBlock Margin="0,30,0,0" TextWrapping="Wrap" 
-                           Text="Change the colour of your text."/>
-            </Grid>
-        </Border>
-    </ToolTip>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="DeleteContentToolTip" 
+                                        TitleText="Delete"
+                                        ImageSource="\Resources\Delete.png" 
+                                        ContentText="Delete this selected content."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="HideContentToolTip" 
+                                        TitleText="Hide"
+                                        ImageSource="\Resources\Hide.png" 
+                                        ContentText="Hide this selected content so that it is only visible to you."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ShowContentToolTip" 
+                                        TitleText="Show"
+                                        ImageSource="\Resources\Show.png" 
+                                        ContentText="Show this selected content so that it is visible to everyone."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ClosePopupToolTip" 
+                                        TitleText="Close Palette"
+                                        ContentText="Close the custom colour palette."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="StickyPopupToolTip" 
+                                        TitleText="Sticky Popup"
+                                        ImageSource="\Resources\PenOut.png" 
+                                        ContentText="Change the palette so that it stays open.  When the drawing pin is pushed in, the palette will remain open.  When the drawing pin is pulled out, the palette will close whenever you click your mouse or stylus outside the palette."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="NextSlideToolTip" 
+                                        TitleText="Next Page"
+                                        ImageSource="\Resources\Next.png" 
+                                        ContentText="Move to the next page in the conversation."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="AddLiveWindowToolTip" 
+                                        TitleText="Add LiveWindow"
+                                        ImageSource="\Resources\Ribbon-LivePreviewDraft02.png" 
+                                        ContentText="Create a LiveWindow on your personal notepad.  A livewindow is a copy of the presentation space, but as the presentation space changes, so will your LiveWindow.  When you create a LiveWindow, you determine what it is focused on, and how large it is.  You can have many LiveWindows in your personal notes, and you can move them around in Image Mode."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="PreviousSlideToolTip" 
+                                        TitleText="Previous Page"
+                                        ImageSource="\Resources\Previous.png" 
+                                        ContentText="Move to the previous page in the conversation."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="AddSlideToolTip" 
+                                        TitleText="Add Page"
+                                        ImageSource="\Resources\NewSlide.png" 
+                                        ContentText="Add a new page after the current page."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="SyncToolTip" 
+                                        TitleText="Synchronize"
+                                        ImageSource="\Resources\SyncShiny.png" 
+                                        ContentText="Link to or unlink from the teacher's current location."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="AddVideoToolTip" 
+                                        TitleText="Add Video"
+                                        ImageSource="\Resources\AddVideo.png" 
+                                        ContentText="Add a video from your computer into MeTL, on the presentation space."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="AddImageToolTip" 
+                                        TitleText="Add Image"
+                                        ImageSource="\Resources\AddImage.png" 
+                                        ContentText="Add an image to the slide."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ImageModeToolTip" 
+                                        TitleText="Image Mode"
+                                        ImageSource="\Resources\ImageMode.png" 
+                                        ContentText="In this mode you can insert pictures."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="TextModeToolTip" 
+                                        TitleText="Text Mode"
+                                        ImageSource="\Resources\TextMode.png" 
+                                        ContentText="In this mode you can type."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ViewSubmissionToolTip" 
+                                        TitleText="View submissions"
+                                        ImageSource="\Resources\ViewSubmission.png" 
+                                        ContentText="View any submissions students have sent you in this conversation."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="SubmitSubmissionToolTip" 
+                                        TitleText="Send Submission"
+                                        ImageSource="\Resources\SendSubmission.png" 
+                                        ContentText="Submit a snapshot of your screen to the teacher."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="RestoreCanvasToolTip" 
+                                        TitleText="Restore Canvas"
+                                        ImageSource="\Resources\Ribbon-FitCanvas.png" 
+                                        ContentText="This will zoom all the way out, allowing you to see the entire canvas at once."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ExtendCanvasToolTip" 
+                                        TitleText="Extend Canvas"
+                                        ImageSource="\Resources\ExtendCanvas.png" 
+                                        ContentText="Add extra blank space to the page."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="CreateMeetingToolTip" 
+                                        TitleText="Create Meeting"
+                                        ImageSource="\Resources\Ribbon-Meeting.png" 
+                                        ContentText="In meeting style, MeTL will allow all participants equal rights over all content.  Participants will be able to add, move or remove annotations, regardless of who originally placed the annotations.  They will be free to collaborate on any page in the conversation."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="CreateTutorialToolTip" 
+                                        TitleText="Tutorial"
+                                        ImageSource="\Resources\Ribbon-Tutorial.png" 
+                                        ContentText="In tutorial style, MeTL will allow your students to collaborate with each other directly on each page.  They will be free to navigate throughout the conversation and they will be able to manage their friends subscriptions."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="CreateLectureToolTip" 
+                                        TitleText="Lecture"
+                                        ImageSource="\Resources\Ribbon-Lecture.png" 
+                                        ContentText="In lecture style, MeTL will ensure that your students are always on the same page as you.  You will be able to write directly on each page, but your students will not.  They will be able to write only in their private note area."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="RemainTheSameToolTip" 
+                                        TitleText="Remain the same"
+                                        ImageSource="\Resources\Ribbon-Lecture.png" 
+                                        ContentText="Leave this conversation in the same style and commit all other changes"/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ZoomInToolTip" 
+                                        TitleText="Zoom In"
+                                        ImageSource="\Resources\Ribbon-ZoomIn.png" 
+                                        ContentText="Zoom in on this page."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ZoomOutToolTip" 
+                                        TitleText="Zoom Out"
+                                        ImageSource="\Resources\Ribbon-ZoomOut.png" 
+                                        ContentText="Zoom out on this page."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ApplicationMenuToolTip" 
+                                        TitleText="Monash MeTL Application Menu"
+                                        ImageSource="\Resources\homeloo_gear_clock_2.jpg" 
+                                        ContentText="Open the application menu to view options for this application, for the conversation, to get help, and to logout."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ConversationListingToolTip" 
+                                        TitleText="Enter Conversation"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Select a conversation to join.  Please note, some conversations disable certain features of this program, such as making public notes or being able to view notes made by other participants."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="EditConversationToolTip" 
+                                        TitleText="Edit Conversation"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Edit the current conversation.  You may only do this if you created the conversation."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="CreateConversationToolTip" 
+                                        TitleText="Create Conversation"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Create a conversation.  Firstly, enter the name of your conversation.  If the name already exists, you will not be able to create the conversation, and the create buttons will be disabled.  Then, select which type of conversation you would like to create.  You can change the settings of your conversation at a later time."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ImportConversationToolTip" 
+                                        TitleText="Import Conversation"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Import a Microsoft Powerpoint file into MeTL."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ExportConversationToolTip" 
+                                        TitleText="Export Conversation"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Export a conversation from MeTL into another format, such as .xps or .pdf."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="PrintConversationToolTip" 
+                                        TitleText="Print Conversation"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Send your current conversation with private notes to a system-available printer."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="PrintHandoutToolTip" 
+                                        TitleText="Print Conversation"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Send your current conversation to a system-available printer."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="HelpToolTip" 
+                                        TitleText="Help"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Find out more about how to use MeTL"/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="AboutToolTip" 
+                                        TitleText="About"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Find out about Monash MeTL."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ReportBugToolTip" 
+                                        TitleText="Report a Bug"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Report a bug in Monash MeTL.  Bugs are problems with programs, and the best thing you can do when you find a problem with MeTL is let us know, so we can get to work fixing it."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="EULAToolTip" 
+                                        TitleText="Terms and Conditions"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="When you use Monash MeTL, you are bound by an End User License Agreement.  We take your privacy seriously - you can read here to find out what you are entitled to, and what you are obligated to do, while using this program."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="TutorialToolTip" 
+                                        TitleText="Tutorial"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Review the Instructional Tutorial for MeTL."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="LogoutToolTip" 
+                                        TitleText="Logout of MeTL"
+                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ContentText="Log out of MeTL.  If you would like to log in as a different user, you should log out."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="UndoToolTip" 
+                                        TitleText="Undo"
+                                        ImageSource="\Resources\UndoShiny.png" 
+                                        ContentText="Undo the last change that you made on this page."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="RedoToolTip" 
+                                        TitleText="Redo"
+                                        ImageSource="\Resources\RedoShiny.png" 
+                                        ContentText="Redo the last change that you undid on this page."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="CreateQuizToolTip" 
+                                        TitleText="Create a new quiz"
+                                        ImageSource="\Resources\NewQuiz.png" 
+                                        ContentText="Create a multiple-choice quiz."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="WorkPubliclyToolTip" 
+                                        TitleText="Work Publicly"
+                                        ImageSource="\Resources\Ribbon-Public.png" 
+                                        ContentText="Display new changes publicly."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="EditingFindToolTip" 
+                                        TitleText="Find text"
+                                        ImageSource="..\..\Resources\MagnifyingGlassShiny.png" 
+                                        ContentText="Search through the text in this page for a phrase."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="EditingReplaceToolTip" 
+                                        TitleText="Replace Text"
+                                        ImageSource="\Resources\MagnifyingGlassShiny.png" 
+                                        ContentText="Search for occurances of a particular phrase that you have typed, and replace them."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="EditingSelectToolTip" 
+                                        TitleText="Select Text"
+                                        ImageSource="\Resources\MagnifyingGlassShiny.png" 
+                                        ContentText="Find and select all occurances of a particular phrase, whether you wrote it or not."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="SearchFriendsToolTip" 
+                                        TitleText="Search Friends"
+                                        ImageSource="\Resources\MagnifyingGlassShiny.png" 
+                                        ContentText="Search through all the users of MeTL for participants who meet specific criteria."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="AddFriendToolTip" 
+                                        TitleText="Add Friend"
+                                        ImageSource="\Resources\AnonHead.png" 
+                                        ContentText="Add a particular participant of MeTL to your friends console."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="RemoveFriendToolTip" 
+                                        TitleText="Remove Friend"
+                                        ImageSource="\Resources\AnonHead.png" 
+                                        ContentText="Remove a particular participant of MeTL from your friends console."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="PenToolTip" 
+                                        TitleText="Draw Digital Ink"
+                                        ImageSource="\Resources\RedPenShiny.png" 
+                                        ContentText="In this mode, you can draw on the screen."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="EraserToolTip" 
+                                        TitleText="Erase Digital Ink"
+                                        ImageSource="\Resources\ShinyEraser.png" 
+                                        ContentText="Erase whole ink strokes."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="SelectTextBoxToolTip" 
+                                        TitleText="Select Text"
+                                        ImageSource="\Resources\SelectText.png" 
+                                        ContentText="Move or resize your text containers."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="SelectToolTip" 
+                                        TitleText="Select Digital Ink"
+                                        ImageSource="\Resources\SelectInk.png" 
+                                        ContentText="Circle your ink to select it."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="FriendsToolTip" 
+                                        TitleText="Open Friends"
+                                        ImageSource="\Resources\friendsplaceholder.png" 
+                                        ContentText="Sort your friends and engage in a conversation wide-chat"/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="NotesToolTip" 
+                                        TitleText="Open Private Notes"
+                                        ImageSource="\resources\scratchpadplaceholderyellownotepad.png" 
+                                        ContentText="Open your notes.  The notes you write here will be automatically saved to the server, so that when you next join this page you will recover your notes."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="CutToolTip" 
+                                        TitleText="Cut"
+                                        ImageSource="\Resources\cut.png" 
+                                        ContentText="Cut the selection to the clipboard."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="CopyToolTip" 
+                                        TitleText="Copy"
+                                        ImageSource="\Resources\copy.png" 
+                                        ContentText="Copy the selection to the clipboard."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="PasteToolTip" 
+                                        TitleText="Paste"
+                                        ImageSource="\Resources\paste.png" 
+                                        ContentText="Paste the contents of the clipboard."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="FontFamilyToolTip" 
+                                        TitleText="Font Family"
+                                        ImageSource="\Resources\fontFamily.png" 
+                                        ContentText="Change the font of your text."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="TextBoxToolTip" 
+                                        TitleText="Type"
+                                        ImageSource="\Resources\PlaceTextBox.png" 
+                                        ContentText="Click on the page to start typing there."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="FontSizeToolTip" 
+                                        TitleText="Font Size"
+                                        ImageSource="\Resources\fontSize.png" 
+                                        ContentText="Change the size of your font."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="IncreaseFontSizeToolTip" 
+                                        TitleText="Increase Font Size"
+                                        ImageSource="\Resources\increaseFontSize.png" 
+                                        ContentText="Increase your font size."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="DecreaseFontSizeToolTip" 
+                                        TitleText="Decrease Font Size"
+                                        ImageSource="\Resources\decreaseFontSize.png" 
+                                        ContentText="Decrease your font size."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ClearFormattingToolTip" 
+                                        TitleText="Clear Formatting"
+                                        ImageSource="\Resources\clearFormatting.png" 
+                                        ContentText="Remove any styling from the currently selected text."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="BoldToolTip" 
+                                        TitleText="Bold (Ctrl+B)"
+                                        ImageSource="\Resources\bold.png" 
+                                        ContentText="Use bold text."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ItalicToolTip" 
+                                        TitleText="Italic (Ctrl+I)"
+                                        ImageSource="\Resources\italic.png" 
+                                        ContentText="Use italic text."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="UnderlineToolTip" 
+                                        TitleText="Underline (Ctrl+U)"
+                                        ImageSource="\Resources\underline.png" 
+                                        ContentText="Underline your text."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="StrikeThroughToolTip" 
+                                        TitleText="Strike-through"
+                                        ImageSource="\Resources\strikethrough.png" 
+                                        ContentText="Strike-through your current text."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="DecreaseIndentToolTip" 
+                                        TitleText="Decrease Indent"
+                                        ImageSource="\Resources\decreaseIndent.png" 
+                                        ContentText="Decrease the indentation of your current paragraph, or your currently selected paragraphs."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="IncreaseIndentToolTip" 
+                                        TitleText="Increase Indent"
+                                        ImageSource="\Resources\increaseIndent.png" 
+                                        ContentText="Increase the indentation of your current paragraph, or your currently selected paragraphs."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="SuperScriptToolTip" 
+                                        TitleText="Superscript"
+                                        ImageSource="\Resources\superscript.png" 
+                                        ContentText="Elevate your text to superscript.  Superscript is smaller text that lives on a sub-line above the normal line of text."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="SubScriptToolTip" 
+                                        TitleText="Subscript"
+                                        ImageSource="\Resources\subscript.png" 
+                                        ContentText="Denigrate your text to subscript.  Subscript is smaller text that lives on a sub-line below the normal line of text."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="GrabMoveToolTip" 
+                                        TitleText="Move page"
+                                        ImageSource="\Resources\Hand tool.png" 
+                                        ContentText="Move the page on the screen"/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="GrabZoomToolTip" 
+                                        TitleText="Grab zoom"
+                                        ImageSource="\Resources\GrabZoom.png" 
+                                        ContentText="Select an area to zoom in on"/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="FitToViewToolTip" 
+                                        TitleText="Show all"
+                                        ImageSource="\Resources\ShowAll.png" 
+                                        ContentText="Fit the entire page on the screen"/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="FitToPageToolTip" 
+                                        TitleText="Fit to page"
+                                        ImageSource="\Resources\subscript.png" 
+                                        ContentText="Fit the width of the page to the screen"/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="ShowSlideToolTip" 
+                                        TitleText="Show slide"
+                                        ImageSource="\Resources\ShowOriginal.png" 
+                                        ContentText="Show the original view of the page"/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="FontColourToolTip" 
+                                        TitleText="Font Colour"
+                                        ImageSource="\Resources\changeFontColour.png" 
+                                        ContentText="Change the colour of your text."/>
 </ResourceDictionary>

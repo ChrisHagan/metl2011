@@ -726,21 +726,21 @@ namespace SandRibbonInterop
             set { SetValue(TitleTextProperty, value); }
         }
         public static readonly DependencyProperty TitleTextProperty =
-            DependencyProperty.Register("TitleText", typeof(string), typeof(MeTLImageToolTip), new UIPropertyMetadata(""));
+            DependencyProperty.Register("TitleText", typeof(string), typeof(MeTLContentToolTip), new UIPropertyMetadata(""));
         public string ContentText
         {
             get { return (string)GetValue(ContentTextProperty); }
             set { SetValue(ContentTextProperty, value); }
         }
         public static readonly DependencyProperty ContentTextProperty =
-            DependencyProperty.Register("ContentText", typeof(string), typeof(MeTLImageToolTip), new UIPropertyMetadata(""));
-        public FrameworkElement ContentElement
+            DependencyProperty.Register("ContentText", typeof(string), typeof(MeTLContentToolTip), new UIPropertyMetadata(""));
+        public UIElement ContentElement
         {
-            get { return (FrameworkElement)GetValue(ContentElementProperty); }
+            get { return (UIElement)GetValue(ContentElementProperty); }
             set { SetValue(ContentElementProperty, value); }
         }
         public static readonly DependencyProperty ContentElementProperty =
-            DependencyProperty.Register("ImageSource", typeof(FrameworkElement), typeof(MeTLImageToolTip), new UIPropertyMetadata(null));
+            DependencyProperty.Register("ContentElement", typeof(UIElement), typeof(MeTLContentToolTip), new UIPropertyMetadata(null));
     }
 
 }

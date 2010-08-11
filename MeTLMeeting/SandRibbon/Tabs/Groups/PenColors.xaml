@@ -53,10 +53,10 @@
                     <Border Tag="{Binding Path=Index}"
                             Padding="2" BorderBrush="Transparent" Name="buttonBorder" BorderThickness="1" Height="18" Width="30">
                         <Border.ToolTip>
-                            <ToolTip>
-                                <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-                                    <Grid Margin="2">
-                                        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Width="40" Height="40" >
+                            <SandRibbonInterop:MeTLContentToolTip TitleText="{Binding Path=IsHighlighter, Converter={StaticResource myAvailablePenTitleConverter}}">
+                                <SandRibbonInterop:MeTLContentToolTip.ContentElement>
+                                    <Viewbox>
+                                        <Grid Width="40" Height="40" >
                                             <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
                                             <Rectangle Fill="{StaticResource BrushGradientBackground}"/>
                                             <Border BorderThickness="0" Padding="0" ClipToBounds="True">
@@ -69,11 +69,9 @@
                                                 </Grid>
                                             </Border>
                                         </Grid>
-                                        <TextBlock Margin="45,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                           Text="{Binding Path=IsHighlighter, Converter={StaticResource myAvailablePenTitleConverter}}" FontSize="14" FontWeight="Bold"/>
-                                    </Grid>
-                                </Border>
-                            </ToolTip>
+                                    </Viewbox>
+                                </SandRibbonInterop:MeTLContentToolTip.ContentElement>
+                            </SandRibbonInterop:MeTLContentToolTip>
                         </Border.ToolTip>
                         <StackPanel Name="Stack" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                             <Viewbox Name="Main" Height="Auto" Width="18">
@@ -96,10 +94,11 @@
                                     Margin="0" HorizontalAlignment="Stretch" 
                                         Grid.Row="1" x:Name="OpenPopup" Click="OpenColourSettingPopup" Tag="{Binding Path=Index}">
                                 <Button.ToolTip>
-                                    <ToolTip>
-                                        <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-                                            <Grid Margin="2">
-                                                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Width="40" Height="40" >
+                                    <SandRibbonInterop:MeTLContentToolTip TitleText="{Binding Path=IsHighlighter, Converter={StaticResource myAvailablePenDropDownConverter}}"
+                                                                          ContentText="Change the colour or thickness of this tool.">
+                                        <SandRibbonInterop:MeTLContentToolTip.ContentElement>
+                                            <Viewbox>
+                                                <Grid Width="40" Height="40" >
                                                     <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
                                                     <Rectangle Fill="{StaticResource BrushGradientBackground}"/>
                                                     <Border BorderThickness="0" Padding="0" ClipToBounds="True">
@@ -112,13 +111,9 @@
                                                         </Grid>
                                                     </Border>
                                                 </Grid>
-                                                <TextBlock Margin="45,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" 
-                           Text="{Binding Path=IsHighlighter, Converter={StaticResource myAvailablePenDropDownConverter}}" FontSize="14" FontWeight="Bold"/>
-                                                <TextBlock Margin="45,30,0,0" TextWrapping="Wrap" 
-                           Text="Change the colour or thickness of this pen."/>
-                                            </Grid>
-                                        </Border>
-                                    </ToolTip>
+                                            </Viewbox>
+                                        </SandRibbonInterop:MeTLContentToolTip.ContentElement>
+                                    </SandRibbonInterop:MeTLContentToolTip>
                                 </Button.ToolTip>
                                 <Viewbox>
                                     <Grid Width="30" Height="30">
@@ -205,6 +200,9 @@
                                 <Grid PreviewMouseUp="ColourUp"
                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                         Width="Auto" Height="Auto" Background="Transparent">
+                                    <Grid.ToolTip>
+                                        <SandRibbonInterop:MeTLImageToolTip TitleText="Change the colour of this tool" ContentText="{Binding}"/>
+                                    </Grid.ToolTip>
                                     <Rectangle Fill="{Binding}" Margin="3" IsHitTestVisible="False"/>
                                 </Grid>
                             </DataTemplate>
@@ -224,6 +222,9 @@
                                 <Grid PreviewMouseUp="SizeUp"
                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                         Width="Auto" Height="Auto" Background="Transparent">
+                                    <Grid.ToolTip>
+                                        <SandRibbonInterop:MeTLImageToolTip TitleText="Change the thickness of this tool" ContentText="{Binding}"/>
+                                    </Grid.ToolTip>
                                     <Rectangle Margin="2"
                                     Fill="Black" IsHitTestVisible="False" 
                                     StrokeThickness="1" Width="Auto"  
@@ -233,7 +234,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Button Click="ResetToDefault">
+                    <Button Click="ResetToDefault" ToolTip="{StaticResource ResetPenToDefaultToolTip}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                             <Rectangle Width="25" Height="20" x:Name="ColourSettingPopupDefaultColour"/>
                             <Label Content="Reset pen to default settings" FontWeight="Regular" FontSize="11"/>
