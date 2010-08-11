@@ -10,11 +10,11 @@
                                         TitleText="Show submission"
                                         ImageSource="\Resources\Ribbon-LivePreviewDraft02.png" 
                                         ContentText="Import this submission onto a new slide, so that you can show it publicly."/>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="BlankWhiteboardConversationToolTip" 
+    <SandRibbonInterop:MeTLImageToolTip x:Key="BlankWhiteboardConversationTypeToolTip" 
                                         TitleText="Blank Whiteboard"
                                         ImageSource="\Resources\Whiteboard.png" 
                                         ContentText="A new empty MeTL conversation."/>
-    <SandRibbonInterop:MeTLImageToolTip x:Key="EditablePowerpointConversationToolTip" 
+    <SandRibbonInterop:MeTLImageToolTip x:Key="EditablePowerpointConversationTypeToolTip" 
                                         TitleText="Editable Powerpoint"
                                         ImageSource="\Resources\FlexiblePowerpoint.png" 
                                         ContentText="A new MeTL conversation, created from a powerpoint file.  The individual objects from the powerpoint can be moved around and edited."/>
@@ -196,7 +196,7 @@
     <SandRibbonInterop:MeTLImageToolTip x:Key="WorkPubliclyToolTip" 
                                         TitleText="Work Publicly"
                                         ImageSource="\Resources\Ribbon-Public.png" 
-                                        ContentText="Display new changes publicly."/>
+                                        ContentText="When enabled, new changes will be displayed publicly."/>
     <SandRibbonInterop:MeTLImageToolTip x:Key="EditingFindToolTip" 
                                         TitleText="Find text"
                                         ImageSource="..\..\Resources\MagnifyingGlassShiny.png" 

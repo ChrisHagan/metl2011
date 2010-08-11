@@ -81,9 +81,9 @@
                     <Border Padding="4" CornerRadius="2" Background="{StaticResource BackgroundBlueGradient}"
                             BorderBrush="DarkGray" BorderThickness="1">
                         <Border Background="{StaticResource BackgroundBlueGradient}" BorderBrush="DarkGray" BorderThickness="1">
-                            <Grid Margin="2">
+                            <Grid Margin="2" MaxWidth="300">
                                 <Image HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
-                       Source="{TemplateBinding ImageSource}"/>
+                           Source="{TemplateBinding ImageSource}"/>
                                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            FontFamily="Verdana" FontSize="14" FontWeight="Bold" Foreground="Black"
                            Text="{TemplateBinding TitleText}"/>
@@ -106,7 +106,7 @@
                             BorderBrush="DarkGray" BorderThickness="1">
                         <Border Background="{StaticResource BackgroundBlueGradient}" 
                             BorderBrush="DarkGray" BorderThickness="1">
-                            <Grid Margin="2">
+                            <Grid Margin="2" MaxWidth="300">
                                 <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" 
                                               Content="{TemplateBinding ContentElement}"/>
                                 <TextBlock Margin="30,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" 
