@@ -202,6 +202,7 @@ namespace SandRibbon
         public static CompositeCommand SneakOutOf = new CompositeCommand();
         public static CompositeCommand ClearDynamicContent = new CompositeCommand();
         public static CompositeCommand PreParserAvailable = new CompositeCommand();
+        public static CompositeCommand ConversationPreParserAvailable = new CompositeCommand();
         public static CompositeCommand MoveToPrevious = new CompositeCommand();
         public static CompositeCommand MoveToNext = new CompositeCommand();
         public static CompositeCommand SetConversationPermissions = new CompositeCommand();
