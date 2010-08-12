@@ -49,19 +49,6 @@ namespace SandRibbon.Providers
                 return true;
             return false;
         }
-        public static string secureGetString(string resource)
-        {
-            string responseString = "";
-            try
-            {
-                responseString = client().DownloadString(resource);
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("issue encountered while downloading data from the server: " + ex.Message);
-            }
-            return responseString;
-        }
         public static bool exists(string resource)
         {
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
@@ -77,57 +64,94 @@ namespace SandRibbon.Providers
                 return false;
             }
         }
+        public static string secureGetString(string resource)
+        {
+            string responseString = "";
+            int attempts = 0;
+            while (attempts < 5)
+            {
+                try
+                {
+                    responseString = client().DownloadString(resource);
+                    break;
+                }
+                catch (Exception)
+                {
+                    attempts++;
+                }
+            }
+            return responseString;
+        }
 
         public static string insecureGetString(string resource)
         {
             string responseString = "";
-            try
+            int attempts = 0;
+            while (attempts < 5)
             {
-                responseString = client().DownloadString(resource);
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("issue encountered while downloading data from the server: " + ex.Message);
+                try
+                {
+                    responseString = client().DownloadString(resource);
+                    break;
+                }
+                catch (Exception)
+                {
+                    attempts++;
+                }
             }
             return responseString;
         }
         public static string securePutData(string uri, byte[] data)
         {
             string responseString = "";
-            try
+            int attempts = 0;
+            while (attempts < 5)
             {
-                responseString = decode(client().UploadData(uri, data));
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("issue encountered while downloading data from the server: " + ex.Message);
+                try
+                {
+                    responseString = decode(client().UploadData(uri, data));
+                    break;
+                }
+                catch (Exception)
+                {
+                    attempts++;
+                }
             }
             return responseString;
         }
         public static byte[] secureGetData(string resource)
         {
-            byte[] responseBytes;
-            try
+            byte[] responseBytes = new byte[1];
+            int attempts = 0;
+            while (attempts < 5)
             {
-                responseBytes = client().DownloadData(resource);
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("issue encountered while downloading data from the server: " + ex.Message);
-                responseBytes = new byte[1];
+                try
+                {
+                    responseBytes = client().DownloadData(resource);
+                    break;
+                }
+                catch (Exception)
+                {
+                    attempts++;
+                }
             }
             return responseBytes;
         }
         public static string securePutFile(string uri, string filename)
         {
             string responseString = "";
-            try
+            int attempts = 0;
+            while (attempts < 5)
             {
+                try
+                {
                 responseString = decode(client().UploadFile(uri, filename));
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("issue encountered while downloading data from the server: " + ex.Message);
+                break;
+                }
+                catch (Exception)
+                {
+                    attempts++;
+                }
             }
             return responseString;
         }
