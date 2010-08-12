@@ -76,8 +76,17 @@ namespace SandRibbon.Components.Submissions
         }
         private void receiveSubmission(TargettedSubmission submission)
         {
-            submissionList.Add(submission);
+            if(!IHaveThisSubmission(submission))
+                submissionList.Add(submission);
         }
+
+        private bool IHaveThisSubmission(TargettedSubmission submission)
+        {
+            if (submissionList.Where(s => s.time == submission.time && s.author == submission.author && s.url == submission.url).ToList().Count > 0)
+                return true;
+            return false;
+        }
+
         private void generateScreenshot(object sender, RoutedEventArgs e)
         {
             var time = DateTime.Now.Ticks;
@@ -93,14 +102,15 @@ namespace SandRibbon.Components.Submissions
                                                                                       slide = Globals.slide,
                                                                                       time = time 
                                                                                   });
+
+                                MessageBox.Show("Submission sent to " + Globals.conversationDetails.Author);
                              });
-            Commands.SendScreenshotSubmission.RegisterCommand(sendScreenshot);
+            Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.Execute(new ScreenshotDetails
                                                     {
                                                         time = time,
                                                         message = string.Format("{0}'s submission at {1}", Globals.me, new DateTime(time)),
                                                     });
-            MessageBox.Show("Submission sent to " + Globals.conversationDetails.Author);
         }
 
         private void viewSubmissions(object sender, RoutedEventArgs e)

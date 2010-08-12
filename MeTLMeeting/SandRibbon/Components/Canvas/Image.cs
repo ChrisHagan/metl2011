@@ -500,14 +500,13 @@ namespace SandRibbon.Components.Canvas
                 if (selectedImage is System.Windows.Controls.Image)
                 {
                     var tag = ((System.Windows.Controls.Image)selectedImage).tag();
-                    tag.privacy = privacy;
                     tag.zIndex = -1;
                     ((System.Windows.Controls.Image)selectedImage).tag(tag);
                     Commands.SendImage.Execute(new TargettedImage
                     {
                         author = Globals.me,
                         slide = currentSlide,
-                        privacy = privacy,
+                        privacy = ((System.Windows.Controls.Image)selectedImage).tag().privacy,
                         target = target,
                         image = (System.Windows.Controls.Image)selectedImage
                     });
