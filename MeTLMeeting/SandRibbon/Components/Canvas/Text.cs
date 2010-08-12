@@ -224,8 +224,6 @@ namespace SandRibbon.Components.Canvas
             else
                 privacyChoice = "both";
             Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
-            //var adorner = GetAdorner();
-            //AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
         }
 
         private void selectingText(object sender, InkCanvasSelectionChangingEventArgs e)
@@ -332,12 +330,16 @@ namespace SandRibbon.Components.Canvas
         }
         private void setTextSize(double size)
         {
+            var selection = GetSelectedElements();
             currentSize = size;
             if (myTextBox == null) return;
             RemovePrivacyStylingFromElement(myTextBox);
             myTextBox.FontSize = size;
             myTextBox.Focus();
+            Select(null, null);
             sendText(myTextBox);
+            myTextBox.UpdateLayout();
+            Select(new []{myTextBox});
         }
         private void setTextColor(Color color)
         {

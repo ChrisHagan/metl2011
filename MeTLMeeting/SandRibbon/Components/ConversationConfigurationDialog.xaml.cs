@@ -81,7 +81,7 @@ namespace SandRibbon.Components
                 case ConversationConfigurationMode.IMPORT:
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Visible;
-                    CommitButton.Content = "Import powerpoint into Conversation";
+                    CommitButton.Content = "Import PowerPoint into Conversation";
                     if (startingContentSelector != null && startingContentSelector.Items.Count > 1)
                         startingContentSelector.SelectedIndex = 1;
                     if (details == null)
@@ -206,7 +206,7 @@ namespace SandRibbon.Components
                         }
                         catch (Exception e)
                         {
-                            MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your powerpoint.  If the conversation was created, please check whether it has imported correctly.");
+                            MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your PowerPoint.  If the conversation was created, please check whether it has imported correctly.");
                             throw e;
                         }
                         finally

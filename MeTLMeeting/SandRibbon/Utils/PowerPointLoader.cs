@@ -178,7 +178,7 @@ namespace SandRibbon.Utils
             }
             catch (Exception ex)
             {
-                MessageBox.Show("LoadPowerpointAsFlatSlides error: " + ex.Message);
+                //MessageBox.Show("LoadPowerpointAsFlatSlides error: " + ex.Message);
             }
             finally
             {
@@ -206,7 +206,7 @@ namespace SandRibbon.Utils
                     details.Tag = "unTagged";
                 var conversation = provider.Create(details);
                 conversation.Author = Globals.me;
-                Commands.PowerPointProgress.Execute("Starting to parse powerpoint file");
+                Commands.PowerPointProgress.Execute("Starting to parse PowerPoint file");
                 foreach (var slide in ppt.Slides)
                 {
                     importSlide(details, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);

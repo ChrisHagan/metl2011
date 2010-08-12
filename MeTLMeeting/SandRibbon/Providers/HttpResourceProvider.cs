@@ -51,7 +51,16 @@ namespace SandRibbon.Providers
         }
         public static string secureGetString(string resource)
         {
-            return client().DownloadString(resource);
+            string responseString = "";
+            try
+            {
+                responseString = client().DownloadString(resource);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("issue encountered while downloading data from the server: " + ex.Message);
+            }
+            return responseString;
         }
         public static bool exists(string resource)
         {
@@ -71,19 +80,56 @@ namespace SandRibbon.Providers
 
         public static string insecureGetString(string resource)
         {
-            return client().DownloadString(resource);
+            string responseString = "";
+            try
+            {
+                responseString = client().DownloadString(resource);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("issue encountered while downloading data from the server: " + ex.Message);
+            }
+            return responseString;
         }
         public static string securePutData(string uri, byte[] data)
         {
-            return decode(client().UploadData(uri, data));
+            string responseString = "";
+            try
+            {
+                responseString = decode(client().UploadData(uri, data));
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("issue encountered while downloading data from the server: " + ex.Message);
+            }
+            return responseString;
         }
         public static byte[] secureGetData(string resource)
         {
-            return client().DownloadData(resource);
+            byte[] responseBytes;
+            try
+            {
+                responseBytes = client().DownloadData(resource);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("issue encountered while downloading data from the server: " + ex.Message);
+                responseBytes = new byte[1];
+            }
+            return responseBytes;
         }
         public static string securePutFile(string uri, string filename)
         {
-            return decode(client().UploadFile(uri, filename));
+            string responseString = "";
+            try
+            {
+                responseString = decode(client().UploadFile(uri, filename));
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("issue encountered while downloading data from the server: " + ex.Message);
+            }
+            return responseString;
         }
         private static string decode(byte[] bytes)
         {

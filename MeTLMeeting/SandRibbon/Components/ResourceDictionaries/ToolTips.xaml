@@ -15,13 +15,13 @@
                                         ImageSource="\Resources\Whiteboard.png" 
                                         ContentText="A new empty MeTL conversation."/>
     <SandRibbonInterop:MeTLImageToolTip x:Key="EditablePowerpointConversationTypeToolTip" 
-                                        TitleText="Editable Powerpoint"
+                                        TitleText="Editable PowerPoint"
                                         ImageSource="\Resources\FlexiblePowerpoint.png" 
-                                        ContentText="A new MeTL conversation, created from a powerpoint file.  The individual objects from the powerpoint can be moved around and edited."/>
+                                        ContentText="A new MeTL conversation, created from a PowerPoint file.  The individual objects from the PowerPoint can be moved around and edited."/>
     <SandRibbonInterop:MeTLImageToolTip x:Key="ExactPowerpointConversationTypeToolTip" 
-                                        TitleText="High Quality Powerpoint"
+                                        TitleText="High Quality PowerPoint"
                                         ImageSource="\Resources\ExactPowerpoint.png" 
-                                        ContentText="A new MeTL conversation, created from a powerpoint file.  The powerpoint will be imported in high quality, exactly as it appeared in powerpoint.  Objects imported from powerpoint will not be editable."/>
+                                        ContentText="A new MeTL conversation, created from a PowerPoint file.  The PowerPoint will be imported in high quality, exactly as it appeared in PowerPoint.  Objects imported from PowerPoint will not be editable."/>
     <SandRibbonInterop:MeTLImageToolTip x:Key="AttachCurrentSlideToQuizToolTip" 
                                         TitleText="Attach snapshot"
                                         ImageSource="\Resources\AttachSnapshot.png" 
@@ -144,7 +144,7 @@
     <SandRibbonInterop:MeTLImageToolTip x:Key="ImportConversationToolTip" 
                                         TitleText="Import Conversation"
                                         ImageSource="\Resources\Slide_Not_Loaded.png" 
-                                        ContentText="Import a Microsoft Powerpoint file into MeTL."/>
+                                        ContentText="Import a Microsoft PowerPoint file into MeTL."/>
     <SandRibbonInterop:MeTLImageToolTip x:Key="ExportConversationToolTip" 
                                         TitleText="Export Conversation"
                                         ImageSource="\Resources\Slide_Not_Loaded.png" 

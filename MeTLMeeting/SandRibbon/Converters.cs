@@ -21,6 +21,7 @@ namespace SandRibbon
         public static privacyToBoolConverter privacyToBoolConverter = new privacyToBoolConverter();
         public static availablePenTitleConverter availablePenTitleConverter = new availablePenTitleConverter();
         public static availablePenDropDownConverter availablePenDropDownConverter = new availablePenDropDownConverter();
+        public static quizButtonsToVisibilityConverter quizButtonsToVisibilityConverter = new quizButtonsToVisibilityConverter();
         public static reverseQuizzesToVisibilityConverter reverseQuizzesToVisibilityConverter = new reverseQuizzesToVisibilityConverter();
         public static milisecondsToTimeConverter milisecondsToTimeConverter = new milisecondsToTimeConverter();
         public static videoMediaElementToMediaElementConverter videoMediaElementToMediaElementConverter = new videoMediaElementToMediaElementConverter();
@@ -120,6 +121,22 @@ namespace SandRibbon
                     return Visibility.Collapsed;
             }
             return Visibility.Visible;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class quizButtonsToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int)
+            {
+                if ((int)value > 1)
+                    return Visibility.Visible;
+            }
+            return Visibility.Collapsed;
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

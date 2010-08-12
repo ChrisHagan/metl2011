@@ -118,6 +118,15 @@ namespace SandRibbon
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+
+            Commands.AddImage.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -207,12 +216,12 @@ namespace SandRibbon
         }
         private void StartPowerPointLoad(object unused)
         {
-            ShowPowerpointBlocker("Starting Powerpoint Import");
+            ShowPowerpointBlocker("Starting PowerPoint Import");
             Commands.PostStartPowerPointLoad.Execute(null);
         }
         private void ImportPowerPoint(object unused)
         {
-            ShowPowerpointBlocker("Starting Powerpoint Import");
+            ShowPowerpointBlocker("Starting PowerPoint Import");
             Commands.PostImportPowerpoint.Execute(null);
         }
         private void AdjustReportedDrawingAttributesAccordingToZoom(object attributes)

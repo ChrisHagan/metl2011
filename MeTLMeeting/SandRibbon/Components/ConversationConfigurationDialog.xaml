@@ -53,14 +53,14 @@
                                 <StackPanel>
                                     <Image Height="50" Width="50" Source="..\Resources\FlexiblePowerpoint.png"/>
                                     <Label HorizontalAlignment="Center" FontWeight="Bold" Content="Editable"/>
-                                    <Label HorizontalAlignment="Center" Content="Powerpoint"/>
+                                    <Label HorizontalAlignment="Center" Content="PowerPoint"/>
                                 </StackPanel>
                             </ListBoxItem>
                             <ListBoxItem x:Name="HighQualityPowerpointListBoxItem" Tag="highquality" Selected="selectChoice" ToolTip="{StaticResource ExactPowerpointConversationTypeToolTip}">
                                 <StackPanel>
                                     <Image Height="50" Width="50" Source="..\Resources\ExactPowerpoint.png"/>
                                     <Label HorizontalAlignment="Center" FontWeight="Bold" Content="High Quality"/>
-                                    <Label HorizontalAlignment="Center" Content="Powerpoint"/>
+                                    <Label HorizontalAlignment="Center" Content="PowerPoint"/>
                                 </StackPanel>
                             </ListBoxItem>
                         </ListBox>

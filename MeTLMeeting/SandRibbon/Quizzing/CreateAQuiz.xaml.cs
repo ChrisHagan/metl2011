@@ -99,12 +99,17 @@ namespace SandRibbon.Quizzing
             if (!shouldAddNewEmptyOption()) return;
             foreach (var option in options)
                 ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(option)).Opacity = 1;
+            var newName = "A";
+            var newIndex = 1;
+            if (options.Count > 0)
+            {
+                newName = new String(new[] { (char)(options.Last().name.ToCharArray()[0] + 1) }).ToUpper();
+                newIndex = AllColors.all.IndexOf(options.Last().color) + 1;
+            }
             var newOption = new Option
             {
-                name = new String(new[]{
-                    (char)(options.Last().name.ToCharArray()[0]+1)
-                }).ToUpper(),
-                color = AllColors.all.ElementAt(AllColors.all.IndexOf(options.Last().color) + 1)
+                name = newName,
+                color = AllColors.all.ElementAt(newIndex)
             };
             if (shouldAddNewEmptyOption())
             {
@@ -117,6 +122,7 @@ namespace SandRibbon.Quizzing
         {
             var owner = ((FrameworkElement)sender).DataContext;
             options.Remove((Option)owner);
+            AddNewEmptyOption();
             CommandManager.InvalidateRequerySuggested();
         }
         private void screenshotAsAQuestion(object sender, RoutedEventArgs e)
