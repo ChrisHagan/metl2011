@@ -590,7 +590,7 @@ namespace SandRibbon.Components.Canvas
             foreach (TextBox box in GetSelectedElements())
             {
                 myTextBox = box;
-                sendText(box);
+                sendText(box, box.tag().privacy);
             }
             addAdorners();
         }
