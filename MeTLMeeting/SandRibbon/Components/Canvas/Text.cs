@@ -54,7 +54,6 @@ namespace SandRibbon.Components.Canvas
             SelectionChanging += selectingText;
             SelectionResizing += dirtyText;
             SelectionResized += SendTextBoxes;
-            SelectionResized += textMoved;
             toggleFontBold = new DelegateCommand<object>(toggleBold, canUseTextCommands);
             Commands.ToggleBold.RegisterCommand(toggleFontBold);
             toggleFontItalic = new DelegateCommand<object>(toggleItalics, canUseTextCommands);
@@ -551,7 +550,7 @@ namespace SandRibbon.Components.Canvas
             });
             GlobalTimers.resetSyncTimer();
             sendTextWithoutHistory(box, intendedPrivacy);
-            //            sendTextWithoutHistory(box, box.tag().privacy);
+            if(GetSelectedElements().Count > 0)addAdorners();
         }
         private void sendTextWithoutHistory(TextBox box, string thisPrivacy)
         {
@@ -587,11 +586,13 @@ namespace SandRibbon.Components.Canvas
         }
         private void SendTextBoxes(object sender, EventArgs e)
         {
+            ClearAdorners();
             foreach (TextBox box in GetSelectedElements())
             {
                 myTextBox = box;
                 sendText(box);
             }
+            addAdorners();
         }
 
         public void ReceiveTextBox(TargettedTextBox targettedBox)
@@ -656,9 +657,9 @@ namespace SandRibbon.Components.Canvas
             Dispatcher.adoptAsync(delegate
                                       {
                                           if (targettedBox.target != target) return;
-                                          if (targettedBox.author == Globals.me &&
-                                              alreadyHaveThisTextBox(targettedBox.box))
-                                              return; //I never want my live text to collide with me.
+                                          //if (targettedBox.author == Globals.me &&
+                                            //  alreadyHaveThisTextBox(targettedBox.box))
+                                              //return; //I never want my live text to collide with me.
                                           if (targettedBox.slide == currentSlide &&
                                               (targettedBox.privacy == "public" || targettedBox.author == Globals.me))
                                           {

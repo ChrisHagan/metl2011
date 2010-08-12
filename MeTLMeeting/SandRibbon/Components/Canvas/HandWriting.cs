@@ -309,7 +309,7 @@ namespace SandRibbon.Components.Canvas
         {
             addAdorners();
             foreach (var stroke in GetSelectedStrokes())
-                doMyStrokeAdded(stroke);
+                doMyStrokeAdded(stroke, stroke.tag().privacy);
         }
         private void deleteSelectedStrokes(object _sender, ExecutedRoutedEventArgs _handler)
         {
@@ -374,7 +374,7 @@ namespace SandRibbon.Components.Canvas
                                                     stroke = stroke,
                                                     target = target,
                                                     author = Globals.me,
-                                                    privacy = thisPrivacy,
+                                                    privacy = stroke.tag().privacy,
                                                     slide = currentSlide
                                                 });
             }
