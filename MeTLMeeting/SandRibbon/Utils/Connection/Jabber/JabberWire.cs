@@ -876,17 +876,7 @@ namespace SandRibbon.Utils.Connection
             }
             location.activeConversation = room;
             joinRooms();
-            /*
-            HistoryProviderFactory.provider.Retrieve<PreParser>(
-                onStart,
-                onProgress,
-                finishedParser =>
-                {
-                    Logger.Log(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
-                    Commands.PreParserAvailable.Execute(finishedParser);
-                },
-                room);
-             */
+
         }
         private void handleSyncMoveReceived(string[] parts)
         {
