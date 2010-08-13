@@ -140,15 +140,19 @@ namespace SandRibbon.Components.Canvas
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
-            if(!Globals.isAuthor) return;
-            if(element.GetType() != typeof(TextBox)) return;
-            var box = (TextBox) element;
-                if (privacy == "private")
-                    element.Effect = new DropShadowEffect { BlurRadius = 50, 
-                        Color = Colors.Black,
-                        ShadowDepth = 0, Opacity = 1 };
-                else
-                   RemovePrivacyStylingFromElement(element); 
+            if (!Globals.isAuthor) return;
+            if (element.GetType() != typeof(TextBox)) return;
+            var box = (TextBox)element;
+            if (privacy == "private")
+                element.Effect = new DropShadowEffect
+                {
+                    BlurRadius = 50,
+                    Color = Colors.Black,
+                    ShadowDepth = 0,
+                    Opacity = 1
+                };
+            else
+                RemovePrivacyStylingFromElement(element);
         }
         private void dirtyTextBoxWithoutHistory(TextBox box)
         {
@@ -204,6 +208,7 @@ namespace SandRibbon.Components.Canvas
 
         private void selectionChanged(object sender, EventArgs e)
         {
+            ClearAdorners();
             addAdorners();
         }
         private void addAdorners()
@@ -214,7 +219,7 @@ namespace SandRibbon.Components.Canvas
                 ClearAdorners();
                 return;
             }
-            var publicElements = selectedElements.Where(t => ((TextBox) t).tag().privacy.ToLower() == "public").ToList();
+            var publicElements = selectedElements.Where(t => ((TextBox)t).tag().privacy.ToLower() == "public").ToList();
             string privacyChoice;
             if (publicElements.Count == 0)
                 privacyChoice = "show";
@@ -222,6 +227,11 @@ namespace SandRibbon.Components.Canvas
                 privacyChoice = "hide";
             else
                 privacyChoice = "both";
+            foreach (TextBox box in GetSelectedElements().Where(e => e is TextBox).ToList())
+            {
+                if (box != null)
+                    box.UpdateLayout();
+            }
             Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
         }
 
@@ -338,7 +348,7 @@ namespace SandRibbon.Components.Canvas
             Select(null, null);
             sendText(myTextBox);
             myTextBox.UpdateLayout();
-            Select(new []{myTextBox});
+            Select(new[] { myTextBox });
         }
         private void setTextColor(Color color)
         {
@@ -553,7 +563,7 @@ namespace SandRibbon.Components.Canvas
             });
             GlobalTimers.resetSyncTimer();
             sendTextWithoutHistory(box, intendedPrivacy);
-            if(GetSelectedElements().Count > 0)addAdorners();
+            if (GetSelectedElements().Count > 0) addAdorners();
         }
         private void sendTextWithoutHistory(TextBox box, string thisPrivacy)
         {
@@ -604,7 +614,7 @@ namespace SandRibbon.Components.Canvas
             if (targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box) && me != "projector")
             {
                 var box = textBoxFromId(targettedBox.identity);
-                if (box!= null)
+                if (box != null)
                     ApplyPrivacyStylingToElement(box, box.tag().privacy);
                 return;
             }//I never want my live text to collide with me.
@@ -661,8 +671,8 @@ namespace SandRibbon.Components.Canvas
                                       {
                                           if (targettedBox.target != target) return;
                                           //if (targettedBox.author == Globals.me &&
-                                            //  alreadyHaveThisTextBox(targettedBox.box))
-                                              //return; //I never want my live text to collide with me.
+                                          //  alreadyHaveThisTextBox(targettedBox.box))
+                                          //return; //I never want my live text to collide with me.
                                           if (targettedBox.slide == currentSlide &&
                                               (targettedBox.privacy == "public" || targettedBox.author == Globals.me))
                                           {
