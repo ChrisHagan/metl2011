@@ -518,6 +518,7 @@ namespace SandRibbon.Components.Canvas
         {
             var box = (TextBox)sender;
             ApplyPrivacyStylingToElement(box, box.tag().privacy);
+            box.Height = Double.NaN;
             if (typingTimer == null)
             {
                 typingTimer = new Timer(delegate

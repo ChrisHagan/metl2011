@@ -95,10 +95,14 @@ namespace SandRibbon
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             Logger.Log(e.Exception.Message);
+            //This next line is only here until we can work out why it's happening - it's a non-breaking error on x64 windows 7, with no apparent failure of functionality.
+            //if (e.Exception.InnerException != null && e.Exception.InnerException.Message == "Attempted to read or write protected memory. This is often an indication that other memory is corrupt.") return;
+            
             MessageBox.Show(string.Format("MeTL has encountered an unexpected error and has to close:{0}\n{1} ",
                 e.Exception.Message,
                 e.Exception.InnerException == null? 
                     "No inner exception": e.Exception.InnerException.Message));
+            this.Shutdown();
         }
         private void AncilliaryButton_Click(object sender, RoutedEventArgs e)
         {
