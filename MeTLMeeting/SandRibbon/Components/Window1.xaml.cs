@@ -87,11 +87,6 @@ namespace SandRibbon
             Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.SetTutorialVisibility.RegisterCommand(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
