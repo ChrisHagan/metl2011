@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Threading;
+using System.Net.NetworkInformation;
 
 namespace LectureMeTL
 {
@@ -25,8 +26,26 @@ namespace LectureMeTL
         }
         private void Window_Loaded(object sender, EventArgs e)
         {
-            var p = System.Diagnostics.Process.Start("metl.exe");
-            Thread.Sleep(7000);
+            bool CanConnect = false;
+            try
+            {
+                var client = new System.Net.WebClient();
+                var currentServerXML = client.DownloadString("http://metl.adm.monash.edu.au/server.xml");
+                var currentServer = currentServerXML.Split(new char[] { '>', '<' })[2];
+                var ping = new Ping();
+                var pingResponse = ping.Send(currentServer);
+                if (pingResponse.Status == IPStatus.Success)
+                    CanConnect = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("MeTL cannot contact the server.  Please check that you are connected to the internet.");
+            }
+            if (CanConnect)
+            {
+                var p = System.Diagnostics.Process.Start("metl.exe");
+                Thread.Sleep(7000);
+            }
             App.Current.Shutdown();
         }
 
