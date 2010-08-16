@@ -29,7 +29,9 @@ namespace SandRibbon.Components.Submissions
         }
         private void joinConversation(string obj)
         {
+            this.Close();
             submissionList = new ObservableCollection<TargettedSubmission>();
+            UpdateLayout();
         }
 
         public ViewSubmissions(List<TargettedSubmission> userSubmissions):this()

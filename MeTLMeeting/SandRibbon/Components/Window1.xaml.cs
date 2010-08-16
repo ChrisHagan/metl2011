@@ -151,7 +151,6 @@ namespace SandRibbon
         {
             var adorner = ((FrameworkElement)canvasViewBox);
             var adornerRect = new Rect(canvas.TranslatePoint(info.ElementBounds.TopLeft, canvasViewBox), canvas.TranslatePoint(info.ElementBounds.BottomRight, canvasViewBox));
-            //adorner.Children.Add(new PrivacyToggleButton(info.privacyChoice, adornerRect));
             if (adornerRect.Right < 0 || adornerRect.Right > canvasViewBox.ActualWidth
                 || adornerRect.Top < 0 || adornerRect.Top > canvasViewBox.ActualHeight) return;
             AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(info.privacyChoice, adornerRect)));

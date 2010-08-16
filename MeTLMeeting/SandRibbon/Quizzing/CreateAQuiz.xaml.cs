@@ -122,7 +122,25 @@ namespace SandRibbon.Quizzing
         {
             var owner = ((FrameworkElement)sender).DataContext;
             options.Remove((Option)owner);
+            var newList = new List<Option>();
+            foreach(var obj in options)
+                newList.Add(obj);
+            options.Clear();
+            var name = "A";
+            foreach(var option in newList)
+            {
+                if(option.name == option.optionText)
+                    option.optionText = name;
+                option.name = name;
+                name = new String(new[] {(char) (name.ToCharArray()[0] + 1)}).ToUpper();
+                options.Add(option);
+            }
+
             AddNewEmptyOption();
+            foreach(var obj in options)
+                if(!(obj.optionText.Length > 0))
+                    ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(obj)).Opacity = 0.5;
+
             CommandManager.InvalidateRequerySuggested();
         }
         private void screenshotAsAQuestion(object sender, RoutedEventArgs e)
