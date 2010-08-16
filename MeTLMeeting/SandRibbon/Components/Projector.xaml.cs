@@ -69,9 +69,15 @@ namespace SandRibbon.Components
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(setLayer));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
             stack.handwriting.EditingModeChanged += modeChanged;
             stack.images.EditingModeChanged += modeChanged;
             stack.text.EditingModeChanged += modeChanged;
+        }
+
+        private void moveTo(object obj)
+        {
+            stack.Flush();
         }
 
 
@@ -138,15 +144,10 @@ namespace SandRibbon.Components
         private static Color deleteColor = Colors.Red;
         private static string currentMode;
         private static string privacy;
-        private int parserCount = 0;
         public void PreParserAvailable(PreParser parser)
         {
-            //we receive 3 preparsers for each moveto, 1 for public 2 for private, current file format and legacy one
-            parserCount++;
-            if (!isPrivate(parser) && IsParserNotEmpty(parser) || parserCount == 3)
+            if (!isPrivate(parser) && IsParserNotEmpty(parser))
             {
-                parserCount = 0;
-                stack.Flush();
                 stack.handwriting.ReceiveStrokes(parser.ink);
                 stack.images.ReceiveImages(parser.images.Values);
                 foreach (var text in parser.text.Values)

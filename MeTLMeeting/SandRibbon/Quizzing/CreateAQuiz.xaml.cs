@@ -38,6 +38,8 @@ namespace SandRibbon.Quizzing
             quizTitle.GotMouseCapture += selectAll;
             quizTitle.GotKeyboardFocus += selectAll;
         }
+
+
         private void Close(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -135,12 +137,10 @@ namespace SandRibbon.Quizzing
                 name = new String(new[] {(char) (name.ToCharArray()[0] + 1)}).ToUpper();
                 options.Add(option);
             }
-
             AddNewEmptyOption();
             foreach(var obj in options)
                 if(!(obj.optionText.Length > 0))
                     ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(obj)).Opacity = 0.5;
-
             CommandManager.InvalidateRequerySuggested();
         }
         private void screenshotAsAQuestion(object sender, RoutedEventArgs e)
