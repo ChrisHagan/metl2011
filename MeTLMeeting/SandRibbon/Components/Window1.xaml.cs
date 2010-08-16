@@ -138,14 +138,16 @@ namespace SandRibbon
             WorkspaceStateProvider.RestorePreviousSettings();
             App.Now("Started MeTL");
         }
-        private void noop(object unused) { }
+        private void noop(object unused)
+        {
+        }
         private void ShowEditSlidesDialog(object unused)
         {
             new SlidesEditingDialog().ShowDialog();
         }
         private void SetInkCanvasMode(object unused)
         {
-            setLayer("Sketch");
+            Commands.SetLayer.Execute("Sketch");
         }
         private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
         {
@@ -633,10 +635,7 @@ namespace SandRibbon
         {
             Close();
         }
-        private void setLayer(string layer)
-        {
-            Commands.SetLayer.Execute(layer);
-        }
+
         private void receivedHistoryPortion(object sender, ExecutedRoutedEventArgs e)
         {
             Commands.PostRetrievedHistoryPortion.Execute(e.Parameter);

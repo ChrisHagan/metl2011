@@ -100,14 +100,11 @@ namespace SandRibbon.Components
             setProjectionLayers();
             try
             {
-                
-            HistoryProviderFactory.provider.Retrieve<PreParser>(
-                JabberWire.dontDoAnything,
-                JabberWire.dontDoAnything,
-                finishedParser =>{
-                    PreParserAvailable(finishedParser);
-                },
-                Globals.slide.ToString());
+                HistoryProviderFactory.provider.Retrieve<PreParser>(
+                    JabberWire.dontDoAnything,
+                    JabberWire.dontDoAnything,
+                    PreParserAvailable,
+                    Globals.slide.ToString());
             }
             catch (Exception)
             {

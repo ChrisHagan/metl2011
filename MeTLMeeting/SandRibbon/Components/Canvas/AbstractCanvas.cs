@@ -98,7 +98,7 @@ namespace SandRibbon.Components.Canvas
                 }
             });
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(ClearSelectionOnLayerChanged));
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(ClearSelectionOnLayerChanged));
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<object>(ItemsPrivacyChange));
         }
@@ -122,18 +122,16 @@ namespace SandRibbon.Components.Canvas
         protected void ClearAdorners()
         {
             Commands.RemovePrivacyAdorners.Execute(null);
-            /*Dispatcher.adoptAsync(delegate
-            {
-                var adornerLayer = AdornerLayer.GetAdornerLayer(this);
-                if (adornerLayer == null) return;
-                var adorners = adornerLayer.GetAdorners(this);
-                if (adorners != null)
-                    foreach (var adorner in adorners)
-                        adornerLayer.Remove(adorner);
-            });*/
         }
-        private void ClearSelectionOnLayerChanged(object _unused)
+        private void ClearSelectionOnLayerChanged(string layer)
         {
+            if (layer.ToLower()== "view")
+            {
+                UseCustomCursor = true;
+                Cursor = Cursors.Hand;
+            }
+            else
+                UseCustomCursor = false;
             if (this.GetSelectedElements().Count > 0 || this.GetSelectedStrokes().Count > 0)
             {
                 this.Select(null, null);
@@ -143,18 +141,6 @@ namespace SandRibbon.Components.Canvas
                 }
                 catch (Exception) { }
             }
-        }
-        public FrameworkElement GetAdorner()
-        {
-            var element = (FrameworkElement)this;
-            return (FrameworkElement)element;
-            while (element.Parent != null && !(element.Name == "adornerGrid"))
-                element = (FrameworkElement)element.Parent;
-
-            foreach (var child in ((Grid)element).Children)
-                if (((FrameworkElement)child).Name == "adorner")
-                    return (FrameworkElement)child;
-            return null;
         }
         protected void AbstractCanvas_SelectionChanged(object sender, EventArgs e)
         {
