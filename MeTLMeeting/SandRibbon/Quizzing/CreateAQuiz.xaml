@@ -62,7 +62,7 @@
                                     <StackPanel Orientation="Horizontal">
                                         <q:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" />
                                         <TextBox Margin="0 5 20 5" Width="300" Text="{Binding Path=optionText}" GotFocus="TextBox_GotFocus"/>
-                                        <Button Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
+                                        <Button Focusable="False" Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
                                             <Image Height="20" Width="20"  Source="\Resources\Delete.png"/>
                                         </Button>
                                     </StackPanel>
