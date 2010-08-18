@@ -44,7 +44,7 @@ namespace LectureMeTL
             if (CanConnect)
             {
                 var p = System.Diagnostics.Process.Start("metl.exe");
-                Thread.Sleep(7000);
+                Thread.Sleep(6000);
             }
             App.Current.Shutdown();
         }

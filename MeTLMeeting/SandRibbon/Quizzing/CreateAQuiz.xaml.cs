@@ -38,8 +38,6 @@ namespace SandRibbon.Quizzing
             quizTitle.GotMouseCapture += selectAll;
             quizTitle.GotKeyboardFocus += selectAll;
         }
-
-
         private void Close(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -96,6 +94,8 @@ namespace SandRibbon.Quizzing
             if (emptyOptions.Count() == 0) return true;
             return false;
         }
+
+        private const int alphabetLength = 26;
         private void AddNewEmptyOption()
         {
             if (!shouldAddNewEmptyOption()) return;
@@ -105,7 +105,15 @@ namespace SandRibbon.Quizzing
             var newIndex = 1;
             if (options.Count > 0)
             {
-                newName = new String(new[] { (char)(options.Last().name.ToCharArray()[0] + 1) }).ToUpper();
+                var temp = new String(new[] { (char)(options.Last().name.ToCharArray()[options.Last().name.Length - 1] + 1) }).ToUpper();
+                if(temp.ToCharArray()[0] <= 90)
+                    newName = temp;
+
+                if(options.Count >= alphabetLength)
+                {
+                    var prefix = new string(new char[] {(char) ("A".ToCharArray()[0] + ((options.Count/alphabetLength)-1))}).ToUpper();
+                    newName = string.Format("{0}{1}", prefix, newName);
+                }
                 newIndex = AllColors.all.IndexOf(options.Last().color) + 1;
             }
             var newOption = new Option
@@ -124,17 +132,32 @@ namespace SandRibbon.Quizzing
         {
             var owner = ((FrameworkElement)sender).DataContext;
             options.Remove((Option)owner);
+            var size = options.Count;
             var newList = new List<Option>();
             foreach(var obj in options)
                 newList.Add(obj);
             options.Clear();
+            
             var name = "A";
             foreach(var option in newList)
             {
                 if(option.name == option.optionText)
                     option.optionText = name;
                 option.name = name;
-                name = new String(new[] {(char) (name.ToCharArray()[0] + 1)}).ToUpper();
+                var temp = new String(new[] { (char)(name.ToCharArray()[name.Length - 1] + 1) }).ToUpper();
+                if(temp.ToCharArray()[0] <= 90)
+                    name = temp;
+                else
+                    name = "A";
+
+                if(options.Count  + 1 >= alphabetLength)
+                {
+                    var offset = (options.Count/alphabetLength)-1;
+                    if(offset < 0)
+                        offset = 0;
+                    var prefix = new string(new char[] {(char) ("A".ToCharArray()[0] + offset)}).ToUpper();
+                    name = string.Format("{0}{1}", prefix, name);
+                }
                 options.Add(option);
             }
             AddNewEmptyOption();
@@ -193,6 +216,5 @@ namespace SandRibbon.Quizzing
         {
             AddNewEmptyOption();
         }
-
     }
 }

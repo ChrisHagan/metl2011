@@ -421,6 +421,7 @@ namespace SandRibbon
                 Commands.UpdateConversationDetails.Execute(details);
                 Logger.Log("Joined conversation " + title);
                 Commands.RequerySuggested(Commands.SetConversationPermissions);
+                Commands.SetLayer.Execute("Sketch");
                 if (automatedTest(details.Title))
                     ribbon.SelectedTab = ribbon.Tabs[1];
             });
