@@ -31,7 +31,7 @@ namespace SandRibbon.Providers
                         LastAccessed = SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value)
                     }).ToList();
                 var allConversations = ConversationDetailsProviderFactory.Provider.ListConversations();
-                return recentConversations.Where(rc => allConversations.Select(c => c.Jid).Contains(rc.Jid)).ToList();
+                return allConversations.Where(ac => recentConversations.Select(c => c.Jid).Contains(ac.Jid)).ToList();
             }
             return new List<ConversationDetails>();
         }
