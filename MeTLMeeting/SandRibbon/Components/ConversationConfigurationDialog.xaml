@@ -5,7 +5,7 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:my="clr-namespace:SandRibbon"
     Width="480"
-    Height="400"
+    Height="425"
     x:Name="createConversation"
     Loaded="Window_Loaded" ShowInTaskbar="True" WindowStartupLocation="CenterScreen"
     Title="Configure new MeTL Conversation" Closing="createConversation_Closing">
@@ -23,7 +23,7 @@
                     </StackPanel>
                 </Grid>
             </Border>
-            <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
                     <Grid x:Name="createGroup" >
                         <Grid.RowDefinitions>
@@ -65,7 +65,7 @@
                             </ListBoxItem>
                         </ListBox>
                     </Grid>
-                    <Grid x:Name="importGroup">
+                    <Grid x:Name="importGroup" Margin="0 5 0 5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="250"/>
@@ -76,7 +76,7 @@
                                  Grid.Column="1" TextWrapping="WrapWithOverflow"></TextBox>
                         <Button Click="BrowseFiles" Grid.Column="2">Browse</Button>
                     </Grid>
-                    <Grid x:Name="commonGroup">
+                    <Grid x:Name="commonGroup" Margin=" 0 5 0 5" >
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="Auto" MinWidth="220"/>
@@ -86,14 +86,14 @@
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <Label Grid.Column="0" Grid.Row="0">Restrict to:</Label>
+                        <Label Grid.Column="0" Grid.Row="0" Margin ="0 5 0 5">Restrict to:</Label>
                         <ScrollViewer Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" 
                                       HorizontalScrollBarVisibility="Disabled" 
                                       VerticalScrollBarVisibility="Auto" MaxHeight="100">
                             <ListBox x:Name="conversationSubjectListBox"></ListBox>
                         </ScrollViewer>
-                        <Label Grid.Column="0" Grid.Row="1" Height="25">Title:</Label>
-                        <TextBox Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" x:Name="conversationNameTextBox" 
+                        <Label Grid.Column="0" Grid.Row="1" Height="25" Margin="0 5 0 5">Title:</Label>
+                        <TextBox Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="0 5 0 5"  x:Name="conversationNameTextBox" 
                                  GotFocus="selectAll" GotKeyboardFocus="selectAll"  GotMouseCapture="selectAll" 
                                  TextChanged="UpdateConversationTitle" TextWrapping="WrapWithOverflow"></TextBox>
                     </Grid>

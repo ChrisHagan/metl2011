@@ -47,7 +47,14 @@ namespace SandRibbon.Components.Canvas
         {
             get
             {
-                return setSlide == -1 ? Globals.slide : setSlide;
+                try
+                {
+                    return setSlide == -1 ? Globals.slide : setSlide;
+                }
+                catch(NotSetException e)
+                {
+                    return 0;
+                }
             }
             set
             {

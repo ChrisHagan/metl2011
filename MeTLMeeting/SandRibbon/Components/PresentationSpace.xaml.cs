@@ -234,13 +234,19 @@ namespace SandRibbon.Components
             } foreach (var bubble in parser.bubbleList)
                 stack.ReceiveNewBubble(bubble);
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
-            if (parser.location.currentSlide == Globals.location.currentSlide)
-                if (snapshotTimer == null)
-                    snapshotTimer = new Timer(delegate
-                    {
-                        Dispatcher.adoptAsync(delegate { snapshot(); });
-                    }, null, 600, Timeout.Infinite);
-                else snapshotTimer.Change(900, Timeout.Infinite);
+            try
+            {
+                if (parser.location.currentSlide == Globals.location.currentSlide)
+                    if (snapshotTimer == null)
+                        snapshotTimer = new Timer(delegate
+                                                      {
+                                                          Dispatcher.adoptAsync(delegate { snapshot(); });
+                                                      }, null, 600, Timeout.Infinite);
+                    else snapshotTimer.Change(900, Timeout.Infinite);
+            }
+            catch(NotSetException e)
+            {
+            }
         }
         private Timer snapshotTimer;
         private void snapshot()
