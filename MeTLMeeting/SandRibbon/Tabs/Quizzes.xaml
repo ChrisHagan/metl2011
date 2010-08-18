@@ -1,4 +1,4 @@
-﻿<sr:RibbonTab sr:KeyboardAccess.Keys="F" Text="Quizzes"
+﻿<sr:RibbonTab sr:KeyboardAccess.Keys="Q" Text="Quizzes"
     x:Class="SandRibbon.Tabs.Quizzes"
     x:Name="feedback"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
