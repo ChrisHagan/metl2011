@@ -318,7 +318,7 @@ namespace SandRibbon.Utils
             }
             wire.SneakOutOf(id.ToString());
         }
-        private void sendTextboxes(int id, System.Collections.Generic.IEnumerable<XElement> shapes)
+        private void sendTextboxes(int id, IEnumerable<XElement> shapes)
         {
             var me = Globals.me;
             var privateRoom = id.ToString() + me;

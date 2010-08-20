@@ -8,11 +8,13 @@ using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using SandRibbon.Components;
 using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbonInterop;
 using SandRibbonObjects;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using PrintDialog=System.Windows.Controls.PrintDialog;
 
 namespace SandRibbon.Utils.Connection
 {
@@ -34,32 +36,32 @@ namespace SandRibbon.Utils.Connection
             {//This int constructor only passes to the superclass
             }
             //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
-            public IEnumerable<InkCanvas> ToVisualWithNotes()
+            public IEnumerable<UserCanvasStack> ToVisualWithNotes()
             {
                 return createVisual();
             }
-            public IEnumerable<InkCanvas> ToVisuaWithoutNotes()
+            public IEnumerable<UserCanvasStack> ToVisuaWithoutNotes()
             {
                 var canvases = createVisual();
                 return new [] {canvases.First()};
             }
-            private IEnumerable<InkCanvas> createVisual()
+            private IEnumerable<UserCanvasStack> createVisual()
             {
-                var publicCanvas = new InkCanvas();
-                var privateCanvas = new InkCanvas();
+                var publicCanvas = new UserCanvasStack();
+                var privateCanvas = new UserCanvasStack();
                 foreach (var stroke in ink)
                 {
                     if((stroke.privacy == "public" || stroke.target=="presentationSpace"))
-                        publicCanvas.Strokes.Add(stroke.stroke);
+                        publicCanvas.handwriting.Strokes.Add(stroke.stroke);
                     else if(stroke.target== "notepad")
-                        privateCanvas.Strokes.Add(stroke.stroke);
+                        privateCanvas.handwriting.Strokes.Add(stroke.stroke);
                 }
                 foreach (var image in images)
                 {
                     if (image.Value.privacy == "public" || image.Value.target == "presentationSpace")
-                        publicCanvas.Children.Add(image.Value.image);
+                        publicCanvas.images.Children.Add(image.Value.image);
                     else if(image.Value.target== "notepad")
-                        privateCanvas.Children.Add(image.Value.image);    
+                        privateCanvas.images.Children.Add(image.Value.image);    
                 }
                 foreach (var box in text)
                 {
@@ -68,11 +70,11 @@ namespace SandRibbon.Utils.Connection
                     textbox.BorderBrush = new SolidColorBrush(Colors.Transparent);
                     textbox.Background = new SolidColorBrush(Colors.Transparent);
                     if (box.Value.privacy == "public" || box.Value.target == "presentationSpace")
-                        publicCanvas.Children.Add(textbox);
+                        publicCanvas.text.Children.Add(textbox);
                     else if(box.Value.target== "notepad")
-                        privateCanvas.Children.Add(textbox);    
+                        privateCanvas.text.Children.Add(textbox);    
                 }
-                if (privateCanvas.Children.Count == 0 && privateCanvas.Strokes.Count == 0)
+                if (privateCanvas.images.Children.Count == 0 & privateCanvas.text.Children.Count == 0 && privateCanvas.handwriting.Strokes.Count == 0)
                     return new [] {publicCanvas};
                 return new [] {publicCanvas, privateCanvas};
             }
@@ -163,7 +165,7 @@ namespace SandRibbon.Utils.Connection
         private void ShowPrintDialogWithNotes(IEnumerable<PrintParser> parsers)
         {
             var visuals = parsers.Select(p => p.ToVisualWithNotes())
-                                 .Aggregate(new List<InkCanvas>(),
+                                 .Aggregate(new List<UserCanvasStack>(),
                                                            (acc, item) => {
                                                                               acc.AddRange(item);
                                                                               return acc;
@@ -173,14 +175,14 @@ namespace SandRibbon.Utils.Connection
         private void ShowPrintDialogWithoutNotes(IEnumerable<PrintParser> parsers)
         {
             var visuals = parsers.Select(p => p.ToVisuaWithoutNotes())
-                                 .Aggregate(new List<InkCanvas>(),
+                                 .Aggregate(new List<UserCanvasStack>(),
                                                            (acc, item) => {
                                                                               acc.AddRange(item);
                                                                               return acc;
                                                            });
             HandlePrint(visuals);
         }
-        private void HandlePrint(List<InkCanvas> visuals)
+        private void HandlePrint(List<SandRibbon.Components.UserCanvasStack> visuals)
         {
             Application.Current.Dispatcher.adoptAsync((System.Action)delegate
               {
