@@ -20,9 +20,13 @@ namespace SandRibbon.Quizzing
         public AnswerAQuiz()
         {
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
+            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
+            Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(closeMe));
         }
-        private void joinConversation(object obj)
+
+        private void closeMe(object obj)
         {
             Close();
         }
