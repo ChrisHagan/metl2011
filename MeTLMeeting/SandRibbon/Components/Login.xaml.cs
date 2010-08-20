@@ -31,8 +31,10 @@ namespace SandRibbon.Components
         public static List<double> TEETH = Enumerable.Range(1, TOOTH_COUNT).Select(i => (360.0 / TOOTH_COUNT) * i).ToList();
         static Random random = new Random();
         public string Version { get; set; }
-        public string ReleaseNotes { 
-            get {
+        public string ReleaseNotes
+        {
+            get
+            {
                 var releaseNotes = HttpResourceProvider.insecureGetString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
                 if (!string.IsNullOrEmpty(releaseNotes))
                     releaseNotesViewer.Visibility = Visibility.Visible;
@@ -58,25 +60,46 @@ namespace SandRibbon.Components
                 }));
             Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
         }
-        private void ServersDown(IEnumerable<ServerStatus> servers) {
+        private void ServersDown(IEnumerable<ServerStatus> servers)
+        {
             Dispatcher.adopt((Action)delegate
             {
                 this.servers.ItemsSource = servers;
             });
-        } 
+        }
         private static string getMetlVersion()
         {
-            var doc = XDocument.Load("MeTL.exe.manifest");
-            if (doc != null)
+            var files = Directory.GetFiles(".", "*.exe");
+            var docs = new List<string>();
+            foreach (string filename in files)
             {
-                var node = doc.Root.Descendants().Where(n =>
-                        n.Attribute("name") != null && n.Attribute("name").Value.Equals("MeTL.exe")).First();
-                if (node != null)
+                if (!filename.Contains("vshost"))
+                    docs.Add(filename.Substring(2));
+            }
+            if (docs.Contains("MeTL.exe"))
+            {
+                docs.Remove("MeTL.exe");
+                docs.Add("MeTL.exe");
+            }
+            foreach (string documentString in docs)
+            {
+                try
                 {
-                    var version = node.Attribute("version").Value;
-                    return version.ToString();
+                    var doc = XDocument.Load(documentString + ".manifest");
+                    if (doc != null)
+                    {
+                        var node = doc.Root.Descendants().Where(n =>
+                                n.Attribute("name") != null && n.Attribute("name").Value.Equals(documentString)).First();
+                        if (node != null)
+                        {
+                            var version = node.Attribute("version").Value;
+                            return version.ToString();
+                        }
+                        return "Unknown";
+                    }
+                    return "Unknown";
                 }
-                return "Unknown";
+                catch (Exception) { }
             }
             return "Unknown";
         }
@@ -156,7 +179,7 @@ namespace SandRibbon.Components
 
             string AuthcatePassword = password.Password;
             SecureString secureAuthcatePassword = password.SecurePassword;
-            
+
             if (authenticateAgainstFailoverSystem(AuthcateUsername, AuthcatePassword, secureAuthcatePassword) || isBackdoorUser(AuthcateUsername))
             {
                 var eligibleGroups = new AuthorisationProvider().getEligibleGroups(AuthcateUsername, AuthcatePassword);
