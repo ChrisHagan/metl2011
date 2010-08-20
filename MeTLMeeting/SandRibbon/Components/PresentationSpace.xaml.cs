@@ -158,7 +158,7 @@ namespace SandRibbon.Components
             var dpi = 96;
             var size = 1024;
             var ratio = ActualWidth/ActualHeight;
-            var bitmap = new RenderTargetBitmap(size, (int) (size * ratio), dpi, dpi, PixelFormats.Default);
+            var bitmap = new RenderTargetBitmap(size, size, dpi, dpi, PixelFormats.Default);
             var dv = new DrawingVisual();
             using (var context = dv.RenderOpen())
             {
