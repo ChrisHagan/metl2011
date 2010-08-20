@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbonInterop;
 using System.Collections.ObjectModel;
 using SandRibbon.Components;
@@ -22,7 +23,14 @@ namespace SandRibbon.Quizzing
         public AssessAQuiz()
         {
             InitializeComponent();
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
         }
+
+        private void joinConversation(object obj)
+        {
+           Close(); 
+        }
+
         public AssessAQuiz(ObservableCollection<QuizAnswer> answers, QuizQuestion question) : this() 
         {
             DataContext = question;

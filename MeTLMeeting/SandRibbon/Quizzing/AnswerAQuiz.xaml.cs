@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbonInterop;
 
@@ -19,6 +20,11 @@ namespace SandRibbon.Quizzing
         public AnswerAQuiz()
         {
             InitializeComponent();
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
+        }
+        private void joinConversation(object obj)
+        {
+            Close();
         }
         public AnswerAQuiz(QuizQuestion thisQuiz):this()
         {

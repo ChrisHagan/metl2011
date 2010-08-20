@@ -31,7 +31,7 @@ namespace SandRibbon.Components.Submissions
         {
             InitializeComponent();
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(conversationChanged));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(detailsChanged));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             conversationChanged(null);
@@ -43,6 +43,24 @@ namespace SandRibbon.Components.Submissions
                 receiveSubmission(submission);
         }
 
+
+        private void detailsChanged(object obj)
+        {
+            Dispatcher.adoptAsync( delegate
+                                                {
+                                                    try
+                                                    {
+                                                        if (Globals.conversationDetails.Author == Globals.me)
+                                                            amTeacher();
+                                                        else
+                                                            amStudent();
+                                                    }
+                                                    catch(NotSetException)
+                                                    {
+                                                    }
+      
+                                                });
+        }
         private void conversationChanged(object details)
         {
             Dispatcher.adoptAsync( delegate
@@ -54,7 +72,6 @@ namespace SandRibbon.Components.Submissions
                                                             amTeacher();
                                                         else
                                                             amStudent();
-                                                        //Commands.SneakInto.Execute(Globals.conversationDetails.Jid);
                                                     }
                                                     catch(NotSetException)
                                                     {

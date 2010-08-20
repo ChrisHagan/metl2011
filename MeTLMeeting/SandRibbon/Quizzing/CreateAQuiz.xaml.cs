@@ -37,7 +37,14 @@ namespace SandRibbon.Quizzing
             quizTitle.GotFocus += selectAll;
             quizTitle.GotMouseCapture += selectAll;
             quizTitle.GotKeyboardFocus += selectAll;
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
         }
+
+        private void joinConversation(object obj)
+        {
+            Close();
+        }
+
         private void Close(object sender, RoutedEventArgs e)
         {
             this.Close();

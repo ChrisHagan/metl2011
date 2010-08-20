@@ -157,7 +157,8 @@ namespace SandRibbon.Components
         {
             var dpi = 96;
             var size = 1024;
-            var bitmap = new RenderTargetBitmap(size, size, dpi, dpi, PixelFormats.Default);
+            var ratio = ActualWidth/ActualHeight;
+            var bitmap = new RenderTargetBitmap(size, (int) (size * ratio), dpi, dpi, PixelFormats.Default);
             var dv = new DrawingVisual();
             using (var context = dv.RenderOpen())
             {
@@ -182,12 +183,9 @@ namespace SandRibbon.Components
             {
                 encoder.Save(stream);
             }
-
             var hostedFileName = ResourceUploader.uploadResource(Globals.slide.ToString(), file);
-
             return hostedFileName;
         }
-
         private void CreateThumbnail(int id)
         {
             try
