@@ -48,14 +48,14 @@ namespace SandRibbon.Utils.Connection
                 var privateCanvas = new InkCanvas();
                 foreach (var stroke in ink)
                 {
-                    if((stroke.privacy == "public" || stroke.target=="presentationSpace") && (stroke.target != "quizAuthoring"))
+                    if((stroke.privacy == "public" || stroke.target=="presentationSpace"))
                         publicCanvas.Strokes.Add(stroke.stroke);
                     else if(stroke.target== "notepad")
                         privateCanvas.Strokes.Add(stroke.stroke);
                 }
                 foreach (var image in images)
                 {
-                    if ((image.Value.privacy == "public" || image.Value.target == "presentationSpace") && (image.Value.target != "quizAuthoring"))
+                    if (image.Value.privacy == "public" || image.Value.target == "presentationSpace")
                         publicCanvas.Children.Add(image.Value.image);
                     else if(image.Value.target== "notepad")
                         privateCanvas.Children.Add(image.Value.image);    
@@ -66,7 +66,7 @@ namespace SandRibbon.Utils.Connection
                     textbox.BorderThickness = new Thickness(0);
                     textbox.BorderBrush = new SolidColorBrush(Colors.Transparent);
                     textbox.Background = new SolidColorBrush(Colors.Transparent);
-                    if ((box.Value.privacy == "public" || box.Value.target == "presentationSpace") && (box.Value.target != "quizAuthoring"))
+                    if (box.Value.privacy == "public" || box.Value.target == "presentationSpace")
                         publicCanvas.Children.Add(textbox);
                     else if(box.Value.target== "notepad")
                         privateCanvas.Children.Add(textbox);    
@@ -110,7 +110,6 @@ namespace SandRibbon.Utils.Connection
         }
         public void PrintPrivate(string title, string user)
         {
-
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithNotes);
             var conversation = ConversationDetailsProviderFactory.Provider.DetailsOf(title);
             targetPageCount = conversation.Slides.Where(s=>s.type == Slide.TYPE.SLIDE).Count();
