@@ -92,7 +92,7 @@ namespace SandRibbon.Providers
             {
                 
              */
-            new HttpHistoryProvider().Retrieve<PreParser>(
+            new HttpHistoryProvider().Retrieve<T>(
                     delegate { },
                     (_i, _j) => { },
                     history =>
