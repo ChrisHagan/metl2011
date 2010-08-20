@@ -33,6 +33,7 @@ namespace SandRibbon.Utils.Connection
                 : base(slide)
             {//This int constructor only passes to the superclass
             }
+            //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
             public IEnumerable<InkCanvas> ToVisualWithNotes()
             {
                 return createVisual();
