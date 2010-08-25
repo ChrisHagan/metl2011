@@ -143,6 +143,7 @@ namespace SandRibbon.Components.Canvas
             if (!Globals.isAuthor) return;
             if (element.GetType() != typeof(TextBox)) return;
             var box = (TextBox)element;
+            updateSelectionAdorners();
             if (privacy == "private")
                 element.Effect = new DropShadowEffect
                 {
@@ -207,6 +208,10 @@ namespace SandRibbon.Components.Canvas
         }
 
         private void selectionChanged(object sender, EventArgs e)
+        {
+            updateSelectionAdorners();
+        }
+        private void updateSelectionAdorners()
         {
             ClearAdorners();
             addAdorners();
