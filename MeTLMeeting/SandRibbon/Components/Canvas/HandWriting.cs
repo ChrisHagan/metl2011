@@ -46,7 +46,9 @@ namespace SandRibbon.Components.Canvas
                 var newAttributes = DefaultDrawingAttributes.Clone();
                 newAttributes.Width = penSize;
                 newAttributes.Height = penSize;
-                DefaultDrawingAttributes = newAttributes;
+                if (newAttributes.Height > DrawingAttributes.MinHeight && newAttributes.Height < DrawingAttributes.MaxHeight
+                    && newAttributes.Width > DrawingAttributes.MinWidth && newAttributes.Width < DrawingAttributes.MaxWidth)
+                    DefaultDrawingAttributes = newAttributes;
             }));
             Commands.IncreasePenSize.RegisterCommand(new DelegateCommand<object>(_obj =>
             {

@@ -208,6 +208,8 @@ namespace SandRibbon
         private void AdjustReportedDrawingAttributesAccordingToZoom(object attributes)
         {
             var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
+            if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN) 
+                return;
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
             var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
@@ -236,7 +238,7 @@ namespace SandRibbon
             else if (desiredZoom < DrawingAttributes.MaxHeight)
                 finalZoomHeight = DrawingAttributes.MinHeight;
             else finalZoomHeight = DrawingAttributes.MaxHeight;
-            if (desiredZoom > DrawingAttributes.MinWidth)
+            if (desiredZoom > DrawingAttributes.MinWidth && desiredZoom < DrawingAttributes.MaxWidth)
                 finalZoomWidth = desiredZoom;
             else if (desiredZoom < DrawingAttributes.MaxWidth)
                 finalZoomWidth = DrawingAttributes.MinWidth;
