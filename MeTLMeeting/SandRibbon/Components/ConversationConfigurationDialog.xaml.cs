@@ -211,7 +211,7 @@ namespace SandRibbon.Components
                         }
                         finally
                         {
-                            Commands.PowerPointLoadFinished.Execute(null);
+                            Commands.PowerpointFinished.Execute(null);
                         }
                         return;
                     }
@@ -222,14 +222,14 @@ namespace SandRibbon.Components
                     break;
                 case ConversationConfigurationMode.CREATE:
                     Commands.CreateConversation.Execute(details);
-                    Commands.PowerPointLoadFinished.Execute(null);
+                    Commands.PowerpointFinished.Execute(null);
                     break;
                 case ConversationConfigurationMode.EDIT:
                     ConversationDetailsProviderFactory.Provider.Update(details);
-                    Commands.PowerPointLoadFinished.Execute(null);
+                    Commands.PowerpointFinished.Execute(null);
                     break;
             }
-            Commands.PowerPointLoadFinished.Execute(null);
+            Commands.PowerpointFinished.Execute(null);
         }
         private void Create(object sender, ExecutedRoutedEventArgs e)
         {
@@ -242,7 +242,7 @@ namespace SandRibbon.Components
 
         private void Close(object sender, RoutedEventArgs e)
         {
-            Commands.PowerPointLoadFinished.Execute(null);
+            Commands.PowerpointFinished.Execute(null);
             this.Close();
         }
         private void startingContentListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -306,7 +306,7 @@ namespace SandRibbon.Components
 
         private void createConversation_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Commands.PowerPointLoadFinished.Execute(null);
+            Commands.PowerpointFinished.Execute(null);
         }
 
         private void selectAll(object sender, RoutedEventArgs e)

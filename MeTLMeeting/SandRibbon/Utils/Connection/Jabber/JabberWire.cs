@@ -467,9 +467,7 @@ namespace SandRibbon.Utils.Connection
         private void onStart()
         {
             Worm.heart.Interval = TimeSpan.FromMilliseconds(15000);
-            Commands.RetrievedHistoryPortion.Execute(new[] { 0, 20 });
         }
-
         public static void dontDoAnything()
         {
         }
@@ -518,19 +516,12 @@ namespace SandRibbon.Utils.Connection
             HistoryProviderFactory.provider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser =>
-                {
-                    Commands.PreParserAvailable.Execute(finishedParser);
-                },
+                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
                 location.currentSlide.ToString());
             HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser =>
-                {
-                    Commands.PreParserAvailable.Execute(finishedParser);
-                    //finishedParser.Regurgitate(),
-                },
+                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
                 credentials.name,
                 location.currentSlide.ToString());
         }

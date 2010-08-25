@@ -166,7 +166,6 @@ namespace SandRibbon.Providers
             if (retrievalComplete != null)
                 worker.RunWorkerCompleted += (_sender, _args) =>
                 {
-                    Commands.AllContentRetrieved.Execute(room);
                     Logger.Log(string.Format("{0} retrieval complete at historyProvider", room));
                     try
                     {

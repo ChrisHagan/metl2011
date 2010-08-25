@@ -62,10 +62,8 @@ namespace SandRibbon
             userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(SetIdentity));
-            Commands.PowerPointLoadFinished.RegisterCommand(new DelegateCommand<object>(PowerPointLoadFinished));
-            Commands.PowerPointProgress.RegisterCommand(new DelegateCommand<string>(PowerPointProgress));
+            Commands.PowerpointFinished.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
-            Commands.ClearDynamicContent.RegisterCommand(new DelegateCommand<object>(ClearDynamicContent));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
@@ -73,9 +71,7 @@ namespace SandRibbon
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerPoint, mustBeLoggedIn));
-            Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>(StartPowerPointLoad, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.PreShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowPrintConversationDialog));
             Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(CreateConversation));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
@@ -192,10 +188,6 @@ namespace SandRibbon
         {
             Commands.MirrorPresentationSpace.Execute(this);
         }
-        private void PowerPointLoadFinished(object unused)
-        {
-            Dispatcher.adoptAsync((finishedPowerpoint));
-        }
         private void GrabMove(Point moveDelta)
         {
             if (moveDelta.X != 0)
@@ -203,28 +195,15 @@ namespace SandRibbon
             if (moveDelta.Y != 0)
                 scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y);
         }
-        private void PowerPointProgress(string progress)
-        {
-            Dispatcher.adoptAsync(delegate
-            {
-                showPowerPointProgress(progress);
-            });
-        }
         private void ChangeTab(string which)
         {
             foreach (var tab in ribbon.Tabs)
                 if (((RibbonTab)tab).Text == which)
                     ribbon.SelectedTab = (RibbonTab)tab;
         }
-        private void StartPowerPointLoad(object unused)
-        {
-            ShowPowerpointBlocker("Starting PowerPoint Import");
-            Commands.PostStartPowerPointLoad.Execute(null);
-        }
         private void ImportPowerPoint(object unused)
         {
             ShowPowerpointBlocker("Starting PowerPoint Import");
-            Commands.PostImportPowerpoint.Execute(null);
         }
         private void AdjustReportedDrawingAttributesAccordingToZoom(object attributes)
         {
@@ -299,11 +278,6 @@ namespace SandRibbon
                     break;
             }
         }
-        private void ShowPrintConversationDialog(object _unused)
-        {
-            ShowPowerpointBlocker("Printing Dialog Open");
-            Commands.ShowPrintConversationDialog.Execute(null);
-        }
         private void CreateConversation(object _unused)
         {
             ShowPowerpointBlocker("Creating Conversation Dialog Open");
@@ -320,7 +294,7 @@ namespace SandRibbon
         }
         private void UnblockInput(object _unused)
         {
-            Dispatcher.adoptAsync((finishedPowerpoint));
+            Dispatcher.adoptAsync((HideProgressBlocker));
         }
         private void SetIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
         {
@@ -436,9 +410,6 @@ namespace SandRibbon
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
             return string.Format("{3} is in {0}'s \"{1}\", currently in {2} style", details.Author, details.Title, permissionLabel, userInformation.credentials.name);
-        }
-        private void ClearDynamicContent(object obj)
-        {
         }
         private void MoveTo(int slide)
         {
@@ -589,12 +560,6 @@ namespace SandRibbon
                            };
             ProgressDisplay.Children.Add(text);
         }
-        private void finishedPowerpoint()
-        {
-            ProgressDisplay.Children.Clear();
-            InputBlocker.Visibility = Visibility.Collapsed;
-            HideProgressBlocker();
-        }
         private void connect(string username, string pass, int location, string conversation)
         {
             if (wire == null)
@@ -635,11 +600,6 @@ namespace SandRibbon
         private void closeApplication(object sender, ExecutedRoutedEventArgs e)
         {
             Close();
-        }
-
-        private void receivedHistoryPortion(object sender, ExecutedRoutedEventArgs e)
-        {
-            Commands.PostRetrievedHistoryPortion.Execute(e.Parameter);
         }
         private static void SetVisibilityOf(UIElement target, Visibility visibility)
         {

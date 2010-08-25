@@ -94,7 +94,6 @@ namespace SandRibbon.Utils
                     details.Tag = "unTagged";
                 var conversation = provider.Create(details);
                 conversation.Author = Globals.me;
-                Commands.PowerPointProgress.Execute("Starting to parse powerpoint file");
                 var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
                 var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
                 var thumbnailStartId = conversation.Slides.First().id;
@@ -150,7 +149,6 @@ namespace SandRibbon.Utils
                         ExportShape(shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
                     }
                 }
-                Commands.PowerPointProgress.Execute("Finished parsing powerpoint, Beginning data upload");
                 var startingId = conversation.Slides.First().id;
                 var index = 0;
                 conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide { 
@@ -183,7 +181,7 @@ namespace SandRibbon.Utils
             finally
             {
                 ppt.Close();
-                Commands.PowerPointLoadFinished.Execute(null);
+                Commands.PowerpointFinished.Execute(null);
             }
         }
         private static void createThumbnail(ConversationDetails details, Microsoft.Office.Interop.PowerPoint.Slide slide)
@@ -206,12 +204,10 @@ namespace SandRibbon.Utils
                     details.Tag = "unTagged";
                 var conversation = provider.Create(details);
                 conversation.Author = Globals.me;
-                Commands.PowerPointProgress.Execute("Starting to parse PowerPoint file");
                 foreach (var slide in ppt.Slides)
                 {
                     importSlide(details, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
                 }
-                Commands.PowerPointProgress.Execute("Finished parsing powerpoint, Beginning data upload");
                 var startingId = conversation.Slides.First().id;
                 var index = 0;
                 conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide { author = Globals.me, id = startingId++, index = index++ }).ToList();
@@ -235,7 +231,7 @@ namespace SandRibbon.Utils
             {/*How do we know when a parallelized operation has actually finished?
               * We don't.  But the content comes in live.*/
                 ppt.Close();
-                Commands.PowerPointLoadFinished.Execute(null);
+                Commands.PowerpointFinished.Execute(null);
             }
         }
         private void sendSlide(int id, XElement slide)

@@ -24,7 +24,6 @@ namespace SandRibbon.Components
             InitializeComponent();
             this.conversations.ItemsSource = new List<SandRibbonObjects.ConversationDetails>();
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>((_details) => {}, doesConversationAlreadyExist));
-            Commands.StartPowerPointLoad.RegisterCommand(new DelegateCommand<object>((_details) => {}, (detailsObject)=>doesConversationAlreadyExist((ConversationDetails)detailsObject)));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(

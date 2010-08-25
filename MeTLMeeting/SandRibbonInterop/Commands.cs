@@ -66,8 +66,7 @@ namespace SandRibbon
         public static RoutedCommand ImportSubmission = new RoutedCommand();
         public static CompositeCommand DummyCommandToProcessCanExecute = new CompositeCommand();
 
-        public static CompositeCommand DisablePens = new CompositeCommand();
-        public static CompositeCommand EnablePens = new CompositeCommand();
+        public static CompositeCommand TogglePens = new CompositeCommand();
         public static CompositeCommand SetPedagogyLevel = new CompositeCommand();
         public static CompositeCommand GetMainScrollViewer = new CompositeCommand();
         public static CompositeCommand ShowConversationSearchBox = new CompositeCommand();
@@ -80,7 +79,6 @@ namespace SandRibbon
         public static CompositeCommand ProxyMirrorPresentationSpace = new CompositeCommand();
         public static CompositeCommand InitiateDig = new CompositeCommand();
         public static CompositeCommand SendDig = new CompositeCommand();
-        public static CompositeCommand ReceiveDig = new CompositeCommand();
         public static CompositeCommand DugPublicSpace = new CompositeCommand();
         public static CompositeCommand SendLiveWindow = new CompositeCommand();
         public static CompositeCommand SendDirtyLiveWindow = new CompositeCommand();
@@ -88,7 +86,6 @@ namespace SandRibbon
         public static CompositeCommand ReceiveDirtyLiveWindow = new CompositeCommand();
         public static CompositeCommand DeleteSelectedItems = new CompositeCommand();
         public static CompositeCommand Relogin = new CompositeCommand();
-        public static CompositeCommand HideInputBlocker = new CompositeCommand();
         #region Quizzing
         public static CompositeCommand SendWormMove = new CompositeCommand(); 
         public static CompositeCommand ReceiveWormMove = new CompositeCommand(); 
@@ -107,7 +104,6 @@ namespace SandRibbon
         public static CompositeCommand SetPrivacyOfItems = new CompositeCommand();
         public static CompositeCommand GotoThread = new CompositeCommand();
         public static CompositeCommand SetPenColor = new CompositeCommand();
-        public static CompositeCommand AddForeignThread = new CompositeCommand();
         public static CompositeCommand SetHighlighterMode = new CompositeCommand();
         public static CompositeCommand ToggleHighlighterMode = new CompositeCommand();
         public static CompositeCommand SetDrawingAttributes = new CompositeCommand();
@@ -192,15 +188,12 @@ namespace SandRibbon
         public static CompositeCommand Redo = new CompositeCommand();
         public static RoutedCommand ProxyJoinConversation = new RoutedCommand();
         public static CompositeCommand ChangeTab = new CompositeCommand();
-        public static RoutedCommand AnyUiAction = new RoutedCommand();
-        public static RoutedCommand ProgressReported = new RoutedCommand();
         #region ConversationLevel
         public static CompositeCommand SyncedMoveRequested = new CompositeCommand();
         public static CompositeCommand SendSyncMove = new CompositeCommand();
         public static CompositeCommand MoveTo = new CompositeCommand();
         public static CompositeCommand SneakInto = new CompositeCommand();
         public static CompositeCommand SneakOutOf = new CompositeCommand();
-        public static CompositeCommand ClearDynamicContent = new CompositeCommand();
         public static CompositeCommand PreParserAvailable = new CompositeCommand();
         public static CompositeCommand ConversationPreParserAvailable = new CompositeCommand();
         public static CompositeCommand MoveToPrevious = new CompositeCommand();
@@ -210,8 +203,6 @@ namespace SandRibbon
         public static CompositeCommand SendDirtyConversationDetails = new CompositeCommand();
         public static CompositeCommand UpdateConversationDetails = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyConversationDetails = new CompositeCommand();
-        public static CompositeCommand RetrievedHistoryPortion = new CompositeCommand();
-        public static CompositeCommand PostRetrievedHistoryPortion = new CompositeCommand();
         public static CompositeCommand SetSync = new CompositeCommand();
         public static CompositeCommand AddSlide = new CompositeCommand();
         public static CompositeCommand PreCreateConversation = new CompositeCommand();
@@ -220,38 +211,31 @@ namespace SandRibbon
         public static CompositeCommand CreateConversation = new CompositeCommand();
         public static CompositeCommand PreEditConversation = new CompositeCommand();
         public static CompositeCommand EditConversation = new CompositeCommand();
-        public static CompositeCommand ImportPowerpoint = new CompositeCommand();
-        public static CompositeCommand UploadPowerpoint = new CompositeCommand();
-        public static CompositeCommand PostImportPowerpoint = new CompositeCommand();
-        public static CompositeCommand StartPowerPointLoad = new CompositeCommand();
-        public static CompositeCommand PostStartPowerPointLoad = new CompositeCommand();
-        public static CompositeCommand PowerPointLoadFinished = new CompositeCommand();
-        public static CompositeCommand PowerPointProgress = new CompositeCommand();
         public static CompositeCommand AllContentSent = new CompositeCommand();
-        public static CompositeCommand AllContentRetrieved = new CompositeCommand();
         public static CompositeCommand BlockInput = new CompositeCommand();
         public static CompositeCommand UnblockInput = new CompositeCommand();
         public static CompositeCommand CanEdit = new CompositeCommand();
-        public static CompositeCommand PreShowPrintConversationDialog = new CompositeCommand();
         public static CompositeCommand ShowPrintConversationDialog = new CompositeCommand();
         public static CompositeCommand PrintConversation = new CompositeCommand();
         public static CompositeCommand PrintConversationHandout = new CompositeCommand();
         public static CompositeCommand SendChatMessage = new CompositeCommand();
         public static CompositeCommand ReceiveChatMessage = new CompositeCommand();
         #endregion
-        #region Drawers
-        public static CompositeCommand ToggleScratchPadVisibility = new CompositeCommand();
-        public static CompositeCommand ToggleFriendsVisibility = new CompositeCommand();
-        #endregion
-        #region PluginForwarding
-        public static RoutedCommand PostSetIdentity = new RoutedCommand();
-        #endregion
-        #region Friends
-        public static CompositeCommand ReceivePublicChat = new CompositeCommand();
+        #region ppt
+        public static CompositeCommand ImportPowerpoint = new CompositeCommand();
+        public static CompositeCommand UploadPowerpoint = new CompositeCommand();
+        public static CompositeCommand PowerpointFinished = new CompositeCommand();
         public static CompositeCommand ReceiveMove = new CompositeCommand();
         public static CompositeCommand ReceiveJoin = new CompositeCommand();
         public static CompositeCommand ReceivePing = new CompositeCommand();
         public static CompositeCommand ReceiveFlush = new CompositeCommand();
+        #endregion
+        #region Drawers
+        public static CompositeCommand ToggleScratchPadVisibility = new CompositeCommand();
+        public static CompositeCommand ToggleFriendsVisibility = new CompositeCommand();
+        #endregion
+        #region Friends
+        public static CompositeCommand ReceivePublicChat = new CompositeCommand();
         public static RoutedCommand HighlightFriend = new RoutedCommand();
         public static RoutedCommand PostHighlightFriend = new RoutedCommand();
         public static RoutedCommand HighlightUser = new RoutedCommand();
