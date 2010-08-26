@@ -39,6 +39,8 @@ namespace PowerpointJabber
             DisableClickAdvance();
             isExtendedDesktopMode = false;
             isExtendedDesktopMode = true;
+            this.Height = System.Windows.Forms.Screen.AllScreens[0].WorkingArea.Height;
+            this.Width = System.Windows.Forms.Screen.AllScreens[0].WorkingArea.Width;
             slideThumbs = new ObservableCollection<SlideThumbnail>();
             strokeCollectionsForSlides = new Dictionary<int, StrokeCollection>();
             pens = new List<UbiquitousPen> 
@@ -71,13 +73,29 @@ namespace PowerpointJabber
             else
                 isExtendedDesktopMode = true;
         }
+        private void pageUp(object sender, ExecutedRoutedEventArgs e)
+        {
+            doMoveToPrevSlide();
+        }
+        private void pageDown(object sender, ExecutedRoutedEventArgs e)
+        {
+            doMoveToNextSlide();
+        }
+        private void closeApplication(object sender, ExecutedRoutedEventArgs e)
+        {
+            try
+            {
+                Close();
+            }
+            catch (Exception ex) { }
+        }
         private void SetUpCanvasses()
         {
             slideshowMembraneBounds = new Grid();
             var SlideShowMembraneCanvas = new InkCanvas
             {
                 Name = "slideShowMembraneCanvas",
-                Background = new SolidColorBrush { Color = new System.Windows.Media.Color {A=1,R=255,G=255,B=255 } },
+                Background = new SolidColorBrush { Color = new System.Windows.Media.Color { A = 1, R = 255, G = 255, B = 255 } },
                 EditingMode = InkCanvasEditingMode.Ink,
                 IsHitTestVisible = true,
                 Height = double.NaN,
@@ -96,7 +114,9 @@ namespace PowerpointJabber
                 WindowStyle = WindowStyle.None
             };
             slideshowMembrane.Show();
-            ActiveCanvasses = new List<InkCanvas> { StrokeCanvas, StrokeCanvas2, SlideShowMembraneCanvas };
+            ActiveCanvasses = new List<InkCanvas> { StrokeCanvas, SlideShowMembraneCanvas };
+            // Removed from above list
+            //StrokeCanvas2, 
             foreach (InkCanvas canvas in ActiveCanvasses)
             {
                 canvas.StrokesReplaced += InkCanvas_StrokesReplaced;
@@ -134,8 +154,9 @@ namespace PowerpointJabber
                         if (System.Windows.Forms.Screen.AllScreens.Length > 1)
                         {
                             SlideShowGridContainer.Visibility = Visibility.Visible;
-                            MeTLGridContainer.Visibility = Visibility.Visible;
-                            BetweenSlideShowAndMeTL.Visibility = Visibility.Visible;
+                            //MeTLGridContainer.Visibility = Visibility.Visible;
+                            //BetweenSlideShowAndMeTL.Visibility = Visibility.Visible;
+                            this.Topmost = false;
                             this.Background = System.Windows.Media.Brushes.Black;
                             SlideViewerSection.Width = currentWidthOfSlideViewer;
                             ButtonSection.Width = currentWidthOfButtons;
@@ -149,9 +170,10 @@ namespace PowerpointJabber
                         }
                         break;
                     case false:
+                        this.Topmost = true;
                         SlideShowGridContainer.Visibility = Visibility.Collapsed;
-                        MeTLGridContainer.Visibility = Visibility.Collapsed;
-                        BetweenSlideShowAndMeTL.Visibility = Visibility.Collapsed;
+                        //MeTLGridContainer.Visibility = Visibility.Collapsed;
+                        //BetweenSlideShowAndMeTL.Visibility = Visibility.Collapsed;
                         this.Background = System.Windows.Media.Brushes.Transparent;
                         SlideViewerSection.Width = currentWidthOfSlideViewer;
                         ButtonSection.Width = currentWidthOfButtons;
@@ -240,7 +262,11 @@ namespace PowerpointJabber
         private void SetCanvasBackground()
         {
             if (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.State == PpSlideShowState.ppSlideShowRunning)
+            {
                 BackgroundOfCanvas.Source = slideThumbs.Where(c => c.slideNumber == ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Slide.SlideNumber).First().thumbnail;
+                BackgroundOfCanvas.Height = BackgroundOfCanvas.Source.Height;
+                BackgroundOfCanvas.Width = BackgroundOfCanvas.Source.Width;
+            }
         }
         private void moveToSelectedSlide(object sender, RoutedEventArgs e)
         {
@@ -294,11 +320,19 @@ namespace PowerpointJabber
         }
         private void MoveToNextSlide(object sender, RoutedEventArgs e)
         {
+            doMoveToNextSlide();
+        }
+        private void doMoveToNextSlide()
+        {
             var currentSlide = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition;
             if (currentSlide < ThisAddIn.instance.Application.ActivePresentation.Slides.Count)
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(currentSlide + 1, Microsoft.Office.Core.MsoTriState.msoTrue);
         }
         private void MoveToPrevSlide(object sender, RoutedEventArgs e)
+        {
+            doMoveToPrevSlide();
+        }
+        private void doMoveToPrevSlide()
         {
             var currentSlide = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition;
             if (currentSlide > 1)
@@ -368,7 +402,11 @@ namespace PowerpointJabber
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Exit();
             if (this != null)
             {
-                this.Close();
+                try
+                {
+                    this.Close();
+                }
+                catch (Exception) { }
             }
         }
         private void hideSlide(object sender, RoutedEventArgs e)
@@ -441,6 +479,7 @@ namespace PowerpointJabber
             if (ThisAddIn.instance.wire.isConnected && ThisAddIn.instance.wire.isInConversation)
                 ThisAddIn.instance.wire.sendRawStroke(e.Stroke);
             InkCanvas source = (InkCanvas)sender;
+            strokeCollectionsForSlides[lastSlide].Add(e.Stroke);
             foreach (InkCanvas canvas in ActiveCanvasses)
                 if (canvas != source)
                 {
@@ -455,6 +494,7 @@ namespace PowerpointJabber
             if (ThisAddIn.instance.wire.isConnected && ThisAddIn.instance.wire.isInConversation)
                 ThisAddIn.instance.wire.sendRawDirtyStroke(e.Stroke);
             InkCanvas source = (InkCanvas)sender;
+            strokeCollectionsForSlides[lastSlide].Remove(e.Stroke);
             foreach (InkCanvas canvas in ActiveCanvasses)
                 if (canvas != source)
                 {
@@ -486,6 +526,11 @@ namespace PowerpointJabber
             {
                 if (ThisAddIn.instance.wire.isConnected && ThisAddIn.instance.wire.isInConversation)
                     ThisAddIn.instance.wire.sendRawDirtyStroke(droppedStroke);
+                foreach (StrokeCollection sc in strokeCollectionsForSlides.Values)
+                {
+                    if (sc.Contains(droppedStroke))
+                        sc.Remove(droppedStroke);
+                }
                 foreach (InkCanvas canvas in ActiveCanvasses)
                     if (canvas.Strokes.Contains(droppedStroke))
                         canvas.Strokes.Remove(droppedStroke);
@@ -497,6 +542,8 @@ namespace PowerpointJabber
                 foreach (InkCanvas canvas in ActiveCanvasses)
                     if (!canvas.Strokes.Contains(newStroke))
                         canvas.Strokes.Add(newStroke);
+                if (!strokeCollectionsForSlides[lastSlide].Contains(newStroke))
+                    strokeCollectionsForSlides[lastSlide].Add(newStroke);
             }
         }
     }

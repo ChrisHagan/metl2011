@@ -200,6 +200,7 @@
   -->
   <ItemGroup>
     <Compile Include="FileConversationDetailsProvider.cs" />
+    <Compile Include="Commands.cs" />
     <Compile Include="loginDialogBox.xaml.cs">
       <DependentUpon>loginDialogBox.xaml</DependentUpon>
     </Compile>
