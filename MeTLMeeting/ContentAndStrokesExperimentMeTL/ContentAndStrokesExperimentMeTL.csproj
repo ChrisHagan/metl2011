@@ -138,6 +138,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="MeTLExperimenterIcon.ico" />
     <Content Include="resources\AddVideo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

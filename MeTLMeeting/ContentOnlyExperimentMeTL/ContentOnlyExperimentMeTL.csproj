@@ -134,6 +134,7 @@
     <Content Include="MeTL.exe.manifest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="MeTLExperimenterIcon.ico" />
     <Content Include="resources\AddVideo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

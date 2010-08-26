@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <PublishUrlHistory>publish\</PublishUrlHistory>
-    <InstallUrlHistory>http://metl.adm.monash.edu.au/LectureMeTL/</InstallUrlHistory>
+    <InstallUrlHistory>http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu.au/LectureMeTL/</InstallUrlHistory>
     <SupportUrlHistory>
     </SupportUrlHistory>
     <UpdateUrlHistory>
