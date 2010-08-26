@@ -19,6 +19,7 @@
     <ManifestKeyFile>ContentOnlyExperimentMeTL_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
+    <ApplicationIcon>MeTLExperimenterIcon.ico</ApplicationIcon>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -31,13 +32,13 @@
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://metl.adm.monash.edu.au/ContentOnlyMeTL/</InstallUrl>
     <UpdateUrl>http://metl.adm.monash.edu.au/ContentOnlyMeTL/</UpdateUrl>
-    <ProductName>Experimental MeTL %28content only%29</ProductName>
+    <ProductName>MeTL-X %28CO%29</ProductName>
     <PublisherName>Monash University eEducation Centre</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>4</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>

@@ -21,8 +21,7 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetZone>LocalIntranet</TargetZone>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>MeTLLogo-bronze.ico</ApplicationIcon>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>SandRibbon_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
     <PublishUrl>publish\</PublishUrl>
@@ -792,6 +791,8 @@
     <Resource Include="Resources\Ribbon-SlideStack.png" />
     <Resource Include="Resources\FitToPage.png" />
     <Resource Include="Resources\FitToView.png" />
+    <Resource Include="MeTLExperimenterIcon.ico" />
+    <Resource Include="MeTLLogo-bronze.ico" />
     <Content Include="Resources\AddVideo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

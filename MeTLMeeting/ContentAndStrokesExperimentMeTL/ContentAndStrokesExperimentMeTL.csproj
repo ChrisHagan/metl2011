@@ -19,6 +19,7 @@
     <ManifestKeyFile>ContentAndStrokesExperimentMeTL_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
+    <ApplicationIcon>MeTLExperimenterIcon.ico</ApplicationIcon>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -31,12 +32,12 @@
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://metl.adm.monash.edu.au/ContentAndStrokesMeTL/</InstallUrl>
     <UpdateUrl>http://metl.adm.monash.edu.au/ContentAndStrokesMeTL/</UpdateUrl>
-    <ProductName>Experiment MeTL %28Content and strokes%29</ProductName>
+    <ProductName>MeTL-X %28CS%29</ProductName>
     <PublisherName>Monash University eEducation Centre</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -165,12 +166,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SandRibbon\SandRibbon.csproj">
-      <Project>{0213D150-6485-4F40-AF80-5AC5E8BB10CC}</Project>
-      <Name>SandRibbon</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework Client Profile</ProductName>
@@ -206,6 +201,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SandRibbon\SandRibbon.csproj">
+      <Project>{0213D150-6485-4F40-AF80-5AC5E8BB10CC}</Project>
+      <Name>SandRibbon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
