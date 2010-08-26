@@ -10,7 +10,6 @@
     xmlns:tabs="clr-namespace:SandRibbon.Tabs"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
-    xmlns:widgets="clr-namespace:SandRibbon.Widgets"
     AllowDrop="True"
     Title="MeTL Presenter"
     x:Name="ribbonWindow"
@@ -81,7 +80,6 @@
                     <components:SlideDisplay x:Name="slides" />
                 </Grid>
             </Grid>
-            <components:LoadProgress x:Name="progress" Visibility="Collapsed" />
             <Grid x:Name="TutorialLayer" Visibility="Collapsed" IsHitTestVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-90,0,0" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" >
                 <components:Tutorial />
             </Grid>

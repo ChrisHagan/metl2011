@@ -611,11 +611,6 @@ namespace SandRibbon
         {
             userInformation.policy.isSynced = !userInformation.policy.isSynced;
         }
-        private void progressReported(object sender, ExecutedRoutedEventArgs e)
-        {
-            var report = (int[])e.Parameter;
-            progress.Show(report[0], report[1]);
-        }
         private void OriginalView(object _unused)
         {
             var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).First();
@@ -924,7 +919,6 @@ namespace SandRibbon
             ribbon.SelectedTab = home;
             CommandManager.InvalidateRequerySuggested();
             Commands.RequerySuggested();
-            Commands.SetLayer.Execute("Text");
             Commands.SetLayer.Execute("Sketch");
         }
         private class PreferredDisplayIndexComparer : IComparer<FrameworkElement>
@@ -956,30 +950,6 @@ namespace SandRibbon
             UpdatePrivacyAdorners();
             updateCurrentPenAfterZoomChanged();
         }
-
-        private void fixAutoSizing(object sender, SizeChangedEventArgs e)
-        {
-            var lastValue = Commands.SetLayer.lastValue();
-            Commands.SetLayer.Execute("Sketch");
-            Commands.SetLayer.Execute("Text");
-            Commands.SetLayer.Execute(lastValue);
-            /*var currentTab = ribbon.SelectedTab;
-            if (currentTab != null)
-            {
-                Dictionary<RibbonGroup, Visibility> currentVisibility = new Dictionary<RibbonGroup, Visibility>();
-                foreach (RibbonGroup rg in currentTab.Items)
-                {
-                    currentVisibility[rg] = rg.Visibility;
-                    rg.Visibility = Visibility.Collapsed;
-                }
-                foreach (RibbonGroup rg in currentTab.Items)
-                {
-                    //rg.Visibility = Visibility.Visible;
-                    rg.Visibility = currentVisibility[rg];
-                }
-            }*/
-        }
-
         private void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             UpdatePrivacyAdorners();

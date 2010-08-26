@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbonObjects;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
-    public partial class PrivacyTools : UserControl
+    public partial class PrivacyTools
     {
         public static readonly DependencyProperty PrivateProperty =
             DependencyProperty.Register("Private", typeof(string), typeof(PrivacyTools), new UIPropertyMetadata("public"));
@@ -40,24 +38,21 @@ namespace SandRibbon.Components
                 return privacy != (string)GetValue(PrivateProperty)
                 && (Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.Author == Globals.me);
             }
-            catch (Exception e)
+            catch (Exception )
             {
                 return false;
             }
         }
         private void SetPrivacy(string p)
         {
-            Dispatcher.adoptAsync((Action) delegate
-                                         {
-                                             if (p == "public")
-                                                 WorkPubliclyButton.IsChecked = true;
-                                             else
-                                                 WorkPubliclyButton.IsChecked = false;
-                                             SetValue(PrivateProperty, p);
-                                             Commands.RequerySuggested(Commands.SetPrivacy);
-                                         });
+            Dispatcher.adoptAsync(delegate
+                                      {
+                                          WorkPubliclyButton.IsChecked = p == "public";
+                                          SetValue(PrivateProperty, p);
+                                          Commands.RequerySuggested(Commands.SetPrivacy);
+                                      });
         }
-        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
+        protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new PrivacyToolsAutomationPeer(this);
         }
@@ -82,7 +77,7 @@ namespace SandRibbon.Components
         }
         public PrivacyTools PrivacyTools
         {
-            get { return (PrivacyTools)base.Owner; }
+            get { return (PrivacyTools)Owner; }
         }
         public override object GetPattern(PatternInterface patternInterface)
         {
@@ -100,7 +95,7 @@ namespace SandRibbon.Components
         }
         public string Value
         {
-            get { return (string)this.PrivacyTools.GetValue(PrivacyTools.PrivateProperty); }
+            get { return (string)PrivacyTools.GetValue(PrivacyTools.PrivateProperty); }
         }
     }
     public class PrivacyEnablementChecker : IValueConverter

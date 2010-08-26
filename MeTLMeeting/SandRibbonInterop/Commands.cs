@@ -243,7 +243,7 @@ namespace SandRibbon
         #endregion
         Commands()
         {
-            NotImplementedYet.RegisterCommand(new DelegateCommand<object>((_param) => { }, (_param) => { return false; }));
+            NotImplementedYet.RegisterCommand(new DelegateCommand<object>((_param) => { }, (_param) => false));
         }
         public static int HandlerCount{
             get {
