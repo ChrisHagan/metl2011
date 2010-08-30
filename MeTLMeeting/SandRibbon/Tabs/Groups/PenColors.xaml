@@ -59,14 +59,19 @@
                                         <Grid Width="40" Height="40" >
                                             <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
                                             <Rectangle Fill="{StaticResource BrushGradientBackground}"/>
-                                            <Border BorderThickness="0" Padding="0" ClipToBounds="True">
-                                                <Grid>
-                                                    <InkPresenter 
-                                                      Strokes="{Binding Path=BrushPreviewStroke}"/>
-                                                    <InkPresenter 
-                                                      Strokes="{Binding Path=HighlighterPreviewStroke}"
-                                                      Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}" />
-                                                </Grid>
+                                            <Border BorderThickness="0" Padding="0" ClipToBounds="True" >
+                                                <Viewbox Height="40" Width="40">
+                                                    <Grid>
+                                                        <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}">
+                                                            <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
+                                                            <Image Height="100" Width="100" Source="/Resources/MeTLPenOverlay.png"/>
+                                                        </Grid>
+                                                        <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}">
+                                                            <Polygon Height="400" Width="400" Points="{Binding Path=HighlighterPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
+                                                            <Image Height="400" Width="400" Source="/Resources/MeTLHighlighterOverlay.png"/>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Viewbox>
                                             </Border>
                                         </Grid>
                                     </Viewbox>
@@ -78,14 +83,19 @@
                                 <Grid Width="40" Height="40" >
                                     <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
                                     <Rectangle Fill="{StaticResource BrushGradientBackground}"/>
-                                    <Border BorderThickness="0" Padding="0" ClipToBounds="True">
-                                        <Grid>
-                                            <InkPresenter 
-                                                      Strokes="{Binding Path=BrushPreviewStroke}"/>
-                                            <InkPresenter 
-                                                      Strokes="{Binding Path=HighlighterPreviewStroke}"
-                                                      Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}" />
-                                        </Grid>
+                                    <Border BorderThickness="0" Padding="0" ClipToBounds="True" >
+                                        <Viewbox Height="40" Width="40">
+                                            <Grid>
+                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}">
+                                                    <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
+                                                    <Image Height="100" Width="100" Source="/Resources/MeTLPenOverlay.png"/>
+                                                </Grid>
+                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}">
+                                                    <Polygon Height="400" Width="400" Points="{Binding Path=HighlighterPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
+                                                    <Image Height="400" Width="400" Source="/Resources/MeTLHighlighterOverlay.png"/>
+                                                </Grid>
+                                            </Grid>
+                                        </Viewbox>
                                     </Border>
                                 </Grid>
                             </Viewbox>
@@ -101,14 +111,19 @@
                                                 <Grid Width="40" Height="40" >
                                                     <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
                                                     <Rectangle Fill="{StaticResource BrushGradientBackground}"/>
-                                                    <Border BorderThickness="0" Padding="0" ClipToBounds="True">
-                                                        <Grid>
-                                                            <InkPresenter 
-                                                      Strokes="{Binding Path=BrushPreviewStroke}"/>
-                                                            <InkPresenter 
-                                                      Strokes="{Binding Path=HighlighterPreviewStroke}"
-                                                      Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}" />
-                                                        </Grid>
+                                                    <Border BorderThickness="0" Padding="0" ClipToBounds="True" >
+                                                        <Viewbox Height="40" Width="40">
+                                                            <Grid>
+                                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}">
+                                                                    <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
+                                                                    <Image Height="100" Width="100" Source="/Resources/MeTLPenOverlay.png"/>
+                                                                </Grid>
+                                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}">
+                                                                    <Polygon Height="400" Width="400" Points="{Binding Path=HighlighterPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
+                                                                    <Image Height="400" Width="400" Source="/Resources/MeTLHighlighterOverlay.png"/>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Viewbox>
                                                     </Border>
                                                 </Grid>
                                             </Viewbox>
