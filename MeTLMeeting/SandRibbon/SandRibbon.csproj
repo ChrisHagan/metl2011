@@ -222,6 +222,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Submissions\FileUploads.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Submissions\ScreenshotSubmission.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -493,6 +497,9 @@
     </Compile>
     <Compile Include="Components\SlidesEditingDialog.xaml.cs">
       <DependentUpon>SlidesEditingDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Submissions\FileUploads.xaml.cs">
+      <DependentUpon>FileUploads.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Submissions\ScreenshotSubmission.xaml.cs">
       <DependentUpon>ScreenshotSubmission.xaml</DependentUpon>
@@ -821,6 +828,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\NewQuiz.png" />
+    <Resource Include="Resources\mimetype_readme.png" />
     <Resource Include="Resources\MeTLPenOverlay.png" />
     <Resource Include="Resources\MeTLHighlighterOverlay.png" />
     <Content Include="Resources\Pen.png">

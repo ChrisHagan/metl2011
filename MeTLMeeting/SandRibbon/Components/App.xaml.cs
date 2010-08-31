@@ -56,6 +56,7 @@ namespace SandRibbon
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyImage();
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.LiveWindow();
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.QuizOption();
+            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.FileResource();
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.QuizResponse();
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyElement();
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyAutoshape();

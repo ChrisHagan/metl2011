@@ -338,7 +338,6 @@ namespace SandRibbon.Components.Canvas
                 {
                     image.Margin = new Thickness(PADDING, PADDING, PADDING, PADDING);
                     Children.Add(image);
-                    //ApplyPrivacyStylingToElement(image, image.tag().privacy);
                 }
             }
             catch (Exception e)
@@ -836,9 +835,28 @@ namespace SandRibbon.Components.Canvas
                 case FileType.Video:
                     MessageBox.Show("The object you're trying to import is a video.  At present, MeTL does not support videos.");
                     return;
-                    dropVideoOnCanvas(fileName, pos, count);
+                default:
+                    uploadFileForUse(fileName, pos);
                     break;
             }
+        }
+
+        private void uploadFileForUse(string filename, Point position)
+        {
+            string hostedFileName;
+            if (!filename.Contains("http"))
+            {
+                hostedFileName = ResourceUploader.uploadResource(currentSlide.ToString(), filename);
+                if (hostedFileName == "failed") return;
+            }
+            else
+                hostedFileName = filename;
+            Commands.SendFileResource.Execute(new TargettedFile
+                                                  {
+                                                      author = Globals.me,
+                                                      url = hostedFileName
+                                                   });
+            
         }
         public void dropImageOnCanvas(string fileName, Point pos, int count)
         {

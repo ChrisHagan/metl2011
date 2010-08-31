@@ -13,6 +13,7 @@
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">5</core:String>
     </sr:RibbonTab.Resources>
+
     <sr:RibbonGroup Header="Create" x:Name="quizRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Quizzes.png">
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Small" Priority="5"/>

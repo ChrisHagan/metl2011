@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using SandRibbon.Components.Submissions;
 using SandRibbon.Providers;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
@@ -47,6 +48,10 @@ namespace SandRibbon
         public static BracketingConverter BracketingConverter = new BracketingConverter();
         public static ConvertStringToImageSource ConvertStringToImageSource = new ConvertStringToImageSource();
         public static ExtractUrlAndConvertConverter ExtractUrlAndConvertConverter = new ExtractUrlAndConvertConverter();
+        public static ExtractAuthorConverter ExtractAuthorConverter = new ExtractAuthorConverter();
+        public static ExtractNameConverter ExtractNameConverter = new ExtractNameConverter();
+        public static ExtractTypeConverter ExtractTypeConverter = new ExtractTypeConverter();
+        public static ExtractUrlConverter ExtractUrlConverter = new ExtractUrlConverter();
         public static IndexInThisCollectionConverter IndexInThisCollectionConverter = new IndexInThisCollectionConverter();
         public static BoolToVisibilityConverter BoolToVisibilityConverter = new BoolToVisibilityConverter();
         public static ImageSourceExtractor ImageSourceExtractor = new ImageSourceExtractor();
@@ -166,6 +171,58 @@ namespace SandRibbon
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException("You shouldn't be converting an IndexInThisCollection back to anything");
+        }
+    }
+    public class ExtractUrlConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return "";
+            return ((FileInfo)value).url;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class ExtractAuthorConverter :IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return "";
+            return ((FileInfo) value).author;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class ExtractTypeConverter :IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return "";
+            return ((FileInfo) value).fileType;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class ExtractNameConverter :IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return "";
+            return ((FileInfo) value).filename;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
     public class ExtractUrlAndConvertConverter : IValueConverter

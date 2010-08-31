@@ -179,6 +179,7 @@ namespace SandRibbon.Utils.Connection
             Commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(SendImage));
             Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(SendVideo));
             Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
+            Commands.SendFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(sendFileResource));
             Commands.SendDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyVideo));
             Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoShape));
             Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoShape));
@@ -200,6 +201,8 @@ namespace SandRibbon.Utils.Connection
             Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
             Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
         }
+
+
         public void getCurrentClasses(object _unused)
         {
             var currentRooms = new List<string>();
@@ -541,6 +544,10 @@ namespace SandRibbon.Utils.Connection
         {
             stanza(image.slide.ToString(), new MeTLStanzas.Image(image));
         }
+        private void sendFileResource(TargettedFile file)
+        {
+            stanza(Globals.location.activeConversation, new MeTLStanzas.FileResource(file));
+        }
         public void SendVideo(TargettedVideo video)
         {
             stanza(video.slide.ToString(), new MeTLStanzas.Video(video));
@@ -765,6 +772,12 @@ namespace SandRibbon.Utils.Connection
             }
             foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
                 actOnDirtyVideoReceived(dirtyVideo);
+            foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))
+                actOnFileResource(file);
+        }
+        public virtual void actOnFileResource(MeTLStanzas.FileResource resource)
+        {
+            Commands.ReceiveFileResource.Execute(resource.fileResource);
         }
         public virtual void actOnScreenshotSubmission(TargettedSubmission submission)
         {

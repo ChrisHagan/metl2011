@@ -146,6 +146,9 @@ namespace SandRibbon
         public static CompositeCommand ReceiveAutoShape = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyAutoShape = new CompositeCommand();
 
+        public static CompositeCommand SendFileResource = new CompositeCommand();
+        public static CompositeCommand ReceiveFileResource = new CompositeCommand();
+
         #endregion
         #region TextCanvas
         public static CompositeCommand TextboxFocused = new CompositeCommand();

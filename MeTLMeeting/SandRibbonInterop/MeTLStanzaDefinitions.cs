@@ -43,6 +43,10 @@ namespace SandRibbonInterop.MeTLStanzas
         public IEnumerable<SelectedIdentity> context;
         public int thoughtSlide;
     }
+    public class TargettedFile : TargettedElement
+    {
+        public string url { get; set;}
+    }
     public class TargettedImage : TargettedElement
     {
         public System.Windows.Controls.Image imageProperty;
@@ -757,6 +761,42 @@ namespace SandRibbonInterop.MeTLStanzas
             }
         }
         
+        public class FileResource: Element
+        {
+
+            public static string TAG = "fileResource";
+            public static string AUTHOR = "author";
+            public static string URL = "url";
+            static FileResource()
+            {
+                agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(FileResource));
+            }
+            public FileResource()
+            {
+                this.Namespace = METL_NS;
+                this.TagName = TAG;
+            }
+            public FileResource(TargettedFile file) : this()
+            {
+                fileResource = file;
+            }
+            public TargettedFile fileResource
+            {
+                get
+                {
+                    return new TargettedFile
+                               {
+                                   author = GetTag(AUTHOR),
+                                   url = GetTag(URL)
+                               };
+                }
+                set
+                {
+                    SetTag(AUTHOR, value.author);
+                    SetTag(URL, value.url);
+                }
+            }
+        }
         public class ScreenshotSubmission: Element
         {
             static ScreenshotSubmission()
@@ -1003,6 +1043,14 @@ namespace SandRibbonInterop.MeTLStanzas
                 }
             }
         }
+        private static void ensureCacheDirectoryExists(string room)
+        {
+            if (!Directory.Exists("Resource"))
+                Directory.CreateDirectory("Resource");
+            var roomPath = System.IO.Path.Combine("Resource", room);
+            if (!Directory.Exists(roomPath))
+                Directory.CreateDirectory(roomPath);
+        }
         public class Video : Element {
             static Video() { 
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Video));
@@ -1020,12 +1068,12 @@ namespace SandRibbonInterop.MeTLStanzas
                 var video = new MediaElement { 
                     Tag = this.tag,
                     LoadedBehavior = MediaState.Manual,
-                    Source = new Uri(this.source, UriKind.RelativeOrAbsolute)
+                    Source = source
                 };
                 var srVideo = new SandRibbonInterop.Video { 
                     MediaElement = video, 
                     Tag=this.tag, 
-                    VideoSource = new System.Uri(this.source,UriKind.RelativeOrAbsolute),
+                    VideoSource = video.Source,
                     VideoHeight = video.NaturalVideoHeight,
                     VideoWidth = video.NaturalVideoWidth
                 };
@@ -1084,11 +1132,29 @@ namespace SandRibbonInterop.MeTLStanzas
                 get { return GetTag(tagTag); }
                 set { SetTag(tagTag, value); }
             }
-            public string source
+            private static Uri getCachedVideo(string url)
             {
-                get { return GetTag(sourceTag); }
-                set { SetTag(sourceTag, value); }
+                var regex = new Regex(@".*?/Resource/(.*?)/(.*)");
+                var match = regex.Matches(url)[0];
+                var room = match.Groups[1].Value;
+                var file = match.Groups[2].Value;
+                var path = string.Format(@"Resource\{0}\{1}", room, file);
+                ensureCacheDirectoryExists(room);
+                if (File.Exists(path))
+                    return new Uri(path, UriKind.RelativeOrAbsolute);
+                var sourceBytes = new WebClient { Credentials = new NetworkCredential("exampleUsername", "examplePassword") }.DownloadData(url);
+                File.WriteAllBytes(path, sourceBytes);
+                return new Uri(url, UriKind.RelativeOrAbsolute);
             }
+            public Uri source
+            {
+                get {
+                    return getCachedVideo(GetTag(sourceTag));
+                }
+                set { SetTag(sourceTag, value.ToString()); }
+            }
+
+
         }
         public class Image : Element
         {
@@ -1131,7 +1197,7 @@ namespace SandRibbonInterop.MeTLStanzas
                     var path = string.Format(@"Resource\{0}\{1}", room, file);
                     var bitmapImage = new BitmapImage();
                     bitmapImage.BeginInit();
-                    ensureImageCacheDirectory(room);
+                    ensureCacheDirectoryExists(room);
                     if (File.Exists(path))
                     {
                         bitmapImage.StreamSource = new MemoryStream(File.ReadAllBytes(path));
@@ -1150,14 +1216,7 @@ namespace SandRibbonInterop.MeTLStanzas
                     return BitmapSource.Create(1, 1, 96, 96, PixelFormats.BlackWhite, BitmapPalettes.BlackAndWhite, new byte[96 * 96], 1);
                 }
             }
-            private static void ensureImageCacheDirectory(string room)
-            {
-                if (!Directory.Exists("Resource"))
-                    Directory.CreateDirectory("Resource");
-                var roomPath = System.IO.Path.Combine("Resource", room);
-                if (!Directory.Exists(roomPath))
-                    Directory.CreateDirectory(roomPath);
-            }
+
             public TargettedImage Img
             {
                 get
@@ -1210,6 +1269,7 @@ namespace SandRibbonInterop.MeTLStanzas
                     try
                     {
                         var path = string.Format("https://{0}:1188{1}", JabberWire.SERVER, GetTag(sourceTag));
+                        return GetCachedImage(path);
                         return (ImageSource)new ImageSourceConverter().ConvertFromString(path);
                     }
                     catch (Exception e)
