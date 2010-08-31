@@ -63,12 +63,12 @@
                                                 <Viewbox Height="40" Width="40">
                                                     <Grid>
                                                         <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}">
-                                                            <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPreviewStroke}" Height="100" Width="100"/>
+                                                            <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPenPreviewStroke}" Height="100" Width="100"/>
                                                             <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
                                                             <Image Height="100" Width="100" Source="/Resources/MeTLPenOverlay.png"/>
                                                         </Grid>
                                                         <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}">
-                                                            <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPreviewStroke}" Height="100" Width="100"/>
+                                                            <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnHighlighterPreviewStroke}" Height="100" Width="100"/>
                                                             <Viewbox Height="100" Width="100">
                                                                 <Polygon Height="400" Width="400" Points="{Binding Path=HighlighterPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
                                                             </Viewbox>
@@ -91,12 +91,12 @@
                                         <Viewbox Height="40" Width="40">
                                             <Grid>
                                                 <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}">
-                                                    <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPreviewStroke}" Height="100" Width="100"/>
+                                                    <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPenPreviewStroke}" Height="100" Width="100"/>
                                                     <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
                                                     <Image Height="100" Width="100" Source="/Resources/MeTLPenOverlay.png"/>
                                                 </Grid>
                                                 <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}">
-                                                    <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPreviewStroke}" Height="100" Width="100"/>
+                                                    <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnHighlighterPreviewStroke}" Height="100" Width="100"/>
                                                     <Viewbox Height="100" Width="100">
                                                         <Polygon Height="400" Width="400" Points="{Binding Path=HighlighterPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
                                                     </Viewbox>
@@ -123,12 +123,12 @@
                                                         <Viewbox Height="40" Width="40">
                                                             <Grid>
                                                                 <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}">
-                                                                    <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPreviewStroke}" Height="100" Width="100"/>
+                                                                    <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPenPreviewStroke}" Height="100" Width="100"/>
                                                                     <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
                                                                     <Image Height="100" Width="100" Source="/Resources/MeTLPenOverlay.png"/>
                                                                 </Grid>
                                                                 <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}">
-                                                                    <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPreviewStroke}" Height="100" Width="100"/>
+                                                                    <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnHighlighterPreviewStroke}" Height="100" Width="100"/>
                                                                     <Viewbox Height="100" Width="100">
                                                                         <Polygon Height="400" Width="400" Points="{Binding Path=HighlighterPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
                                                                     </Viewbox>
