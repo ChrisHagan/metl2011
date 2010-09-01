@@ -54,7 +54,7 @@ namespace SandRibbon.Components.Submissions
                                                              fileImage = getFileImage(file.url)
                                                          }));
         }
-
+        //
         public static string getFileType(string url)
         {
             var extension = System.IO.Path.GetExtension(url).ToLower();
@@ -62,10 +62,62 @@ namespace SandRibbon.Components.Submissions
             {
                 case ".ppt":
                     return "PowerPoint";
+                case ".pptx":
+                    return "PowerPoint";
                 case ".doc":
                     return "Word";
+                case ".docx":
+                    return "Word";
+                case ".txt":
+                    return "Text";
+                case ".html":
+                    return "HTML";
                 case ".xls":
                     return "Excel";
+                case ".xlsx":
+                    return "Excel";
+                case ".pdf":
+                    return "PDF";
+                case ".odt":
+                    return "Open Office Document";
+                case ".mpg":
+                    return "Video";
+                case ".mp4":
+                    return "Video";
+                case ".m4v":
+                    return "Video";
+                case ".mpz":
+                    return "Video";
+                case ".mpeg":
+                    return "Video";
+                case ".divx":
+                    return "Video";
+                case ".xvid":
+                    return "Video";
+                case ".avi":
+                    return "Video";
+                case ".mov":
+                    return "QuickTime";
+                case ".swf":
+                    return "Shockwave";
+                case ".wmv":
+                    return "Windows Media Video";
+                case ".xap":
+                    return "Silverlight";
+                case ".gif":
+                    return "GIF";
+                case ".png":
+                    return "PNG";
+                case ".bmp":
+                    return "Bitmap";
+                case ".jpeg":
+                    return "Jpeg";
+                case ".jpg":
+                    return "Jpeg";
+                case ".mp3":
+                    return "Audio";
+                case ".wav":
+                    return "Audio";
                 default :
                     return "Other";
             }
@@ -94,6 +146,11 @@ namespace SandRibbon.Components.Submissions
 
             }
             this.Close();
+        }
+
+        private void canSaveFile(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = files != null && files.SelectedItem != null;
         }
     }
 }

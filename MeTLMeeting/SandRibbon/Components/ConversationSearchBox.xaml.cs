@@ -320,7 +320,7 @@ namespace SandRibbon.Components
                                            || conv.Tag.ToLower().Contains(token)).ToList();
                 }
             }
-            return matchingItems;
+            return matchingItems.OrderByDescending(c => c.Created).ToList();
         }
 
         private void updateConversationCount(int Count)

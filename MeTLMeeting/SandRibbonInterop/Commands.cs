@@ -64,6 +64,7 @@ namespace SandRibbon
         public static CompositeCommand SendScreenshotSubmission = new CompositeCommand();
         public static CompositeCommand ReceiveScreenshotSubmission = new CompositeCommand();
         public static RoutedCommand ImportSubmission = new RoutedCommand();
+        public static RoutedCommand SaveFile = new RoutedCommand();
         public static CompositeCommand DummyCommandToProcessCanExecute = new CompositeCommand();
 
         public static CompositeCommand TogglePens = new CompositeCommand();
@@ -136,6 +137,7 @@ namespace SandRibbon
         public static CompositeCommand SendDirtyVideo = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyVideo = new CompositeCommand();
         public static CompositeCommand AddImage = new CompositeCommand();
+        public static CompositeCommand FileUpload = new CompositeCommand();
         public static CompositeCommand SendImage = new CompositeCommand();
         public static CompositeCommand ReceiveImage = new CompositeCommand();
         public static CompositeCommand SendDirtyImage = new CompositeCommand();

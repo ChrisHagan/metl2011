@@ -2,36 +2,45 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:SandRibbon="clr-namespace:SandRibbon"
+    xmlns:Commands="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     Title="FileUploads">
-    <StackPanel Orientation="Horizontal">
-        <ListBox x:Name="files" Width="110" >
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Viewbox Width="100" Height="100">
-                        <Image Source="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" ToolTip="{Binding Path=author}"/>
-                    </Viewbox>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <StackPanel Orientation="Vertical">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static Commands:Commands.SaveFile}" Executed="saveFile" CanExecute="canSaveFile"/>
+    </Window.CommandBindings>
+    <Border Background="{StaticResource BackgroundBlueGradient}">
+        <DockPanel>
+            <Button DockPanel.Dock="Bottom" Command="{x:Static Commands:Commands.SaveFile}" >Save as</Button>
             <StackPanel Orientation="Horizontal">
-                <Label>Name</Label>
-                <Label Content="{Binding ElementName=files, Path=SelectedItem, Converter={x:Static SandRibbon:Converters.ExtractNameConverter}}"/>
+                <ListBox x:Name="files" Width="110" Background="Transparent"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel IsItemsHost="True" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Viewbox Width="100" Height="100">
+                                <Image Source="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" ToolTip="{Binding Path=author}"/>
+                            </Viewbox>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Name</Label>
+                        <Label Content="{Binding ElementName=files, Path=SelectedItem, Converter={x:Static SandRibbon:Converters.ExtractNameConverter}}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Author</Label>
+                        <Label Content="{Binding ElementName=files, Path=SelectedItem, Converter={x:Static SandRibbon:Converters.ExtractAuthorConverter}}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Url</Label>
+                        <Label Content="{Binding ElementName=files, Path=SelectedItem, Converter={x:Static SandRibbon:Converters.ExtractUrlConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label>Author</Label>
-                <Label Content="{Binding ElementName=files, Path=SelectedItem, Converter={x:Static SandRibbon:Converters.ExtractAuthorConverter}}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label>Url</Label>
-                <Label Content="{Binding ElementName=files, Path=SelectedItem, Converter={x:Static SandRibbon:Converters.ExtractUrlConverter}}"/>
-            </StackPanel>
-            <Button Click="saveFile" >Save file to disk</Button>
-        </StackPanel>
-    </StackPanel>
+        </DockPanel>
+    </Border>
 </Window>

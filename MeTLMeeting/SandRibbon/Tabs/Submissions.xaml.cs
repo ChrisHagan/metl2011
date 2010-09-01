@@ -24,29 +24,11 @@ namespace SandRibbon.Tabs
 {
     public partial class Submissions : Divelements.SandRibbon.RibbonTab
     {
-        private List<FileInfo> files; 
         public Submissions()
         {
             InitializeComponent();
-            files = new List<FileInfo>();
-            Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(receiveFile));
+
         }
 
-        private void receiveFile(TargettedFile file)
-        {
-           Dispatcher.adoptAsync(() => files.Add(new FileInfo
-                                                     {
-                                                         fileType = FileUploads.getFileType(file.url),
-                                                         filename = FileUploads.getFileName(file.url),
-                                                         url = file.url,
-                                                         author = file.author,
-                                                         fileImage = FileUploads.getFileImage(file.url)
-                                                     }));
-        }
-
-        private void openUploads(object sender, RoutedEventArgs e)
-        {
-            new FileUploads(files).Show();
-        }
     }
 }

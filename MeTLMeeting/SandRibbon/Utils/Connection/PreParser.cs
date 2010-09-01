@@ -17,6 +17,7 @@ namespace SandRibbon.Utils.Connection
         public Dictionary<string, TargettedAutoShape> autoshapes = new Dictionary<string, TargettedAutoShape>();
         public List<TargettedStroke> ink = new List<TargettedStroke>();
         public List<QuizQuestion> quizzes = new List<QuizQuestion>();
+        public List<TargettedFile> files = new List<TargettedFile>();
         public List<TargettedSubmission> submissions = new List<TargettedSubmission>();
         public List<QuizAnswer> quizAnswers = new List<QuizAnswer>();
         public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
@@ -89,8 +90,14 @@ namespace SandRibbon.Utils.Connection
             //Videos currently disabled.
             foreach (var video in videos.Values)
                 Commands.ReceiveVideo.Execute(video);
+            foreach(var file in files)
+                Commands.ReceiveFileResource.Execute(file);
             Commands.AllContentSent.Execute(location.currentSlide);
             Logger.Log(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
+        }
+        public override void actOnFileResource(MeTLStanzas.FileResource resource)
+        {
+            files.Add(resource.fileResource);
         }
         public override void ReceiveCommand(string message)
         {//Preparsers don't care about commands, they're not a valid part of history.

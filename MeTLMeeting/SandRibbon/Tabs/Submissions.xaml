@@ -12,9 +12,6 @@
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">6</core:String>
     </sr:RibbonTab.Resources>
-    <sr:RibbonGroup Header="Uploads">
-        <Button Click="openUploads">Uploads</Button>
-    </sr:RibbonGroup>
     <sr:RibbonGroup Header="Submission" ShowDialogLauncher="False" Image="\Resources\Submissions.png">
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Small" Priority="2"/>

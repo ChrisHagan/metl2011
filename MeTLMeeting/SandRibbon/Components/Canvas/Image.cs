@@ -64,6 +64,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyAutoShape));
             Commands.AddAutoShape.RegisterCommand(new DelegateCommand<object>(createNewAutoShape));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(addImageFromDisk));
+            Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(uploadFile));
             Commands.PlaceQuizSnapshot.RegisterCommand(new DelegateCommand<string>(addImageFromQuizSnapshot));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<ImageDrop>((drop) =>
@@ -720,6 +721,16 @@ namespace SandRibbon.Components.Canvas
                     handleDrop(file, new Point(0, 0), i++);
             });
         }
+        private void uploadFile(object _obj)
+        {
+            addResourceFromDisk((files) =>
+                                    {
+                                        foreach(var file in files)
+                                        {
+                                            uploadFileForUse(file);
+                                        }
+                                    });
+        }
         private void addImageFromQuizSnapshot(string filename)
         {
             handleDrop(filename, new Point(10, 10), 1);
@@ -836,12 +847,12 @@ namespace SandRibbon.Components.Canvas
                     MessageBox.Show("The object you're trying to import is a video.  At present, MeTL does not support videos.");
                     return;
                 default:
-                    uploadFileForUse(fileName, pos);
+                    uploadFileForUse(fileName);
                     break;
             }
         }
 
-        private void uploadFileForUse(string filename, Point position)
+        private void uploadFileForUse(string filename)
         {
             string hostedFileName;
             if (!filename.Contains("http"))
