@@ -20,6 +20,7 @@ using SandRibbon.Components.Utility;
 using System.Windows.Ink;
 using Point = System.Windows.Point;
 using SandRibbon.Providers;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -51,7 +52,7 @@ namespace SandRibbon.Components.Canvas
                 {
                     return setSlide == -1 ? Globals.slide : setSlide;
                 }
-                catch(NotSetException e)
+                catch (NotSetException e)
                 {
                     return 0;
                 }
@@ -132,13 +133,17 @@ namespace SandRibbon.Components.Canvas
         }
         private void ClearSelectionOnLayerChanged(string layer)
         {
-            if (layer.ToLower()== "view")
+            if (layer.ToLower() == "view")
             {
                 UseCustomCursor = true;
                 Cursor = Cursors.Hand;
             }
             else
-                UseCustomCursor = false;
+                try
+                {
+                    Commands.UpdateCursor.Execute(Commands.UpdateCursor.lastValue());
+                }
+                catch (Exception) { UseCustomCursor = false; }
             if (this.GetSelectedElements().Count > 0 || this.GetSelectedStrokes().Count > 0)
             {
                 this.Select(null, null);

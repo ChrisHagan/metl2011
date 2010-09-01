@@ -25,11 +25,11 @@ using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using System.Windows.Media.Effects;
-using Brushes=System.Windows.Media.Brushes;
-using Color=System.Windows.Media.Color;
-using Point=System.Windows.Point;
-using Rectangle=System.Windows.Shapes.Rectangle;
-using Size=System.Windows.Size;
+using Brushes = System.Windows.Media.Brushes;
+using Color = System.Windows.Media.Color;
+using Point = System.Windows.Point;
+using Rectangle = System.Windows.Shapes.Rectangle;
+using Size = System.Windows.Size;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -116,29 +116,29 @@ namespace SandRibbon.Components.Canvas
                     ApplyPrivacyStylingToElement(image, image.tag().privacy);
                     UndoHistory.Queue(
                         () =>
-                            {
-                                AddImage(image);
-                                Commands.SendImage.Execute(new TargettedImage
-                                                               {
-                                                                   author = image.tag().author,
-                                                                   slide = currentSlide,
-                                                                   privacy = privacy,
-                                                                   target = target,
-                                                                   image = image
-                                                               });
-                            },
+                        {
+                            AddImage(image);
+                            Commands.SendImage.Execute(new TargettedImage
+                                                           {
+                                                               author = image.tag().author,
+                                                               slide = currentSlide,
+                                                               privacy = privacy,
+                                                               target = target,
+                                                               image = image
+                                                           });
+                        },
                         () =>
-                            {
-                                Children.Remove(image);
-                                Commands.SendDirtyImage.Execute(new TargettedDirtyElement
-                                                                    {
-                                                                        identifier = image.tag().id,
-                                                                        target = target,
-                                                                        privacy = image.tag().privacy,
-                                                                        author = image.tag().author,
-                                                                        slide = currentSlide
-                                                                    });
-                            });
+                        {
+                            Children.Remove(image);
+                            Commands.SendDirtyImage.Execute(new TargettedDirtyElement
+                                                                {
+                                                                    identifier = image.tag().id,
+                                                                    target = target,
+                                                                    privacy = image.tag().privacy,
+                                                                    author = image.tag().author,
+                                                                    slide = currentSlide
+                                                                });
+                        });
 
                     Commands.SendDirtyImage.Execute(new TargettedDirtyElement
                                                         {
@@ -236,13 +236,13 @@ namespace SandRibbon.Components.Canvas
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
-            if(!Globals.isAuthor) return;
-            if(privacy != "private")
+            if (!Globals.isAuthor) return;
+            if (privacy != "private")
             {
                 RemovePrivacyStylingFromElement(element);
                 return;
             }
-            element.Effect =new DropShadowEffect { BlurRadius = 50, Color = Colors.Black, ShadowDepth = 0, Opacity = 1 };
+            element.Effect = new DropShadowEffect { BlurRadius = 50, Color = Colors.Black, ShadowDepth = 0, Opacity = 1 };
             element.Opacity = 0.7;
         }
         private void ensureAllImagesHaveCorrectPrivacy()
@@ -421,7 +421,7 @@ namespace SandRibbon.Components.Canvas
 
             foreach (var element in GetSelectedElements().Where(e => e is System.Windows.Controls.Image))
             {
-                var image = (System.Windows.Controls.Image) element;
+                var image = (System.Windows.Controls.Image)element;
                 ApplyPrivacyStylingToElement(image, image.tag().privacy);
                 Clipboard.SetImage((BitmapSource)image.Source);
                 listToCut.Add(new TargettedDirtyElement
@@ -468,6 +468,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void selectionChanged(object sender, EventArgs e)
         {
+            ClearAdorners();
             addAdorner();
         }
 
@@ -479,7 +480,7 @@ namespace SandRibbon.Components.Canvas
                 ClearAdorners();
                 return;
             }
-            var publicElements = selectedElements.Where(i => ((System.Windows.Controls.Image) i).tag().privacy.ToLower() == "public").ToList();  
+            var publicElements = selectedElements.Where(i => ((System.Windows.Controls.Image)i).tag().privacy.ToLower() == "public").ToList();
             string privacyChoice;
             if (publicElements.Count == 0)
                 privacyChoice = "show";
@@ -499,16 +500,25 @@ namespace SandRibbon.Components.Canvas
             {
                 if (selectedImage is System.Windows.Controls.Image)
                 {
+                    selectedImage.UpdateLayout();
+                    var selectedImageLeft = InkCanvas.GetLeft((System.Windows.Controls.Image)selectedImage);
+                    var selectedImageTop = InkCanvas.GetTop((System.Windows.Controls.Image)selectedImage);
+                    var newImage = new System.Windows.Controls.Image();
+                    newImage.Height = ((System.Windows.Controls.Image)selectedImage).ActualHeight;
+                    newImage.Width = ((System.Windows.Controls.Image)selectedImage).Width;
+                    newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(SandRibbonInterop.LocalCache.ImageCache.RemoteSource(new Uri(((System.Windows.Controls.Image)selectedImage).Source.ToString(), UriKind.Relative)));
+                    InkCanvas.SetLeft(newImage, selectedImageLeft);
+                    InkCanvas.SetTop(newImage, selectedImageTop);
                     var tag = ((System.Windows.Controls.Image)selectedImage).tag();
                     tag.zIndex = -1;
-                    ((System.Windows.Controls.Image)selectedImage).tag(tag);
+                    ((System.Windows.Controls.Image)newImage).tag(tag);
                     Commands.SendImage.Execute(new TargettedImage
                     {
                         author = Globals.me,
                         slide = currentSlide,
                         privacy = ((System.Windows.Controls.Image)selectedImage).tag().privacy,
                         target = target,
-                        image = (System.Windows.Controls.Image)selectedImage
+                        image = newImage
                     });
                 }
                 else if (selectedImage is AutoShape)
@@ -730,7 +740,7 @@ namespace SandRibbon.Components.Canvas
             if (target == "presentationSpace" && canEdit && me != "projector")
             {
                 string initialDirectory = "c:\\";
-                foreach (var path in new[] { Environment.SpecialFolder.MyPictures,Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })
+                foreach (var path in new[] { Environment.SpecialFolder.MyPictures, Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })
                     try
                     {
                         initialDirectory = Environment.GetFolderPath(path);
@@ -746,7 +756,7 @@ namespace SandRibbon.Components.Canvas
                                                  FilterIndex = 1,
                                                  RestoreDirectory = true
                                              };
-                var dialogResult = fileBrowser.ShowDialog();
+                var dialogResult = fileBrowser.ShowDialog(Window.GetWindow(this));
                 if (dialogResult == true)
                     withResources(fileBrowser.FileNames);
             }

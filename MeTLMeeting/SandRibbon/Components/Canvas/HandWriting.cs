@@ -18,6 +18,7 @@ using SandRibbon.Utils;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
+using System.Windows;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -97,6 +98,7 @@ namespace SandRibbon.Components.Canvas
                     newAttributes.Color = ColorLookup.ColorOf((string)colorObj);
                 DefaultDrawingAttributes = newAttributes;
             });
+            Commands.UpdateCursor.RegisterCommand(new DelegateCommand<Cursor>(UpdateCursor));
             Commands.SetPenColor.RegisterCommand(colorChangedCommand);
             Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
@@ -104,6 +106,14 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
+        }
+        private void UpdateCursor(object obj)
+        {
+            if (obj is Cursor)
+            {
+                UseCustomCursor = true;
+                Cursor = (Cursor)obj;
+            }
         }
         private void deleteSelectedItems(object obj)
         {
@@ -201,7 +211,7 @@ namespace SandRibbon.Components.Canvas
                         if (stroke.privacy == "private" && me != "projector")
                             if (stroke.target == target)
                                 ApplyPrivacyStylingToStroke(stroke.stroke, stroke.privacy);
-                                //addPrivateRegion(stroke.stroke);
+                        //addPrivateRegion(stroke.stroke);
                     }
                     var duration = SandRibbonObjects.DateTimeFactory.Now() - start;
                     strokeReceiptDurations.Add(duration);
@@ -210,13 +220,13 @@ namespace SandRibbon.Components.Canvas
         #region eventHandlers
         private void selectionChanged(object sender, EventArgs e)
         {
-                Dispatcher.adoptAsync((Action)addAdorners);
+            Dispatcher.adoptAsync((Action)addAdorners);
         }
         private void addAdorners()
         {
             ClearAdorners();
             var selectedStrokes = GetSelectedStrokes();
-            if(selectedStrokes.Count() == 0)  return; 
+            if (selectedStrokes.Count() == 0) return;
             var publicStrokes = selectedStrokes.Where(s => s.tag().privacy.ToLower() == "public").ToList();
             string privacyChoice;
             if (publicStrokes.Count == 0)
@@ -415,7 +425,7 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             foreach (var stroke in newStrokes)
             {
-                stroke.DrawingAttributes.Color = (Color) ColorConverter.ConvertFromString(stroke.tag().startingColor);
+                stroke.DrawingAttributes.Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor);
                 doMyStrokeAdded(stroke, stroke.tag().privacy);
             }
             addAdorners();
@@ -458,10 +468,10 @@ namespace SandRibbon.Components.Canvas
                 }
             });
         }
-       private Dictionary<double, Stroke> privacyDictionary = new Dictionary<double, Stroke>();
+        private Dictionary<double, Stroke> privacyDictionary = new Dictionary<double, Stroke>();
         private void ApplyPrivacyStylingToStroke(Stroke stroke, string privacy)
         {
-            if(!Globals.isAuthor) return;
+            if (!Globals.isAuthor) return;
             if (privacy == "private")
                 addPrivacyStylingToStroke(stroke);
             else
@@ -469,14 +479,14 @@ namespace SandRibbon.Components.Canvas
         }
         private void RemovePrivacyStylingFromStroke(Stroke stroke)
         {
-            if(!Globals.isAuthor) return;
+            if (!Globals.isAuthor) return;
             try
             {
                 if (stroke.tag().startingColor != null)
                 {
 
-                    stroke.DrawingAttributes.Color = (Color) ColorConverter.ConvertFromString(stroke.tag().startingColor);
-                    if(privacyDictionary.Keys.Where(k => k == stroke.sum().checksum).Count() == 0) return;
+                    stroke.DrawingAttributes.Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor);
+                    if (privacyDictionary.Keys.Where(k => k == stroke.sum().checksum).Count() == 0) return;
                     stroke.DrawingAttributes.IsHighlighter =
                         privacyDictionary[stroke.sum().checksum].tag().isHighlighter;
                     Strokes.Remove(privacyDictionary[stroke.sum().checksum]);
@@ -488,12 +498,12 @@ namespace SandRibbon.Components.Canvas
         }
         private void addPrivacyStylingToStroke(Stroke stroke)
         {
-            if(privacyDictionary.Keys.Where(k => k == stroke.sum().checksum).Count() != 0) return;
+            if (privacyDictionary.Keys.Where(k => k == stroke.sum().checksum).Count() != 0) return;
             var privacyStroke = new Stroke(stroke.StylusPoints);
-            privacyStroke.tag(new StrokeTag { author = "Privacy", privacy = "private", startingColor = stroke.DrawingAttributes.Color.ToString(), isHighlighter = stroke.DrawingAttributes.IsHighlighter});
+            privacyStroke.tag(new StrokeTag { author = "Privacy", privacy = "private", startingColor = stroke.DrawingAttributes.Color.ToString(), isHighlighter = stroke.DrawingAttributes.IsHighlighter });
             privacyStroke.DrawingAttributes = new DrawingAttributes
                                                   {
-                                                      Color = (Color) ColorConverter.ConvertFromString(stroke.tag().startingColor),
+                                                      Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor),
                                                       Width = stroke.DrawingAttributes.Width * 2,
                                                       Height = stroke.DrawingAttributes.Height * 2,
                                                       IsHighlighter = true
@@ -538,8 +548,8 @@ namespace SandRibbon.Components.Canvas
                 var oldTag = ((Stroke)stroke).tag();
                 doMyStrokeRemoved(stroke);
                 var newStroke = stroke.Clone();
-                ((Stroke)newStroke).tag(new StrokeTag {author = oldTag.author,privacy=newPrivacy,startingColor=oldTag.startingColor,startingSum=oldTag.startingSum});
-                doMyStrokeAdded(newStroke,newPrivacy);
+                ((Stroke)newStroke).tag(new StrokeTag { author = oldTag.author, privacy = newPrivacy, startingColor = oldTag.startingColor, startingSum = oldTag.startingSum });
+                doMyStrokeAdded(newStroke, newPrivacy);
             }
             Select(new StrokeCollection());
         }

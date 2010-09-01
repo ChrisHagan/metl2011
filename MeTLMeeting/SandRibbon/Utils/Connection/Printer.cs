@@ -26,7 +26,8 @@ namespace SandRibbon.Utils.Connection
             Commands.ShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowPrintConversationDialog));
         }
         public static void ShowPrintConversationDialog(object o) {
-            new Components.PrintDialog().ShowDialog(); 
+            var pcDialog = new Components.PrintDialog();
+            pcDialog.ShowDialog(); 
         }
         public class PrintParser : PreParser
         {

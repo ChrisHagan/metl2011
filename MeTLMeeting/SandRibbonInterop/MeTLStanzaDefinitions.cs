@@ -14,6 +14,8 @@ using agsXMPP.Xml.Dom;
 using SandRibbonObjects;
 using Constants;
 using System.Collections.Generic;
+using SandRibbonInterop;
+using SandRibbonInterop.LocalCache;
 
 namespace SandRibbonInterop.MeTLStanzas
 {
@@ -1052,7 +1054,7 @@ namespace SandRibbonInterop.MeTLStanzas
                 }
                 set
                 {
-                    var absolutePath = value.videoProperty.MediaElement.Source.ToString();
+                    var absolutePath = ImageCache.RemoteSource(new System.Uri(value.videoProperty.MediaElement.Source.ToString(),UriKind.Absolute)).ToString();
                     SetTag(tagTag, value.videoProperty.Tag.ToString());
                     SetTag(sourceTag, absolutePath);
                     SetTag(xTag, InkCanvas.GetLeft(value.videoProperty).ToString());
@@ -1109,10 +1111,12 @@ namespace SandRibbonInterop.MeTLStanzas
             }
             public System.Windows.Controls.Image forceEvaluation()
             {
+                var localSource = SandRibbonInterop.LocalCache.ImageCache.LocalSource(new System.Uri(this.source.ToString(),UriKind.Absolute));
+                var localImageSource = (ImageSource)new ImageSourceConverter().ConvertFrom(localSource);
                 var image = new System.Windows.Controls.Image
                 {
                     Tag = this.tag,
-                    Source = this.source,
+                    Source = localImageSource,
                     Height = this.height,
                     Width = this.width
                 };
@@ -1120,45 +1124,7 @@ namespace SandRibbonInterop.MeTLStanzas
                 InkCanvas.SetTop(image, this.y);
                 return image;
             }
-            public static ImageSource GetCachedImage(string url)
-            {
-                try
-                {
-                    var regex = new Regex(@".*?/Resource/(.*?)/(.*)");
-                    var match = regex.Matches(url)[0];
-                    var room = match.Groups[1].Value;
-                    var file = match.Groups[2].Value;
-                    var path = string.Format(@"Resource\{0}\{1}", room, file);
-                    var bitmapImage = new BitmapImage();
-                    bitmapImage.BeginInit();
-                    ensureImageCacheDirectory(room);
-                    if (File.Exists(path))
-                    {
-                        bitmapImage.StreamSource = new MemoryStream(File.ReadAllBytes(path));
-                    }
-                    else
-                    {
-                        var sourceBytes = new WebClient { Credentials = new NetworkCredential("exampleUsername", "examplePassword") }.DownloadData(url);
-                        bitmapImage.StreamSource = new MemoryStream(sourceBytes);
-                        File.WriteAllBytes(path, sourceBytes);
-                    }
-                    bitmapImage.EndInit();
-                    return bitmapImage;
-                }
-                catch (Exception e)
-                {
-                    return BitmapSource.Create(1, 1, 96, 96, PixelFormats.BlackWhite, BitmapPalettes.BlackAndWhite, new byte[96 * 96], 1);
-                }
-            }
-            private static void ensureImageCacheDirectory(string room)
-            {
-                if (!Directory.Exists("Resource"))
-                    Directory.CreateDirectory("Resource");
-                var roomPath = System.IO.Path.Combine("Resource", room);
-                if (!Directory.Exists(roomPath))
-                    Directory.CreateDirectory(roomPath);
-            }
-            public TargettedImage Img
+          public TargettedImage Img
             {
                 get
                 {
@@ -1205,6 +1171,7 @@ namespace SandRibbonInterop.MeTLStanzas
             }
             public ImageSource source
             {
+                //I'm not sure, but I think this bit may be redownloading it anyway.  I'll look into this after lunch.
                 get
                 {
                     try

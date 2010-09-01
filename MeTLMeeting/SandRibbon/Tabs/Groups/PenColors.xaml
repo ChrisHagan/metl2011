@@ -9,19 +9,6 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib">
     <StackPanel x:Name="LayoutRoot" Orientation="Horizontal">
         <StackPanel.Resources>
-            <groups:AttributesToStringConverter x:Key="AttributesToStringConverter"/>
-            <groups:IntTextConverter x:Key="IntTextConverter"/>
-            <groups:HueTextConverter x:Key="HueSliderTextConverter"/>
-            <groups:DoubleTextConverter x:Key="DoubleSliderTextConverter"/>
-            <groups:RoundingConverter x:Key="RoundingConverter"/>
-            <groups:HueSliderConverter x:Key="HueSliderConverter"/>
-            <groups:DoubleSliderConverter x:Key="DoubleSliderConverter"/>
-            <groups:ReverseBoolToVisibilityConverter x:Key="reverseBoolToVisibilityConverter"/>
-            <groups:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
-            <groups:HexToColourConverter x:Key="HexToColourConverter"/>
-            <groups:colourContrastConverter x:Key="colourContrastConverter"/>
-            <my:availablePenTitleConverter x:Key="myAvailablePenTitleConverter"/>
-            <my:availablePenDropDownConverter x:Key="myAvailablePenDropDownConverter"/>
             <ImageBrush ImageSource="\Resources\Ribbon-Palette.png" x:Key="SpectrumBrush"/>
             <LinearGradientBrush x:Key="BrushGradientBackground" StartPoint="0,0" EndPoint="1,0" MappingMode="RelativeToBoundingBox">
                 <LinearGradientBrush.GradientStops>
@@ -53,7 +40,8 @@
                     <Border Tag="{Binding Path=Index}"
                             Padding="2" BorderBrush="Transparent" Name="buttonBorder" BorderThickness="1" Height="18" Width="30">
                         <Border.ToolTip>
-                            <SandRibbonInterop:MeTLContentToolTip TitleText="{Binding Path=IsHighlighter, Converter={StaticResource myAvailablePenTitleConverter}}">
+                            <SandRibbonInterop:MeTLContentToolTip TitleText="{Binding Path=Attributes, Converter={x:Static my:Converters.AvailablePenTitleConverter}}"
+                                                                          ContentText="{Binding Path=Attributes, Converter={x:Static my:Converters.AvailablePenContentConverter}}">
                                 <SandRibbonInterop:MeTLContentToolTip.ContentElement>
                                     <Viewbox>
                                         <Grid Width="40" Height="40" >
@@ -62,12 +50,12 @@
                                             <Border BorderThickness="0" Padding="0" ClipToBounds="True" >
                                                 <Viewbox Height="40" Width="40">
                                                     <Grid>
-                                                        <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}">
+                                                        <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static my:Converters.ReverseBoolToVisibilityConverter}}">
                                                             <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPenPreviewStroke}" Height="100" Width="100"/>
                                                             <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
                                                             <Image Height="100" Width="100" Source="/Resources/MeTLPenOverlay.png"/>
                                                         </Grid>
-                                                        <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}">
+                                                        <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static my:Converters.BoolToVisibilityConverter}}">
                                                             <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnHighlighterPreviewStroke}" Height="100" Width="100"/>
                                                             <Viewbox Height="100" Width="100">
                                                                 <Polygon Height="400" Width="400" Points="{Binding Path=HighlighterPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
@@ -90,12 +78,12 @@
                                     <Border BorderThickness="0" Padding="0" ClipToBounds="True" >
                                         <Viewbox Height="40" Width="40">
                                             <Grid>
-                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}">
+                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static my:Converters.ReverseBoolToVisibilityConverter}}">
                                                     <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPenPreviewStroke}" Height="100" Width="100"/>
                                                     <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
                                                     <Image Height="100" Width="100" Source="/Resources/MeTLPenOverlay.png"/>
                                                 </Grid>
-                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}">
+                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static my:Converters.BoolToVisibilityConverter}}">
                                                     <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnHighlighterPreviewStroke}" Height="100" Width="100"/>
                                                     <Viewbox Height="100" Width="100">
                                                         <Polygon Height="400" Width="400" Points="{Binding Path=HighlighterPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
@@ -112,8 +100,8 @@
                                     Margin="0" HorizontalAlignment="Stretch" 
                                         Grid.Row="1" x:Name="OpenPopup" Click="OpenColourSettingPopup" Tag="{Binding Path=Index}">
                                 <Button.ToolTip>
-                                    <SandRibbonInterop:MeTLContentToolTip TitleText="{Binding Path=IsHighlighter, Converter={StaticResource myAvailablePenDropDownConverter}}"
-                                                                          ContentText="Change the colour or thickness of this tool.">
+                                    <SandRibbonInterop:MeTLContentToolTip TitleText="{Binding Path=Attributes, Converter={x:Static my:Converters.AvailablePenDropDownConverter}}"
+                                                                          ContentText="{Binding Path=Attributes, Converter={x:Static my:Converters.AvailablePenDropDownContentConverter}}">
                                         <SandRibbonInterop:MeTLContentToolTip.ContentElement>
                                             <Viewbox>
                                                 <Grid Width="40" Height="40" >
@@ -122,12 +110,12 @@
                                                     <Border BorderThickness="0" Padding="0" ClipToBounds="True" >
                                                         <Viewbox Height="40" Width="40">
                                                             <Grid>
-                                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource reverseBoolToVisibilityConverter}}">
+                                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static my:Converters.ReverseBoolToVisibilityConverter}}">
                                                                     <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPenPreviewStroke}" Height="100" Width="100"/>
                                                                     <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
                                                                     <Image Height="100" Width="100" Source="/Resources/MeTLPenOverlay.png"/>
                                                                 </Grid>
-                                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={StaticResource boolToVisibilityConverter}}">
+                                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static my:Converters.BoolToVisibilityConverter}}">
                                                                     <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnHighlighterPreviewStroke}" Height="100" Width="100"/>
                                                                     <Viewbox Height="100" Width="100">
                                                                         <Polygon Height="400" Width="400" Points="{Binding Path=HighlighterPreviewPoints}" Fill="{Binding Path=ColorBrush}" />
@@ -228,7 +216,7 @@
                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                         Width="Auto" Height="Auto" Background="Transparent">
                                     <Grid.ToolTip>
-                                        <SandRibbonInterop:MeTLImageToolTip TitleText="Change the colour of this tool" ContentText="{Binding}"/>
+                                        <SandRibbonInterop:MeTLImageToolTip TitleText="Change the colour of this tool" ContentText="{Binding Converter={x:Static my:Converters.ColourToNameConverter}}"/>
                                     </Grid.ToolTip>
                                     <Rectangle Fill="{Binding}" Margin="3" IsHitTestVisible="False"/>
                                 </Grid>
