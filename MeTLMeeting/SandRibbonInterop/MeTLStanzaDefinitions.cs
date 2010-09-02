@@ -1068,6 +1068,7 @@ namespace SandRibbonInterop.MeTLStanzas
                 var video = new MediaElement { 
                     Tag = this.tag,
                     LoadedBehavior = MediaState.Manual,
+                    Source = new Uri(this.source, UriKind.RelativeOrAbsolute)
                     Source = source
                 };
                 var srVideo = new SandRibbonInterop.Video { 

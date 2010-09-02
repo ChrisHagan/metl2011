@@ -115,7 +115,7 @@ namespace SandRibbon.Utils
                         else shape.Visible = MsoTriState.msoTrue;
                     }
                     createThumbnail(details, slide);
-                    
+
                     slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
                     var xSlide = new XElement("slide");
                     xSlide.Add(new XAttribute("index", slide.SlideIndex));
@@ -124,7 +124,7 @@ namespace SandRibbon.Utils
                     xSlide.Add(new XElement("shape",
                     new XAttribute("x", 0),
                     new XAttribute("y", 0),
-                    new XAttribute("height",backgroundHeight),
+                    new XAttribute("height", backgroundHeight),
                     new XAttribute("width", backgroundWidth),
                     new XAttribute("privacy", "public"),
                     new XAttribute("snapshot", slidePath)));
@@ -151,10 +151,11 @@ namespace SandRibbon.Utils
                 }
                 var startingId = conversation.Slides.First().id;
                 var index = 0;
-                conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide { 
-                    author = Globals.me, 
-                    id = startingId++, 
-                    index = index++, 
+                conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide
+                {
+                    author = Globals.me,
+                    id = startingId++,
+                    index = index++,
                     defaultHeight = float.Parse(d.Attribute("defaultHeight").Value),
                     defaultWidth = float.Parse(d.Attribute("defaultWidth").Value)
                 }).ToList();

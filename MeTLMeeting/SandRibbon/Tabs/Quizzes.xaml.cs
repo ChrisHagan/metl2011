@@ -120,7 +120,9 @@ namespace SandRibbon.Tabs
         private void CreateQuiz(object sender, RoutedEventArgs e)
         {
             Commands.BlockInput.Execute("Create a quiz dialog open.");
-            new CreateAQuiz(activeQuizes.Count).ShowDialog();
+            var quizDialog = new CreateAQuiz(activeQuizes.Count);
+            quizDialog.Owner = Window.GetWindow(this);
+            quizDialog.ShowDialog();
         }
         private void quiz_Click(object sender, RoutedEventArgs e)
         {

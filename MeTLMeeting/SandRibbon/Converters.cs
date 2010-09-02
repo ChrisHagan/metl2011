@@ -54,7 +54,13 @@ namespace SandRibbon
         public static ExtractUrlConverter ExtractUrlConverter = new ExtractUrlConverter();
         public static IndexInThisCollectionConverter IndexInThisCollectionConverter = new IndexInThisCollectionConverter();
         public static BoolToVisibilityConverter BoolToVisibilityConverter = new BoolToVisibilityConverter();
+        public static ReverseBoolToVisibilityConverter ReverseBoolToVisibilityConverter = new ReverseBoolToVisibilityConverter();
         public static ImageSourceExtractor ImageSourceExtractor = new ImageSourceExtractor();
+        public static availablePenTitleConverter AvailablePenTitleConverter = new availablePenTitleConverter();
+        public static availablePenDropDownConverter AvailablePenDropDownConverter = new availablePenDropDownConverter();
+        public static availablePenContentConverter AvailablePenContentConverter = new availablePenContentConverter();
+        public static availablePenDropDownContentConverter AvailablePenDropDownContentConverter = new availablePenDropDownContentConverter();
+        public static colourToNameConverter ColourToNameConverter = new colourToNameConverter();
     }
     public class privacyToBoolConverter : IValueConverter
     {
@@ -85,13 +91,53 @@ namespace SandRibbon
         }
     }
 
+    public class colourToNameConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Color)
+            {
+                return
+                    ColourInformationProvider.ConvertToName(((Color)value));
+            }
+            if (value is Brush)
+            {
+                if (value is SolidColorBrush)
+                    return ColourInformationProvider.ConvertToName(((SolidColorBrush)value).Color);
+            }
+            return "unknown";
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class availablePenTitleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool && (bool)value)
+            if (value is System.Windows.Ink.DrawingAttributes)
             {
-                return "Use this highlighter";
+                var penType = ((System.Windows.Ink.DrawingAttributes)value).IsHighlighter ? "highlighter" : "pen";
+                var penString = ColourInformationProvider.ConvertToName(((System.Windows.Ink.DrawingAttributes)value).Color) + " " + penType;
+                return penString.Substring(0,1).ToUpper() + penString.Substring(1);
+            }
+            return "Use this pen";
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class availablePenContentConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is System.Windows.Ink.DrawingAttributes)
+            {
+                var penType = ((System.Windows.Ink.DrawingAttributes)value).IsHighlighter ? "highlighter" : "pen";
+                return "Use this " + penType;
             }
             return "Use this pen";
         }
@@ -104,9 +150,12 @@ namespace SandRibbon
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool && (bool)value)
+            if (value is System.Windows.Ink.DrawingAttributes)
             {
-                    return "Modify this highlighter";
+                var penType = ((System.Windows.Ink.DrawingAttributes)value).IsHighlighter ? "highlighter" : "pen";
+                return "Modify this " +
+                    ColourInformationProvider.ConvertToName(((System.Windows.Ink.DrawingAttributes)value).Color) +
+                    " " + penType;
             }
             return "Modify this pen";
         }
@@ -115,7 +164,26 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
-    
+    public class availablePenDropDownContentConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            /*
+            if (value is System.Windows.Ink.DrawingAttributes)
+            {
+                var penType = ((System.Windows.Ink.DrawingAttributes)value).IsHighlighter ? "highlighter" : "pen";
+                return "Modify this " +
+                    ColourInformationProvider.ConvertToName(((System.Windows.Ink.DrawingAttributes)value).Color) +
+                    " " + penType+", by changing the colour or width";
+            }*/
+            return "Change the colour or width of this tool";
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class reverseQuizzesToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -647,6 +715,259 @@ namespace SandRibbon
             return Int32.Parse((string)value);
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class HexToColourConverter : IValueConverter
+    {
+        public ColorConverter bc;
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                var newColor = (Brush)(new BrushConverter().ConvertFromString(value.ToString()));
+                return newColor;
+            }
+            return new SolidColorBrush(Colors.Black);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return ((Brush)value).ToString();
+        }
+    }
+    public class colourContrastConverter : IValueConverter
+    {
+        public ColorConverter bc;
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                var nc = (Color)(ColorConverter.ConvertFromString(value.ToString()));
+                if (nc.R + nc.G + nc.B > 381)
+                    return Brushes.Black;
+                //var newColor = (Brush)(new BrushConverter().ConvertFromString(value.ToString()));
+                else return Brushes.White;
+                //return newColor;
+            }
+            return new SolidColorBrush(Colors.Black);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return ((Brush)value).ToString();
+        }
+    }
+    public class HueSliderConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                if ((double)value < 360 && (double)value > 0)
+                    return (double)value;
+                else if ((double)value > 360)
+                    return 360;
+                else return 0;
+            }
+            return 0;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if ((double)value != null && (double)value < 360 && (double)value > 0)
+            {
+                return (double)value;
+            }
+            return 0;
+        }
+    }
+    public class DoubleSliderConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                if ((double)value < 1 && (double)value > 0)
+                    return value;
+                else if ((double)value > 1)
+                    return 1;
+                else return 0;
+            }
+            return 0;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if ((double)value != null && (double)value < 256 && (double)value > 0)
+            {
+                return (double)value;
+            }
+            return 0;
+        }
+
+    }
+    public class RoundingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                if ((int)value > 255)
+                    return 255;
+                else if ((int)value < 0)
+                    return 0;
+                else return value;
+            }
+            return 0;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if ((double)value != null && (double)value < 256 && (double)value > 0)
+            {
+                double dblValue = System.Convert.ToDouble(value);
+                return (int)dblValue;
+            }
+            return (double)0;
+        }
+
+    }
+    public class ReverseBoolToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if ((bool)value)
+            {
+                return Visibility.Collapsed;
+            }
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if ((Visibility)value == Visibility.Visible)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
+    public class HueTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null && (double)value < 360 && (double)value > 0)
+            {
+                return value.ToString();
+            }
+            return "0";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                double dblValue = System.Convert.ToDouble((string)value);
+                if (dblValue < 360 && dblValue > 0)
+                    return dblValue;
+                else if (dblValue > 360)
+                    return 360;
+                else return 0;
+            }
+            return 0;
+        }
+    }
+    public class AttributesToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value == null)
+                return "";
+            var attributes = (SandRibbon.Tabs.Groups.PenColors.DrawingAttributesEntry)value;
+            var Pen = attributes.IsHighlighter ? "highlighter" : "pen";
+            var size = Math.Round(attributes.PenSize, 1);
+            return string.Format("A {0}, {1} {2} wide, of colour {3}.",
+                Pen,
+                size.ToString(),
+                size > 1 ? "points" : "point",
+                attributes.XAMLColorName);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                double dblValue = System.Convert.ToDouble((string)value);
+                if (dblValue < 1 && dblValue > 0)
+                    return dblValue;
+                else if (dblValue > 1)
+                    return 1;
+                else return 0;
+            }
+            return 0;
+        }
+    }
+    public class DoubleTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null && (double)value < 256 && (double)value > 0)
+            {
+                return value.ToString();
+            }
+            return "0";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                double dblValue = System.Convert.ToDouble((string)value);
+                if (dblValue < 1 && dblValue > 0)
+                    return dblValue;
+                else if (dblValue > 1)
+                    return 1;
+                else return 0;
+            }
+            return 0;
+        }
+
+    }
+    public class IntTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null && (int)value < 256 && (int)value > 0)
+            {
+                return value.ToString();
+            }
+            return "0";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value != null)
+            {
+                int dblValue = System.Convert.ToInt32((string)value);
+                if (dblValue < 256 && dblValue > 0)
+                    return dblValue;
+                else if (dblValue > 255)
+                    return 255;
+                else return 0;
+            }
+            return 0;
+        }
+
+    }
+    public class Half : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            Console.WriteLine(value.GetType().Name);
+            return ((Double)value) / 2;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotImplementedException();
         }

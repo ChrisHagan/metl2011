@@ -54,7 +54,7 @@ namespace SandRibbon.Components.ResourceDictionaries
             MediaElement.DataContext = (System.Windows.Controls.Slider)sender;
             MediaElement.MediaOpened += new RoutedEventHandler(MediaElement_MediaOpened);
             MediaElement.LoadedBehavior = MediaState.Manual;
-            MediaElement.Source = MediaElementCache.LocalSource(MediaElement.Source);
+            MediaElement.Source = SandRibbonInterop.LocalCache.MediaElementCache.LocalSource(MediaElement.Source);
             Video_Play(sender, new RoutedEventArgs());
         }
         private bool MouseDown = false;
