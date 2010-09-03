@@ -42,7 +42,6 @@ namespace SandRibbon
         private DelegateCommand<string> powerPointFinished;
         private PowerPointLoader loader = new PowerPointLoader();
         private UndoHistory history = new UndoHistory();
-        public ConversationDetails details;
         private JabberWire wire;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
@@ -115,7 +114,6 @@ namespace SandRibbon
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
@@ -843,19 +841,36 @@ namespace SandRibbon
         }
         private void SetConversationPermissions(object obj)
         {
-            var style = (string)obj;
-            foreach (var s in new[]{
-                Permissions.LABORATORY_PERMISSIONS,
-                Permissions.TUTORIAL_PERMISSIONS,
-                Permissions.LECTURE_PERMISSIONS,
-                Permissions.MEETING_PERMISSIONS})
-                if (s.Label == style)
-                    details.Permissions = s;
-            ConversationDetailsProviderFactory.Provider.Update(details);
+            try
+            {
+                var style = (string) obj;
+                var details = Globals.conversationDetails;
+                foreach (var s in new[]
+                                      {
+                                          Permissions.LABORATORY_PERMISSIONS,
+                                          Permissions.TUTORIAL_PERMISSIONS,
+                                          Permissions.LECTURE_PERMISSIONS,
+                                          Permissions.MEETING_PERMISSIONS
+                                      })
+                    if (s.Label == style)
+                        details.Permissions = s;
+                ConversationDetailsProviderFactory.Provider.Update(details);
+            }
+            catch(NotSetException e)
+            {
+                return;
+            }
         }
         private bool CanSetConversationPermissions(object _style)
         {
-            return details != null && userInformation.credentials.name == details.Author;
+            try
+            {
+                return Globals.conversationDetails != null && userInformation.credentials.name == Globals.conversationDetails.Author;
+            }
+            catch(NotSetException e)
+            {
+                return false;
+            }
         }
         /*taskbar management*/
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
