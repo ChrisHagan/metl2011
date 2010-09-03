@@ -199,7 +199,7 @@ namespace SandRibbon.Components.Canvas
                     var newStrokes = new StrokeCollection(
                         receivedStrokes.Where(ts => ts.target == strokeTarget)
                         .Where(s => s.privacy == "public" || (s.author == Globals.me && me != "projector"))
-                        //    when uncommenting line above, remove line below.
+                        //    when uncommenting line above, remove line below. WENDYS EXPERIMENT!
                         //    .Where(s => s.author == Globals.me)
                         .Select(s => s.stroke)
                         .Where(s => !(this.strokes.Contains(s.sum()))));
@@ -471,7 +471,7 @@ namespace SandRibbon.Components.Canvas
         private Dictionary<double, Stroke> privacyDictionary = new Dictionary<double, Stroke>();
         private void ApplyPrivacyStylingToStroke(Stroke stroke, string privacy)
         {
-            if (!Globals.isAuthor) return;
+            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == Permissions.LECTURE_PERMISSIONS) return;
             if (privacy == "private")
                 addPrivacyStylingToStroke(stroke);
             else
@@ -479,7 +479,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void RemovePrivacyStylingFromStroke(Stroke stroke)
         {
-            if (!Globals.isAuthor) return;
+            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == Permissions.LECTURE_PERMISSIONS) return;
             try
             {
                 if (stroke.tag().startingColor != null)

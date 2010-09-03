@@ -362,7 +362,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\Scratchpad.xaml">
+    <Page Include="Components\Notepad.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -601,8 +601,8 @@
     <Compile Include="Components\SimpleImpl\SimplePenTools.xaml.cs">
       <DependentUpon>SimplePenTools.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Scratchpad.xaml.cs">
-      <DependentUpon>Scratchpad.xaml</DependentUpon>
+    <Compile Include="Components\Notepad.xaml.cs">
+      <DependentUpon>Notepad.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Groups\TextTools.xaml.cs" />
     <Compile Include="Tabs\Groups\ToolBox.xaml.cs">

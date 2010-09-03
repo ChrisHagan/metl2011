@@ -140,7 +140,7 @@ namespace SandRibbon.Components.Canvas
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
-            if (!Globals.isAuthor) return;
+            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == Permissions.LECTURE_PERMISSIONS) return;
             if (element.GetType() != typeof(TextBox)) return;
             var box = (TextBox)element;
             updateSelectionAdorners();

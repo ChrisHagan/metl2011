@@ -19,12 +19,11 @@ namespace SandRibbon.Components
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(ToggleScratchPadVisibility));
         }
-        private void ToggleScratchPadVisibility(object unused) {
-            if (Visibility == Visibility.Visible)
-                Visibility = Visibility.Collapsed;
-            else
-                Visibility = Visibility.Visible;
+        private void ToggleScratchPadVisibility(object unused)
+        {
+            Visibility = Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
+
         private void updateTitleBar(int id)
         {
             Dispatcher.adoptAsync((Action)delegate {

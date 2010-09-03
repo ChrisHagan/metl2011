@@ -75,7 +75,7 @@
                         <Canvas x:Name="privacyTools"/>
                     </AdornerDecorator>
                 </Grid>
-                <GridSplitter x:Name="notesGridSplitter" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
+                <GridSplitter x:Name="slidesGridsplitter" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
                 <Grid Grid.Column="2" x:Name="rightDrawer">
                     <components:SlideDisplay x:Name="slides" />
                 </Grid>

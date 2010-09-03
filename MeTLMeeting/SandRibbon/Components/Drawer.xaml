@@ -16,7 +16,7 @@
                 <TextBlock x:Name="notes" Text="Personal Notes" FontSize="18" Margin="0,0,25,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
             <ScrollViewer x:Name="scroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                <components:Scratchpad Margin="0,25,0,0" Width="Auto" Height="Auto" x:Name="scratchPad"/> 
+                <components:Notepad Margin="0,25,0,0" Width="Auto" Height="Auto" x:Name="scratchPad"/> 
             </ScrollViewer>
         </Grid>
         <components:ScrollBar x:Name="adornerScroll" />
