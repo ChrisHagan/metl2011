@@ -461,6 +461,7 @@ namespace SandRibbon.Tabs.Groups
             }
         }
         private bool OpeningPopup;
+
         private void OpenColourSettingPopup(object sender, RoutedEventArgs e)
         {
             var newBrush = new SolidColorBrush();

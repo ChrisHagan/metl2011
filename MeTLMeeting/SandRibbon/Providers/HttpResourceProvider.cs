@@ -77,6 +77,7 @@ namespace SandRibbon.Providers
                 }
                 catch (Exception)
                 {
+                    App.Now("Failed secureGetString from " + resource);
                     attempts++;
                 }
             }
@@ -96,6 +97,7 @@ namespace SandRibbon.Providers
                 }
                 catch (Exception)
                 {
+                    App.Now("Failed insecureGetString from " + resource);
                     attempts++;
                 }
             }
@@ -114,6 +116,7 @@ namespace SandRibbon.Providers
                 }
                 catch (Exception)
                 {
+                    App.Now("Failed securePutData to " + uri);
                     attempts++;
                 }
             }
@@ -132,6 +135,7 @@ namespace SandRibbon.Providers
                 }
                 catch (Exception)
                 {
+                    App.Now("Failed secureGetData from " + resource);
                     attempts++;
                 }
             }

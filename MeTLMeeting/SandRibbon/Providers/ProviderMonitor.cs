@@ -95,6 +95,7 @@ namespace SandRibbon.Components
         public void Ping(string uri)
         {
             var ping = new System.Net.NetworkInformation.Ping();
+            App.Now("pinged " + uri);
             ping.PingCompleted += (_sender, pingArgs) =>
             {
                 if (pingArgs.Reply != null && pingArgs.Reply.Status == IPStatus.Success)
