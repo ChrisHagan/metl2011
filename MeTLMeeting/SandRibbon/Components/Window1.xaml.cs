@@ -121,6 +121,7 @@ namespace SandRibbon
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
 
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
@@ -134,6 +135,23 @@ namespace SandRibbon
         }
         private void noop(object unused)
         {
+        }
+        private void ToggleFriendsVisibility(object unused)
+        {
+            if (chatGridsplitter.Visibility == Visibility.Visible)
+            {
+                chatGridsplitter.Visibility = Visibility.Collapsed;
+                leftDrawer.Visibility = Visibility.Collapsed;
+                LHSSplitterDefinition.Width = new GridLength(0);
+                LHSDrawerDefinition.Width = new GridLength(0);
+            }
+            else
+            {
+                chatGridsplitter.Visibility = Visibility.Visible;
+                leftDrawer.Visibility = Visibility.Visible;
+                LHSSplitterDefinition.Width = new GridLength(10);
+                LHSDrawerDefinition.Width = new GridLength((columns.ActualWidth - rightDrawer.ActualWidth) / 4);
+            }
         }
         private void ShowEditSlidesDialog(object unused)
         {

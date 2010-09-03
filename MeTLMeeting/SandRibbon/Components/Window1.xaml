@@ -51,11 +51,18 @@
         <Grid x:Name="EffectRoot">
             <Grid x:Name="columns">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="LHSDrawerDefinition" Width="0"/>
+                    <ColumnDefinition x:Name="LHSSplitterDefinition" Width="0"/>
                     <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
                     <ColumnDefinition x:Name="RHSSplitterDefinition" Width="10" />
                     <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*" />
                 </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0">
+                <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Collapsed">
+                    <components:Friends x:Name="friends" />
+                </Grid>
+                <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Visibility="Collapsed" 
+                              HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
+                <Grid Grid.Column="2">
                     <Grid x:Name="adornerGrid" Margin="0,0,27,27" SizeChanged="adornerGrid_SizeChanged">
                         <InkCanvas EditingMode="None" Background="Transparent" x:Name="adorner"/>
                         <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
@@ -75,8 +82,8 @@
                         <Canvas x:Name="privacyTools"/>
                     </AdornerDecorator>
                 </Grid>
-                <GridSplitter x:Name="slidesGridsplitter" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
-                <Grid Grid.Column="2" x:Name="rightDrawer">
+                <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
+                <Grid Grid.Column="4" x:Name="rightDrawer">
                     <components:SlideDisplay x:Name="slides" />
                 </Grid>
             </Grid>
