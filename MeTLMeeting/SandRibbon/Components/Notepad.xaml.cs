@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace SandRibbon.Components
 {
@@ -7,6 +8,7 @@ namespace SandRibbon.Components
         public Notepad()
         {
             InitializeComponent();
+            stack.canvasStack.Background = Brushes.Transparent;
         }
     }
 }

@@ -471,7 +471,7 @@ namespace SandRibbon.Components.Canvas
         private Dictionary<double, Stroke> privacyDictionary = new Dictionary<double, Stroke>();
         private void ApplyPrivacyStylingToStroke(Stroke stroke, string privacy)
         {
-            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == Permissions.LECTURE_PERMISSIONS) return;
+            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == Permissions.LECTURE_PERMISSIONS || target == "notepad") return;
             if (privacy == "private")
                 addPrivacyStylingToStroke(stroke);
             else

@@ -942,7 +942,6 @@ namespace SandRibbon
                     case 0:
                         ClearUI();
                         homeGroups.Add(new EditingOptions());
-                        //homeGroups.Add(new PenColors());
                         break;
                     case 1:
                         tabs.Add(new Tabs.Quizzes());
@@ -950,8 +949,6 @@ namespace SandRibbon
                         tabs.Add(new Tabs.Attachments());
                         homeGroups.Add(new PrivacyToolsHost());
                         homeGroups.Add(new EditingModes());
-                        //homeGroups.Add(new ToolBox());
-                        //homeGroups.Add(new TextTools());
                         break;
                     case 2:
                         ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
@@ -962,9 +959,6 @@ namespace SandRibbon
                     case 3:
                         homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
                         homeGroups.Add(new Notes());
-                        tabs.Add(new Tabs.Analytics());
-                        tabs.Add(new Tabs.Plugins());
-                        //privacyTools.Children.Add(new PrivacyTools());
                         break;
                     default:
                         break;

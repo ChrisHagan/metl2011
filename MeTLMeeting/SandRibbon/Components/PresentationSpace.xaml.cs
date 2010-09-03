@@ -51,7 +51,6 @@ namespace SandRibbon.Components
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
             Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
         }
-
         private void exploreBubble(ThoughtBubble thoughtBubble)
         {
             var origin = new Point(0, 0);

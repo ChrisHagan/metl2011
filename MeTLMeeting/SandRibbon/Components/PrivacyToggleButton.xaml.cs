@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SandRibbon.Providers;
+using SandRibbonObjects;
 
 namespace SandRibbon.Components
 {
@@ -25,7 +26,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             System.Windows.Controls.Canvas.SetLeft(privacyButtons, bounds.Right);
             System.Windows.Controls.Canvas.SetTop(privacyButtons, bounds.Top);
-            if(!Globals.isAuthor)
+            if(!Globals.isAuthor || Globals.conversationDetails.Permissions == Permissions.LECTURE_PERMISSIONS)
             {
                 showButton.Visibility = Visibility.Collapsed;
                 hideButton.Visibility = Visibility.Collapsed;
