@@ -958,7 +958,7 @@ namespace SandRibbon
                         break;
                     case 3:
                         homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
-                        homeGroups.Add(new Notes());
+                        //homeGroups.Add(new Notes());
                         break;
                     default:
                         break;
