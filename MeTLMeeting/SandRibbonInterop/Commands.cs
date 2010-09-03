@@ -67,6 +67,7 @@ namespace SandRibbon
         public static RoutedCommand ImportSubmission = new RoutedCommand();
         public static RoutedCommand SaveFile = new RoutedCommand();
         public static CompositeCommand DummyCommandToProcessCanExecute = new CompositeCommand();
+        public static CompositeCommand DummyCommandToProcessCanExecuteForPrivacyTools = new CompositeCommand();
 
         public static CompositeCommand TogglePens = new CompositeCommand();
         public static CompositeCommand SetPedagogyLevel = new CompositeCommand();

@@ -14,11 +14,11 @@ namespace SandRibbon.Components
         public static readonly DependencyProperty PrivateProperty =
             DependencyProperty.Register("Private", typeof(string), typeof(PrivacyTools), new UIPropertyMetadata("public"));
         public static PrivacyEnablementChecker PrivacySetterIsEnabled = new PrivacyEnablementChecker();
-        
+
         public PrivacyTools()
         {
             InitializeComponent();
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy,canSetPrivacy));
+            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy, canSetPrivacy));
             try
             {
                 if (Globals.isAuthor)
@@ -26,7 +26,8 @@ namespace SandRibbon.Components
                 else
                     Commands.SetPrivacy.Execute("private");
             }
-            catch (NotSetException) { 
+            catch (NotSetException)
+            {
                 Commands.SetPrivacy.Execute("Private");
             }
             DataContext = this;
@@ -38,7 +39,7 @@ namespace SandRibbon.Components
                 return privacy != (string)GetValue(PrivateProperty)
                 && (Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.Author == Globals.me);
             }
-            catch (Exception )
+            catch (Exception)
             {
                 return false;
             }
@@ -59,8 +60,12 @@ namespace SandRibbon.Components
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
-           // if(!canSetPrivacy("private")) return;
             var thisButton = ((CheckBox)sender);
+            if (!canSetPrivacy("public"))
+            {
+                thisButton.IsChecked = (Globals.privacy == "private") ? false : true;
+                return;
+            }
             if (thisButton.IsChecked == true)
             {
                 Commands.SetPrivacy.Execute("public");
@@ -109,5 +114,5 @@ namespace SandRibbon.Components
             throw new NotImplementedException();
         }
     }
-     
+
 }

@@ -159,7 +159,18 @@ namespace SandRibbon.Components.Canvas
             if (!canEdit)
                 EditingMode = InkCanvasEditingMode.None;
             else
+            {
                 EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
+                if (EditingMode == InkCanvasEditingMode.Ink)
+                {
+                    try { UpdateCursor(Commands.UpdateCursor.lastValue()); }
+                    catch (Exception) { }
+                }
+                else 
+                {
+                    UpdateCursor(CursorExtensions.generateCursor(EditingMode));
+                }
+            }
         }
         public void SetEditingMode()
         {

@@ -26,16 +26,9 @@ namespace SandRibbon.Utils
 
             var bitmapSource = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
             bitmapSource.Render(fe);
-            
+
             var pixels = new int[width * height];
-            try
-            {
-                bitmapSource.CopyPixels(pixels, width * 4, 0);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            bitmapSource.CopyPixels(pixels, width * 4, 0);
             var bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
@@ -45,7 +38,7 @@ namespace SandRibbon.Utils
 
             var handle = bitmap.GetHicon();
             System.Drawing.Icon.FromHandle(handle).Save(stream);
-            
+
             var streamBuff = stream.ToArray();
             var resultStream = new MemoryStream();
 
@@ -53,7 +46,7 @@ namespace SandRibbon.Utils
 
             var hsY = (byte)(int)(hotSpot.Y * height);
             var hsX = (byte)(int)(hotSpot.X * width);
-            resultStream.Seek(2, SeekOrigin.Begin); 
+            resultStream.Seek(2, SeekOrigin.Begin);
             resultStream.Write(streamBuff, 2, 1);
             resultStream.Seek(8, SeekOrigin.Begin);
             resultStream.WriteByte(0);
@@ -72,7 +65,7 @@ namespace SandRibbon.Utils
             catch (Exception) { }
             return Cursors.Cross;
         }
-        public static Cursor generateCursorFromPen(DrawingAttributes pen)
+        public static Cursor generateCursor(DrawingAttributes pen)
         {
             var colour = new SolidColorBrush(pen.Color);
             var poly = new System.Windows.Shapes.Ellipse
@@ -84,6 +77,27 @@ namespace SandRibbon.Utils
             };
             return CursorExtensions.ConvertToCursor(poly, new System.Windows.Point(0.5, 0.5));
         }
-
+        public static Cursor generateCursor(InkCanvasEditingMode mode)
+        {
+            FrameworkElement poly;
+            Point hotspot;
+            switch (mode.ToString())
+            {
+                case "Select":
+                    return Cursors.Arrow;
+                    break;
+                case "None":
+                    poly = new Grid { Height = 10, Width = 10 };
+                    hotspot = new Point(0, 0);
+                    break;
+                default:
+                    poly = new Grid { Height = 32, Width = 32 };
+                    ((Grid)poly).Children.Add(new System.Windows.Shapes.Rectangle { Fill = Brushes.Black, Height = Double.NaN, Width = 2, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Stretch });
+                    ((Grid)poly).Children.Add(new System.Windows.Shapes.Rectangle { Fill = Brushes.Black, Height = 2, Width = Double.NaN, HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Center });
+                    hotspot = new System.Windows.Point(0.5, 0.5);
+                    break;
+            }
+            return CursorExtensions.ConvertToCursor(poly, hotspot);
+        }
     }
 }

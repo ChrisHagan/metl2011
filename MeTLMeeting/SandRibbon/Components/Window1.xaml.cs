@@ -58,6 +58,9 @@ namespace SandRibbon
         private void DoConstructor()
         {
             InitializeComponent();
+            var MeTLType = ConfigurationProvider.instance.getMeTLType();
+            Title = MeTLType;
+            Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\"+ MeTLType + ".ico");
             userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(SetIdentity));
@@ -113,6 +116,7 @@ namespace SandRibbon
             Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
@@ -240,7 +244,7 @@ namespace SandRibbon
             var desiredZoom = zoomIndependentAttributes.Height / currentZoom;
             zoomIndependentAttributes.Height = correctZoom(desiredZoom);
             zoomIndependentAttributes.Width = correctZoom(desiredZoom);
-            Commands.UpdateCursor.Execute(CursorExtensions.generateCursorFromPen(zoomIndependentAttributes));
+            Commands.UpdateCursor.Execute(CursorExtensions.generateCursor(zoomIndependentAttributes));
             Commands.ReportDrawingAttributes.Execute(zoomIndependentAttributes);
         }
         private void AdjustReportedStrokeAttributesAccordingToZoom(object attributes)
@@ -292,7 +296,7 @@ namespace SandRibbon
             var desiredZoom = zoomCorrectAttributes.Height * currentZoom;
             zoomCorrectAttributes.Width = correctZoom(desiredZoom);
             zoomCorrectAttributes.Height = correctZoom(desiredZoom);
-            Commands.UpdateCursor.Execute(CursorExtensions.generateCursorFromPen(zoomCorrectAttributes));
+            Commands.UpdateCursor.Execute(CursorExtensions.generateCursor(zoomCorrectAttributes));
             Commands.ActualSetDrawingAttributes.Execute(zoomCorrectAttributes);
         }
         private void SetTutorialVisibility(object visibilityObject)
@@ -521,6 +525,12 @@ namespace SandRibbon
         private bool conversationSearchMustBeClosed(object _obj)
         {
             return currentConversationSearchBox.Visibility == Visibility.Collapsed && mustBeInConversation(null);
+        }
+        private bool conversationSearchMustBeClosedAndMustBeAllowedToPublish(object _obj)
+        {
+            if (conversationSearchMustBeClosed(null))
+                return Globals.isAuthor || Globals.conversationDetails.Permissions.studentCanPublish;
+            else return false;
         }
 
         private bool mustBeInConversation(object _arg)

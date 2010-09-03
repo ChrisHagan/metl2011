@@ -772,7 +772,9 @@
     <Resource Include="Resources\fontFamily.png" />
     <Resource Include="Resources\fontSize.png" />
     <Resource Include="Resources\Ribbon-ApplicationButton.png" />
-    <Resource Include="Resources\MeTL.ico" />
+    <Content Include="Resources\MeTL.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Resources\Ribbon-Lecture.png" />
     <Resource Include="Resources\Ribbon-Meeting.png" />
     <Resource Include="Resources\Ribbon-Tutorial.png" />
@@ -820,6 +822,12 @@
     <Resource Include="Resources\Hide.png" />
     <Resource Include="Resources\ArtistEasel.png" />
     <Resource Include="Resources\ArtistPalette.png" />
+    <Content Include="Resources\ContentAndStrokesExperimentMeTL.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ContentOnlyExperimentMeTL.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Highlighter.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -832,6 +840,9 @@
     <Resource Include="Resources\mimetype_readme.png" />
     <Resource Include="Resources\MeTLPenOverlay.png" />
     <Resource Include="Resources\MeTLHighlighterOverlay.png" />
+    <Content Include="Resources\MeTL Presenter.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Pen.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

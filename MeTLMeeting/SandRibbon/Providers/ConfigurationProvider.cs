@@ -28,6 +28,7 @@ namespace SandRibbon.Providers
         {
             get 
             {
+                isStaging = true;
                 if (isStaging)
                 {
                     if (stagingServer == null)
@@ -58,6 +59,25 @@ namespace SandRibbon.Providers
             }
             return docs.First().Substring(0,docs.First().Length - 4);
         }
+        public int getMeTLPedagogyLevel()
+        {
+            int level;
+
+            switch (getMeTLType())
+            {
+                case "MeTL":
+                    level = 3;
+                    break;
+                case "MeTL Presenter":
+                    level = 2;
+                    break;
+                default:
+                    level = 3;
+                    break;
+            }
+            return level;
+        }
+        
         public string getMetlVersion()
         {
             string MeTLType = getMeTLType();
