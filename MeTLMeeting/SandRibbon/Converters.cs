@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using SandRibbon.Components.Submissions;
 using SandRibbon.Providers;
+using SandRibbon.Tabs;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
@@ -52,6 +53,7 @@ namespace SandRibbon
         public static ExtractNameConverter ExtractNameConverter = new ExtractNameConverter();
         public static ExtractTypeConverter ExtractTypeConverter = new ExtractTypeConverter();
         public static ExtractUrlConverter ExtractUrlConverter = new ExtractUrlConverter();
+        public static GetFileTooltip GetFileToolTip = new GetFileTooltip();
         public static IndexInThisCollectionConverter IndexInThisCollectionConverter = new IndexInThisCollectionConverter();
         public static BoolToVisibilityConverter BoolToVisibilityConverter = new BoolToVisibilityConverter();
         public static ReverseBoolToVisibilityConverter ReverseBoolToVisibilityConverter = new ReverseBoolToVisibilityConverter();
@@ -239,6 +241,19 @@ namespace SandRibbon
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException("You shouldn't be converting an IndexInThisCollection back to anything");
+        }
+    }
+    public class GetFileTooltip: IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var fileInfo = (FileInfo) value;
+            return string.Format("{0} {1} {2} {3}kb", fileInfo.filename, fileInfo.author, fileInfo.uploadTime, fileInfo.size); 
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
     public class ExtractUrlConverter : IValueConverter

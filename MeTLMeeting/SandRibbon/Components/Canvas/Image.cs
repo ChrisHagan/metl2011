@@ -503,10 +503,13 @@ namespace SandRibbon.Components.Canvas
                     selectedImage.UpdateLayout();
                     var selectedImageLeft = InkCanvas.GetLeft((System.Windows.Controls.Image)selectedImage);
                     var selectedImageTop = InkCanvas.GetTop((System.Windows.Controls.Image)selectedImage);
-                    var newImage = new System.Windows.Controls.Image();
-                    newImage.Height = ((System.Windows.Controls.Image)selectedImage).ActualHeight;
-                    newImage.Width = ((System.Windows.Controls.Image)selectedImage).Width;
-                    newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(SandRibbonInterop.LocalCache.ImageCache.RemoteSource(new Uri(((System.Windows.Controls.Image)selectedImage).Source.ToString(), UriKind.Relative)));
+                    var newImage = new System.Windows.Controls.Image
+                                       {
+                                           Height = ((System.Windows.Controls.Image) selectedImage).ActualHeight,
+                                           Width = ((System.Windows.Controls.Image) selectedImage).Width,
+                                           //Source = (ImageSource) new ImageSourceConverter().ConvertFrom( SandRibbonInterop.LocalCache.ImageCache.RemoteSource( new Uri( ((System.Windows.Controls.Image) selectedImage).Source. ToString(), UriKind.Relative)))
+                                           Source = ((System.Windows.Controls.Image)selectedImage).Source
+                                       };
                     InkCanvas.SetLeft(newImage, selectedImageLeft);
                     InkCanvas.SetTop(newImage, selectedImageTop);
                     var tag = ((System.Windows.Controls.Image)selectedImage).tag();
@@ -875,7 +878,11 @@ namespace SandRibbon.Components.Canvas
             Commands.SendFileResource.Execute(new TargettedFile
                                                   {
                                                       author = Globals.me,
-                                                      url = hostedFileName
+                                                      url = hostedFileName,
+                                                      uploadTime = DateTime.Now.ToString(),
+                                                      size = new System.IO.FileInfo(filename).Length,
+                                                      name = Path.GetFileNameWithoutExtension(filename)
+
                                                    });
             
         }

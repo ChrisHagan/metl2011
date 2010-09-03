@@ -14,6 +14,7 @@ using agsXMPP.Xml.Dom;
 using SandRibbonObjects;
 using Constants;
 using System.Collections.Generic;
+using Path=System.IO.Path;
 
 namespace SandRibbonInterop.MeTLStanzas
 {
@@ -46,6 +47,9 @@ namespace SandRibbonInterop.MeTLStanzas
     public class TargettedFile : TargettedElement
     {
         public string url { get; set;}
+        public string uploadTime { get; set; }
+        public long size { get; set; }
+        public string name { get; set; }
     }
     public class TargettedImage : TargettedElement
     {
@@ -767,6 +771,9 @@ namespace SandRibbonInterop.MeTLStanzas
             public static string TAG = "fileResource";
             public static string AUTHOR = "author";
             public static string URL = "url";
+            public static string TIME = "time";
+            public static string SIZE = "size";
+            public static string NAME = "name";
             static FileResource()
             {
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(FileResource));
@@ -784,16 +791,23 @@ namespace SandRibbonInterop.MeTLStanzas
             {
                 get
                 {
-                    return new TargettedFile
+                    var file =  new TargettedFile
                                {
                                    author = GetTag(AUTHOR),
                                    url = GetTag(URL)
                                };
+                    file.uploadTime = HasTag(TIME) ? GetTag(TIME) : DateTime.Now.ToString();
+                    file.size = HasTag(SIZE) ? long.Parse(GetTag(SIZE)) : 0;
+                    file.name = HasTag(NAME) ? GetTag(NAME) : Path.GetFileNameWithoutExtension(file.url);
+                    return file;
                 }
                 set
                 {
                     SetTag(AUTHOR, value.author);
                     SetTag(URL, value.url);
+                    SetTag(TIME, value.uploadTime);
+                    SetTag(SIZE, value.size);
+                    SetTag(NAME, value.name);
                 }
             }
         }

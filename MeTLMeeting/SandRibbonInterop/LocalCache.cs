@@ -76,7 +76,7 @@ namespace SandRibbonInterop.LocalCache
                 foreach (string seg in remoteUri.Segments)
                     localFileName += seg.ToString().Replace("/", "_").Replace("\\", "_");
                 var localUriString = cacheName + "\\" + localFileName;
-                System.IO.File.WriteAllBytes(localUriString, SandRibbonInterop.HttpResourceProvider.secureGetData(remoteUri.ToString()));
+               //System.IO.File.WriteAllBytes(localUriString, HttpResourceProvider.secureGetData(remoteUri.ToString()));
                 var localUri = new Uri(localUriString, UriKind.Relative);
                 Add(remoteUri.ToString(), localUri);
             }
@@ -84,6 +84,9 @@ namespace SandRibbonInterop.LocalCache
         }
         public static Uri RemoteSource(Uri media)
         {
+            var uri = CacheDict().Where(kv => kv.Value == media).Select(k => k.Key).FirstOrDefault();
+            return uri== null ? null : new Uri(uri, UriKind.RelativeOrAbsolute);
+             
             var results = new List<KeyValuePair<string, Uri>>();
             foreach (KeyValuePair<string, Uri> kv in CacheDict())
             {

@@ -87,9 +87,6 @@
     <Compile Include="CommandParameterProvider.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="HttpResourceProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Interfaces\IConversationListing.cs" />
     <Compile Include="Interfaces\IConversationSelector.cs" />
     <Compile Include="Interfaces\IFriendsDisplay.cs" />

@@ -5,12 +5,36 @@
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
-    xmlns:core="clr-namespace:System;assembly=mscorlib" >
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    xmlns:SandRibbon="clr-namespace:SandRibbon" >
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">7</core:String>
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup Header="Uploads">
         <SandRibbonInterop:Button ToolTip="{StaticResource AddImageToolTip}"  x:Name="fileUpload" Icon="\Resources\AddImage.png" Text="Upload file" Command="api:Commands.FileUpload"/>
-        <Button Click="openUploads">Uploads</Button>
+    </sr:RibbonGroup>
+    <sr:RibbonGroup>
+            <ListBox x:Name="attachments" Background="Transparent"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Button Click="saveFile">
+                        <Button.ToolTip>
+                            <SandRibbonInterop:MeTLImageToolTip ImageSource="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" 
+                                                                ContentText="{Binding Path=tooltip}"/>
+                        </Button.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" />
+                            <Label Content="{Binding Path=filename}"/>
+                        </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
     </sr:RibbonGroup>
 </sr:RibbonTab>
