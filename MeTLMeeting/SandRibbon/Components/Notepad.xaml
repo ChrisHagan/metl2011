@@ -1,0 +1,13 @@
+﻿<UserControl x:Class="SandRibbon.Components.Notepad"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:canvas="clr-namespace:SandRibbon.Components.Canvas"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop" >
+    <UserControl.Resources>
+        <core:String x:Key="target">notepad</core:String>
+        <core:String x:Key="defaultPrivacy">private</core:String>
+    </UserControl.Resources>
+    <components:UserCanvasStack x:Name="stack"></components:UserCanvasStack>
+</UserControl>
