@@ -32,6 +32,17 @@ namespace SandRibbon.Components
             }
             DataContext = this;
         }
+        private bool canBecomePublic()
+        {
+            try
+            {
+                return (Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.Author == Globals.me);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         private bool canSetPrivacy(string privacy)
         {
             try
@@ -61,7 +72,7 @@ namespace SandRibbon.Components
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             var thisButton = ((CheckBox)sender);
-            if (!canSetPrivacy("public"))
+            if (!canBecomePublic())
             {
                 thisButton.IsChecked = (Globals.privacy == "private") ? false : true;
                 return;
