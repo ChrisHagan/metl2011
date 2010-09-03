@@ -49,7 +49,7 @@ namespace SandRibbon.Components
             this.DataContext = this;
             Loaded += loaded;
             Commands.AddWindowEffect.Execute(null);
-            Version = getMetlVersion();
+            Version = ConfigurationProvider.instance.getMetlVersion();
             Logger.Log(string.Format("The Version of MeTL is -> {0}", Version));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(
                 _credentials =>
@@ -66,42 +66,6 @@ namespace SandRibbon.Components
             {
                 this.servers.ItemsSource = servers;
             });
-        }
-        private static string getMetlVersion()
-        {
-            var files = Directory.GetFiles(".", "*.exe");
-            var docs = new List<string>();
-            foreach (string filename in files)
-            {
-                if (!filename.Contains("vshost"))
-                    docs.Add(filename.Substring(2));
-            }
-            if (docs.Contains("MeTL.exe"))
-            {
-                docs.Remove("MeTL.exe");
-                docs.Add("MeTL.exe");
-            }
-            foreach (string documentString in docs)
-            {
-                try
-                {
-                    var doc = XDocument.Load(documentString + ".manifest");
-                    if (doc != null)
-                    {
-                        var node = doc.Root.Descendants().Where(n =>
-                                n.Attribute("name") != null && n.Attribute("name").Value.Equals(documentString)).First();
-                        if (node != null)
-                        {
-                            var version = node.Attribute("version").Value;
-                            return version.ToString();
-                        }
-                        return "Unknown";
-                    }
-                    return "Unknown";
-                }
-                catch (Exception) { }
-            }
-            return "Unknown";
         }
         public bool isAuthenticatedAgainstLDAP(string username, string password)
         {
