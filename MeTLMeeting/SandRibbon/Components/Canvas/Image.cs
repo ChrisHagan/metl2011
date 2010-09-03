@@ -740,7 +740,7 @@ namespace SandRibbon.Components.Canvas
                                     {
                                         foreach(var file in files)
                                         {
-                                            uploadFileForUse(file);
+                                                uploadFileForUse(file);
                                         }
                                     });
         }
@@ -867,6 +867,11 @@ namespace SandRibbon.Components.Canvas
 
         private void uploadFileForUse(string filename)
         {
+            if (filename.EndsWith(".yaws") || filename.EndsWith(".beam") || filename.EndsWith(".erl"))
+            {
+                MessageBox.Show("Sorry, MeTL cannot upload this file: " + filename);
+                return;
+            }
             string hostedFileName;
             if (!filename.Contains("http"))
             {
