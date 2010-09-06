@@ -29,6 +29,7 @@ namespace SandRibbon
         public static videoMediaElementToMediaElementConverter videoMediaElementToMediaElementConverter = new videoMediaElementToMediaElementConverter();
         public static videoTimeSpanToDoubleSecondsConverter videoTimeSpanToDoubleSecondsConverter = new videoTimeSpanToDoubleSecondsConverter();
         public static videoDurationToDoubleConverter videoDurationToDoubleConverter = new videoDurationToDoubleConverter();
+        public static videoPaddingSubtractorConverter videoPaddingSubtractorConverter = new videoPaddingSubtractorConverter();
         public static DebugConverter debugConverter = new DebugConverter();
         public static ConversationNameExtractor conversationNameExtractor = new ConversationNameExtractor();
         public static ConversationTooltipExtractor conversationTooltipExtractor = new ConversationTooltipExtractor();
@@ -675,6 +676,21 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
+    public class videoPaddingSubtractorConverter: IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return null;
+            var originalSize = (double)value;
+            return Math.Max((double)originalSize - 60,(double)0);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class videoDurationToDoubleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

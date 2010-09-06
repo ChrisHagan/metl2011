@@ -1114,13 +1114,14 @@ namespace SandRibbonInterop.MeTLStanzas
                 }
                 set
                 {
-                    var absolutePath = value.videoProperty.MediaElement.Source.ToString();
+                    
+                    var absolutePath = value.videoProperty.VideoSource != null ? value.videoProperty.VideoSource.ToString() : value.videoProperty.MediaElement.Source.ToString();
                     SetTag(tagTag, value.videoProperty.Tag.ToString());
                     SetTag(sourceTag, absolutePath);
-                    SetTag(xTag, InkCanvas.GetLeft(value.videoProperty).ToString());
-                    SetTag(yTag, InkCanvas.GetTop(value.videoProperty).ToString());
-                    SetTag(heightTag, (value.videoProperty.ActualHeight).ToString());
-                    SetTag(widthTag, (value.videoProperty.ActualWidth).ToString());
+                    SetTag(xTag, value.X.ToString());
+                    SetTag(yTag, value.Y.ToString());
+                    SetTag(heightTag, (value.videoProperty.Height).ToString());
+                    SetTag(widthTag, (value.videoProperty.Width).ToString());
                     SetTag(authorTag, value.author);
                     SetTag(targetTag, value.target);
                     SetTag(privacyTag, value.privacy);

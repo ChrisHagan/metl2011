@@ -41,12 +41,14 @@
                             Background="{StaticResource BackgroundBlueGradient}">
                             <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent},Converter={x:Static my:Converters.videoMediaElementToMediaElementConverter}}">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition/>
+                                    <RowDefinition />
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="20"/>
                                 </Grid.RowDefinitions >
-                                <ContentPresenter Grid.Row="0"
+                                <Viewbox Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="{Binding Height, Converter={x:Static my:Converters.videoPaddingSubtractorConverter}}" Width="Auto">
+                                    <ContentPresenter
                                               Content="{Binding Path=MediaElement}"/>
+                                </Viewbox>
                                 <StackPanel Grid.Row="1" Orientation="Horizontal" >
                                     <Button Content="Play" Click="Video_Play"/>
                                     <Button Content="Pause" Click="Video_Pause"/>

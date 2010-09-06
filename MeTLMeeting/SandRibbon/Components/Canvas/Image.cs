@@ -217,7 +217,6 @@ namespace SandRibbon.Components.Canvas
         private void ReceiveVideo(TargettedVideo video)
         {
             //videos currently disabled.  Remove the return to re-enable.
-            return;
             Dispatcher.adoptAsync(delegate
             {
                 video.video.MediaElement.LoadedBehavior = MediaState.Manual;
@@ -229,10 +228,14 @@ namespace SandRibbon.Components.Canvas
         {
             if (!videoExistsOnCanvas(element))
             {
+                var height = element.Height;
+                var width = element.Width;
                 Children.Add(element);
                 element.MediaElement.LoadedBehavior = MediaState.Manual;
                 InkCanvas.SetLeft(element, element.X);
                 InkCanvas.SetTop(element, element.Y);
+                element.Height = height;
+                element.Width = width;
             }
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
@@ -480,7 +483,7 @@ namespace SandRibbon.Components.Canvas
                 ClearAdorners();
                 return;
             }
-            var publicElements = selectedElements.Where(i => ((System.Windows.Controls.Image)i).tag().privacy.ToLower() == "public").ToList();
+            var publicElements = selectedElements.Where(i => (((i is System.Windows.Controls.Image) && ((System.Windows.Controls.Image)i).tag().privacy.ToLower() == "public")) || ((i is SandRibbonInterop.Video) && ((SandRibbonInterop.Video)i).tag().privacy.ToLower() == "public")).ToList();
             string privacyChoice;
             if (publicElements.Count == 0)
                 privacyChoice = "show";
@@ -556,16 +559,17 @@ namespace SandRibbon.Components.Canvas
                     var tag = ((SandRibbonInterop.Video)selectedImage).tag();
                     tag.privacy = privacy;
                     tag.zIndex = -1;
-                    ((SandRibbonInterop.Video)selectedImage).tag(tag);
-
-                    var srVideo = ((SandRibbonInterop.Video)selectedImage);
-                    srVideo.X = InkCanvas.GetLeft(srVideo);
-                    srVideo.Y = InkCanvas.GetTop(srVideo);
-                    srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
-                    srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
-                    srVideo.Height = srVideo.ActualHeight;
-                    srVideo.Width = srVideo.ActualWidth;
-                    srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
+                    var oldVideo = ((SandRibbonInterop.Video)selectedImage);
+                    oldVideo.UpdateLayout();
+                    var srVideo = new SandRibbonInterop.Video();
+                    srVideo.tag(tag);
+                    srVideo.X = InkCanvas.GetLeft(oldVideo);
+                    srVideo.Y = InkCanvas.GetTop(oldVideo);
+                    srVideo.VideoHeight = oldVideo.MediaElement.ActualHeight;
+                    srVideo.VideoWidth = oldVideo.MediaElement.ActualWidth;
+                    srVideo.Height = oldVideo.ActualHeight;
+                    srVideo.Width = oldVideo.ActualWidth;
+                    srVideo.VideoSource = new System.Uri("https://" + Constants.JabberWire.SERVER + ":1188/" + (SandRibbonInterop.LocalCache.MediaElementCache.RemoteSource(oldVideo.VideoSource).ToString()), UriKind.Absolute);
                     Commands.SendVideo.Execute(new TargettedVideo
                     {
                         author = Globals.me,
@@ -681,7 +685,8 @@ namespace SandRibbon.Components.Canvas
             });
         }
         #endregion
-        /*        #region Video
+                
+        #region Video
         private SandRibbonInterop.Video newVideo(System.Uri Source)
         {
             var MeTLVideo = new SandRibbonInterop.Video()
@@ -691,7 +696,7 @@ namespace SandRibbon.Components.Canvas
             return MeTLVideo;
         }
         #endregion
-  */
+  
         #region AutoShapes
         private void createNewAutoShape(object obj)
         {
@@ -857,8 +862,10 @@ namespace SandRibbon.Components.Canvas
                     dropImageOnCanvas(fileName, pos, count);
                     break;
                 case FileType.Video:
-                    MessageBox.Show("The object you're trying to import is a video.  At present, MeTL does not support videos.");
-                    return;
+                    dropVideoOnCanvas(fileName, pos, count);
+                    //MessageBox.Show("The object you're trying to import is a video.  At present, MeTL does not support videos.");
+                    //return;
+                    break;
                 default:
                     uploadFileForUse(fileName);
                     break;
@@ -1132,6 +1139,30 @@ namespace SandRibbon.Components.Canvas
                         privacy = newPrivacy,
                         target = target,
                         image = (System.Windows.Controls.Image)image
+                    });
+                }
+                foreach (SandRibbonInterop.Video video in GetSelectedElements().ToList().Where(i =>
+                    i is SandRibbonInterop.Video
+                    && ((SandRibbonInterop.Video)i).tag().privacy != newPrivacy))
+                {
+                    var oldTag = ((SandRibbonInterop.Video)video).tag();
+                    Commands.SendDirtyImage.Execute(new TargettedDirtyElement
+                    {
+                        identifier = ((SandRibbonInterop.Video)video).tag().id,
+                        target = target,
+                        privacy = ((SandRibbonInterop.Video)video).tag().privacy,
+                        author = Globals.me,
+                        slide = currentSlide
+                    });
+                    oldTag.privacy = newPrivacy;
+                    ((SandRibbonInterop.Video)video).tag(oldTag);
+                    Commands.SendVideo.Execute(new TargettedVideo
+                    {
+                        author = Globals.me,
+                        slide = currentSlide,
+                        privacy = newPrivacy,
+                        target = target,
+                        video = (SandRibbonInterop.Video)video
                     });
                 }
             }
