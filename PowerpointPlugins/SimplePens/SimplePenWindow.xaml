@@ -1,0 +1,53 @@
+﻿<Window x:Class="PowerpointJabber.SimplePenWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:plugin="clr-namespace:PowerpointJabber"
+    ShowInTaskbar="True" WindowStartupLocation="Manual" Topmost="True" Top="0" Left="0" 
+    Closing="Window_Closing" WindowStyle="None" AllowsTransparency="True" Background="Transparent" Cursor="Arrow" 
+        SizeToContent="WidthAndHeight">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static plugin:Commands.CloseApplication}" Executed="closeApplication" />
+        <CommandBinding Command="{x:Static plugin:Commands.PageUp}" Executed="pageUp" />
+        <CommandBinding Command="{x:Static plugin:Commands.PageDown}" Executed="pageDown" />
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="{x:Static plugin:Commands.CloseApplication}"/>
+        <KeyBinding Key="PageUp" Command="{x:Static plugin:Commands.PageUp}"/>
+        <KeyBinding Key="PageDown" Command="{x:Static plugin:Commands.PageDown}"/>
+    </Window.InputBindings>
+    <Border Background="AliceBlue" CornerRadius="3" Padding="3" BorderBrush="DarkGray" BorderThickness="1">
+        <WrapPanel Orientation="Vertical" HorizontalAlignment="Left">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl x:Name="PensControl">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Click="Pen" Tag="{Binding Path=penName}" Background="{Binding Path=penColour}" Height="75" Width="50">
+                                <StackPanel>
+                                    <Image Source="Resources\pptPaintbrush.png"/>
+                                    <Label HorizontalAlignment="Center" Content="{Binding Path=penName}"/>
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </ScrollViewer>
+            <Button Click="Eraser" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptEraser.png"/>
+                    <Label HorizontalAlignment="Center">Erase</Label>
+                </StackPanel>
+            </Button>
+            <Button Click="Selector" Height="75" Width="50">
+                <StackPanel>
+                    <Image Source="Resources\pptSelect.png"/>
+                    <Label HorizontalAlignment="Center">Select</Label>
+                </StackPanel>
+            </Button>
+        </WrapPanel>
+    </Border>
+</Window>
