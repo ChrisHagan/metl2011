@@ -53,6 +53,7 @@ namespace SandRibbon.Components
             if (conversationSubjectListBox.Items.Count > 0)
                 conversationSubjectListBox.SelectedItem = conversationSubjectListBox.Items[conversationSubjectListBox.Items.IndexOf(details.Subject.ToString())];
         }
+        private bool isFirstRun = true;
         private void UpdateDialogBoxAppearance()
         {
             switch (dialogMode)
@@ -61,7 +62,7 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Create";
-                    if (startingContentSelector != null && startingContentSelector.Items.Count > 0)
+                    if (isFirstRun && startingContentSelector != null && startingContentSelector.Items.Count > 0)
                         startingContentSelector.SelectedIndex = 0;
                     if (details == null)
                         details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
@@ -82,7 +83,7 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Visible;
                     CommitButton.Content = "Create";
-                    if (startingContentSelector != null && startingContentSelector.Items.Count > 1)
+                    if (isFirstRun && startingContentSelector != null && startingContentSelector.Items.Count > 1)
                         startingContentSelector.SelectedIndex = 1;
                     if (details == null)
                         details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
@@ -98,6 +99,7 @@ namespace SandRibbon.Components
                     }
                     break;
             }
+            isFirstRun = false;
         }
         private void BrowseFiles(object sender, RoutedEventArgs e)
         {

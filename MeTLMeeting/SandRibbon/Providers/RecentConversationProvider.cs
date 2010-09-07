@@ -66,7 +66,7 @@ namespace SandRibbon.Providers
             }
             catch (IOException e)
             {
-                MessageBox.Show("Yep, punked the recent conversations");
+                //MessageBox.Show("Yep, punked the recent conversations");
             }
         }
         public static string DisplayNameFor(ConversationDetails conversation)

@@ -30,6 +30,7 @@ namespace SandRibbon
         public static videoTimeSpanToDoubleSecondsConverter videoTimeSpanToDoubleSecondsConverter = new videoTimeSpanToDoubleSecondsConverter();
         public static videoDurationToDoubleConverter videoDurationToDoubleConverter = new videoDurationToDoubleConverter();
         public static videoPaddingSubtractorConverter videoPaddingSubtractorConverter = new videoPaddingSubtractorConverter();
+        public static videoMirrorPaddingSubtractorConverter videoMirrorPaddingSubtractorConverter = new videoMirrorPaddingSubtractorConverter();
         public static DebugConverter debugConverter = new DebugConverter();
         public static ConversationNameExtractor conversationNameExtractor = new ConversationNameExtractor();
         public static ConversationTooltipExtractor conversationTooltipExtractor = new ConversationTooltipExtractor();
@@ -670,6 +671,20 @@ namespace SandRibbon
                 return null;
             var me = ((TimeSpan)value);
             return (double)(me.Hours * 3600) + (me.Minutes * 60) + (me.Seconds);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class videoMirrorPaddingSubtractorConverter: IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return null;
+            var originalSize = (double)value;
+            return Math.Max((double)originalSize - 10,(double)0);
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

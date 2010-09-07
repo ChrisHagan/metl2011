@@ -16,7 +16,7 @@ namespace PowerpointJabber
         public Wire wire;
         public static ThisAddIn instance;
         public SimpleSlideShowWindow SSSW;
-        public bool customPresenterIsEnabled = true;
+        public bool customPresenterIsEnabled = false;
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {

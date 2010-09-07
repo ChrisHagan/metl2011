@@ -147,6 +147,7 @@ namespace SandRibbon.Components
             {
                 stack.handwriting.ReceiveStrokes(parser.ink);
                 stack.images.ReceiveImages(parser.images.Values);
+                stack.images.ReceiveVideos(parser.videos.Values);
                 foreach (var text in parser.text.Values)
                     stack.text.doText(text);
             }

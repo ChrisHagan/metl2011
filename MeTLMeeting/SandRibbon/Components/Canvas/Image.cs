@@ -82,12 +82,40 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyLiveWindow));
             Commands.DugPublicSpace.RegisterCommand(new DelegateCommand<LiveWindowSetup>(DugPublicSpace));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedImages));
+            Commands.MirrorVideo.RegisterCommand(new DelegateCommand<SandRibbonInterop.VideoMirror.VideoMirrorInformation>(mirrorVideo));
+            Commands.VideoMirrorRefreshRectangle.RegisterCommand(new DelegateCommand<string>(mirrorVideoRefresh));
         }
 
         private void deleteSelectedImages(object obj)
         {
             deleteImages();
             ClearAdorners();
+        }
+        private void mirrorVideoRefresh(string id)
+        {
+            if (me == "projector") return;
+            foreach (FrameworkElement fe in Children)
+            {
+                if (fe is SandRibbonInterop.Video)
+                {
+                    var vm = (SandRibbonInterop.Video)fe;
+                    vm.UpdateMirror(id);
+                }
+            }
+        }
+        private void mirrorVideo(SandRibbonInterop.VideoMirror.VideoMirrorInformation info)
+        {
+            if (me != "projector") return;
+            foreach (FrameworkElement fe in Children)
+            {
+                if (fe is SandRibbonInterop.VideoMirror)
+                {
+                    var vm = (SandRibbonInterop.VideoMirror)fe;
+                    if (info.rect == null)
+                        Children.Remove(vm);
+                    else vm.UpdateMirror(info);
+                }
+            }
         }
         private void ReceiveDirtyLiveWindow(TargettedDirtyElement dirtyElement)
         {
@@ -201,11 +229,24 @@ namespace SandRibbon.Components.Canvas
                 ReceiveImage(image);
             ensureAllImagesHaveCorrectPrivacy();
         }
+        public void ReceiveVideos(IEnumerable<TargettedVideo> videos)
+        {
+            var safeVideos = videos.Where(shouldDisplay).ToList();
+            foreach (var video in safeVideos)
+                ReceiveVideo(video);
+            ensureAllImagesHaveCorrectPrivacy();
+        }
         private bool shouldDisplay(TargettedImage image)
         {
             return !(image.slide != currentSlide ||
                 !(image.target.Equals(target)) ||
                 (!(image.privacy == "public" || (image.author == Globals.me && me != "projector"))));
+        }
+        private bool shouldDisplay(TargettedVideo video)
+        {
+            return !(video.slide != currentSlide ||
+                !(video.target.Equals(target)) ||
+                (!(video.privacy == "public" || (video.author == Globals.me && me != "projector"))));
         }
         private void ReceiveImage(TargettedImage image)
         {
@@ -214,14 +255,16 @@ namespace SandRibbon.Components.Canvas
                 AddImage(image.image);
             });
         }
-        private void ReceiveVideo(TargettedVideo video)
+        public void ReceiveVideo(TargettedVideo video)
         {
-            //videos currently disabled.  Remove the return to re-enable.
             Dispatcher.adoptAsync(delegate
             {
                 video.video.MediaElement.LoadedBehavior = MediaState.Manual;
                 video.video.MediaElement.ScrubbingEnabled = true;
-                AddVideo(video.video);
+                if (me == "projector")
+                    AddVideoClone(video.video);
+                else
+                    AddVideo(video.video);
             });
         }
         public void AddVideo(SandRibbonInterop.Video element)
@@ -236,6 +279,21 @@ namespace SandRibbon.Components.Canvas
                 InkCanvas.SetTop(element, element.Y);
                 element.Height = height;
                 element.Width = width;
+            }
+        }
+        public void AddVideoClone(SandRibbonInterop.Video element)
+        {
+            if (!videoExistsOnCanvas(element))
+            {
+                var videoClone = new SandRibbonInterop.VideoMirror();
+                videoClone.id = element.tag().id;
+                if (videoClone.Rectangle == null)
+                    videoClone.RequestNewRectangle();
+                Children.Add(videoClone);
+                InkCanvas.SetLeft(videoClone, element.X);
+                InkCanvas.SetTop(videoClone, element.Y);
+                videoClone.Height = element.Height;
+                videoClone.Width = element.Width;
             }
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
@@ -254,11 +312,19 @@ namespace SandRibbon.Components.Canvas
             Dispatcher.adoptAsync(delegate
             {
                 var images = new List<System.Windows.Controls.Image>();
+                var videos = new List<SandRibbonInterop.Video>();
                 foreach (var child in Children)
+                {
                     if (child is System.Windows.Controls.Image)
                         images.Add((System.Windows.Controls.Image)child);
+                    if (child is SandRibbonInterop.Video)
+                        videos.Add((SandRibbonInterop.Video)child);
+                }
                 foreach (System.Windows.Controls.Image image in images)
                     ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                    foreach (SandRibbonInterop.Video video in videos)
+                    ApplyPrivacyStylingToElement(video, video.tag().privacy);
+           
             });
         }
         public static IEnumerable<Point> getImagePoints(System.Windows.Controls.Image image)
@@ -579,6 +645,7 @@ namespace SandRibbon.Components.Canvas
                         video = srVideo,
                         id = srVideo.tag().id
                     });
+                    Commands.MirrorVideo.Execute(new SandRibbonInterop.VideoMirror.VideoMirrorInformation {id=srVideo.tag().id,rect=null });
                 }
             }
         }

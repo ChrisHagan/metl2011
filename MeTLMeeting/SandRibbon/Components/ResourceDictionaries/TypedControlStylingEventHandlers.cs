@@ -8,6 +8,8 @@ using System.Windows.Data;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using SandRibbon.Providers;
+using SandRibbonInterop;
+using System.Windows.Shapes;
 
 namespace SandRibbon.Components.ResourceDictionaries
 {
@@ -15,7 +17,7 @@ namespace SandRibbon.Components.ResourceDictionaries
     {
         public void OpenDoubleButtonPopup(object sender, RoutedEventArgs e)
         {
-            var popup = (Popup)(((Button)sender).DataContext);
+            var popup = (Popup)(((FrameworkElement)sender).DataContext);
             popup.IsOpen = true;
         }
         public void Video_Play(object sender, RoutedEventArgs e)
@@ -26,10 +28,9 @@ namespace SandRibbon.Components.ResourceDictionaries
             {
                 if (newMediaElement.Clock.CurrentTime.HasValue)
                     newMediaElement.Clock.Controller.Seek(newMediaElement.Clock.CurrentTime.Value, System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
-                else 
-                    newMediaElement.Clock.Controller.Seek(new TimeSpan(0,0,0), System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
+                else
+                    newMediaElement.Clock.Controller.Seek(new TimeSpan(0, 0, 0), System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
                 newMediaElement.Clock.Controller.Resume();
-                //MediaElement.Clock.Controller.
             }
             newMediaElement.Play();
         }
@@ -37,8 +38,9 @@ namespace SandRibbon.Components.ResourceDictionaries
         {
             var MediaElement = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext).MediaElement;
             MediaElement.LoadedBehavior = MediaState.Manual;
-            MediaElement.Clock.Controller.Pause();
-            //MediaElement.Pause();
+            if (MediaElement.Clock != null)
+                MediaElement.Clock.Controller.Pause();
+            else MediaElement.Pause();
         }
         public void Video_Mute(object sender, RoutedEventArgs e)
         {
@@ -50,12 +52,14 @@ namespace SandRibbon.Components.ResourceDictionaries
         }
         public void CreateMediaTimeline(object sender, EventArgs e)
         {
-            var MediaElement = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext).MediaElement;
+            var srVideo = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext);
+            var MediaElement = srVideo.MediaElement;
             MediaElement.DataContext = (System.Windows.Controls.Slider)sender;
             MediaElement.MediaOpened += new RoutedEventHandler(MediaElement_MediaOpened);
             MediaElement.LoadedBehavior = MediaState.Manual;
             MediaElement.Source = SandRibbonInterop.LocalCache.MediaElementCache.LocalSource(MediaElement.Source);
             Video_Play(sender, new RoutedEventArgs());
+            Video_Pause(sender, new RoutedEventArgs());
         }
         private bool MouseDown = false;
         private bool Updating = true;
@@ -66,17 +70,10 @@ namespace SandRibbon.Components.ResourceDictionaries
             Updating = false;
             if (MediaElement.Clock.IsPaused)
                 isPaused = true;
-            MediaElement.Pause();
-            MediaElement.Clock.Controller.Pause();
         }
         public void sliderMouseUp(object sender, EventArgs e)
         {
             var MediaElement = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext).MediaElement;
-            if (!isPaused)
-            {
-                MediaElement.Play();
-                MediaElement.Clock.Controller.Resume();
-            }   
             isPaused = false;
             var currentPosition = MediaElement.Position;
             Updating = true;
@@ -99,6 +96,7 @@ namespace SandRibbon.Components.ResourceDictionaries
         {
             var MediaElement = ((MediaElement)sender);
             var Slider = ((System.Windows.Controls.Slider)MediaElement.DataContext);
+            var srVideo = (SandRibbonInterop.Video)Slider.DataContext;
             MediaTimeline mt = new MediaTimeline((Uri)MediaElement.Source);
             MediaClock mc = mt.CreateClock();
             MediaElement.Clock = mc;
@@ -113,6 +111,13 @@ namespace SandRibbon.Components.ResourceDictionaries
                     }
                 };
             MediaElement.Clock.Controller.Pause();
+            MediaElement.UpdateLayout();
+            var rectToPush = new Rectangle();
+            rectToPush.Fill = new VisualBrush(MediaElement);
+            rectToPush.Stroke = Brushes.Red;
+            rectToPush.Height = MediaElement.ActualHeight;
+            rectToPush.Width = MediaElement.ActualWidth;
+            Commands.MirrorVideo.Execute(new SandRibbonInterop.VideoMirror.VideoMirrorInformation { id = srVideo.tag().id, rect = rectToPush });
         }
     }
 }

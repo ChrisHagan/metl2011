@@ -30,6 +30,27 @@
         </Setter>
     </Style>
 
+    <Style TargetType="{x:Type SandRibbonInterop:VideoMirror}">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type SandRibbonInterop:VideoMirror}">
+                    <Grid>
+                        <Border CornerRadius="4" Padding="4" 
+                            BorderBrush="DarkGray" BorderThickness="1"
+                            Background="{StaticResource BackgroundBlueGradient}">
+                            <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="{Binding Height, Converter={x:Static my:Converters.videoMirrorPaddingSubtractorConverter}}" Width="Auto">
+                                <Rectangle Height="{TemplateBinding RectHeight}" 
+                                    Width="{TemplateBinding RectWidth}" 
+                                    Fill="{TemplateBinding RectFill}"/>
+                            </Viewbox>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type SandRibbonInterop:Video}">
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="Template">

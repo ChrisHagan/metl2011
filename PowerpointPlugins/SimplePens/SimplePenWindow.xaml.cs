@@ -33,10 +33,10 @@ namespace PowerpointJabber
                 {
                     new UbiquitousPen{penName="thinBlack",penColour=System.Windows.Media.Brushes.Black,penWeight=1.5f},
                     new UbiquitousPen{penName="thinRed",penColour=System.Windows.Media.Brushes.Red,penWeight=1.5f},
-                    new UbiquitousPen{penName="thinYellow",penColour=System.Windows.Media.Brushes.Yellow,penWeight=1.5f},
+                    //new UbiquitousPen{penName="thinYellow",penColour=System.Windows.Media.Brushes.Yellow,penWeight=1.5f},
                     new UbiquitousPen{penName="thinBlue",penColour=System.Windows.Media.Brushes.Blue,penWeight=1.5f},
-                    new UbiquitousPen{penName="thinGreen",penColour=System.Windows.Media.Brushes.Green,penWeight=1.5f},
-                    new UbiquitousPen{penName="thinDarkBlue",penColour=System.Windows.Media.Brushes.DarkBlue,penWeight=1.5f},
+                    //new UbiquitousPen{penName="thinGreen",penColour=System.Windows.Media.Brushes.Green,penWeight=1.5f},
+                    //new UbiquitousPen{penName="thinDarkBlue",penColour=System.Windows.Media.Brushes.DarkBlue,penWeight=1.5f},
                     new UbiquitousPen{penName="medRed",penColour=System.Windows.Media.Brushes.Red,penWeight=3f},
                     new UbiquitousPen{penName="medBlue",penColour=System.Windows.Media.Brushes.Blue,penWeight=3f},
                     new UbiquitousPen{penName="medwhite",penColour=System.Windows.Media.Brushes.Yellow,penWeight=3f},

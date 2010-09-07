@@ -6,6 +6,8 @@ using System.Windows.Media;
 using SandRibbonObjects;
 using Divelements.SandRibbon;
 using System.Windows.Controls;
+using System.Windows.Shapes;
+using SandRibbon;
 
 namespace SandRibbonInterop
 {
@@ -141,6 +143,92 @@ namespace SandRibbonInterop
             };
         }
     }
+    public class VideoMirror : System.Windows.Controls.Primitives.Thumb
+    {
+        public class VideoMirrorInformation
+        {
+            public string id;
+            public Rectangle rect;
+        }
+
+        public string id;
+        public void UpdateMirror(VideoMirrorInformation info)
+        {
+            if (info.id == id)
+            {
+                this.Rectangle = (Rectangle)info.rect;
+            }
+        }
+        public void RequestNewRectangle()
+        {
+            Commands.VideoMirrorRefreshRectangle.Execute(id);
+        }
+
+        public System.Windows.Shapes.Rectangle Rectangle
+        {
+            get { return (System.Windows.Shapes.Rectangle)GetValue(RectangleProperty); }
+            set
+            {
+                SetValue(RectangleProperty, value);
+                SetValue(RectHeightProperty, ((System.Windows.Shapes.Rectangle)value).Height);
+                SetValue(RectWidthProperty, ((System.Windows.Shapes.Rectangle)value).Width);
+                SetValue(RectFillProperty, ((System.Windows.Shapes.Rectangle)value).Fill);
+            }
+        }
+        public static readonly DependencyProperty RectangleProperty =
+            DependencyProperty.Register("Rectangle", typeof(System.Windows.Shapes.Rectangle), typeof(VideoMirror), new UIPropertyMetadata(null));
+        public System.Double RectHeight
+        {
+            get { return (System.Double)((System.Windows.Shapes.Rectangle)GetValue(RectangleProperty)).Height; }
+            set
+            {
+                if (value == ((System.Windows.Shapes.Rectangle)GetValue(RectangleProperty)).Height)
+                    return;
+                var newRect = (System.Windows.Shapes.Rectangle)GetValue(RectangleProperty);
+                newRect.Height = value;
+                SetValue(RectangleProperty, newRect);
+            }
+        }
+        public static readonly DependencyProperty RectHeightProperty =
+            DependencyProperty.Register("RectHeight", typeof(System.Double), typeof(VideoMirror), new UIPropertyMetadata((System.Double)0));
+        public System.Double RectWidth
+        {
+            get { return (System.Double)((System.Windows.Shapes.Rectangle)GetValue(RectangleProperty)).Width; }
+            set
+            {
+                if (value == ((System.Windows.Shapes.Rectangle)GetValue(RectangleProperty)).Width)
+                    return;
+                var newRect = (System.Windows.Shapes.Rectangle)GetValue(RectangleProperty);
+                newRect.Width = value;
+                SetValue(RectangleProperty, newRect);
+            }
+        }
+        public static readonly DependencyProperty RectWidthProperty =
+            DependencyProperty.Register("RectWidth", typeof(System.Double), typeof(VideoMirror), new UIPropertyMetadata((System.Double)0));
+
+        public Brush RectFill
+        {
+            get { return (Brush)((System.Windows.Shapes.Rectangle)GetValue(RectangleProperty)).Fill; }
+            set
+            {
+                if (value == ((System.Windows.Shapes.Rectangle)GetValue(RectangleProperty)).Fill)
+                    return;
+                var newRect = (System.Windows.Shapes.Rectangle)GetValue(RectangleProperty);
+                newRect.Fill = value;
+                SetValue(RectangleProperty, newRect);
+            }
+        }
+        public static readonly DependencyProperty RectFillProperty =
+            DependencyProperty.Register("RectFill", typeof(Brush), typeof(VideoMirror), new UIPropertyMetadata(Brushes.Transparent));
+        public VideoMirror()
+            : base()
+        {
+            this.Loaded += (a, b) =>
+            {
+            };
+        }
+    }
+
     public class Video : System.Windows.Controls.Primitives.Thumb
     {
         public Duration Duration
@@ -150,6 +238,7 @@ namespace SandRibbonInterop
         }
         public static readonly DependencyProperty DurationProperty =
             DependencyProperty.Register("Duration", typeof(Duration), typeof(Thumb), new UIPropertyMetadata(null));
+
         public TimeSpan Position
         {
             get { return (TimeSpan)GetValue(PositionProperty); }
@@ -184,17 +273,16 @@ namespace SandRibbonInterop
             get { return (double)GetValue(HeightProperty); }
             set { SetValue(HeightProperty, value); }
         }
-
-
-
-
         public static readonly DependencyProperty PositionProperty =
             DependencyProperty.Register("Position", typeof(TimeSpan), typeof(Thumb), new UIPropertyMetadata(null));
 
         public System.Windows.Controls.MediaElement MediaElement
         {
             get { return (System.Windows.Controls.MediaElement)GetValue(MediaElementProperty); }
-            set { SetValue(MediaElementProperty, value); }
+            set
+            {
+                SetValue(MediaElementProperty, value);
+            }
         }
         public static readonly DependencyProperty MediaElementProperty =
             DependencyProperty.Register("MediaElement", typeof(System.Windows.Controls.MediaElement), typeof(Thumb), new UIPropertyMetadata(null));
@@ -231,15 +319,18 @@ namespace SandRibbonInterop
         public static readonly DependencyProperty VideoWidthProperty =
             DependencyProperty.Register("VideoWidth", typeof(System.Double), typeof(Thumb), new UIPropertyMetadata((System.Double)Double.NaN));
 
-        /*public System.Windows.Controls.Image Thumbnail
+        public void UpdateMirror(string id)
         {
-            get { return (System.Windows.Controls.Image)GetValue(ThumbnailProperty); }
-            set { SetValue(ThumbnailProperty, value); }
+            if (id == this.tag().id)
+            {
+                var rectToPush = new Rectangle();
+                rectToPush.Fill = new VisualBrush(MediaElement);
+                rectToPush.Stroke = Brushes.Red;
+                rectToPush.Height = MediaElement.ActualHeight;
+                rectToPush.Width = MediaElement.ActualWidth;
+                Commands.MirrorVideo.Execute(new SandRibbonInterop.VideoMirror.VideoMirrorInformation { id = id, rect = rectToPush });
+            }
         }
-        public static readonly DependencyProperty ThumbnailProperty =
-            DependencyProperty.Register("Thumbnail", typeof(System.Windows.Controls.Image), typeof(Thumb), new UIPropertyMetadata(null));
-        */
-
         public Video()
             : base()
         {
