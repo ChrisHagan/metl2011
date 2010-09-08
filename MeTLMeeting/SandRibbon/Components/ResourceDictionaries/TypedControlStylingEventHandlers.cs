@@ -22,7 +22,8 @@ namespace SandRibbon.Components.ResourceDictionaries
         }
         public void Video_Play(object sender, RoutedEventArgs e)
         {
-            var newMediaElement = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext).MediaElement;
+            var srVideo = ((SandRibbonInterop.Video)((FrameworkElement)sender).DataContext);
+            var newMediaElement = srVideo.MediaElement;
             newMediaElement.LoadedBehavior = MediaState.Manual;
             if (newMediaElement.Clock != null)
             {
@@ -32,6 +33,13 @@ namespace SandRibbon.Components.ResourceDictionaries
                     newMediaElement.Clock.Controller.Seek(new TimeSpan(0, 0, 0), System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
                 newMediaElement.Clock.Controller.Resume();
             }
+            newMediaElement.UpdateLayout();
+            var rectToPush = new Rectangle();
+            rectToPush.Fill = new VisualBrush(newMediaElement);
+            rectToPush.Stroke = Brushes.Red;
+            rectToPush.Height = newMediaElement.ActualHeight;
+            rectToPush.Width = newMediaElement.ActualWidth;
+            Commands.MirrorVideo.Execute(new SandRibbonInterop.VideoMirror.VideoMirrorInformation { id = srVideo.tag().id, rect = rectToPush });
             newMediaElement.Play();
         }
         public void Video_Pause(object sender, RoutedEventArgs e)
