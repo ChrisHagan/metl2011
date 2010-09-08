@@ -151,8 +151,8 @@ namespace SandRibbon.Providers
             {
                 try
                 {
-                responseString = decode(client().UploadFile(uri, filename));
-                break;
+                    responseString = decode(client().UploadFile(uri, filename));
+                    break;
                 }
                 catch (Exception)
                 {
