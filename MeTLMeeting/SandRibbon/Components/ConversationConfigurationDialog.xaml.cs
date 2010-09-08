@@ -53,6 +53,7 @@ namespace SandRibbon.Components
             if (conversationSubjectListBox.Items.Count > 0)
                 conversationSubjectListBox.SelectedItem = conversationSubjectListBox.Items[conversationSubjectListBox.Items.IndexOf(details.Subject.ToString())];
         }
+        private bool isFirstRun = true;
         private void UpdateDialogBoxAppearance()
         {
             switch (dialogMode)
@@ -60,8 +61,8 @@ namespace SandRibbon.Components
                 case ConversationConfigurationMode.CREATE:
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Collapsed;
-                    CommitButton.Content = "Create Conversation";
-                    if (startingContentSelector != null && startingContentSelector.Items.Count > 0)
+                    CommitButton.Content = "Create";
+                    if (isFirstRun && startingContentSelector != null && startingContentSelector.Items.Count > 0)
                         startingContentSelector.SelectedIndex = 0;
                     if (details == null)
                         details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
@@ -69,7 +70,7 @@ namespace SandRibbon.Components
                 case ConversationConfigurationMode.EDIT:
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
-                    CommitButton.Content = "Update Conversation";
+                    CommitButton.Content = "Update";
                     details = ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation);
                     PopulateFields();
                     if (details == null)
@@ -81,8 +82,8 @@ namespace SandRibbon.Components
                 case ConversationConfigurationMode.IMPORT:
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Visible;
-                    CommitButton.Content = "Import PowerPoint into Conversation";
-                    if (startingContentSelector != null && startingContentSelector.Items.Count > 1)
+                    CommitButton.Content = "Create";
+                    if (isFirstRun && startingContentSelector != null && startingContentSelector.Items.Count > 1)
                         startingContentSelector.SelectedIndex = 1;
                     if (details == null)
                         details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
@@ -90,7 +91,7 @@ namespace SandRibbon.Components
                 case ConversationConfigurationMode.DELETE:
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
-                    CommitButton.Content = "Delete Conversation";
+                    CommitButton.Content = "Create";
                     if (details == null)
                     {
                         MessageBox.Show("No valid conversation currently selected.  Please ensure you are in a conversation you own when deleting a conversation.");
@@ -98,6 +99,7 @@ namespace SandRibbon.Components
                     }
                     break;
             }
+            isFirstRun = false;
         }
         private void BrowseFiles(object sender, RoutedEventArgs e)
         {
