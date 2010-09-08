@@ -61,36 +61,46 @@
                             BorderBrush="DarkGray" BorderThickness="1"
                             Background="{StaticResource BackgroundBlueGradient}">
                             <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent},Converter={x:Static my:Converters.videoMediaElementToMediaElementConverter}}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                    <RowDefinition Height="30"/>
-                                    <RowDefinition Height="20"/>
-                                </Grid.RowDefinitions >
-                                <Viewbox Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="{Binding Height, Converter={x:Static my:Converters.videoPaddingSubtractorConverter}}" Width="Auto">
+                                <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="{Binding Height, Converter={x:Static my:Converters.videoMirrorPaddingSubtractorConverter}}" Width="Auto">
                                     <ContentPresenter
                                               Content="{Binding Path=MediaElement}"/>
                                 </Viewbox>
-                                <StackPanel Grid.Row="1" Orientation="Horizontal" >
-                                    <Button Content="Play" Click="Video_Play"/>
-                                    <Button Content="Pause" Click="Video_Pause"/>
-                                    <Button Content="Mute" Click="Video_Mute"/>
-                                    <Slider Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=MediaElement.Volume}" Minimum="0" Maximum="1" Width="100"/>
-                                </StackPanel>
-                                <Grid Grid.Row="2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="80"/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="80"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Label Grid.Column="0" Content="{Binding ElementName=scrubBar, Path=Value, Converter={x:Static my:Converters.milisecondsToTimeConverter}}"/>
-                                    <Slider Grid.Column="1" Name="scrubBar" Initialized="CreateMediaTimeline" 
+                                <Border Opacity="0" VerticalAlignment="Bottom" Name="ControlsBorder" CornerRadius="4" Padding="4" 
+                            BorderBrush="DarkGray" BorderThickness="1"
+                            Background="{StaticResource BackgroundBlueGradient}">
+                                    <Grid >
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="40"/>
+                                        </Grid.RowDefinitions>
+                                        <StackPanel Grid.Row="0" Orientation="Horizontal" >
+                                            <Button Content="Play" Click="Video_Play"/>
+                                            <Button Content="Pause" Click="Video_Pause"/>
+                                            <Button Content="Mute" Click="Video_Mute"/>
+                                            <Slider Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=MediaElement.Volume}" Minimum="0" Maximum="1" Width="100"/>
+                                        </StackPanel>
+                                        <Grid Grid.Row="1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="80"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Grid.Column="0" Content="{Binding ElementName=scrubBar, Path=Value, Converter={x:Static my:Converters.milisecondsToTimeConverter}}"/>
+                                            <Slider Grid.Column="1" Name="scrubBar" Initialized="CreateMediaTimeline" 
                                         Minimum="0" ValueChanged="sliderValueChanged" PreviewMouseDown="sliderMouseDown" 
                                         PreviewMouseUp="sliderMouseUp" IsMoveToPointEnabled="False" TickFrequency="1000" IsSnapToTickEnabled="True" SmallChange="1000" />
-                                    <Label Grid.Column="2" Content="{Binding ElementName=scrubBar, Path=Maximum, Converter={x:Static my:Converters.milisecondsToTimeConverter}}"/>
-                                </Grid>
+                                            <Label Grid.Column="2" Content="{Binding ElementName=scrubBar, Path=Maximum, Converter={x:Static my:Converters.milisecondsToTimeConverter}}"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
                             </Grid>
                         </Border>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ControlsBorder" Property="Opacity" Value="0.7"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

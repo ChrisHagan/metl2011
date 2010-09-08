@@ -28,7 +28,7 @@ namespace SandRibbon.Providers
         {
             get 
             {
-                //isStaging = true;
+                isStaging = true;
                 if (isStaging)
                 {
                     if (stagingServer == null)
