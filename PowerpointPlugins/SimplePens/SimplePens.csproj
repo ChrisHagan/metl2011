@@ -180,6 +180,7 @@
   -->
   <ItemGroup>
     <Compile Include="Commands.cs" />
+    <Compile Include="Converters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -214,6 +215,7 @@
     <Compile Include="ThisAddIn.Designer.cs">
       <DependentUpon>ThisAddIn.Designer.xml</DependentUpon>
     </Compile>
+    <Compile Include="WindowsInteropFunctions.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
@@ -246,6 +248,14 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\pptSwitchDisplay.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\MeTLHighlighterOverlay.png" />
+    <Resource Include="Resources\MeTLPenOverlay.png" />
+    <Resource Include="Resources\ShinyEraser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ArrowCursor.png" />
   </ItemGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
