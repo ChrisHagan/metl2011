@@ -15,7 +15,19 @@ namespace PowerpointJabber
     {
         public static ThisAddIn instance;
         public SimplePenWindow SSSW;
-        public bool customPresenterIsEnabled = true;
+        public bool customPresenterIsEnabled
+        {
+            get
+            {
+                Properties.Settings.Default.Reload();
+                return Properties.Settings.Default.SimplePensEnabled;
+            }
+            set
+            {
+                Properties.Settings.Default.SimplePensEnabled = value;
+                Properties.Settings.Default.Save();
+            }
+        }
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {

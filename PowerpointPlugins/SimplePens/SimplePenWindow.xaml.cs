@@ -43,6 +43,7 @@ namespace PowerpointJabber
             currentPen = pens[0];
             PensControl.Items.Clear();
             PensControl.ItemsSource = pens;
+            ReFocusPresenter();
         }
         private void DisableClickAdvance()
         {
