@@ -25,20 +25,21 @@
     <NoStandardLibraries>false</NoStandardLibraries>
     <RootNamespace>PowerpointJabber</RootNamespace>
     <AssemblyName>SimplePens</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
     <ManifestCertificateThumbprint>4E92C5AB87076A4BEA32036360CF040324D59F62</ManifestCertificateThumbprint>
     <ManifestKeyFile>PowerpointJabber_TemporaryKey.pfx</ManifestKeyFile>
     <SignManifests>true</SignManifests>
-    <IsWebBootstrapper>False</IsWebBootstrapper>
+    <IsWebBootstrapper>True</IsWebBootstrapper>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <PublishUrl>publish\</PublishUrl>
-    <InstallUrl>
-    </InstallUrl>
+    <InstallUrl>http://metl.adm.monash.edu.au/SimplePens/</InstallUrl>
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.6</ApplicationVersion>
+    <ApplicationVersion>1.0.0.1</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
-    <UpdateInterval>7</UpdateInterval>
+    <UpdateInterval>30</UpdateInterval>
     <UpdateIntervalUnits>days</UpdateIntervalUnits>
   </PropertyGroup>
   <ItemGroup>
@@ -160,15 +161,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="Microsoft.Office.Tools.v9.0, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Office.Tools.Common.v9.0, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Tools.Applications.Runtime.v9.0, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -231,7 +223,6 @@
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Ribbon1.cs" />
     <Compile Include="SimplePenWindow.xaml.cs">

@@ -24,7 +24,7 @@
     <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
     <RootNamespace>PowerpointJabber</RootNamespace>
-    <AssemblyName>SimplePens</AssemblyName>
+    <AssemblyName>FileUploadPlugin</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <ManifestCertificateThumbprint>4E92C5AB87076A4BEA32036360CF040324D59F62</ManifestCertificateThumbprint>
     <ManifestKeyFile>PowerpointJabber_TemporaryKey.pfx</ManifestKeyFile>
@@ -208,8 +208,9 @@
     can be found.
   -->
   <ItemGroup>
-    <Compile Include="Commands.cs" />
-    <Compile Include="Converters.cs" />
+    <Compile Include="HttpResourceProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -234,9 +235,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Ribbon1.cs" />
-    <Compile Include="SimplePenWindow.xaml.cs">
-      <DependentUpon>SimplePenWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -246,17 +244,11 @@
     <Compile Include="ThisAddIn.Designer.cs">
       <DependentUpon>ThisAddIn.Designer.xml</DependentUpon>
     </Compile>
-    <Compile Include="WindowsInteropFunctions.cs" />
+    <Compile Include="VLE integration.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Ribbon1.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="SimplePenWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\pptBlackScreen.png">
