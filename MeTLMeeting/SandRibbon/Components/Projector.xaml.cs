@@ -99,6 +99,10 @@ namespace SandRibbon.Components
         }
         private void setLayer(object obj)
         {
+            foreach (var layer in stack.stack.Children)
+            {
+                ((UIElement)layer).Opacity = 1;
+            } 
         }
         private void startProjector(object obj)
         {
