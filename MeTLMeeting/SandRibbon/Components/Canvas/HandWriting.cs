@@ -45,6 +45,8 @@ namespace SandRibbon.Components.Canvas
             Commands.ActualChangePenSize.RegisterCommand(new DelegateCommand<double>(penSize =>
             {
                 var newAttributes = DefaultDrawingAttributes.Clone();
+                newAttributes.FitToCurve = true;
+                newAttributes.IgnorePressure = false;
                 newAttributes.Width = penSize;
                 newAttributes.Height = penSize;
                 if (newAttributes.Height > DrawingAttributes.MinHeight && newAttributes.Height < DrawingAttributes.MaxHeight
@@ -54,6 +56,8 @@ namespace SandRibbon.Components.Canvas
             Commands.IncreasePenSize.RegisterCommand(new DelegateCommand<object>(_obj =>
             {
                 var newAttributes = DefaultDrawingAttributes.Clone();
+                newAttributes.FitToCurve = true;
+                newAttributes.IgnorePressure = false;
                 newAttributes.Width += 5;
                 newAttributes.Height += 5;
                 DefaultDrawingAttributes = newAttributes;
@@ -62,6 +66,8 @@ namespace SandRibbon.Components.Canvas
              {
                  if ((DefaultDrawingAttributes.Width - 0.5) <= 0) return;
                  var newAttributes = DefaultDrawingAttributes.Clone();
+                 newAttributes.FitToCurve = true;
+                 newAttributes.IgnorePressure = false;
                  newAttributes.Width -= .5;
                  newAttributes.Height -= .5;
                  DefaultDrawingAttributes = newAttributes;
@@ -69,6 +75,8 @@ namespace SandRibbon.Components.Canvas
             Commands.RestorePenSize.RegisterCommand(new DelegateCommand<object>(_obj =>
             {
                 var newAttributes = DefaultDrawingAttributes.Clone();
+                newAttributes.FitToCurve = true;
+                newAttributes.IgnorePressure = false;
                 newAttributes.Width = defaultWidth;
                 newAttributes.Height = defaultHeight;
                 DefaultDrawingAttributes = newAttributes;
@@ -80,6 +88,8 @@ namespace SandRibbon.Components.Canvas
             Commands.ToggleHighlighterMode.RegisterCommand(new DelegateCommand<object>(_obj =>
             {
                 var newAttributes = DefaultDrawingAttributes.Clone();
+                newAttributes.FitToCurve = true;
+                newAttributes.IgnorePressure = false;
                 newAttributes.IsHighlighter = !newAttributes.IsHighlighter;
                 DefaultDrawingAttributes = newAttributes;
             }));
@@ -87,6 +97,8 @@ namespace SandRibbon.Components.Canvas
             {
                 var newAttributes = DefaultDrawingAttributes.Clone();
                 newAttributes.IsHighlighter = newIsHighlighter;
+                newAttributes.FitToCurve = true;
+                newAttributes.IgnorePressure = false;
                 DefaultDrawingAttributes = newAttributes;
             }));
             colorChangedCommand = new DelegateCommand<object>((colorObj) =>
@@ -96,6 +108,8 @@ namespace SandRibbon.Components.Canvas
                     newAttributes.Color = (Color)colorObj;
                 else if (colorObj is string)
                     newAttributes.Color = ColorLookup.ColorOf((string)colorObj);
+                newAttributes.FitToCurve = true;
+                newAttributes.IgnorePressure = false;
                 DefaultDrawingAttributes = newAttributes;
             });
             Commands.UpdateCursor.RegisterCommand(new DelegateCommand<Cursor>(UpdateCursor));

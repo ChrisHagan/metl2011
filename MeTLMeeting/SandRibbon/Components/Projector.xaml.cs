@@ -78,6 +78,7 @@ namespace SandRibbon.Components
         private void moveTo(object obj)
         {
             stack.Flush();
+            startProjector(null);
         }
 
 
@@ -93,9 +94,13 @@ namespace SandRibbon.Components
         }
         private void Projector_Loaded(object sender, RoutedEventArgs e)
         {
-            setProjectionLayers();
+            startProjector(null);
+            //setProjectionLayers();
         }
         private void setLayer(object obj)
+        {
+        }
+        private void startProjector(object obj)
         {
             setProjectionLayers();
             try

@@ -1150,6 +1150,7 @@ namespace SandRibbonInterop.MeTLStanzas
             private static Uri getCachedVideo(string url)
             {
                 var regex = new Regex(@".*?/Resource/(.*?)/(.*)");
+                if (url.StartsWith("Resource\\"))return new System.Uri(url, UriKind.RelativeOrAbsolute);
                 var match = regex.Matches(url)[0];
                 var room = match.Groups[1].Value;
                 var file = match.Groups[2].Value;

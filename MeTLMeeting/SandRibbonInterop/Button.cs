@@ -225,6 +225,7 @@ namespace SandRibbonInterop
         {
             this.Loaded += (a, b) =>
             {
+                RequestNewRectangle();
             };
         }
     }

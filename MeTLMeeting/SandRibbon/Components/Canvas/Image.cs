@@ -660,6 +660,7 @@ namespace SandRibbon.Components.Canvas
                     srVideo.VideoWidth = oldVideo.MediaElement.ActualWidth;
                     srVideo.Height = oldVideo.ActualHeight;
                     srVideo.Width = oldVideo.ActualWidth;
+                    //srVideo.VideoSource = oldVideo.VideoSource;
                     srVideo.VideoSource = new System.Uri("https://" + Constants.JabberWire.SERVER + ":1188/" + (SandRibbonInterop.LocalCache.MediaElementCache.RemoteSource(oldVideo.VideoSource).ToString()), UriKind.Absolute);
                     Commands.SendVideo.Execute(new TargettedVideo
                     {
