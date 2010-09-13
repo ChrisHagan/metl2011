@@ -43,7 +43,6 @@ namespace SandRibbon.Components.Sandpit
             Commands.ThoughtLiveWindow.RegisterCommand(new DelegateCommand<ThoughtBubbleLiveWindow>(mainSlideLiveWindow));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(mainWindowMove));
-            Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(dirtyStroke));
             var uri = new Uri(@"..\..\Resources\thoughtOutline.png", UriKind.RelativeOrAbsolute);
             var image = new BitmapImage(uri);
             thoughtMask = new ImageBrush
@@ -53,18 +52,11 @@ namespace SandRibbon.Components.Sandpit
             thoughtBorder.OpacityMask = thoughtMask;
             thought.Opacity = 0.3;
         }
-
-        private void dirtyStroke(TargettedDirtyElement stroke)
-        {
-            var a = stroke.identifier;
-        }
-
         private void mainWindowMove(int newSlide)
         {
             if (newSlide != parent)
                 Commands.SneakOutOf.Execute(room.ToString());
         }
-
         private void PreParserAvailable(PreParser parser)
         {
             thought.stack.handwriting.ReceiveStrokes(parser.ink);
@@ -151,10 +143,7 @@ namespace SandRibbon.Components.Sandpit
                 thoughtView.Width = ((System.Windows.Controls.Canvas)Parent).ActualWidth;
                 thoughtView.Height = ((System.Windows.Controls.Canvas)Parent).ActualHeight;
                 RLWViewBox.Visibility = Visibility.Visible;
-                Dispatcher.adoptAsync(delegate
-                {
-                    setThoughtAccess(true);
-                });
+                Dispatcher.adoptAsync(() => setThoughtAccess(true));
                 Commands.ExploreBubble.Execute(this);
             }
             else
@@ -164,8 +153,6 @@ namespace SandRibbon.Components.Sandpit
                 thoughtBorder.OpacityMask = thoughtMask;
                 thought.Opacity = 0.3;
                 thoughtView.MouseLeftButtonUp +=new MouseButtonEventHandler(toggleThoughtBubble);
-                //thought.MouseEnter += new MouseEventHandler(thought_MouseEnter);
-                //thought.MouseLeave += new MouseEventHandler(thought_MouseLeave);
                 RLWViewBox.Visibility = Visibility.Collapsed;
                 thoughtView.Width = 80;
                 thoughtView.Height = 80;

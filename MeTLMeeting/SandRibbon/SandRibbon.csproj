@@ -326,10 +326,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\Sandpit\ThoughtBubbleLauncher.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Components\Sandpit\ThoughtBubbleSpace.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -573,9 +569,6 @@
     </Compile>
     <Compile Include="Components\Sandpit\ThoughtBubble.xaml.cs">
       <DependentUpon>ThoughtBubble.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Sandpit\ThoughtBubbleLauncher.xaml.cs">
-      <DependentUpon>ThoughtBubbleLauncher.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Sandpit\ThoughtBubbleSpace.xaml.cs">
       <DependentUpon>ThoughtBubbleSpace.xaml</DependentUpon>
