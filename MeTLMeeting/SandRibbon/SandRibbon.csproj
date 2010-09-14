@@ -765,6 +765,7 @@
     <Resource Include="Resources\fontFamily.png" />
     <Resource Include="Resources\fontSize.png" />
     <Resource Include="Resources\Ribbon-ApplicationButton.png" />
+    <Resource Include="Resources\MeTL Collaborator.ico" />
     <Content Include="Resources\MeTL.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

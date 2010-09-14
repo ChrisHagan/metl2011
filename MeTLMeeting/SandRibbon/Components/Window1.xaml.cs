@@ -60,7 +60,11 @@ namespace SandRibbon
             InitializeComponent();
             var MeTLType = ConfigurationProvider.instance.getMeTLType();
             Title = MeTLType;
-            Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\"+ MeTLType + ".ico");
+            try
+            {
+                Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + MeTLType + ".ico");
+            }
+            catch (Exception) { }
             userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(SetIdentity));

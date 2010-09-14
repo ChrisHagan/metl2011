@@ -71,6 +71,9 @@ namespace SandRibbon.Providers
                 case "MeTL Presenter":
                     level = 2;
                     break;
+                case "MeTL Collaborator":
+                    level = 3;
+                    break;
                 default:
                     level = 3;
                     break;
