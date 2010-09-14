@@ -59,6 +59,11 @@ namespace SandRibbon
         private void DoConstructor()
         {
             InitializeComponent();
+            try
+            {
+                this.Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\MeTLPresenterIcon.ico");
+            }
+            catch (Exception) { }
             userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(SetIdentity));

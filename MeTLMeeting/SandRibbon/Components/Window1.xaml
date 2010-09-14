@@ -16,7 +16,7 @@
     WindowState="Maximized"
                  MinHeight="240"
                  MinWidth="320"
-    Icon="..\Resources\MeTLLogo-bronze.ico">
+    >
     <sr:RibbonWindow.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ZoomIn}" CanExecute="canZoomIn" Executed="doZoomIn" />
         <CommandBinding Command="{x:Static api:Commands.ZoomOut}" CanExecute="canZoomOut" Executed="doZoomOut" />
