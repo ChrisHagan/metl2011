@@ -70,7 +70,7 @@ namespace SandRibbon.Tabs
                                                          fileImage = getFileImage(fileInfo.url),
                                                          uploadTime =fileInfo.uploadTime, 
                                                          size = fileInfo.size,
-                                                         tooltip =  string.Format("Name: {0}\nAuthor: {1}\nUpload Time:{2}\nSize {3:0.00}mb", fileInfo.name, fileInfo.author, fileInfo.uploadTime, fileInfo.size / 1000000.0) 
+                                                         tooltip = string.Format("Type: {0}\nAuthor: {1}\nUpload Time:{2}\nSize {3:0.00}mb", getFileType(fileInfo.url), fileInfo.author, fileInfo.uploadTime, fileInfo.size / 1048576.0) 
                                                      }));
         }
 
@@ -160,7 +160,47 @@ namespace SandRibbon.Tabs
         }
         public static string getFileImage(string url)
         {
-            return @"C:\specialMeTL\MeTLMeeting\SandRibbon\Resources\mimetype_readme.png";
+            switch (getFileType("." + url.Split('.').Last()))
+            {
+                case "HTML":
+                    return "\\resources\\mimeTypes\\web.png";
+                case "Jpeg":
+                    return "\\resources\\mimeTypes\\image.png";
+                case "Audio":
+                    return "\\resources\\mimeTypes\\audio.png";
+                case "Other":
+                    return "\\resources\\mimeTypes\\unknown.png";
+                case "Bitmap":
+                    return "\\resources\\mimeTypes\\image.png";
+                case "PDF":
+                    return "\\resources\\mimeTypes\\publication.png";
+                case "Text":
+                    return "\\resources\\mimeTypes\\text.png";
+                case "Word":
+                    return "\\resources\\mimeTypes\\document.png";
+                case "PowerPoint":
+                    return "\\resources\\mimeTypes\\publication.png";
+                case "Excel":
+                    return "\\resources\\mimeTypes\\spreadsheet.png";
+                case "PNG":
+                    return "\\resources\\mimeTypes\\image.png";
+                case "GIF":
+                    return "\\resources\\mimeTypes\\image.png";
+                case "Windows Media Video":
+                    return "\\resources\\mimeTypes\\video.png";
+                case "Open Office Document":
+                    return "\\resources\\mimeTypes\\document.png";
+                case "Silverlight":
+                    return "\\resources\\mimeTypes\\gadget.png";
+                case "Shockwave":
+                    return "\\resources\\mimeTypes\\gadget.png";
+                case "Quicktime":
+                    return "\\resources\\mimeTypes\\video.png";
+                case "Video":
+                    return "\\resources\\mimeTypes\\video.png";
+                default:
+                    return "\\resources\\mimeTypes\\unknown.png";
+            }
         }
     }
 }
