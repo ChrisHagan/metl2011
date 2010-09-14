@@ -601,8 +601,7 @@ namespace SandRibbon.Components.Canvas
                                        {
                                            Height = ((System.Windows.Controls.Image) selectedImage).ActualHeight,
                                            Width = ((System.Windows.Controls.Image) selectedImage).Width,
-                                           Source = (ImageSource) new ImageSourceConverter().ConvertFrom( SandRibbonInterop.LocalCache.ImageCache.RemoteSource( new Uri( ((System.Windows.Controls.Image) selectedImage).Source. ToString(), UriKind.Relative)))
-                                           //Source = ((System.Windows.Controls.Image)selectedImage).Source
+                                           Source = (ImageSource) new ImageSourceConverter().ConvertFrom(SandRibbonInterop.LocalCache.ResourceCache.RemoteSource( new Uri( ((System.Windows.Controls.Image) selectedImage).Source. ToString(), UriKind.Relative)))
                                        };
                     InkCanvas.SetLeft(newImage, selectedImageLeft);
                     InkCanvas.SetTop(newImage, selectedImageTop);
@@ -661,7 +660,7 @@ namespace SandRibbon.Components.Canvas
                     srVideo.Height = oldVideo.ActualHeight;
                     srVideo.Width = oldVideo.ActualWidth;
                     //srVideo.VideoSource = oldVideo.VideoSource;
-                    srVideo.VideoSource = new System.Uri("https://" + Constants.JabberWire.SERVER + ":1188/" + (SandRibbonInterop.LocalCache.MediaElementCache.RemoteSource(oldVideo.VideoSource).ToString()), UriKind.Absolute);
+                    srVideo.VideoSource = new System.Uri("https://" + Constants.JabberWire.SERVER + ":1188/" + ( SandRibbonInterop.LocalCache.ResourceCache.RemoteSource(oldVideo.VideoSource).ToString()), UriKind.Absolute);
                     Commands.SendVideo.Execute(new TargettedVideo
                     {
                         author = Globals.me,
