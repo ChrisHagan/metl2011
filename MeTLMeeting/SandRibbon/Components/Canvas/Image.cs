@@ -601,14 +601,14 @@ namespace SandRibbon.Components.Canvas
                                        {
                                            Height = ((System.Windows.Controls.Image) selectedImage).ActualHeight,
                                            Width = ((System.Windows.Controls.Image) selectedImage).Width,
-                                           //Source = (ImageSource) new ImageSourceConverter().ConvertFrom( SandRibbonInterop.LocalCache.ImageCache.RemoteSource( new Uri( ((System.Windows.Controls.Image) selectedImage).Source. ToString(), UriKind.Relative)))
-                                           Source = ((System.Windows.Controls.Image)selectedImage).Source
+                                           Source = (ImageSource) new ImageSourceConverter().ConvertFrom( SandRibbonInterop.LocalCache.ImageCache.RemoteSource( new Uri( ((System.Windows.Controls.Image) selectedImage).Source. ToString(), UriKind.Relative)))
+                                           //Source = ((System.Windows.Controls.Image)selectedImage).Source
                                        };
                     InkCanvas.SetLeft(newImage, selectedImageLeft);
                     InkCanvas.SetTop(newImage, selectedImageTop);
                     var tag = ((System.Windows.Controls.Image)selectedImage).tag();
                     tag.zIndex = -1;
-                    ((System.Windows.Controls.Image)newImage).tag(tag);
+                    newImage.tag(tag);
                     Commands.SendImage.Execute(new TargettedImage
                     {
                         author = Globals.me,

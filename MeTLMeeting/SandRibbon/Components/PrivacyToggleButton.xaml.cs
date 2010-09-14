@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SandRibbon.Providers;
+using SandRibbon.Providers.Structure;
+using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 
 namespace SandRibbon.Components
@@ -69,6 +71,33 @@ namespace SandRibbon.Components
             {
                 privacyChoice = privacy;
                 ElementBounds = bounds;
+            }
+        }
+
+        private void bubbleContent(object sender, RoutedEventArgs e)
+        {
+            var slide = Globals.slide;
+            var currentDetails = Globals.conversationDetails;
+            string target = null;
+            var selection = new List<SelectedIdentity>();
+            foreach(var registeredCommand in Commands.DoWithCurrentSelection.RegisteredCommands)
+                registeredCommand.Execute((Action<SelectedIdentity>)(id=>{
+                    target = id.target;
+                    selection.Add(id);
+                }));
+            if (selection.Count() > 0)
+            {
+                var details = ConversationDetailsProviderFactory.Provider.AppendSlideAfter(Globals.slide, currentDetails.Jid, Slide.TYPE.THOUGHT);
+                var newSlide = details.Slides.Select(s => s.id).Max();
+                Commands.SendNewBubble.Execute(new TargettedBubbleContext
+                                                   {
+                                                       author = Globals.me,
+                                                       context = selection,
+                                                       privacy = "public",
+                                                       slide = slide,
+                                                       target = target,
+                                                       thoughtSlide =newSlide 
+                                                   });
             }
         }
     }

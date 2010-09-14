@@ -12,9 +12,6 @@
     <sr:RibbonGroup Header="S15 Board Manager">
         <sandpit:BoardManagerLauncher />
     </sr:RibbonGroup>
-    <sr:RibbonGroup Header="Bubbles">
-        <sandpit:ThoughtBubbleLauncher />
-    </sr:RibbonGroup>
     <sr:RibbonGroup Header="Diagnostics">
         <components:RubyRepl /> 
     </sr:RibbonGroup>

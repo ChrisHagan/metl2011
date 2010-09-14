@@ -7,7 +7,11 @@
         <core:String x:Key="defaultPrivacy">public</core:String>
         <core:String x:Key="target">thoughtBubble</core:String>
     </UserControl.Resources>
-    <Grid>
+    <StackPanel x:Name="thoughtSpace" Orientation="Vertical">
+        <StackPanel Orientation="Horizontal"  Background="{StaticResource BackgroundBlueGradient}">
+            <Button>Make Bubble Public</Button>
+            <Button>Make Bubble Private</Button> 
+        </StackPanel>
         <components:UserCanvasStack x:Name="stack"/>
-    </Grid>
+    </StackPanel>
 </UserControl>

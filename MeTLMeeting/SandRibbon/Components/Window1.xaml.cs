@@ -212,15 +212,21 @@ namespace SandRibbon
         }
         private void GrabMove(Point moveDelta)
         {
-            if (moveDelta.X != 0)
+            try
             {
-                var HZoomRatio = (scroll.ExtentWidth / scroll.Width);
-                scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + (moveDelta.X * HZoomRatio));
-            } 
-            if (moveDelta.Y != 0)
-            {
-                var VZoomRatio = (scroll.ExtentHeight / scroll.Height);
-                scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y * VZoomRatio);
+                if (moveDelta.X != 0)
+                {
+                    var HZoomRatio = (scroll.ExtentWidth/scroll.Width);
+                    scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + (moveDelta.X*HZoomRatio));
+                }
+                if (moveDelta.Y != 0)
+                {
+                    var VZoomRatio = (scroll.ExtentHeight/scroll.Height);
+                    scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y*VZoomRatio);
+                }
+            }
+            catch(Exception e)
+            {//out of range exceptions and the like 
             }
         }
         private void ChangeTab(string which)

@@ -80,8 +80,6 @@ namespace SandRibbon.Components
             stack.Flush();
             startProjector(null);
         }
-
-
         private void Projector_MouseLeave(object sender, MouseEventArgs e)
         {
             PenUp();
@@ -95,10 +93,14 @@ namespace SandRibbon.Components
         private void Projector_Loaded(object sender, RoutedEventArgs e)
         {
             startProjector(null);
-            //setProjectionLayers();
         }
         private void setLayer(object obj)
         {
+            Dispatcher.adoptAsync(() =>
+                                      {
+                                          foreach (var layer in stack.stack.Children)
+                                              ((UIElement) layer).Opacity = 1;
+                                      });
         }
         private void startProjector(object obj)
         {
@@ -195,7 +197,7 @@ namespace SandRibbon.Components
         private void SetPrivacy(string privacy)
         {
             Projector.privacy = privacy;
-            setProjectionLayers();
+            //setProjectionLayers();
         }
         public static void PenMoving(StylusPointCollection points)
         {

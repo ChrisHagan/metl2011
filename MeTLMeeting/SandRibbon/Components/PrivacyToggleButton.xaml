@@ -2,21 +2,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:SandRibbon="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     >
     <Canvas>
         <StackPanel Margin="10, 0, 0, 0" x:Name="privacyButtons" Orientation="Vertical" Background="{StaticResource BackgroundBlueGradient}" >
             <SandRibbonInterop:Button x:Name="deleteButton" ToolTip="{StaticResource DeleteContentToolTip}" Icon="\Resources\Delete.png" Text="Delete" Click="deleteContent" InternalButtonSize="Small"/>
             <SandRibbonInterop:Button x:Name="hideButton" ToolTip="{StaticResource HideContentToolTip}" Icon="\Resources\Hide.png" Text="Hide" Click="hideContent" InternalButtonSize="Small"/>
             <SandRibbonInterop:Button x:Name="showButton" ToolTip="{StaticResource ShowContentToolTip}" Icon="\Resources\Show.png" Text="Show" Click="showContent" InternalButtonSize="Small"/>
-            <!--<Button x:Name="deleteButton" Click="deleteContent">
-                <Label Content="Delete"/>
-            </Button>
-            <Button x:Name="hideButton" Click="hideContent">
-                <Label Content="Hide"/>
-            </Button>
-            <Button x:Name="showButton" Click="showContent">
-                <Label Content="Show"/>
-            </Button>-->
         </StackPanel>
     </Canvas>
 </UserControl>
