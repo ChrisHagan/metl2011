@@ -42,6 +42,7 @@ namespace SandRibbon
         private DelegateCommand<string> powerPointFinished;
         private PowerPointLoader loader = new PowerPointLoader();
         private UndoHistory history = new UndoHistory();
+        public ConversationDetails details;
         private JabberWire wire;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
@@ -122,6 +123,7 @@ namespace SandRibbon
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
@@ -129,6 +131,7 @@ namespace SandRibbon
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
 
             adornerScroll.scroll = scroll;
@@ -163,6 +166,7 @@ namespace SandRibbon
         }
         private void ShowEditSlidesDialog(object unused)
         {
+            new SlidesEditingDialog().ShowDialog();
             var seDialog = new SlidesEditingDialog();
             seDialog.Owner = Window.GetWindow(this);
             seDialog.ShowDialog();
@@ -216,6 +220,10 @@ namespace SandRibbon
         }
         private void GrabMove(Point moveDelta)
         {
+            if (moveDelta.X != 0)
+                scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + moveDelta.X);
+            if (moveDelta.Y != 0)
+                scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y);
             try
             {
                 if (moveDelta.X != 0)
@@ -246,6 +254,7 @@ namespace SandRibbon
         private void AdjustReportedDrawingAttributesAccordingToZoom(object attributes)
         {
             var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
+            if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN) 
             if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN)
                 return;
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
@@ -783,6 +792,7 @@ namespace SandRibbon
             var cvHeight = adornerGrid.ActualHeight;
             var cvWidth = adornerGrid.ActualWidth;
             var cvRatio = cvWidth / cvHeight;
+            var scrollRatio = scroll.ActualWidth / scroll.ActualHeight;
             double newWidth = 0;
             double newHeight = 0;
             double oldWidth = scroll.ActualWidth;
@@ -790,10 +800,12 @@ namespace SandRibbon
             var scrollRatio = oldWidth / oldHeight;
             if (scrollRatio > cvRatio)
             {
+                var newWidth = scroll.ActualWidth * ZoomValue;
                 newWidth = scroll.ActualWidth * ZoomValue;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
                 scroll.Width = newWidth;
+                var newHeight = newWidth / cvRatio;
                 newHeight = newWidth / cvRatio;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
@@ -801,10 +813,12 @@ namespace SandRibbon
             }
             if (scrollRatio < cvRatio)
             {
+                var newHeight = scroll.ActualHeight * ZoomValue;
                 newHeight = scroll.ActualHeight * ZoomValue;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
                 scroll.Height = newHeight;
+                var newWidth = newHeight * cvRatio;
                 newWidth = newHeight * cvRatio;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
@@ -812,10 +826,12 @@ namespace SandRibbon
             }
             if (scrollRatio == cvRatio)
             {
+                var newHeight = scroll.ActualHeight * ZoomValue;
                 newHeight = scroll.ActualHeight * ZoomValue;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
                 scroll.Height = newHeight;
+                var newWidth = scroll.ActualWidth * ZoomValue;
                 newWidth = scroll.ActualWidth * ZoomValue;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
@@ -832,6 +848,7 @@ namespace SandRibbon
             var cvHeight = adornerGrid.ActualHeight;
             var cvWidth = adornerGrid.ActualWidth;
             var cvRatio = cvWidth / cvHeight;
+            var scrollRatio = scroll.ActualWidth / scroll.ActualHeight;
             double newWidth = 0;
             double newHeight = 0;
             double oldWidth = scroll.ActualWidth;
@@ -839,10 +856,12 @@ namespace SandRibbon
             var scrollRatio = oldWidth / oldHeight;
             if (scrollRatio > cvRatio)
             {
+                var newWidth = scroll.ActualWidth * ZoomValue;
                 newWidth = scroll.ActualWidth * ZoomValue;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
                 scroll.Width = newWidth;
+                var newHeight = newWidth / cvRatio;
                 newHeight = newWidth / cvRatio;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
@@ -850,10 +869,12 @@ namespace SandRibbon
             }
             if (scrollRatio < cvRatio)
             {
+                var newHeight = scroll.ActualHeight * ZoomValue;
                 newHeight = scroll.ActualHeight * ZoomValue;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
                 scroll.Height = newHeight;
+                var newWidth = newHeight * cvRatio;
                 newWidth = newHeight * cvRatio;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
@@ -861,10 +882,12 @@ namespace SandRibbon
             }
             if (scrollRatio == cvRatio)
             {
+                var newHeight = scroll.ActualHeight * ZoomValue;
                 newHeight = scroll.ActualHeight * ZoomValue;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
                 scroll.Height = newHeight;
+                var newWidth = scroll.ActualWidth * ZoomValue;
                 newWidth = scroll.ActualWidth * ZoomValue;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
@@ -879,6 +902,15 @@ namespace SandRibbon
         }
         private void SetConversationPermissions(object obj)
         {
+            var style = (string)obj;
+            foreach (var s in new[]{
+                Permissions.LABORATORY_PERMISSIONS,
+                Permissions.TUTORIAL_PERMISSIONS,
+                Permissions.LECTURE_PERMISSIONS,
+                Permissions.MEETING_PERMISSIONS})
+                if (s.Label == style)
+                    details.Permissions = s;
+            ConversationDetailsProviderFactory.Provider.Update(details);
             try
             {
                 var style = (string) obj;
@@ -901,6 +933,7 @@ namespace SandRibbon
         }
         private bool CanSetConversationPermissions(object _style)
         {
+            return details != null && userInformation.credentials.name == details.Author;
             try
             {
                 return Globals.conversationDetails != null && userInformation.credentials.name == Globals.conversationDetails.Author;
@@ -962,6 +995,7 @@ namespace SandRibbon
                     case 0:
                         ClearUI();
                         homeGroups.Add(new EditingOptions());
+                        //homeGroups.Add(new PenColors());
                         break;
                     case 1:
                         tabs.Add(new Tabs.Quizzes());
@@ -969,6 +1003,8 @@ namespace SandRibbon
                         tabs.Add(new Tabs.Attachments());
                         homeGroups.Add(new PrivacyToolsHost());
                         homeGroups.Add(new EditingModes());
+                        //homeGroups.Add(new ToolBox());
+                        //homeGroups.Add(new TextTools());
                         break;
                     case 2:
                         ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
@@ -978,6 +1014,10 @@ namespace SandRibbon
                         break;
                     case 3:
                         homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
+                        homeGroups.Add(new Notes());
+                        tabs.Add(new Tabs.Analytics());
+                        tabs.Add(new Tabs.Plugins());
+                        //privacyTools.Children.Add(new PrivacyTools());
                         //homeGroups.Add(new Notes());
                         break;
                     default:
