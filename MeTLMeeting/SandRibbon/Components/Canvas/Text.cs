@@ -664,12 +664,10 @@ namespace SandRibbon.Components.Canvas
                                                    removeDoomedTextBoxes(targettedBox);
                                                });
             }
-
             if (targettedBox.slide == currentSlide && (targettedBox.privacy == "public" || (targettedBox.author == Globals.me && me != "projector")))
             {
                 Dispatcher.adoptAsync(delegate
                 {
-
                     doText(targettedBox);
                 });
             }
