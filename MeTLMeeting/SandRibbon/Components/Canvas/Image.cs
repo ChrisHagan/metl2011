@@ -88,6 +88,32 @@ namespace SandRibbon.Components.Canvas
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedImages));
             Commands.MirrorVideo.RegisterCommand(new DelegateCommand<SandRibbonInterop.VideoMirror.VideoMirrorInformation>(mirrorVideo));
             Commands.VideoMirrorRefreshRectangle.RegisterCommand(new DelegateCommand<string>(mirrorVideoRefresh));
+            Commands.UserVisibility.RegisterCommand(new DelegateCommand<VisibilityInformation>(setUserVisibility));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(clearVisibilityDictionary));
+        }
+
+        private void clearVisibilityDictionary(object obj)
+        {
+           userImages.Clear(); 
+        }
+
+        private void setUserVisibility(VisibilityInformation info)
+        {
+                    Dispatcher.adoptAsync(() =>
+                                  {
+
+                                      Children.Clear();
+                                      userVisibility[info.user] = info.visible;
+                                      var visibleUsers =
+                                          userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
+                                      var allVisibleImages = new List<TargettedImage>();
+                                      foreach(var user in visibleUsers)
+                                      {
+                                        if(userImages.ContainsKey(user))
+                                            allVisibleImages.AddRange(userImages[user]);
+                                      }
+                                      ReceiveImages(allVisibleImages);
+                                  });
         }
 
         private void deleteSelectedImages(object obj)
@@ -371,7 +397,7 @@ namespace SandRibbon.Components.Canvas
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
             var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
-            if(userImages.ContainsKey(author))
+            if(userImages.ContainsKey(author) && element.target == target)
             {
                 var dirtyImage = userImages[author].Where(i => i.id == element.identifier).FirstOrDefault();
                 if (dirtyImage != null)

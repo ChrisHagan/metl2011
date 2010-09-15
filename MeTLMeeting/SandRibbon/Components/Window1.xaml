@@ -38,7 +38,7 @@
     <sr:RibbonWindow.Ribbon>
         <sr:Ribbon x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" 
                    ShowHelp="false" ApplicationButtonImage="\Resources\Ribbon-ApplicationButton.png">
-            <!--SizeChanged="fixAutoSizing">-->
+                   <!--SizeChanged="fixAutoSizing">-->
             <sr:Ribbon.ToolBar>
                 <chrome:ToolBar />
             </sr:Ribbon.ToolBar>
@@ -47,7 +47,6 @@
     <sr:RibbonWindow.StatusBar>
         <chrome:StatusBar Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}"/>
     </sr:RibbonWindow.StatusBar>
-<<<<<<< my
     <Grid>
         <Grid x:Name="EffectRoot">
             <Grid x:Name="columns">
@@ -62,54 +61,27 @@
                     <components:Friends x:Name="friends" />
                 </Grid>
                 <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Visibility="Collapsed" 
-=======
-    <Grid x:Name="EffectRoot">
-        <Grid x:Name="columns">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="LHSDrawerDefinition" Width="0"/>
-                <ColumnDefinition x:Name="LHSSplitterDefinition" Width="0"/>
-                <ColumnDefinition x:Name="canvasContentDefinition" MinWidth="40" />
-                <ColumnDefinition x:Name="RHSSplitterDefinition" Width="10" />
-                <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Collapsed">
-                <components:Friends x:Name="friends" />
-            </Grid>
-            <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Visibility="Collapsed" 
->>>>>>> your
                               HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
-            <Grid Grid.Column="2">
-                <Grid x:Name="adornerGrid" Margin="0,0,27,27" SizeChanged="adornerGrid_SizeChanged">
-                    <InkCanvas EditingMode="None" Background="Transparent" x:Name="adorner"/>
-                    <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
-                        <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                            <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
-                        </ScrollViewer>
-                    </Viewbox>
-                    <Grid x:Name="dynamicContent" />
-                    <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" Background="{StaticResource BackgroundGrayGradient}">
+                <Grid Grid.Column="2">
+                    <Grid x:Name="adornerGrid" Margin="0,0,27,27" SizeChanged="adornerGrid_SizeChanged">
+                        <InkCanvas EditingMode="None" Background="Transparent" x:Name="adorner"/>
+                        <Viewbox x:Name="canvasViewBox" SizeChanged="zoomConcernedControlSizeChanged">
+                            <ScrollViewer x:Name="scroll" SizeChanged="zoomConcernedControlSizeChanged" ScrollChanged="scroll_ScrollChanged" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                <components:PresentationSpace Height="auto" Width="auto" x:Name="canvas"/>
+                            </ScrollViewer>
+                        </Viewbox>
+                        <Grid x:Name="dynamicContent" />
+                        <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" Background="{StaticResource BackgroundGrayGradient}">
+                        </Grid>
+                        <Canvas Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">
+                            <StackPanel x:Name="ProgressDisplay" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Canvas>
                     </Grid>
-<<<<<<< my
                     <components:ScrollBar x:Name="adornerScroll"/>
                     <AdornerDecorator>
                         <Canvas x:Name="privacyTools"/>
                     </AdornerDecorator>
-=======
-                    <Canvas Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">
-                        <StackPanel x:Name="ProgressDisplay" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Canvas>
->>>>>>> your
                 </Grid>
-<<<<<<< my
-=======
-                <components:ScrollBar x:Name="adornerScroll"/>
-                <AdornerDecorator>
-                    <Canvas x:Name="privacyTools"/>
-                </AdornerDecorator>
-            </Grid>
-            <GridSplitter x:Name="notesGridSplitter" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
-            <Grid Grid.Column="2" x:Name="rightDrawerHost">
->>>>>>> your
                 <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
                     <Grid Grid.Column="4" x:Name="rightDrawer">
                         <components:SlideDisplay x:Name="slides" />

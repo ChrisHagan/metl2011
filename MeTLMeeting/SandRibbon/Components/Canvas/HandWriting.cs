@@ -140,7 +140,8 @@ namespace SandRibbon.Components.Canvas
                                           var allVisibleStrokes = new List<TargettedStroke>();
                                           foreach(var user in visibleUsers)
                                           {
-                                            allVisibleStrokes.AddRange(userStrokes[user]);
+                                              if(userStrokes.ContainsKey(user))
+                                                  allVisibleStrokes.AddRange(userStrokes[user]);
                                           }
                                           ReceiveStrokes(allVisibleStrokes);
                                       });

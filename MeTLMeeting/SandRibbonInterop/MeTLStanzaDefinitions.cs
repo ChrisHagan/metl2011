@@ -1203,8 +1203,15 @@ namespace SandRibbonInterop.MeTLStanzas
                 }
                 catch (Exception e)
                 {
-
-                    return BitmapSource.Create(1, 1, 96, 96, PixelFormats.BlackWhite, BitmapPalettes.BlackAndWhite, new byte[96 * 96], 1);
+                    try
+                    {
+                        MessageBox.Show(string.Format("Cache done broked {0}", e.Message));
+                        return new BitmapImage(new Uri(url, UriKind.RelativeOrAbsolute));
+                    }
+                    catch (Exception)
+                    {
+                        return BitmapSource.Create(1, 1, 96, 96, PixelFormats.BlackWhite, BitmapPalettes.BlackAndWhite, new byte[96 * 96], 1);
+                    }
                 }
                 /*
                 try

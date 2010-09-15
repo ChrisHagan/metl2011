@@ -37,9 +37,11 @@ namespace SandRibbon.Components.Canvas
     public class Text : AbstractCanvas
     {
         private double currentSize = 10.0;
+        private Dictionary<string, List<TargettedTextBox>> userText;
         private FontFamily currentFamily = new FontFamily("Arial");
         public Text()
         {
+            userText = new Dictionary<String, List<TargettedTextBox>>();
             EditingMode = InkCanvasEditingMode.None;
             Background = Brushes.Transparent;
             SelectionMoved += SendTextBoxes;
@@ -78,6 +80,25 @@ namespace SandRibbon.Components.Canvas
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
+            Commands.UserVisibility.RegisterCommand(new DelegateCommand<VisibilityInformation>(setUserVisibility));
+        }
+
+        private void setUserVisibility(VisibilityInformation info)
+        {
+            Dispatcher.adoptAsync(() =>
+                                  {
+                                      Children.Clear();
+                                      userVisibility[info.user] = info.visible;
+                                      var visibleUsers =
+                                          userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
+                                      var allVisibleText = new List<TargettedTextBox>();
+                                      foreach(var user in visibleUsers)
+                                      {
+                                          if(userText.ContainsKey(user))
+                                            allVisibleText.AddRange(userText[user]);
+                                      }
+                                      ReceiveTextBoxes(allVisibleText);
+                                  });
         }
 
         private void textMoved(object sender, EventArgs e)
@@ -105,6 +126,7 @@ namespace SandRibbon.Components.Canvas
 
         private void MoveTo(int _slide)
         {
+            userText.Clear();
             myTextBox = null;
         }
         private bool focusable = true;
@@ -173,8 +195,16 @@ namespace SandRibbon.Components.Canvas
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
             if (myTextBox != null && element.identifier == myTextBox.tag().id) return;
+            var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
+            if(userText.ContainsKey(author) && element.target == target)
+            {
+                var dirtyImage = userText[author].Where(t => t.identity  == element.identifier).FirstOrDefault();
+                if (dirtyImage != null)
+                    userText[author].Remove(dirtyImage);
+            }
             Dispatcher.adoptAsync(delegate
             {
+
                 for (int i = 0; i < Children.Count; i++)
                 {
                     var currentTextbox = (TextBox)Children[i];
@@ -612,7 +642,11 @@ namespace SandRibbon.Components.Canvas
             }
             addAdorners();
         }
-
+        private void ReceiveTextBoxes(IEnumerable<TargettedTextBox> boxes)
+        {
+            foreach(var box in boxes)
+                ReceiveTextBox(box);
+        }
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
             if (targettedBox.target != target) return;
@@ -635,6 +669,7 @@ namespace SandRibbon.Components.Canvas
             {
                 Dispatcher.adoptAsync(delegate
                 {
+
                     doText(targettedBox);
                 });
             }
@@ -674,6 +709,14 @@ namespace SandRibbon.Components.Canvas
         {
             Dispatcher.adoptAsync(delegate
                                       {
+                                          var author = targettedBox.author == Globals.conversationDetails.Author ? "Teacher" : targettedBox.author;
+                                          Commands.ReceiveAuthor.Execute(author);
+                                          if (!userVisibility.ContainsKey(author))
+                                              userVisibility.Add(author, true);
+                                          if(!userText.ContainsKey(author))
+                                              userText.Add(author, new List<TargettedTextBox>());
+                                          if(!userText[author].Contains(targettedBox))
+                                              userText[author].Add(targettedBox);
                                           if (targettedBox.target != target) return;
                                           //if (targettedBox.author == Globals.me &&
                                           //  alreadyHaveThisTextBox(targettedBox.box))

@@ -13,7 +13,7 @@ namespace SandRibbonInterop.LocalCache
     public class ResourceCache
     {
         public static string cacheName = "resourceCache";
-        private static string cacheXMLfile = cacheName + "\\" + cacheName;
+        private static string cacheXMLfile = cacheName + "\\" + cacheName + ".xml";
         private static Dictionary<string, System.Uri> ActualDict = null;
         private static Dictionary<string, System.Uri> CacheDict
         {
@@ -67,8 +67,13 @@ namespace SandRibbonInterop.LocalCache
             CacheDict.Add(remoteUri, localUri);
             if (!System.IO.Directory.Exists(cacheName))
                 System.IO.Directory.CreateDirectory(cacheName);
-            var cachedString = string.Format("<CachedUri remote='{0}' local='{1}'/>", remoteUri, localUri);
-            File.AppendAllText(cacheXMLfile, cachedString);
+            var XDoc = "<CachedUris>";
+            foreach (var key in CacheDict.Keys)
+            {
+                XDoc += string.Format("<CachedUri remote='{0}' local='{1}'/>", key, CacheDict[key].ToString());
+            }
+            XDoc += "</CachedUris>";
+            File.WriteAllText(cacheXMLfile, XDoc);
         }
         public static Uri LocalSource(string uri)
         {
