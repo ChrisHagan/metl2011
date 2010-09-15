@@ -792,7 +792,6 @@ namespace SandRibbon
             var cvHeight = adornerGrid.ActualHeight;
             var cvWidth = adornerGrid.ActualWidth;
             var cvRatio = cvWidth / cvHeight;
-            var scrollRatio = scroll.ActualWidth / scroll.ActualHeight;
             double newWidth = 0;
             double newHeight = 0;
             double oldWidth = scroll.ActualWidth;
@@ -800,12 +799,10 @@ namespace SandRibbon
             var scrollRatio = oldWidth / oldHeight;
             if (scrollRatio > cvRatio)
             {
-                var newWidth = scroll.ActualWidth * ZoomValue;
                 newWidth = scroll.ActualWidth * ZoomValue;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
                 scroll.Width = newWidth;
-                var newHeight = newWidth / cvRatio;
                 newHeight = newWidth / cvRatio;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
@@ -813,12 +810,10 @@ namespace SandRibbon
             }
             if (scrollRatio < cvRatio)
             {
-                var newHeight = scroll.ActualHeight * ZoomValue;
                 newHeight = scroll.ActualHeight * ZoomValue;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
                 scroll.Height = newHeight;
-                var newWidth = newHeight * cvRatio;
                 newWidth = newHeight * cvRatio;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
@@ -826,12 +821,10 @@ namespace SandRibbon
             }
             if (scrollRatio == cvRatio)
             {
-                var newHeight = scroll.ActualHeight * ZoomValue;
                 newHeight = scroll.ActualHeight * ZoomValue;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
                 scroll.Height = newHeight;
-                var newWidth = scroll.ActualWidth * ZoomValue;
                 newWidth = scroll.ActualWidth * ZoomValue;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
@@ -853,15 +846,12 @@ namespace SandRibbon
             double newHeight = 0;
             double oldWidth = scroll.ActualWidth;
             double oldHeight = scroll.ActualHeight;
-            var scrollRatio = oldWidth / oldHeight;
             if (scrollRatio > cvRatio)
             {
-                var newWidth = scroll.ActualWidth * ZoomValue;
                 newWidth = scroll.ActualWidth * ZoomValue;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
                 scroll.Width = newWidth;
-                var newHeight = newWidth / cvRatio;
                 newHeight = newWidth / cvRatio;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
@@ -869,12 +859,10 @@ namespace SandRibbon
             }
             if (scrollRatio < cvRatio)
             {
-                var newHeight = scroll.ActualHeight * ZoomValue;
                 newHeight = scroll.ActualHeight * ZoomValue;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
                 scroll.Height = newHeight;
-                var newWidth = newHeight * cvRatio;
                 newWidth = newHeight * cvRatio;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
@@ -882,12 +870,10 @@ namespace SandRibbon
             }
             if (scrollRatio == cvRatio)
             {
-                var newHeight = scroll.ActualHeight * ZoomValue;
                 newHeight = scroll.ActualHeight * ZoomValue;
                 if (newHeight > scroll.ExtentHeight)
                     newHeight = scroll.ExtentHeight;
                 scroll.Height = newHeight;
-                var newWidth = scroll.ActualWidth * ZoomValue;
                 newWidth = scroll.ActualWidth * ZoomValue;
                 if (newWidth > scroll.ExtentWidth)
                     newWidth = scroll.ExtentWidth;
@@ -913,8 +899,7 @@ namespace SandRibbon
             ConversationDetailsProviderFactory.Provider.Update(details);
             try
             {
-                var style = (string) obj;
-                var details = Globals.conversationDetails;
+                details = Globals.conversationDetails;
                 foreach (var s in new[]
                                       {
                                           Permissions.LABORATORY_PERMISSIONS,
@@ -1014,11 +999,13 @@ namespace SandRibbon
                         break;
                     case 3:
                         homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
+                        //privacyTools.Children.Add(new PrivacyTools());
+                        //homeGroups.Add(new Notes());
+                        break;
+                    case 4:
                         homeGroups.Add(new Notes());
                         tabs.Add(new Tabs.Analytics());
                         tabs.Add(new Tabs.Plugins());
-                        //privacyTools.Children.Add(new PrivacyTools());
-                        //homeGroups.Add(new Notes());
                         break;
                     default:
                         break;
