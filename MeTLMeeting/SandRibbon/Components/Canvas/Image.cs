@@ -45,8 +45,12 @@ namespace SandRibbon.Components.Canvas
     public class Image : AbstractCanvas
     {
         private static readonly int PADDING = 5;
+        private Dictionary<string, List<TargettedImage>> userImages;
+        private Dictionary<string, bool> userVisibility;
         public Image()
         {
+            userImages = new Dictionary<string, List<TargettedImage>>();
+            userVisibility = new Dictionary<string, bool>();
             EditingMode = InkCanvasEditingMode.Select;
             Background = Brushes.Transparent;
             PreviewKeyDown += keyPressed;
@@ -261,6 +265,17 @@ namespace SandRibbon.Components.Canvas
         {
             Dispatcher.adoptAsync(delegate
             {
+                if (image.target == target)
+                {
+                    var author = image.author == Globals.conversationDetails.Author ? "Teacher" : image.author;
+                    Commands.ReceiveAuthor.Execute(author);
+                    if (!userVisibility.ContainsKey(author))
+                        userVisibility.Add(author, true);
+                    if(!userImages.ContainsKey(author))
+                        userImages.Add(author, new List<TargettedImage>());
+                    if(!userImages[author].Contains(image))
+                        userImages[author].Add(image);
+                }
                 AddImage(image.image);
             });
         }
@@ -355,6 +370,13 @@ namespace SandRibbon.Components.Canvas
         {
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
+            var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
+            if(userImages.ContainsKey(author))
+            {
+                var dirtyImage = userImages[author].Where(i => i.id == element.identifier).FirstOrDefault();
+                if (dirtyImage != null)
+                    userImages[author].Remove(dirtyImage);
+            }
             doDirtyImage(element.identifier);
         }
         public void ReceiveDirtyVideo(TargettedDirtyElement element)
