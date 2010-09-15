@@ -13,6 +13,7 @@ using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Quizzing;
 using SandRibbonInterop;
+using SandRibbonInterop.LocalCache;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using SandRibbon.Components.Sandpit;
@@ -164,6 +165,8 @@ namespace SandRibbon.Utils.Connection
         public JabberWire()
         {
         }
+
+        public SandRibbonInterop.LocalCache.ResourceCache cache;
         public JabberWire(JabberWire.Credentials credentials)
         {
             this.credentials = credentials;

@@ -33,6 +33,7 @@ namespace SandRibbon
         #endregion
 
         public static CompositeCommand AddPrivacyToggleButton = new CompositeCommand();
+        public static CompositeCommand UserVisibility = new CompositeCommand();
         public static CompositeCommand RemovePrivacyAdorners = new CompositeCommand();
         public static CompositeCommand UpdateCursor = new CompositeCommand();
         public static CompositeCommand MirrorVideo = new CompositeCommand();
@@ -123,6 +124,7 @@ namespace SandRibbon
         public static CompositeCommand SendStroke = new CompositeCommand();
         public static CompositeCommand ReceiveStroke = new CompositeCommand();
         public static CompositeCommand ReceiveStrokes = new CompositeCommand();
+        public static CompositeCommand ReceiveAuthor = new CompositeCommand();
         public static CompositeCommand SendDirtyStroke = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyStrokes = new CompositeCommand();
         public static CompositeCommand SetPrivacy = new CompositeCommand();

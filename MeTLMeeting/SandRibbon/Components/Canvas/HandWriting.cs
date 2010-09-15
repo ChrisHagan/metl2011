@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,8 +25,11 @@ namespace SandRibbon.Components.Canvas
 {
     public class HandWriting : AbstractCanvas
     {
+
+        private Dictionary<string, List<TargettedStroke>> userStrokes;
         public HandWriting()
         {
+            userStrokes = new Dictionary<string, List<TargettedStroke>>();
             Loaded += new System.Windows.RoutedEventHandler(HandWriting_Loaded);
             StrokeCollected += singleStrokeCollected;
             SelectionChanging += selectingStrokes;
@@ -120,7 +124,29 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
+            Commands.UserVisibility.RegisterCommand(new DelegateCommand<VisibilityInformation>(setUserVisibility));
         }
+
+        private void setUserVisibility(VisibilityInformation info)
+        {
+            Dispatcher.adoptAsync(() =>
+                                      {
+                                          Strokes.Clear();
+                                          strokes.Clear();
+                                          privacyDictionary.Clear();
+                                          userVisibility[info.user] = info.visible;
+                                          var visibleUsers =
+                                              userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
+                                          var allVisibleStrokes = new List<TargettedStroke>();
+                                          foreach(var user in visibleUsers)
+                                          {
+                                            allVisibleStrokes.AddRange(userStrokes[user]);
+                                          }
+                                          ReceiveStrokes(allVisibleStrokes);
+                                      });
+
+        }
+
         private void UpdateCursor(object obj)
         {
             if (obj is Cursor)
@@ -137,6 +163,9 @@ namespace SandRibbon.Components.Canvas
         private void MoveTo(object obj)
         {
             privacyDictionary = new Dictionary<double, Stroke>();
+            userStrokes = new Dictionary<string, List<TargettedStroke>>();
+            userVisibility = new Dictionary<string, bool>();
+
         }
         private void HandWriting_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -230,15 +259,24 @@ namespace SandRibbon.Components.Canvas
                         .Where(s => !(this.strokes.Contains(s.sum()))));
                     Strokes.Add(newStrokes);
                     this.strokes.AddRange(newStrokes.Select(s => s.sum()));
-
                     foreach (var stroke in receivedStrokes)
                     {
-                        if (stroke.privacy == "private" && me != "projector")
-                            if (stroke.target == target)
+                        if (stroke.target == target)
+                        {
+                            var author= stroke.author==Globals.conversationDetails.Author? "Teacher" : stroke.author;
+                            Commands.ReceiveAuthor.Execute(author);
+                            if(!userStrokes.ContainsKey(author))
+                                userStrokes.Add(author, new List<TargettedStroke>());
+                            if(!userStrokes[author].Contains(stroke))
+                                userStrokes[author].Add(stroke);
+                            if(!userVisibility.ContainsKey(author))
+                                userVisibility.Add(author, true);
+                            
+                            if (stroke.privacy == "private" && me != "projector")
                                 ApplyPrivacyStylingToStroke(stroke.stroke, stroke.privacy);
-                        //addPrivateRegion(stroke.stroke);
+                        }
                     }
-                    var duration = SandRibbonObjects.DateTimeFactory.Now() - start;
+                    var duration = DateTimeFactory.Now() - start;
                     strokeReceiptDurations.Add(duration);
                 });
         }
@@ -482,6 +520,17 @@ namespace SandRibbon.Components.Canvas
             Dispatcher.adoptAsync(delegate
             {
                 var dirtyChecksums = targettedDirtyStrokes.Select(t => t.identifier);
+                foreach (var stroke in targettedDirtyStrokes)
+                {
+                    var author = stroke.author == Globals.conversationDetails.Author ? "Teacher" : stroke.author;
+                    if(userStrokes.ContainsKey(author))
+                    {
+                        var strokeList = userStrokes[author];
+                        var dirtyStrokes = strokeList.Where(s => dirtyChecksums.Contains(s.stroke.sum().checksum.ToString())).Select(s => s.stroke.sum().checksum);
+                        var newStrokes = strokeList.Where(s => !dirtyStrokes.Contains(s.stroke.sum().checksum)).ToList();
+                        userStrokes[author] = newStrokes;
+                    }
+                }
                 var presentDirtyStrokes = Strokes.Where(s => dirtyChecksums.Contains(s.sum().checksum.ToString())).ToList();
                 for (int i = 0; i < presentDirtyStrokes.Count(); i++)
                 {

@@ -1149,18 +1149,7 @@ namespace SandRibbonInterop.MeTLStanzas
             }
             private static Uri getCachedVideo(string url)
             {
-                var regex = new Regex(@".*?/Resource/(.*?)/(.*)");
-                if (url.StartsWith("Resource\\"))return new System.Uri(url, UriKind.RelativeOrAbsolute);
-                var match = regex.Matches(url)[0];
-                var room = match.Groups[1].Value;
-                var file = match.Groups[2].Value;
-                var path = string.Format(@"Resource\{0}\{1}", room, file);
-                ensureCacheDirectoryExists(room);
-                if (File.Exists(path))
-                    return new Uri(path, UriKind.RelativeOrAbsolute);
-                var sourceBytes = new WebClient { Credentials = new NetworkCredential("exampleUsername", "examplePassword") }.DownloadData(url);
-                File.WriteAllBytes(path, sourceBytes);
-                return new Uri(url, UriKind.RelativeOrAbsolute);
+                return LocalCache.ResourceCache.LocalSource(url);
             }
             public Uri source
             {
@@ -1169,8 +1158,6 @@ namespace SandRibbonInterop.MeTLStanzas
                 }
                 set { SetTag(sourceTag, value.ToString()); }
             }
-
-
         }
         public class Image : Element
         {
@@ -1204,6 +1191,22 @@ namespace SandRibbonInterop.MeTLStanzas
             }
             public static ImageSource GetCachedImage(string url)
             {
+
+                try
+                {
+                    var bitmapImage = new BitmapImage();
+                    bitmapImage.BeginInit();
+                    var uri = LocalCache.ResourceCache.LocalSource(url).ToString();
+                    bitmapImage.StreamSource = new MemoryStream(File.ReadAllBytes(uri));
+                    bitmapImage.EndInit();
+                    return bitmapImage;
+                }
+                catch (Exception e)
+                {
+
+                    return BitmapSource.Create(1, 1, 96, 96, PixelFormats.BlackWhite, BitmapPalettes.BlackAndWhite, new byte[96 * 96], 1);
+                }
+                /*
                 try
                 {
                     var regex = new Regex(@".*?/Resource/(.*?)/(.*)");
@@ -1231,6 +1234,7 @@ namespace SandRibbonInterop.MeTLStanzas
                 {
                     return BitmapSource.Create(1, 1, 96, 96, PixelFormats.BlackWhite, BitmapPalettes.BlackAndWhite, new byte[96 * 96], 1);
                 }
+                 * */
             }
 
             public TargettedImage Img

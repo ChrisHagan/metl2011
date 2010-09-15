@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
@@ -9,32 +10,26 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace SandRibbonInterop.LocalCache
 {
-    public class MediaElementCache : ResourceCache
+    public class ResourceCache
     {
-        private static string cacheName = "videoCache";
-    }
-    public class FileCache : ResourceCache
-    {
-        private static string cacheName = "fileCache";
-    }
-    public class ImageCache : ResourceCache
-    {
-        private static string cacheName = "imageCache";
-    }
-    public abstract class ResourceCache
-    {
-        private static string cacheName = "resourceCache";
-        private static readonly string cacheXMLfile = cacheName + "\\" + cacheName + ".xml";
-        private static Dictionary<string, Uri> ActualDict;
-        private static Dictionary<string, System.Uri> CacheDict()
+        public static string cacheName = "resourceCache";
+        private static string cacheXMLfile = cacheName + "\\" + cacheName;
+        private static Dictionary<string, System.Uri> ActualDict = null;
+        private static Dictionary<string, System.Uri> CacheDict
         {
-            if (ActualDict == null)
-                try
+            get
+            {
+                if(ActualDict == null)
                 {
                     ActualDict = ReadDictFromFile();
                 }
-                catch (Exception) { return new Dictionary<string, Uri>(); }
-            return ActualDict;
+                return ActualDict;
+            }
+            set
+            {
+                ActualDict = value;   
+            }
+
         }
         private static Dictionary<string, Uri> ReadDictFromFile()
         {
@@ -52,55 +47,55 @@ namespace SandRibbonInterop.LocalCache
             }
             return newDict;
         }
+        //we keep 7 days worth of cached images, 
+        public  void CleanUpCache()
+        {
+            var XDoc = "<CachedUris>";
+            foreach(var uri in Directory.GetFiles(cacheName +"\\"))
+            {
+                if(Directory.GetLastAccessTime(uri).Ticks < DateTime.Now.Subtract(new TimeSpan(7,0,0,0)).Ticks)
+                    Directory.Delete(uri);
+                else
+                    XDoc += string.Format("<CachedUri remote='{0}' local='{1}'/>", uri, RemoteSource(new Uri(uri, UriKind.RelativeOrAbsolute)));
+            }
+            XDoc += "</CachesUris>";
+            File.WriteAllText(cacheXMLfile, XDoc);
+        }
         private static void Add(string remoteUri, Uri localUri)
         {
-            if (CacheDict().Contains(new KeyValuePair<string, Uri>(remoteUri, localUri))) return;
-            CacheDict().Add(remoteUri, localUri);
+            if (CacheDict.Contains(new KeyValuePair<string, Uri>(remoteUri, localUri))) return;
+            CacheDict.Add(remoteUri, localUri);
             if (!System.IO.Directory.Exists(cacheName))
                 System.IO.Directory.CreateDirectory(cacheName);
-            var XDoc = "<CachedUris>";
-            foreach (KeyValuePair<string, Uri> kv in CacheDict())
-            {
-                XDoc += "<CachedUri remote='" + kv.Key.ToString() + "' local='" + kv.Value.ToString() + "'/>";
-            }
-            XDoc += "</CachedUris>";
-            System.IO.File.WriteAllText(cacheXMLfile, XDoc);
+            var cachedString = string.Format("<CachedUri remote='{0}' local='{1}'/>", remoteUri, localUri);
+            File.AppendAllText(cacheXMLfile, cachedString);
+        }
+        public static Uri LocalSource(string uri)
+        {
+            return LocalSource(new Uri(uri, UriKind.RelativeOrAbsolute));
         }
         public static Uri LocalSource(Uri remoteUri)
         {
-            if (remoteUri.ToString().StartsWith(cacheName + "\\_"))
+            if (remoteUri.ToString().StartsWith(cacheName + "\\"))
                 return remoteUri;
-            if (!CacheDict().ContainsKey(remoteUri.ToString()))
+            if (!CacheDict.ContainsKey(remoteUri.ToString()))
             {
-                if (!System.IO.Directory.Exists(cacheName))
-                    System.IO.Directory.CreateDirectory(cacheName);
-                var localFileName = "";
-                localFileName += remoteUri.ToString().Replace("/", "_").Replace("\\", "_");
-                var localUriString = cacheName + "\\" + localFileName;
-                System.IO.File.WriteAllBytes(localUriString, HttpResourceProvider.secureGetData(remoteUri.ToString()));
+                if (!Directory.Exists(cacheName))
+                    Directory.CreateDirectory(cacheName);
+                var localUriString = cacheName + "\\" +  remoteUri.ToString().Split('/').Reverse().First();
+                File.WriteAllBytes(localUriString, HttpResourceProvider.secureGetData(remoteUri.ToString()));
                 var localUri = new Uri(localUriString, UriKind.Relative);
                 Add(remoteUri.ToString(), localUri);
             }
-            return CacheDict()[remoteUri.ToString()];
+            return CacheDict[remoteUri.ToString()];
         }
         public static Uri RemoteSource(Uri media)
         {
             
             if (media.ToString().StartsWith("Resource\\"))
                 return media;
-            
-            var uri = CacheDict().Where(kv => kv.Value == media).FirstOrDefault().Key;
+            var uri = CacheDict.Where(kv => kv.Value == media).FirstOrDefault().Key;
             return uri== null ? null : new Uri(uri, UriKind.RelativeOrAbsolute);
-           //shouldn't need the below code. 
-            var results = new List<KeyValuePair<string, Uri>>();
-            foreach (KeyValuePair<string, Uri> kv in CacheDict())
-            {
-                if (kv.Value == media)
-                    results.Add(kv);
-            }
-            if (results.Count > 0)
-                return new Uri(results.FirstOrDefault().Key, UriKind.Absolute);
-            return null;
         }
     }
     public class WebClientWithTimeout : WebClient
@@ -175,7 +170,6 @@ namespace SandRibbonInterop.LocalCache
                 }
                 catch (Exception)
                 {
-                    //App.Now("Failed secureGetString from " + resource);
                     attempts++;
                 }
             }
@@ -195,7 +189,6 @@ namespace SandRibbonInterop.LocalCache
                 }
                 catch (Exception)
                 {
-                    //App.Now("Failed insecureGetString from " + resource);
                     attempts++;
                 }
             }

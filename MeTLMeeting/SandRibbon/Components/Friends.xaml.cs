@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Components.Canvas;
 using SandRibbon.Providers;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
@@ -13,11 +16,28 @@ namespace SandRibbon.Components
     public partial class Friends
     {
         public DelegateCommand<string> setAuthor;
+        public ObservableCollection<String> publishers;
         public Friends()
         {
             InitializeComponent();
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(_obj => history.Children.Clear()));
             Commands.ReceiveChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(receiveChatMessage));
+            publishers = new ObservableCollection<string>();
+            Commands.ReceiveAuthor.RegisterCommand(new DelegateCommand<string>(ReceiveAuthor));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
+            users.ItemsSource = publishers;
+        }
+
+        private void moveTo(object obj)
+        {
+            publishers.Clear();
+        }
+        private void ReceiveAuthor(string author )
+        {
+                if(!publishers.Contains(author))
+                {
+                    publishers.Add(author);
+                }
         }
 
         public void SetWidth(double width)
@@ -104,6 +124,16 @@ namespace SandRibbon.Components
                 return true;
             }
             return false;
+        }
+
+        private void userClick(object sender, RoutedEventArgs e)
+        {
+            var button = (System.Windows.Controls.CheckBox) sender;
+            Commands.UserVisibility.Execute(new VisibilityInformation
+                                                {
+                                                    user = button.DataContext.ToString(),
+                                                    visible = button.IsChecked == true
+                                                });
         }
     }
 }

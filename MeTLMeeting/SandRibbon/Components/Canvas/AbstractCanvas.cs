@@ -31,6 +31,11 @@ namespace SandRibbon.Components.Canvas
         public string target;
         public int position;
     }
+    public class VisibilityInformation
+    {
+        public string user;
+        public bool visible;
+    }
     public class TagInformation
     {
         public string Author;
@@ -81,9 +86,12 @@ namespace SandRibbon.Components.Canvas
         public string privacy { get { return affectedByPrivacy ? actualPrivacy : defaultPrivacy; } }
         public delegate void ChildrenChangedHandler(DependencyObject visualAdded, DependencyObject visualRemoved);
         public event ChildrenChangedHandler ChildrenChanged;
+        protected Dictionary<string, bool> userVisibility;
         public AbstractCanvas()
             : base()
         {
+
+            userVisibility = new Dictionary<string, bool>();
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             DragOver += ImageDragOver;
             Drop += ImagesDrop;

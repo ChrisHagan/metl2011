@@ -45,8 +45,12 @@ namespace SandRibbon.Components.Canvas
     public class Image : AbstractCanvas
     {
         private static readonly int PADDING = 5;
+        private Dictionary<string, List<TargettedImage>> userImages;
+        private Dictionary<string, bool> userVisibility;
         public Image()
         {
+            userImages = new Dictionary<string, List<TargettedImage>>();
+            userVisibility = new Dictionary<string, bool>();
             EditingMode = InkCanvasEditingMode.Select;
             Background = Brushes.Transparent;
             PreviewKeyDown += keyPressed;
@@ -261,6 +265,17 @@ namespace SandRibbon.Components.Canvas
         {
             Dispatcher.adoptAsync(delegate
             {
+                if (image.target == target)
+                {
+                    var author = image.author == Globals.conversationDetails.Author ? "Teacher" : image.author;
+                    Commands.ReceiveAuthor.Execute(author);
+                    if (!userVisibility.ContainsKey(author))
+                        userVisibility.Add(author, true);
+                    if(!userImages.ContainsKey(author))
+                        userImages.Add(author, new List<TargettedImage>());
+                    if(!userImages[author].Contains(image))
+                        userImages[author].Add(image);
+                }
                 AddImage(image.image);
             });
         }
@@ -355,6 +370,13 @@ namespace SandRibbon.Components.Canvas
         {
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
+            var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
+            if(userImages.ContainsKey(author))
+            {
+                var dirtyImage = userImages[author].Where(i => i.id == element.identifier).FirstOrDefault();
+                if (dirtyImage != null)
+                    userImages[author].Remove(dirtyImage);
+            }
             doDirtyImage(element.identifier);
         }
         public void ReceiveDirtyVideo(TargettedDirtyElement element)
@@ -601,8 +623,7 @@ namespace SandRibbon.Components.Canvas
                                        {
                                            Height = ((System.Windows.Controls.Image) selectedImage).ActualHeight,
                                            Width = ((System.Windows.Controls.Image) selectedImage).Width,
-                                           Source = (ImageSource) new ImageSourceConverter().ConvertFrom( SandRibbonInterop.LocalCache.ImageCache.RemoteSource( new Uri( ((System.Windows.Controls.Image) selectedImage).Source. ToString(), UriKind.Relative)))
-                                           //Source = ((System.Windows.Controls.Image)selectedImage).Source
+                                           Source = (ImageSource) new ImageSourceConverter().ConvertFrom(SandRibbonInterop.LocalCache.ResourceCache.RemoteSource( new Uri( ((System.Windows.Controls.Image) selectedImage).Source. ToString(), UriKind.Relative)))
                                        };
                     InkCanvas.SetLeft(newImage, selectedImageLeft);
                     InkCanvas.SetTop(newImage, selectedImageTop);
@@ -661,7 +682,7 @@ namespace SandRibbon.Components.Canvas
                     srVideo.Height = oldVideo.ActualHeight;
                     srVideo.Width = oldVideo.ActualWidth;
                     //srVideo.VideoSource = oldVideo.VideoSource;
-                    srVideo.VideoSource = new System.Uri("https://" + Constants.JabberWire.SERVER + ":1188/" + (SandRibbonInterop.LocalCache.MediaElementCache.RemoteSource(oldVideo.VideoSource).ToString()), UriKind.Absolute);
+                    srVideo.VideoSource = new System.Uri("https://" + Constants.JabberWire.SERVER + ":1188/" + ( SandRibbonInterop.LocalCache.ResourceCache.RemoteSource(oldVideo.VideoSource).ToString()), UriKind.Absolute);
                     Commands.SendVideo.Execute(new TargettedVideo
                     {
                         author = Globals.me,
