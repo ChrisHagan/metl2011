@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -31,19 +32,19 @@ namespace SandRibbon.Components.Canvas
         public string target;
         public int position;
     }
-    public class VisibilityInformation : UIElement
+    public class VisibilityInformation  : DependencyObject 
     {
         public string user { get; set;}
-        public bool visible { get; set;}  
-        /*ublic bool visible 
+        //public bool visible { get; set;}  
+        public bool visible 
         {
             get { return (bool)this.GetValue(UserVisibilityProperty); }
             set { this.SetValue(UserVisibilityProperty, value); } 
         }
         public static readonly DependencyProperty UserVisibilityProperty = DependencyProperty.Register(
           "visible", typeof(bool), typeof(VisibilityInformation), new UIPropertyMetadata(true));
-    */
-        
+    
+
     }
     public class TagInformation
     {

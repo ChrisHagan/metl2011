@@ -15,16 +15,16 @@
                 <ItemsControl x:Name="users">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <CheckBox IsChecked="True"  Click="userClick">
-                                <Label Content="I HATE YOU"/>
+                            <CheckBox IsChecked="{Binding Path=visible}"  Click="userClick">
+                                <Label Content="{Binding Path=user}"/>
                             </CheckBox>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <StackPanel Orientation="Horizontal">
                     <CheckBox IsChecked="true" Click="teacherToggle">Toggle Teacher</CheckBox>
-                    <CheckBox x:Name="myToggle"  Click="meToggle">Toggle Me</CheckBox>
-                    <CheckBox Click="otherToggle"> Toggle Everyone else</CheckBox>
+                    <CheckBox IsChecked="true" x:Name="myToggle"  Click="meToggle">Toggle Me</CheckBox>
+                    <CheckBox IsChecked="true" Click="otherToggle"> Toggle Everyone else</CheckBox>
                 </StackPanel>
             </StackPanel>
             <Grid Grid.Row="1" Width="Auto" 
