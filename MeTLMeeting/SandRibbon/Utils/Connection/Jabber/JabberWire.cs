@@ -204,48 +204,55 @@ namespace SandRibbon.Utils.Connection
             Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
             Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
         }
-
-
+        private void doGetCurrentClasses()
+        {
+            try
+            {
+                var currentRooms = new List<string>();
+                if (conn != null && conn.Username == Globals.me)
+                {
+                    var discoIq = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
+                    discoIq.To = new Jid(Constants.JabberWire.MUC);
+                    //discoIq.From = conn.MyJID;
+                    var IQResponse = conn.IqGrabber.SendIq(discoIq);
+                    if (IQResponse == null) return;
+                    foreach (object item in IQResponse.Query.ChildNodes.ToArray())
+                    {
+                        if (item.GetType().Equals(typeof(agsXMPP.protocol.iq.disco.DiscoItem)))
+                        {
+                            var name = ((agsXMPP.protocol.iq.disco.DiscoItem)item).Name.ToString();
+                            name = name.Remove(name.Length - 4);
+                            currentRooms.Add(name);
+                        }
+                    }
+                    var populatedConversations = new List<ConversationDetails>();
+                    var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+                    int dummy;
+                    var conversationJids = currentRooms.Where(r => Int32.TryParse(r, out dummy))
+                        .Select(r => Int32.Parse(r))
+                        .Where(r => Slide.conversationFor(r) == r).Distinct().Select(r => r.ToString());
+                    foreach (ConversationDetails conversation in conversations.Where(c => conversationJids.Contains(c.Jid)))
+                    {
+                        var discoOccupants = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
+                        discoOccupants.To = new Jid(conversation.Jid.ToString() + "@" + Constants.JabberWire.MUC);
+                        var newIQResponse = conn.IqGrabber.SendIq(discoOccupants);
+                        if (newIQResponse.Query.ChildNodes.ToArray()
+                            .Where(n => n is agsXMPP.protocol.iq.disco.DiscoItem)
+                            .Select(di => ((DiscoItem)di).Name.Split('@')[0])
+                            .Any(name => name.Contains(conversation.Author)))
+                        {
+                            populatedConversations.Add(conversation);
+                        }
+                    }
+                    Commands.receiveCurrentClasses.Execute(populatedConversations);
+                }
+            }
+            catch (Exception) { }
+        }
         public void getCurrentClasses(object _unused)
         {
-            var currentRooms = new List<string>();
-            if (conn != null)
-            {
-                var discoIq = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
-                discoIq.To = new Jid(Constants.JabberWire.MUC);
-                discoIq.From = conn.MyJID;
-                var IQResponse = conn.IqGrabber.SendIq(discoIq);
-                if (IQResponse == null) return;
-                foreach (object item in IQResponse.Query.ChildNodes.ToArray())
-                {
-                    if (item.GetType().Equals(typeof(agsXMPP.protocol.iq.disco.DiscoItem)))
-                    {
-                        var name = ((agsXMPP.protocol.iq.disco.DiscoItem)item).Name.ToString();
-                        name = name.Remove(name.Length - 4);
-                        currentRooms.Add(name);
-                    }
-                }
-            }
-            var populatedConversations = new List<ConversationDetails>();
-            var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
-            int dummy;
-            var conversationJids = currentRooms.Where(r => Int32.TryParse(r, out dummy))
-                .Select(r => Int32.Parse(r))
-                .Where(r => Slide.conversationFor(r) == r).Distinct().Select(r => r.ToString());
-            foreach (ConversationDetails conversation in conversations.Where(c => conversationJids.Contains(c.Jid)))
-            {
-                var discoOccupants = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
-                discoOccupants.To = new Jid(conversation.Jid.ToString() + "@" + Constants.JabberWire.MUC);
-                var IQResponse = conn.IqGrabber.SendIq(discoOccupants);
-                if (IQResponse.Query.ChildNodes.ToArray()
-                    .Where(n => n is agsXMPP.protocol.iq.disco.DiscoItem)
-                    .Select(di => ((DiscoItem)di).Name.Split('@')[0])
-                    .Any(name => name.Contains(conversation.Author)))
-                {
-                    populatedConversations.Add(conversation);
-                }
-            }
-            Commands.receiveCurrentClasses.Execute(populatedConversations);
+            Thread newThread = new Thread(new ThreadStart(doGetCurrentClasses));
+            newThread.Start();
         }
         private void SendNewBubble(TargettedBubbleContext selection)
         {
