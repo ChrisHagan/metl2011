@@ -11,16 +11,21 @@
                 <RowDefinition x:Name="chatHistoryContent"/>
                 <RowDefinition x:Name="chatInputContent" Height="25"/>
             </Grid.RowDefinitions>
-            <StackPanel>
+            <StackPanel Grid.Row="0" Orientation="Vertical">
                 <ItemsControl x:Name="users">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="True"  Click="userClick">
-                                <Label Content="{Binding}"/>
+                                <Label Content="I HATE YOU"/>
                             </CheckBox>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="true" Click="teacherToggle">Toggle Teacher</CheckBox>
+                    <CheckBox x:Name="myToggle"  Click="meToggle">Toggle Me</CheckBox>
+                    <CheckBox Click="otherToggle"> Toggle Everyone else</CheckBox>
+                </StackPanel>
             </StackPanel>
             <Grid Grid.Row="1" Width="Auto" 
                   HorizontalAlignment="Stretch" 

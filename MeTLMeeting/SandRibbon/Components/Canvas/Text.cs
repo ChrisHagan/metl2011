@@ -88,7 +88,7 @@ namespace SandRibbon.Components.Canvas
             Dispatcher.adoptAsync(() =>
                                   {
                                       Children.Clear();
-                                      userVisibility[info.user] = info.visible;
+                                      updateVisibility(info);
                                       var visibleUsers =
                                           userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
                                       var allVisibleText = new List<TargettedTextBox>();

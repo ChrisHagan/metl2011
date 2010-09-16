@@ -106,7 +106,7 @@ namespace SandRibbon.Components.Canvas
                                   {
 
                                       Children.Clear();
-                                      userVisibility[info.user] = info.visible;
+                                      updateVisibility(info); 
                                       var visibleUsers =
                                           userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
                                       var allVisibleImages = new List<TargettedImage>();

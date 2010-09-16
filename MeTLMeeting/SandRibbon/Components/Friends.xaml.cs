@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,19 +11,20 @@ using SandRibbon.Components.Canvas;
 using SandRibbon.Providers;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
+using CheckBox=System.Windows.Controls.CheckBox;
 
 namespace SandRibbon.Components
 {
     public partial class Friends
     {
         public DelegateCommand<string> setAuthor;
-        public ObservableCollection<String> publishers;
+        public ObservableCollection<VisibilityInformation> publishers;
         public Friends()
         {
             InitializeComponent();
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(_obj => history.Children.Clear()));
             Commands.ReceiveChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(receiveChatMessage));
-            publishers = new ObservableCollection<string>();
+            publishers = new ObservableCollection<VisibilityInformation>();
             Commands.ReceiveAuthor.RegisterCommand(new DelegateCommand<string>(ReceiveAuthor));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
             users.ItemsSource = publishers;
@@ -31,12 +33,18 @@ namespace SandRibbon.Components
         private void moveTo(object obj)
         {
             publishers.Clear();
+            if (Globals.me == Globals.conversationDetails.Author)
+                myToggle.Visibility = Visibility.Collapsed;
         }
         private void ReceiveAuthor(string author )
         {
-                if(!publishers.Contains(author))
+                if(publishers.ToList().Where(uv => uv.user == author).Count() == 0)
                 {
-                    publishers.Add(author);
+                    publishers.Add(new VisibilityInformation
+                                       {
+                                           user = author,
+                                           visible = true
+                                       });
                 }
         }
 
@@ -131,8 +139,42 @@ namespace SandRibbon.Components
             var button = (System.Windows.Controls.CheckBox) sender;
             Commands.UserVisibility.Execute(new VisibilityInformation
                                                 {
-                                                    user = button.DataContext.ToString(),
+                                                    user = ((VisibilityInformation)button.DataContext).user,
                                                     visible = button.IsChecked == true
+                                                });
+        }
+
+        private void teacherToggle(object sender, RoutedEventArgs e)
+        {
+            var user = publishers.Where(uv =>uv.user == "Teacher").First();
+            user.visible = ((CheckBox)sender).IsChecked == true;
+            Commands.UserVisibility.Execute(new VisibilityInformation
+                                                {
+                                                    user = "toggleTeacher",
+                                                    visible =((CheckBox) sender).IsChecked == true
+                                                });
+        }
+        private void meToggle(object sender, RoutedEventArgs e)
+        {
+            publishers.Where(uv =>uv.user == Globals.me).First().visible = ((CheckBox)sender).IsChecked == true;
+            Commands.UserVisibility.Execute(new VisibilityInformation
+                                                {
+                                                    user = "toggleMe",
+                                                    visible =((CheckBox) sender).IsChecked == true
+                                                });
+        }
+        private void otherToggle(object sender, RoutedEventArgs e)
+        {
+            foreach(var uv in publishers)
+            {
+                if (uv.user != "Teacher" && uv.user != Globals.me)
+                    uv.visible = ((CheckBox) sender).IsChecked == true;
+
+            }
+            Commands.UserVisibility.Execute(new VisibilityInformation
+                                                {
+                                                    user = "toggleStudents",
+                                                    visible = ((CheckBox) sender).IsChecked == true
                                                 });
         }
     }

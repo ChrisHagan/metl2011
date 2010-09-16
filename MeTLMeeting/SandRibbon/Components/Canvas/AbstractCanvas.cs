@@ -31,10 +31,19 @@ namespace SandRibbon.Components.Canvas
         public string target;
         public int position;
     }
-    public class VisibilityInformation
+    public class VisibilityInformation : UIElement
     {
-        public string user;
-        public bool visible;
+        public string user { get; set;}
+        public bool visible { get; set;}  
+        /*ublic bool visible 
+        {
+            get { return (bool)this.GetValue(UserVisibilityProperty); }
+            set { this.SetValue(UserVisibilityProperty, value); } 
+        }
+        public static readonly DependencyProperty UserVisibilityProperty = DependencyProperty.Register(
+          "visible", typeof(bool), typeof(VisibilityInformation), new UIPropertyMetadata(true));
+    */
+        
     }
     public class TagInformation
     {
@@ -118,7 +127,35 @@ namespace SandRibbon.Components.Canvas
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<object>(ItemsPrivacyChange));
         }
+        protected void updateVisibility(VisibilityInformation info)
+        {
+            switch (info.user)
+            {
+                case "toggleTeacher":
+                    {
+                        userVisibility["Teacher"] = info.visible;
+                        break;
+                    }
+                case "toggleMe":
+                    {
+                        userVisibility[Globals.me] = info.visible;
+                        break;
+                    }
+                case "toggleStudents":
+                    {
+                        var keys = userVisibility.Keys.Where(k => k != "Teacher" && k != Globals.me).ToList();
+                        foreach(var key in keys)
+                            userVisibility[key] = info.visible;
+                        break;
+                    }
+                    default:
+                    {
+                        userVisibility[info.user] = info.visible;
+                        break;
+                    }
+            }
 
+        }
         private void moveTo(object obj)
         {
             ClearAdorners();
