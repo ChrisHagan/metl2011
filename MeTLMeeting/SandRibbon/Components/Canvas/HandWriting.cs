@@ -165,7 +165,6 @@ namespace SandRibbon.Components.Canvas
         {
             privacyDictionary = new Dictionary<double, Stroke>();
             userStrokes = new Dictionary<string, List<TargettedStroke>>();
-            userVisibility = new Dictionary<string, bool>();
 
         }
         private void HandWriting_Loaded(object sender, System.Windows.RoutedEventArgs e)
@@ -176,7 +175,6 @@ namespace SandRibbon.Components.Canvas
         public List<StrokeChecksum> strokes = new List<StrokeChecksum>();
         private DelegateCommand<string> modeChangedCommand;
         private DelegateCommand<object> colorChangedCommand;
-        private DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials> setAuthor;
         protected override void CanEditChanged()
         {
             canEdit = base.canEdit;

@@ -1186,7 +1186,6 @@ namespace SandRibbonInterop.MeTLStanzas
 
                 try
                 {
-
                     return LocalCache.ResourceCache.LocalSource(url).ToString();
                 }
                 catch (Exception e)
