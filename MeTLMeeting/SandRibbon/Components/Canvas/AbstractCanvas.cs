@@ -122,6 +122,7 @@ namespace SandRibbon.Components.Canvas
         private void moveTo(object obj)
         {
             ClearAdorners();
+            userVisibility.Clear();
         }
 
         void AbstractCanvas_KeyDown(object sender, KeyEventArgs e)

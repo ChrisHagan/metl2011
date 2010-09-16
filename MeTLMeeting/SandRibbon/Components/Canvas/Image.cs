@@ -46,10 +46,12 @@ namespace SandRibbon.Components.Canvas
     {
         private static readonly int PADDING = 5;
         private Dictionary<string, List<TargettedImage>> userImages;
+        private Dictionary<string, List<TargettedVideo>> userVideo;
         private Dictionary<string, bool> userVisibility;
         public Image()
         {
             userImages = new Dictionary<string, List<TargettedImage>>();
+            userVideo = new Dictionary<string, List<TargettedVideo>>();
             userVisibility = new Dictionary<string, bool>();
             EditingMode = InkCanvasEditingMode.Select;
             Background = Brushes.Transparent;
@@ -94,7 +96,8 @@ namespace SandRibbon.Components.Canvas
 
         private void clearVisibilityDictionary(object obj)
         {
-           userImages.Clear(); 
+            userImages.Clear(); 
+            userVideo.Clear();
         }
 
         private void setUserVisibility(VisibilityInformation info)
@@ -107,12 +110,16 @@ namespace SandRibbon.Components.Canvas
                                       var visibleUsers =
                                           userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
                                       var allVisibleImages = new List<TargettedImage>();
+                                      var allVisibleVideos = new List<TargettedVideo>();
                                       foreach(var user in visibleUsers)
                                       {
                                         if(userImages.ContainsKey(user))
                                             allVisibleImages.AddRange(userImages[user]);
+                                        if(userVideo.ContainsKey(user))
+                                            allVisibleVideos.AddRange(userVideo[user]);
                                       }
                                       ReceiveImages(allVisibleImages);
+                                      ReceiveVideos(allVisibleVideos);
                                   });
         }
 
@@ -311,6 +318,17 @@ namespace SandRibbon.Components.Canvas
             {
                 video.video.MediaElement.LoadedBehavior = MediaState.Manual;
                 video.video.MediaElement.ScrubbingEnabled = true;
+                if (video.target == target)
+                {
+                    var author = video.author == Globals.conversationDetails.Author ? "Teacher" : video.author;
+                    Commands.ReceiveAuthor.Execute(author);
+                    if (!userVisibility.ContainsKey(author))
+                        userVisibility.Add(author, true);
+                    if(!userVideo.ContainsKey(author))
+                        userVideo.Add(author, new List<TargettedVideo>());
+                    if(!userVideo[author].Contains(video))
+                        userVideo[author].Add(video);
+                }
                 if (me == "projector")
                     AddVideoClone(video.video);
                 else
@@ -409,6 +427,13 @@ namespace SandRibbon.Components.Canvas
         {
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
+            var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
+            if(userVideo.ContainsKey(author) && element.target == target)
+            {
+                var dirtyImage = userVideo[author].Where(i => i.id == element.identifier).FirstOrDefault();
+                if (dirtyImage != null)
+                    userVideo[author].Remove(dirtyImage);
+            }
             doDirtyVideo(element.identifier);
         }
 
