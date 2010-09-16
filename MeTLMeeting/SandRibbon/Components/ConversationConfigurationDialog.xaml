@@ -25,6 +25,12 @@
             </Border>
             <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
+                    <TextBlock x:Name="deleteMessage" Visibility="Collapsed" TextWrapping="Wrap">
+                        Are you sure you want to delete this conversation?
+                        Remember that other users may have private content in this conversation which you can't see - by deleting this conversation you are preventing them from accessing their content.
+                        No MeTL conversation is ever deleted.  This tool allows you only to quickly rename this conversation and restrict it to yourself, so that it will appear to be deleted to other users.
+                        To undelete this conversation, simply rename it and change the permissions to something that will allow other users.
+                    </TextBlock>
                     <Grid x:Name="createGroup" >
                         <Grid.RowDefinitions>
                             <RowDefinition/>

@@ -47,6 +47,7 @@ namespace SandRibbon.Utils
         }
         public PowerPointLoader()
         {
+            Commands.DeleteConversation.RegisterCommand(new DelegateCommand<object>(DeleteConversation));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation));
             Commands.CreateConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowCreateConversationDialog));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
@@ -66,6 +67,10 @@ namespace SandRibbon.Utils
                     LoadPowerpoint(spec.File, spec.Details);
                     break;
             }
+        }
+        private void DeleteConversation(object o)
+        {
+            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.DELETE).ShowDialog();
         }
         private void EditConversation(object o)
         {

@@ -59,6 +59,7 @@ namespace SandRibbon.Components
             switch (dialogMode)
             {
                 case ConversationConfigurationMode.CREATE:
+                    deleteMessage.Visibility = Visibility.Collapsed;
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Create";
@@ -68,6 +69,7 @@ namespace SandRibbon.Components
                         details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
                 case ConversationConfigurationMode.EDIT:
+                    deleteMessage.Visibility = Visibility.Collapsed;
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Update";
@@ -80,6 +82,7 @@ namespace SandRibbon.Components
                     }
                     break;
                 case ConversationConfigurationMode.IMPORT:
+                    deleteMessage.Visibility = Visibility.Collapsed;
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Visible;
                     CommitButton.Content = "Create";
@@ -89,14 +92,20 @@ namespace SandRibbon.Components
                         details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
                 case ConversationConfigurationMode.DELETE:
+                    deleteMessage.Visibility = Visibility.Visible;
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
-                    CommitButton.Content = "Create";
+                    CommitButton.Content = "Delete";
+                    details = ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation);
                     if (details == null)
                     {
                         MessageBox.Show("No valid conversation currently selected.  Please ensure you are in a conversation you own when deleting a conversation.");
                         this.Close();
                     }
+                    details.Subject = details.Author;
+                    details.Title = "DELETED - " + details.Title;
+                    var addendumTag = String.IsNullOrEmpty(details.Tag)?"":"OldTag: " + details.Tag;
+                    details.Tag = "This conversation is deleted.  That means that it has been renamed and restricted so that only you can see it.  Nothing in MeTL is ever truly deleted."+addendumTag;
                     break;
             }
             isFirstRun = false;
@@ -230,6 +239,10 @@ namespace SandRibbon.Components
                     ConversationDetailsProviderFactory.Provider.Update(details);
                     Commands.PowerpointFinished.Execute(null);
                     break;
+                case ConversationConfigurationMode.DELETE:
+                    ConversationDetailsProviderFactory.Provider.Update(details);
+                    Commands.PowerpointFinished.Execute(null);
+                    break;
             }
             Commands.PowerpointFinished.Execute(null);
         }
@@ -296,6 +309,10 @@ namespace SandRibbon.Components
                             canExecute = true;
                         break;
                     case ConversationConfigurationMode.CREATE:
+                        if (checkConversation(details))
+                            canExecute = true;
+                        break;
+                    case ConversationConfigurationMode.DELETE:
                         if (checkConversation(details))
                             canExecute = true;
                         break;

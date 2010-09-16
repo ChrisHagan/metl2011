@@ -48,7 +48,8 @@ namespace SandRibbon.Components
             this.Visibility = Visibility.Visible;
             Commands.RequerySuggested();
         }
-        private bool CanShowConversationSearchBox(object o) {
+        private bool CanShowConversationSearchBox(object o)
+        {
             return this.Visibility != Visibility.Visible;
         }
         private void HideConversationSearchBox(object o)
@@ -119,11 +120,11 @@ namespace SandRibbon.Components
         {
             var list = new List<SandRibbonObjects.ConversationDetails>();
             var recentConversations = SandRibbon.Providers.RecentConversationProvider.loadRecentConversations().Where(c => c.IsValid
-                && allConversations.Contains(c)).Reverse().Take(10);
+                && allConversations.Contains(c)).Where(s => !s.Title.StartsWith("DELETED")).Reverse().Take(10);
             var recentAuthors = recentConversations.Select(c => c.Author).Where(c => c != Globals.me).Distinct().ToList();
             foreach (var author in recentAuthors)
             {
-                var otherConversationsByThisAuthor = allConversations.Where(c => c.IsValid && !list.Contains(c) && c.Author == author).Reverse();
+                var otherConversationsByThisAuthor = allConversations.Where(c => c.IsValid && !list.Contains(c) && c.Author == author).OrderByDescending(t => t.Created).ToList();
                 if (otherConversationsByThisAuthor.Count() > 0)
                 {
                     list.AddRange(otherConversationsByThisAuthor.Take(10));
@@ -135,8 +136,9 @@ namespace SandRibbon.Components
         private void updateMyRecentConversationsSource()
         {
             myRecentConversationsSource = convertToSummaries(SandRibbon.Providers.RecentConversationProvider.loadRecentConversations().Where(c => c.IsValid && allConversations.Contains(c))
-                        .Reverse()
-                        .Take(10).ToList());
+                .Where(s => !s.Title.StartsWith("DELETED"))
+                .Reverse()
+                .Take(10).ToList());
             myRecentConversationsCount.Content = "(" + myRecentConversationsSource.Count.ToString() + ")";
         }
 
@@ -168,7 +170,7 @@ namespace SandRibbon.Components
         {
             if (allConversations.Count == 0)
                 DoUpdateAllConversations();
-            allConversationsSource = convertToSummaries(allConversations);
+            allConversationsSource = convertToSummaries(allConversations.OrderByDescending(t=>t.Created).ToList());
             allConversationsCount.Content = "(" + allConversationsSource.Count.ToString() + ")";
             if (allConversations.Count != 0)
             {
@@ -185,16 +187,20 @@ namespace SandRibbon.Components
                 DoUpdateAllConversations();
             currentlyTeachingConversationsItemsControl.ItemsSource = currentlyTeachingConversationsSource;
             if (currentlyTeachingConversationsSource != null && currentlyTeachingConversationsSource.Count > 0)
-            currentlyTeachingConversationsCount.Content = "(" + currentlyTeachingConversationsSource.Count.ToString() + ")";
+                currentlyTeachingConversationsCount.Content = "(" + currentlyTeachingConversationsSource.Count.ToString() + ")";
         }
-        
+
         private void updateMyOwnedConversations()
         {
             if (allConversations.Count == 0)
                 DoUpdateAllConversations();
-            myOwnedConversationsSource = convertToSummaries(allConversations.Where(s => s.Author == Globals.me).ToList());
+            var listConversations = convertToSummaries(allConversations.Where(s => s.Author == Globals.me).ToList().Where(t=>!t.Title.StartsWith("DELETED")).OrderByDescending(s=>s.Created).ToList());
+            var listDeletedConversations = convertToSummaries(allConversations.Where(s => s.Author == Globals.me).ToList().Where(t=>t.Title.StartsWith("DELETED")).OrderByDescending(s=>s.Created).ToList());
+            listConversations.AddRange(listDeletedConversations);
+            myOwnedConversationsSource = listConversations;
             myOwnedConversationsCount.Content = "(" + myOwnedConversationsSource.Count.ToString() + ")";
         }
+        
         private void showMyOwnedConversations()
         {
             updateMyOwnedConversations();
@@ -247,7 +253,7 @@ namespace SandRibbon.Components
                 var matchingItems = specificSearch(searchText);
                 SearchResults.ItemsSource = convertToSummaries(matchingItems);
 
-                if(Globals.me.Contains("Admirable") && searchText.Contains("automatedconversation"))
+                if (Globals.me.Contains("Admirable") && searchText.Contains("automatedconversation"))
                 {
                     var list = matchingItems.OrderBy(c => c.Created).Select(c => c);
                     Commands.JoinConversation.Execute(list.Last().Jid);
@@ -306,7 +312,7 @@ namespace SandRibbon.Components
                             Int32.Parse(searchTerm);
                             isNumber = true;
                         }
-                        catch(FormatException e)
+                        catch (FormatException e)
                         {
                         }
                         if (!String.IsNullOrEmpty(searchTerm) && isNumber)
@@ -329,9 +335,9 @@ namespace SandRibbon.Components
             {
                 ResultsCount.Visibility = Visibility.Visible;
                 if (Count == 1)
-                    ResultsCount.Content = "1 result found for '"+lastSearch+"'";
+                    ResultsCount.Content = "1 result found for '" + lastSearch + "'";
                 else
-                    ResultsCount.Content = Count.ToString() + " results found for '"+lastSearch+"'";
+                    ResultsCount.Content = Count.ToString() + " results found for '" + lastSearch + "'";
             }
             else
             {

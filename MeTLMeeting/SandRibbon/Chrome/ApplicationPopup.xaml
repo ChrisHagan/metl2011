@@ -18,6 +18,7 @@
     <sr:MenuItem Text="New conversation" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.PreCreateConversation}"/>
     <sr:MenuItem Text="Open conversation" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}"/>
     <sr:MenuItem Text="Edit current conversation" ToolTip="{StaticResource EditConversationToolTip}" Command="{x:Static api:Commands.PreEditConversation}" />
+    <!--<sr:MenuItem Text="Delete current conversation" Command="{x:Static api:Commands.PreDeleteConversation}"/>-->
     <!--<sr:MenuItem Text="Print conversation" ToolTip="{StaticResource PrintHandoutToolTip}" Command="{x:Static api:Commands.PreShowPrintConversationDialog}" />
     -->
     <sr:MenuItem Text="Print" ToolTip="{StaticResource PrintConversationToolTip}" Command="{x:Static api:Commands.PrintConversation}" />
