@@ -1057,14 +1057,6 @@ namespace SandRibbonInterop.MeTLStanzas
                 }
             }
         }
-        private static void ensureCacheDirectoryExists(string room)
-        {
-            if (!Directory.Exists("Resource"))
-                Directory.CreateDirectory("Resource");
-            var roomPath = System.IO.Path.Combine("Resource", room);
-            if (!Directory.Exists(roomPath))
-                Directory.CreateDirectory(roomPath);
-        }
         public class Video : Element {
             static Video() { 
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Video));
@@ -1189,59 +1181,18 @@ namespace SandRibbonInterop.MeTLStanzas
                 InkCanvas.SetTop(image, this.y);
                 return image;
             }
-            public static ImageSource GetCachedImage(string url)
+            public static string GetCachedImage(string url)
             {
 
                 try
                 {
-                    var bitmapImage = new BitmapImage();
-                    bitmapImage.BeginInit();
-                    var uri = LocalCache.ResourceCache.LocalSource(url).ToString();
-                    bitmapImage.StreamSource = new MemoryStream(File.ReadAllBytes(uri));
-                    bitmapImage.EndInit();
-                    return bitmapImage;
+
+                    return LocalCache.ResourceCache.LocalSource(url).ToString();
                 }
                 catch (Exception e)
                 {
-                    try
-                    {
-                        MessageBox.Show(string.Format("Cache done broked {0}", e.Message));
-                        return new BitmapImage(new Uri(url, UriKind.RelativeOrAbsolute));
-                    }
-                    catch (Exception)
-                    {
-                        return BitmapSource.Create(1, 1, 96, 96, PixelFormats.BlackWhite, BitmapPalettes.BlackAndWhite, new byte[96 * 96], 1);
-                    }
+                    return "resources/slide_not_loaded.png";   
                 }
-                /*
-                try
-                {
-                    var regex = new Regex(@".*?/Resource/(.*?)/(.*)");
-                    var match = regex.Matches(url)[0];
-                    var room = match.Groups[1].Value;
-                    var file = match.Groups[2].Value;
-                    var path = string.Format(@"Resource\{0}\{1}", room, file);
-                    var bitmapImage = new BitmapImage();
-                    bitmapImage.BeginInit();
-                    ensureCacheDirectoryExists(room);
-                    if (File.Exists(path))
-                    {
-                        bitmapImage.StreamSource = new MemoryStream(File.ReadAllBytes(path));
-                    }
-                    else
-                    {
-                        var sourceBytes = new WebClient { Credentials = new NetworkCredential("exampleUsername", "examplePassword") }.DownloadData(url);
-                        bitmapImage.StreamSource = new MemoryStream(sourceBytes);
-                        File.WriteAllBytes(path, sourceBytes);
-                    }
-                    bitmapImage.EndInit();
-                    return bitmapImage;
-                }
-                catch (Exception e)
-                {
-                    return BitmapSource.Create(1, 1, 96, 96, PixelFormats.BlackWhite, BitmapPalettes.BlackAndWhite, new byte[96 * 96], 1);
-                }
-                 * */
             }
 
             public TargettedImage Img
@@ -1296,8 +1247,7 @@ namespace SandRibbonInterop.MeTLStanzas
                     try
                     {
                         var path = string.Format("https://{0}:1188{1}", JabberWire.SERVER, GetTag(sourceTag));
-                        return GetCachedImage(path);
-                        return (ImageSource)new ImageSourceConverter().ConvertFromString(path);
+                        return (ImageSource)new ImageSourceConverter().ConvertFromString(GetCachedImage(path));
                     }
                     catch (Exception e)
                     {
