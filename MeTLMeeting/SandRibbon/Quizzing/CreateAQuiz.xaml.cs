@@ -58,7 +58,7 @@ namespace SandRibbon.Quizzing
         }
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
-            var quiz = new QuizQuestion { title = quizTitle.Text, url = url, question = question.Text, author = Globals.me, id = DateTime.Now.Ticks };
+            var quiz = new QuizQuestion { title = quizTitle.Text, url = url, question = question.Text, author = Globals.me, id = SandRibbonObjects.DateTimeFactory.Now().Ticks };
             foreach (object obj in quizQuestions.Items)
             {
                 var answer = (Option)obj;
@@ -195,7 +195,7 @@ namespace SandRibbon.Quizzing
             Commands.ScreenshotGenerated.RegisterCommand(gotScreenshot);
             Commands.GenerateScreenshot.Execute(new ScreenshotDetails
                                                     {
-                                                        time = DateTime.Now.Ticks,
+                                                        time = SandRibbonObjects.DateTimeFactory.Now().Ticks,
                                                         message = ""
                                                     });
         }

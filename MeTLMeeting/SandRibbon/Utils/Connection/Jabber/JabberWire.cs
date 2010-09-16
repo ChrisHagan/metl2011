@@ -306,7 +306,7 @@ namespace SandRibbon.Utils.Connection
         }
         protected virtual void openConnection(string username)
         {
-            conn.Open(username, "examplePassword", DateTime.Now.Ticks.ToString(), 1);
+            conn.Open(username, "examplePassword", SandRibbonObjects.DateTimeFactory.Now().Ticks.ToString(), 1);
         }
         private void OnLogin(object o)
         {

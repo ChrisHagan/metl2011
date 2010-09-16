@@ -35,7 +35,7 @@ namespace SandRibbon.Components
 
         private void SMARTboardConsole(string message)
         {
-            SMARTboardDiagnosticOutput.Items.Insert(0, DateTime.Now + ": " + message);
+            SMARTboardDiagnosticOutput.Items.Insert(0, SandRibbonObjects.DateTimeFactory.Now() + ": " + message);
         }
 
         private void canConnectToSmartboard(object sender, CanExecuteRoutedEventArgs e)

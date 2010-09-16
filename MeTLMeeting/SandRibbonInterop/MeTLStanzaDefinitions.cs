@@ -796,7 +796,7 @@ namespace SandRibbonInterop.MeTLStanzas
                                    author = GetTag(AUTHOR),
                                    url = GetTag(URL)
                                };
-                    file.uploadTime = HasTag(TIME) ? GetTag(TIME) : DateTime.Now.ToString();
+                    file.uploadTime = HasTag(TIME) ? GetTag(TIME) : SandRibbonObjects.DateTimeFactory.Now().ToString();
                     file.size = HasTag(SIZE) ? long.Parse(GetTag(SIZE)) : 0;
                     file.name = HasTag(NAME) ? GetTag(NAME) : Path.GetFileNameWithoutExtension(file.url);
                     return file;

@@ -106,7 +106,7 @@ namespace SandRibbon.Components.Submissions
 
         private void generateScreenshot(object sender, RoutedEventArgs e)
         {
-            var time = DateTime.Now.Ticks;
+            var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             DelegateCommand<string> sendScreenshot = null;
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
                              {

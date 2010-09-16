@@ -454,7 +454,7 @@ namespace SandRibbon
             if (value != null && value is DateTime)
                 return ((DateTime)value).ToString();
             else
-                return DateTime.Now.ToString();
+                return SandRibbonObjects.DateTimeFactory.Now().ToString();
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

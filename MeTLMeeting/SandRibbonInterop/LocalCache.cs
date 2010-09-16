@@ -19,7 +19,7 @@ namespace SandRibbonInterop.LocalCache
         {
             get
             {
-                if(ActualDict == null)
+                if (ActualDict == null)
                 {
                     ActualDict = ReadDictFromFile();
                 }
@@ -27,7 +27,7 @@ namespace SandRibbonInterop.LocalCache
             }
             set
             {
-                ActualDict = value;   
+                ActualDict = value;
             }
 
         }
@@ -48,13 +48,13 @@ namespace SandRibbonInterop.LocalCache
             return newDict;
         }
         //we keep 7 days worth of cached images, 
-        public  void CleanUpCache()
+        public void CleanUpCache()
         {
             var XDoc = "<CachedUris>";
-            foreach(var uri in Directory.GetFiles(cacheName +"\\"))
+            foreach (var uri in Directory.GetFiles(cacheName + "\\"))
             {
-                if(Directory.GetLastAccessTime(uri).Ticks < DateTime.Now.Subtract(new TimeSpan(7,0,0,0)).Ticks)
-                    Directory.Delete(uri);
+                if (Directory.GetLastAccessTime(uri).Ticks < SandRibbonObjects.DateTimeFactory.Now().Subtract(new TimeSpan(7, 0, 0, 0)).Ticks)
+                    File.Delete(cacheName + "\\" + uri);
                 else
                     XDoc += string.Format("<CachedUri remote='{0}' local='{1}'/>", uri, RemoteSource(new Uri(uri, UriKind.RelativeOrAbsolute)));
             }
@@ -87,7 +87,7 @@ namespace SandRibbonInterop.LocalCache
             {
                 if (!Directory.Exists(cacheName))
                     Directory.CreateDirectory(cacheName);
-                var localUriString = cacheName + "\\" +  remoteUri.ToString().Split('/').Reverse().First();
+                var localUriString = cacheName + "\\" + remoteUri.ToString().Split('/').Reverse().First();
                 File.WriteAllBytes(localUriString, HttpResourceProvider.secureGetData(remoteUri.ToString()));
                 var localUri = new Uri(localUriString, UriKind.Relative);
                 Add(remoteUri.ToString(), localUri);
@@ -96,11 +96,11 @@ namespace SandRibbonInterop.LocalCache
         }
         public static Uri RemoteSource(Uri media)
         {
-            
+
             if (media.ToString().StartsWith("Resource\\"))
                 return media;
             var uri = CacheDict.Where(kv => kv.Value == media).FirstOrDefault().Key;
-            return uri== null ? null : new Uri(uri, UriKind.RelativeOrAbsolute);
+            return uri == null ? null : new Uri(uri, UriKind.RelativeOrAbsolute);
         }
     }
     public class WebClientWithTimeout : WebClient

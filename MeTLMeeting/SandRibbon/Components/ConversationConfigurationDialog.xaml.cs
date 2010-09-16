@@ -66,7 +66,7 @@ namespace SandRibbon.Components
                     if (isFirstRun && startingContentSelector != null && startingContentSelector.Items.Count > 0)
                         startingContentSelector.SelectedIndex = 0;
                     if (details == null)
-                        details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
+                        details = new ConversationDetails { Author = Globals.me, Created = SandRibbonObjects.DateTimeFactory.Now(), Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
                 case ConversationConfigurationMode.EDIT:
                     deleteMessage.Visibility = Visibility.Collapsed;
@@ -89,7 +89,7 @@ namespace SandRibbon.Components
                     if (isFirstRun && startingContentSelector != null && startingContentSelector.Items.Count > 1)
                         startingContentSelector.SelectedIndex = 1;
                     if (details == null)
-                        details = new ConversationDetails { Author = Globals.me, Created = DateTime.Now, Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
+                        details = new ConversationDetails { Author = Globals.me, Created = SandRibbonObjects.DateTimeFactory.Now(), Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
                 case ConversationConfigurationMode.DELETE:
                     deleteMessage.Visibility = Visibility.Visible;

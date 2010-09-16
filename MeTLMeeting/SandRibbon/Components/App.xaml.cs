@@ -19,7 +19,7 @@ namespace SandRibbon
         private bool loggingOut = false;
 
         public static string Now(string title){
-            var now = DateTime.Now;
+            var now = SandRibbonObjects.DateTimeFactory.Now();
             var s = string.Format("{2} {0}:{1}", now, now.Millisecond, title);
             Logger.Log(s);
             Console.WriteLine(s);
@@ -85,7 +85,7 @@ namespace SandRibbon
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyAutoshape();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyLiveWindow();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.ScreenshotSubmission();
-                Console.WriteLine("End ", DateTime.Now.ToString());
+                Console.WriteLine("End ", SandRibbonObjects.DateTimeFactory.Now().ToString());
             }
             catch (Exception ex)
             {

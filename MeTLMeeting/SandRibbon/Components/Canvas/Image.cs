@@ -1039,15 +1039,17 @@ namespace SandRibbon.Components.Canvas
             }
         }
 
-        private void uploadFileForUse(string filename)
+        private void uploadFileForUse(string unMangledFilename)
         {
-            if (filename.EndsWith(".yaws") || filename.EndsWith(".beam") || filename.EndsWith(".erl"))
+            string filename = unMangledFilename + ".MeTLFileUpload";
+            File.Copy(unMangledFilename, filename);
+            /*if (filename.EndsWith(".yaws") || filename.EndsWith(".beam") || filename.EndsWith(".erl"))
             {
                 MessageBox.Show("Sorry, MeTL cannot upload this file: " + filename);
                 return;
-            }
+            }*/
             string hostedFileName;
-            if (!filename.Contains("http"))
+            if (!filename.StartsWith("http"))
             {
                 hostedFileName = ResourceUploader.uploadResource(currentSlide.ToString(), filename);
                 if (hostedFileName == "failed") return;
@@ -1058,12 +1060,12 @@ namespace SandRibbon.Components.Canvas
                                                   {
                                                       author = Globals.me,
                                                       url = hostedFileName,
-                                                      uploadTime = DateTime.Now.ToString(),
+                                                      uploadTime = SandRibbonObjects.DateTimeFactory.Now().ToString(),
                                                       size = new System.IO.FileInfo(filename).Length,
-                                                      name = Path.GetFileNameWithoutExtension(filename)
+                                                      name = Path.GetFileNameWithoutExtension(unMangledFilename)
 
                                                    });
-            
+            File.Delete(filename);
         }
         public void dropImageOnCanvas(string fileName, Point pos, int count)
         {
