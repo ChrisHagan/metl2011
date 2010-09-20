@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentAndStrokesExperiment
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLCollaborator", "MeTLCollaborator\MeTLCollaborator.csproj", "{C2BC5886-C540-4DF0-88C7-C8E00AFF935B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLinkOpener", "MeTLLinkOpener\MeTLLinkOpener.csproj", "{4FE28D25-A8F8-44C5-A4BE-555359718C4E}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = SandRibbon2.vsmdi
@@ -83,6 +85,10 @@ Global
 		{C2BC5886-C540-4DF0-88C7-C8E00AFF935B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2BC5886-C540-4DF0-88C7-C8E00AFF935B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2BC5886-C540-4DF0-88C7-C8E00AFF935B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
