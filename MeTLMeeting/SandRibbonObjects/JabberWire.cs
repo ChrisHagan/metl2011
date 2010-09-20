@@ -16,7 +16,7 @@ namespace Constants
             get
             {
                 //uncomment this line to lock the application to a specific server.
-                //return "madam.adm.monash.edu.au";
+                //return "reifier.adm.monash.edu.au";
                 return server_property;
             }
             set{
