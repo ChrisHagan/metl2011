@@ -352,37 +352,35 @@ namespace SandRibbon.Providers
         }
         public static string securePutFile(string uri, string filename)
         {
-            string type = "securePutFile";
-            byte[] responseBytes = new byte[0];
+            const string type = "securePutFile";
+            var responseBytes = new byte[0];
             int attempts = 0;
             int percentage = 0;
             bool isDownloaded = false;
-            bool isCancelled = false;
             while (!isDownloaded && attempts < 5)
             {
                 try
                 {
                     percentage = 0;
-                    isCancelled = false;
-                    long recBytes = 0;
                     var webclient = client();
                     var threadAction = new Thread(new ThreadStart(() =>
                     {
                         webclient.UploadFileAsync(new System.Uri(uri, UriKind.RelativeOrAbsolute), filename);
                         NotifyStatus("starting", type, uri, filename);
                     }));
+                    bool downloaded = isDownloaded;
+                    int attempts1 = attempts;
                     webclient.UploadProgressChanged += (sender, args) =>
                     {
-                        if (!isDownloaded)
+                        if (!downloaded)
                         {
-                            recBytes = args.BytesSent + args.BytesReceived;
+                            long recBytes = args.BytesSent + args.BytesReceived;
                             percentage = (int)(recBytes / (args.TotalBytesToSend + args.TotalBytesToReceive));
-                            NotifyProgress(attempts, type, uri, recBytes, args.TotalBytesToSend, percentage, true);
+                            NotifyProgress(attempts1, type, uri, recBytes, args.TotalBytesToSend, percentage, true);
                         }
                     };
                     webclient.UploadFileCompleted += (sender, args) =>
                     {
-                        isCancelled = args.Cancelled;
                         responseBytes = args.Result;
                         NotifyStatus("completed", type, uri);
                         isDownloaded = true;

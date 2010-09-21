@@ -35,7 +35,6 @@ namespace SandRibbon.Components.Canvas
     public class VisibilityInformation  : DependencyObject 
     {
         public string user { get; set;}
-        //public bool visible { get; set;}  
         public bool visible 
         {
             get { return (bool)this.GetValue(UserVisibilityProperty); }
