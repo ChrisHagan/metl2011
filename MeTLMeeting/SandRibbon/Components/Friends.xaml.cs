@@ -17,7 +17,6 @@ namespace SandRibbon.Components
 {
     public partial class Friends
     {
-        public DelegateCommand<string> setAuthor;
         public ObservableCollection<VisibilityInformation> publishers;
         public Friends()
         {
@@ -47,7 +46,40 @@ namespace SandRibbon.Components
                                        });
                 }
         }
+        private void teacherToggle(object sender, RoutedEventArgs e)
+        {
+            var user = publishers.Where(uv =>uv.user == "Teacher").First();
+            user.visible = ((CheckBox)sender).IsChecked == true;
+            Commands.UserVisibility.Execute(new VisibilityInformation
+                                                {
+                                                    user = "toggleTeacher",
+                                                    visible =((CheckBox) sender).IsChecked == true
+                                                });
+        }
+        private void meToggle(object sender, RoutedEventArgs e)
+        {
+            publishers.Where(uv =>uv.user == Globals.me).First().visible = ((CheckBox)sender).IsChecked == true;
+            Commands.UserVisibility.Execute(new VisibilityInformation
+                                                {
+                                                    user = "toggleMe",
+                                                    visible =((CheckBox) sender).IsChecked == true
+                                                });
+        }
+        private void otherToggle(object sender, RoutedEventArgs e)
+        {
+            foreach(var uv in publishers)
+            {
+                if (uv.user != "Teacher" && uv.user != Globals.me)
+                    uv.visible = ((CheckBox) sender).IsChecked == true;
 
+            }
+            Commands.UserVisibility.Execute(new VisibilityInformation
+                                                {
+                                                    user = "toggleStudents",
+                                                    visible = ((CheckBox) sender).IsChecked == true
+                                                });
+        }
+        //Chat functionality
         public void SetWidth(double width)
         {
             friendsDock.Width = width;
@@ -144,38 +176,6 @@ namespace SandRibbon.Components
                                                 });
         }
 
-        private void teacherToggle(object sender, RoutedEventArgs e)
-        {
-            var user = publishers.Where(uv =>uv.user == "Teacher").First();
-            user.visible = ((CheckBox)sender).IsChecked == true;
-            Commands.UserVisibility.Execute(new VisibilityInformation
-                                                {
-                                                    user = "toggleTeacher",
-                                                    visible =((CheckBox) sender).IsChecked == true
-                                                });
-        }
-        private void meToggle(object sender, RoutedEventArgs e)
-        {
-            publishers.Where(uv =>uv.user == Globals.me).First().visible = ((CheckBox)sender).IsChecked == true;
-            Commands.UserVisibility.Execute(new VisibilityInformation
-                                                {
-                                                    user = "toggleMe",
-                                                    visible =((CheckBox) sender).IsChecked == true
-                                                });
-        }
-        private void otherToggle(object sender, RoutedEventArgs e)
-        {
-            foreach(var uv in publishers)
-            {
-                if (uv.user != "Teacher" && uv.user != Globals.me)
-                    uv.visible = ((CheckBox) sender).IsChecked == true;
 
-            }
-            Commands.UserVisibility.Execute(new VisibilityInformation
-                                                {
-                                                    user = "toggleStudents",
-                                                    visible = ((CheckBox) sender).IsChecked == true
-                                                });
-        }
     }
 }

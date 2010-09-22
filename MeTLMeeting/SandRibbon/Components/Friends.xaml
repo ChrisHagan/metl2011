@@ -11,26 +11,29 @@
                 <RowDefinition x:Name="chatHistoryContent"/>
                 <RowDefinition x:Name="chatInputContent" Height="25"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Vertical">
-                <ItemsControl x:Name="users">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <CheckBox IsChecked="{Binding Path=visible}"  Click="userClick">
-                                <Label Content="{Binding Path=user}"/>
-                            </CheckBox>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox IsChecked="true" Click="teacherToggle">Toggle Teacher</CheckBox>
-                    <CheckBox IsChecked="true" x:Name="myToggle"  Click="meToggle">Toggle Me</CheckBox>
-                    <CheckBox IsChecked="true" Click="otherToggle"> Toggle Everyone else</CheckBox>
-                </StackPanel>
-            </StackPanel>
-            <Grid Grid.Row="1" Width="Auto" 
-                  HorizontalAlignment="Stretch" 
-                  VerticalAlignment="Top" 
-                  Background="{StaticResource BackgroundBlueGradient}">
+            <DockPanel LastChildFill="False" Grid.Row="0" Width="auto" Height="auto">
+                <WrapPanel Orientation="Vertical" DockPanel.Dock="Top">
+                    <Label FontWeight="Bold">User Visibility Controls</Label>
+                    <ScrollViewer>
+                        <ItemsControl x:Name="users">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Path=visible}"  Click="userClick">
+                                        <Label Content="{Binding Path=user}" />
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </WrapPanel>
+                <WrapPanel Orientation="Vertical"  Height="auto" DockPanel.Dock="Bottom">
+                    <Label FontWeight="Bold">Quick visibility links</Label>
+                    <CheckBox IsChecked="true" Click="teacherToggle">Teacher</CheckBox>
+                    <CheckBox IsChecked="true" x:Name="myToggle"   Click="meToggle">Me</CheckBox>
+                    <CheckBox IsChecked="true"  Click="otherToggle">Everyone else</CheckBox>
+                </WrapPanel>
+            </DockPanel>
+            <Grid Grid.Row="1" Width="Auto"  HorizontalAlignment="Stretch"  VerticalAlignment="Top"  Background="{StaticResource BackgroundBlueGradient}">
                 <TextBlock Text="Chat" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
             <ScrollViewer x:Name="historyScrollViewer" Height="auto" Grid.Row="2">

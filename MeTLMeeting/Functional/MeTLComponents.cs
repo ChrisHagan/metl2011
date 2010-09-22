@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Controls;
+using System.Xaml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Controls.Primitives;
 using Keys = System.Windows.Forms.SendKeys;

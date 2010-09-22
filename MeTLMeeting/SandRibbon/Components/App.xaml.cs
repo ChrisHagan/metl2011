@@ -40,27 +40,6 @@ namespace SandRibbon
         {
             //This is to ensure that all the static constructors are called.
             base.OnStartup(e);
-            new Worm();
-            new Printer();
-            new CommandParameterProvider();
-            Commands.LogOut.RegisterCommand(new DelegateCommand<object>(LogOut));
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Ink();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Quiz();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Image();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Video();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Bubble();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.TextBox();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyInk();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyText();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.AutoShape();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyImage();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.LiveWindow();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.QuizOption();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.FileResource();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.QuizResponse();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyElement();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyAutoshape();
-            new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyLiveWindow();
             App.Now("Finished static constructor");
             try
             {
@@ -85,7 +64,7 @@ namespace SandRibbon
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyAutoshape();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyLiveWindow();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.ScreenshotSubmission();
-                Console.WriteLine("End ", SandRibbonObjects.DateTimeFactory.Now().ToString());
+                Console.WriteLine(@"End ");
             }
             catch (Exception ex)
             {
