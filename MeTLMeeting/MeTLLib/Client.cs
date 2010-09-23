@@ -8,12 +8,23 @@ using MeTLLib.Providers.Connection;
 using MeTLLib.Providers.Structure;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using System.Windows.Ink;
 
 namespace MeTLLib
 {
     public class ClientConnection
     {
         private JabberWire wire;
+        public Location location { get { return wire.location; } }
+        public string username
+        {
+            get
+            {
+                if (wire != null && wire.credentials != null && wire.credentials.name != null)
+                    return wire.credentials.name;
+                else return "";
+            }
+        }
         public bool isConnected { get { return wire.IsConnected(); } }
         public ClientConnection()
         {

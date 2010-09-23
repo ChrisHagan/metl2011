@@ -37,6 +37,7 @@ namespace MeTLLib.DataTypes
             new MeTLStanzas.DirtyImage();
             new MeTLStanzas.LiveWindow();
             new MeTLStanzas.QuizOption();
+            new MeTLStanzas.ScreenshotSubmission();
             new MeTLStanzas.FileResource();
             new MeTLStanzas.QuizResponse();
             new MeTLStanzas.DirtyElement();
@@ -169,7 +170,19 @@ namespace MeTLLib.DataTypes
             }
             set
             {
-                identity = value.tag().id;
+                string internalIdentity;
+                try
+                {
+                    internalIdentity = value.tag().id;
+                }
+                catch (Exception ex)
+                {
+                    if (String.IsNullOrEmpty(identity))
+                        identity = string.Format("{0}:{1}", author, DateTimeFactory.Now());
+                    value.tag(new TextTag { author = author, id = identity, privacy = privacy });
+                    internalIdentity = value.tag().id;
+                }
+                identity = internalIdentity;
                 boxProperty = value;
             }
         }
@@ -570,8 +583,17 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
+                    double startingSum;
+                    try
+                    {
+                        startingSum = value.stroke.startingSum();
+                    }
+                    catch (Exception ex)
+                    {
+                        startingSum = value.stroke.sum().checksum;
+                    }
                     this.SetTag(sumTag, value.stroke.sum().checksum.ToString());
-                    this.SetTag(startingSumTag, value.stroke.startingSum());
+                    this.SetTag(startingSumTag, startingSum);
                     this.SetTag(pointsTag, strokeToPoints(value.stroke));
                     this.SetTag(colorTag, strokeToColor(value.stroke));
                     this.SetTag(thicknessTag, value.stroke.DrawingAttributes.Width.ToString());
@@ -667,6 +689,7 @@ namespace MeTLLib.DataTypes
                     Height = height,
                     Width = width
                 };
+
                 InkCanvas.SetLeft(textBox, x);
                 InkCanvas.SetTop(textBox, y);
                 return textBox;

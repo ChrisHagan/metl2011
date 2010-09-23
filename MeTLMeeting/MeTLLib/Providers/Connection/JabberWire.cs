@@ -186,6 +186,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void setUpWire()
         {
+            conn = null;
             new MeTLLib.DataTypes.MeTLStanzasConstructor();
             this.jid = createJid(credentials.name);
             if (conn == null)
@@ -710,7 +711,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
             {
                 var vid = video.Vid;
-                actOnVideoReceived(vid);
+                actOnVideoReceived(video.Vid);
             }
             foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
                 actOnDirtyVideoReceived(dirtyVideo);

@@ -32,14 +32,18 @@ namespace MeTLLib.Providers.Connection
 
         private static WebClient client()
         {
+            configureServicePointManager();
+            var wc = new WebClientWithTimeout { Credentials = MeTLCredentials };
+            return wc;
+        }
+        private static void configureServicePointManager()
+        {
             if (firstRun)
             {
                 ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
                 ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
                 firstRun = false;
             }
-            var wc = new WebClientWithTimeout { Credentials = MeTLCredentials };
-            return wc;
         }
         private static bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
@@ -54,6 +58,7 @@ namespace MeTLLib.Providers.Connection
         }
         public static long getSize(string resource)
         {
+            configureServicePointManager();
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = MeTLCredentials;
             request.Method = "HEAD";
@@ -70,6 +75,7 @@ namespace MeTLLib.Providers.Connection
         }
         public static bool exists(string resource)
         {
+            configureServicePointManager();
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = MeTLCredentials;
             request.Method = "HEAD";

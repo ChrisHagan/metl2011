@@ -13,10 +13,11 @@
                 <Button Click="setInkMode" Tag="Ink">Ink</Button>
                 <Button Click="setInkMode" Tag="Select">Select</Button>
                 <Button Click="setInkMode" Tag="Erase">Erase</Button>
+                <Button Click="NewTextBox">InsertText</Button>
             </StackPanel>
             <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                           Height="Auto" Width="Auto"> 
-                <InkCanvas x:Name="inkCanvas"/>
+                <InkCanvas x:Name="inkCanvas" StrokeCollected="StrokeCollected"/>
             </Viewbox>
         </DockPanel>
     </Grid>

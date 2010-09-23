@@ -181,7 +181,6 @@ namespace MeTLLib.Providers.Connection
         }
         public override void actOnVideoReceived(TargettedVideo video)
         {
-            //Videos currently disabled
             videos[video.id]=video;
         }
         public override void actOnBubbleReceived(TargettedBubbleContext bubble)

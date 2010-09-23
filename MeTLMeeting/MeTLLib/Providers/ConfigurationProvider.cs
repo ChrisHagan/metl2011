@@ -29,7 +29,6 @@ namespace MeTLLib.Providers
         {
             get 
             {
-                isStaging = true;
                 if (isStaging)
                 {
                     if (stagingServer == null)

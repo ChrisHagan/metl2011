@@ -37,17 +37,6 @@ namespace MeTLLib.Providers
                 }
             }
         }
-        public static DrawingAttributes drawingAttributes
-        {
-            get
-            {
-                try { return ((DrawingAttributes)Commands.ReportDrawingAttributes.lastValue()); }
-                catch (NotSetException)
-                {
-                }
-                return new DrawingAttributes();
-            }
-        }
         public static List<Slide> slides
         {
             get
@@ -111,13 +100,6 @@ namespace MeTLLib.Providers
             get
             {
                 return credentials.name;
-            }
-        }
-        public static string privacy
-        {
-            get
-            {
-                return (string)Commands.SetPrivacy.lastValue();
             }
         }
     }

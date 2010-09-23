@@ -26,22 +26,39 @@ namespace LibTester
             InitializeComponent();
             client = new ClientConnection();
             client.LogMessageAvailable += (sender, args) => { Console.WriteLine(args.logMessage); };
-            client.StatusChanged += (sender, args) => { Console.WriteLine("StatusChange(isConnected) = " + args.isConnected.ToString()); };
             client.StrokeAvailable += (sender, args) => { inkCanvas.Strokes.Add(args.stroke.stroke); };
-            //Console.WriteLine("StrokeReceived: " + args.stroke.startingChecksum.ToString()); };
-            client.TextBoxAvailable += (sender, args) => { Console.WriteLine("TextBoxReceived: " + args.textBox.box.Text); };
-            client.ImageAvailable += (sender, args) => { Console.WriteLine("ImageReceieved: " + args.image.id); };
+            client.TextBoxAvailable += (sender, args) => { inkCanvas.Children.Add(args.textBox.box); };
+            client.ImageAvailable += (sender, args) => { inkCanvas.Children.Add(args.image.image); };
+            client.VideoAvailable += (sender, args) =>
+            {
+                var me = args.video.video.MediaElement;
+                me.LoadedBehavior = MediaState.Play;
+                Canvas.SetLeft(me, args.video.X);
+                Canvas.SetTop(me, args.video.Y);
+                me.Width = args.video.Width;
+                me.Height = args.video.Height;
+                inkCanvas.Children.Add(me);
+
+            };
             client.PreParserAvailable += (sender, args) =>
             {
                 var parser = ((PreParser)args.parser);
-                foreach (TargettedStroke stroke in parser.ink)
-                    inkCanvas.Strokes.Add(stroke.stroke);
+                foreach (TargettedVideo video in parser.videos.Values)
+                {
+                    var me = video.video.MediaElement;
+                    me.LoadedBehavior = MediaState.Play;
+                    Canvas.SetLeft(me, video.video.X);
+                    Canvas.SetTop(me, video.video.Y);
+                    me.Width = video.video.Width;
+                    me.Height = video.video.Height;
+                    inkCanvas.Children.Add(me);
+                }
                 foreach (TargettedImage image in parser.images.Values)
                     inkCanvas.Children.Add(image.image);
                 foreach (TargettedTextBox textBox in parser.text.Values)
                     inkCanvas.Children.Add(textBox.box);
-                foreach (TargettedVideo video in parser.videos.Values)
-                    inkCanvas.Children.Add(video.video);
+                foreach (TargettedStroke stroke in parser.ink)
+                    inkCanvas.Strokes.Add(stroke.stroke);
             };
         }
         private void attemptToAuthenticate(object sender, RoutedEventArgs e)
@@ -61,13 +78,9 @@ namespace LibTester
         }
         private void moveTo(object sender, RoutedEventArgs e)
         {
-            if (client != null && client.isConnected)
-            {
-                inkCanvas.Children.Clear();
-                inkCanvas.Strokes.Clear();
-                client.MoveTo(Int32.Parse(location.Text));
-            }
-            else Console.WriteLine("not yet logged in");
+            inkCanvas.Children.Clear();
+            inkCanvas.Strokes.Clear();
+            client.MoveTo(Int32.Parse(location.Text));
         }
         private void setInkMode(object sender, RoutedEventArgs e)
         {
@@ -83,6 +96,41 @@ namespace LibTester
                 case "Erase":
                     inkCanvas.EditingMode = InkCanvasEditingMode.EraseByStroke;
                     break;
+            }
+        }
+        private void StrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
+        {
+            if (client != null)
+            {
+                var internalStroke = e.Stroke;
+                var newStroke = new TargettedStroke
+                {
+                    stroke = internalStroke,
+                    privacy = "public",
+                    author = client.username,
+                    slide = client.location.currentSlide,
+                    target = "presentationSpace",
+                };
+                client.SendStroke(newStroke);
+            }
+        }
+        private void NewTextBox(object sender, RoutedEventArgs e)
+        {
+            if (client != null)
+            {
+                var internalTextBox = new TextBox();
+                internalTextBox.Text = "this is a new textbox from MeTLLib";
+                Canvas.SetLeft(internalTextBox, 100);
+                Canvas.SetTop(internalTextBox, 100);
+                var newTargettedTextBox = new TargettedTextBox
+                {
+                    privacy = "public",
+                    author = client.username,
+                    slide = client.location.currentSlide,
+                    target = "presentationSpace",
+                    box = internalTextBox,
+                };
+                client.SendTextBox(newTargettedTextBox);
             }
         }
     }

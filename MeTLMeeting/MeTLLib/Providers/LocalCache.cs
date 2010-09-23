@@ -84,6 +84,11 @@ namespace MeTLLib.Providers
         {
             if (remoteUri.ToString().StartsWith(cacheName + "\\"))
                 return remoteUri;
+           //This is a quick and dirty fix for a problem that should be solved elsewhere.  
+            //Somwehow, the source attribute of some stanzas is having the server section repeated when it's constructed.
+            // eg:  https://madam.adm.monash.edu.au:1188/https://madam.adm.monash.edu.au:1188/https://madam.adm.monash.edu.au:1188/Resource/101/Bear.wmv"
+            if (remoteUri.ToString().StartsWith("https://") && remoteUri.ToString().Contains(":1188/https://"))
+                remoteUri = new System.Uri("https://"+Constants.SERVER+remoteUri.ToString().Substring(remoteUri.ToString().LastIndexOf(":1188/")), UriKind.Absolute);
             if (!CacheDict.ContainsKey(remoteUri.ToString()))
             {
                 if (!Directory.Exists(cacheName))
