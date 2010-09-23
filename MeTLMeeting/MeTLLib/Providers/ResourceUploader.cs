@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using MeTLLib.Providers.Connection;
 using MeTLLib.Providers;
 
-namespace SandRibbon.Utils.Connection
+namespace MeTLLib.Providers.Connection
 {
     class ResourceUploader
     {

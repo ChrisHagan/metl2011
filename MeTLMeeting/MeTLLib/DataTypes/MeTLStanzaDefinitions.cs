@@ -874,6 +874,42 @@ namespace MeTLLib.DataTypes
                 }
             }
         }
+        public class LocalFileInformation
+        {
+            public string author;
+            public string file;
+            public string path;
+            public bool overwrite;
+            public string name;
+            public string privacy;
+            public long size;
+            public int slide;
+            public string target;
+            public string uploadTime; 
+        }
+        public class LocalImageInformation
+        {
+            public string author;
+            public System.Windows.Controls.Image image;
+            public string file;
+            public string room;
+            public bool overwrite;
+            public string privacy;
+            public int slide;
+            public string target;
+        }
+        public class LocalVideoInformation
+        {
+            public string author;
+            public MeTLLib.DataTypes.Video video;
+            public string file;
+            public string room;
+            public bool overwrite;
+            public string privacy;
+            public int slide;
+            public string target;
+        }
+        
         public class ScreenshotSubmission : Element
         {
             static ScreenshotSubmission()

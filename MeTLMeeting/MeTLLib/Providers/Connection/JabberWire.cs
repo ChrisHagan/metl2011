@@ -114,8 +114,8 @@ namespace MeTLLib.Providers.Connection
             Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoShape));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
             Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
-           // Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>((_arg) => new Printer().PrintPrivate(location.activeConversation, credentials.name)));
-           // Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>((_arg) => new Printer().PrintHandout(location.activeConversation, credentials.name)));
+            // Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>((_arg) => new Printer().PrintPrivate(location.activeConversation, credentials.name)));
+            // Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>((_arg) => new Printer().PrintHandout(location.activeConversation, credentials.name)));
             Commands.SendChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendChat));
             Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
             Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
@@ -130,54 +130,58 @@ namespace MeTLLib.Providers.Connection
             Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
             Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
         }
-        private void doGetCurrentClasses()
+        internal List<ConversationDetails> CurrentClasses
         {
-            try
+            get
             {
-                var currentRooms = new List<string>();
-                if (conn != null && conn.Username == Globals.me)
+                try
                 {
-                    var discoIq = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
-                    discoIq.To = new Jid(Constants.MUC);
-                    //discoIq.From = conn.MyJID;
-                    var IQResponse = conn.IqGrabber.SendIq(discoIq);
-                    if (IQResponse == null) return;
-                    foreach (object item in IQResponse.Query.ChildNodes.ToArray())
+                    var currentRooms = new List<string>();
+                    if (conn != null && conn.Username == Globals.me)
                     {
-                        if (item.GetType().Equals(typeof(agsXMPP.protocol.iq.disco.DiscoItem)))
+                        var discoIq = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
+                        discoIq.To = new Jid(Constants.MUC);
+                        //discoIq.From = conn.MyJID;
+                        var IQResponse = conn.IqGrabber.SendIq(discoIq);
+                        if (IQResponse == null) return null;
+                        foreach (object item in IQResponse.Query.ChildNodes.ToArray())
                         {
-                            var name = ((agsXMPP.protocol.iq.disco.DiscoItem)item).Name.ToString();
-                            name = name.Remove(name.Length - 4);
-                            currentRooms.Add(name);
+                            if (item.GetType().Equals(typeof(agsXMPP.protocol.iq.disco.DiscoItem)))
+                            {
+                                var name = ((agsXMPP.protocol.iq.disco.DiscoItem)item).Name.ToString();
+                                name = name.Remove(name.Length - 4);
+                                currentRooms.Add(name);
+                            }
                         }
-                    }
-                    var populatedConversations = new List<ConversationDetails>();
-                    var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
-                    int dummy;
-                    var conversationJids = currentRooms.Where(r => Int32.TryParse(r, out dummy))
-                        .Select(r => Int32.Parse(r))
-                        .Where(r => Slide.conversationFor(r) == r).Distinct().Select(r => r.ToString());
-                    foreach (ConversationDetails conversation in conversations.Where(c => conversationJids.Contains(c.Jid)))
-                    {
-                        var discoOccupants = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
-                        discoOccupants.To = new Jid(conversation.Jid.ToString() + "@" + Constants.MUC);
-                        var newIQResponse = conn.IqGrabber.SendIq(discoOccupants);
-                        if (newIQResponse.Query.ChildNodes.ToArray()
-                            .Where(n => n is agsXMPP.protocol.iq.disco.DiscoItem)
-                            .Select(di => ((DiscoItem)di).Name.Split('@')[0])
-                            .Any(name => name.Contains(conversation.Author)))
+                        var populatedConversations = new List<ConversationDetails>();
+                        var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+                        int dummy;
+                        var conversationJids = currentRooms.Where(r => Int32.TryParse(r, out dummy))
+                            .Select(r => Int32.Parse(r))
+                            .Where(r => Slide.conversationFor(r) == r).Distinct().Select(r => r.ToString());
+                        foreach (ConversationDetails conversation in conversations.Where(c => conversationJids.Contains(c.Jid)))
                         {
-                            populatedConversations.Add(conversation);
+                            var discoOccupants = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
+                            discoOccupants.To = new Jid(conversation.Jid.ToString() + "@" + Constants.MUC);
+                            var newIQResponse = conn.IqGrabber.SendIq(discoOccupants);
+                            if (newIQResponse.Query.ChildNodes.ToArray()
+                                .Where(n => n is agsXMPP.protocol.iq.disco.DiscoItem)
+                                .Select(di => ((DiscoItem)di).Name.Split('@')[0])
+                                .Any(name => name.Contains(conversation.Author)))
+                            {
+                                populatedConversations.Add(conversation);
+                            }
                         }
+                        return populatedConversations;
                     }
-                    Commands.receiveCurrentClasses.Execute(populatedConversations);
+                    return null;
                 }
+                catch (Exception) { return null; }
             }
-            catch (Exception) { }
         }
         public void getCurrentClasses(object _unused)
         {
-            Thread newThread = new Thread(new ThreadStart(doGetCurrentClasses));
+            Thread newThread = new Thread(new ThreadStart(() => { if (CurrentClasses != null)Commands.receiveCurrentClasses.Execute(CurrentClasses); }));
             newThread.Start();
         }
         private void SendNewBubble(TargettedBubbleContext selection)
@@ -273,6 +277,11 @@ namespace MeTLLib.Providers.Connection
         private void OnPresence(object sender, Element element)
         {
             Commands.ReceiveWormMove.Execute("=");
+        }
+        public void Logout()
+        {
+            unregisterHandlers();
+            conn.Close();
         }
         public void Login(Location location)
         {
@@ -408,7 +417,7 @@ namespace MeTLLib.Providers.Connection
         private void onStart()
         {
             Commands.UpdateWormInterval.Execute(TimeSpan.FromMilliseconds(15000));
-        //    Worm.heart.Interval = TimeSpan.FromMilliseconds(15000);
+            //    Worm.heart.Interval = TimeSpan.FromMilliseconds(15000);
         }
         public static void dontDoAnything()
         {
@@ -448,6 +457,20 @@ namespace MeTLLib.Providers.Connection
         public bool IsConnected()
         {
             return conn != null && conn.Authenticated;
+        }
+        public void GetHistory(int where)
+        {
+            HistoryProviderFactory.provider.Retrieve<PreParser>(
+                onStart,
+                onProgress,
+                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                location.currentSlide.ToString());
+            HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
+                onStart,
+                onProgress,
+                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                credentials.name,
+                location.currentSlide.ToString());
         }
         public void MoveTo(int where)
         {

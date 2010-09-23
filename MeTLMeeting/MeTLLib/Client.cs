@@ -9,13 +9,27 @@ using MeTLLib.Providers.Structure;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using System.Windows.Ink;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace MeTLLib
 {
     public class ClientConnection
     {
+        public ClientConnection()
+        {
+            attachCommandsToEvents();
+        }
+        #region fields
         private JabberWire wire;
-        public Location location { get { return wire.location; } }
+        public Location location
+        {
+            get
+            {
+                if (wire != null && wire.location != null) return wire.location;
+                else return null;
+            }
+        }
         public string username
         {
             get
@@ -26,101 +40,314 @@ namespace MeTLLib
             }
         }
         public bool isConnected { get { return wire.IsConnected(); } }
-        public ClientConnection()
-        {
-            attachCommandsToEvents();
-        }
+        #endregion
+        #region connection
         public bool Connect(string username, string password)
         {
             AuthorisationProvider.attemptAuthentication(username, password);
             return isConnected;
         }
-        public void MoveTo(int slide)
+        public bool Disconnect()
         {
-            Commands.MoveTo.Execute(slide);
+            wire.Logout();
+            wire = null;
+            return isConnected;
         }
-        #region Boilerplate
+        #endregion
         #region sendStanzas
         public void SendTextBox(TargettedTextBox textbox)
         {
+            if (wire == null) return;
             Commands.SendTextBox.Execute(textbox);
         }
         public void SendStroke(TargettedStroke stroke)
         {
+            if (wire == null) return;
             Commands.SendStroke.Execute(stroke);
         }
         public void SendImage(TargettedImage image)
         {
+            if (wire == null) return;
             Commands.SendImage.Execute(image);
+        }
+        public void SendVideo(TargettedVideo video)
+        {
+            if (wire == null) return;
+            Commands.SendVideo.Execute(video);
+        }
+        public void SendDirtyTextBox(TargettedDirtyElement tde)
+        {
+            if (wire == null) return;
+            Commands.SendDirtyText.Execute(tde);
+        }
+        public void SendDirtyStroke(TargettedDirtyElement tde)
+        {
+            if (wire == null) return;
+            Commands.SendDirtyStroke.Execute(tde);
+        }
+        public void SendDirtyImage(TargettedDirtyElement tde)
+        {
+            if (wire == null) return;
+            Commands.SendDirtyImage.Execute(tde);
+        }
+        public void SendDirtyVideo(TargettedDirtyElement tde)
+        {
+            if (wire == null) return;
+            Commands.SendDirtyVideo.Execute(tde);
+        }
+        public void SendSubmission(TargettedSubmission ts)
+        {
+            if (wire == null) return;
+            Commands.SendScreenshotSubmission.Execute(ts);
+        }
+        public void SendQuizAnswer(QuizAnswer qa)
+        {
+            if (wire == null) return;
+            Commands.SendQuizAnswer.Execute(qa);
+        }
+        public void SendQuizQuestion(QuizQuestion qq)
+        {
+            if (wire == null) return;
+            Commands.SendQuiz.Execute(qq);
+        }
+        public void SendFile(TargettedFile tf)
+        {
+            if (wire == null) return;
+            Commands.SendFileResource.Execute(tf);
+        }
+        public void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii)
+        {
+            var newPath = ResourceUploader.uploadResource("/Resource/" + lii.room, lii.file, false);
+            Image newImage = lii.image;
+            newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
+            Commands.SendFileResource.Execute(new TargettedImage
+            {
+                author = lii.author,
+                privacy = lii.privacy,
+                slide = lii.slide,
+                target = lii.target,
+                image = newImage
+            });
+        }
+        public void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi)
+        {
+            var newPath = ResourceUploader.uploadResource(lfi.path, lfi.file, lfi.overwrite);
+            Commands.SendFileResource.Execute(new TargettedFile
+            {
+                author = lfi.author,
+                name = lfi.name,
+                privacy = lfi.privacy,
+                size = lfi.size,
+                slide = lfi.slide,
+                target = lfi.target,
+                uploadTime = lfi.uploadTime,
+                url = newPath
+            });
+        }
+        public void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation lvi)
+        {
+            var newPath = ResourceUploader.uploadResource("/Resource/" + lvi.room, lvi.file, false);
+            MeTLLib.DataTypes.Video newVideo = lvi.video;
+            newVideo.MediaElement.Source = new Uri(newPath, UriKind.Absolute);
+            Commands.SendFileResource.Execute(new TargettedVideo
+            {
+                author = lvi.author,
+                privacy = lvi.privacy,
+                slide = lvi.slide,
+                target = lvi.target,
+                video = newVideo
+            });
+        }
+        #endregion
+        #region conversationCommands
+        public void MoveTo(int slide)
+        {
+            if (wire == null) return;
+            Commands.MoveTo.Execute(slide);
+        }
+        public void SneakInto(string room)
+        {
+            if (wire == null) return;
+            Commands.SneakInto.Execute(room);
+        }
+        public void SneakOutOf(string room)
+        {
+            if (wire == null) return;
+            Commands.SneakOutOf.Execute(room);
+        }
+        public void AsyncRetrieveHistoryOf(int room)
+        {
+            if (wire == null) return;
+            wire.GetHistory(room);
+        }
+        public PreParser RetrieveHistoryOf(string room)
+        {
+            //This doesn't work yet.  The completion of the action never fires.  There may be a deadlock somewhere preventing this.
+            return null;
+            if (wire == null) return null;
+            bool isFinished = false;
+            var provider = new HttpHistoryProvider();
+            PreParser finishedParser = new PreParser(PreParser.ParentRoom(room));
+            provider.Retrieve<PreParser>(null, null, preParser =>
+            {
+                finishedParser = preParser;
+                isFinished = true;
+            }, room);
+            while (!isFinished)
+            {
+            }
+            return finishedParser;
         }
         public void UpdateConversationDetails(ConversationDetails details)
         {
+            if (wire == null) return;
             Commands.UpdateConversationDetails.Execute(details);
         }
         public List<ConversationDetails> AvailableConversations
         {
             get
             {
+                if (wire == null) return null;
                 return ConversationDetailsProviderFactory.Provider.ListConversations().ToList();
+            }
+        }
+        public List<ConversationDetails> CurrentConversations
+        {
+            get
+            {
+                if (wire == null) return null;
+                return wire.CurrentClasses;
             }
         }
         #endregion
         #region commandToEventBridge
         private void attachCommandsToEvents()
         {
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>((s) =>
-            {
-                var credentials = new Credentials { authorizedGroups = s.authorizedGroups, name = s.name, password = "examplePassword" };
-                wire = new JabberWire(credentials);
-                wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
-                Commands.MoveTo.Execute(101);
-                Logger.Log("set up jabberwire");
-            }));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>((s) =>
-                PreParserAvailable(this, new PreParserAvailableEventArgs { parser = s })));
-            Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<TargettedStroke>((s) =>
-                StrokeAvailable(this, new StrokeAvailableEventArgs { stroke = s })
-                ));
-            Commands.ReceiveTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>((s) =>
-                TextBoxAvailable(this, new TextBoxAvailableEventArgs { textBox = s })
-                ));
-            Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<TargettedStroke>((s) =>
-                StrokeAvailable(this, new StrokeAvailableEventArgs { stroke = s })));
-            Commands.ReceiveVideo.RegisterCommand(new DelegateCommand<TargettedVideo>((s) =>
-                VideoAvailable(this, new VideoAvailableEventArgs { video = s })));
-            Commands.ReceiveImage.RegisterCommand(new DelegateCommand<TargettedImage[]>((s) =>
-                {
-                    foreach (TargettedImage ti in s)
-                        ImageAvailable(this, new ImageAvailableEventArgs { image = ti });
-                }
-                ));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<object>((s) =>
-            Logger.Log(
-                "Location:" + ((PreParser)s).location.currentSlide.ToString() +
-                " Ink:" + ((PreParser)s).ink.Count.ToString() +
-                " Images:" + ((PreParser)s).images.Count.ToString() +
-                " Text:" + ((PreParser)s).text.Count.ToString() +
-                " Videos:" + ((PreParser)s).videos.Count.ToString() +
-                " Submissions:" + ((PreParser)s).submissions.Count.ToString() +
-                " Quizzes:" + ((PreParser)s).quizzes.Count.ToString() +
-                " QuizAnswers:" + ((PreParser)s).quizAnswers.Count.ToString()
-                )));
-            Commands.LoggedIn.RegisterCommand(new DelegateCommand<object>((s) =>
-            {
-                Logger.Log("Logged in\r\n");
-                StatusChanged(this, new StatusChangedEventArgs { isConnected = true });
-            }));
-            Commands.ReceiveLogMessage.RegisterCommand(new DelegateCommand<string>((s) =>
-                LogMessageAvailable(this, new LogMessageAvailableEventArgs { logMessage = s })));
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(setIdentity));
+            Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(receiveStroke));
+            Commands.ReceiveTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(receiveTextBox));
+            Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyStroke));
+            Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<TargettedStroke[]>(receiveStrokes));
+            Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyStroke));
+            Commands.ReceiveVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(receiveVideo));
+            Commands.ReceiveDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyVideo));
+            Commands.ReceiveImage.RegisterCommand(new DelegateCommand<TargettedImage[]>(receiveImage));
+            Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyImage));
+            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preParserAvailable));
+            Commands.LoggedIn.RegisterCommand(new DelegateCommand<object>(loggedIn));
+            Commands.ReceiveLogMessage.RegisterCommand(new DelegateCommand<string>(receiveLogMessage));
+            Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(receiveQuiz));
+            Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(receiveQuizAnswer));
+            Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(receiveFileResource));
+            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
+        }
+        #region CommandMethods
+        private void loggedIn(object _unused)
+        {
+            Logger.Log("Logged in\r\n");
+            StatusChanged(this, new StatusChangedEventArgs { isConnected = true });
+        }
+        private void setIdentity(Credentials c)
+        {
+            var credentials = new Credentials { authorizedGroups = c.authorizedGroups, name = c.name, password = "examplePassword" };
+            wire = new JabberWire(credentials);
+            wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
+            Commands.MoveTo.Execute(101);
+            Logger.Log("set up jabberwire");
+        }
+        private void receiveSubmission(TargettedSubmission ts)
+        {
+            SubmissionAvailable(this, new SubmissionAvailableEventArgs { submission = ts });
+        }
+        private void receiveQuiz(QuizQuestion qq)
+        {
+            QuizQuestionAvailable(this, new QuizQuestionAvailableEventArgs { quizQuestion = qq });
+        }
+        private void receiveQuizAnswer(QuizAnswer qa)
+        {
+            QuizAnswerAvailable(this, new QuizAnswerAvailableEventArgs { quizAnswer = qa });
+        }
+        private void receiveFileResource(TargettedFile tf)
+        {
+            FileAvailable(this, new FileAvailableEventArgs { file = tf });
+        }
+        private void receiveImage(TargettedImage[] tia)
+        {
+            foreach (TargettedImage ti in tia)
+                ImageAvailable(this, new ImageAvailableEventArgs { image = ti });
+        }
+        private void receiveLogMessage(string logMessage)
+        {
+            LogMessageAvailable(this, new LogMessageAvailableEventArgs { logMessage = logMessage });
+        }
+        private void receiveStroke(TargettedStroke ts)
+        {
+            StrokeAvailable(this, new StrokeAvailableEventArgs { stroke = ts });
+        }
+        private void receiveStrokes(TargettedStroke[] tsa)
+        {
+            foreach (TargettedStroke ts in tsa)
+                StrokeAvailable(this, new StrokeAvailableEventArgs { stroke = ts });
+        }
+        private void receiveImages(TargettedImage[] tia)
+        {
+            foreach (TargettedImage ti in tia)
+                ImageAvailable(this, new ImageAvailableEventArgs { image = ti });
+        }
+        private void receiveImage(TargettedImage ti)
+        {
+            ImageAvailable(this, new ImageAvailableEventArgs { image = ti });
+        }
+        private void receiveTextBox(TargettedTextBox ttb)
+        {
+            TextBoxAvailable(this, new TextBoxAvailableEventArgs { textBox = ttb });
+        }
+        private void receiveVideo(TargettedVideo tv)
+        {
+            VideoAvailable(this, new VideoAvailableEventArgs { video = tv });
+        }
+        private void receiveDirtyStroke(TargettedDirtyElement tde)
+        {
+            DirtyStrokeAvailable(this, new DirtyElementAvailableEventArgs { dirtyElement = tde });
+        }
+        private void receiveDirtyTextBox(TargettedDirtyElement tde)
+        {
+            DirtyTextBoxAvailable(this, new DirtyElementAvailableEventArgs { dirtyElement = tde });
+        }
+        private void receiveDirtyVideo(TargettedDirtyElement tde)
+        {
+            DirtyVideoAvailable(this, new DirtyElementAvailableEventArgs { dirtyElement = tde });
+        }
+        private void receiveDirtyImage(TargettedDirtyElement tde)
+        {
+            DirtyImageAvailable(this, new DirtyElementAvailableEventArgs { dirtyElement = tde });
+        }
+        private void preParserAvailable(PreParser pp)
+        {
+            PreParserAvailable(this, new PreParserAvailableEventArgs { parser = pp });
+            /*Logger.Log(
+                "Location:" + pp.location.currentSlide.ToString() +
+                " Ink:" + pp.ink.Count.ToString() +
+                " Images:" + pp.images.Count.ToString() +
+                " Text:" + pp.text.Count.ToString() +
+                " Videos:" + pp.videos.Count.ToString() +
+                " Submissions:" + pp.submissions.Count.ToString() +
+                " Quizzes:" + pp.quizzes.Count.ToString() +
+                " QuizAnswers:" + pp.quizAnswers.Count.ToString()
+                );*/
         }
         #endregion
+        #endregion
         #region EventHandlers
+        public delegate void SubmissionAvailableEventHandler(object sender, SubmissionAvailableEventArgs e);
+        public delegate void FileAvailableEventHandler(object sender, FileAvailableEventArgs e);
         public delegate void StatusChangedEventHandler(object sender, StatusChangedEventArgs e);
         public delegate void PreParserAvailableEventHandler(object sender, PreParserAvailableEventArgs e);
         public delegate void LogMessageAvailableEventHandler(object sender, LogMessageAvailableEventArgs e);
         public delegate void StrokeAvailableEventHandler(object sender, StrokeAvailableEventArgs e);
         public delegate void ImageAvailableEventHandler(object sender, ImageAvailableEventArgs e);
         public delegate void TextBoxAvailableEventHandler(object sender, TextBoxAvailableEventArgs e);
+        public delegate void DirtyElementAvailableEventHandler(object sender, DirtyElementAvailableEventArgs e);
         public delegate void VideoAvailableEventHandler(object sender, VideoAvailableEventArgs e);
         public delegate void AutoshapeAvailableEventHandler(object sender, AutoshapeAvailableEventArgs e);
         public delegate void LiveWindowAvailableEventHandler(object sender, LiveWindowAvailableEventArgs e);
@@ -135,6 +362,8 @@ namespace MeTLLib
 
         #endregion
         #region EventArgsDefinitions
+        public class SubmissionAvailableEventArgs : EventArgs { public TargettedSubmission submission;}
+        public class FileAvailableEventArgs : EventArgs { public TargettedFile file;}
         public class StatusChangedEventArgs : EventArgs { public bool isConnected;}
         public class PreParserAvailableEventArgs : EventArgs { public PreParser parser; }
         public class LogMessageAvailableEventArgs : EventArgs { public string logMessage; }
@@ -142,6 +371,7 @@ namespace MeTLLib
         public class ImageAvailableEventArgs : EventArgs { public TargettedImage image;}
         public class VideoAvailableEventArgs : EventArgs { public TargettedVideo video;}
         public class TextBoxAvailableEventArgs : EventArgs { public TargettedTextBox textBox;}
+        public class DirtyElementAvailableEventArgs : EventArgs { public TargettedDirtyElement dirtyElement;}
         public class AutoshapeAvailableEventArgs : EventArgs { public TargettedAutoShape autoshape;}
         public class LiveWindowAvailableEventArgs : EventArgs { public LiveWindowSetup livewindow;}
         public class BubbleAvailableEventArgs : EventArgs { public TargettedBubbleContext bubble;}
@@ -154,6 +384,8 @@ namespace MeTLLib
         public class CommandAvailableEventArgs : EventArgs { public string command;}
         #endregion
         #region Events
+        public event SubmissionAvailableEventHandler SubmissionAvailable;
+        public event FileAvailableEventHandler FileAvailable;
         public event StatusChangedEventHandler StatusChanged;
         public event PreParserAvailableEventHandler PreParserAvailable;
         public event LogMessageAvailableEventHandler LogMessageAvailable;
@@ -161,6 +393,10 @@ namespace MeTLLib
         public event ImageAvailableEventHandler ImageAvailable;
         public event VideoAvailableEventHandler VideoAvailable;
         public event TextBoxAvailableEventHandler TextBoxAvailable;
+        public event DirtyElementAvailableEventHandler DirtyTextBoxAvailable;
+        public event DirtyElementAvailableEventHandler DirtyImageAvailable;
+        public event DirtyElementAvailableEventHandler DirtyVideoAvailable;
+        public event DirtyElementAvailableEventHandler DirtyStrokeAvailable;
         public event AutoshapeAvailableEventHandler AutoshapeAvailable;
         public event LiveWindowAvailableEventHandler LiveWindowAvailable;
         public event BubbleAvailableEventHandler BubbleAvailable;
@@ -173,6 +409,10 @@ namespace MeTLLib
         public event CommandAvailableEventHandler CommandAvailable;
         #endregion Events
         #region VirtualEventSubscribers
+        protected virtual void onSubmissionAvailable(SubmissionAvailableEventArgs e)
+        { SubmissionAvailable(this, e); }
+        protected virtual void onFileAvailable(FileAvailableEventArgs e)
+        { FileAvailable(this, e); }
         protected virtual void onStatusChanged(StatusChangedEventArgs e)
         { StatusChanged(this, e); }
         protected virtual void onPreParserAvailable(PreParserAvailableEventArgs e)
@@ -181,6 +421,14 @@ namespace MeTLLib
         { LogMessageAvailable(this, e); }
         protected virtual void onStrokeAvailable(StrokeAvailableEventArgs e)
         { StrokeAvailable(this, e); }
+        protected virtual void onDirtyStrokeAvailable(DirtyElementAvailableEventArgs e)
+        { DirtyStrokeAvailable(this, e); }
+        protected virtual void onDirtyTextBoxAvailable(DirtyElementAvailableEventArgs e)
+        { DirtyTextBoxAvailable(this, e); }
+        protected virtual void onDirtyImageAvailable(DirtyElementAvailableEventArgs e)
+        { DirtyImageAvailable(this, e); }
+        protected virtual void onDirtyVideoAvailable(DirtyElementAvailableEventArgs e)
+        { DirtyVideoAvailable(this, e); }
         protected virtual void onImageAvailable(ImageAvailableEventArgs e)
         { ImageAvailable(this, e); }
         protected virtual void onVideoAvailable(VideoAvailableEventArgs e)
@@ -207,7 +455,6 @@ namespace MeTLLib
         { ConversationDetailsAvailable(this, e); }
         protected virtual void onCommandAvailable(CommandAvailableEventArgs e)
         { CommandAvailable(this, e); }
-        #endregion
         #endregion
     }
 }
