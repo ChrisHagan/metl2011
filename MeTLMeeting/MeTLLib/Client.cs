@@ -9,11 +9,18 @@ using MeTLLib.Providers.Structure;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using System.Windows.Ink;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace MeTLLib
 {
     public class ClientConnection
     {
+        public ClientConnection()
+        {
+            attachCommandsToEvents();
+        }
+        #region fields
         private JabberWire wire;
         public Location location
         {
@@ -33,11 +40,7 @@ namespace MeTLLib
             }
         }
         public bool isConnected { get { return wire.IsConnected(); } }
-        public ClientConnection()
-        {
-            attachCommandsToEvents();
-        }
-        #region Boilerplate
+        #endregion
         #region connection
         public bool Connect(string username, string password)
         {
@@ -112,6 +115,49 @@ namespace MeTLLib
             if (wire == null) return;
             Commands.SendFileResource.Execute(tf);
         }
+        public void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii)
+        {
+            var newPath = ResourceUploader.uploadResource("/Resource/" + lii.room, lii.file, false);
+            Image newImage = lii.image;
+            newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
+            Commands.SendFileResource.Execute(new TargettedImage
+            {
+                author = lii.author,
+                privacy = lii.privacy,
+                slide = lii.slide,
+                target = lii.target,
+                image = newImage
+            });
+        }
+        public void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi)
+        {
+            var newPath = ResourceUploader.uploadResource(lfi.path, lfi.file, lfi.overwrite);
+            Commands.SendFileResource.Execute(new TargettedFile
+            {
+                author = lfi.author,
+                name = lfi.name,
+                privacy = lfi.privacy,
+                size = lfi.size,
+                slide = lfi.slide,
+                target = lfi.target,
+                uploadTime = lfi.uploadTime,
+                url = newPath
+            });
+        }
+        public void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation lvi)
+        {
+            var newPath = ResourceUploader.uploadResource("/Resource/" + lvi.room, lvi.file, false);
+            MeTLLib.DataTypes.Video newVideo = lvi.video;
+            newVideo.MediaElement.Source = new Uri(newPath, UriKind.Absolute);
+            Commands.SendFileResource.Execute(new TargettedVideo
+            {
+                author = lvi.author,
+                privacy = lvi.privacy,
+                slide = lvi.slide,
+                target = lvi.target,
+                video = newVideo
+            });
+        }
         #endregion
         #region conversationCommands
         public void MoveTo(int slide)
@@ -129,10 +175,28 @@ namespace MeTLLib
             if (wire == null) return;
             Commands.SneakOutOf.Execute(room);
         }
-        public void RetrieveHistoryOf(int room)
+        public void AsyncRetrieveHistoryOf(int room)
         {
             if (wire == null) return;
             wire.GetHistory(room);
+        }
+        public PreParser RetrieveHistoryOf(string room)
+        {
+            //This doesn't work yet.  The completion of the action never fires.  There may be a deadlock somewhere preventing this.
+            return null;
+            if (wire == null) return null;
+            bool isFinished = false;
+            var provider = new HttpHistoryProvider();
+            PreParser finishedParser = new PreParser(PreParser.ParentRoom(room));
+            provider.Retrieve<PreParser>(null, null, preParser =>
+            {
+                finishedParser = preParser;
+                isFinished = true;
+            }, room);
+            while (!isFinished)
+            {
+            }
+            return finishedParser;
         }
         public void UpdateConversationDetails(ConversationDetails details)
         {
@@ -156,7 +220,6 @@ namespace MeTLLib
             }
         }
         #endregion
-
         #region commandToEventBridge
         private void attachCommandsToEvents()
         {
@@ -393,6 +456,5 @@ namespace MeTLLib
         protected virtual void onCommandAvailable(CommandAvailableEventArgs e)
         { CommandAvailable(this, e); }
         #endregion
-        #endregion Boilerplate
     }
 }

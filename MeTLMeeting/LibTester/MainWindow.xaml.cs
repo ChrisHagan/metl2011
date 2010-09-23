@@ -78,9 +78,16 @@ namespace LibTester
         }
         private void moveTo(object sender, RoutedEventArgs e)
         {
+            if (client == null) return;
             inkCanvas.Children.Clear();
             inkCanvas.Strokes.Clear();
             client.MoveTo(Int32.Parse(location.Text));
+        }
+        private void getHistory(object sender, RoutedEventArgs e)
+        {
+            if (client == null) return;
+            var parser = client.RetrieveHistoryOf(location.Text);
+            MessageBox.Show(describeParser(parser));
         }
         private void setInkMode(object sender, RoutedEventArgs e)
         {
@@ -132,6 +139,18 @@ namespace LibTester
                 };
                 client.SendTextBox(newTargettedTextBox);
             }
+        }
+        private string describeParser(PreParser pp)
+        {
+            return "Location:" + pp.location.currentSlide.ToString() +
+            " Ink:" + pp.ink.Count.ToString() +
+            " Images:" + pp.images.Count.ToString() +
+            " Text:" + pp.text.Count.ToString() +
+            " Videos:" + pp.videos.Count.ToString() +
+            " Submissions:" + pp.submissions.Count.ToString() +
+            " Quizzes:" + pp.quizzes.Count.ToString() +
+            " QuizAnswers:" + pp.quizAnswers.Count.ToString();
+
         }
     }
 }

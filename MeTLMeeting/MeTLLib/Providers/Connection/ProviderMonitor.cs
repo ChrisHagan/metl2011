@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using agsXMPP;
-using SandRibbon.Utils.Connection;
 using System.Timers;
 using System.Collections.Generic;
 
