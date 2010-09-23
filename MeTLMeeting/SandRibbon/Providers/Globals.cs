@@ -33,7 +33,21 @@ namespace SandRibbon.Providers
                 return (PedagogyLevel)Commands.SetPedagogyLevel.lastValue();
             }
         }
-        public static SandRibbon.Utils.Connection.JabberWire.Location location
+        public static string MeTLType
+        {
+            get
+            {
+                try
+                {
+                    return Commands.SendMeTLType.lastValue().ToString();
+                }
+                catch(NotSetException e)
+                {
+                    return "MeTL Collaborator";
+                }
+            }
+        }
+        public static Utils.Connection.JabberWire.Location location
         {
             get
             {
