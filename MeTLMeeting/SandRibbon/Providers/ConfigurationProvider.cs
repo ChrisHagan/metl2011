@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Windows;
+using System.Xml.Linq;
 using System.Xml;
 using System;
 using System.IO;
@@ -62,8 +63,8 @@ namespace SandRibbon.Providers
         public int getMeTLPedagogyLevel()
         {
             int level;
-
-            switch (getMeTLType())
+            var type = getMeTLType();
+            switch (type)
             {
                 case "MeTL":
                     level = 3;
@@ -74,10 +75,15 @@ namespace SandRibbon.Providers
                 case "MeTL Collaborator":
                     level = 3;
                     break;
+                case "MeTL Demonstrator":
+                    level = 3;
+                    MessageBox.Show("Gordon Special");
+                    break;
                 default:
                     level = 3;
                     break;
             }
+            Commands.SendMeTLType.Execute(type);
             return level;
         }
         

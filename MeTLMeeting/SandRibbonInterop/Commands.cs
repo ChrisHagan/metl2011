@@ -242,6 +242,7 @@ namespace SandRibbon
         public static CompositeCommand ReceiveJoin = new CompositeCommand();
         public static CompositeCommand ReceivePing = new CompositeCommand();
         public static CompositeCommand ReceiveFlush = new CompositeCommand();
+        public static CompositeCommand SendMeTLType = new CompositeCommand();
         #endregion
         #region Drawers
         public static CompositeCommand ToggleScratchPadVisibility = new CompositeCommand();

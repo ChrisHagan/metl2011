@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentAndStrokesExperiment
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLCollaborator", "MeTLCollaborator\MeTLCollaborator.csproj", "{C2BC5886-C540-4DF0-88C7-C8E00AFF935B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLinkOpener", "MeTLLinkOpener\MeTLLinkOpener.csproj", "{4FE28D25-A8F8-44C5-A4BE-555359718C4E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLDemonstrator", "MeTLDemonstrator\MeTLDemonstrator.csproj", "{98CF1FFC-E994-4933-B315-1B66A95CD055}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLib", "MeTLLib\MeTLLib.csproj", "{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}"
 EndProject
@@ -157,16 +157,16 @@ Global
 		{C2BC5886-C540-4DF0-88C7-C8E00AFF935B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C2BC5886-C540-4DF0-88C7-C8E00AFF935B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C2BC5886-C540-4DF0-88C7-C8E00AFF935B}.Release|x86.ActiveCfg = Release|Any CPU
-		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{4FE28D25-A8F8-44C5-A4BE-555359718C4E}.Release|x86.ActiveCfg = Release|Any CPU
+		{98CF1FFC-E994-4933-B315-1B66A95CD055}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98CF1FFC-E994-4933-B315-1B66A95CD055}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98CF1FFC-E994-4933-B315-1B66A95CD055}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{98CF1FFC-E994-4933-B315-1B66A95CD055}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{98CF1FFC-E994-4933-B315-1B66A95CD055}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{98CF1FFC-E994-4933-B315-1B66A95CD055}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98CF1FFC-E994-4933-B315-1B66A95CD055}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98CF1FFC-E994-4933-B315-1B66A95CD055}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{98CF1FFC-E994-4933-B315-1B66A95CD055}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{98CF1FFC-E994-4933-B315-1B66A95CD055}.Release|x86.ActiveCfg = Release|Any CPU
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

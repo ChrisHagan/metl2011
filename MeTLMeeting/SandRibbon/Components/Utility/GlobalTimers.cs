@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using SandRibbon.Providers;
 using SandRibbon.Utils;
 
 namespace SandRibbon.Components.Utility
@@ -12,6 +13,7 @@ namespace SandRibbon.Components.Utility
         private static List<Action> timedActions = new List<Action>();
         public static void SetSyncTimer(Action timedAction)
         {
+            if (Globals.MeTLType == "MeTL Demonstrator") return;
             timedActions.Add(timedAction);
             if(SyncTimer == null)
                 SyncTimer = new Timer(delegate
