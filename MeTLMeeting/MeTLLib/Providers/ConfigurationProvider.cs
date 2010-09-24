@@ -65,13 +65,16 @@ namespace MeTLLib.Providers
 
             switch (getMeTLType())
             {
-                case "MeTL":
+                case Constants.MeTL:
                     level = 3;
                     break;
-                case "MeTL Presenter":
+                case Constants.MeTlPresenter:
                     level = 2;
                     break;
-                case "MeTL Collaborator":
+                case Constants.MeTLCollaborator:
+                    level = 3;
+                    break;
+                case Constants.MeTLDemonstrator:
                     level = 3;
                     break;
                 default:

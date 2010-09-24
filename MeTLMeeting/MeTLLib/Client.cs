@@ -30,9 +30,9 @@ namespace MeTLLib
         {
             attachCommandsToEvents();
         }
-        public bool Connect(string username, string password)
+        public bool Connect(string user, string password)
         {
-            AuthorisationProvider.attemptAuthentication(username, password);
+            AuthorisationProvider.attemptAuthentication(user, password);
             return isConnected;
         }
         public void MoveTo(int slide)
