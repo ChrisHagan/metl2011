@@ -6,7 +6,6 @@ using System.Windows.Media;
 using Divelements.SandRibbon;
 using System.Windows.Controls;
 using System.Windows.Shapes;
-using SandRibbon;
 
 namespace MeTLLib.DataTypes
 {

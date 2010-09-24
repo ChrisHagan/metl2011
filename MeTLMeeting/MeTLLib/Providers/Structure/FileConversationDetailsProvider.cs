@@ -7,14 +7,12 @@ using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using System.Text.RegularExpressions;
-using SandRibbon.Utils;
 using System.Threading;
 using System.Runtime.Remoting.Messaging;
 using Ionic.Zip;
 using System.IO;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
-using SandRibbon.Utils.Connection;
 
 namespace MeTLLib.Providers.Structure
 {
