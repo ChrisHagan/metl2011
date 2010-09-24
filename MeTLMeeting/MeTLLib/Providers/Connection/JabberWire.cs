@@ -91,10 +91,15 @@ namespace MeTLLib.Providers.Connection
         public JabberWire()
         {
         }
-
         public ResourceCache cache;
-        public JabberWire(Credentials credentials)
+        public JabberWire(Credentials credentials, string SERVER)
         {
+            if (SERVER == null)
+            {
+                Constants.SERVER = null;
+                LookupServer();
+            }
+            else Constants.SERVER = SERVER;
             this.credentials = credentials;
             setUpWire();
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));

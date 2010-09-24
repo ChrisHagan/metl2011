@@ -24,7 +24,7 @@ namespace LibTester
         public MainWindow()
         {
             InitializeComponent();
-            client = new ClientConnection();
+            client = new ClientConnection("madam.adm.monash.edu.au");
             client.LogMessageAvailable += (sender, args) => { Console.WriteLine(args.logMessage); };
             client.StrokeAvailable += (sender, args) => { inkCanvas.Strokes.Add(args.stroke.stroke); };
             client.TextBoxAvailable += (sender, args) => { inkCanvas.Children.Add(args.textBox.box); };

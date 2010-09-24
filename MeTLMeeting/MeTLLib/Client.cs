@@ -11,14 +11,21 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using System.Windows.Ink;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Threading;
 
 namespace MeTLLib
 {
     public class ClientConnection
     {
-        public ClientConnection()
+        public string SERVER;
+        public ClientConnection(string server)
         {
+            SERVER = server;
             attachCommandsToEvents();
+        }
+        public ClientConnection()
+            : this(null)
+        {
         }
         #region fields
         private JabberWire wire;
@@ -39,17 +46,31 @@ namespace MeTLLib
                 else return "";
             }
         }
-        public bool isConnected { get { return wire.IsConnected(); } }
-       #endregion
+        public bool isConnected
+        {
+            get
+            {
+                if (wire == null) return false;
+                return wire.IsConnected();
+            }
+        }
+        #endregion
+
         #region connection
         public bool Connect(string username, string password)
         {
-            AuthorisationProvider.attemptAuthentication(user, password);
+            Constants.SERVER = null;
+            AuthorisationProvider.attemptAuthentication(username, password);
+
             return isConnected;
         }
         public bool Disconnect()
         {
-            wire.Logout();
+            Action work = delegate
+            {
+                wire.Logout();
+            };
+            tryIfConnected(work);
             wire = null;
             return isConnected;
         }
@@ -57,158 +78,233 @@ namespace MeTLLib
         #region sendStanzas
         public void SendTextBox(TargettedTextBox textbox)
         {
-            if (wire == null) return;
-            Commands.SendTextBox.Execute(textbox);
+            Action work = delegate
+            {
+                Commands.SendTextBox.Execute(textbox);
+            };
+            tryIfConnected(work);
         }
         public void SendStroke(TargettedStroke stroke)
         {
-            if (wire == null) return;
-            Commands.SendStroke.Execute(stroke);
+            Action work = delegate
+            {
+                Commands.SendStroke.Execute(stroke);
+            };
+            tryIfConnected(work);
         }
         public void SendImage(TargettedImage image)
         {
-            if (wire == null) return;
-            Commands.SendImage.Execute(image);
+            Action work = delegate
+            {
+                Commands.SendImage.Execute(image);
+            };
+            tryIfConnected(work);
         }
         public void SendVideo(TargettedVideo video)
         {
-            if (wire == null) return;
-            Commands.SendVideo.Execute(video);
+            Action work = delegate
+            {
+                Commands.SendVideo.Execute(video);
+            };
+            tryIfConnected(work);
         }
         public void SendDirtyTextBox(TargettedDirtyElement tde)
         {
-            if (wire == null) return;
-            Commands.SendDirtyText.Execute(tde);
+            Action work = delegate
+            {
+                Commands.SendDirtyText.Execute(tde);
+            };
+            tryIfConnected(work);
         }
         public void SendDirtyStroke(TargettedDirtyElement tde)
         {
-            if (wire == null) return;
-            Commands.SendDirtyStroke.Execute(tde);
+            Action work = delegate
+            {
+                Commands.SendDirtyStroke.Execute(tde);
+            };
+            tryIfConnected(work);
         }
         public void SendDirtyImage(TargettedDirtyElement tde)
         {
-            if (wire == null) return;
-            Commands.SendDirtyImage.Execute(tde);
+            Action work = delegate
+            {
+                Commands.SendDirtyImage.Execute(tde);
+            };
+            tryIfConnected(work);
         }
         public void SendDirtyVideo(TargettedDirtyElement tde)
         {
-            if (wire == null) return;
-            Commands.SendDirtyVideo.Execute(tde);
+            Action work = delegate
+            {
+                Commands.SendDirtyVideo.Execute(tde);
+            };
+            tryIfConnected(work);
         }
         public void SendSubmission(TargettedSubmission ts)
         {
-            if (wire == null) return;
-            Commands.SendScreenshotSubmission.Execute(ts);
+            Action work = delegate
+            {
+                Commands.SendScreenshotSubmission.Execute(ts);
+            };
+            tryIfConnected(work);
         }
         public void SendQuizAnswer(QuizAnswer qa)
         {
-            if (wire == null) return;
-            Commands.SendQuizAnswer.Execute(qa);
+            Action work = delegate
+            {
+                Commands.SendQuizAnswer.Execute(qa);
+            };
+            tryIfConnected(work);
         }
         public void SendQuizQuestion(QuizQuestion qq)
         {
-            if (wire == null) return;
-            Commands.SendQuiz.Execute(qq);
+            Action work = delegate
+            {
+                Commands.SendQuiz.Execute(qq);
+            };
+            tryIfConnected(work);
         }
         public void SendFile(TargettedFile tf)
         {
-            if (wire == null) return;
-            Commands.SendFileResource.Execute(tf);
+            Action work = delegate
+            {
+                Commands.SendFileResource.Execute(tf);
+            };
+            tryIfConnected(work);
         }
         public void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii)
         {
-            var newPath = ResourceUploader.uploadResource("/Resource/" + lii.room, lii.file, false);
-            Image newImage = lii.image;
-            newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
-            Commands.SendFileResource.Execute(new TargettedImage
+            Action work = delegate
             {
-                author = lii.author,
-                privacy = lii.privacy,
-                slide = lii.slide,
-                target = lii.target,
-                image = newImage
-            });
+                var newPath = ResourceUploader.uploadResource("/Resource/" + lii.room, lii.file, false);
+                Image newImage = lii.image;
+                newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
+                Commands.SendFileResource.Execute(new TargettedImage
+                {
+                    author = lii.author,
+                    privacy = lii.privacy,
+                    slide = lii.slide,
+                    target = lii.target,
+                    image = newImage
+                });
+            };
+            tryIfConnected(work);
         }
         public void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi)
         {
-            var newPath = ResourceUploader.uploadResource(lfi.path, lfi.file, lfi.overwrite);
-            Commands.SendFileResource.Execute(new TargettedFile
+            Action work = delegate
             {
-                author = lfi.author,
-                name = lfi.name,
-                privacy = lfi.privacy,
-                size = lfi.size,
-                slide = lfi.slide,
-                target = lfi.target,
-                uploadTime = lfi.uploadTime,
-                url = newPath
-            });
+                var newPath = ResourceUploader.uploadResource(lfi.path, lfi.file, lfi.overwrite);
+                Commands.SendFileResource.Execute(new TargettedFile
+                {
+                    author = lfi.author,
+                    name = lfi.name,
+                    privacy = lfi.privacy,
+                    size = lfi.size,
+                    slide = lfi.slide,
+                    target = lfi.target,
+                    uploadTime = lfi.uploadTime,
+                    url = newPath
+                });
+            };
+            tryIfConnected(work);
         }
         public void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation lvi)
         {
-            var newPath = ResourceUploader.uploadResource("/Resource/" + lvi.room, lvi.file, false);
-            MeTLLib.DataTypes.Video newVideo = lvi.video;
-            newVideo.MediaElement.Source = new Uri(newPath, UriKind.Absolute);
-            Commands.SendFileResource.Execute(new TargettedVideo
+            Action work = delegate
             {
-                author = lvi.author,
-                privacy = lvi.privacy,
-                slide = lvi.slide,
-                target = lvi.target,
-                video = newVideo
-            });
+                var newPath = ResourceUploader.uploadResource("/Resource/" + lvi.room, lvi.file, false);
+                MeTLLib.DataTypes.Video newVideo = lvi.video;
+                newVideo.MediaElement.Source = new Uri(newPath, UriKind.Absolute);
+                Commands.SendFileResource.Execute(new TargettedVideo
+                {
+                    author = lvi.author,
+                    privacy = lvi.privacy,
+                    slide = lvi.slide,
+                    target = lvi.target,
+                    video = newVideo
+                });
+            };
+            tryIfConnected(work);
         }
         #endregion
         #region conversationCommands
         public void MoveTo(int slide)
         {
-            if (wire == null) return;
-            Commands.MoveTo.Execute(slide);
+            Action work = delegate
+            {
+                Commands.MoveTo.Execute(slide);
+            };
+            tryIfConnected(work);
+            //if (wire == null) return;
+            //Commands.MoveTo.Execute(slide);
         }
         public void SneakInto(string room)
         {
-            if (wire == null) return;
-            Commands.SneakInto.Execute(room);
+            Action work = delegate
+            {
+                Commands.SneakInto.Execute(room);
+            };
+            tryIfConnected(work);
         }
         public void SneakOutOf(string room)
         {
-            if (wire == null) return;
-            Commands.SneakOutOf.Execute(room);
+            Action work = delegate
+            {
+                Commands.SneakOutOf.Execute(room);
+            };
+            tryIfConnected(work);
         }
         public void AsyncRetrieveHistoryOf(int room)
         {
-            if (wire == null) return;
-            wire.GetHistory(room);
+            Action work = delegate
+            {
+                wire.GetHistory(room);
+            };
+            tryIfConnected(work);
         }
         public PreParser RetrieveHistoryOf(string room)
         {
             //This doesn't work yet.  The completion of the action never fires.  There may be a deadlock somewhere preventing this.
-            return null;
-            if (wire == null) return null;
-            bool isFinished = false;
-            var provider = new HttpHistoryProvider();
+            return new PreParser(0);
             PreParser finishedParser = new PreParser(PreParser.ParentRoom(room));
-            provider.Retrieve<PreParser>(null, null, preParser =>
+            tryIfConnected(() =>
             {
-                finishedParser = preParser;
-                isFinished = true;
-            }, room);
-            while (!isFinished)
-            {
-            }
+                var provider = new HttpHistoryProvider();
+                provider.Retrieve<PreParser>(
+                    () =>
+                    {
+                        Logger.Log("History started (" + room + ")");
+                    },
+                    (current, total) => Logger.Log("History progress (" + room + "): " + current + "/" + total),
+                    preParser =>
+                    {
+                        Logger.Log("History completed (" + room + ")");
+                        finishedParser = preParser;
+                    },
+                    room);
+            });
             return finishedParser;
         }
         public void UpdateConversationDetails(ConversationDetails details)
         {
-            if (wire == null) return;
-            Commands.UpdateConversationDetails.Execute(details);
+            Action work = delegate
+            {
+                Commands.UpdateConversationDetails.Execute(details);
+            };
+            tryIfConnected(work);
         }
         public List<ConversationDetails> AvailableConversations
         {
             get
             {
                 if (wire == null) return null;
-                return ConversationDetailsProviderFactory.Provider.ListConversations().ToList();
+                var list = new List<ConversationDetails>();
+                Action work = delegate
+                {
+                    list = ConversationDetailsProviderFactory.Provider.ListConversations().ToList();
+                };
+                return list;
             }
         }
         public List<ConversationDetails> CurrentConversations
@@ -216,7 +312,12 @@ namespace MeTLLib
             get
             {
                 if (wire == null) return null;
-                return wire.CurrentClasses;
+                var list = new List<ConversationDetails>();
+                Action work = delegate
+                {
+                    list = wire.CurrentClasses;
+                };
+                return list;
             }
         }
         #endregion
@@ -249,8 +350,11 @@ namespace MeTLLib
         }
         private void setIdentity(Credentials c)
         {
+            Commands.UnregisterAllCommands();
+            attachCommandsToEvents();
             var credentials = new Credentials { authorizedGroups = c.authorizedGroups, name = c.name, password = "examplePassword" };
-            wire = new JabberWire(credentials);
+            wire = null;
+            wire = new JabberWire(credentials, SERVER);
             wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
             Commands.MoveTo.Execute(101);
             Logger.Log("set up jabberwire");
@@ -455,6 +559,14 @@ namespace MeTLLib
         { ConversationDetailsAvailable(this, e); }
         protected virtual void onCommandAvailable(CommandAvailableEventArgs e)
         { CommandAvailable(this, e); }
+        #endregion
+        #region HelperMethods
+        private void tryIfConnected(Action action)
+        {
+            if (wire == null) return;
+            action();
+        }
+
         #endregion
     }
 }
