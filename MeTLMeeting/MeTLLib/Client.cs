@@ -564,6 +564,7 @@ namespace MeTLLib
         private void tryIfConnected(Action action)
         {
             if (wire == null) return;
+            if (wire.IsConnected() == false) return;
             action();
         }
 
