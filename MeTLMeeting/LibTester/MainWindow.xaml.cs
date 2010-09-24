@@ -60,6 +60,9 @@ namespace LibTester
                 foreach (TargettedStroke stroke in parser.ink)
                     inkCanvas.Strokes.Add(stroke.stroke);
             };
+            username.Text = "eecrole";
+            password.Password = "m0nash2008";
+            attemptToAuthenticate(this, new RoutedEventArgs());
         }
         private void attemptToAuthenticate(object sender, RoutedEventArgs e)
         {

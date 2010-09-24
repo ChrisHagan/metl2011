@@ -20,6 +20,7 @@ namespace MeTLLib
         public string SERVER;
         public ClientConnection(string server)
         {
+            //Change the string to a System.Uri to ensure that people only give an appropriate uri.
             SERVER = server;
             attachCommandsToEvents();
         }
@@ -382,6 +383,7 @@ namespace MeTLLib
         }
         private void receiveLogMessage(string logMessage)
         {
+            //This should be a system.trace thing.  I'll have to go through the lib, cleaning up all the Logger.Log to turn them into system.diagnostics.trace
             LogMessageAvailable(this, new LogMessageAvailableEventArgs { logMessage = logMessage });
         }
         private void receiveStroke(TargettedStroke ts)
@@ -429,16 +431,6 @@ namespace MeTLLib
         private void preParserAvailable(PreParser pp)
         {
             PreParserAvailable(this, new PreParserAvailableEventArgs { parser = pp });
-            /*Logger.Log(
-                "Location:" + pp.location.currentSlide.ToString() +
-                " Ink:" + pp.ink.Count.ToString() +
-                " Images:" + pp.images.Count.ToString() +
-                " Text:" + pp.text.Count.ToString() +
-                " Videos:" + pp.videos.Count.ToString() +
-                " Submissions:" + pp.submissions.Count.ToString() +
-                " Quizzes:" + pp.quizzes.Count.ToString() +
-                " QuizAnswers:" + pp.quizAnswers.Count.ToString()
-                );*/
         }
         #endregion
         #endregion
