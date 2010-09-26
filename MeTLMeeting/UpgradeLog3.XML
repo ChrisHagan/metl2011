@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="SpecialMeTL">
+</Property><Property Name="Solution File" Value="C:\specialMeTL\MeTLMeeting\SpecialMeTL.sln">
+</Property><Property Name="Date" Value="Monday, 27 September 2010">
+</Property><Property Name="Time" Value="9:27 AM">
+</Property><Property Name="Log Number" Value="3">
+</Property></Properties><Event ErrorLevel="0" Project="SandRibbon" Source="SandRibbon\SandRibbon.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="SandRibbon" Source="SandRibbon\SandRibbon.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="SandRibbonInterop" Source="SandRibbonInterop\SandRibbonInterop.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="SandRibbonInterop" Source="SandRibbonInterop\SandRibbonInterop.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="SandRibbonObjects" Source="SandRibbonObjects\SandRibbonObjects.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="SandRibbonObjects" Source="SandRibbonObjects\SandRibbonObjects.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="HeadfulClassRoom" Source="HeadfulClassRoom\HeadfulClassRoom.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="HeadfulClassRoom" Source="HeadfulClassRoom\HeadfulClassRoom.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="HeadlessClassroom" Source="HeadlessClassroom\HeadlessClassroom.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="HeadlessClassroom" Source="HeadlessClassroom\HeadlessClassroom.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="Functional" Source="Functional\Functional.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="Functional" Source="Functional\Functional.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="SlidePostMortem" Source="SlidePostMortem\SlidePostMortem.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="SlidePostMortem" Source="SlidePostMortem\SlidePostMortem.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="LectureMeTL" Source="LectureMeTL\LectureMeTL.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="LectureMeTL" Source="LectureMeTL\LectureMeTL.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="ContentOnlyExperimentMeTL" Source="ContentOnlyExperimentMeTL\ContentOnlyExperimentMeTL.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="ContentOnlyExperimentMeTL" Source="ContentOnlyExperimentMeTL\ContentOnlyExperimentMeTL.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="ContentAndStrokesExperimentMeTL" Source="ContentAndStrokesExperimentMeTL\ContentAndStrokesExperimentMeTL.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="ContentAndStrokesExperimentMeTL" Source="ContentAndStrokesExperimentMeTL\ContentAndStrokesExperimentMeTL.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="MeTLCollaborator" Source="MeTLCollaborator\MeTLCollaborator.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="MeTLCollaborator" Source="MeTLCollaborator\MeTLCollaborator.csproj" Description="Converted">
+</Event><Event ErrorLevel="2" Project="MeTLLinkOpener" Source="MeTLLinkOpener\MeTLLinkOpener.csproj" Description="Unable to open project file to perform upgrade.  ">
+</Event><Event ErrorLevel="0" Project="" Source="SpecialMeTL.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="SpecialMeTL.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="SandRibbon" Source="SandRibbon\SandRibbon.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="SandRibbonInterop" Source="SandRibbonInterop\SandRibbonInterop.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="SandRibbonObjects" Source="SandRibbonObjects\SandRibbonObjects.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="HeadfulClassRoom" Source="HeadfulClassRoom\HeadfulClassRoom.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="HeadlessClassroom" Source="HeadlessClassroom\HeadlessClassroom.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="SlidePostMortem" Source="SlidePostMortem\SlidePostMortem.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="LectureMeTL" Source="LectureMeTL\LectureMeTL.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="ContentOnlyExperimentMeTL" Source="ContentOnlyExperimentMeTL\ContentOnlyExperimentMeTL.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="ContentAndStrokesExperimentMeTL" Source="ContentAndStrokesExperimentMeTL\ContentAndStrokesExperimentMeTL.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="MeTLCollaborator" Source="MeTLCollaborator\MeTLCollaborator.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>

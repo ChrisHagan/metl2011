@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -49,6 +49,10 @@
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -157,278 +161,416 @@
     <ApplicationDefinition Include="Components\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Automation\MultipleClientLauncher.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Automation\StrokeHarvester.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Chrome\ApplicationPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Chrome\StatusBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Chrome\ToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ConversationSearchBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Drawer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\DrawerSplitter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Friends.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\HelpButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Login.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Pedagogicometry\Pedagogicometer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\PrivacyToggleButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SlideDisplay.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SlideNavigationControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SlidesEditingDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Submissions\ScreenshotSubmission.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Submissions\ViewSubmissions.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Tutorial.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Quizzing\AnswerAQuiz.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Quizzing\AssessAQuiz.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Quizzing\CreateAQuiz.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Quizzing\GoldPlaque.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Quizzing\QuizButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Attachments.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\PrivacyToolsHost.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\EditingOptions.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Submissions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\ZoomControlsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\PenColors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ConversationConfigurationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\PresentationSpace.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\PrintDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\PrintingHost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\PrivacyTools.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Projector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ResourceDictionaries\Brushes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ResourceDictionaries\TypedControlStylings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\RubyRepl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Sandpit\BoardManagerLauncher.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Sandpit\S15Boards.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Sandpit\ThoughtBubble.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Sandpit\ThoughtBubbleSpace.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ScrollBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SimpleImpl\FeatureListing.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SimpleImpl\SimpleConversationSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SimpleImpl\SimpleFriendsListing.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SimpleImpl\SimpleModeSwitcher.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SimpleImpl\SimplePencilCaseDisplay.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SimpleImpl\SimplePenTools.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Notepad.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\TextTools.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\ToolBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SMARTboard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\SyncDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ResourceDictionaries\ToolTips.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\UserCanvasStack.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Window1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ZoomControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Quizzing\Worm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Analytics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\EditingModes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\Friends.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\MiniMap.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\Notes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Home.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Plugins.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Quizzes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Compile Include="Components\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
