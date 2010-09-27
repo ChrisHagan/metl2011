@@ -177,6 +177,7 @@ namespace LibTester
     }
     public class TraceLoggerItemsControl : ItemsControl
     {
+        delegate void LogDelegate(string message, category level);
         public TraceEventType traceLevel
         {
             get { return (TraceEventType)GetValue(traceLevelProperty); }
@@ -185,7 +186,7 @@ namespace LibTester
         public static readonly DependencyProperty traceLevelProperty =
             DependencyProperty.Register("traceLevel", typeof(TraceEventType), typeof(TraceLoggerItemsControl), new UIPropertyMetadata(null));
 
-        private ObservableCollection<Label> traceLogStore = new ObservableCollection<Label>();
+        internal ObservableCollection<Label> traceLogStore = new ObservableCollection<Label>();
         private enum category { WARN, ERROR, INFO, UNKNOWN }
         public TraceLoggerItemsControl()
             : base()
@@ -195,21 +196,24 @@ namespace LibTester
         }
         private void TraceLoggerItemsControl_Loaded(object sender, RoutedEventArgs e)
         {
-            Trace.Listeners.Add(new TextBlockTraceLogger(logMessage) { Name = traceLevel.ToString(), Filter = new TraceLevelFilter(traceLevel) });
+            Trace.Listeners.Add(new TextBlockTraceLogger(doAffineLog) { Name = traceLevel.ToString(), Filter = new TraceLevelFilter(traceLevel) });
+        }
+        private void doAffineLog(string message, category cat) {
+            Dispatcher.BeginInvoke(new LogDelegate(logMessage), DispatcherPriority.Normal, new object[]{message,cat});
         }
         private void logMessage(string message, category cat)
         {
-            Action del = delegate
-            {
+            //Action del = delegate
+            //{
                 traceLogStore.Add(new Label { Content = message, ToolTip = cat });
-            };
-            if (Thread.CurrentThread == Dispatcher.Thread)
+            //};
+            /*if (Thread.CurrentThread == Dispatcher.Thread)
                 del();
             else
                 Dispatcher.BeginInvoke(del);
-
+            */
         }
-        private class TextBlockTraceLogger : TraceListener
+        class TextBlockTraceLogger : TraceListener
         {
             private Action<string, category> log;
             public TextBlockTraceLogger(Action<string, category> logOutput)
