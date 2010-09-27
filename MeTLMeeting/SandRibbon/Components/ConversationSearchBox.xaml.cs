@@ -76,20 +76,23 @@ namespace SandRibbon.Components
         }
         private void DoUpdateAllConversations()
         {
-            allConversations = SandRibbon.Providers.Structure.ConversationDetailsProviderFactory.Provider.ListConversations().ToList();
-            if (allConversations.Count != 0)
-            {
-                updateAllConversationsSource();
-                updateMyOwnedConversations();
-                updateMyRecentConversationsSource();
-                updateMyRecommendedConversationsSource();
-                Commands.getCurrentClasses.Execute(null);
-                updateCurrentlyTeachingConversations();
-                if (!string.IsNullOrEmpty(lastSearch))
-                {
-                    searchFor((lastSearch).ToLower());
-                }
-            }
+            Dispatcher.adoptAsync(() =>
+                      {
+                          allConversations = SandRibbon.Providers.Structure.ConversationDetailsProviderFactory.Provider.ListConversations().ToList();
+                          if (allConversations.Count != 0)
+                          {
+                              updateAllConversationsSource();
+                              updateMyOwnedConversations();
+                              updateMyRecentConversationsSource();
+                              updateMyRecommendedConversationsSource();
+                              Commands.getCurrentClasses.Execute(null);
+                              updateCurrentlyTeachingConversations();
+                              if (!string.IsNullOrEmpty(lastSearch))
+                              {
+                                  searchFor((lastSearch).ToLower());
+                              }
+                          }
+                      });
         }
         private void unbindAllItemSources()
         {
@@ -183,24 +186,37 @@ namespace SandRibbon.Components
 
         private void updateCurrentlyTeachingConversations()
         {
-            if (allConversations.Count == 0)
-                DoUpdateAllConversations();
-            currentlyTeachingConversationsItemsControl.ItemsSource = currentlyTeachingConversationsSource;
-            if (currentlyTeachingConversationsSource != null && currentlyTeachingConversationsSource.Count > 0)
-                currentlyTeachingConversationsCount.Content = "(" + currentlyTeachingConversationsSource.Count.ToString() + ")";
+            Dispatcher.adoptAsync(() =>
+                      {
+                          if (allConversations.Count == 0)
+                              DoUpdateAllConversations();
+                          currentlyTeachingConversationsItemsControl.ItemsSource =
+                              currentlyTeachingConversationsSource;
+                          if (currentlyTeachingConversationsSource != null &&
+                              currentlyTeachingConversationsSource.Count > 0)
+                              currentlyTeachingConversationsCount.Content = "(" + currentlyTeachingConversationsSource .Count.ToString() + ")"; 
+                      });
         }
 
         private void updateMyOwnedConversations()
         {
-            if (allConversations.Count == 0)
-                DoUpdateAllConversations();
-            var listConversations = convertToSummaries(allConversations.Where(s => s.Author == Globals.me).ToList().Where(t=>!t.Title.StartsWith("DELETED")).OrderByDescending(s=>s.Created).ToList());
-            var listDeletedConversations = convertToSummaries(allConversations.Where(s => s.Author == Globals.me).ToList().Where(t=>t.Title.StartsWith("DELETED")).OrderByDescending(s=>s.Created).ToList());
-            listConversations.AddRange(listDeletedConversations);
-            myOwnedConversationsSource = listConversations;
-            myOwnedConversationsCount.Content = "(" + myOwnedConversationsSource.Count.ToString() + ")";
+            Dispatcher.adoptAsync(() =>
+                      {
+                          if (allConversations.Count == 0)
+                              DoUpdateAllConversations();
+                          var listConversations = convertToSummaries(allConversations
+                              .Where(s => s.Author == Globals.me).ToList()
+                              .Where( t => !t.Title.StartsWith("DELETED"))
+                              .OrderByDescending(s => s.Created).ToList());
+                          var listDeletedConversations = convertToSummaries( allConversations
+                              .Where(s => s.Author == Globals.me).ToList()
+                              .Where( t => t.Title.StartsWith("DELETED"))
+                              .OrderByDescending(s => s.Created).ToList());
+                          listConversations.AddRange(listDeletedConversations);
+                          myOwnedConversationsSource = listConversations;
+                          myOwnedConversationsCount.Content = string.Format("({0})", myOwnedConversationsSource.Count);
+                      });
         }
-        
         private void showMyOwnedConversations()
         {
             updateMyOwnedConversations();
