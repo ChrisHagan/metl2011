@@ -49,10 +49,10 @@ namespace SandRibbon.Chrome
                         break;
                     case 3:
                         add("friends");
-                        add("notes");
+                        //add("notes");
                         add("lectureStyle");
                         add("tutorialStyle");
-                        add("meetingStyle");
+                        //add("meetingStyle");
                         break; 
                 }
             }

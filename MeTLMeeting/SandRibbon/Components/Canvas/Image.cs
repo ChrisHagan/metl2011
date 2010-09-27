@@ -99,7 +99,35 @@ namespace SandRibbon.Components.Canvas
             userImages.Clear(); 
             userVideo.Clear();
         }
+        private void updateVisibility(VisibilityInformation info)
+        {
+            switch (info.user)
+            {
+                case "toggleTeacher":
+                    {
+                        userVisibility["Teacher"] = info.visible;
+                        break;
+                    }
+                case "toggleMe":
+                    {
+                        userVisibility[Globals.me] = info.visible;
+                        break;
+                    }
+                case "toggleStudents":
+                    {
+                        var keys = userVisibility.Keys.Where(k => k != "Teacher" && k != Globals.me).ToList();
+                        foreach(var key in keys)
+                            userVisibility[key] = info.visible;
+                        break;
+                    }
+                    default:
+                    {
+                        userVisibility[info.user] = info.visible;
+                        break;
+                    }
+            }
 
+        }
         private void setUserVisibility(VisibilityInformation info)
         {
                     Dispatcher.adoptAsync(() =>
