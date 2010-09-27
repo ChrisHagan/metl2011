@@ -19,11 +19,10 @@ namespace MeTLLib
     public class ClientConnection
     {
         public string SERVER;
-        public ClientConnection(string server)
+        public ClientConnection(System.Uri server)
         {
-            //Change the string to a System.Uri to ensure that people only give an appropriate uri.
-            SERVER = server;
-            Trace.TraceInformation("MeTL client connection started.  Server set to:"+server, "Connection",TraceLevel.Info);
+            SERVER = decodeUri(server);
+            Trace.TraceInformation("MeTL client connection started.  Server set to:"+SERVER, "Connection");
             attachCommandsToEvents();
         }
         public ClientConnection()
@@ -93,7 +92,7 @@ namespace MeTLLib
         }
         public void SendStroke(TargettedStroke stroke)
         {
-            Trace.TraceInformation("Beginning Stroke send: " + stroke.startingChecksum);
+            Trace.TraceInformation("Beginning Stroke send: " + stroke.startingChecksum, "Sending data");
             Action work = delegate
             {
                 Commands.SendStroke.Execute(stroke);
@@ -567,7 +566,10 @@ namespace MeTLLib
             if (wire.IsConnected() == false) return;
             action();
         }
-
+        private string decodeUri(Uri uri)
+        {
+            return uri.Host.ToString();
+        }
         #endregion
     }
 }
