@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using MeTLLib.DataTypes;
+using System.Diagnostics;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -91,7 +92,7 @@ namespace MeTLLib.Providers.Connection
             foreach(var file in files)
                 Commands.ReceiveFileResource.Execute(file);
             Commands.AllContentSent.Execute(location.currentSlide);
-            Logger.Log(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
+            Trace.TraceInformation(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
         public override void actOnFileResource(MeTLStanzas.FileResource resource)
         {
@@ -145,7 +146,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (NullReferenceException)
             {
-                Logger.Log("Null reference in collecting autoshape from preparser");
+                Trace.TraceError("Null reference in collecting autoshape from preparser");
             }
         }
         public override void actOnStrokeReceived(TargettedStroke stroke)
@@ -168,7 +169,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (NullReferenceException)
             {
-                Logger.Log("Null reference in collecting text from preparser");
+                Trace.TraceError("Null reference in collecting text from preparser");
             }
         }
         public override void actOnLiveWindowReceived(LiveWindowSetup window)

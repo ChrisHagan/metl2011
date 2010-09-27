@@ -6,6 +6,7 @@ using MeTLLib.Providers.Connection;
 using MeTLLib;
 using System.DirectoryServices;
 using MeTLLib.DataTypes;
+using System.Diagnostics;
 
 namespace MeTLLib.Providers
 {
@@ -35,7 +36,7 @@ namespace MeTLLib.Providers
             }
             else
                 foreach (XmlElement error in doc.GetElementsByTagName("error"))
-                    Logger.Log("XmlError node:"+error.InnerText);
+                    Trace.TraceError("XmlError node:"+error.InnerText);
             return groups;
         }
         public static bool isAuthenticatedAgainstLDAP(string username, string password)
@@ -62,7 +63,7 @@ namespace MeTLLib.Providers
             }
             catch (Exception e)
             {
-                Logger.Log(string.Format("Failed authentication against LDAP because {0}", e.Message));
+                Trace.TraceError(string.Format("Failed authentication against LDAP because {0}", e.Message));
                 return false;
             }
             return true;
@@ -77,7 +78,7 @@ namespace MeTLLib.Providers
             }
             catch (Exception e)
             {
-                Logger.Log("Web proxy auth error:" + e.Message);
+                Trace.TraceError("Web proxy auth error:" + e.Message);
                 return false;
             }
         }
@@ -120,7 +121,7 @@ namespace MeTLLib.Providers
             }
             else
             {
-                Logger.Log("Failed to Login.");
+                Trace.TraceError("Failed to Login.");
             }
         }
 

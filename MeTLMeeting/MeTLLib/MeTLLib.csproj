@@ -88,7 +88,6 @@
     <Compile Include="Providers\Connection\ProviderMonitor.cs" />
     <Compile Include="Providers\GlobalCultureCompatibility.cs" />
     <Compile Include="Providers\Globals.cs" />
-    <Compile Include="Providers\Logger.cs" />
     <Compile Include="Providers\Structure\ConversationDetailsProviderFactory.cs" />
     <Compile Include="Providers\Crypto.cs" />
     <Compile Include="Providers\Structure\FileConversationDetailsProvider.cs" />

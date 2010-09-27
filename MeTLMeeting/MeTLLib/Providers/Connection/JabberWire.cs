@@ -12,6 +12,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using agsXMPP.protocol.iq.disco;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Structure;
+using System.Diagnostics;
 
 namespace MeTLLib.Providers.Connection
 {/*SPECIAL METL*/
@@ -60,13 +61,13 @@ namespace MeTLLib.Providers.Connection
             }
             catch (Exception e)
             {
-                MessageBox.Show("MeTL cannot find the server and so cannot start.  Please check your internet connection and try again.");
+                Trace.TraceError("MeTL cannot find the server and so cannot start.  Please check your internet connection and try again.");
                 if (Application.Current != null)
                     Application.Current.Shutdown();
             }
             finally
             {
-                Logger.Log(string.Format("Switched MeTL server to {0}", Constants.SERVER));
+                Trace.TraceInformation(string.Format("Switched MeTL server to {0}", Constants.SERVER));
             }
 
         }
@@ -79,13 +80,13 @@ namespace MeTLLib.Providers.Connection
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show("MeTL cannot find the server and so cannot start.  Please check your internet connection and try again.");
+                    Trace.TraceError("MeTL cannot find the server and so cannot start.  Please check your internet connection and try again.");
                     if (Application.Current != null)
                         Application.Current.Shutdown();
                 }
                 finally
                 {
-                    Logger.Log(string.Format("Logged into MeTL server {0}", Constants.SERVER));
+                    Trace.TraceInformation(string.Format("Logged into MeTL server {0}", Constants.SERVER));
                 }
         }
         public JabberWire()
@@ -256,28 +257,28 @@ namespace MeTLLib.Providers.Connection
         }
         private void HandlerError(object sender, Exception ex)
         {
-            Logger.Log(string.Format("Handler error: {0}", ex.Message));
+            Trace.TraceError(string.Format("Handler error: {0}", ex.Message));
             Reset("Handler");
         }
         private void ElementError(object sender, Element element)
         {
-            Logger.Log(string.Format("Element error: {0}", element.ToString()));
+            Trace.TraceError(string.Format("Element error: {0}", element.ToString()));
             Reset("Element");
         }
         protected virtual void ReadXml(object sender, string xml)
         {
             if (!xml.Contains("/WORM_MOVES"))
-                log("IN:" + xml);
+                Trace.TraceInformation("IN:" + xml);
         }
         protected virtual void WriteXml(object sender, string xml)
         {
             if (!xml.Contains("/WORM_MOVES"))
-                log("OUT:" + xml);
+                Trace.TraceInformation("OUT:" + xml);
         }
         private void OnClose(object sender)
         {
             unregisterHandlers();
-            Logger.Log("Closed manually, unregistered handlers");
+            Trace.TraceWarning("Closed manually, unregistered handlers");
         }
         private void OnPresence(object sender, Element element)
         {
@@ -330,7 +331,7 @@ namespace MeTLLib.Providers.Connection
                 {
                     if (conn.XmppConnectionState == XmppConnectionState.Disconnected)
                     {
-                        Logger.Log(string.Format("Resetting.  Blame {0}", caller));
+                        Trace.TraceWarning(string.Format("Resetting.  Blame {0}", caller));
                         conn.Close();
                         Login(location);
                     }
@@ -338,7 +339,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (Exception e)
             {
-                MessageBox.Show(string.Format("Xmpp error: {0}\nReconnecting", e.Message));
+                Trace.TraceError(string.Format("Xmpp error: {0}\nReconnecting", e.Message));
                 Reset("Reset exception handling (recursive)");
             }
         }
@@ -360,7 +361,7 @@ namespace MeTLLib.Providers.Connection
                 }
                 catch (Exception e)
                 {
-                    log(string.Format("Couldn't join room {0}: {1}", room, e.Message));
+                    Trace.TraceError(string.Format("Couldn't join room {0}: {1}", room, e.Message));
                 }
             }
         }
@@ -368,23 +369,19 @@ namespace MeTLLib.Providers.Connection
         {
             var alias = credentials.name + conn.Resource;
             new MucManager(conn).JoinRoom(room, alias, true);
-            log(string.Format("Joined room {0}", room));
-        }
-        private void log(string message)
-        {
-            Logger.Log(message);
+            Trace.TraceInformation(string.Format("Joined room {0}", room));
         }
         private void send(string target, string message)
         {
             try
             {
                 if (target.ToLower() == "global")
-                    log(string.Format("{0} fired on the global thread", message));
+                    Trace.TraceInformation(string.Format("{0} fired on the global thread", message));
                 send(new Message(new Jid(target + "@" + Constants.MUC), jid, MessageType.groupchat, message));
             }
             catch (Exception e)
             {
-                log(string.Format("Exception in send: {0}", e.Message));
+                Trace.TraceError(string.Format("Exception in send: {0}", e.Message));
             }
         }
         protected virtual void send(Message message)
@@ -612,7 +609,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (Exception e)
             {
-                Logger.Log(string.Format("Uncaught exception in ReceivedMessage: {0}", e.Message));
+                Trace.TraceError(string.Format("Uncaught exception in ReceivedMessage: {0}", e.Message));
             }
         }
         public virtual void handlePing(string[] parts)
@@ -684,7 +681,7 @@ namespace MeTLLib.Providers.Connection
             var message = (Element)obj;
             if (message.GetAttribute("type") == "error")
             {
-                Logger.Log(message.ToString());
+                Trace.TraceError(message.ToString());
                 return;
             }
             if (message.SelectSingleElement("body") != null)
@@ -827,7 +824,7 @@ namespace MeTLLib.Providers.Connection
                 onProgress,
                 finishedParser =>
                 {
-                    Logger.Log(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
+                    Trace.TraceInformation(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
                     Commands.PreParserAvailable.Execute(finishedParser);
                 },
                 room);
@@ -878,7 +875,7 @@ namespace MeTLLib.Providers.Connection
         }
         protected virtual void handleUnknownMessage(string message)
         {
-            log(string.Format("Received unknown message: {0}", message));
+            Trace.TraceWarning(string.Format("Received unknown message: {0}", message));
         }
     }
 }

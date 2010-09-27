@@ -12,6 +12,7 @@ using System.Windows.Ink;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MeTLLib
 {
@@ -22,6 +23,7 @@ namespace MeTLLib
         {
             //Change the string to a System.Uri to ensure that people only give an appropriate uri.
             SERVER = server;
+            Trace.TraceInformation("MeTL client connection started.  Server set to:"+server, "Connection",TraceLevel.Info);
             attachCommandsToEvents();
         }
         public ClientConnection()
@@ -61,24 +63,28 @@ namespace MeTLLib
         public bool Connect(string username, string password)
         {
             Constants.SERVER = null;
+            Trace.TraceInformation("Attempting authentication with username:" + username);
             AuthorisationProvider.attemptAuthentication(username, password);
-
+            Trace.TraceInformation("Connection state: " + isConnected.ToString());
             return isConnected;
         }
         public bool Disconnect()
         {
             Action work = delegate
             {
+                Trace.TraceInformation("Attempting to disconnect from MeTL");
                 wire.Logout();
             };
             tryIfConnected(work);
             wire = null;
+            Trace.TraceInformation("Connection state: " + isConnected.ToString());
             return isConnected;
         }
         #endregion
         #region sendStanzas
         public void SendTextBox(TargettedTextBox textbox)
         {
+            Trace.TraceInformation("Beginning TextBox send: " + textbox.identity);
             Action work = delegate
             {
                 Commands.SendTextBox.Execute(textbox);
@@ -87,6 +93,7 @@ namespace MeTLLib
         }
         public void SendStroke(TargettedStroke stroke)
         {
+            Trace.TraceInformation("Beginning Stroke send: " + stroke.startingChecksum);
             Action work = delegate
             {
                 Commands.SendStroke.Execute(stroke);
@@ -95,6 +102,7 @@ namespace MeTLLib
         }
         public void SendImage(TargettedImage image)
         {
+            Trace.TraceInformation("Beginning Image send: " + image.id);
             Action work = delegate
             {
                 Commands.SendImage.Execute(image);
@@ -103,6 +111,7 @@ namespace MeTLLib
         }
         public void SendVideo(TargettedVideo video)
         {
+            Trace.TraceInformation("Beginning Video send: " + video.id);
             Action work = delegate
             {
                 Commands.SendVideo.Execute(video);
@@ -111,6 +120,7 @@ namespace MeTLLib
         }
         public void SendDirtyTextBox(TargettedDirtyElement tde)
         {
+            Trace.TraceInformation("Beginning DirtyTextbox send: " + tde.identifier);
             Action work = delegate
             {
                 Commands.SendDirtyText.Execute(tde);
@@ -119,6 +129,7 @@ namespace MeTLLib
         }
         public void SendDirtyStroke(TargettedDirtyElement tde)
         {
+            Trace.TraceInformation("Beginning DirtyStroke send: " + tde.identifier);
             Action work = delegate
             {
                 Commands.SendDirtyStroke.Execute(tde);
@@ -127,6 +138,7 @@ namespace MeTLLib
         }
         public void SendDirtyImage(TargettedDirtyElement tde)
         {
+            Trace.TraceInformation("Beginning DirtyImage send: " + tde.identifier);
             Action work = delegate
             {
                 Commands.SendDirtyImage.Execute(tde);
@@ -135,6 +147,7 @@ namespace MeTLLib
         }
         public void SendDirtyVideo(TargettedDirtyElement tde)
         {
+            Trace.TraceInformation("Beginning DirtyVideo send: " + tde.identifier);
             Action work = delegate
             {
                 Commands.SendDirtyVideo.Execute(tde);
@@ -143,6 +156,7 @@ namespace MeTLLib
         }
         public void SendSubmission(TargettedSubmission ts)
         {
+            Trace.TraceInformation("Beginning Submission send: " + ts.url);
             Action work = delegate
             {
                 Commands.SendScreenshotSubmission.Execute(ts);
@@ -151,6 +165,7 @@ namespace MeTLLib
         }
         public void SendQuizAnswer(QuizAnswer qa)
         {
+            Trace.TraceInformation("Beginning QuizAnswer send: " + qa.id);
             Action work = delegate
             {
                 Commands.SendQuizAnswer.Execute(qa);
@@ -159,6 +174,7 @@ namespace MeTLLib
         }
         public void SendQuizQuestion(QuizQuestion qq)
         {
+            Trace.TraceInformation("Beginning QuizQuestion send: " + qq.id);
             Action work = delegate
             {
                 Commands.SendQuiz.Execute(qq);
@@ -167,6 +183,7 @@ namespace MeTLLib
         }
         public void SendFile(TargettedFile tf)
         {
+            Trace.TraceInformation("Beginning File send: " + tf.url);
             Action work = delegate
             {
                 Commands.SendFileResource.Execute(tf);
@@ -177,7 +194,9 @@ namespace MeTLLib
         {
             Action work = delegate
             {
+                Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
                 var newPath = ResourceUploader.uploadResource("/Resource/" + lii.room, lii.file, false);
+                Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
                 Image newImage = lii.image;
                 newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
                 Commands.SendFileResource.Execute(new TargettedImage
@@ -275,12 +294,12 @@ namespace MeTLLib
                 provider.Retrieve<PreParser>(
                     () =>
                     {
-                        Logger.Log("History started (" + room + ")");
+                        Trace.TraceInformation("History started (" + room + ")");
                     },
-                    (current, total) => Logger.Log("History progress (" + room + "): " + current + "/" + total),
+                    (current, total) => Trace.TraceInformation("History progress (" + room + "): " + current + "/" + total),
                     preParser =>
                     {
-                        Logger.Log("History completed (" + room + ")");
+                        Trace.TraceInformation("History completed (" + room + ")");
                         finishedParser = preParser;
                     },
                     room);
@@ -337,7 +356,6 @@ namespace MeTLLib
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyImage));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preParserAvailable));
             Commands.LoggedIn.RegisterCommand(new DelegateCommand<object>(loggedIn));
-            Commands.ReceiveLogMessage.RegisterCommand(new DelegateCommand<string>(receiveLogMessage));
             Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(receiveQuiz));
             Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(receiveQuizAnswer));
             Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(receiveFileResource));
@@ -346,7 +364,7 @@ namespace MeTLLib
         #region CommandMethods
         private void loggedIn(object _unused)
         {
-            Logger.Log("Logged in\r\n");
+            Trace.TraceInformation("Logged in\r\n");
             StatusChanged(this, new StatusChangedEventArgs { isConnected = true });
         }
         private void setIdentity(Credentials c)
@@ -358,7 +376,7 @@ namespace MeTLLib
             wire = new JabberWire(credentials, SERVER);
             wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
             Commands.MoveTo.Execute(101);
-            Logger.Log("set up jabberwire");
+            Trace.TraceInformation("set up jabberwire");
         }
         private void receiveSubmission(TargettedSubmission ts)
         {
@@ -380,11 +398,6 @@ namespace MeTLLib
         {
             foreach (TargettedImage ti in tia)
                 ImageAvailable(this, new ImageAvailableEventArgs { image = ti });
-        }
-        private void receiveLogMessage(string logMessage)
-        {
-            //This should be a system.trace thing.  I'll have to go through the lib, cleaning up all the Logger.Log to turn them into system.diagnostics.trace
-            LogMessageAvailable(this, new LogMessageAvailableEventArgs { logMessage = logMessage });
         }
         private void receiveStroke(TargettedStroke ts)
         {
@@ -439,7 +452,6 @@ namespace MeTLLib
         public delegate void FileAvailableEventHandler(object sender, FileAvailableEventArgs e);
         public delegate void StatusChangedEventHandler(object sender, StatusChangedEventArgs e);
         public delegate void PreParserAvailableEventHandler(object sender, PreParserAvailableEventArgs e);
-        public delegate void LogMessageAvailableEventHandler(object sender, LogMessageAvailableEventArgs e);
         public delegate void StrokeAvailableEventHandler(object sender, StrokeAvailableEventArgs e);
         public delegate void ImageAvailableEventHandler(object sender, ImageAvailableEventArgs e);
         public delegate void TextBoxAvailableEventHandler(object sender, TextBoxAvailableEventArgs e);
@@ -462,7 +474,6 @@ namespace MeTLLib
         public class FileAvailableEventArgs : EventArgs { public TargettedFile file;}
         public class StatusChangedEventArgs : EventArgs { public bool isConnected;}
         public class PreParserAvailableEventArgs : EventArgs { public PreParser parser; }
-        public class LogMessageAvailableEventArgs : EventArgs { public string logMessage; }
         public class StrokeAvailableEventArgs : EventArgs { public TargettedStroke stroke;}
         public class ImageAvailableEventArgs : EventArgs { public TargettedImage image;}
         public class VideoAvailableEventArgs : EventArgs { public TargettedVideo video;}
@@ -484,7 +495,6 @@ namespace MeTLLib
         public event FileAvailableEventHandler FileAvailable;
         public event StatusChangedEventHandler StatusChanged;
         public event PreParserAvailableEventHandler PreParserAvailable;
-        public event LogMessageAvailableEventHandler LogMessageAvailable;
         public event StrokeAvailableEventHandler StrokeAvailable;
         public event ImageAvailableEventHandler ImageAvailable;
         public event VideoAvailableEventHandler VideoAvailable;
@@ -513,8 +523,6 @@ namespace MeTLLib
         { StatusChanged(this, e); }
         protected virtual void onPreParserAvailable(PreParserAvailableEventArgs e)
         { PreParserAvailable(this, e); }
-        protected virtual void onLogMessageAvailable(LogMessageAvailableEventArgs e)
-        { LogMessageAvailable(this, e); }
         protected virtual void onStrokeAvailable(StrokeAvailableEventArgs e)
         { StrokeAvailable(this, e); }
         protected virtual void onDirtyStrokeAvailable(DirtyElementAvailableEventArgs e)

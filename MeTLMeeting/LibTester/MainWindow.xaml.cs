@@ -12,9 +12,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MeTLLib;
+using System.Diagnostics;
 using MeTLLib.Providers;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
+using System.Collections.ObjectModel;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace LibTester
 {
@@ -25,7 +29,6 @@ namespace LibTester
         {
             InitializeComponent();
             client = new ClientConnection("madam.adm.monash.edu.au");
-            client.LogMessageAvailable += (sender, args) => { Console.WriteLine(args.logMessage); };
             client.StrokeAvailable += (sender, args) => { inkCanvas.Strokes.Add(args.stroke.stroke); };
             client.TextBoxAvailable += (sender, args) => { inkCanvas.Children.Add(args.textBox.box); };
             client.ImageAvailable += (sender, args) => { inkCanvas.Children.Add(args.image.image); };
@@ -154,6 +157,101 @@ namespace LibTester
             " Quizzes:" + pp.quizzes.Count.ToString() +
             " QuizAnswers:" + pp.quizAnswers.Count.ToString();
 
+        }
+    }
+    public class TraceLevelFilter : TraceFilter
+    {
+        private TraceEventType traceLevel;
+        public TraceLevelFilter(TraceEventType level)
+            : base()
+        {
+            traceLevel = level;
+        }
+        public override bool ShouldTrace(TraceEventCache cache, string source, TraceEventType eventType, int id, string formatOrMessage, object[] args, object data1, object[] data)
+        {
+            if (eventType == traceLevel)
+                return true;
+            else
+                return false;
+        }
+    }
+    public class TraceLoggerItemsControl : ItemsControl
+    {
+        public TraceEventType traceLevel
+        {
+            get { return (TraceEventType)GetValue(traceLevelProperty); }
+            set { SetValue(traceLevelProperty, value); }
+        }
+        public static readonly DependencyProperty traceLevelProperty =
+            DependencyProperty.Register("traceLevel", typeof(TraceEventType), typeof(TraceLoggerItemsControl), new UIPropertyMetadata(null));
+
+        private ObservableCollection<Label> traceLogStore = new ObservableCollection<Label>();
+        private enum category { WARN, ERROR, INFO, UNKNOWN }
+        public TraceLoggerItemsControl()
+            : base()
+        {
+            this.Loaded += new RoutedEventHandler(TraceLoggerItemsControl_Loaded);
+            this.ItemsSource = traceLogStore;
+        }
+        private void TraceLoggerItemsControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            Trace.Listeners.Add(new TextBlockTraceLogger(logMessage) { Name = traceLevel.ToString(), Filter = new TraceLevelFilter(traceLevel) });
+        }
+        private void logMessage(string message, category cat)
+        {
+            Action del = delegate
+            {
+                traceLogStore.Add(new Label { Content = message, ToolTip = cat });
+            };
+            if (Thread.CurrentThread == Dispatcher.Thread)
+                del();
+            else
+                Dispatcher.BeginInvoke(del);
+
+        }
+        private class TextBlockTraceLogger : TraceListener
+        {
+            private Action<string, category> log;
+            public TextBlockTraceLogger(Action<string, category> logOutput)
+                : base()
+            {
+                this.Name = "textBlockTraceLogger";
+                log = logOutput;
+            }
+            public override void Write(string message)
+            {
+                if (log != null) AddMessage(message, category.UNKNOWN);
+            }
+            public override void WriteLine(string message)
+            {
+                if (log != null) AddMessage(message, category.UNKNOWN);
+            }
+            public override void WriteLine(string message, string inputCategory)
+            {
+                var cat = category.UNKNOWN;
+                switch (inputCategory)
+                {
+                    case "warning":
+                        cat = category.WARN;
+                        break;
+                    case "information":
+                        cat = category.INFO;
+                        break;
+                    case "error":
+                        cat = category.ERROR;
+                        break;
+                    default:
+                        cat = category.UNKNOWN;
+                        break;
+                }
+                AddMessage(message, cat);
+                base.WriteLine(message, inputCategory);
+            }
+            private void AddMessage(string message, category cat)
+            {
+                message = message.Insert(0, DateTime.Now.ToString() + ": ");
+                log(message, cat);
+            }
         }
     }
 }

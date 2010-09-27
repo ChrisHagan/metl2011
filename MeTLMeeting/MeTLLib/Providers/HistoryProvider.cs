@@ -12,6 +12,7 @@ using Ionic.Zip;
 using agsXMPP.Xml.Dom;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
+using System.Diagnostics;
 
 namespace MeTLLib.Providers
 {
@@ -130,7 +131,7 @@ namespace MeTLLib.Providers
     {
         public override void Retrieve<T>(Action retrievalBeginning, Action<int,int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
-            Logger.Log(string.Format("HttpHistoryProvider.Retrieve: Beginning retrieve for {0}", room));
+            Trace.TraceInformation(string.Format("HttpHistoryProvider.Retrieve: Beginning retrieve for {0}", room));
             var accumulatingParser = (T)Activator.CreateInstance(typeof(T), PreParser.ParentRoom(room));
             if(retrievalBeginning != null)
                 Application.Current.Dispatcher.adoptAsync(retrievalBeginning);
@@ -158,20 +159,20 @@ namespace MeTLLib.Providers
                                      }
                                      catch (WebException e)
                                      {
-                                         MessageBox.Show("WE: " + e.Message);
+                                         Trace.TraceWarning("WE: " + e.Message);
                                          //Nothing to do if it's a 404.  There is no history to obtain.
                                      }
                                  };
             if (retrievalComplete != null)
                 worker.RunWorkerCompleted += (_sender, _args) =>
                 {
-                    Logger.Log(string.Format("{0} retrieval complete at historyProvider", room));
+                    Trace.TraceInformation(string.Format("{0} retrieval complete at historyProvider", room));
                     try
                     {
                         Application.Current.Dispatcher.Invoke(retrievalComplete, (T)accumulatingParser);
                     }
                     catch (Exception ex) {
-                    //    Logger.Log("Exception on the retrievalComplete section: "+ex.Message.ToString()); 
+                    //    Trace.TraceError("Exception on the retrievalComplete section: "+ex.Message.ToString()); 
                     }
                     };
             worker.RunWorkerAsync(null);

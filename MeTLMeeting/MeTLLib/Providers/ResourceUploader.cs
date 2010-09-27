@@ -3,6 +3,7 @@ using System.Text;
 using System.Xml.Linq;
 using MeTLLib.Providers.Connection;
 using MeTLLib.Providers;
+using System.Diagnostics;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -24,7 +25,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (WebException e)
             {
-                Logger.Log("Cannot upload resource: " + e.Message);
+                Trace.TraceError("Cannot upload resource: " + e.Message);
             }
             return "failed";
         }

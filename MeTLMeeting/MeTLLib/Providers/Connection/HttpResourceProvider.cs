@@ -3,6 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Linq;
 using System;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -431,7 +432,7 @@ namespace MeTLLib.Providers.Connection
         {
             return;
             var filenameDescriptor = string.IsNullOrEmpty(filename) ? "" : " : " + filename;
-            Logger.Log(status + "(" + type + " : " + uri + filenameDescriptor + ")");
+            Trace.TraceInformation(status + "(" + type + " : " + uri + filenameDescriptor + ")");
         }
         private static void NotifyProgress(int attempts, string type, string resource, long recBytes, long size, int percentage, bool isPercentage)
         {
@@ -439,10 +440,10 @@ namespace MeTLLib.Providers.Connection
             if (isPercentage)
             {
                 percentage = (int)(recBytes / size);
-                Logger.Log("Attempt " + attempts + " waiting on " + type + ": " + percentage + "% (" + resource + ")");
+                Trace.TraceInformation("Attempt " + attempts + " waiting on " + type + ": " + percentage + "% (" + resource + ")");
             }
             else
-                Logger.Log("Attempt " + attempts + " waiting on " + type + ": " + recBytes + "B (" + resource + ")");
+                Trace.TraceInformation("Attempt " + attempts + " waiting on " + type + ": " + recBytes + "B (" + resource + ")");
         }
     }
 }

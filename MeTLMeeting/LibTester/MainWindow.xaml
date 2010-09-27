@@ -1,10 +1,35 @@
 ﻿<Window x:Class="LibTester.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525" x:Name="mainWindow">
+        xmlns:my="clr-namespace:LibTester"
+        Title="MainWindow" Height="350" Width="800" x:Name="mainWindow">
     <Grid>
         <DockPanel>
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <ScrollViewer DockPanel.Dock="Left" Width="400" HorizontalScrollBarVisibility="Visible">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <Label>Information</Label>
+                        <my:TraceLoggerItemsControl traceLevel="Information"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <Label>Warning</Label>
+                        <my:TraceLoggerItemsControl traceLevel="Warning"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <Label>Error</Label>
+                        <my:TraceLoggerItemsControl traceLevel="Error"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <Label>Verbose</Label>
+                        <my:TraceLoggerItemsControl traceLevel="Verbose"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <Label>Critical</Label>
+                        <my:TraceLoggerItemsControl traceLevel="Critical"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                 <TextBox x:Name="username" Width="100"/> 
                 <PasswordBox x:Name="password" Width="100"/>
                 <Button Click="attemptToAuthenticate">Login</Button>

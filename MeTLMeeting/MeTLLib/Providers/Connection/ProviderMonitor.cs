@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using agsXMPP;
 using System.Timers;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -75,7 +76,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (Exception e)
             {
-                Logger.Log("Sorry, might not be able to throw the current callstack");
+                Trace.TraceError("Sorry, might not be able to throw the current callstack");
                 //  throw new Exception(currentStack.ToString(), e);
             }
         }
@@ -94,7 +95,7 @@ namespace MeTLLib.Providers.Connection
         public void Ping(string uri)
         {
             var ping = new System.Net.NetworkInformation.Ping();
-            Logger.Log("pinged " + uri);
+            Trace.TraceInformation("pinged " + uri);
             ping.PingCompleted += (_sender, pingArgs) =>
             {
                 if (pingArgs.Reply != null && pingArgs.Reply.Status == IPStatus.Success)
