@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {

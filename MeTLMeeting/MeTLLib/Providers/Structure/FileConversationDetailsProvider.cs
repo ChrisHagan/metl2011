@@ -18,6 +18,13 @@ namespace MeTLLib.Providers.Structure
 {
     class FileConversationDetailsProvider : HttpResourceProvider, IConversationDetailsProvider
     {
+        private ResourceUploader resourceUploader;
+        public FileConversationDetailsProvider(IWebClientFactory factory, ResourceUploader uploader) : base(factory)
+        {
+            resourceUploader = uploader;
+            Commands.ReceiveDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(ReceiveDirtyConversationDetails));
+            ListConversations();
+        }
         private static readonly int HTTP_PORT = 1188;
         private static string ROOT_ADDRESS
         {
@@ -37,7 +44,7 @@ namespace MeTLLib.Providers.Structure
             try
             {
                 var url = string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, conversationJid, DETAILS);
-                var response = XElement.Parse(HttpResourceProvider.secureGetString(url));
+                var response = XElement.Parse(secureGetString(url));
                 var result = new ConversationDetails().ReadXml(response);
                 return result;
             }
@@ -50,11 +57,6 @@ namespace MeTLLib.Providers.Structure
                 ProviderMonitor.HealthCheck(() => { });
                 return new ConversationDetails();
             }
-        }
-        public FileConversationDetailsProvider()
-        {
-            Commands.ReceiveDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(ReceiveDirtyConversationDetails));
-            ListConversations();
         }
         public ConversationDetails AppendSlideAfter(int currentSlide, string title)
         {
@@ -227,14 +229,14 @@ namespace MeTLLib.Providers.Structure
                 });
             }
             details.Created = DateTimeFactory.Now();
-            ResourceUploader.uploadResourceToPath(Encoding.UTF8.GetBytes(details.WriteXml().ToString(SaveOptions.DisableFormatting)),
+            resourceUploader.uploadResourceToPath(Encoding.UTF8.GetBytes(details.WriteXml().ToString(SaveOptions.DisableFormatting)),
                 string.Format("Structure/{0}", details.Jid), DETAILS);
             Update(details);
             return details;
         }
         public ApplicationLevelInformation GetApplicationLevelInformation()
         {
-            return new ApplicationLevelInformation { currentId = Int32.Parse(HttpResourceProvider.secureGetString(NEXT_AVAILABLE_ID)) };
+            return new ApplicationLevelInformation { currentId = Int32.Parse(secureGetString(NEXT_AVAILABLE_ID)) };
         }
     }
 }

@@ -13,10 +13,16 @@ namespace MeTLLib.Providers
 {
     public class ResourceCache
     {
-        public static string cacheName = "resourceCache";
-        private static string cacheXMLfile = cacheName + "\\" + cacheName + ".xml";
-        private static Dictionary<string, System.Uri> ActualDict = null;
-        private static Dictionary<string, System.Uri> CacheDict
+        HttpResourceProvider resourceProvider;
+        ResourceUploader resourceUploader;
+        public ResourceCache(HttpResourceProvider provider, ResourceUploader uploader) {
+            resourceProvider= provider;
+            resourceUploader = uploader;
+        }
+        public static readonly string cacheName = "resourceCache";
+        private string cacheXMLfile = cacheName + "\\" + cacheName + ".xml";
+        private Dictionary<string, System.Uri> ActualDict = null;
+        private Dictionary<string, System.Uri> CacheDict
         {
             get
             {
@@ -32,7 +38,7 @@ namespace MeTLLib.Providers
             }
 
         }
-        private static Dictionary<string, Uri> ReadDictFromFile()
+        private Dictionary<string, Uri> ReadDictFromFile()
         {
             var newDict = new Dictionary<string, Uri>();
             if (!System.IO.Directory.Exists(cacheName))
@@ -62,7 +68,7 @@ namespace MeTLLib.Providers
             XDoc += "</CachesUris>";
             File.WriteAllText(cacheXMLfile, XDoc);
         }
-        private static void Add(string remoteUri, Uri localUri)
+        private void Add(string remoteUri, Uri localUri)
         {
             if (CacheDict.Contains(new KeyValuePair<string, Uri>(remoteUri, localUri))) return;
             CacheDict.Add(remoteUri, localUri);
@@ -76,11 +82,11 @@ namespace MeTLLib.Providers
             XDoc += "</CachedUris>";
             File.WriteAllText(cacheXMLfile, XDoc);
         }
-        public static Uri LocalSource(string uri)
+        public Uri LocalSource(string uri)
         {
             return LocalSource(new Uri(uri, UriKind.RelativeOrAbsolute));
         }
-        public static Uri LocalSource(Uri remoteUri)
+        public Uri LocalSource(Uri remoteUri)
         {
             if (remoteUri.ToString().StartsWith(cacheName + "\\"))
                 return remoteUri;
@@ -94,13 +100,13 @@ namespace MeTLLib.Providers
                 if (!Directory.Exists(cacheName))
                     Directory.CreateDirectory(cacheName);
                 var localUriString = cacheName + "\\" + remoteUri.ToString().Split('/').Reverse().First();
-                File.WriteAllBytes(localUriString, HttpResourceProvider.secureGetData(remoteUri.ToString()));
+                File.WriteAllBytes(localUriString, resourceProvider.secureGetData(remoteUri.ToString()));
                 var localUri = new Uri(localUriString, UriKind.Relative);
                 Add(remoteUri.ToString(), localUri);
             }
             return CacheDict[remoteUri.ToString()];
         }
-        public static Uri RemoteSource(Uri media)
+        public Uri RemoteSource(Uri media)
         {
 
             if (media.ToString().StartsWith("Resource\\"))

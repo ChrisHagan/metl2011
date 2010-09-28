@@ -28,7 +28,7 @@ namespace LibTester
         public MainWindow()
         {
             InitializeComponent();
-            client = new ClientConnection(new System.Uri("//madam.adm.monash.edu.au", UriKind.Absolute));
+            client = ClientFactory.Connection();
             client.StrokeAvailable += (sender, args) => { inkCanvas.Strokes.Add(args.stroke.stroke); };
             client.TextBoxAvailable += (sender, args) => { inkCanvas.Children.Add(args.textBox.box); };
             client.ImageAvailable += (sender, args) => { inkCanvas.Children.Add(args.image.image); };

@@ -25,7 +25,7 @@ namespace Functional
         public SoloStudentTraversesExistingConversation()
         {
         }
-        private TestContext testContextInstance;
+        public TestContext testContextInstance;
         public TestContext TestContext
         {
             get
@@ -37,7 +37,7 @@ namespace Functional
                 testContextInstance = value;
             }
         }
-        private static AutomationElementCollection windows;
+        public static AutomationElementCollection windows;
         [TestInitialize]
         public void AttachToProcess()
         {
@@ -120,7 +120,7 @@ namespace Functional
             CreateConversation();
         }
         [TestMethod]
-        private void openQuizToAnswer()
+        public void openQuizToAnswer()
         {
             var elements = AutomationElement
                         .RootElement
@@ -131,17 +131,17 @@ namespace Functional
                 new Quiz(window).openQuiz();
         }
         [TestMethod]
-        private void answerAQuiz()
+        public void answerAQuiz()
         {
             new QuizAnswer().answer();
         }
         [TestMethod]
-        private void OpenQuiz()
+        public void OpenQuiz()
         {
             new Quiz(windows[0]).open();
         }
         [TestMethod]
-        private void CreateQuiz()
+        public void CreateQuiz()
         {
             new QuizCreate().options().create();
         }
@@ -272,7 +272,7 @@ namespace Functional
         public void InjectStudentStrokes()
         {
             var presentationSpace = new UserCanvasStack(windows[1], "canvas");
-            presentationSpace.Ink = ink("dhag23", 100,100, "private");
+            presentationSpace.Ink = ink("dhag23", 100,100, "public");
         }
         [TestMethod]
         public void InjectText()
@@ -300,7 +300,7 @@ namespace Functional
             presentationSpace.Images = @"C:\specialMeTL\robot.jpg"; 
             //presentationSpace.Images = image("dhag22", @"http://i144.photobucket.com/albums/r181/jssst21/mortalwombatbannercopy.jpg", 80, RANDOM.Next(200));
         }
-        private string image(string author, string url, int x, int y)
+        public string image(string author, string url, int x, int y)
         {//THIS WILL NOT CONTROL PRIVACY
              return (
                new XElement("strokeCollection",
@@ -316,7 +316,7 @@ namespace Functional
                            new XElement(METL + "target", target),
                            new XElement(METL + "slide", slide))))).ToString(SaveOptions.DisableFormatting);
         }
-        private string text(string author, string privacy, string content, int x, int y)
+        public string text(string author, string privacy, string content, int x, int y)
         {
             return (
                new XElement("strokeCollection",
@@ -340,7 +340,7 @@ namespace Functional
                            new XElement(METL + "target", target),
                            new XElement(METL + "slide", slide))))).ToString(SaveOptions.DisableFormatting);
         }
-        private Color randomColor()
+        public Color randomColor()
         {
             var buff = new byte[3];
             RANDOM.NextBytes(buff);
@@ -356,14 +356,14 @@ namespace Functional
         {
             return ink(author, start, randomColor(), yOffset, privacy);
         }
-        private string ink(string author, int start, Color color, int yOffset, string privacy)
+        public string ink(string author, int start, Color color, int yOffset, string privacy)
         {
             var pressure = 80;
             var length = 300;
             return stroke(author, color, 3.0, Enumerable.Range(start, length).Aggregate("",
                 (acc,i)=>acc+string.Format("{0} {1} {2} ", i, yOffset+Math.Round(i*RANDOM.NextDouble(),2),pressure)).Trim(), privacy);
         }
-        private string stroke(string author, Color color, double thickness, string points, string privacy)
+        public string stroke(string author, Color color, double thickness, string points, string privacy)
         {//PRIVACY IS NOT CONTROLLED BY THIS STROKE.  IT IS IGNORED.
             return (
                 new XElement("strokeCollection",

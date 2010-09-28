@@ -13,6 +13,7 @@ using agsXMPP.protocol.iq.disco;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Structure;
 using System.Diagnostics;
+using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {/*SPECIAL METL*/
@@ -42,22 +43,22 @@ namespace MeTLLib.Providers.Connection
         {
             LookupServer();
         }
-        public static void SwitchServer(string target)
+        public void SwitchServer(string target)
         {
             try
             {
                 switch (target)
                 {
                     case "prod":
-                        ConfigurationProvider.instance.isStaging = false;
+                        configurationProvider.isStaging = false;
                         break;
                     case "staging":
-                        ConfigurationProvider.instance.isStaging = true;
+                        configurationProvider.isStaging = true;
                         break;
                     default:
                         break;
                 }
-                Constants.SERVER = ConfigurationProvider.instance.SERVER;
+                Constants.SERVER = configurationProvider.SERVER;
             }
             catch (Exception e)
             {
@@ -73,25 +74,12 @@ namespace MeTLLib.Providers.Connection
         }
         public static void LookupServer()
         {
-            if (Constants.SERVER == null)
-                try
-                {
-                    Constants.SERVER = ConfigurationProvider.instance.SERVER;
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError("MeTL cannot find the server and so cannot start.  Please check your internet connection and try again.");
-                    if (Application.Current != null)
-                        Application.Current.Shutdown();
-                }
-                finally
-                {
-                    Trace.TraceInformation(string.Format("Logged into MeTL server {0}", Constants.SERVER));
-                }
         }
-        public JabberWire()
-        {
-        }
+        [Inject] ConfigurationProvider configurationProvider;
+        [Inject] IConversationDetailsProvider conversationDetailsProvider;
+        [Inject] HttpHistoryProvider historyProvider;
+        [Inject] CachedHistoryProvider cachedHistoryProvider;
+        public JabberWire() { }
         public ResourceCache cache;
         public JabberWire(Credentials credentials, string SERVER)
         {
@@ -160,7 +148,7 @@ namespace MeTLLib.Providers.Connection
                             }
                         }
                         var populatedConversations = new List<ConversationDetails>();
-                        var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+                        var conversations = conversationDetailsProvider.ListConversations();
                         int dummy;
                         var conversationJids = currentRooms.Where(r => Int32.TryParse(r, out dummy))
                             .Select(r => Int32.Parse(r))
@@ -434,7 +422,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void retrieveHistory(string room)
         {
-            HistoryProviderFactory.provider.Retrieve<PreParser>(
+            historyProvider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
                 null,
@@ -462,12 +450,12 @@ namespace MeTLLib.Providers.Connection
         }
         public void GetHistory(int where)
         {
-            HistoryProviderFactory.provider.Retrieve<PreParser>(
+            historyProvider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
                 location.currentSlide.ToString());
-            HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
+            historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
@@ -480,12 +468,12 @@ namespace MeTLLib.Providers.Connection
                 new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), Constants.MUC, jid.Resource), credentials.name);
             location.currentSlide = where;
             joinRooms();
-            HistoryProviderFactory.provider.Retrieve<PreParser>(
+            historyProvider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
                 location.currentSlide.ToString());
-            HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
+            historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
@@ -691,8 +679,7 @@ namespace MeTLLib.Providers.Connection
             }
             try
             {
-                ((CachedHistoryProvider)HistoryProviderFactory.provider).HandleMessage(
-                    message.GetAttribute("from").Split('@')[0], message);
+                cachedHistoryProvider.HandleMessage(message.GetAttribute("from").Split('@')[0], message);
             }
             catch (Exception e)
             {
@@ -819,7 +806,7 @@ namespace MeTLLib.Providers.Connection
             var muc = new MucManager(conn);
             joinRoom(new Jid(room + "@" + Constants.MUC));
 
-            HistoryProviderFactory.provider.Retrieve<PreParser>(
+            historyProvider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser =>
@@ -828,7 +815,7 @@ namespace MeTLLib.Providers.Connection
                     Commands.PreParserAvailable.Execute(finishedParser);
                 },
                 room);
-            HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
+            historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
@@ -846,7 +833,7 @@ namespace MeTLLib.Providers.Connection
             {
                 var muc = new MucManager(conn);
                 muc.LeaveRoom(new Jid(location.activeConversation + "@" + Constants.MUC), credentials.name);
-                foreach (var slide in ConversationDetailsProviderFactory.Provider.DetailsOf(location.activeConversation).Slides.Select(s => s.id))
+                foreach (var slide in conversationDetailsProvider.DetailsOf(location.activeConversation).Slides.Select(s => s.id))
                     muc.LeaveRoom(new Jid(slide + "@" + Constants.MUC), credentials.name);
             }
             location.activeConversation = room;
@@ -862,7 +849,7 @@ namespace MeTLLib.Providers.Connection
         {
             var jid = parts[1];
             Commands.ReceiveDirtyConversationDetails.Execute(jid);
-            var newDetails = ConversationDetailsProviderFactory.Provider.DetailsOf(jid);
+            var newDetails = conversationDetailsProvider.DetailsOf(jid);
             Commands.UpdateForeignConversationDetails.Execute(newDetails);
             if (isCurrentConversation(jid))
                 Commands.UpdateConversationDetails.Execute(newDetails);

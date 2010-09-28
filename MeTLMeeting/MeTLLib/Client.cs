@@ -13,21 +13,29 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Threading;
 using System.Diagnostics;
+using Ninject;
 
 namespace MeTLLib
 {
+    public abstract class MeTLServerAddress{
+        public Uri uri { get; set; }
+    }
+    public class MadamServerAddress : MeTLServerAddress{
+        public MadamServerAddress() { 
+            uri = new Uri("//madam.adm.monash.edu");
+        }
+    }
     public class ClientConnection
     {
-        public string SERVER;
-        public ClientConnection(System.Uri server)
-        {
-            SERVER = decodeUri(server);
-            Trace.TraceInformation("MeTL client connection started.  Server set to:"+SERVER, "Connection");
-            attachCommandsToEvents();
-        }
+        [Inject] private AuthorisationProvider authorisationProvider;
+        [Inject] private ResourceUploader resourceUploader;
+        [Inject] private HttpHistoryProvider historyProvider;
+        [Inject] private IConversationDetailsProvider conversationDetailsProvider;
+        [Inject] private MeTLServerAddress server;
         public ClientConnection()
-            : this(null)
         {
+            Trace.TraceInformation("MeTL client connection started.  Server set to:"+server.ToString(), "Connection");
+            attachCommandsToEvents();
         }
         #region fields
         private JabberWire wire;
@@ -57,13 +65,12 @@ namespace MeTLLib
             }
         }
         #endregion
-
         #region connection
         public bool Connect(string username, string password)
         {
             Constants.SERVER = null;
             Trace.TraceInformation("Attempting authentication with username:" + username);
-            AuthorisationProvider.attemptAuthentication(username, password);
+            authorisationProvider.attemptAuthentication(username, password);
             Trace.TraceInformation("Connection state: " + isConnected.ToString());
             return isConnected;
         }
@@ -194,7 +201,7 @@ namespace MeTLLib
             Action work = delegate
             {
                 Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
-                var newPath = ResourceUploader.uploadResource("/Resource/" + lii.room, lii.file, false);
+                var newPath = resourceUploader.uploadResource("/Resource/" + lii.room, lii.file, false);
                 Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
                 Image newImage = lii.image;
                 newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
@@ -213,7 +220,7 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                var newPath = ResourceUploader.uploadResource(lfi.path, lfi.file, lfi.overwrite);
+                var newPath = resourceUploader.uploadResource(lfi.path, lfi.file, lfi.overwrite);
                 Commands.SendFileResource.Execute(new TargettedFile
                 {
                     author = lfi.author,
@@ -232,7 +239,7 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                var newPath = ResourceUploader.uploadResource("/Resource/" + lvi.room, lvi.file, false);
+                var newPath = resourceUploader.uploadResource("/Resource/" + lvi.room, lvi.file, false);
                 MeTLLib.DataTypes.Video newVideo = lvi.video;
                 newVideo.MediaElement.Source = new Uri(newPath, UriKind.Absolute);
                 Commands.SendFileResource.Execute(new TargettedVideo
@@ -285,12 +292,10 @@ namespace MeTLLib
         public PreParser RetrieveHistoryOf(string room)
         {
             //This doesn't work yet.  The completion of the action never fires.  There may be a deadlock somewhere preventing this.
-            return new PreParser(0);
             PreParser finishedParser = new PreParser(PreParser.ParentRoom(room));
             tryIfConnected(() =>
             {
-                var provider = new HttpHistoryProvider();
-                provider.Retrieve<PreParser>(
+                historyProvider.Retrieve<PreParser>(
                     () =>
                     {
                         Trace.TraceInformation("History started (" + room + ")");
@@ -321,7 +326,7 @@ namespace MeTLLib
                 var list = new List<ConversationDetails>();
                 Action work = delegate
                 {
-                    list = ConversationDetailsProviderFactory.Provider.ListConversations().ToList();
+                    list = conversationDetailsProvider.ListConversations().ToList();
                 };
                 return list;
             }
@@ -372,7 +377,7 @@ namespace MeTLLib
             attachCommandsToEvents();
             var credentials = new Credentials { authorizedGroups = c.authorizedGroups, name = c.name, password = "examplePassword" };
             wire = null;
-            wire = new JabberWire(credentials, SERVER);
+            wire = new JabberWire(credentials, server.ToString());
             wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
             Commands.MoveTo.Execute(101);
             Trace.TraceInformation("set up jabberwire");

@@ -16,6 +16,7 @@ using Path = System.IO.Path;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using Ninject;
 
 namespace MeTLLib.DataTypes
 {
@@ -45,7 +46,6 @@ namespace MeTLLib.DataTypes
             new MeTLStanzas.DirtyLiveWindow();
         }
     }
-
     public class TargettedElement
     {
         public string author { get; set; }
@@ -1161,6 +1161,7 @@ namespace MeTLLib.DataTypes
         }
         public class Video : Element
         {
+            [Inject] private ResourceCache resourceCache;
             static Video()
             {
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Video));
@@ -1248,9 +1249,9 @@ namespace MeTLLib.DataTypes
                 get { return GetTag(tagTag); }
                 set { SetTag(tagTag, value); }
             }
-            private static Uri getCachedVideo(string url)
+            private Uri getCachedVideo(string url)
             {
-                return MeTLLib.Providers.ResourceCache.LocalSource(url);
+                return resourceCache.LocalSource(url);
             }
             public Uri source
             {
@@ -1267,6 +1268,7 @@ namespace MeTLLib.DataTypes
             {
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Image));
             }
+            [Inject] ResourceCache resourceCache;
             public static string TAG = "image";
             public Image()
             {
@@ -1291,12 +1293,12 @@ namespace MeTLLib.DataTypes
                 InkCanvas.SetTop(image, this.y);
                 return image;
             }
-            public static string GetCachedImage(string url)
+            public string GetCachedImage(string url)
             {
 
                 try
                 {
-                    return ResourceCache.LocalSource(url).ToString();
+                    return resourceCache.LocalSource(url).ToString();
                 }
                 catch (Exception e)
                 {

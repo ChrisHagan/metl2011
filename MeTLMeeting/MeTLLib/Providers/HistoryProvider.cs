@@ -16,21 +16,6 @@ using System.Diagnostics;
 
 namespace MeTLLib.Providers
 {
-    class HistoryProviderFactory
-    {
-        private static object instanceLock = new object();
-        private static IHistoryProvider instance;
-        public static IHistoryProvider provider
-        {
-            get
-            {
-                lock (instanceLock)
-                    if (instance == null)
-                        instance = new CachedHistoryProvider();
-                return instance;
-            }
-        }
-    }
     interface IHistoryProvider
     {
         void Retrieve<T>(
@@ -47,7 +32,11 @@ namespace MeTLLib.Providers
             string room
         ) where T : PreParser;
     }
-    abstract class BaseHistoryProvider : IHistoryProvider {
+    public abstract class BaseHistoryProvider : IHistoryProvider {
+        protected HttpResourceProvider resourceProvider;
+        public BaseHistoryProvider(HttpResourceProvider provider) {
+            resourceProvider = provider;
+        }
         public abstract void Retrieve<T>(
             Action retrievalBeginning,
             Action<int, int> retrievalProceeding,
@@ -65,16 +54,14 @@ namespace MeTLLib.Providers
             this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{0}/{1}", author,room));
         }
     }
-    class CachedHistoryProvider : BaseHistoryProvider {
+    public class CachedHistoryProvider : BaseHistoryProvider {
+        private HttpHistoryProvider historyProvider;
+        public CachedHistoryProvider(HttpResourceProvider resourceProvider, HttpHistoryProvider historyProvider) : base(resourceProvider) {
+            this.historyProvider = historyProvider;
+        }
         private Dictionary<string, PreParser> cache = new Dictionary<string,PreParser>();
         private int measure<T>(int acc, T item){
             return acc + item.ToString().Length;
-        }
-        public static long cacheSize {
-            get {/*Warning: This does not calculate the size you would expect.  It's been left in here mostly as a breakpoint - we're
-                not storing XML at this point, but in memory structures*/
-                return ((CachedHistoryProvider)HistoryProviderFactory.provider).cacheTotalSize;
-            }
         }
         private long cacheTotalSize{
             get
@@ -92,7 +79,7 @@ namespace MeTLLib.Providers
             {
                 
              */
-            new HttpHistoryProvider().Retrieve<T>(
+            historyProvider.Retrieve<T>(
                     delegate { },
                     (_i, _j) => { },
                     history =>
@@ -118,7 +105,6 @@ namespace MeTLLib.Providers
             return false;
             
         }
-
         public void HandleMessage(string to, Element message) {
             if(isPrivateRoom(to)) return;
             var room = Int32.Parse(to);
@@ -127,8 +113,9 @@ namespace MeTLLib.Providers
             cache[room.ToString()].ActOnUntypedMessage(message);
         }
     }
-    class HttpHistoryProvider : BaseHistoryProvider
+    public class HttpHistoryProvider : BaseHistoryProvider
     {
+        public HttpHistoryProvider(HttpResourceProvider provider) : base(provider) { }
         public override void Retrieve<T>(Action retrievalBeginning, Action<int,int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
             Trace.TraceInformation(string.Format("HttpHistoryProvider.Retrieve: Beginning retrieve for {0}", room));
@@ -141,7 +128,7 @@ namespace MeTLLib.Providers
                                      var zipUri = string.Format("https://{0}:1749/{1}/all.zip", Constants.SERVER, room);
                                      try
                                      {
-                                         var zipData = HttpResourceProvider.secureGetData(zipUri);
+                                         var zipData = resourceProvider.secureGetData(zipUri);
                                          if (zipData.Count() == 0) return;
                                          var zip = ZipFile.Read(zipData);
                                          var days = (from e in zip.Entries where e.FileName.EndsWith(".xml") orderby e.FileName select e).ToArray();

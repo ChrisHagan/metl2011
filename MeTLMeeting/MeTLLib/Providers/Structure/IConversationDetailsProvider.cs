@@ -3,7 +3,7 @@ using MeTLLib.DataTypes;
 
 namespace MeTLLib.Providers.Structure
 {
-    interface IConversationDetailsProvider
+    public interface IConversationDetailsProvider
     {
         ConversationDetails DetailsOf(string jid);
         ConversationDetails Update(ConversationDetails details);

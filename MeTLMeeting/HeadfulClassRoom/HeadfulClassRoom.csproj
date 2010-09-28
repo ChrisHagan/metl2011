@@ -118,12 +118,6 @@
     <Compile Include="Telnet.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Functional\Functional.csproj">
-      <Project>{EEA9F528-4885-4D7E-8BDC-914FA52370C7}</Project>
-      <Name>Functional</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="availableStrokes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

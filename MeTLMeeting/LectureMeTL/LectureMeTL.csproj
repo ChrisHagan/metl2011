@@ -248,12 +248,6 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SandRibbon\SandRibbon.csproj">
-      <Project>{0213D150-6485-4F40-AF80-5AC5E8BB10CC}</Project>
-      <Name>SandRibbon</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

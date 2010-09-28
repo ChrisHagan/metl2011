@@ -36,10 +36,12 @@
     <Reference Include="agsXMPP">
       <HintPath>..\MeTLLib\lib\agsXMPP.dll</HintPath>
     </Reference>
+    <Reference Include="CommonServiceLocator.NinjectAdapter">
+      <HintPath>lib\CommonServiceLocator.NinjectAdapter.dll</HintPath>
+    </Reference>
     <Reference Include="Divan">
       <HintPath>..\MeTLLib\lib\Divan.dll</HintPath>
     </Reference>
-    <Reference Include="Divelements.SandRibbon, Version=1.1.7.2, Culture=neutral, PublicKeyToken=75b7ec17dd7c14c3, processorArchitecture=MSIL" />
     <Reference Include="HTMLparserLibDotNet20">
       <HintPath>..\MeTLLib\lib\HTMLparserLibDotNet20.dll</HintPath>
     </Reference>
@@ -59,8 +61,14 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\MeTLLib\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject">
+      <HintPath>lib\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Rhino.Mocks">
+      <HintPath>lib\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -78,129 +86,9 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationLevelInformationTest.cs" />
-    <Compile Include="AuthorisationProviderTest.cs" />
-    <Compile Include="AuthorizedGroupTest.cs" />
-    <Compile Include="AutoShapeTest.cs" />
-    <Compile Include="BoardMoveTest.cs" />
-    <Compile Include="ButtonTest.cs" />
-    <Compile Include="CachedHistoryProviderTest.cs" />
-    <Compile Include="CheckBoxTest.cs" />
-    <Compile Include="ClientConnectionTest.cs" />
-    <Compile Include="ClientConnection_AutoshapeAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_BubbleAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_ChatAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_CommandAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_ConversationDetailsAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_DirtyElementAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_DiscoAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_FileAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_ImageAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_LiveWindowAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_PreParserAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_QuizAnswerAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_QuizAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_QuizQuestionAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_StatusChangedEventArgsTest.cs" />
-    <Compile Include="ClientConnection_StrokeAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_SubmissionAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_TextBoxAvailableEventArgsTest.cs" />
-    <Compile Include="ClientConnection_VideoAvailableEventArgsTest.cs" />
-    <Compile Include="CommandParameterProviderTest.cs" />
-    <Compile Include="CommandsTest.cs" />
-    <Compile Include="CompositeCommandExtensionsTest.cs" />
-    <Compile Include="ConfigurationProviderTest.cs" />
-    <Compile Include="ConstantsTest.cs" />
-    <Compile Include="ConversationDetailsProviderFactoryTest.cs" />
-    <Compile Include="ConversationDetailsTest.cs" />
-    <Compile Include="CredentialsTest.cs" />
-    <Compile Include="CryptoTest.cs" />
-    <Compile Include="DateTimeFactoryTest.cs" />
-    <Compile Include="DispatcherExtensionsTest.cs" />
-    <Compile Include="DoubleButtonTest.cs" />
-    <Compile Include="DrawerContentTest.cs" />
-    <Compile Include="ExtensionsTest.cs" />
-    <Compile Include="FileConversationDetailsProviderTest.cs" />
-    <Compile Include="FileConversationDetailsProvider_UniqueConversationComparatorTest.cs" />
-    <Compile Include="GlobalsTest.cs" />
-    <Compile Include="HistoryProviderFactoryTest.cs" />
-    <Compile Include="HttpHistoryProviderTest.cs" />
     <Compile Include="HttpResourceProviderTest.cs" />
-    <Compile Include="IConversationDetailsProviderTest.cs" />
-    <Compile Include="ImageExtensionsTest.cs" />
-    <Compile Include="JabberWireTest.cs" />
-    <Compile Include="LiveWindowSetupTest.cs" />
-    <Compile Include="LocationTest.cs" />
-    <Compile Include="MeTLContentToolTipTest.cs" />
-    <Compile Include="MeTLImageToolTipTest.cs" />
-    <Compile Include="MeTLStanzasConstructorTest.cs" />
-    <Compile Include="MeTLStanzasTest.cs" />
-    <Compile Include="MeTLStanzas_AutoShapeTest.cs" />
-    <Compile Include="MeTLStanzas_BubbleTest.cs" />
-    <Compile Include="MeTLStanzas_DirtyAutoshapeTest.cs" />
-    <Compile Include="MeTLStanzas_DirtyElementTest.cs" />
-    <Compile Include="MeTLStanzas_DirtyImageTest.cs" />
-    <Compile Include="MeTLStanzas_DirtyInkTest.cs" />
-    <Compile Include="MeTLStanzas_DirtyLiveWindowTest.cs" />
-    <Compile Include="MeTLStanzas_DirtyTextTest.cs" />
-    <Compile Include="MeTLStanzas_DirtyVideoTest.cs" />
-    <Compile Include="MeTLStanzas_FileResourceTest.cs" />
-    <Compile Include="MeTLStanzas_ImageTest.cs" />
-    <Compile Include="MeTLStanzas_InkTest.cs" />
-    <Compile Include="MeTLStanzas_LiveWindowTest.cs" />
-    <Compile Include="MeTLStanzas_LocalFileInformationTest.cs" />
-    <Compile Include="MeTLStanzas_LocalImageInformationTest.cs" />
-    <Compile Include="MeTLStanzas_LocalVideoInformationTest.cs" />
-    <Compile Include="MeTLStanzas_PowerpointVideoTest.cs" />
-    <Compile Include="MeTLStanzas_QuizOptionTest.cs" />
-    <Compile Include="MeTLStanzas_QuizResponseTest.cs" />
-    <Compile Include="MeTLStanzas_QuizTest.cs" />
-    <Compile Include="MeTLStanzas_ScreenshotSubmissionTest.cs" />
-    <Compile Include="MeTLStanzas_TextBoxTest.cs" />
-    <Compile Include="MeTLStanzas_VideoTest.cs" />
-    <Compile Include="NonRibbonButtonTest.cs" />
-    <Compile Include="NotSetExceptionTest.cs" />
-    <Compile Include="OptionTest.cs" />
-    <Compile Include="PenColorsListBoxTest.cs" />
-    <Compile Include="PermissionsTest.cs" />
-    <Compile Include="PolicyTest.cs" />
-    <Compile Include="PowerpointVideoTest.cs" />
-    <Compile Include="PreParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProviderMonitorTest.cs" />
-    <Compile Include="QuizAnswerTest.cs" />
-    <Compile Include="QuizContainerTest.cs" />
-    <Compile Include="QuizQuestionTest.cs" />
-    <Compile Include="RadioButtonTest.cs" />
-    <Compile Include="RenderedLiveWindowTest.cs" />
-    <Compile Include="ResourceCacheTest.cs" />
-    <Compile Include="ResourceUploaderTest.cs" />
-    <Compile Include="RibbonPanelTest.cs" />
-    <Compile Include="SelectedIdentityTest.cs" />
-    <Compile Include="ServerStatusTest.cs" />
-    <Compile Include="SlideTest.cs" />
-    <Compile Include="SlideViewingListBoxTest.cs" />
-    <Compile Include="StrokeExtensionsTest.cs" />
-    <Compile Include="TargettedAutoShapeTest.cs" />
-    <Compile Include="TargettedBubbleContextTest.cs" />
-    <Compile Include="TargettedDirtyElementTest.cs" />
-    <Compile Include="TargettedElementTest.cs" />
-    <Compile Include="TargettedFileTest.cs" />
-    <Compile Include="TargettedImageTest.cs" />
-    <Compile Include="TargettedPowerpointBackgroundVideoTest.cs" />
-    <Compile Include="TargettedStrokeTest.cs" />
-    <Compile Include="TargettedSubmissionTest.cs" />
-    <Compile Include="TargettedTextBoxTest.cs" />
-    <Compile Include="TargettedVideoTest.cs" />
-    <Compile Include="TextExtensionsTest.cs" />
-    <Compile Include="ThumbnailInformationTest.cs" />
-    <Compile Include="UserInformationTest.cs" />
-    <Compile Include="VideoExtensionsTest.cs" />
-    <Compile Include="VideoMirrorTest.cs" />
-    <Compile Include="VideoMirror_VideoMirrorInformationTest.cs" />
-    <Compile Include="VideoTest.cs" />
-    <Compile Include="WebClientWithTimeoutTest.cs" />
-    <Compile Include="WormMoveTest.cs" />
+    <Compile Include="TestModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">

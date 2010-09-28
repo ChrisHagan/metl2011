@@ -111,20 +111,6 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SandRibbonInterop\SandRibbonInterop.csproj">
-      <Project>{936C46AC-5A2F-4476-A89C-52537260DBE4}</Project>
-      <Name>SandRibbonInterop</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SandRibbonObjects\SandRibbonObjects.csproj">
-      <Project>{87F30CE0-8265-4934-8E1E-CF90B26B2562}</Project>
-      <Name>SandRibbonObjects</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SandRibbon\SandRibbon.csproj">
-      <Project>{0213D150-6485-4F40-AF80-5AC5E8BB10CC}</Project>
-      <Name>SandRibbon</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

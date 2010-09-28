@@ -10,15 +10,16 @@ using System.Diagnostics;
 
 namespace MeTLLib.Providers
 {
-    class AuthorisationProvider : HttpResourceProvider
+    public class AuthorisationProvider : HttpResourceProvider
     {
-        public static List<AuthorizedGroup> getEligibleGroups( string AuthcateName, string AuthcatePassword) 
+        public AuthorisationProvider(IWebClientFactory factory) : base(factory) {}
+        public List<AuthorizedGroup> getEligibleGroups( string AuthcateName, string AuthcatePassword) 
         {
             //if (AuthcateName.StartsWith(BackDoor.USERNAME_PREFIX)) 
             //    return new List<JabberWire.AuthorizedGroup> { new JabberWire.AuthorizedGroup("Artificial person", ""),new JabberWire.AuthorizedGroup("Unrestricted", ""), new JabberWire.AuthorizedGroup(AuthcateName, "")  };
             var groups = new List<AuthorizedGroup>();
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
-            string sXML = HttpResourceProvider.insecureGetString(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, Constants.SERVER));
+            string sXML = insecureGetString(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, Constants.SERVER));
             var doc = new XmlDocument();
                 doc.LoadXml(sXML);
             if (doc.GetElementsByTagName("error").Count == 0)
@@ -39,7 +40,7 @@ namespace MeTLLib.Providers
                     Trace.TraceError("XmlError node:"+error.InnerText);
             return groups;
         }
-        public static bool isAuthenticatedAgainstLDAP(string username, string password)
+        public bool isAuthenticatedAgainstLDAP(string username, string password)
         {
             //if (username.StartsWith(BackDoor.USERNAME_PREFIX)) return true;
             string LDAPServerURL = @"LDAP://directory.monash.edu.au:389/";
@@ -68,12 +69,12 @@ namespace MeTLLib.Providers
             }
             return true;
         }
-        public static bool isAuthenticatedAgainstWebProxy(string username, string password)
+        public bool isAuthenticatedAgainstWebProxy(string username, string password)
         {
             try
             {
                 var resource = String.Format("https://my.monash.edu.au/login?username={0}&password={1}", username, password);
-                String test = HttpResourceProvider.insecureGetString(resource);
+                String test = insecureGetString(resource);
                 return !test.Contains("error-text");
             }
             catch (Exception e)
@@ -82,25 +83,20 @@ namespace MeTLLib.Providers
                 return false;
             }
         }
-        public static void attemptAuthentication(string username, string password)
+        public void attemptAuthentication(string username, string password)
         {
             if (Constants.SERVER == null) JabberWire.LookupServer();
             string AuthcateUsername = "";
-#if DEBUG
-            JabberWire.SwitchServer("staging");
-#else
-            ConfigurationProvider.instance.isStaging = false;
-#endif
             if (username.Contains("_"))
             {
                 var Parameters = username.Split('_');
                 if (Parameters.ToList().Contains<string>("prod"))
                 {
-                    JabberWire.SwitchServer("prod");
+                    //JabberWire.SwitchServer("prod");
                 }
                 if (Parameters.ToList().Contains<string>("staging"))
                 {
-                    JabberWire.SwitchServer("staging");
+                    //JabberWire.SwitchServer("staging");
                 }
                 AuthcateUsername = username.Remove(username.IndexOf("_"));
             }
@@ -111,7 +107,7 @@ namespace MeTLLib.Providers
 
             if (authenticateAgainstFailoverSystem(AuthcateUsername, AuthcatePassword) || isBackdoorUser(AuthcateUsername))
             {
-                var eligibleGroups = AuthorisationProvider.getEligibleGroups(AuthcateUsername, AuthcatePassword);
+                var eligibleGroups = getEligibleGroups(AuthcateUsername, AuthcatePassword);
                 Commands.SetIdentity.Execute(new Credentials
                 {
                     name = AuthcateUsername,
@@ -125,12 +121,12 @@ namespace MeTLLib.Providers
             }
         }
 
-        private static bool isBackdoorUser(string user)
+        private bool isBackdoorUser(string user)
         {
             return user.ToLower().Contains("admirable");
         }
 
-        private static bool authenticateAgainstFailoverSystem(string username, string password)
+        private bool authenticateAgainstFailoverSystem(string username, string password)
         {
             //gotta remember to remove this!
             return true;
