@@ -6,6 +6,7 @@ using System.Net.Security;
 using System.Net;
 using Ninject;
 using System.Text;
+using MeTLLib;
 
 namespace MeTLLibTests
 {
@@ -109,7 +110,7 @@ namespace MeTLLibTests
              * Aaand five hours of hard refactoring later we've almost made everything in the entire graph injected and instance based.
              * I am a HUGE IDIOT for doing everything in statics and not considering that we might want to test later on.
              */
-            IKernel kernel = new StandardKernel(new TestModule());
+            IKernel kernel = new StandardKernel(new BaseModule(),new TestModule());
             HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
             Assert.AreEqual("http://nowhere.adm.monash.edu/resources/something.ext", provider.securePutFile("http://resourceServer.wherever", "something.ext"));
         }

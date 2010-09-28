@@ -27,13 +27,18 @@ namespace MeTLLib
     }
     public class ClientConnection
     {
-        [Inject] private AuthorisationProvider authorisationProvider;
-        [Inject] private ResourceUploader resourceUploader;
-        [Inject] private HttpHistoryProvider historyProvider;
-        [Inject] private IConversationDetailsProvider conversationDetailsProvider;
-        [Inject] private MeTLServerAddress server;
-        public ClientConnection()
+         private AuthorisationProvider authorisationProvider;
+         private ResourceUploader resourceUploader;
+         private HttpHistoryProvider historyProvider;
+         private IConversationDetailsProvider conversationDetailsProvider;
+         private MeTLServerAddress server;
+        public ClientConnection(AuthorisationProvider auth, ResourceUploader uploader, HttpHistoryProvider history, IConversationDetailsProvider conversationDetails, MeTLServerAddress address )
         {
+            authorisationProvider = auth;
+            resourceUploader = uploader;
+            historyProvider = history;
+            conversationDetailsProvider = conversationDetails;
+            server = address;
             Trace.TraceInformation("MeTL client connection started.  Server set to:"+server.ToString(), "Connection");
             attachCommandsToEvents();
         }
