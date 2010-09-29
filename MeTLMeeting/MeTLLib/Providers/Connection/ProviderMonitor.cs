@@ -15,10 +15,6 @@ namespace MeTLLib.Providers.Connection
 {
     public partial class ProviderMonitor
     {
-        static ProviderMonitor()
-        {
-            JabberWire.LookupServer();
-        }
         private static List<ServerStatus> SERVERS =
                 new List<ServerStatus>(){
                     new ServerStatus{

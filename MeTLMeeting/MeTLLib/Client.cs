@@ -19,25 +19,33 @@ namespace MeTLLib
 {
     public abstract class MeTLServerAddress{
         public Uri uri { get; set; }
+        public string muc{
+            get
+            {
+                return "conference." + uri.Host;
+            }
+        }
+        public agsXMPP.Jid global {
+            get {
+                return new agsXMPP.Jid("global@" + muc);
+            }
+        }
     }
     public class MadamServerAddress : MeTLServerAddress{
         public MadamServerAddress() { 
-            uri = new Uri("//madam.adm.monash.edu");
+            uri = new Uri("http://madam.adm.monash.edu.au");
         }
     }
     public class ClientConnection
     {
-         private AuthorisationProvider authorisationProvider;
-         private ResourceUploader resourceUploader;
-         private HttpHistoryProvider historyProvider;
-         private IConversationDetailsProvider conversationDetailsProvider;
-         private MeTLServerAddress server;
-        public ClientConnection(AuthorisationProvider auth, ResourceUploader uploader, HttpHistoryProvider history, IConversationDetailsProvider conversationDetails, MeTLServerAddress address )
+        [Inject] public AuthorisationProvider authorisationProvider { private get; set; }
+        [Inject] public ResourceUploader resourceUploader { private get; set; }
+        [Inject] public HttpHistoryProvider historyProvider { private get; set; }
+        [Inject] public IConversationDetailsProvider conversationDetailsProvider { private get;set; }
+        [Inject] public JabberWireFactory jabberWireFactory { private get;set; }
+        private MeTLServerAddress server;
+        public ClientConnection(MeTLServerAddress address)
         {
-            authorisationProvider = auth;
-            resourceUploader = uploader;
-            historyProvider = history;
-            conversationDetailsProvider = conversationDetails;
             server = address;
             Trace.TraceInformation("MeTL client connection started.  Server set to:"+server.ToString(), "Connection");
             attachCommandsToEvents();
@@ -73,7 +81,6 @@ namespace MeTLLib
         #region connection
         public bool Connect(string username, string password)
         {
-            Constants.SERVER = null;
             Trace.TraceInformation("Attempting authentication with username:" + username);
             authorisationProvider.attemptAuthentication(username, password);
             Trace.TraceInformation("Connection state: " + isConnected.ToString());
@@ -267,8 +274,6 @@ namespace MeTLLib
                 Commands.MoveTo.Execute(slide);
             };
             tryIfConnected(work);
-            //if (wire == null) return;
-            //Commands.MoveTo.Execute(slide);
         }
         public void SneakInto(string room)
         {
@@ -297,7 +302,7 @@ namespace MeTLLib
         public PreParser RetrieveHistoryOf(string room)
         {
             //This doesn't work yet.  The completion of the action never fires.  There may be a deadlock somewhere preventing this.
-            PreParser finishedParser = new PreParser(PreParser.ParentRoom(room));
+            PreParser finishedParser = jabberWireFactory.preParser(PreParser.ParentRoom(room));
             tryIfConnected(() =>
             {
                 historyProvider.Retrieve<PreParser>(
@@ -381,10 +386,10 @@ namespace MeTLLib
             Commands.UnregisterAllCommands();
             attachCommandsToEvents();
             var credentials = new Credentials { authorizedGroups = c.authorizedGroups, name = c.name, password = "examplePassword" };
-            wire = null;
-            wire = new JabberWire(credentials, server.ToString());
+            jabberWireFactory.credentials = c; 
+            wire = jabberWireFactory.wire();
             wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
-            Commands.MoveTo.Execute(101);
+            //Commands.MoveTo.Execute(101);
             Trace.TraceInformation("set up jabberwire");
         }
         private void receiveSubmission(TargettedSubmission ts)
@@ -572,8 +577,14 @@ namespace MeTLLib
         #region HelperMethods
         private void tryIfConnected(Action action)
         {
-            if (wire == null) return;
-            if (wire.IsConnected() == false) return;
+            if (wire == null){
+                Trace.TraceWarning("Wire is null at tryIfConnected");
+                return;
+            }
+            if (wire.IsConnected() == false){
+                Trace.TraceWarning("Wire is disconnected at tryIfConnected");
+                return;
+            }
             action();
         }
         private string decodeUri(Uri uri)

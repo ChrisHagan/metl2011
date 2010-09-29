@@ -16,7 +16,37 @@ using System.Diagnostics;
 using Ninject;
 
 namespace MeTLLib.Providers.Connection
-{/*SPECIAL METL*/
+{
+    public class JabberWireFactory{
+        public Credentials credentials { private get; set; }
+        [Inject] public ConfigurationProvider configurationProvider { private get; set; }
+        [Inject] public IConversationDetailsProvider conversationDetailsProvider { private get; set; } 
+        [Inject] public HttpHistoryProvider historyProvider{private get;set;} 
+        [Inject] public CachedHistoryProvider cachedHistoryProvider{private get;set;} 
+        [Inject] public MeTLServerAddress metlServerAddress{private get;set;}
+        public JabberWire wire() {
+            if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a wire");
+            return new JabberWire(
+                credentials, 
+                conversationDetailsProvider,
+                historyProvider,
+                cachedHistoryProvider,
+                metlServerAddress);
+        }
+        public PreParser preParser(int room){
+            if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a preParser");
+            return new PreParser(
+                credentials,
+                room,
+                conversationDetailsProvider,
+                historyProvider,
+                cachedHistoryProvider,
+                metlServerAddress);
+        }
+        public PreParser create<T>(int room) where T:PreParser{
+            return preParser(room);
+        }
+    }
     public partial class JabberWire
     {
         protected const string WORM = "/WORM_MOVES";
@@ -33,64 +63,10 @@ namespace MeTLLib.Providers.Connection
         private static string privacy = "PUBLIC";
         protected XmppClientConnection conn;
         private Jid jid;
-#if DEBUG
-        protected bool Debug = true;
-#else
-        protected bool Debug = false;
-#endif
         public bool LoggedIn = false;
-        static JabberWire()
-        {
-            LookupServer();
-        }
-        public void SwitchServer(string target)
-        {
-            try
-            {
-                switch (target)
-                {
-                    case "prod":
-                        configurationProvider.isStaging = false;
-                        break;
-                    case "staging":
-                        configurationProvider.isStaging = true;
-                        break;
-                    default:
-                        break;
-                }
-                Constants.SERVER = configurationProvider.SERVER;
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError("MeTL cannot find the server and so cannot start.  Please check your internet connection and try again.");
-                if (Application.Current != null)
-                    Application.Current.Shutdown();
-            }
-            finally
-            {
-                Trace.TraceInformation(string.Format("Switched MeTL server to {0}", Constants.SERVER));
-            }
 
-        }
-        public static void LookupServer()
+        private void registerCommands()
         {
-        }
-        [Inject] ConfigurationProvider configurationProvider;
-        [Inject] IConversationDetailsProvider conversationDetailsProvider;
-        [Inject] HttpHistoryProvider historyProvider;
-        [Inject] CachedHistoryProvider cachedHistoryProvider;
-        public JabberWire() { }
-        public ResourceCache cache;
-        public JabberWire(Credentials credentials, string SERVER)
-        {
-            if (SERVER == null)
-            {
-                Constants.SERVER = null;
-                LookupServer();
-            }
-            else Constants.SERVER = SERVER;
-            this.credentials = credentials;
-            setUpWire();
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(SendSyncMoveTo));
@@ -108,8 +84,6 @@ namespace MeTLLib.Providers.Connection
             Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoShape));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
             Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
-            // Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>((_arg) => new Printer().PrintPrivate(location.activeConversation, credentials.name)));
-            // Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>((_arg) => new Printer().PrintHandout(location.activeConversation, credentials.name)));
             Commands.SendChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendChat));
             Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
             Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
@@ -123,6 +97,17 @@ namespace MeTLLib.Providers.Connection
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
             Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
+        }
+        public ResourceCache cache;
+        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress)
+        {
+            this.credentials = credentials;
+            this.conversationDetailsProvider = conversationDetailsProvider;
+            this.historyProvider = historyProvider;
+            this.cachedHistoryProvider = cachedHistoryProvider;
+            this.metlServerAddress = metlServerAddress;
+            setUpWire();
+            registerCommands();
         }
         internal List<ConversationDetails> CurrentClasses
         {
@@ -187,6 +172,8 @@ namespace MeTLLib.Providers.Connection
             conn = null;
             new MeTLLib.DataTypes.MeTLStanzasConstructor();
             this.jid = createJid(credentials.name);
+            //WHAT?  Of COURSE it's null!  You just SET IT to null!  Besides, what are you afraid is going to happen?  Is the old value
+            //going to leave residue on the new value?  It's better than null now!  It's orphaned!
             if (conn == null)
             {
                 conn = new XmppClientConnection(jid.Server);
@@ -200,7 +187,7 @@ namespace MeTLLib.Providers.Connection
         }
         private Jid createJid(string username)
         {
-            return new Jid(username + "@" + Constants.SERVER);
+            return new Jid(username + "@" + metlServerAddress.uri.Host);
         }
         private void SendWormMove(WormMove move)
         {
@@ -290,14 +277,18 @@ namespace MeTLLib.Providers.Connection
             conn.OnStreamError += ElementError;
             conn.OnPresence += OnPresence;
             conn.OnClose += OnClose;
-            if (Debug)
-            {
-                conn.OnReadXml += ReadXml;
-                conn.OnWriteXml += WriteXml;
-            }
+#if DEBUG
+            conn.OnReadXml += ReadXml;
+            conn.OnWriteXml += WriteXml;
+#endif
             openConnection(jid.User);
         }
         private object resetLock = new object();
+        private Credentials credentials_2;
+        private IConversationDetailsProvider conversationDetailsProvider;
+        private HttpHistoryProvider historyProvider;
+        private CachedHistoryProvider cachedHistoryProvider;
+        private MeTLServerAddress metlServerAddress;
         private void unregisterHandlers()
         {
             conn.OnAuthError -= OnAuthError;
@@ -335,11 +326,11 @@ namespace MeTLLib.Providers.Connection
         {
             var rooms = new[]
             {
-                Constants.GLOBAL,
-                new Jid(credentials.name, Constants.MUC, jid.Resource),
-                new Jid(location.activeConversation,Constants.MUC,jid.Resource),
-                new Jid(location.currentSlide.ToString(), Constants.MUC,jid.Resource),
-                new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), Constants.MUC,jid.Resource)
+                metlServerAddress.global,
+                new Jid(credentials.name, metlServerAddress.muc, jid.Resource),
+                new Jid(location.activeConversation,metlServerAddress.muc,jid.Resource),
+                new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
+                new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
             };
             foreach (var room in rooms.Where(r => r.User != null && r.User != "0"))
             {
@@ -407,14 +398,6 @@ namespace MeTLLib.Providers.Connection
         private void onStart()
         {
             Commands.UpdateWormInterval.Execute(TimeSpan.FromMilliseconds(15000));
-            //    Worm.heart.Interval = TimeSpan.FromMilliseconds(15000);
-        }
-        public static void dontDoAnything()
-        {
-        }
-
-        public static void dontDoAnything(int _obj, int _obj2)
-        {
         }
         private void onProgress(int upTo, int outOf)
         {
@@ -465,7 +448,7 @@ namespace MeTLLib.Providers.Connection
         public void MoveTo(int where)
         {
             new MucManager(conn).LeaveRoom(
-                new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), Constants.MUC, jid.Resource), credentials.name);
+                new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
             location.currentSlide = where;
             joinRooms();
             historyProvider.Retrieve<PreParser>(

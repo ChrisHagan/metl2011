@@ -7,19 +7,23 @@ using MeTLLib;
 using System.DirectoryServices;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using Ninject;
 
 namespace MeTLLib.Providers
 {
     public class AuthorisationProvider : HttpResourceProvider
     {
-        public AuthorisationProvider(IWebClientFactory factory) : base(factory) {}
+        private MeTLServerAddress server;
+        public AuthorisationProvider(IWebClientFactory factory, MeTLServerAddress server) : base(factory) {
+            this.server = server;
+        }
         public List<AuthorizedGroup> getEligibleGroups( string AuthcateName, string AuthcatePassword) 
         {
             //if (AuthcateName.StartsWith(BackDoor.USERNAME_PREFIX)) 
             //    return new List<JabberWire.AuthorizedGroup> { new JabberWire.AuthorizedGroup("Artificial person", ""),new JabberWire.AuthorizedGroup("Unrestricted", ""), new JabberWire.AuthorizedGroup(AuthcateName, "")  };
             var groups = new List<AuthorizedGroup>();
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
-            string sXML = insecureGetString(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, Constants.SERVER));
+            string sXML = insecureGetString(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, server.uri.Host));
             var doc = new XmlDocument();
                 doc.LoadXml(sXML);
             if (doc.GetElementsByTagName("error").Count == 0)
@@ -85,7 +89,6 @@ namespace MeTLLib.Providers
         }
         public void attemptAuthentication(string username, string password)
         {
-            if (Constants.SERVER == null) JabberWire.LookupServer();
             string AuthcateUsername = "";
             if (username.Contains("_"))
             {
@@ -120,12 +123,10 @@ namespace MeTLLib.Providers
                 Trace.TraceError("Failed to Login.");
             }
         }
-
         private bool isBackdoorUser(string user)
         {
             return user.ToLower().Contains("admirable");
         }
-
         private bool authenticateAgainstFailoverSystem(string username, string password)
         {
             //gotta remember to remove this!

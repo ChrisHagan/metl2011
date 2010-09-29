@@ -23,11 +23,11 @@ namespace MeTLLib.Providers.Connection
         public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
-        public PreParser(int slide):base()
+        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress) : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress)
         {
             if (this.location == null)
                 this.location = new Location();
-            this.location.currentSlide = slide;
+            this.location.currentSlide = room;
         }
         public InkCanvas ToVisual()
         {

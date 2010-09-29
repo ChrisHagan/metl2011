@@ -8,7 +8,7 @@ using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
-    class WebClientWithTimeout : WebClient
+    public class WebClientWithTimeout : WebClient
     {
         protected override WebRequest GetWebRequest(Uri address)
         {
@@ -18,7 +18,11 @@ namespace MeTLLib.Providers.Connection
         }
     }
     public class MeTLWebClient : IWebClient{
-        [Inject] WebClientWithTimeout client;
+        WebClientWithTimeout client;
+        public MeTLWebClient(ICredentials credentials) {
+            this.client = new WebClientWithTimeout();
+            this.client.Credentials = credentials;
+        }
         public long getSize(Uri resource)
         {
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
@@ -112,15 +116,15 @@ namespace MeTLLib.Providers.Connection
         private static readonly string MonashCertificateSubject = "CN=my.monash.edu.au, OU=ITS, O=Monash University, L=Clayton, S=Victoria, C=AU";
         private static readonly string MonashCertificateIssuer = "E=premium-server@thawte.com, CN=Thawte Premium Server CA, OU=Certification Services Division, O=Thawte Consulting cc, L=Cape Town, S=Western Cape, C=ZA";
         private static readonly string MonashExternalCertificateIssuer = "CN=Thawte SSL CA, O=\"Thawte, Inc.\", C=US";
-        private ICredentials _credentials;
+        private ICredentials credentials;
         public WebClientFactory(ICredentials credentials) {
             ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
-            _credentials = credentials;
+            this.credentials = credentials;
         }
         public IWebClient client()
         {
-            return new MeTLWebClient();
+            return new MeTLWebClient(this.credentials);
         }
         private bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {

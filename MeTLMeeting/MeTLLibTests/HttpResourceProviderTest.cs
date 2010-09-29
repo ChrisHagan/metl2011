@@ -154,7 +154,7 @@ namespace MeTLLibTests
         }
         public string uploadFile(Uri resource, string filename)
         {
-            throw new NotImplementedException();
+            return "http://nowhere.adm.monash.edu/resources/something.ext";
         }
         public void uploadFileAsync(Uri resource, string filename)
         {

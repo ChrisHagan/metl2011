@@ -13,6 +13,7 @@ using agsXMPP.Xml.Dom;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using Ninject;
 
 namespace MeTLLib.Providers
 {
@@ -33,10 +34,10 @@ namespace MeTLLib.Providers
         ) where T : PreParser;
     }
     public abstract class BaseHistoryProvider : IHistoryProvider {
-        protected HttpResourceProvider resourceProvider;
-        public BaseHistoryProvider(HttpResourceProvider provider) {
-            resourceProvider = provider;
-        }
+        [Inject]public HttpHistoryProvider historyProvider{protected get;set;}
+        [Inject]public HttpResourceProvider resourceProvider{protected get;set;}
+        [Inject]public JabberWireFactory jabberWireFactory{protected get;set;}
+        [Inject]public MeTLServerAddress serverAddress{protected get;set;}
         public abstract void Retrieve<T>(
             Action retrievalBeginning,
             Action<int, int> retrievalProceeding,
@@ -55,10 +56,6 @@ namespace MeTLLib.Providers
         }
     }
     public class CachedHistoryProvider : BaseHistoryProvider {
-        private HttpHistoryProvider historyProvider;
-        public CachedHistoryProvider(HttpResourceProvider resourceProvider, HttpHistoryProvider historyProvider) : base(resourceProvider) {
-            this.historyProvider = historyProvider;
-        }
         private Dictionary<string, PreParser> cache = new Dictionary<string,PreParser>();
         private int measure<T>(int acc, T item){
             return acc + item.ToString().Length;
@@ -75,29 +72,16 @@ namespace MeTLLib.Providers
         }
         public override void Retrieve<T>(Action retrievalBeginning, Action<int, int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
-            /*if (!cache.ContainsKey(room) || isPrivateRoom(room))
-            {
-                
-             */
             historyProvider.Retrieve<T>(
-                    delegate { },
-                    (_i, _j) => { },
-                    history =>
-                    {
-                        /*if (cache.ContainsKey(room))
-                            cache[room] = cache[room].merge<PreParser>(history);
-                        else&*/
-                            cache[room] = history;
-                        //Commands.PreParserAvailable.Execute(history);
-                        retrievalComplete((T)cache[room]);
-                    },
-                    room);
-            /*}
-            else {
-                retrievalComplete((T)cache[room]);
-            }*/
+                null,
+                null,
+                history =>
+                {
+                    cache[room] = history;
+                    retrievalComplete((T)cache[room]);
+                },
+                room);
         }
-
         private bool isPrivateRoom(string room)
         {
             var validChar = new[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
@@ -109,23 +93,22 @@ namespace MeTLLib.Providers
             if(isPrivateRoom(to)) return;
             var room = Int32.Parse(to);
             if (!cache.ContainsKey(room.ToString()))
-                cache[room.ToString()] = new PreParser(room);
+                cache[room.ToString()] = jabberWireFactory.preParser(room);
             cache[room.ToString()].ActOnUntypedMessage(message);
         }
     }
     public class HttpHistoryProvider : BaseHistoryProvider
     {
-        public HttpHistoryProvider(HttpResourceProvider provider) : base(provider) { }
         public override void Retrieve<T>(Action retrievalBeginning, Action<int,int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
             Trace.TraceInformation(string.Format("HttpHistoryProvider.Retrieve: Beginning retrieve for {0}", room));
-            var accumulatingParser = (T)Activator.CreateInstance(typeof(T), PreParser.ParentRoom(room));
+            var accumulatingParser = jabberWireFactory.create<T>(PreParser.ParentRoom(room));
             if(retrievalBeginning != null)
                 Application.Current.Dispatcher.adoptAsync(retrievalBeginning);
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
-                                     var zipUri = string.Format("https://{0}:1749/{1}/all.zip", Constants.SERVER, room);
+                                     var zipUri = string.Format("https://{0}:1749/{1}/all.zip", serverAddress.uri.Host, room);
                                      try
                                      {
                                          var zipData = resourceProvider.secureGetData(zipUri);
@@ -146,7 +129,7 @@ namespace MeTLLib.Providers
                                      }
                                      catch (WebException e)
                                      {
-                                         Trace.TraceWarning("WE: " + e.Message);
+                                         Trace.TraceWarning("HistoryProvider WebException in Retrieve: " + e.Message);
                                          //Nothing to do if it's a 404.  There is no history to obtain.
                                      }
                                  };
@@ -159,7 +142,7 @@ namespace MeTLLib.Providers
                         Application.Current.Dispatcher.Invoke(retrievalComplete, (T)accumulatingParser);
                     }
                     catch (Exception ex) {
-                    //    Trace.TraceError("Exception on the retrievalComplete section: "+ex.Message.ToString()); 
+                        Trace.TraceError("Exception on the retrievalComplete section: "+ex.Message.ToString()); 
                     }
                     };
             worker.RunWorkerAsync(null);
