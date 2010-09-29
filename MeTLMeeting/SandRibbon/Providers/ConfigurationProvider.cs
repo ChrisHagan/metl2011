@@ -29,7 +29,7 @@ namespace SandRibbon.Providers
             get 
             {
                 //return "reifier.adm.monash.edu";
-                //isStaging = true;
+                isStaging = true;
                 if (isStaging)
                 {
                     if (stagingServer == null)

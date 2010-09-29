@@ -169,7 +169,7 @@ namespace SandRibbon.Components
 
         private bool authenticateAgainstFailoverSystem(string username, string password, SecureString securePassword)
         {
-            return true;
+            //return true;
             if (isAuthenticatedAgainstLDAP(username, password))
                 return true;
             else if (isAuthenticatedAgainstWebProxy(username, securePassword))

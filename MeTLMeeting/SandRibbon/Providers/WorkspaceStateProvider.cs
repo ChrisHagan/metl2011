@@ -64,7 +64,7 @@ namespace SandRibbon.Providers
                         CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(level);
                     break;
                    
-                    /* case "SetIdentity":
+                    case "SetIdentity":
                         var values = (Crypto.decrypt(param.Attribute("authentication").Value)).Split(':');
                         Commands.SetIdentity.Execute(
                             new SandRibbon.Utils.Connection.JabberWire.Credentials{
@@ -73,7 +73,7 @@ namespace SandRibbon.Providers
                                 authorizedGroups=new AuthorisationProvider().getEligibleGroups(values[0],values[1])
                             });
                     break;
-                     */
+                    
                     /*case "JoinConversation":
                         Commands.JoinConversation.Execute(param.Attribute("conversation").Value);
                     break;*/
