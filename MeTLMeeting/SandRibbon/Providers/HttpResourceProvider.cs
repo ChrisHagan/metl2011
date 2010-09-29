@@ -32,14 +32,18 @@ namespace SandRibbon.Providers
 
         private static WebClient client()
         {
+            configureServicePointManager();
+            var wc = new WebClientWithTimeout { Credentials = MeTLCredentials };
+            return wc;
+        }
+        private static void configureServicePointManager()
+        {
             if (firstRun)
             {
                 ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
                 ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
                 firstRun = false;
             }
-            var wc = new WebClientWithTimeout { Credentials = MeTLCredentials };
-            return wc;
         }
         private static bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
@@ -54,6 +58,7 @@ namespace SandRibbon.Providers
         }
         public static long getSize(string resource)
         {
+            configureServicePointManager();
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = MeTLCredentials;
             request.Method = "HEAD";
@@ -70,6 +75,7 @@ namespace SandRibbon.Providers
         }
         public static bool exists(string resource)
         {
+            configureServicePointManager();
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = MeTLCredentials;
             request.Method = "HEAD";
@@ -86,6 +92,7 @@ namespace SandRibbon.Providers
         }
         public static string secureGetString(string resource)
         {
+            return client().DownloadString(resource);
             string type = "secureGetString";
             string responseString = "";
             int attempts = 0;
@@ -155,6 +162,7 @@ namespace SandRibbon.Providers
 
         public static string insecureGetString(string resource)
         {
+            return client().DownloadString(resource);
             string type = "insecureGet";
             string responseString = "";
             int attempts = 0;
@@ -223,6 +231,7 @@ namespace SandRibbon.Providers
         }
         public static string securePutData(string uri, byte[] data)
         {
+            return decode(client().UploadData(uri, data));
             string type = "securePutData";
             byte[] responseBytes = new byte[0];
             int attempts = 0;
@@ -286,6 +295,7 @@ namespace SandRibbon.Providers
         }
         public static byte[] secureGetData(string resource)
         {
+            return client().DownloadData(resource);
             string type = "secureGetData";
             byte[] responseBytes = new byte[0];
             int attempts = 0;
@@ -352,6 +362,7 @@ namespace SandRibbon.Providers
         }
         public static string securePutFile(string uri, string filename)
         {
+            return decode(client().UploadFile(uri, filename));
             string type = "securePutFile";
             byte[] responseBytes = new byte[0];
             int attempts = 0;
