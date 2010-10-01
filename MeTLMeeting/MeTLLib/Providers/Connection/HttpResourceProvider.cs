@@ -173,34 +173,13 @@ namespace MeTLLib.Providers.Connection
         {
             return client().downloadData(new Uri(resource));
         }
-        public string securePutFile(string uri, string filename)
+        public string securePutFile(System.Uri uri, string filename)
         {
-            return client().uploadFile(new Uri(uri), filename);
+            return client().uploadFile(uri, filename);
         }
         private string decode(byte[] bytes)
         {
             return System.Text.Encoding.UTF8.GetString(bytes);
-        }
-        private void NotifyStatus(string status, string type, string uri)
-        {
-            NotifyStatus(status, type, uri, "");
-        }
-        private void NotifyStatus(string status, string type, string uri, string filename)
-        {
-            return;
-            var filenameDescriptor = string.IsNullOrEmpty(filename) ? "" : " : " + filename;
-            Trace.TraceInformation(status + "(" + type + " : " + uri + filenameDescriptor + ")");
-        }
-        private void NotifyProgress(int attempts, string type, string resource, long recBytes, long size, int percentage, bool isPercentage)
-        {
-            return;
-            if (isPercentage)
-            {
-                percentage = (int)(recBytes / size);
-                Trace.TraceInformation("Attempt " + attempts + " waiting on " + type + ": " + percentage + "% (" + resource + ")");
-            }
-            else
-                Trace.TraceInformation("Attempt " + attempts + " waiting on " + type + ": " + recBytes + "B (" + resource + ")");
         }
     }
 }

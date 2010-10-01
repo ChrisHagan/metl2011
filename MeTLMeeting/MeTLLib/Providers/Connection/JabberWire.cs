@@ -24,6 +24,7 @@ namespace MeTLLib.Providers.Connection
         [Inject] public HttpHistoryProvider historyProvider{private get;set;} 
         [Inject] public CachedHistoryProvider cachedHistoryProvider{private get;set;} 
         [Inject] public MeTLServerAddress metlServerAddress{private get;set;}
+        [Inject] public ResourceCache cache { private get;set; }
         public JabberWire wire() {
             if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a wire");
             return new JabberWire(
@@ -31,7 +32,8 @@ namespace MeTLLib.Providers.Connection
                 conversationDetailsProvider,
                 historyProvider,
                 cachedHistoryProvider,
-                metlServerAddress);
+                metlServerAddress,
+                cache);
         }
         public PreParser preParser(int room){
             if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a preParser");
@@ -41,7 +43,8 @@ namespace MeTLLib.Providers.Connection
                 conversationDetailsProvider,
                 historyProvider,
                 cachedHistoryProvider,
-                metlServerAddress);
+                metlServerAddress,
+                cache);
         }
         public PreParser create<T>(int room) where T:PreParser{
             return preParser(room);
@@ -99,13 +102,14 @@ namespace MeTLLib.Providers.Connection
             Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
         }
         public ResourceCache cache;
-        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress)
+        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache)
         {
             this.credentials = credentials;
             this.conversationDetailsProvider = conversationDetailsProvider;
             this.historyProvider = historyProvider;
             this.cachedHistoryProvider = cachedHistoryProvider;
             this.metlServerAddress = metlServerAddress;
+            this.cache = cache;
             setUpWire();
             registerCommands();
         }
@@ -120,7 +124,6 @@ namespace MeTLLib.Providers.Connection
                     {
                         var discoIq = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
                         discoIq.To = new Jid(Constants.MUC);
-                        //discoIq.From = conn.MyJID;
                         var IQResponse = conn.IqGrabber.SendIq(discoIq);
                         if (IQResponse == null) return null;
                         foreach (object item in IQResponse.Query.ChildNodes.ToArray())
@@ -169,17 +172,11 @@ namespace MeTLLib.Providers.Connection
         }
         private void setUpWire()
         {
-            conn = null;
             new MeTLLib.DataTypes.MeTLStanzasConstructor();
             this.jid = createJid(credentials.name);
-            //WHAT?  Of COURSE it's null!  You just SET IT to null!  Besides, what are you afraid is going to happen?  Is the old value
-            //going to leave residue on the new value?  It's better than null now!  It's orphaned!
-            if (conn == null)
-            {
-                conn = new XmppClientConnection(jid.Server);
-                conn.UseSSL = false;
-                conn.AutoAgents = false;
-            }
+            conn = new XmppClientConnection(jid.Server);
+            conn.UseSSL = false;
+            conn.AutoAgents = false;
         }
         private void SendPing(string who)
         {
@@ -403,14 +400,6 @@ namespace MeTLLib.Providers.Connection
         {
             //Commands.RetrievedHistoryPortion.Execute(new[] { upTo, outOf });
         }
-        private void retrieveHistory(string room)
-        {
-            historyProvider.Retrieve<PreParser>(
-                onStart,
-                onProgress,
-                null,
-                room);
-        }
         public void SendDirtyText(TargettedDirtyElement element)
         {
             stanza(new MeTLStanzas.DirtyText(element));
@@ -593,10 +582,7 @@ namespace MeTLLib.Providers.Connection
         }
         public virtual void handleGoToConversation(string[] parts)
         {
-            Application.Current.Dispatcher.adopt((Action)delegate
-            {
-                Commands.JoinConversation.Execute(parts[1]);
-            });
+            Commands.JoinConversation.Execute(parts[1]);
         }
         public virtual void handleGoToSlide(string[] parts)
         {
@@ -609,39 +595,24 @@ namespace MeTLLib.Providers.Connection
                     _conversationJid =>
                     {
                         Commands.UpdateConversationDetails.UnregisterCommand(joinedConversation);
-                        Application.Current.Dispatcher.adopt((Action)delegate
-                        {
-                            Commands.MoveTo.Execute(id);
-                            Commands.ReceiveMoveBoardToSlide.Execute(id);
-                        });
+                        Commands.MoveTo.Execute(id);
+                        Commands.ReceiveMoveBoardToSlide.Execute(id);
                     });
                 Commands.UpdateConversationDetails.RegisterCommand(joinedConversation);
-                Application.Current.Dispatcher.adopt((Action)delegate
-                {
-                    Commands.JoinConversation.Execute(desiredConversation);
-                });
+                Commands.JoinConversation.Execute(desiredConversation);
             }
             else
             {
-                Application.Current.Dispatcher.adopt((Action)delegate
-                {
-                    Commands.MoveTo.Execute(id);
-                });
+                Commands.MoveTo.Execute(id);
             }
         }
         public virtual void handleWakeUp(string[] parts)
         {
-            Application.Current.Dispatcher.adopt((Action)delegate
-            {
-                Commands.ReceiveWakeUp.Execute(null);
-            });
+            Commands.ReceiveWakeUp.Execute(null);
         }
         public virtual void handleSleep(string[] parts)
         {
-            Application.Current.Dispatcher.adopt((Action)delegate
-            {
-                Commands.ReceiveSleep.Execute(null);
-            });
+            Commands.ReceiveSleep.Execute(null);
         }
         public virtual void handleWormMoved(string[] parts)
         {
@@ -669,11 +640,9 @@ namespace MeTLLib.Providers.Connection
                 Console.WriteLine(e.Message);
             }
             if (Application.Current == null) return;
-            Application.Current.Dispatcher.adoptAsync(
-                () =>
-                    ActOnUntypedMessage(message));
+                ActOnUntypedMessage(message);
         }
-        public virtual void ActOnUntypedMessage(Element message)
+        public void ActOnUntypedMessage(Element message)
         {
             foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
                 actOnStrokeReceived(ink.Stroke);
@@ -682,7 +651,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
                 actOnTextReceived(box.Box);
             foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
-                actOnImageReceived(image.Img);
+                actOnImageReceived(image.adoptCache(cache).Img);
             foreach (var autoshape in message.SelectElements<MeTLStanzas.AutoShape>(true))
                 actOnAutoShapeReceived(autoshape.autoshape);
             foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
@@ -705,6 +674,7 @@ namespace MeTLLib.Providers.Connection
                 actOnBubbleReceived(bubble.context);
             foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
             {
+                video.adoptCache(cache);
                 var vid = video.Vid;
                 actOnVideoReceived(video.Vid);
             }

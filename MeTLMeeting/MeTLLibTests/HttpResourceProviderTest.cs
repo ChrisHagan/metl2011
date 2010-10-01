@@ -7,6 +7,7 @@ using System.Net;
 using Ninject;
 using System.Text;
 using MeTLLib;
+using Ninject.Modules;
 
 namespace MeTLLibTests
 {
@@ -74,48 +75,24 @@ namespace MeTLLibTests
          * it's got the remote file system, it's got asynchronous bullshit going on, there's plenty of action here.
          */
         [TestMethod()]
-        public void securePutFileTest()
+        public void providerCallsClientUploadWithCorrectlyFormattedUrl()
         {
-            /*
-             * What we're trying to do is to establish the following states and their correct behaviours:
-             */
-            /*
-             * The upload could be successful, returning a string Uri which can be proven to represent the uploaded resource.
-             */
-            /*
-             * The first problem that leaps out at us is that the method calls client(), which is a static method returning a singleton(ish) 
-             * WebClient.
-             * This looks like a prime candidate for dependency injection, especially considering that it features a medium deep dependency satisfaction
-             * graph:
-             * HttpResource <- (WebClient) WebClientWithTimeoutCredentials <- (ICredentials) Credentials <- (MetlUsername, MetlPassword) (Remember we talked about microtypes?)
-             * Now, in test land we don't really need this guy to have any credentials so we could, if we felt like it, stop the resolution at WebClient.
-             * But considering we're going to be relying on the DI framework to give the right password and stuff we should maybe give the system a little
-             * test here.  Bad form to test your frameworks but sometimes you just want to be sure.  So along the way we'll make sure that an appropriate
-             * test configured credentials is in our injected Client's credentials.
-             */
-            /*
-             * We'll let all of our objects graph be determined by the test module, who is responsible for specifying our preferred resolutions.
-             * This does mean that this entire library is now commited to similarly instantiating its members by using the ProductionModule we have yet
-             * to write.  It can hold off on migration, but it MUST particularize resolution for the members we're ambiguating here.
-             * 
-             * The first thing you'll notice is that we must redesign away from statics.  That's okay, because we'll ask the DI framework to manage our
-             * singleton status for us.  This merely means that once it's provided an instance of HttpResourceProvider to anyone, it must supply
-             * that instance henceforth.  This is specified, as is everything else about DI, in TestModule.  The specific case of HttpResourceProvider,
-             * being common to both test and prod, is specified in BaseModule, which TestModule inherits.
-             * 
-             * Another singleton which immediately surfaces is WebClientFactory, whose job it is to furnish the requested WebClient when client() is
-             * called, appropriately configured with credentials (and, incidentally, constructing one time and elegantly taking care of that weird bug
-             * you worked around).
-             * 
-             * Aaand five hours of hard refactoring later we've almost made everything in the entire graph injected and instance based.
-             * I am a HUGE IDIOT for doing everything in statics and not considering that we might want to test later on.
-             */
-            IKernel kernel = new StandardKernel(new BaseModule(),new TestModule());
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
-            Assert.AreEqual("http://nowhere.adm.monash.edu/resources/something.ext", provider.securePutFile("http://resourceServer.wherever", "something.ext"));
+            Assert.AreEqual( "http://nowhere.adm.monash.edu/resources/something.ext", provider.securePutFile(new System.Uri("http://resourceServer.wherever"), "something.ext"));
+        }
+        [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void nullUriPassedToSecurePutFileFails()
+        {
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
+            provider.securePutFile(null, "something.ext");
         }
     }
-#region Stubs
+    #region Stubs
     public class StubWebClientFactory : MeTLLib.Providers.Connection.IWebClientFactory {
         public IWebClient client()
         {
@@ -154,6 +131,7 @@ namespace MeTLLibTests
         }
         public string uploadFile(Uri resource, string filename)
         {
+            if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
             return "http://nowhere.adm.monash.edu/resources/something.ext";
         }
         public void uploadFileAsync(Uri resource, string filename)

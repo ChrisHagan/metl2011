@@ -23,7 +23,7 @@ namespace MeTLLib.Providers.Connection
             try
             {
                 var fullPath = string.Format("{0}?path=Resource/{1}&overwrite={2}", RESOURCE_SERVER_UPLOAD, path, overwrite);
-                var res = _httpResourceProvider.securePutFile(fullPath, file);
+                var res = _httpResourceProvider.securePutFile(new System.Uri(fullPath), file);
                 var url = XElement.Parse(res).Attribute("url").Value;
                 return "https://" + url.Split(new[] { "://" }, System.StringSplitOptions.None)[1];
             }
@@ -50,7 +50,7 @@ namespace MeTLLib.Providers.Connection
         public string uploadResourceToPath(string localFile, string remotePath, string name, bool overwrite)
         {
             var url = string.Format("{0}?path=Resource/{1}&overwrite={2}&filename={3}", RESOURCE_SERVER_UPLOAD, remotePath, overwrite.ToString().ToLower(), name);
-            var res = _httpResourceProvider.securePutFile(url, localFile);
+            var res = _httpResourceProvider.securePutFile(new System.Uri(url), localFile);
             return XElement.Parse(res).Attribute("url").Value;
         }
         /*

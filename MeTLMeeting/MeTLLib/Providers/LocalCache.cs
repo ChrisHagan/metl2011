@@ -8,17 +8,15 @@ using System.Xml.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using MeTLLib.Providers.Connection;
+using Ninject;
 
 namespace MeTLLib.Providers
 {
     public class ResourceCache
     {
-        HttpResourceProvider resourceProvider;
-        ResourceUploader resourceUploader;
-        public ResourceCache(HttpResourceProvider provider, ResourceUploader uploader) {
-            resourceProvider= provider;
-            resourceUploader = uploader;
-        }
+        [Inject] public HttpResourceProvider resourceProvider{private get; set;}
+        [Inject] public ResourceUploader resourceUploader{private get;set;}
+
         public static readonly string cacheName = "resourceCache";
         private string cacheXMLfile = cacheName + "\\" + cacheName + ".xml";
         private Dictionary<string, System.Uri> ActualDict = null;
@@ -36,7 +34,6 @@ namespace MeTLLib.Providers
             {
                 ActualDict = value;
             }
-
         }
         private Dictionary<string, Uri> ReadDictFromFile()
         {
@@ -113,15 +110,6 @@ namespace MeTLLib.Providers
                 return media;
             var uri = CacheDict.Where(kv => kv.Value == media).FirstOrDefault().Key;
             return uri == null ? null : new Uri(uri, UriKind.RelativeOrAbsolute);
-        }
-    }
-    class WebClientWithTimeout : WebClient
-    {
-        protected override WebRequest GetWebRequest(Uri address)
-        {
-            WebRequest request = (WebRequest)base.GetWebRequest(address);
-            request.Timeout = int.MaxValue;
-            return request;
         }
     }
 }

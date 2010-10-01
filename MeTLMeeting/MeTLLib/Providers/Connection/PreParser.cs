@@ -23,7 +23,7 @@ namespace MeTLLib.Providers.Connection
         public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
-        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress) : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress)
+        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache) : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache)
         {
             if (this.location == null)
                 this.location = new Location();

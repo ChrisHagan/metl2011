@@ -1161,7 +1161,7 @@ namespace MeTLLib.DataTypes
         }
         public class Video : Element
         {
-            [Inject] private ResourceCache resourceCache;
+            private ResourceCache resourceCache;
             static Video()
             {
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Video));
@@ -1176,6 +1176,10 @@ namespace MeTLLib.DataTypes
                 : this()
             {
                 this.Vid = video;
+            }
+            public Video adoptCache(ResourceCache cache) {
+                this.resourceCache = cache;
+                return this;
             }
             public MeTLLib.DataTypes.Video forceEvaluation()
             {
@@ -1279,6 +1283,10 @@ namespace MeTLLib.DataTypes
                 : this()
             {
                 this.Img = image;
+            }
+            public Image adoptCache(ResourceCache cache) {
+                this.resourceCache = cache;
+                return this;
             }
             public System.Windows.Controls.Image forceEvaluation()
             {

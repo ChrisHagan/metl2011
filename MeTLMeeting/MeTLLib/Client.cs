@@ -36,7 +36,10 @@ namespace MeTLLib
             uri = new Uri("http://madam.adm.monash.edu.au");
         }
     }
-    public class ClientConnection
+    public interface IClientBehaviour {
+
+    }
+    public class ClientConnection : IClientBehaviour
     {
         [Inject] public AuthorisationProvider authorisationProvider { private get; set; }
         [Inject] public ResourceUploader resourceUploader { private get; set; }

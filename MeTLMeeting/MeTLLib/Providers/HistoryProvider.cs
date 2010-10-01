@@ -103,8 +103,7 @@ namespace MeTLLib.Providers
         {
             Trace.TraceInformation(string.Format("HttpHistoryProvider.Retrieve: Beginning retrieve for {0}", room));
             var accumulatingParser = jabberWireFactory.create<T>(PreParser.ParentRoom(room));
-            if(retrievalBeginning != null)
-                Application.Current.Dispatcher.adoptAsync(retrievalBeginning);
+            if (retrievalBeginning != null) retrievalBeginning();
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
@@ -123,8 +122,7 @@ namespace MeTLLib.Providers
                                                  var historicalDay = Encoding.UTF8.GetString(stream.ToArray());
                                                  parseHistoryItem(historicalDay, accumulatingParser);
                                              }
-                                             if (retrievalProceeding != null)
-                                                 Application.Current.Dispatcher.BeginInvoke(retrievalProceeding, i, days.Count());
+                                             if (retrievalProceeding != null) retrievalProceeding(i, days.Count());
                                          }
                                      }
                                      catch (WebException e)
@@ -139,7 +137,7 @@ namespace MeTLLib.Providers
                     Trace.TraceInformation(string.Format("{0} retrieval complete at historyProvider", room));
                     try
                     {
-                        Application.Current.Dispatcher.Invoke(retrievalComplete, (T)accumulatingParser);
+                        retrievalComplete((T)accumulatingParser);
                     }
                     catch (Exception ex) {
                         Trace.TraceError("Exception on the retrievalComplete section: "+ex.Message.ToString()); 
@@ -149,16 +147,13 @@ namespace MeTLLib.Providers
         }
         protected virtual void parseHistoryItem(string item, JabberWire wire)
         {//This takes all the time
-            Application.Current.Dispatcher.adoptAsync((Action)delegate
-            {//Creating and event setting on the dispatcher thread?  Might be expensive, might not.  Needs bench.
-                var history = item + "</logCollection>";
-                var parser = new StreamParser();
-                parser.OnStreamElement += ((_sender, node) =>
-                                               {
-                                                   wire.ReceivedMessage(node);
-                                               });
-                parser.Push(Encoding.UTF8.GetBytes(history), 0, history.Length);
-            });
+            var history = item + "</logCollection>";
+            var parser = new StreamParser();
+            parser.OnStreamElement += ((_sender, node) =>
+                                           {
+                                               wire.ReceivedMessage(node);
+                                           });
+            parser.Push(Encoding.UTF8.GetBytes(history), 0, history.Length);
         }
     }
 }
