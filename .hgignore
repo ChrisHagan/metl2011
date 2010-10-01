@@ -1,0 +1,17 @@
+syntax: glob
+*.dll
+*~
+.*.swp
+*.g.*
+*.dat
+*.pdb
+*.version
+*.exe
+*.trx
+*.baml
+*\bin\*
+*\obj\*
+*.orig
+*.resharper
+*_ReSharper*
+*.Designer.*
