@@ -1162,6 +1162,7 @@ namespace MeTLLib.DataTypes
         public class Video : Element
         {
             private ResourceCache resourceCache;
+            private MeTLServerAddress server;
             static Video()
             {
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Video));
@@ -1177,8 +1178,9 @@ namespace MeTLLib.DataTypes
             {
                 this.Vid = video;
             }
-            public Video adoptCache(ResourceCache cache) {
+            public Video adoptCache(ResourceCache cache,MeTLServerAddress server) {
                 this.resourceCache = cache;
+                this.server = server;
                 return this;
             }
             public MeTLLib.DataTypes.Video forceEvaluation()
@@ -1268,11 +1270,12 @@ namespace MeTLLib.DataTypes
         }
         public class Image : Element
         {
+            private MeTLServerAddress server;
+            private ResourceCache cache;
             static Image()
             {
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Image));
             }
-            [Inject] ResourceCache resourceCache;
             public static string TAG = "image";
             public Image()
             {
@@ -1284,8 +1287,9 @@ namespace MeTLLib.DataTypes
             {
                 this.Img = image;
             }
-            public Image adoptCache(ResourceCache cache) {
-                this.resourceCache = cache;
+            public Image adoptCache(ResourceCache cache, MeTLServerAddress server) {
+                this.cache = cache;
+                this.server = server;
                 return this;
             }
             public System.Windows.Controls.Image forceEvaluation()
@@ -1306,7 +1310,7 @@ namespace MeTLLib.DataTypes
 
                 try
                 {
-                    return resourceCache.LocalSource(url).ToString();
+                    return cache.LocalSource(url).ToString();
                 }
                 catch (Exception e)
                 {
@@ -1365,7 +1369,7 @@ namespace MeTLLib.DataTypes
                 {
                     try
                     {
-                        var path = string.Format("https://{0}:1188{1}", Constants.SERVER, GetTag(sourceTag));
+                        var path = string.Format("https://{0}:1188{1}", server.uri.Host.ToString(), GetTag(sourceTag));
                         return (ImageSource)new ImageSourceConverter().ConvertFromString(GetCachedImage(path));
                     }
                     catch (Exception e)

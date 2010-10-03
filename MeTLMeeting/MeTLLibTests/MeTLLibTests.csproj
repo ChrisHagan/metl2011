@@ -37,7 +37,7 @@
       <HintPath>..\MeTLLib\lib\agsXMPP.dll</HintPath>
     </Reference>
     <Reference Include="CommonServiceLocator.NinjectAdapter">
-      <HintPath>lib\CommonServiceLocator.NinjectAdapter.dll</HintPath>
+      <HintPath>..\MeTLLib\lib\CommonServiceLocator.NinjectAdapter.dll</HintPath>
     </Reference>
     <Reference Include="Divan">
       <HintPath>..\MeTLLib\lib\Divan.dll</HintPath>
@@ -62,7 +62,7 @@
       <HintPath>..\MeTLLib\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
-      <HintPath>lib\Ninject.dll</HintPath>
+      <HintPath>..\MeTLLib\lib\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

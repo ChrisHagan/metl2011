@@ -17,40 +17,53 @@ using Ninject;
 
 namespace MeTLLib
 {
-    public abstract class MeTLServerAddress{
+    public abstract class MeTLServerAddress
+    {
         public Uri uri { get; set; }
-        public string muc{
+        public Uri secureUri { get { return new Uri("https://" + uri.Host.ToString()); } }
+        public string muc
+        {
             get
             {
                 return "conference." + uri.Host;
             }
         }
-        public agsXMPP.Jid global {
-            get {
+        public agsXMPP.Jid global
+        {
+            get
+            {
                 return new agsXMPP.Jid("global@" + muc);
             }
         }
     }
-    public class MadamServerAddress : MeTLServerAddress{
-        public MadamServerAddress() { 
+    public class MadamServerAddress : MeTLServerAddress
+    {
+        public MadamServerAddress()
+        {
             uri = new Uri("http://madam.adm.monash.edu.au");
         }
     }
-    public interface IClientBehaviour {
+    public interface IClientBehaviour
+    {
 
     }
     public class ClientConnection : IClientBehaviour
     {
-        [Inject] public AuthorisationProvider authorisationProvider { private get; set; }
-        [Inject] public ResourceUploader resourceUploader { private get; set; }
-        [Inject] public HttpHistoryProvider historyProvider { private get; set; }
-        [Inject] public IConversationDetailsProvider conversationDetailsProvider { private get;set; }
-        [Inject] public JabberWireFactory jabberWireFactory { private get;set; }
+        [Inject]
+        public AuthorisationProvider authorisationProvider { private get; set; }
+        [Inject]
+        public ResourceUploader resourceUploader { private get; set; }
+        [Inject]
+        public HttpHistoryProvider historyProvider { private get; set; }
+        [Inject]
+        public IConversationDetailsProvider conversationDetailsProvider { private get; set; }
+        [Inject]
+        public JabberWireFactory jabberWireFactory { private get; set; }
         private MeTLServerAddress server;
         public ClientConnection(MeTLServerAddress address)
         {
             server = address;
-            Trace.TraceInformation("MeTL client connection started.  Server set to:"+server.ToString(), "Connection");
+            Trace.TraceInformation("MeTL client connection started.  Server set to:" + server.ToString(), "Connection");
             attachCommandsToEvents();
         }
         #region fields
@@ -389,7 +402,7 @@ namespace MeTLLib
             Commands.UnregisterAllCommands();
             attachCommandsToEvents();
             var credentials = new Credentials { authorizedGroups = c.authorizedGroups, name = c.name, password = "examplePassword" };
-            jabberWireFactory.credentials = c; 
+            jabberWireFactory.credentials = c;
             wire = jabberWireFactory.wire();
             wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
             //Commands.MoveTo.Execute(101);
@@ -580,11 +593,13 @@ namespace MeTLLib
         #region HelperMethods
         private void tryIfConnected(Action action)
         {
-            if (wire == null){
+            if (wire == null)
+            {
                 Trace.TraceWarning("Wire is null at tryIfConnected");
                 return;
             }
-            if (wire.IsConnected() == false){
+            if (wire.IsConnected() == false)
+            {
                 Trace.TraceWarning("Wire is disconnected at tryIfConnected");
                 return;
             }

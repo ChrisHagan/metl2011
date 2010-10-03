@@ -57,10 +57,10 @@ namespace MeTLLibTests
         //Oh.  Everything in ResourceProvider is static.  Did I do that?  There's an incorrect singleton in client() which is not threadsafe by the way :D
         //So, the _Accessor is exactly the proxy object we talked about, which turns the class inside out.
         //Ps these all aren't static anymore
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void NotifyStatusTest()
-        {
+        //[TestMethod()]
+        //[DeploymentItem("MeTLLib.dll")]
+        //public void NotifyStatusTest()
+        //{
             /*
             string status = string.Empty; // TODO: Initialize to an appropriate value
             string type = string.Empty; // TODO: Initialize to an appropriate value
@@ -69,13 +69,13 @@ namespace MeTLLibTests
             HttpResourceProvider_Accessor.NotifyStatus(status, type, uri, filename);
             Assert.Inconclusive("A method that does not return a value cannot be verified.");
              */
-        }
+        //}
         /*
          * Ok, let's try for this one.  It pretty much involves all the hard bits of anything, so if we can get this we can do the rest.
          * it's got the remote file system, it's got asynchronous bullshit going on, there's plenty of action here.
          */
         [TestMethod()]
-        public void providerCallsClientUploadWithCorrectlyFormattedUrl()
+        public void providerCallsClientUploadFileWithCorrectlyFormattedUrl()
         {
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
@@ -91,6 +91,60 @@ namespace MeTLLibTests
             HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
             provider.securePutFile(null, "something.ext");
         }
+        [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void nullFilePassedToSecurePutFileFails()
+        {
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
+            provider.securePutFile(new System.Uri("http://resourceServer.wherever"), null);
+        }
+        [TestMethod()]
+        public void providerCallsClientUploadDataWithCorrectlyFormattedUrl()
+        {
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
+            Assert.AreEqual("http://nowhere.adm.monash.edu/resources/something.ext", provider.securePutFile(new System.Uri("http://resourceServer.wherever"), "something.ext"));
+        }
+        [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void nullUriPassedToSecurePutDataFails()
+        {
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
+            provider.securePutData(null, new byte[]{});
+        }
+        [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void nullDataPassedToSecurePutDataFails()
+        {
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
+            provider.securePutData("http://nowhere.adm.monash.edu/resources/something.exe", null);
+        }
+
+        [TestMethod()]
+        public void providerCallsClientDownloadStringWithCorrectlyFormattedUrl()
+        {
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
+            Assert.AreEqual("<type>data</type>", provider.secureGetString("http://resourceServer.wherever"));
+        }
+        [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void nullUriPassedToSecureGetStringFails()
+        {
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
+            provider.secureGetString(null);
+        }
+
     }
     #region Stubs
     public class StubWebClientFactory : MeTLLib.Providers.Connection.IWebClientFactory {
@@ -103,11 +157,13 @@ namespace MeTLLibTests
         //Normal rules about encapsulation don't apply to testing utilities.  We WANT to be able to look inside them all the time.
         public long getSize(Uri resource)
         {
-            throw new NotImplementedException();
+            if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
+            return (long)1000;
         }
         public bool exists(Uri resource)
         {
-            throw new NotImplementedException();
+            if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
+            return true;
         }
         public void downloadStringAsync(Uri resource)
         {
@@ -115,15 +171,19 @@ namespace MeTLLibTests
         }
         public string downloadString(Uri resource)
         {
-            throw new NotImplementedException();
+            if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
+            return "<type>data</type>";
         }
         public byte[] downloadData(Uri resource)
         {
-            throw new NotImplementedException();
+            if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
+            return new byte[] {60,116,121,112,101,62,100,97,116,97,60,47,116,121,112,101,62};
         }
         public string uploadData(Uri resource, byte[] data)
         {
-            throw new NotImplementedException();
+            if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
+            if (data == null) throw new ArgumentNullException("data", "Value cannot be null.");
+            return "http://nowhere.adm.monash.edu/resources/something.ext";
         }
         public void uploadDataAsync(Uri resource, byte[] data)
         {
@@ -132,6 +192,7 @@ namespace MeTLLibTests
         public string uploadFile(Uri resource, string filename)
         {
             if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
+            if (filename == null) throw new ArgumentNullException("filename", "Value cannot be null.");
             return "http://nowhere.adm.monash.edu/resources/something.ext";
         }
         public void uploadFileAsync(Uri resource, string filename)

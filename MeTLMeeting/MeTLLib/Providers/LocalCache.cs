@@ -16,7 +16,7 @@ namespace MeTLLib.Providers
     {
         [Inject] public HttpResourceProvider resourceProvider{private get; set;}
         [Inject] public ResourceUploader resourceUploader{private get;set;}
-
+        [Inject] public MeTLServerAddress server { private get; set; }
         public static readonly string cacheName = "resourceCache";
         private string cacheXMLfile = cacheName + "\\" + cacheName + ".xml";
         private Dictionary<string, System.Uri> ActualDict = null;
@@ -91,7 +91,8 @@ namespace MeTLLib.Providers
             //Somwehow, the source attribute of some stanzas is having the server section repeated when it's constructed.
             // eg:  https://madam.adm.monash.edu.au:1188/https://madam.adm.monash.edu.au:1188/https://madam.adm.monash.edu.au:1188/Resource/101/Bear.wmv"
             if (remoteUri.ToString().StartsWith("https://") && remoteUri.ToString().Contains(":1188/https://"))
-                remoteUri = new System.Uri("https://"+Constants.SERVER+remoteUri.ToString().Substring(remoteUri.ToString().LastIndexOf(":1188/")), UriKind.Absolute);
+                remoteUri = new System.Uri(server.secureUri.ToString().TrimEnd('/')+remoteUri.ToString().Substring(remoteUri.ToString().LastIndexOf(":1188/")), UriKind.Absolute);
+            // Turns out it was actually some bad stanzas in the history.  I don't know what they were doing there, but it wasn't caused by this library.
             if (!CacheDict.ContainsKey(remoteUri.ToString()))
             {
                 if (!Directory.Exists(cacheName))

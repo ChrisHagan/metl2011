@@ -651,7 +651,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
                 actOnTextReceived(box.Box);
             foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
-                actOnImageReceived(image.adoptCache(cache).Img);
+                actOnImageReceived(image.adoptCache(cache,metlServerAddress).Img);
             foreach (var autoshape in message.SelectElements<MeTLStanzas.AutoShape>(true))
                 actOnAutoShapeReceived(autoshape.autoshape);
             foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
@@ -673,11 +673,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
                 actOnBubbleReceived(bubble.context);
             foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
-            {
-                video.adoptCache(cache);
-                var vid = video.Vid;
-                actOnVideoReceived(video.Vid);
-            }
+                actOnVideoReceived(video.adoptCache(cache,metlServerAddress).Vid);
             foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
                 actOnDirtyVideoReceived(dirtyVideo);
             foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))

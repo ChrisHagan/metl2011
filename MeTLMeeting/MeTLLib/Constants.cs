@@ -24,8 +24,9 @@ namespace MeTLLib
                 //return "reifier.adm.monash.edu.au";
                 return server_property;
             }
-            set{
-                server_property=value;
+            set
+            {
+                server_property = value;
                 MUC = "conference." + SERVER;
                 GLOBAL = new Jid("global@" + MUC);
             }
