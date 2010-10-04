@@ -78,9 +78,9 @@ namespace MeTLLib.Providers.Connection
         {
             throw new NotImplementedException();
         }
-        string IWebClient.uploadFile(Uri resource, string filename)
+        byte[] IWebClient.uploadFile(Uri resource, string filename)
         {
-            throw new NotImplementedException();
+            return client.UploadFile(resource.ToString(), filename);
         }
     }
     public class MeTLCredentials : NetworkCredential {
@@ -99,7 +99,7 @@ namespace MeTLLib.Providers.Connection
         byte[] downloadData(Uri resource);
         string uploadData(Uri resource, byte[] data);
         void uploadDataAsync(Uri resource, byte[] data);
-        string uploadFile(Uri resource, string filename);
+        byte[] uploadFile(Uri resource, string filename);
         void uploadFileAsync(Uri resource, string filename);
     }
     public interface IWebClientFactory {
@@ -175,7 +175,7 @@ namespace MeTLLib.Providers.Connection
         }
         public string securePutFile(System.Uri uri, string filename)
         {
-            return client().uploadFile(uri, filename);
+            return decode(client().uploadFile(uri, filename));
         }
         private string decode(byte[] bytes)
         {

@@ -95,7 +95,19 @@ namespace MeTLLib.DataTypes
             }
             set
             {
-                id = value.tag().id;
+                string internalIdentity;
+                try
+                {
+                    internalIdentity = value.tag().id;
+                }
+                catch (Exception ex)
+                {
+                    if (String.IsNullOrEmpty(id))
+                        id = string.Format("{0}:{1}", author, DateTimeFactory.Now());
+                    value.tag(new ImageTag { author = author, id = id, privacy = privacy });
+                    internalIdentity = value.tag().id;
+                }
+                id = internalIdentity;
                 imageProperty = value;
             }
         }
@@ -119,7 +131,19 @@ namespace MeTLLib.DataTypes
             }
             set
             {
-                id = value.tag().id;
+                string internalIdentity;
+                try
+                {
+                    internalIdentity = value.tag().id;
+                }
+                catch (Exception ex)
+                {
+                    if (String.IsNullOrEmpty(id))
+                        id = string.Format("{0}:{1}", author, DateTimeFactory.Now());
+                    value.tag(new ImageTag { author = author, id = id, privacy = privacy });
+                    internalIdentity = value.tag().id;
+                }
+                id = internalIdentity;
                 X = value.X;
                 Y = value.Y;
                 Height = value.ActualHeight;
@@ -885,14 +909,13 @@ namespace MeTLLib.DataTypes
             public long size;
             public int slide;
             public string target;
-            public string uploadTime; 
+            public string uploadTime;
         }
         public class LocalImageInformation
         {
             public string author;
             public System.Windows.Controls.Image image;
             public string file;
-            public string room;
             public bool overwrite;
             public string privacy;
             public int slide;
@@ -909,7 +932,7 @@ namespace MeTLLib.DataTypes
             public int slide;
             public string target;
         }
-        
+
         public class ScreenshotSubmission : Element
         {
             static ScreenshotSubmission()
@@ -1178,7 +1201,8 @@ namespace MeTLLib.DataTypes
             {
                 this.Vid = video;
             }
-            public Video adoptCache(ResourceCache cache,MeTLServerAddress server) {
+            public Video adoptCache(ResourceCache cache, MeTLServerAddress server)
+            {
                 this.resourceCache = cache;
                 this.server = server;
                 return this;
@@ -1287,7 +1311,8 @@ namespace MeTLLib.DataTypes
             {
                 this.Img = image;
             }
-            public Image adoptCache(ResourceCache cache, MeTLServerAddress server) {
+            public Image adoptCache(ResourceCache cache, MeTLServerAddress server)
+            {
                 this.cache = cache;
                 this.server = server;
                 return this;

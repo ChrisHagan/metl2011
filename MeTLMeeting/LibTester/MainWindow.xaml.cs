@@ -125,7 +125,7 @@ namespace LibTester
             {
                 var conversationList = "";
                 foreach (ConversationDetails details in client.AvailableConversations)
-                    conversationList += details.Jid +":"+details.Title + "\r\n";
+                    conversationList += details.Jid + ":" + details.Title + "\r\n";
                 MessageBox.Show(conversationList);
             }
         }
@@ -199,6 +199,62 @@ namespace LibTester
                     box = internalTextBox,
                 };
                 client.SendTextBox(newTargettedTextBox);
+            }
+        }
+        private void NewImage(object sender, RoutedEventArgs e)
+        {
+            if (client != null)
+            {
+                var ofdg = new Microsoft.Win32.OpenFileDialog();
+                ofdg.Multiselect = false;
+                ofdg.ShowDialog();
+                if (!String.IsNullOrEmpty(ofdg.FileName))
+                {
+                    var internalImage = new Image();
+                    internalImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(ofdg.FileName);
+                    Canvas.SetLeft(internalImage, 100);
+                    Canvas.SetTop(internalImage, 100);
+                    client.UploadAndSendImage(new MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation 
+                    {
+                        privacy = "public",
+                        author = client.username,
+                        slide = client.location.currentSlide,
+                        target = "presentationSpace",
+                        overwrite = false,
+                        file = ofdg.FileName,
+                        image = internalImage,
+                    });
+                }
+            }
+        }
+        private void NewVideo(object sender, RoutedEventArgs e)
+        {
+            if (client != null)
+            {
+                var ofdg = new Microsoft.Win32.OpenFileDialog();
+                ofdg.Multiselect = false;
+                ofdg.ShowDialog();
+                if (!String.IsNullOrEmpty(ofdg.FileName))
+                {
+                    var internalVideo = new Video();
+                    internalVideo.VideoSource = new Uri("file://"+ofdg.FileName);
+                    internalVideo.VideoHeight = 320;
+                    internalVideo.VideoWidth = 240;
+                    internalVideo.Height = 480;
+                    internalVideo.Width = 640;
+                    Canvas.SetLeft(internalVideo, 100);
+                    Canvas.SetTop(internalVideo, 100);
+                    client.UploadAndSendVideo(new MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation
+                    {
+                        privacy = "public",
+                        author = client.username,
+                        slide = client.location.currentSlide,
+                        target = "presentationSpace",
+                        overwrite = false,
+                        file = ofdg.FileName,
+                        video = internalVideo,
+                    });
+                }
             }
         }
         private string describeParser(PreParser pp)

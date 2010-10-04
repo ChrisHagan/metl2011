@@ -229,11 +229,11 @@ namespace MeTLLib
             Action work = delegate
             {
                 Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
-                var newPath = resourceUploader.uploadResource("/Resource/" + lii.room, lii.file, false);
+                var newPath = resourceUploader.uploadResource("/Resource/" + lii.slide, lii.file, false);
                 Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
                 Image newImage = lii.image;
                 newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
-                Commands.SendFileResource.Execute(new TargettedImage
+                Commands.SendImage.Execute(new TargettedImage
                 {
                     author = lii.author,
                     privacy = lii.privacy,
@@ -267,10 +267,11 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                var newPath = resourceUploader.uploadResource("/Resource/" + lvi.room, lvi.file, false);
+                var newPath = resourceUploader.uploadResource(lvi.slide.ToString(), lvi.file, false);
                 MeTLLib.DataTypes.Video newVideo = lvi.video;
+                newVideo.MediaElement = new MediaElement();
                 newVideo.MediaElement.Source = new Uri(newPath, UriKind.Absolute);
-                Commands.SendFileResource.Execute(new TargettedVideo
+                Commands.SendVideo.Execute(new TargettedVideo
                 {
                     author = lvi.author,
                     privacy = lvi.privacy,

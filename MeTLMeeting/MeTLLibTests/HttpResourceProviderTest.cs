@@ -189,11 +189,11 @@ namespace MeTLLibTests
         {
             throw new NotImplementedException();
         }
-        public string uploadFile(Uri resource, string filename)
+        public byte[] uploadFile(Uri resource, string filename)
         {
             if (resource == null) throw new ArgumentNullException("address", "Value cannot be null.");
             if (filename == null) throw new ArgumentNullException("filename", "Value cannot be null.");
-            return "http://nowhere.adm.monash.edu/resources/something.ext";
+            return Encoding.UTF8.GetBytes("http://nowhere.adm.monash.edu/resources/something.ext");
         }
         public void uploadFileAsync(Uri resource, string filename)
         {

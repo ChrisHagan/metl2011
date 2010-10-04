@@ -39,6 +39,8 @@
                 <Button Click="setInkMode" Tag="Select">Select</Button>
                 <Button Click="setInkMode" Tag="Erase">Erase</Button>
                 <Button Click="NewTextBox">InsertText</Button>
+                <Button Click="NewImage">InsertImage</Button>
+                <Button Click="NewVideo">InsertVideo</Button>
                 <Button Click="getHistory">GetHistory</Button>
                 <Button Click="getDisco">currentConversations</Button>
                 <Button Click="getConversations">allConversations</Button>
