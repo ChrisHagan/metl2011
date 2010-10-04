@@ -4,6 +4,7 @@ using System.Deployment.Application;
 using System.Web;
 using System.Windows;
 using System.Windows.Controls;
+using SandRibbon.Components.Sandpit;
 using SandRibbon.Utils;
 using System.Security.Permissions;
 using SandRibbon.Providers;
@@ -30,9 +31,9 @@ namespace SandRibbon
         }
         private void LogOut(object _Unused)
         {
-            loggingOut = true;
+            //loggingOut = true;
             WorkspaceStateProvider.ClearSettings();
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+            //System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
             Application.Current.Shutdown();
         }
         
@@ -86,6 +87,7 @@ namespace SandRibbon
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyLiveWindow();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.ScreenshotSubmission();
                 Console.WriteLine("End ", SandRibbonObjects.DateTimeFactory.Now().ToString());
+               
             }
             catch (Exception ex)
             {

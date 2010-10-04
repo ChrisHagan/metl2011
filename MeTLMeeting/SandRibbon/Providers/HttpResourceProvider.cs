@@ -3,6 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Linq;
 using System;
 using System.Threading;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Providers
 {
@@ -15,6 +16,7 @@ namespace SandRibbon.Providers
             return request;
         }
     }
+
     public class HttpResourceProvider
     {
         private static readonly string StagingMeTLCertificateSubject = "E=nobody@nowhere.gondwanaland, CN=localhost, OU=Janitorial section, O=Hyber Inc., L=Yawstown, S=Gondwanaland, C=se";
@@ -32,14 +34,18 @@ namespace SandRibbon.Providers
 
         private static WebClient client()
         {
+            configureServicePointManager();
+            var wc = new WebClientWithTimeout { Credentials = MeTLCredentials };
+            return wc;
+        }
+        private static void configureServicePointManager()
+        {
             if (firstRun)
             {
                 ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
                 ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
                 firstRun = false;
             }
-            var wc = new WebClientWithTimeout { Credentials = MeTLCredentials };
-            return wc;
         }
         private static bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
@@ -54,6 +60,7 @@ namespace SandRibbon.Providers
         }
         public static long getSize(string resource)
         {
+            configureServicePointManager();
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = MeTLCredentials;
             request.Method = "HEAD";
@@ -70,6 +77,7 @@ namespace SandRibbon.Providers
         }
         public static bool exists(string resource)
         {
+            configureServicePointManager();
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = MeTLCredentials;
             request.Method = "HEAD";
@@ -425,7 +433,7 @@ namespace SandRibbon.Providers
         {
             return;
             var filenameDescriptor = string.IsNullOrEmpty(filename) ? "" : " : " + filename;
-            App.Now(status + "(" + type + " : " + uri + filenameDescriptor + ")");
+            Logger.Log(status + "(" + type + " : " + uri + filenameDescriptor + ")");
         }
         private static void NotifyProgress(int attempts, string type, string resource, long recBytes, long size, int percentage, bool isPercentage)
         {
@@ -433,10 +441,10 @@ namespace SandRibbon.Providers
             if (isPercentage)
             {
                 percentage = (int)(recBytes / size);
-                App.Now("Attempt " + attempts + " waiting on " + type + ": " + percentage + "% (" + resource + ")");
+                Logger.Log("Attempt " + attempts + " waiting on " + type + ": " + percentage + "% (" + resource + ")");
             }
             else
-                App.Now("Attempt " + attempts + " waiting on " + type + ": " + recBytes + "B (" + resource + ")");
+                Logger.Log("Attempt " + attempts + " waiting on " + type + ": " + recBytes + "B (" + resource + ")");
         }
     }
 }
