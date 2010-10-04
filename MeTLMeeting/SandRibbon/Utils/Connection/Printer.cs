@@ -59,6 +59,7 @@ namespace SandRibbon.Utils.Connection
                 }
                 foreach (var image in images)
                 {
+                    image.Value.image.Margin = new Thickness(5,5,5,5);
                     if (image.Value.privacy == "public" || image.Value.target == "presentationSpace")
                         publicCanvas.images.Children.Add(image.Value.image);
                     else if(image.Value.target== "notepad")
