@@ -13,11 +13,14 @@ using Ionic.Zip;
 using System.IO;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
+using Ninject;
 
 namespace MeTLLib.Providers.Structure
 {
     class FileConversationDetailsProvider : HttpResourceProvider, IConversationDetailsProvider
     {
+        [Inject] public IProviderMonitor providerMonitor { private get;set;}
+        [Inject] public MeTLServerAddress server { private get; set; }
         private ResourceUploader resourceUploader;
         public FileConversationDetailsProvider(IWebClientFactory factory, ResourceUploader uploader) : base(factory)
         {
@@ -25,26 +28,26 @@ namespace MeTLLib.Providers.Structure
             Commands.ReceiveDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(ReceiveDirtyConversationDetails));
             ListConversations();
         }
-        private static readonly int HTTP_PORT = 1188;
-        private static string ROOT_ADDRESS
+        private readonly int HTTP_PORT = 1188;
+        private string ROOT_ADDRESS
         {
-            get { return string.Format("https://{0}:{1}", Constants.SERVER, HTTP_PORT); }
+            get { return string.Format("https://{0}:{1}", server.uri.Host, HTTP_PORT); }
         }
-        private static readonly string RESOURCE = "Resource";
-        private static readonly string STRUCTURE = "Structure";
-        private static readonly string UPLOAD = "upload_nested.yaws";
-        private static string NEXT_AVAILABLE_ID
+        private readonly string RESOURCE = "Resource";
+        private readonly string STRUCTURE = "Structure";
+        private readonly string UPLOAD = "upload_nested.yaws";
+        private string NEXT_AVAILABLE_ID
         {
             get { return string.Format("{0}/primarykey.yaws", ROOT_ADDRESS); }
         }
-        private static readonly string DETAILS = "details.xml";
-        private static readonly string SUMMARY = "summary.xml";
+        private readonly string DETAILS = "details.xml";
+        private readonly string SUMMARY = "summary.xml";
         public ConversationDetails DetailsOf(string conversationJid)
         {
             try
             {
                 var url = string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, conversationJid, DETAILS);
-                var response = XElement.Parse(secureGetString(url));
+                var response = XElement.Parse(secureGetString(new System.Uri(url)));
                 var result = new ConversationDetails().ReadXml(response);
                 return result;
             }
@@ -54,7 +57,7 @@ namespace MeTLLib.Providers.Structure
             }
             catch (WebException e)
             {
-                ProviderMonitor.HealthCheck(() => { });
+                providerMonitor.HealthCheck(() => { });
                 return new ConversationDetails();
             }
         }
@@ -88,7 +91,7 @@ namespace MeTLLib.Providers.Structure
             }
             catch (WebException)
             {
-                ProviderMonitor.HealthCheck(() => { /*Everything is AOk*/});
+                providerMonitor.HealthCheck(() => { /*Everything is AOk*/});
                 return new ConversationDetails();
             }
         }
@@ -118,7 +121,7 @@ namespace MeTLLib.Providers.Structure
             }
             catch (WebException)
             {
-                ProviderMonitor.HealthCheck(() => { /*Everything is AOk*/});
+                providerMonitor.HealthCheck(() => { /*Everything is AOk*/});
                 return new ConversationDetails();
             }
         }
@@ -139,13 +142,13 @@ namespace MeTLLib.Providers.Structure
             try
             {
                 var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}&filename={4}", ROOT_ADDRESS, UPLOAD, STRUCTURE, details.Jid, DETAILS);
-                securePutData(url, details.GetBytes());
+                securePutData(new System.Uri(url), details.GetBytes());
                 Commands.SendDirtyConversationDetails.Execute(details.Jid);
                 return details;
             }
             catch (WebException e)
             {
-                ProviderMonitor.HealthCheck(() => { /*Everything is AOk*/});
+                providerMonitor.HealthCheck(() => { /*Everything is AOk*/});
                 return new ConversationDetails();
             }
         }
@@ -176,7 +179,7 @@ namespace MeTLLib.Providers.Structure
                     conversationsCache = RestrictToAccessible(conversationsCache, myGroups);
                     return conversationsCache;
                 }
-                var data = secureGetData(string.Format("https://{0}:1188/Structure/all.zip", Constants.SERVER));
+                var data = secureGetData(new System.Uri(string.Format("https://{0}:1188/Structure/all.zip", server.uri.Host)));
                 using (var zip = ZipFile.Read(data))
                 {
                     var summary = zip
@@ -236,7 +239,7 @@ namespace MeTLLib.Providers.Structure
         }
         public ApplicationLevelInformation GetApplicationLevelInformation()
         {
-            return new ApplicationLevelInformation { currentId = Int32.Parse(secureGetString(NEXT_AVAILABLE_ID)) };
+            return new ApplicationLevelInformation { currentId = Int32.Parse(secureGetString(new System.Uri(NEXT_AVAILABLE_ID))) };
         }
     }
 }

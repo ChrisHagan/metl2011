@@ -4,16 +4,20 @@ using System.Xml.Linq;
 using MeTLLib.Providers.Connection;
 using MeTLLib.Providers;
 using System.Diagnostics;
+using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
     public class ResourceUploader
     {
+        [Inject]
+        public MeTLServerAddress metlServerAddress { private get; set; }
         private HttpResourceProvider _httpResourceProvider;
-        public ResourceUploader(HttpResourceProvider provider) {
+        public ResourceUploader(HttpResourceProvider provider)
+        {
             _httpResourceProvider = provider;
         }
-        private static readonly string RESOURCE_SERVER_UPLOAD = string.Format("https://{0}:1188/upload_nested.yaws", MeTLLib.Constants.SERVER);
+        private string RESOURCE_SERVER_UPLOAD { get { return string.Format("https://{0}:1188/upload_nested.yaws", metlServerAddress.uri.Host); } }
         public string uploadResource(string path, string file)
         {
             return uploadResource(path, file, false);
@@ -40,7 +44,7 @@ namespace MeTLLib.Providers.Connection
         public string uploadResourceToPath(byte[] resourceData, string path, string name, bool overwrite)
         {
             var url = string.Format("{0}?path={1}&overwrite={2}&filename={3}", RESOURCE_SERVER_UPLOAD, path, overwrite.ToString().ToLower(), name);
-            var res = _httpResourceProvider.securePutData(url, resourceData);
+            var res = _httpResourceProvider.securePutData(new System.Uri(url), resourceData);
             return XElement.Parse(res).Attribute("url").Value;
         }
         public string uploadResourceToPath(string localFile, string remotePath, string name)

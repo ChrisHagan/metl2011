@@ -23,7 +23,7 @@ namespace MeTLLib.Providers
             //    return new List<JabberWire.AuthorizedGroup> { new JabberWire.AuthorizedGroup("Artificial person", ""),new JabberWire.AuthorizedGroup("Unrestricted", ""), new JabberWire.AuthorizedGroup(AuthcateName, "")  };
             var groups = new List<AuthorizedGroup>();
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
-            string sXML = insecureGetString(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, server.uri.Host));
+            string sXML = insecureGetString(new System.Uri(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, server.uri.Host)));
             var doc = new XmlDocument();
                 doc.LoadXml(sXML);
             if (doc.GetElementsByTagName("error").Count == 0)
@@ -78,7 +78,7 @@ namespace MeTLLib.Providers
             try
             {
                 var resource = String.Format("https://my.monash.edu.au/login?username={0}&password={1}", username, password);
-                String test = insecureGetString(resource);
+                String test = insecureGetString(new System.Uri(resource));
                 return !test.Contains("error-text");
             }
             catch (Exception e)

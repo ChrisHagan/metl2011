@@ -123,7 +123,7 @@ namespace MeTLLib.Providers.Connection
                     if (conn != null && conn.Username == Globals.me)
                     {
                         var discoIq = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
-                        discoIq.To = new Jid(Constants.MUC);
+                        discoIq.To = new Jid(metlServerAddress.muc);
                         var IQResponse = conn.IqGrabber.SendIq(discoIq);
                         if (IQResponse == null) return null;
                         foreach (object item in IQResponse.Query.ChildNodes.ToArray())
@@ -144,7 +144,7 @@ namespace MeTLLib.Providers.Connection
                         foreach (ConversationDetails conversation in conversations.Where(c => conversationJids.Contains(c.Jid)))
                         {
                             var discoOccupants = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
-                            discoOccupants.To = new Jid(conversation.Jid.ToString() + "@" + Constants.MUC);
+                            discoOccupants.To = new Jid(conversation.Jid.ToString() + "@" + metlServerAddress.muc);
                             var newIQResponse = conn.IqGrabber.SendIq(discoOccupants);
                             if (newIQResponse.Query.ChildNodes.ToArray()
                                 .Where(n => n is agsXMPP.protocol.iq.disco.DiscoItem)
@@ -158,7 +158,10 @@ namespace MeTLLib.Providers.Connection
                     }
                     return null;
                 }
-                catch (Exception) { return null; }
+                catch (Exception ex) 
+                { 
+                    return null; 
+                }
             }
         }
         public void getCurrentClasses(object _unused)
@@ -353,7 +356,7 @@ namespace MeTLLib.Providers.Connection
             {
                 if (target.ToLower() == "global")
                     Trace.TraceInformation(string.Format("{0} fired on the global thread", message));
-                send(new Message(new Jid(target + "@" + Constants.MUC), jid, MessageType.groupchat, message));
+                send(new Message(new Jid(target + "@" + metlServerAddress.muc), jid, MessageType.groupchat, message));
             }
             catch (Exception e)
             {
@@ -370,7 +373,7 @@ namespace MeTLLib.Providers.Connection
             string modifiedTarget =
                 stanza.GetTag(MeTLStanzas.privacyTag) == "private" ?
                 string.Format("{0}{1}", target, stanza.GetTag("author")) : target;
-            message.To = new Jid(string.Format("{0}@{1}", modifiedTarget, Constants.MUC));
+            message.To = new Jid(string.Format("{0}@{1}", modifiedTarget, metlServerAddress.muc));
             message.From = jid;
             message.Type = MessageType.groupchat;
             message.AddChild(stanza);
@@ -390,7 +393,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void directCommand(string target, string message)
         {
-            conn.Send(new Message(new Jid(target + "@" + Constants.SERVER), jid, MessageType.chat, message));
+            conn.Send(new Message(new Jid(target + "@" + metlServerAddress.uri.Host), jid, MessageType.chat, message));
         }
         private void onStart()
         {
@@ -709,7 +712,7 @@ namespace MeTLLib.Providers.Connection
         }
         public virtual void actOnDirtyStrokeReceived(MeTLStanzas.DirtyInk element)
         {
-            Commands.ReceiveDirtyStrokes.Execute(new[] { element.element });
+            Commands.ReceiveDirtyStrokes.Execute(element.element);
         }
         public virtual void actOnDirtyTextReceived(MeTLStanzas.DirtyText dirtyText)
         {
@@ -753,7 +756,7 @@ namespace MeTLLib.Providers.Connection
         public void SneakInto(string room)
         {
             var muc = new MucManager(conn);
-            joinRoom(new Jid(room + "@" + Constants.MUC));
+            joinRoom(new Jid(room + "@" + metlServerAddress.muc));
 
             historyProvider.Retrieve<PreParser>(
                 onStart,
@@ -774,16 +777,16 @@ namespace MeTLLib.Providers.Connection
         public void SneakOutOf(string room)
         {
             var muc = new MucManager(conn);
-            muc.LeaveRoom(new Jid(room + "@" + Constants.MUC), credentials.name);
+            muc.LeaveRoom(new Jid(room + "@" + metlServerAddress.muc), credentials.name);
         }
         public void JoinConversation(string room)
         {
             if (location.activeConversation != null)
             {
                 var muc = new MucManager(conn);
-                muc.LeaveRoom(new Jid(location.activeConversation + "@" + Constants.MUC), credentials.name);
+                muc.LeaveRoom(new Jid(location.activeConversation + "@" + metlServerAddress.muc), credentials.name);
                 foreach (var slide in conversationDetailsProvider.DetailsOf(location.activeConversation).Slides.Select(s => s.id))
-                    muc.LeaveRoom(new Jid(slide + "@" + Constants.MUC), credentials.name);
+                    muc.LeaveRoom(new Jid(slide + "@" + metlServerAddress.muc), credentials.name);
             }
             location.activeConversation = room;
             joinRooms();

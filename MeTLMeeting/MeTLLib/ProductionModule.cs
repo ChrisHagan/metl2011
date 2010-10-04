@@ -18,6 +18,7 @@ namespace MeTLLib
             Bind<ClientConnection>().ToSelf().InSingletonScope();
             Bind<WebClientWithTimeout>().ToSelf();
             Bind<JabberWireFactory>().ToSelf().InSingletonScope();
+            Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
         }
     }
 }

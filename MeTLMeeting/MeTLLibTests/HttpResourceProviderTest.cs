@@ -124,7 +124,7 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
-            provider.securePutData("http://nowhere.adm.monash.edu/resources/something.exe", null);
+            provider.securePutData(new System.Uri("http://nowhere.adm.monash.edu/resources/something.exe"), null);
         }
 
         [TestMethod()]
@@ -133,7 +133,7 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             HttpResourceProvider provider = kernel.Get<HttpResourceProvider>();
-            Assert.AreEqual("<type>data</type>", provider.secureGetString("http://resourceServer.wherever"));
+            Assert.AreEqual("<type>data</type>", provider.secureGetString(new System.Uri("http://resourceServer.wherever")));
         }
         [TestMethod()]
         [ExpectedException(typeof(ArgumentNullException))]

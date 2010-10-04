@@ -354,6 +354,7 @@ namespace MeTLLib
                 {
                     list = conversationDetailsProvider.ListConversations().ToList();
                 };
+                tryIfConnected(work);
                 return list;
             }
         }
@@ -367,6 +368,7 @@ namespace MeTLLib
                 {
                     list = wire.CurrentClasses;
                 };
+                tryIfConnected(work);
                 return list;
             }
         }

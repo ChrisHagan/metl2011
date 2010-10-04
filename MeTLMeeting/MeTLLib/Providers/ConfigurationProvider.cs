@@ -24,13 +24,13 @@ namespace MeTLLib.Providers
                 if (isStaging)
                 {
                     if (stagingServer == null)
-                        stagingServer = XElement.Parse(insecureGetString(string.Format("http://metl.adm.monash.edu.au/stagingServer.xml"))).Value;
+                        stagingServer = XElement.Parse(insecureGetString(new System.Uri(string.Format("http://metl.adm.monash.edu.au/stagingServer.xml")))).Value;
                     server = stagingServer;
                 }
                 else
                 {
                     if (server == null || server == stagingServer)
-                        server = XElement.Parse(insecureGetString(string.Format("http://metl.adm.monash.edu.au/server.xml"))).Value;
+                        server = XElement.Parse(insecureGetString(new System.Uri("http://metl.adm.monash.edu.au/server.xml"))).Value;
                 }
                 return server;
             }

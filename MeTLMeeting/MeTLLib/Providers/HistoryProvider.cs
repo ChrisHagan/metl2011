@@ -110,7 +110,7 @@ namespace MeTLLib.Providers
                                      var zipUri = string.Format("https://{0}:1749/{1}/all.zip", serverAddress.uri.Host, room);
                                      try
                                      {
-                                         var zipData = resourceProvider.secureGetData(zipUri);
+                                         var zipData = resourceProvider.secureGetData(new System.Uri(zipUri));
                                          if (zipData.Count() == 0) return;
                                          var zip = ZipFile.Read(zipData);
                                          var days = (from e in zip.Entries where e.FileName.EndsWith(".xml") orderby e.FileName select e).ToArray();

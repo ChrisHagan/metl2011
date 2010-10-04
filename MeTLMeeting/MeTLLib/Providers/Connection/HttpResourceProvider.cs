@@ -149,29 +149,29 @@ namespace MeTLLib.Providers.Connection
         {
             return _clientFactory.client();
         }
-        public long getSize(string resource)
+        public long getSize(System.Uri resource)
         {
-            return client().getSize(new Uri(resource));
+            return client().getSize(resource);
         }
-        public bool exists(string resource)
+        public bool exists(System.Uri resource)
         {
-            return client().exists(new Uri(resource));
+            return client().exists(resource);
         }
-        public string secureGetString(string resource)
+        public string secureGetString(System.Uri resource)
         {
-            return client().downloadString(new System.Uri(resource, UriKind.RelativeOrAbsolute));
+            return client().downloadString(resource);
         }
-        public string insecureGetString(string resource)
+        public string insecureGetString(System.Uri resource)
         {
-            return client().downloadString(new Uri(resource, UriKind.RelativeOrAbsolute));
+            return client().downloadString(resource);
         }
-        public string securePutData(string uri, byte[] data)
+        public string securePutData(System.Uri uri, byte[] data)
         {
-            return client().uploadData(new Uri(uri), data);
+            return client().uploadData(uri, data);
         }
-        public byte[] secureGetData(string resource)
+        public byte[] secureGetData(System.Uri resource)
         {
-            return client().downloadData(new Uri(resource));
+            return client().downloadData(resource);
         }
         public string securePutFile(System.Uri uri, string filename)
         {

@@ -29,8 +29,8 @@
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
-                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                <TextBox x:Name="username" Width="100"/> 
+            <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                <TextBox x:Name="username" Width="100"/>
                 <PasswordBox x:Name="password" Width="100"/>
                 <Button Click="attemptToAuthenticate">Login</Button>
                 <TextBox x:Name="location" Width="100"/>
@@ -40,11 +40,15 @@
                 <Button Click="setInkMode" Tag="Erase">Erase</Button>
                 <Button Click="NewTextBox">InsertText</Button>
                 <Button Click="getHistory">GetHistory</Button>
-            </StackPanel>
-            <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                          Height="Auto" Width="Auto"> 
-                <InkCanvas x:Name="inkCanvas" StrokeCollected="StrokeCollected"/>
-            </Viewbox>
+                <Button Click="getDisco">currentConversations</Button>
+                <Button Click="getConversations">allConversations</Button>
+            </WrapPanel>
+            <Grid Background="DarkGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                          Height="Auto" Width="Auto">
+                <Viewbox Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <InkCanvas x:Name ="inkCanvas" StrokeCollected="StrokeCollected"/>
+                </Viewbox>
+            </Grid>
         </DockPanel>
     </Grid>
 </Window>

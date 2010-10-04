@@ -10,20 +10,32 @@ using agsXMPP;
 using System.Timers;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
-    public partial class ProviderMonitor
+    public abstract class IProviderMonitor
     {
-        private static List<ServerStatus> SERVERS =
-                new List<ServerStatus>(){
+        public abstract void HealthCheck(Action healthyBehaviour);
+
+    }
+    public partial class ProductionProviderMonitor : IProviderMonitor
+    {
+        [Inject]
+        public MeTLServerAddress metlServerAddress { private get; set; }
+        private List<ServerStatus> SERVERS
+        {
+            get
+            {
+                return
+                    new List<ServerStatus>(){
                     new ServerStatus{
                         label="Resource", 
-                        CheckStatus=(server)=>server.Ping(Constants.SERVER)},
+                        CheckStatus=(server)=>server.Ping(metlServerAddress.uri)},
                     new ServerStatus{
                         label="Messaging", 
                         CheckStatus=(server)=>{
-                            var conn= new XmppClientConnection(Constants.SERVER);
+                            var conn= new XmppClientConnection(metlServerAddress.uri.Host);
                             conn.AutoAgents = false;
                             conn.OnReadXml += (_sender,xml)=>{
                                 if(Application.Current != null)
@@ -36,9 +48,11 @@ namespace MeTLLib.Providers.Connection
                         }},
                     new ServerStatus{
                         label="Authentication", 
-                        CheckStatus=(server)=>server.Ping("my.monash.edu.au")}
+                        CheckStatus=(server)=>server.Ping(new System.Uri("my.monash.edu.au"))}
                 };
-        public static void HealthCheck(Action healthyBehaviour)
+            }
+        }
+        public override void HealthCheck(Action healthyBehaviour)
         {
             //var currentStack = new System.Diagnostics.StackTrace();
             try
@@ -49,7 +63,7 @@ namespace MeTLLib.Providers.Connection
                 int attempts = 0;
                 const int MILIS_BETWEEN_TRIES = 1000;
                 var timer = new Timer(MILIS_BETWEEN_TRIES);
-                timer.Elapsed += 
+                timer.Elapsed +=
                 (sender, args) =>
                 {
                     var brokenServers = SERVERS.Where(s => !s.ok);
@@ -76,7 +90,7 @@ namespace MeTLLib.Providers.Connection
                 //  throw new Exception(currentStack.ToString(), e);
             }
         }
-        private static void checkServers()
+        private void checkServers()
         {
             foreach (var server in SERVERS)
                 server.CheckStatus(server);
@@ -84,14 +98,14 @@ namespace MeTLLib.Providers.Connection
     }
     class ServerStatus
     {
-        public string label{get;set;}
+        public string label { get; set; }
         public bool ok { get; set; }
         public Action<ServerStatus> CheckStatus;
         private bool alreadyRetried = false;
-        public void Ping(string uri)
+        public void Ping(System.Uri uri)
         {
             var ping = new System.Net.NetworkInformation.Ping();
-            Trace.TraceInformation("pinged " + uri);
+            Trace.TraceInformation("pinged " + uri.ToString());
             ping.PingCompleted += (_sender, pingArgs) =>
             {
                 if (pingArgs.Reply != null && pingArgs.Reply.Status == IPStatus.Success)
@@ -103,12 +117,12 @@ namespace MeTLLib.Providers.Connection
                     ok = false;
                     if (!alreadyRetried)
                     {
-                        ping.SendAsync(uri, null);//Try again
+                        ping.SendAsync(uri.ToString(), null);//Try again
                         alreadyRetried = true;
                     }
                 }
             };
-            ping.SendAsync(uri, null);
+            ping.SendAsync(uri.ToString(), null);
         }
     }
 }

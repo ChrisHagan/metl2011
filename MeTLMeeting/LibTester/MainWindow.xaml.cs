@@ -19,6 +19,7 @@ using MeTLLib.DataTypes;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using System.Threading;
+using System.Windows.Ink;
 
 namespace LibTester
 {
@@ -29,39 +30,86 @@ namespace LibTester
         {
             InitializeComponent();
             client = ClientFactory.Connection();
-            client.StrokeAvailable += (sender, args) => { inkCanvas.Strokes.Add(args.stroke.stroke); };
-            client.TextBoxAvailable += (sender, args) => { inkCanvas.Children.Add(args.textBox.box); };
-            client.ImageAvailable += (sender, args) => { inkCanvas.Children.Add(args.image.image); };
+            client.StrokeAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Strokes.Add(args.stroke.stroke)); };
+            client.DirtyStrokeAvailable += (sender, args) =>
+            {
+                Dispatcher.adoptAsync(() =>
+                {
+                    var strokesToRemove = new StrokeCollection();
+                    for (int i = 0; i < inkCanvas.Strokes.Count; i++)
+                    {
+                        var child = inkCanvas.Strokes[i];
+                        if (child is Stroke && ((Stroke)child).startingSum().ToString() == args.dirtyElement.identifier)
+                            strokesToRemove.Add(inkCanvas.Strokes[i]);
+                    }
+                    foreach (Stroke removedStroke in strokesToRemove)
+                        inkCanvas.Strokes.Remove(removedStroke);
+                    ;
+                });
+            };
+            client.TextBoxAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Children.Add(args.textBox.box)); };
+            client.DirtyTextBoxAvailable += (sender, args) =>
+                {
+                    Dispatcher.adoptAsync(() =>
+                    {
+                        for (int i = 0; i < inkCanvas.Children.Count; i++)
+                        {
+                            var child = inkCanvas.Children[i];
+                            if (child is TextBox && ((TextBox)child).tag().id == args.dirtyElement.identifier)
+                                inkCanvas.Children.Remove(inkCanvas.Children[i]);
+                        }
+                        ;
+                    });
+                };
+            client.ImageAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Children.Add(args.image.image)); };
+            client.DirtyImageAvailable += (sender, args) =>
+            {
+                Dispatcher.adoptAsync(() =>
+                {
+                    for (int i = 0; i < inkCanvas.Children.Count; i++)
+                    {
+                        var child = inkCanvas.Children[i];
+                        if (child is Image && ((Image)child).tag().id == args.dirtyElement.identifier)
+                            inkCanvas.Children.Remove(inkCanvas.Children[i]);
+                    }
+                    ;
+                });
+            };
             client.VideoAvailable += (sender, args) =>
             {
-                var me = args.video.video.MediaElement;
-                me.LoadedBehavior = MediaState.Play;
-                Canvas.SetLeft(me, args.video.X);
-                Canvas.SetTop(me, args.video.Y);
-                me.Width = args.video.Width;
-                me.Height = args.video.Height;
-                inkCanvas.Children.Add(me);
-
+                Dispatcher.adoptAsync(() =>
+                {
+                    var me = args.video.video.MediaElement;
+                    me.LoadedBehavior = MediaState.Play;
+                    Canvas.SetLeft(me, args.video.X);
+                    Canvas.SetTop(me, args.video.Y);
+                    me.Width = args.video.Width;
+                    me.Height = args.video.Height;
+                    inkCanvas.Children.Add(me);
+                });
             };
             client.PreParserAvailable += (sender, args) =>
             {
-                var parser = ((PreParser)args.parser);
-                foreach (TargettedVideo video in parser.videos.Values)
-                {
-                    var me = video.video.MediaElement;
-                    me.LoadedBehavior = MediaState.Play;
-                    Canvas.SetLeft(me, video.video.X);
-                    Canvas.SetTop(me, video.video.Y);
-                    me.Width = video.video.Width;
-                    me.Height = video.video.Height;
-                    inkCanvas.Children.Add(me);
-                }
-                foreach (TargettedImage image in parser.images.Values)
-                    inkCanvas.Children.Add(image.image);
-                foreach (TargettedTextBox textBox in parser.text.Values)
-                    inkCanvas.Children.Add(textBox.box);
-                foreach (TargettedStroke stroke in parser.ink)
-                    inkCanvas.Strokes.Add(stroke.stroke);
+                Dispatcher.adoptAsync(() =>
+                    {
+                        var parser = ((PreParser)args.parser);
+                        foreach (TargettedVideo video in parser.videos.Values)
+                        {
+                            var me = video.video.MediaElement;
+                            me.LoadedBehavior = MediaState.Play;
+                            Canvas.SetLeft(me, video.video.X);
+                            Canvas.SetTop(me, video.video.Y);
+                            me.Width = video.video.Width;
+                            me.Height = video.video.Height;
+                            inkCanvas.Children.Add(me);
+                        }
+                        foreach (TargettedImage image in parser.images.Values)
+                            inkCanvas.Children.Add(image.image);
+                        foreach (TargettedTextBox textBox in parser.text.Values)
+                            inkCanvas.Children.Add(textBox.box);
+                        foreach (TargettedStroke stroke in parser.ink)
+                            inkCanvas.Strokes.Add(stroke.stroke);
+                    });
             };
             username.Text = "eecrole";
             password.Password = "m0nash2008";
@@ -70,16 +118,15 @@ namespace LibTester
         private void attemptToAuthenticate(object sender, RoutedEventArgs e)
         {
             client.Connect(username.Text, password.Password);
-            checkConversations();
         }
-        private void checkConversations()
+        private void getConversations(object sender, RoutedEventArgs e)
         {
             if (client != null && client.isConnected)
             {
+                var conversationList = "";
                 foreach (ConversationDetails details in client.AvailableConversations)
-                {
-                    Console.WriteLine(details.Jid + " : " + details.Title);
-                }
+                    conversationList += details.Jid +":"+details.Title + "\r\n";
+                MessageBox.Show(conversationList);
             }
         }
         private void moveTo(object sender, RoutedEventArgs e)
@@ -94,6 +141,14 @@ namespace LibTester
             if (client == null) return;
             var parser = client.RetrieveHistoryOf(location.Text);
             MessageBox.Show(describeParser(parser));
+        }
+        private void getDisco(object sender, RoutedEventArgs e)
+        {
+            if (client == null) return;
+            var conversationList = "";
+            foreach (ConversationDetails details in client.CurrentConversations)
+                conversationList += details.Jid + ":" + details.Title + "\r\n";
+            MessageBox.Show(conversationList);
         }
         private void setInkMode(object sender, RoutedEventArgs e)
         {
@@ -198,14 +253,15 @@ namespace LibTester
         {
             Trace.Listeners.Add(new TextBlockTraceLogger(doAffineLog) { Name = traceLevel.ToString(), Filter = new TraceLevelFilter(traceLevel) });
         }
-        private void doAffineLog(string message, category cat) {
-            Dispatcher.BeginInvoke(new LogDelegate(logMessage), DispatcherPriority.Normal, new object[]{message,cat});
+        private void doAffineLog(string message, category cat)
+        {
+            Dispatcher.BeginInvoke(new LogDelegate(logMessage), DispatcherPriority.Normal, new object[] { message, cat });
         }
         private void logMessage(string message, category cat)
         {
             //Action del = delegate
             //{
-                traceLogStore.Add(new Label { Content = message, ToolTip = cat });
+            traceLogStore.Add(new Label { Content = message, ToolTip = cat });
             //};
             /*if (Thread.CurrentThread == Dispatcher.Thread)
                 del();
