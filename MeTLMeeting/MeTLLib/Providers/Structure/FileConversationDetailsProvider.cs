@@ -31,7 +31,7 @@ namespace MeTLLib.Providers.Structure
         private readonly int HTTP_PORT = 1188;
         private string ROOT_ADDRESS
         {
-            get { return string.Format("https://{0}:{1}", server.uri.Host, HTTP_PORT); }
+            get { return string.Format("https://{0}:{1}", server.host, HTTP_PORT); }
         }
         private readonly string RESOURCE = "Resource";
         private readonly string STRUCTURE = "Structure";
@@ -179,7 +179,7 @@ namespace MeTLLib.Providers.Structure
                     conversationsCache = RestrictToAccessible(conversationsCache, myGroups);
                     return conversationsCache;
                 }
-                var data = secureGetData(new System.Uri(string.Format("https://{0}:1188/Structure/all.zip", server.uri.Host)));
+                var data = secureGetData(new System.Uri(string.Format("https://{0}:1188/Structure/all.zip", server.host)));
                 using (var zip = ZipFile.Read(data))
                 {
                     var summary = zip

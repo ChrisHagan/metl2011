@@ -17,7 +17,7 @@ namespace MeTLLib.Providers.Connection
         {
             _httpResourceProvider = provider;
         }
-        private string RESOURCE_SERVER_UPLOAD { get { return string.Format("https://{0}:1188/upload_nested.yaws", metlServerAddress.uri.Host); } }
+        private string RESOURCE_SERVER_UPLOAD { get { return string.Format("https://{0}:1188/upload_nested.yaws", metlServerAddress.host); } }
         public string uploadResource(string path, string file)
         {
             return uploadResource(path, file, false);

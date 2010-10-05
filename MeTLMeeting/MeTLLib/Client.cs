@@ -20,12 +20,13 @@ namespace MeTLLib
     public abstract class MeTLServerAddress
     {
         public Uri uri { get; set; }
-        public Uri secureUri { get { return new Uri("https://" + uri.Host.ToString()); } }
+        public Uri secureUri { get { return new Uri("https://" + host); } }
+        public string host { get { return uri.Host; } }
         public string muc
         {
             get
             {
-                return "conference." + uri.Host;
+                return "conference." + host;
             }
         }
         public agsXMPP.Jid global
@@ -40,7 +41,7 @@ namespace MeTLLib
     {
         public MadamServerAddress()
         {
-            uri = new Uri("http://madam.adm.monash.edu.au");
+            uri = new Uri("http://madam.adm.monash.edu.au", UriKind.Absolute);
         }
     }
     public interface IClientBehaviour
@@ -121,7 +122,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning TextBox send: " + textbox.identity);
             Action work = delegate
             {
-                Commands.SendTextBox.Execute(textbox);
+                wire.SendTextbox(textbox);
+                //Commands.SendTextBox.Execute(textbox);
             };
             tryIfConnected(work);
         }
@@ -130,7 +132,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Stroke send: " + stroke.startingChecksum, "Sending data");
             Action work = delegate
             {
-                Commands.SendStroke.Execute(stroke);
+                wire.SendStroke(stroke);
+                //Commands.SendStroke.Execute(stroke);
             };
             tryIfConnected(work);
         }
@@ -139,7 +142,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Image send: " + image.id);
             Action work = delegate
             {
-                Commands.SendImage.Execute(image);
+                wire.SendImage(image);
+                //Commands.SendImage.Execute(image);
             };
             tryIfConnected(work);
         }
@@ -148,7 +152,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Video send: " + video.id);
             Action work = delegate
             {
-                Commands.SendVideo.Execute(video);
+                wire.SendVideo(video);
+                //Commands.SendVideo.Execute(video);
             };
             tryIfConnected(work);
         }
@@ -157,7 +162,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning DirtyTextbox send: " + tde.identifier);
             Action work = delegate
             {
-                Commands.SendDirtyText.Execute(tde);
+                wire.SendDirtyText(tde);
+                //Commands.SendDirtyText.Execute(tde);
             };
             tryIfConnected(work);
         }
@@ -166,7 +172,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning DirtyStroke send: " + tde.identifier);
             Action work = delegate
             {
-                Commands.SendDirtyStroke.Execute(tde);
+                wire.sendDirtyStroke(tde);
+                //Commands.SendDirtyStroke.Execute(tde);
             };
             tryIfConnected(work);
         }
@@ -175,7 +182,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning DirtyImage send: " + tde.identifier);
             Action work = delegate
             {
-                Commands.SendDirtyImage.Execute(tde);
+                wire.SendDirtyImage(tde);
+                //Commands.SendDirtyImage.Execute(tde);
             };
             tryIfConnected(work);
         }
@@ -184,7 +192,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning DirtyVideo send: " + tde.identifier);
             Action work = delegate
             {
-                Commands.SendDirtyVideo.Execute(tde);
+                wire.SendDirtyVideo(tde);
+                //Commands.SendDirtyVideo.Execute(tde);
             };
             tryIfConnected(work);
         }
@@ -193,7 +202,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Submission send: " + ts.url);
             Action work = delegate
             {
-                Commands.SendScreenshotSubmission.Execute(ts);
+                wire.SendScreenshotSubmission(ts);
+                //Commands.SendScreenshotSubmission.Execute(ts);
             };
             tryIfConnected(work);
         }
@@ -202,7 +212,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning QuizAnswer send: " + qa.id);
             Action work = delegate
             {
-                Commands.SendQuizAnswer.Execute(qa);
+                wire.SendQuizAnswer(qa);
+                //Commands.SendQuizAnswer.Execute(qa);
             };
             tryIfConnected(work);
         }
@@ -211,7 +222,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning QuizQuestion send: " + qq.id);
             Action work = delegate
             {
-                Commands.SendQuiz.Execute(qq);
+                wire.SendQuiz(qq);
+                //Commands.SendQuiz.Execute(qq);
             };
             tryIfConnected(work);
         }
@@ -220,7 +232,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning File send: " + tf.url);
             Action work = delegate
             {
-                Commands.SendFileResource.Execute(tf);
+                wire.sendFileResource(tf);
+                //Commands.SendFileResource.Execute(tf);
             };
             tryIfConnected(work);
         }
@@ -233,7 +246,8 @@ namespace MeTLLib
                 Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
                 Image newImage = lii.image;
                 newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
-                Commands.SendImage.Execute(new TargettedImage
+                //Commands.SendImage.Execute(
+                wire.SendImage(new TargettedImage
                 {
                     author = lii.author,
                     privacy = lii.privacy,
@@ -249,7 +263,8 @@ namespace MeTLLib
             Action work = delegate
             {
                 var newPath = resourceUploader.uploadResource(lfi.path, lfi.file, lfi.overwrite);
-                Commands.SendFileResource.Execute(new TargettedFile
+                //Commands.SendFileResource.Execute
+                wire.sendFileResource(new TargettedFile
                 {
                     author = lfi.author,
                     name = lfi.name,
@@ -271,7 +286,8 @@ namespace MeTLLib
                 MeTLLib.DataTypes.Video newVideo = lvi.video;
                 newVideo.MediaElement = new MediaElement();
                 newVideo.MediaElement.Source = new Uri(newPath, UriKind.Absolute);
-                Commands.SendVideo.Execute(new TargettedVideo
+                //Commands.SendVideo.Execute
+                wire.SendVideo(new TargettedVideo
                 {
                     author = lvi.author,
                     privacy = lvi.privacy,
@@ -288,7 +304,9 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                Commands.MoveTo.Execute(slide);
+                wire.MoveTo(slide);
+                //Commands.MoveTo.Execute(slide);
+                Trace.TraceWarning("CommandHandlers: "+Commands.allHandlers().Count().ToString());
             };
             tryIfConnected(work);
         }
@@ -296,7 +314,8 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                Commands.SneakInto.Execute(room);
+                wire.SneakInto(room);
+                //Commands.SneakInto.Execute(room);
             };
             tryIfConnected(work);
         }
@@ -304,7 +323,8 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                Commands.SneakOutOf.Execute(room);
+                wire.SneakOutOf(room);
+                //Commands.SneakOutOf.Execute(room);
             };
             tryIfConnected(work);
         }
@@ -388,18 +408,19 @@ namespace MeTLLib
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<TargettedImage[]>(receiveImage));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyImage));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preParserAvailable));
-            Commands.LoggedIn.RegisterCommand(new DelegateCommand<object>(loggedIn));
+            //Commands.LoggedIn.RegisterCommand(new DelegateCommand<object>(loggedIn));
             Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(receiveQuiz));
             Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(receiveQuizAnswer));
             Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(receiveFileResource));
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
         }
         #region CommandMethods
-        private void loggedIn(object _unused)
+        /*private void loggedIn(object _unused)
         {
             Trace.TraceInformation("Logged in\r\n");
             StatusChanged(this, new StatusChangedEventArgs { isConnected = true });
         }
+         */
         private void setIdentity(Credentials c)
         {
             Commands.UnregisterAllCommands();
@@ -610,7 +631,7 @@ namespace MeTLLib
         }
         private string decodeUri(Uri uri)
         {
-            return uri.Host.ToString();
+            return uri.Host;
         }
         #endregion
     }

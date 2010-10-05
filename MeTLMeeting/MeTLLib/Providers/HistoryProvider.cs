@@ -107,7 +107,7 @@ namespace MeTLLib.Providers
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
-                                     var zipUri = string.Format("https://{0}:1749/{1}/all.zip", serverAddress.uri.Host, room);
+                                     var zipUri = string.Format("https://{0}:1749/{1}/all.zip", serverAddress.host, room);
                                      try
                                      {
                                          var zipData = resourceProvider.secureGetData(new System.Uri(zipUri));

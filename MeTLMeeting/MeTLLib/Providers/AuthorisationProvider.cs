@@ -23,7 +23,7 @@ namespace MeTLLib.Providers
             //    return new List<JabberWire.AuthorizedGroup> { new JabberWire.AuthorizedGroup("Artificial person", ""),new JabberWire.AuthorizedGroup("Unrestricted", ""), new JabberWire.AuthorizedGroup(AuthcateName, "")  };
             var groups = new List<AuthorizedGroup>();
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
-            string sXML = insecureGetString(new System.Uri(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, server.uri.Host)));
+            string sXML = insecureGetString(new System.Uri(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, server.host)));
             var doc = new XmlDocument();
                 doc.LoadXml(sXML);
             if (doc.GetElementsByTagName("error").Count == 0)

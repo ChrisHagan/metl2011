@@ -37,6 +37,7 @@ namespace MeTLLib.Providers
                 }
             }
         }
+ 
         public static List<Slide> slides
         {
             get
@@ -67,7 +68,7 @@ namespace MeTLLib.Providers
                 return ((Credentials)credentials).authorizedGroups;
             }
         }
-        public static bool synched
+        /*public static bool synched
         {
             get
             {
@@ -80,7 +81,7 @@ namespace MeTLLib.Providers
                     return true;
                 }
             }
-        }
+        }*/
         public static int teacherSlide
         {
             get
@@ -92,7 +93,8 @@ namespace MeTLLib.Providers
         {
             get
             {
-                return (int)Commands.MoveTo.lastValue();
+                return 0;
+                //(int)Commands.MoveTo.lastValue();
             }
         }
         public static string me

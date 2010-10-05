@@ -1394,7 +1394,7 @@ namespace MeTLLib.DataTypes
                 {
                     try
                     {
-                        var path = string.Format("https://{0}:1188{1}", server.uri.Host.ToString(), GetTag(sourceTag));
+                        var path = string.Format("https://{0}:1188{1}", server.host, GetTag(sourceTag));
                         return (ImageSource)new ImageSourceConverter().ConvertFromString(GetCachedImage(path));
                     }
                     catch (Exception e)

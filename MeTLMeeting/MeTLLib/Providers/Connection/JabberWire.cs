@@ -70,23 +70,23 @@ namespace MeTLLib.Providers.Connection
 
         private void registerCommands()
         {
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            //Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            //Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(SendSyncMoveTo));
             Commands.SendDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(SendDirtyConversationDetails));
-            Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>((textbox) => SendTextbox(textbox)));
-            Commands.SendDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyText));
-            Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
-            Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(sendDirtyStroke));
-            Commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(SendImage));
-            Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(SendVideo));
-            Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
-            Commands.SendFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(sendFileResource));
-            Commands.SendDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyVideo));
+            //Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>((textbox) => SendTextbox(textbox)));
+            //Commands.SendDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyText));
+            //Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
+            //Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(sendDirtyStroke));
+            //Commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(SendImage));
+            //Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(SendVideo));
+            //Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
+            //Commands.SendFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(sendFileResource));
+            //Commands.SendDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyVideo));
             Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoShape));
             Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoShape));
-            Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
-            Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
+            //Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
+            //Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
             Commands.SendChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendChat));
             Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
             Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
@@ -96,10 +96,10 @@ namespace MeTLLib.Providers.Connection
             Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
             Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
             Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(SendNewBubble));
-            Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
-            Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
-            Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
-            Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
+            //Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
+            //Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
+            //Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
+            //Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
         }
         public ResourceCache cache;
         public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache)
@@ -187,7 +187,7 @@ namespace MeTLLib.Providers.Connection
         }
         private Jid createJid(string username)
         {
-            return new Jid(username + "@" + metlServerAddress.uri.Host);
+            return new Jid(username + "@" + metlServerAddress.host);
         }
         private void SendWormMove(WormMove move)
         {
@@ -268,6 +268,7 @@ namespace MeTLLib.Providers.Connection
         {
             if (this.location == null)
                 this.location = location;
+            unregisterHandlers();
             conn.OnAuthError += OnAuthError;
             conn.OnLogin += OnLogin;
             conn.OnMessage += OnMessage;
@@ -393,7 +394,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void directCommand(string target, string message)
         {
-            conn.Send(new Message(new Jid(target + "@" + metlServerAddress.uri.Host), jid, MessageType.chat, message));
+            conn.Send(new Message(new Jid(target + "@" + metlServerAddress.host), jid, MessageType.chat, message));
         }
         private void onStart()
         {
@@ -459,7 +460,7 @@ namespace MeTLLib.Providers.Connection
         {
             stanza(stroke.slide.ToString(), new MeTLStanzas.Ink(stroke));
         }
-        private void SendScreenshotSubmission(TargettedSubmission submission)
+        public void SendScreenshotSubmission(TargettedSubmission submission)
         {
             stanza(Globals.location.activeConversation, new MeTLStanzas.ScreenshotSubmission(submission));
         }
@@ -471,7 +472,7 @@ namespace MeTLLib.Providers.Connection
         {
             stanza(image.slide.ToString(), new MeTLStanzas.Image(image));
         }
-        private void sendFileResource(TargettedFile file)
+        public void sendFileResource(TargettedFile file)
         {
             stanza(Globals.location.activeConversation, new MeTLStanzas.FileResource(file));
         }
@@ -496,7 +497,7 @@ namespace MeTLLib.Providers.Connection
             var quiz = new MeTLStanzas.Quiz(parameters);
             stanza(Globals.location.activeConversation, quiz);
         }
-        private void SendQuizAnswer(QuizAnswer parameters)
+        public void SendQuizAnswer(QuizAnswer parameters)
         {
             var quiz = new MeTLStanzas.QuizResponse(parameters);
             stanza(Globals.location.activeConversation, quiz);
@@ -585,7 +586,8 @@ namespace MeTLLib.Providers.Connection
         }
         public virtual void handleGoToConversation(string[] parts)
         {
-            Commands.JoinConversation.Execute(parts[1]);
+            JoinConversation(parts[1]);
+            //Commands.JoinConversation.Execute(parts[1]);
         }
         public virtual void handleGoToSlide(string[] parts)
         {
@@ -598,15 +600,18 @@ namespace MeTLLib.Providers.Connection
                     _conversationJid =>
                     {
                         Commands.UpdateConversationDetails.UnregisterCommand(joinedConversation);
-                        Commands.MoveTo.Execute(id);
+                        MoveTo(id);
+                        //Commands.MoveTo.Execute(id);
                         Commands.ReceiveMoveBoardToSlide.Execute(id);
                     });
                 Commands.UpdateConversationDetails.RegisterCommand(joinedConversation);
-                Commands.JoinConversation.Execute(desiredConversation);
+                JoinConversation(desiredConversation);
+                //Commands.JoinConversation.Execute(desiredConversation);
             }
             else
             {
-                Commands.MoveTo.Execute(id);
+                MoveTo(id);
+                //Commands.MoveTo.Execute(id);
             }
         }
         public virtual void handleWakeUp(string[] parts)

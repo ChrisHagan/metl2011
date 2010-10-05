@@ -14,46 +14,52 @@ using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
-    public abstract class IProviderMonitor
+    public interface IProviderMonitor
     {
-        public abstract void HealthCheck(Action healthyBehaviour);
-
+        void HealthCheck(Action healthyBehaviour);
     }
     public partial class ProductionProviderMonitor : IProviderMonitor
     {
         [Inject]
         public MeTLServerAddress metlServerAddress { private get; set; }
+        [Inject]
+        public ITimerFactory timerFactory { private get; set; }
+        private List<ServerStatus> internalServers;
         private List<ServerStatus> SERVERS
         {
             get
             {
-                return
-                    new List<ServerStatus>(){
+                if (internalServers == null)
+                    internalServers = 
+                        new List<ServerStatus>(){
                     new ServerStatus{
                         label="Resource", 
                         CheckStatus=(server)=>server.Ping(metlServerAddress.uri)},
                     new ServerStatus{
                         label="Messaging", 
                         CheckStatus=(server)=>{
-                            var conn= new XmppClientConnection(metlServerAddress.uri.Host);
+                            var conn= new XmppClientConnection(metlServerAddress.host);
                             conn.AutoAgents = false;
-                            conn.OnReadXml += (_sender,xml)=>{
-                                if(Application.Current != null)
-                                    Application.Current.Dispatcher.adoptAsync((Action)delegate
-                                    {
-                                        server.ok=true;
-                                    });
+                            conn.OnXmppConnectionStateChanged += (_sender, state) => 
+                            {
+                                if (state == XmppConnectionState.Connected)
+                                {    
+                                    server.ok = true;
+                                    Trace.TraceWarning("ProviderMonitor: "+server.label+" up"); 
+                                }
                             };
                             conn.Open("NOT_AUTHORIZED", "aCriminal");
                         }},
                     new ServerStatus{
                         label="Authentication", 
-                        CheckStatus=(server)=>server.Ping(new System.Uri("my.monash.edu.au"))}
-                };
+                        CheckStatus=(server)=>server.Ping(new System.Uri("http://my.monash.edu.au", UriKind.Absolute))}
+                    };
+                return internalServers;
             }
         }
-        public override void HealthCheck(Action healthyBehaviour)
+        public void HealthCheck(Action healthyBehaviour)
         {
+            if (healthyBehaviour == null) throw new ArgumentNullException("healthyBehaviour", "Argument cannot be null.");
             //var currentStack = new System.Diagnostics.StackTrace();
             try
             {
@@ -62,32 +68,30 @@ namespace MeTLLib.Providers.Connection
                 checkServers();
                 int attempts = 0;
                 const int MILIS_BETWEEN_TRIES = 1000;
-                var timer = new Timer(MILIS_BETWEEN_TRIES);
-                timer.Elapsed +=
-                (sender, args) =>
-                {
-                    var brokenServers = SERVERS.Where(s => !s.ok);
-                    attempts++;
-                    if (brokenServers.Count() == 0)
+                ITimer timer = null;
+                Action action = () =>
                     {
-                        timer.Stop();
-                        timer.Dispose();
-                        Application.Current.Dispatcher.adopt((Action)delegate
+                        var brokenServers = SERVERS.Where(s => !s.ok);
+                        attempts++;
+                        if (brokenServers.Count() == 0)
                         {
+                            timer.Stop();
+                            timer.Dispose();
                             healthyBehaviour();
-                        });
-                    }
-                    else
-                    {
-                        Commands.ServersDown.Execute(brokenServers);
-                    }
-                };
+                        }
+                        else
+                        {
+                            Commands.ServersDown.Execute(brokenServers);
+                        }
+                    };
+                timer = this.timerFactory.getTimer(MILIS_BETWEEN_TRIES, action);
                 timer.Start();
+                action.Invoke();
             }
             catch (Exception e)
             {
                 Trace.TraceError("Sorry, might not be able to throw the current callstack");
-                //  throw new Exception(currentStack.ToString(), e);
+                throw new Exception("ProviderMonitor unable to ensure connection to servers", e);
             }
         }
         private void checkServers()
@@ -105,12 +109,13 @@ namespace MeTLLib.Providers.Connection
         public void Ping(System.Uri uri)
         {
             var ping = new System.Net.NetworkInformation.Ping();
-            Trace.TraceInformation("pinged " + uri.ToString());
+            Trace.TraceInformation("pinged " + uri.Host);
             ping.PingCompleted += (_sender, pingArgs) =>
             {
                 if (pingArgs.Reply != null && pingArgs.Reply.Status == IPStatus.Success)
                 {
                     ok = true;
+                    Trace.TraceWarning("ProviderMonitor: " + label + " up (pinged in " + pingArgs.Reply.RoundtripTime + ")");
                 }
                 else
                 {
@@ -122,7 +127,49 @@ namespace MeTLLib.Providers.Connection
                     }
                 }
             };
-            ping.SendAsync(uri.ToString(), null);
+            ping.SendAsync(uri.Host, null);
+        }
+    }
+    public interface ITimerFactory
+    {
+        ITimer getTimer(int time, Action elapsed);
+    }
+    public class ProductionTimerFactory : ITimerFactory
+    {
+        public ITimer getTimer(int time, Action elapsed)
+        {
+            return new ProductionTimer(time, elapsed);
+        }
+    }
+    public interface ITimer
+    {
+        void Stop();
+        void Start();
+        void Dispose();
+    }
+    class ProductionTimer : ITimer
+    {
+        private Timer internalClock;
+        public ProductionTimer(int time, Action elapsed)
+        {
+            internalClock = new Timer(time);
+            internalClock.Elapsed += (sender, args) => elapsed();
+        }
+        public void Stop()
+        {
+            if (internalClock != null)
+            {
+                internalClock.Stop();
+            }
+        }
+        public void Start()
+        {
+            if (internalClock != null)
+                internalClock.Start();
+        }
+        public void Dispose()
+        {
+            internalClock.Dispose();
         }
     }
 }
