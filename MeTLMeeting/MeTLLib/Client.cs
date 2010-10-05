@@ -431,6 +431,7 @@ namespace MeTLLib
             wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
             //Commands.MoveTo.Execute(101);
             Trace.TraceInformation("set up jabberwire");
+            Commands.AllStaticCommandsAreRegistered();
         }
         private void receiveSubmission(TargettedSubmission ts)
         {
@@ -627,6 +628,7 @@ namespace MeTLLib
                 Trace.TraceWarning("Wire is disconnected at tryIfConnected");
                 return;
             }
+            Commands.UnregisterAllCommands();
             action();
         }
         private string decodeUri(Uri uri)
