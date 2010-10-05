@@ -516,7 +516,6 @@ namespace MeTLLib
         public delegate void LiveWindowAvailableEventHandler(object sender, LiveWindowAvailableEventArgs e);
         public delegate void BubbleAvailableEventHandler(object sender, BubbleAvailableEventArgs e);
         public delegate void DiscoAvailableEventHandler(object sender, DiscoAvailableEventArgs e);
-        public delegate void QuizAvailableEventHandler(object sender, QuizAvailableEventArgs e);
         public delegate void QuizAnswerAvailableEventHandler(object sender, QuizAnswerAvailableEventArgs e);
         public delegate void QuizQuestionAvailableEventHandler(object sender, QuizQuestionAvailableEventArgs e);
         public delegate void ChatAvailableEventHandler(object sender, ChatAvailableEventArgs e);
@@ -538,7 +537,6 @@ namespace MeTLLib
         public class LiveWindowAvailableEventArgs : EventArgs { public LiveWindowSetup livewindow;}
         public class BubbleAvailableEventArgs : EventArgs { public TargettedBubbleContext bubble;}
         public class DiscoAvailableEventArgs : EventArgs { public string disco;}
-        public class QuizAvailableEventArgs : EventArgs { public QuizContainer quiz;}
         public class QuizAnswerAvailableEventArgs : EventArgs { public QuizAnswer quizAnswer;}
         public class QuizQuestionAvailableEventArgs : EventArgs { public QuizQuestion quizQuestion;}
         public class ChatAvailableEventArgs : EventArgs { public string chat;}
@@ -562,7 +560,6 @@ namespace MeTLLib
         public event LiveWindowAvailableEventHandler LiveWindowAvailable;
         public event BubbleAvailableEventHandler BubbleAvailable;
         public event DiscoAvailableEventHandler DiscoAvailable;
-        public event QuizAvailableEventHandler QuizAvailable;
         public event QuizQuestionAvailableEventHandler QuizQuestionAvailable;
         public event QuizAnswerAvailableEventHandler QuizAnswerAvailable;
         public event ChatAvailableEventHandler ChatAvailable;
@@ -602,8 +599,6 @@ namespace MeTLLib
         { BubbleAvailable(this, e); }
         protected virtual void onDiscoAvailable(DiscoAvailableEventArgs e)
         { DiscoAvailable(this, e); }
-        protected virtual void onQuizAvailable(QuizAvailableEventArgs e)
-        { QuizAvailable(this, e); }
         protected virtual void onQuizQuestionAvailable(QuizQuestionAvailableEventArgs e)
         { QuizQuestionAvailable(this, e); }
         protected virtual void onQuizAnswerAvailable(QuizAnswerAvailableEventArgs e)
