@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseModule.cs" />
+    <Compile Include="ReceiveEvents.cs" />
     <Compile Include="ClientFactory.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Commands\CommandParameterProvider.cs" />

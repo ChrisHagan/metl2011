@@ -30,8 +30,8 @@ namespace LibTester
         {
             InitializeComponent();
             client = ClientFactory.Connection();
-            client.StrokeAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Strokes.Add(args.stroke.stroke)); };
-            client.DirtyStrokeAvailable += (sender, args) =>
+            client.events.StrokeAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Strokes.Add(args.stroke.stroke)); };
+            client.events.DirtyStrokeAvailable += (sender, args) =>
             {
                 Dispatcher.adoptAsync(() =>
                 {
@@ -47,8 +47,8 @@ namespace LibTester
                     ;
                 });
             };
-            client.TextBoxAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Children.Add(args.textBox.box)); };
-            client.DirtyTextBoxAvailable += (sender, args) =>
+            client.events.TextBoxAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Children.Add(args.textBox.box)); };
+            client.events.DirtyTextBoxAvailable += (sender, args) =>
                 {
                     Dispatcher.adoptAsync(() =>
                     {
@@ -61,8 +61,8 @@ namespace LibTester
                         ;
                     });
                 };
-            client.ImageAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Children.Add(args.image.image)); };
-            client.DirtyImageAvailable += (sender, args) =>
+            client.events.ImageAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Children.Add(args.image.image)); };
+            client.events.DirtyImageAvailable += (sender, args) =>
             {
                 Dispatcher.adoptAsync(() =>
                 {
@@ -75,7 +75,7 @@ namespace LibTester
                     ;
                 });
             };
-            client.VideoAvailable += (sender, args) =>
+            client.events.VideoAvailable += (sender, args) =>
             {
                 Dispatcher.adoptAsync(() =>
                 {
@@ -88,7 +88,7 @@ namespace LibTester
                     inkCanvas.Children.Add(me);
                 });
             };
-            client.PreParserAvailable += (sender, args) =>
+            client.events.PreParserAvailable += (sender, args) =>
             {
                 Dispatcher.adoptAsync(() =>
                     {

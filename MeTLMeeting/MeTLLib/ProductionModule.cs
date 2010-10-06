@@ -20,6 +20,7 @@ namespace MeTLLib
             Bind<JabberWireFactory>().ToSelf().InSingletonScope();
             Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
             Bind<ITimerFactory>().To<ProductionTimerFactory>().InSingletonScope();
+            Bind<IReceiveEvents>().To<ProductionReceiveEvents>().InSingletonScope();
         }
     }
 }

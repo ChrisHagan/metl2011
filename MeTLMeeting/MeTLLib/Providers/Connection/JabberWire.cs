@@ -25,6 +25,7 @@ namespace MeTLLib.Providers.Connection
         [Inject] public CachedHistoryProvider cachedHistoryProvider{private get;set;} 
         [Inject] public MeTLServerAddress metlServerAddress{private get;set;}
         [Inject] public ResourceCache cache { private get;set; }
+        [Inject] public IReceiveEvents receiveEvents { private get; set; }
         public JabberWire wire() {
             if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a wire");
             return new JabberWire(
@@ -33,7 +34,7 @@ namespace MeTLLib.Providers.Connection
                 historyProvider,
                 cachedHistoryProvider,
                 metlServerAddress,
-                cache);
+                cache, receiveEvents);
         }
         public PreParser preParser(int room){
             if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a preParser");
@@ -44,7 +45,7 @@ namespace MeTLLib.Providers.Connection
                 historyProvider,
                 cachedHistoryProvider,
                 metlServerAddress,
-                cache);
+                cache, receiveEvents);
         }
         public PreParser create<T>(int room) where T:PreParser{
             return preParser(room);
@@ -63,6 +64,7 @@ namespace MeTLLib.Providers.Connection
         protected const string PONG = "/PONG";
         public Credentials credentials;
         public Location location;
+        private IReceiveEvents receiveEvents;
         private static string privacy = "PUBLIC";
         protected XmppClientConnection conn;
         private Jid jid;
@@ -83,26 +85,26 @@ namespace MeTLLib.Providers.Connection
             //Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
             //Commands.SendFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(sendFileResource));
             //Commands.SendDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyVideo));
-            Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoShape));
-            Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoShape));
+            //Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoShape));
+            //Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoShape));
             //Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
             //Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
-            Commands.SendChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendChat));
-            Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
-            Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
+            //Commands.SendChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendChat));
+            //Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
+            //Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
             Commands.SendWormMove.RegisterCommand(new DelegateCommand<WormMove>(SendWormMove));
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
             Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
             Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
             Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
-            Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(SendNewBubble));
+            //Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(SendNewBubble));
             //Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
             //Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             //Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
             //Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
         }
         public ResourceCache cache;
-        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache)
+        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents events)
         {
             this.credentials = credentials;
             this.conversationDetailsProvider = conversationDetailsProvider;
@@ -110,6 +112,7 @@ namespace MeTLLib.Providers.Connection
             this.cachedHistoryProvider = cachedHistoryProvider;
             this.metlServerAddress = metlServerAddress;
             this.cache = cache;
+            this.receiveEvents = events;
             setUpWire();
             registerCommands();
         }
@@ -429,12 +432,14 @@ namespace MeTLLib.Providers.Connection
             historyProvider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                finishedParser => receiveEvents.receivePreParser(finishedParser), 
+            //Commands.PreParserAvailable.Execute(finishedParser),
                 location.currentSlide.ToString());
             historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                finishedParser => receiveEvents.receivePreParser(finishedParser),
+                    //Commands.PreParserAvailable.Execute(finishedParser),
                 credentials.name,
                 location.currentSlide.ToString());
         }
@@ -447,12 +452,14 @@ namespace MeTLLib.Providers.Connection
             historyProvider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                finishedParser => receiveEvents.receivePreParser(finishedParser),
+                    //Commands.PreParserAvailable.Execute(finishedParser),
                 location.currentSlide.ToString());
             historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                finishedParser => receiveEvents.receivePreParser(finishedParser),
+                    //Commands.PreParserAvailable.Execute(finishedParser),
                 credentials.name,
                 location.currentSlide.ToString());
         }
@@ -689,74 +696,92 @@ namespace MeTLLib.Providers.Connection
         }
         public virtual void actOnFileResource(MeTLStanzas.FileResource resource)
         {
-            Commands.ReceiveFileResource.Execute(resource.fileResource);
+            receiveEvents.receiveFileResource(resource.fileResource);
+            //Commands.ReceiveFileResource.Execute(resource.fileResource);
         }
         public virtual void actOnScreenshotSubmission(TargettedSubmission submission)
         {
-            Commands.ReceiveScreenshotSubmission.Execute(submission);
+            receiveEvents.receiveSubmission(submission);
+            //Commands.ReceiveScreenshotSubmission.Execute(submission);
         }
         public virtual void actOnVideoReceived(TargettedVideo video)
         {
-            Commands.ReceiveVideo.Execute(video);
+            receiveEvents.receiveVideo(video);
+            //Commands.ReceiveVideo.Execute(video);
         }
         public virtual void actOnBubbleReceived(TargettedBubbleContext bubble)
         {
-            Commands.ReceiveNewBubble.Execute(bubble);
+            receiveEvents.receiveBubble(bubble);
+            //Commands.ReceiveNewBubble.Execute(bubble);
         }
         public virtual void actOnDirtyAutoshapeReceived(MeTLStanzas.DirtyAutoshape dirtyAutoShape)
         {
-            Commands.ReceiveDirtyAutoShape.Execute(dirtyAutoShape.element);
+            receiveEvents.receiveDirtyAutoShape(dirtyAutoShape.element);
+            //Commands.ReceiveDirtyAutoShape.Execute(dirtyAutoShape.element);
         }
         public virtual void actOnDirtyVideoReceived(MeTLStanzas.DirtyVideo dirtyVideo)
         {
-            Commands.ReceiveDirtyVideo.Execute(dirtyVideo.element);
+            receiveEvents.receiveDirtyVideo(dirtyVideo.element);
+            //Commands.ReceiveDirtyVideo.Execute(dirtyVideo.element);
         }
         public virtual void actOnDirtyImageReceived(MeTLStanzas.DirtyImage dirtyImage)
         {
-            Commands.ReceiveDirtyImage.Execute(dirtyImage.element);
+            receiveEvents.receiveDirtyImage(dirtyImage.element);
+            //Commands.ReceiveDirtyImage.Execute(dirtyImage.element);
         }
         public virtual void actOnDirtyStrokeReceived(MeTLStanzas.DirtyInk element)
         {
-            Commands.ReceiveDirtyStrokes.Execute(element.element);
+            receiveEvents.receiveDirtyStroke(element.element);
+        //    Commands.ReceiveDirtyStrokes.Execute(element.element);
         }
         public virtual void actOnDirtyTextReceived(MeTLStanzas.DirtyText dirtyText)
         {
-            Commands.ReceiveDirtyText.Execute(dirtyText.element);
+            receiveEvents.receiveDirtyTextBox(dirtyText.element);
+            //Commands.ReceiveDirtyText.Execute(dirtyText.element);
         }
         public virtual void actOnImageReceived(TargettedImage image)
         {
-            Commands.ReceiveImage.Execute(new[] { image });
+            receiveEvents.receiveImage(image);
+            //Commands.ReceiveImage.Execute(new[] { image });
         }
         public virtual void actOnAutoShapeReceived(TargettedAutoShape autoshape)
         {
-            Commands.ReceiveAutoShape.Execute(autoshape);
+            receiveEvents.receiveAutoShape(autoshape);
+            //Commands.ReceiveAutoShape.Execute(autoshape);
         }
         public virtual void actOnQuizReceived(QuizQuestion quiz)
         {
-            Commands.ReceiveQuiz.Execute(quiz);
+            receiveEvents.receiveQuiz(quiz);
+            //Commands.ReceiveQuiz.Execute(quiz);
         }
         public virtual void actOnQuizAnswerReceived(QuizAnswer answer)
         {
-            Commands.ReceiveQuizAnswer.Execute(answer);
+            receiveEvents.receiveQuizAnswer(answer);
+            //Commands.ReceiveQuizAnswer.Execute(answer);
         }
         public virtual void actOnStrokeReceived(TargettedStroke stroke)
         {
-            Commands.ReceiveStroke.Execute(stroke);
+            receiveEvents.receiveStroke(stroke);
+            //Commands.ReceiveStroke.Execute(stroke);
         }
         public virtual void actOnTextReceived(TargettedTextBox box)
         {
             if (box.target == "chat")
-                Commands.ReceiveChatMessage.Execute(box);
+                receiveEvents.receiveChat(box);
+                //Commands.ReceiveChatMessage.Execute(box);
             else
-                Commands.ReceiveTextBox.Execute(box);
+                receiveEvents.receiveTextBox(box);
+            //Commands.ReceiveTextBox.Execute(box);
         }
         public virtual void actOnLiveWindowReceived(LiveWindowSetup window)
         {
-            Commands.ReceiveLiveWindow.Execute(window);
+            receiveEvents.receiveLiveWindow(window);
+            //Commands.ReceiveLiveWindow.Execute(window);
         }
         public virtual void actOnDirtyLiveWindowReceived(TargettedDirtyElement element)
         {
-            Commands.ReceiveDirtyLiveWindow.Execute(element);
+            receiveEvents.receiveDirtyLiveWindow(element);
+            //Commands.ReceiveDirtyLiveWindow.Execute(element);
         }
         public void SneakInto(string room)
         {
@@ -769,13 +794,15 @@ namespace MeTLLib.Providers.Connection
                 finishedParser =>
                 {
                     Trace.TraceInformation(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
-                    Commands.PreParserAvailable.Execute(finishedParser);
+                    receiveEvents.receivePreParser(finishedParser);
+                    //Commands.PreParserAvailable.Execute(finishedParser);
                 },
                 room);
             historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                finishedParser => receiveEvents.receivePreParser(finishedParser),
+                    //Commands.PreParserAvailable.Execute(finishedParser),
                 credentials.name,
                 room);
         }

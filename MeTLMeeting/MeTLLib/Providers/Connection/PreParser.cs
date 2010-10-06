@@ -23,11 +23,13 @@ namespace MeTLLib.Providers.Connection
         public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
-        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache) : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache)
+        public IReceiveEvents receiveEvents;
+        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents) : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents)
         {
             if (this.location == null)
                 this.location = new Location();
             this.location.currentSlide = room;
+            this.receiveEvents = receiveEvents;
         }
         public InkCanvas ToVisual()
         {
@@ -74,24 +76,32 @@ namespace MeTLLib.Providers.Connection
         }
         public void Regurgitate()
         {
-            Commands.ReceiveStrokes.Execute(ink);
+            receiveEvents.receiveStrokes(ink.ToArray());
+            //Commands.ReceiveStrokes.Execute(ink);
             foreach (var autoshape in autoshapes.Values)
-                Commands.ReceiveAutoShape.Execute(autoshape);
-            if(images.Values.Count > 0)
-                Commands.ReceiveImage.Execute(images.Values);
+                receiveEvents.receiveAutoShape(autoshape);
+                //Commands.ReceiveAutoShape.Execute(autoshape);
+            if (images.Values.Count > 0)
+                receiveEvents.receiveImages(images.Values.ToArray());
+                //Commands.ReceiveImage.Execute(images.Values);
             foreach (var box in text.Values)
-                Commands.ReceiveTextBox.Execute(box);
-            foreach(var quiz in quizzes)
-                Commands.ReceiveQuiz.Execute(quiz);
-            foreach(var answer in quizAnswers)
-                Commands.ReceiveQuizAnswer.Execute(answer);
+                receiveEvents.receiveTextBox(box);
+                //Commands.ReceiveTextBox.Execute(box);
+            foreach (var quiz in quizzes)
+                receiveEvents.receiveQuiz(quiz);
+                //Commands.ReceiveQuiz.Execute(quiz);
+            foreach (var answer in quizAnswers)
+                receiveEvents.receiveQuizAnswer(answer);
+                //Commands.ReceiveQuizAnswer.Execute(answer);
             foreach (var window in liveWindows.Values)
-                Commands.ReceiveLiveWindow.Execute(window);
-            //Videos currently disabled.
+                receiveEvents.receiveLiveWindow(window);
+                //Commands.ReceiveLiveWindow.Execute(window);
             foreach (var video in videos.Values)
-                Commands.ReceiveVideo.Execute(video);
-            foreach(var file in files)
-                Commands.ReceiveFileResource.Execute(file);
+                receiveEvents.receiveVideo(video);
+                //Commands.ReceiveVideo.Execute(video);
+            foreach (var file in files)
+                receiveEvents.receiveFileResource(file);
+                //Commands.ReceiveFileResource.Execute(file);
             Commands.AllContentSent.Execute(location.currentSlide);
             Trace.TraceInformation(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
