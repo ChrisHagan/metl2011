@@ -306,6 +306,14 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
+        public void JoinConversation(string conversation)
+        {
+            Action work = delegate
+            {
+                wire.MoveTo(conversationDetailsProvider.DetailsOf(conversation).Slides[0].id);
+            };
+            tryIfConnected(work);
+        }
         public void SneakInto(string room)
         {
             Action work = delegate

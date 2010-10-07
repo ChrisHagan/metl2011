@@ -25,7 +25,21 @@ namespace LibTester
 {
     public partial class MainWindow : Window
     {
+        private List<ConversationDetails> ConversationListingSource;
         private ClientConnection client;
+        public static SlidesConverter slideConverter = new SlidesConverter();
+        public class SlidesConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                return (List<Slide>)value;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -118,23 +132,49 @@ namespace LibTester
         private void attemptToAuthenticate(object sender, RoutedEventArgs e)
         {
             client.Connect(username.Text, password.Password);
+            ConversationListingSource = getAllConversations();
+            ConversationListing.ItemsSource = ConversationListingSource;
         }
         private void getConversations(object sender, RoutedEventArgs e)
         {
+            var conversationList = "";
+            foreach (ConversationDetails details in getAllConversations())
+                conversationList += details.Jid + ":" + details.Title + "\r\n";
+            MessageBox.Show(conversationList);
+        }
+        private List<ConversationDetails> getAllConversations()
+        {
             if (client != null && client.isConnected)
             {
-                var conversationList = "";
-                foreach (ConversationDetails details in client.AvailableConversations)
-                    conversationList += details.Jid + ":" + details.Title + "\r\n";
-                MessageBox.Show(conversationList);
+                return client.AvailableConversations;
             }
+            else return null;
         }
         private void moveTo(object sender, RoutedEventArgs e)
+        {
+            doMoveTo(Int32.Parse(location.Text));
+        }
+        private void joinConversationByButton(object sender, RoutedEventArgs e)
+        {
+            doJoinConversation(((Button)sender).Tag.ToString());
+        }
+        private void moveToByButton(object sender, RoutedEventArgs e)
+        {
+            doMoveTo(Int32.Parse(((Button)sender).Tag.ToString()));
+        }
+        private void doMoveTo(int where)
         {
             if (client == null) return;
             inkCanvas.Children.Clear();
             inkCanvas.Strokes.Clear();
-            client.MoveTo(Int32.Parse(location.Text));
+            client.MoveTo(where);
+        }
+        private void doJoinConversation(string where)
+        {
+            if (client == null) return;
+            inkCanvas.Children.Clear();
+            inkCanvas.Strokes.Clear();
+            client.JoinConversation(where);
         }
         private void getHistory(object sender, RoutedEventArgs e)
         {
@@ -214,7 +254,7 @@ namespace LibTester
                     internalImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(ofdg.FileName);
                     Canvas.SetLeft(internalImage, 100);
                     Canvas.SetTop(internalImage, 100);
-                    client.UploadAndSendImage(new MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation 
+                    client.UploadAndSendImage(new MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation
                     {
                         privacy = "public",
                         author = client.username,
@@ -237,7 +277,7 @@ namespace LibTester
                 if (!String.IsNullOrEmpty(ofdg.FileName))
                 {
                     var internalVideo = new Video();
-                    internalVideo.VideoSource = new Uri("file://"+ofdg.FileName);
+                    internalVideo.VideoSource = new Uri("file://" + ofdg.FileName);
                     internalVideo.VideoHeight = 320;
                     internalVideo.VideoWidth = 240;
                     internalVideo.Height = 480;
