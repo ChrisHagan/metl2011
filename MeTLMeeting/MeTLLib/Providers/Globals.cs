@@ -23,7 +23,7 @@ namespace MeTLLib.Providers
             {
                 try
                 {
-                    var conversationDetails = Globals.conversationDetails;
+                    if (conversationDetails == null) return null;
                     return new Location
                     {
                         activeConversation = conversationDetails.Jid,
@@ -42,30 +42,35 @@ namespace MeTLLib.Providers
         {
             get
             {
-                return ((ConversationDetails)Commands.UpdateConversationDetails.lastValue()).Slides;
+                if (conversationDetails == null) return new List<Slide>();
+                return conversationDetails.Slides; 
+                //((ConversationDetails)Commands.UpdateConversationDetails.lastValue()).Slides;
             }
         }
         public static ConversationDetails conversationDetails
         {
-            get
-            {
-                return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
-            }
+            get;set;
+            /*{
+               return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
+            }*/
         }
         public static Credentials credentials
         {
-            get
-            {
+            get; set;
+            /*{
                 var credentials = Commands.SetIdentity.lastValue();
                 return (Credentials)credentials;
-            }
+            }*/
         }
         public static List<AuthorizedGroup> authorizedGroups
         {
             get
             {
-                var credentials = Commands.SetIdentity.lastValue();
+                if (credentials == null) return new List<AuthorizedGroup>();
+                return credentials.authorizedGroups;
+                /*var credentials = Commands.SetIdentity.lastValue();
                 return ((Credentials)credentials).authorizedGroups;
+            */
             }
         }
         /*public static bool synched
@@ -91,11 +96,11 @@ namespace MeTLLib.Providers
         }
         public static int slide
         {
-            get
-            {
-                return 0;
+            get;set;
+  //          {
+//                return 0;
                 //(int)Commands.MoveTo.lastValue();
-            }
+    //        }
         }
         public static string me
         {

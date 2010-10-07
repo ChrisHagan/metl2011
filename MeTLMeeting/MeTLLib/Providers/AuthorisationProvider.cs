@@ -14,10 +14,12 @@ namespace MeTLLib.Providers
     public class AuthorisationProvider : HttpResourceProvider
     {
         private MeTLServerAddress server;
-        public AuthorisationProvider(IWebClientFactory factory, MeTLServerAddress server) : base(factory) {
+        public AuthorisationProvider(IWebClientFactory factory, MeTLServerAddress server)
+            : base(factory)
+        {
             this.server = server;
         }
-        public List<AuthorizedGroup> getEligibleGroups( string AuthcateName, string AuthcatePassword) 
+        public List<AuthorizedGroup> getEligibleGroups(string AuthcateName, string AuthcatePassword)
         {
             //if (AuthcateName.StartsWith(BackDoor.USERNAME_PREFIX)) 
             //    return new List<JabberWire.AuthorizedGroup> { new JabberWire.AuthorizedGroup("Artificial person", ""),new JabberWire.AuthorizedGroup("Unrestricted", ""), new JabberWire.AuthorizedGroup(AuthcateName, "")  };
@@ -25,14 +27,14 @@ namespace MeTLLib.Providers
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
             string sXML = insecureGetString(new System.Uri(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, server.host)));
             var doc = new XmlDocument();
-                doc.LoadXml(sXML);
+            doc.LoadXml(sXML);
             if (doc.GetElementsByTagName("error").Count == 0)
             {
                 groups.Add(new AuthorizedGroup("Unrestricted", ""));
                 foreach (XmlElement group in doc.GetElementsByTagName("eligibleGroup"))
                 {
                     groups.Add(new AuthorizedGroup(
-                        group.InnerText.Replace("\"",""),
+                        group.InnerText.Replace("\"", ""),
                         group.Attributes["type"].Value));
                 }
                 groups.Add(new AuthorizedGroup(
@@ -41,7 +43,7 @@ namespace MeTLLib.Providers
             }
             else
                 foreach (XmlElement error in doc.GetElementsByTagName("error"))
-                    Trace.TraceError("XmlError node:"+error.InnerText);
+                    Trace.TraceError("XmlError node:" + error.InnerText);
             return groups;
         }
         public bool isAuthenticatedAgainstLDAP(string username, string password)
@@ -87,7 +89,7 @@ namespace MeTLLib.Providers
                 return false;
             }
         }
-        public void attemptAuthentication(string username, string password)
+        public Credentials attemptAuthentication(string username, string password)
         {
             string AuthcateUsername = "";
             if (username.Contains("_"))
@@ -111,16 +113,19 @@ namespace MeTLLib.Providers
             if (authenticateAgainstFailoverSystem(AuthcateUsername, AuthcatePassword) || isBackdoorUser(AuthcateUsername))
             {
                 var eligibleGroups = getEligibleGroups(AuthcateUsername, AuthcatePassword);
-                Commands.SetIdentity.Execute(new Credentials
-                {
-                    name = AuthcateUsername,
-                    password = AuthcatePassword,
-                    authorizedGroups = eligibleGroups
-                });
+                var credentials = new Credentials
+                 {
+                     name = AuthcateUsername,
+                     password = AuthcatePassword,
+                     authorizedGroups = eligibleGroups
+                 };
+                Globals.credentials = credentials;
+                return credentials;
             }
             else
             {
                 Trace.TraceError("Failed to Login.");
+                return null;
             }
         }
         private bool isBackdoorUser(string user)

@@ -25,7 +25,7 @@ namespace MeTLLib.Providers.Structure
         public FileConversationDetailsProvider(IWebClientFactory factory, ResourceUploader uploader) : base(factory)
         {
             resourceUploader = uploader;
-            Commands.ReceiveDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(ReceiveDirtyConversationDetails));
+            //Commands.ReceiveDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(ReceiveDirtyConversationDetails));
             ListConversations();
         }
         private readonly int HTTP_PORT = 1188;
@@ -125,7 +125,7 @@ namespace MeTLLib.Providers.Structure
                 return new ConversationDetails();
             }
         }
-        private void ReceiveDirtyConversationDetails(string jid)
+        public void ReceiveDirtyConversationDetails(string jid)
         {
             var newDetails = DetailsOf(jid);
             if (Globals.authorizedGroups.Select(g => g.groupKey).Contains("Superuser"))
@@ -179,6 +179,7 @@ namespace MeTLLib.Providers.Structure
                     conversationsCache = RestrictToAccessible(conversationsCache, myGroups);
                     return conversationsCache;
                 }
+                if (server == null) return new List<ConversationDetails>();
                 var data = secureGetData(new System.Uri(string.Format("https://{0}:1188/Structure/all.zip", server.host)));
                 using (var zip = ZipFile.Read(data))
                 {

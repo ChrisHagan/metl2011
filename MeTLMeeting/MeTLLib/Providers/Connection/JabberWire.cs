@@ -17,26 +17,36 @@ using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
-    public class JabberWireFactory{
+    public class JabberWireFactory
+    {
         public Credentials credentials { private get; set; }
-        [Inject] public ConfigurationProvider configurationProvider { private get; set; }
-        [Inject] public IConversationDetailsProvider conversationDetailsProvider { private get; set; } 
-        [Inject] public HttpHistoryProvider historyProvider{private get;set;} 
-        [Inject] public CachedHistoryProvider cachedHistoryProvider{private get;set;} 
-        [Inject] public MeTLServerAddress metlServerAddress{private get;set;}
-        [Inject] public ResourceCache cache { private get;set; }
-        [Inject] public IReceiveEvents receiveEvents { private get; set; }
-        public JabberWire wire() {
+        [Inject]
+        public ConfigurationProvider configurationProvider { private get; set; }
+        [Inject]
+        public IConversationDetailsProvider conversationDetailsProvider { private get; set; }
+        [Inject]
+        public HttpHistoryProvider historyProvider { private get; set; }
+        [Inject]
+        public CachedHistoryProvider cachedHistoryProvider { private get; set; }
+        [Inject]
+        public MeTLServerAddress metlServerAddress { private get; set; }
+        [Inject]
+        public ResourceCache cache { private get; set; }
+        [Inject]
+        public IReceiveEvents receiveEvents { private get; set; }
+        public JabberWire wire()
+        {
             if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a wire");
             return new JabberWire(
-                credentials, 
+                credentials,
                 conversationDetailsProvider,
                 historyProvider,
                 cachedHistoryProvider,
                 metlServerAddress,
                 cache, receiveEvents);
         }
-        public PreParser preParser(int room){
+        public PreParser preParser(int room)
+        {
             if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a preParser");
             return new PreParser(
                 credentials,
@@ -47,7 +57,8 @@ namespace MeTLLib.Providers.Connection
                 metlServerAddress,
                 cache, receiveEvents);
         }
-        public PreParser create<T>(int room) where T:PreParser{
+        public PreParser create<T>(int room) where T : PreParser
+        {
             return preParser(room);
         }
     }
@@ -161,17 +172,17 @@ namespace MeTLLib.Providers.Connection
                     }
                     return null;
                 }
-                catch (Exception ex) 
-                { 
-                    return null; 
+                catch (Exception ex)
+                {
+                    return null;
                 }
             }
         }
-        public void getCurrentClasses(object _unused)
-        {
-            Thread newThread = new Thread(new ThreadStart(() => { if (CurrentClasses != null)Commands.receiveCurrentClasses.Execute(CurrentClasses); }));
-            newThread.Start();
-        }
+        //public void getCurrentClasses(object _unused)
+        //{
+        //    Thread newThread = new Thread(new ThreadStart(() => { if (CurrentClasses != null)Commands.receiveCurrentClasses.Execute(CurrentClasses); }));
+        //    newThread.Start();
+        //}
         private void SendNewBubble(TargettedBubbleContext selection)
         {
             stanza(new MeTLStanzas.Bubble(selection));
@@ -326,8 +337,24 @@ namespace MeTLLib.Providers.Connection
                 Reset("Reset exception handling (recursive)");
             }
         }
+        private void leaveRooms()
+        {
+            var rooms = new[]{
+                metlServerAddress.global,
+                new Jid(credentials.name, metlServerAddress.muc, jid.Resource),
+                new Jid(location.activeConversation,metlServerAddress.muc,jid.Resource),
+                new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
+                new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
+            };
+            foreach (var room in rooms)
+            {
+                var alias = credentials.name + conn.Resource;
+                new MucManager(conn).LeaveRoom(room, alias);
+            }
+        }
         private void joinRooms()
         {
+            leaveRooms();
             var rooms = new[]
             {
                 metlServerAddress.global,
@@ -401,7 +428,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void onStart()
         {
-            Commands.UpdateWormInterval.Execute(TimeSpan.FromMilliseconds(15000));
+            //Commands.UpdateWormInterval.Execute(TimeSpan.FromMilliseconds(15000));
         }
         private void onProgress(int upTo, int outOf)
         {
@@ -432,14 +459,14 @@ namespace MeTLLib.Providers.Connection
             historyProvider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser => receiveEvents.receivePreParser(finishedParser), 
-            //Commands.PreParserAvailable.Execute(finishedParser),
+                finishedParser => receiveEvents.receivePreParser(finishedParser),
+                //Commands.PreParserAvailable.Execute(finishedParser),
                 location.currentSlide.ToString());
             historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
-                    //Commands.PreParserAvailable.Execute(finishedParser),
+                //Commands.PreParserAvailable.Execute(finishedParser),
                 credentials.name,
                 location.currentSlide.ToString());
         }
@@ -447,19 +474,24 @@ namespace MeTLLib.Providers.Connection
         {
             new MucManager(conn).LeaveRoom(
                 new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
+            location.activeConversation = (Slide.conversationFor(where)).ToString();
+            var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
+            location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
             location.currentSlide = where;
+            Globals.conversationDetails = currentDetails;
+            Globals.slide = where;
             joinRooms();
             historyProvider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
-                    //Commands.PreParserAvailable.Execute(finishedParser),
+                //Commands.PreParserAvailable.Execute(finishedParser),
                 location.currentSlide.ToString());
             historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
-                    //Commands.PreParserAvailable.Execute(finishedParser),
+                //Commands.PreParserAvailable.Execute(finishedParser),
                 credentials.name,
                 location.currentSlide.ToString());
         }
@@ -602,7 +634,8 @@ namespace MeTLLib.Providers.Connection
             var desiredConversation = Slide.conversationFor(id).ToString();
             if (desiredConversation != location.activeConversation)
             {
-                DelegateCommand<ConversationDetails> joinedConversation = null;
+                MoveTo(id);
+                /*DelegateCommand<ConversationDetails> joinedConversation = null;
                 joinedConversation = new DelegateCommand<ConversationDetails>(
                     _conversationJid =>
                     {
@@ -612,7 +645,7 @@ namespace MeTLLib.Providers.Connection
                         Commands.ReceiveMoveBoardToSlide.Execute(id);
                     });
                 Commands.UpdateConversationDetails.RegisterCommand(joinedConversation);
-                JoinConversation(desiredConversation);
+                JoinConversation(desiredConversation);*/
                 //Commands.JoinConversation.Execute(desiredConversation);
             }
             else
@@ -655,7 +688,7 @@ namespace MeTLLib.Providers.Connection
                 Console.WriteLine(e.Message);
             }
             if (Application.Current == null) return;
-                ActOnUntypedMessage(message);
+            ActOnUntypedMessage(message);
         }
         public void ActOnUntypedMessage(Element message)
         {
@@ -666,7 +699,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
                 actOnTextReceived(box.Box);
             foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
-                actOnImageReceived(image.adoptCache(cache,metlServerAddress).Img);
+                actOnImageReceived(image.adoptCache(cache, metlServerAddress).Img);
             foreach (var autoshape in message.SelectElements<MeTLStanzas.AutoShape>(true))
                 actOnAutoShapeReceived(autoshape.autoshape);
             foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
@@ -688,7 +721,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
                 actOnBubbleReceived(bubble.context);
             foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
-                actOnVideoReceived(video.adoptCache(cache,metlServerAddress).Vid);
+                actOnVideoReceived(video.adoptCache(cache, metlServerAddress).Vid);
             foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
                 actOnDirtyVideoReceived(dirtyVideo);
             foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))
@@ -732,7 +765,7 @@ namespace MeTLLib.Providers.Connection
         public virtual void actOnDirtyStrokeReceived(MeTLStanzas.DirtyInk element)
         {
             receiveEvents.receiveDirtyStroke(element.element);
-        //    Commands.ReceiveDirtyStrokes.Execute(element.element);
+            //    Commands.ReceiveDirtyStrokes.Execute(element.element);
         }
         public virtual void actOnDirtyTextReceived(MeTLStanzas.DirtyText dirtyText)
         {
@@ -768,7 +801,7 @@ namespace MeTLLib.Providers.Connection
         {
             if (box.target == "chat")
                 receiveEvents.receiveChat(box);
-                //Commands.ReceiveChatMessage.Execute(box);
+            //Commands.ReceiveChatMessage.Execute(box);
             else
                 receiveEvents.receiveTextBox(box);
             //Commands.ReceiveTextBox.Execute(box);
@@ -802,7 +835,7 @@ namespace MeTLLib.Providers.Connection
                 onStart,
                 onProgress,
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
-                    //Commands.PreParserAvailable.Execute(finishedParser),
+                //Commands.PreParserAvailable.Execute(finishedParser),
                 credentials.name,
                 room);
         }
@@ -821,8 +854,9 @@ namespace MeTLLib.Providers.Connection
                     muc.LeaveRoom(new Jid(slide + "@" + metlServerAddress.muc), credentials.name);
             }
             location.activeConversation = room;
+            var cd = conversationDetailsProvider.DetailsOf(room);
+            location.availableSlides = cd.Slides.Select(s => s.id).ToList();
             joinRooms();
-
         }
         private void handleSyncMoveReceived(string[] parts)
         {
@@ -832,11 +866,13 @@ namespace MeTLLib.Providers.Connection
         private void handleConversationDetailsUpdated(string[] parts)
         {
             var jid = parts[1];
-            Commands.ReceiveDirtyConversationDetails.Execute(jid);
+            conversationDetailsProvider.ReceiveDirtyConversationDetails(jid);
+            //Commands.ReceiveDirtyConversationDetails.Execute(jid);
             var newDetails = conversationDetailsProvider.DetailsOf(jid);
-            Commands.UpdateForeignConversationDetails.Execute(newDetails);
+            //Commands.UpdateForeignConversationDetails.Execute(newDetails);
             if (isCurrentConversation(jid))
-                Commands.UpdateConversationDetails.Execute(newDetails);
+                receiveEvents.receiveConversationDetails(newDetails);
+            //    Commands.UpdateConversationDetails.Execute(newDetails);
         }
         private bool isCurrentConversation(string jid)
         {
