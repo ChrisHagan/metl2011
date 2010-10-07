@@ -27,5 +27,17 @@ namespace MeTLLibTests
             t.Join();
             return TimeDifference;
         }
+        public static bool comparedCollection<T>(List<T> collection1, List<T> collection2)
+        {
+            var results = new Dictionary<int, KeyValuePair<bool, KeyValuePair<T, T>>>();
+            for (int a = 0; a < collection1.Count; a++)
+            {
+                if (collection1[a].Equals(collection2[a]))
+                    results.Add(a, new KeyValuePair<bool, KeyValuePair<T, T>>(true, new KeyValuePair<T, T>(collection1[a], collection2[a])));
+                else
+                    results.Add(a, new KeyValuePair<bool, KeyValuePair<T, T>>(true, new KeyValuePair<T, T>(collection1[a], collection2[a])));
+            }
+            return !(results.Any(s => s.Value.Key == false));
+        }
     }
 }
