@@ -113,6 +113,7 @@ namespace MeTLLibTests
             //Don't bind to the testProviderMonitor here - this is the class for testing the real one.
             kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             IProviderMonitor providerMonitor = kernel.Get<IProviderMonitor>();
             providerMonitor.HealthCheck(null);
         }

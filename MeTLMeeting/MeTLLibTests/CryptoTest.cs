@@ -72,7 +72,7 @@ namespace MeTLLibTests
         public void CryptoConstructorTest()
         {
             Crypto target = new Crypto();
-            Assert.Inconclusive("TODO: Implement code to verify target");
+            Assert.IsInstanceOfType(target, typeof(Crypto));
         }
 
         /// <summary>
@@ -83,12 +83,11 @@ namespace MeTLLibTests
         public void bytestostringTest()
         {
             byte[] p = null; // TODO: Initialize to an appropriate value
-            Encoding encoding = null; // TODO: Initialize to an appropriate value
+            Encoding encoding = Encoding.UTF8; 
             string expected = string.Empty; // TODO: Initialize to an appropriate value
             string actual;
             actual = Crypto_Accessor.bytestostring(p, encoding);
             Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
         }
 
         /// <summary>
@@ -113,9 +112,9 @@ namespace MeTLLibTests
         public void decryptFromByteArrayTest()
         {
             byte[] input = null; // TODO: Initialize to an appropriate value
-            Encoding encoding = null; // TODO: Initialize to an appropriate value
-            byte[] Key = null; // TODO: Initialize to an appropriate value
-            byte[] IV = null; // TODO: Initialize to an appropriate value
+            Encoding encoding = Encoding.UTF8;
+            byte[] Key = Encoding.UTF8.GetBytes("01234567"); 
+            byte[] IV = Encoding.UTF8.GetBytes("01234567"); 
             string expected = string.Empty; // TODO: Initialize to an appropriate value
             string actual;
             actual = Crypto_Accessor.decryptFromByteArray(input, encoding, Key, IV);
@@ -145,9 +144,9 @@ namespace MeTLLibTests
         public void encryptToByteArrayTest()
         {
             string input = string.Empty; // TODO: Initialize to an appropriate value
-            Encoding encoding = null; // TODO: Initialize to an appropriate value
-            byte[] Key = null; // TODO: Initialize to an appropriate value
-            byte[] IV = null; // TODO: Initialize to an appropriate value
+            Encoding encoding = Encoding.UTF8; 
+            byte[] Key = Encoding.UTF8.GetBytes("01234567"); 
+            byte[] IV = Encoding.UTF8.GetBytes("01234567"); 
             byte[] expected = null; // TODO: Initialize to an appropriate value
             byte[] actual;
             actual = Crypto_Accessor.encryptToByteArray(input, encoding, Key, IV);
@@ -163,7 +162,7 @@ namespace MeTLLibTests
         public void getLastBytesTest()
         {
             byte[] input = null; // TODO: Initialize to an appropriate value
-            int numberOfBytesToGet = 0; // TODO: Initialize to an appropriate value
+            int numberOfBytesToGet = 8; 
             byte[] expected = null; // TODO: Initialize to an appropriate value
             byte[] actual;
             actual = Crypto_Accessor.getLastBytes(input, numberOfBytesToGet);
