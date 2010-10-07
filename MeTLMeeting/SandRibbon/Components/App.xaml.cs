@@ -32,7 +32,7 @@ namespace SandRibbon
         {
             loggingOut = true;
             WorkspaceStateProvider.ClearSettings();
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+            ThumbnailProvider.ClearThumbnails();
             Application.Current.Shutdown();
         }
         

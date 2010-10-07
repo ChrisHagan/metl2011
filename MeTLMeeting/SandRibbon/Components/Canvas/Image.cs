@@ -946,7 +946,8 @@ namespace SandRibbon.Components.Canvas
         }
         private void addImageFromQuizSnapshot(string filename)
         {
-            handleDrop(filename, new Point(10, 10), 1);
+            if(target == "presentationSpace" && me != "projector")
+                handleDrop(filename, new Point(200, 100), 1);
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {

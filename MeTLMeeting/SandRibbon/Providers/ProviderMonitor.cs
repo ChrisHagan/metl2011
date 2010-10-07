@@ -53,8 +53,7 @@ namespace SandRibbon.Components
                 int attempts = 0;
                 const int MILIS_BETWEEN_TRIES = 1000;
                 var timer = new Timer(MILIS_BETWEEN_TRIES);
-                timer.Elapsed += 
-                (sender, args) =>
+                Action timerAction = ()=>
                 {
                     var brokenServers = SERVERS.Where(s => !s.ok);
                     attempts++;
@@ -62,16 +61,15 @@ namespace SandRibbon.Components
                     {
                         timer.Stop();
                         timer.Dispose();
-                        Application.Current.Dispatcher.adopt((Action)delegate
-                        {
-                            healthyBehaviour();
-                        });
+                        Application.Current.Dispatcher.adopt(healthyBehaviour);
                     }
                     else
                     {
                         Commands.ServersDown.Execute(brokenServers);
                     }
                 };
+                timer.Elapsed += (sender, args) => timerAction();
+                timerAction();
                 timer.Start();
             }
             catch (Exception e)

@@ -77,6 +77,10 @@
                                         TitleText="Add Image"
                                         ImageSource="\Resources\AddImage.png" 
                                         ContentText="Add an image to the slide."/>
+    <SandRibbonInterop:MeTLImageToolTip x:Key="UploadFileToolTip" 
+                                        TitleText="Upload File"
+                                        ImageSource="\Resources\AddImage.png" 
+                                        ContentText="Upload a file for distribution to all users."/>
     <SandRibbonInterop:MeTLImageToolTip x:Key="ImageModeToolTip" 
                                         TitleText="Image Mode"
                                         ImageSource="\Resources\ImageMode.png" 

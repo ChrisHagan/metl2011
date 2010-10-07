@@ -11,10 +11,16 @@
         <core:String x:Key="preferredDisplayIndex">7</core:String>
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup Header="Uploads">
-        <SandRibbonInterop:Button ToolTip="{StaticResource AddImageToolTip}"  x:Name="fileUpload" Icon="\Resources\AddImage.png" Text="Upload file" Command="api:Commands.FileUpload"/>
+        <SandRibbonInterop:Button ToolTip="{StaticResource UploadFileToolTip}"  x:Name="fileUpload" Icon="\Resources\AddImage.png" Text="Upload file" Command="api:Commands.FileUpload"/>
     </sr:RibbonGroup>
-    <sr:RibbonGroup>
-            <ListBox x:Name="attachments" Background="Transparent" MaxWidth="600"
+    <sr:RibbonGroup Header="Downloadable Items">
+        <Label VerticalAlignment="Center" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
+               FontWeight="Bold"
+               FontSize="12px"
+               FontFamily="Verdana"
+               Visibility="{Binding ElementName=attachments, Path=ItemsSource.Count, Converter={x:Static SandRibbon:Converters.reverseQuizzesToVisibilityConverter}}"
+               Content="There are currently no attachments for this conversation"/>
+        <ListBox x:Name="attachments" Background="Transparent" MaxWidth="600"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>

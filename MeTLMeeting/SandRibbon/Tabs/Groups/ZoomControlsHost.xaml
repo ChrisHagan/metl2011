@@ -17,7 +17,7 @@
         <sr:GroupVariant Variant="Collapsed" Priority="7"/>
     </sr:RibbonGroup.Variants>
     <SandRibbonInterop:RibbonPanel>
-        <SandRibbonInterop:RadioButton x:Name="View" Icon="\Resources\Hand tool.png" Text="Move" Command="api:Commands.SetLayer" CommandParameter="View" ToolTip="{DynamicResource GrabMoveToolTip}"/>
+        <SandRibbonInterop:RadioButton x:Name="View" Icon="\Resources\HandToolWide.png" Text="Move" Command="api:Commands.SetLayer" CommandParameter="View" ToolTip="{DynamicResource GrabMoveToolTip}"/>
         <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}"/>
         <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}"/>
         <Grid>

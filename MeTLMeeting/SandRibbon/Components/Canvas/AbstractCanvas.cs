@@ -69,7 +69,7 @@ namespace SandRibbon.Components.Canvas
                 }
                 catch (NotSetException e)
                 {
-                    return 0;
+                    return -1;
                 }
             }
             set
