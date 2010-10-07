@@ -97,7 +97,10 @@ namespace MeTLLib.Providers
             {
                 if (!Directory.Exists(cacheName))
                     Directory.CreateDirectory(cacheName);
-                var localUriString = cacheName + "\\" + remoteUri.ToString().Split('/').Reverse().First();
+                var splitString = remoteUri.ToString().Split('/').Reverse();
+                if (!Directory.Exists(cacheName + "\\"+splitString.ElementAt(1)))
+                    Directory.CreateDirectory(cacheName + "\\"+splitString.ElementAt(1));
+                var localUriString = cacheName + "\\" +splitString.ElementAt(1) + "\\" + splitString.ElementAt(0);
                 File.WriteAllBytes(localUriString, resourceProvider.secureGetData(remoteUri));
                 var localUri = new Uri(localUriString, UriKind.Relative);
                 Add(remoteUri.ToString(), localUri);

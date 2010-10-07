@@ -46,6 +46,31 @@ namespace MeTLLib
     }
     public interface IClientBehaviour
     {
+        bool Connect(string username, string password);
+        bool Disconnect();
+        void SendTextBox(TargettedTextBox textbox);
+        void SendStroke(TargettedStroke stroke);
+        void SendImage(TargettedImage image);
+        void SendVideo(TargettedVideo video);
+        void SendDirtyTextBox(TargettedDirtyElement tde);
+        void SendDirtyStroke(TargettedDirtyElement tde);
+        void SendDirtyImage(TargettedDirtyElement tde);
+        void SendDirtyVideo(TargettedDirtyElement tde);
+        void SendSubmission(TargettedSubmission ts);
+        void SendQuizAnswer(QuizAnswer qa);
+        void SendQuizQuestion(QuizQuestion qq);
+        void SendFile(TargettedFile tf);
+        void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii);
+        void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation lvi);
+        void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
+        void MoveTo(int slide);
+        void JoinConversation(string conversation);
+        void SneakInto(string room);
+        void SneakOutOf(string room);
+        void AsyncRetrieveHistoryOf(int room);
+        void UpdateConversationDetails(ConversationDetails details);
+//        List<ConversationDetails> AvailableConversations;
+//        List<ConversationDetails> CurrentConversations;
 
     }
     public class ClientConnection : IClientBehaviour
