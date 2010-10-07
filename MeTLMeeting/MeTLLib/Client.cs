@@ -301,10 +301,11 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                var newPath = resourceUploader.uploadResource(lvi.slide.ToString(), lvi.file, false);
+                var newPath = new Uri(resourceUploader.uploadResource(lvi.slide.ToString(), lvi.file, false),UriKind.Absolute);
                 MeTLLib.DataTypes.Video newVideo = lvi.video;
+                newVideo.VideoSource = newPath;
                 newVideo.MediaElement = new MediaElement();
-                newVideo.MediaElement.Source = new Uri(newPath, UriKind.Absolute);
+                newVideo.MediaElement.Source = newPath;
                 wire.SendVideo(new TargettedVideo
                 {
                     author = lvi.author,

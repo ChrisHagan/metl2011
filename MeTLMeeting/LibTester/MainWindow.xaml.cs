@@ -125,6 +125,12 @@ namespace LibTester
                             inkCanvas.Strokes.Add(stroke.stroke);
                     });
             };
+            client.events.FileAvailable += (sender, args) =>
+            {
+                var a = sender;
+                var b = args;
+                MessageBox.Show(a + ":" + b.file.name + ":" + b.file.url);
+            };
             username.Text = "eecrole";
             password.Password = "m0nash2008";
             attemptToAuthenticate(this, new RoutedEventArgs());
@@ -293,6 +299,33 @@ namespace LibTester
                         overwrite = false,
                         file = ofdg.FileName,
                         video = internalVideo,
+                    });
+                }
+            }
+        }
+        private void NewFile(object sender, RoutedEventArgs e)
+        {
+            if (client != null)
+            {
+                var ofdg = new Microsoft.Win32.OpenFileDialog();
+                ofdg.Multiselect = false;
+                ofdg.ShowDialog();
+                if (!String.IsNullOrEmpty(ofdg.FileName))
+                {
+                    var directoryPath = ofdg.FileName.TrimEnd(ofdg.SafeFileName.ToCharArray());
+                    var directoryInfo = new System.IO.DirectoryInfo(directoryPath);
+                    var fileLength = directoryInfo.GetFiles(ofdg.SafeFileName).ElementAt(0).Length;
+                    client.UploadAndSendFile(new MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation
+                    {
+                        privacy = "public",
+                        author = client.username,
+                        slide = client.location.currentSlide,
+                        target = "presentationSpace",
+                        overwrite = false,
+                        file = ofdg.FileName,
+                        name = ofdg.SafeFileName,
+                        size= fileLength,
+                        uploadTime = DateTime.Now.ToString()
                     });
                 }
             }
