@@ -83,36 +83,13 @@ namespace MeTLLib.Providers.Connection
 
         private void registerCommands()
         {
-            //Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
-            //Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(SendSyncMoveTo));
             Commands.SendDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(SendDirtyConversationDetails));
-            //Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>((textbox) => SendTextbox(textbox)));
-            //Commands.SendDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyText));
-            //Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
-            //Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(sendDirtyStroke));
-            //Commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(SendImage));
-            //Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(SendVideo));
-            //Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
-            //Commands.SendFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(sendFileResource));
-            //Commands.SendDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyVideo));
-            //Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoShape));
-            //Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoShape));
-            //Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
-            //Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
-            //Commands.SendChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendChat));
-            //Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
-            //Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
             Commands.SendWormMove.RegisterCommand(new DelegateCommand<WormMove>(SendWormMove));
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
             Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
             Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
             Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
-            //Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(SendNewBubble));
-            //Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
-            //Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
-            //Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
-            //Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
         }
         public ResourceCache cache;
         public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents events)
@@ -178,11 +155,6 @@ namespace MeTLLib.Providers.Connection
                 }
             }
         }
-        //public void getCurrentClasses(object _unused)
-        //{
-        //    Thread newThread = new Thread(new ThreadStart(() => { if (CurrentClasses != null)Commands.receiveCurrentClasses.Execute(CurrentClasses); }));
-        //    newThread.Start();
-        //}
         private void SendNewBubble(TargettedBubbleContext selection)
         {
             stanza(new MeTLStanzas.Bubble(selection));
@@ -460,13 +432,11 @@ namespace MeTLLib.Providers.Connection
                 onStart,
                 onProgress,
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
-                //Commands.PreParserAvailable.Execute(finishedParser),
                 location.currentSlide.ToString());
             historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
-                //Commands.PreParserAvailable.Execute(finishedParser),
                 credentials.name,
                 location.currentSlide.ToString());
         }
@@ -485,13 +455,11 @@ namespace MeTLLib.Providers.Connection
                 onStart,
                 onProgress,
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
-                //Commands.PreParserAvailable.Execute(finishedParser),
                 location.currentSlide.ToString());
             historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
-                //Commands.PreParserAvailable.Execute(finishedParser),
                 credentials.name,
                 location.currentSlide.ToString());
         }
@@ -626,33 +594,12 @@ namespace MeTLLib.Providers.Connection
         public virtual void handleGoToConversation(string[] parts)
         {
             JoinConversation(parts[1]);
-            //Commands.JoinConversation.Execute(parts[1]);
         }
         public virtual void handleGoToSlide(string[] parts)
         {
             var id = Int32.Parse(parts[1]);
             var desiredConversation = Slide.conversationFor(id).ToString();
-            if (desiredConversation != location.activeConversation)
-            {
-                MoveTo(id);
-                /*DelegateCommand<ConversationDetails> joinedConversation = null;
-                joinedConversation = new DelegateCommand<ConversationDetails>(
-                    _conversationJid =>
-                    {
-                        Commands.UpdateConversationDetails.UnregisterCommand(joinedConversation);
-                        MoveTo(id);
-                        //Commands.MoveTo.Execute(id);
-                        Commands.ReceiveMoveBoardToSlide.Execute(id);
-                    });
-                Commands.UpdateConversationDetails.RegisterCommand(joinedConversation);
-                JoinConversation(desiredConversation);*/
-                //Commands.JoinConversation.Execute(desiredConversation);
-            }
-            else
-            {
-                MoveTo(id);
-                //Commands.MoveTo.Execute(id);
-            }
+            MoveTo(id);
         }
         public virtual void handleWakeUp(string[] parts)
         {
@@ -730,91 +677,73 @@ namespace MeTLLib.Providers.Connection
         public virtual void actOnFileResource(MeTLStanzas.FileResource resource)
         {
             receiveEvents.receiveFileResource(resource.fileResource);
-            //Commands.ReceiveFileResource.Execute(resource.fileResource);
         }
         public virtual void actOnScreenshotSubmission(TargettedSubmission submission)
         {
             receiveEvents.receiveSubmission(submission);
-            //Commands.ReceiveScreenshotSubmission.Execute(submission);
         }
         public virtual void actOnVideoReceived(TargettedVideo video)
         {
             receiveEvents.receiveVideo(video);
-            //Commands.ReceiveVideo.Execute(video);
         }
         public virtual void actOnBubbleReceived(TargettedBubbleContext bubble)
         {
             receiveEvents.receiveBubble(bubble);
-            //Commands.ReceiveNewBubble.Execute(bubble);
         }
         public virtual void actOnDirtyAutoshapeReceived(MeTLStanzas.DirtyAutoshape dirtyAutoShape)
         {
             receiveEvents.receiveDirtyAutoShape(dirtyAutoShape.element);
-            //Commands.ReceiveDirtyAutoShape.Execute(dirtyAutoShape.element);
         }
         public virtual void actOnDirtyVideoReceived(MeTLStanzas.DirtyVideo dirtyVideo)
         {
             receiveEvents.receiveDirtyVideo(dirtyVideo.element);
-            //Commands.ReceiveDirtyVideo.Execute(dirtyVideo.element);
         }
         public virtual void actOnDirtyImageReceived(MeTLStanzas.DirtyImage dirtyImage)
         {
             receiveEvents.receiveDirtyImage(dirtyImage.element);
-            //Commands.ReceiveDirtyImage.Execute(dirtyImage.element);
         }
         public virtual void actOnDirtyStrokeReceived(MeTLStanzas.DirtyInk element)
         {
             receiveEvents.receiveDirtyStroke(element.element);
-            //    Commands.ReceiveDirtyStrokes.Execute(element.element);
         }
         public virtual void actOnDirtyTextReceived(MeTLStanzas.DirtyText dirtyText)
         {
             receiveEvents.receiveDirtyTextBox(dirtyText.element);
-            //Commands.ReceiveDirtyText.Execute(dirtyText.element);
         }
         public virtual void actOnImageReceived(TargettedImage image)
         {
             receiveEvents.receiveImage(image);
-            //Commands.ReceiveImage.Execute(new[] { image });
         }
         public virtual void actOnAutoShapeReceived(TargettedAutoShape autoshape)
         {
             receiveEvents.receiveAutoShape(autoshape);
-            //Commands.ReceiveAutoShape.Execute(autoshape);
         }
         public virtual void actOnQuizReceived(QuizQuestion quiz)
         {
             receiveEvents.receiveQuiz(quiz);
-            //Commands.ReceiveQuiz.Execute(quiz);
         }
         public virtual void actOnQuizAnswerReceived(QuizAnswer answer)
         {
             receiveEvents.receiveQuizAnswer(answer);
-            //Commands.ReceiveQuizAnswer.Execute(answer);
         }
         public virtual void actOnStrokeReceived(TargettedStroke stroke)
         {
             receiveEvents.receiveStroke(stroke);
-            //Commands.ReceiveStroke.Execute(stroke);
         }
         public virtual void actOnTextReceived(TargettedTextBox box)
         {
             if (box.target == "chat")
                 receiveEvents.receiveChat(box);
-            //Commands.ReceiveChatMessage.Execute(box);
             else
                 receiveEvents.receiveTextBox(box);
-            //Commands.ReceiveTextBox.Execute(box);
         }
         public virtual void actOnLiveWindowReceived(LiveWindowSetup window)
         {
             receiveEvents.receiveLiveWindow(window);
-            //Commands.ReceiveLiveWindow.Execute(window);
         }
         public virtual void actOnDirtyLiveWindowReceived(TargettedDirtyElement element)
         {
             receiveEvents.receiveDirtyLiveWindow(element);
-            //Commands.ReceiveDirtyLiveWindow.Execute(element);
         }
         public void SneakInto(string room)
         {
@@ -828,14 +757,12 @@ namespace MeTLLib.Providers.Connection
                 {
                     Trace.TraceInformation(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
                     receiveEvents.receivePreParser(finishedParser);
-                    //Commands.PreParserAvailable.Execute(finishedParser);
                 },
                 room);
             historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
-                //Commands.PreParserAvailable.Execute(finishedParser),
                 credentials.name,
                 room);
         }
@@ -867,12 +794,9 @@ namespace MeTLLib.Providers.Connection
         {
             var jid = parts[1];
             conversationDetailsProvider.ReceiveDirtyConversationDetails(jid);
-            //Commands.ReceiveDirtyConversationDetails.Execute(jid);
             var newDetails = conversationDetailsProvider.DetailsOf(jid);
-            //Commands.UpdateForeignConversationDetails.Execute(newDetails);
             if (isCurrentConversation(jid))
                 receiveEvents.receiveConversationDetails(newDetails);
-            //    Commands.UpdateConversationDetails.Execute(newDetails);
         }
         private bool isCurrentConversation(string jid)
         {

@@ -460,10 +460,7 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var newPathData = new PathGeometry();
-                    //var newPathFigureCollection = (PathFigureCollection)(new PathFigureCollectionConverter().ConvertFromString("F1M47.7778,48.6667L198,48.6667L198,102C174.889,91.3334,157.111,79.7778,110.889,114.444C64.667,149.111,58.4444,130.444,47.7778,118.889z"));
-                    //var newPathFigureCollection = (PathFigureCollection)(new PathFigureCollectionConverter().ConvertFromString(GetTag(PathDataTag.ToString()).ToString()));
                     newPathData.AddGeometry((Geometry)new GeometryConverter().ConvertFromString(GetTag(PathDataTag)));
-                    //newPathData.Figures = newPathFigureCollection;
                     return (PathGeometry)newPathData;
                 }
                 set { SetTag(PathDataTag, value.ToString()); }

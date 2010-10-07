@@ -38,7 +38,6 @@ namespace MeTLLib.Providers.Connection
                 canvas.Children.Add(image.Value.image);
             foreach (var shape in autoshapes)
                 canvas.Children.Add(shape.Value.autoshape);
-            //Videos currently disabled.
             foreach (var video in videos)
                 canvas.Children.Add(video.Value.video);
             foreach (var textbox in text)
@@ -67,7 +66,6 @@ namespace MeTLLib.Providers.Connection
                 foreach (var kv in parser.liveWindows)
                     if (!returnParser.liveWindows.ContainsKey(kv.Key))
                         returnParser.liveWindows.Add(kv.Key, kv.Value);
-                //Videos currently disabled.
                 foreach (var kv in parser.videos)
                     if (!returnParser.videos.ContainsKey(kv.Key))
                         returnParser.videos.Add(kv.Key, kv.Value);
@@ -77,31 +75,22 @@ namespace MeTLLib.Providers.Connection
         public void Regurgitate()
         {
             receiveEvents.receiveStrokes(ink.ToArray());
-            //Commands.ReceiveStrokes.Execute(ink);
             foreach (var autoshape in autoshapes.Values)
                 receiveEvents.receiveAutoShape(autoshape);
-                //Commands.ReceiveAutoShape.Execute(autoshape);
             if (images.Values.Count > 0)
                 receiveEvents.receiveImages(images.Values.ToArray());
-                //Commands.ReceiveImage.Execute(images.Values);
             foreach (var box in text.Values)
                 receiveEvents.receiveTextBox(box);
-                //Commands.ReceiveTextBox.Execute(box);
             foreach (var quiz in quizzes)
                 receiveEvents.receiveQuiz(quiz);
-                //Commands.ReceiveQuiz.Execute(quiz);
             foreach (var answer in quizAnswers)
                 receiveEvents.receiveQuizAnswer(answer);
-                //Commands.ReceiveQuizAnswer.Execute(answer);
             foreach (var window in liveWindows.Values)
                 receiveEvents.receiveLiveWindow(window);
-                //Commands.ReceiveLiveWindow.Execute(window);
             foreach (var video in videos.Values)
                 receiveEvents.receiveVideo(video);
-                //Commands.ReceiveVideo.Execute(video);
             foreach (var file in files)
                 receiveEvents.receiveFileResource(file);
-                //Commands.ReceiveFileResource.Execute(file);
             Commands.AllContentSent.Execute(location.currentSlide);
             Trace.TraceInformation(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }

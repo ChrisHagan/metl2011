@@ -44,23 +44,15 @@ namespace MeTLLib.Providers
             {
                 if (conversationDetails == null) return new List<Slide>();
                 return conversationDetails.Slides; 
-                //((ConversationDetails)Commands.UpdateConversationDetails.lastValue()).Slides;
             }
         }
         public static ConversationDetails conversationDetails
         {
             get;set;
-            /*{
-               return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
-            }*/
         }
         public static Credentials credentials
         {
             get; set;
-            /*{
-                var credentials = Commands.SetIdentity.lastValue();
-                return (Credentials)credentials;
-            }*/
         }
         public static List<AuthorizedGroup> authorizedGroups
         {
@@ -97,10 +89,6 @@ namespace MeTLLib.Providers
         public static int slide
         {
             get;set;
-  //          {
-//                return 0;
-                //(int)Commands.MoveTo.lastValue();
-    //        }
         }
         public static string me
         {

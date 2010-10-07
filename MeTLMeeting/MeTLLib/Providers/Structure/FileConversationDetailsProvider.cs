@@ -25,7 +25,6 @@ namespace MeTLLib.Providers.Structure
         public FileConversationDetailsProvider(IWebClientFactory factory, ResourceUploader uploader) : base(factory)
         {
             resourceUploader = uploader;
-            //Commands.ReceiveDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(ReceiveDirtyConversationDetails));
             ListConversations();
         }
         private readonly int HTTP_PORT = 1188;
