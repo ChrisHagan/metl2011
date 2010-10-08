@@ -40,7 +40,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
-            <!--<ScrollViewer DockPanel.Dock="Left" Width="400" HorizontalScrollBarVisibility="Visible">
+            <ScrollViewer DockPanel.Dock="Left" Width="400" HorizontalScrollBarVisibility="Visible">
                 <StackPanel Orientation="Horizontal">
                     <StackPanel>
                         <Label>Information</Label>
@@ -63,7 +63,7 @@
                         <my:TraceLoggerItemsControl traceLevel="Critical"/>
                     </StackPanel>
                 </StackPanel>
-            </ScrollViewer>-->
+            </ScrollViewer>
             <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal">
                 <TextBox x:Name="username" Width="100"/>
                 <PasswordBox x:Name="password" Width="100"/>

@@ -75,6 +75,7 @@ namespace MeTLLib
         void receiveDirtyAutoShape(TargettedDirtyElement tde);
         void receiveBubble(TargettedBubbleContext tbc);
         void receiveConversationDetails(ConversationDetails cd);
+        void statusChanged(bool isConnected);
         event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
         event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
         event MeTLLibEventHandlers.StatusChangedEventHandler StatusChanged;
@@ -102,6 +103,32 @@ namespace MeTLLib
 
     class ProductionReceiveEvents : IReceiveEvents
     {
+        public ProductionReceiveEvents()
+        {
+            this.AutoshapeAvailable += (sender, args) => { };
+            this.BubbleAvailable += (sender, args) => { };
+            this.ChatAvailable+= (sender, args) => { };
+            this.CommandAvailable += (sender, args) => { };
+            this.ConversationDetailsAvailable+= (sender, args) => { };
+            this.DirtyAutoShapeAvailable+= (sender, args) => { };
+            this.DirtyImageAvailable+= (sender, args) => { };
+            this.DirtyLiveWindowAvailable+= (sender, args) => { };
+            this.DirtyStrokeAvailable+= (sender, args) => { };
+            this.DirtyTextBoxAvailable+= (sender, args) => { };
+            this.DirtyVideoAvailable+= (sender, args) => { };
+            this.DiscoAvailable+= (sender, args) => { };
+            this.FileAvailable+= (sender, args) => { };
+            this.ImageAvailable+= (sender, args) => { };
+            this.LiveWindowAvailable+= (sender, args) => { };
+            this.PreParserAvailable+= (sender, args) => { };
+            this.QuizAnswerAvailable+= (sender, args) => { };
+            this.QuizQuestionAvailable+= (sender, args) => { };
+            this.StatusChanged += (sender,args) =>{ };
+            this.StrokeAvailable+= (sender, args) => { };
+            this.SubmissionAvailable+= (sender, args) => { };
+            this.TextBoxAvailable+= (sender, args) => { };
+            this.VideoAvailable+= (sender, args) => { };
+        }
         void IReceiveEvents.receiveSubmission(TargettedSubmission ts)
         {
             SubmissionAvailable(this, new SubmissionAvailableEventArgs { submission = ts });
@@ -166,7 +193,7 @@ namespace MeTLLib
         }
         public void receiveChat(TargettedTextBox ttb)
         {
-            ChatAvailable(this, new ChatAvailableEventArgs { chat = ttb }); 
+            ChatAvailable(this, new ChatAvailableEventArgs { chat = ttb });
         }
         public void receiveLiveWindow(LiveWindowSetup lws)
         {
@@ -178,7 +205,7 @@ namespace MeTLLib
         }
         public void receiveAutoShape(TargettedAutoShape tas)
         {
-            AutoshapeAvailable(this, new AutoshapeAvailableEventArgs{ autoshape = tas });
+            AutoshapeAvailable(this, new AutoshapeAvailableEventArgs { autoshape = tas });
         }
         public void receiveDirtyAutoShape(TargettedDirtyElement tde)
         {
@@ -190,7 +217,11 @@ namespace MeTLLib
         }
         public void receiveConversationDetails(ConversationDetails cd)
         {
-            ConversationDetailsAvailable(this, new ConversationDetailsAvailableEventArgs {conversationDetails=cd });
+            ConversationDetailsAvailable(this, new ConversationDetailsAvailableEventArgs { conversationDetails = cd });
+        }
+        public void statusChanged(bool isConnected)
+        {
+            StatusChanged(this, new StatusChangedEventArgs { isConnected = isConnected });
         }
 
         #region Events

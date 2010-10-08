@@ -210,6 +210,7 @@ namespace MeTLLib.Providers.Connection
         private void OnLogin(object o)
         {
             this.LoggedIn = true;
+            receiveEvents.statusChanged(this.LoggedIn);
             joinRooms();
         }
         private void OnMessage(object sender, Message message)
@@ -424,6 +425,7 @@ namespace MeTLLib.Providers.Connection
         }
         public bool IsConnected()
         {
+            //this bit right here is damaged.  conn.Authenticated might not fire until too late.
             return conn != null && conn.Authenticated;
         }
         public void GetHistory(int where)

@@ -130,7 +130,6 @@ namespace MeTLLib
             jabberWireFactory.credentials = jabberCredentials;
             wire = jabberWireFactory.wire();
             wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
-            wire.MoveTo(101);
             Trace.TraceInformation("set up jabberwire");
             Commands.AllStaticCommandsAreRegistered();
             Trace.TraceInformation("Connection state: " + isConnected.ToString());

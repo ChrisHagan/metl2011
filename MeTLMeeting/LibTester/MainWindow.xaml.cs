@@ -44,6 +44,7 @@ namespace LibTester
         {
             InitializeComponent();
             client = ClientFactory.Connection();
+            client.events.StatusChanged += (sender, args) => { Dispatcher.adoptAsync(() => { if (args.isConnected)setup(); }); };
             client.events.StrokeAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Strokes.Add(args.stroke.stroke)); };
             client.events.DirtyStrokeAvailable += (sender, args) =>
             {
@@ -138,8 +139,12 @@ namespace LibTester
         private void attemptToAuthenticate(object sender, RoutedEventArgs e)
         {
             client.Connect(username.Text, password.Password);
+        }
+        private void setup()
+        {
             ConversationListingSource = getAllConversations();
             ConversationListing.ItemsSource = ConversationListingSource;
+            doMoveTo(101);
         }
         private void getConversations(object sender, RoutedEventArgs e)
         {
@@ -324,7 +329,7 @@ namespace LibTester
                         overwrite = false,
                         file = ofdg.FileName,
                         name = ofdg.SafeFileName,
-                        size= fileLength,
+                        size = fileLength,
                         uploadTime = DateTime.Now.ToString()
                     });
                 }
