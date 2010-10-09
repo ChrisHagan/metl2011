@@ -18,3 +18,4 @@ C:\specialMeTL\MeTLMeeting\MeTLLibTests\bin\Release\Microsoft.Practices.ServiceL
 C:\specialMeTL\MeTLMeeting\MeTLLibTests\bin\Release\MeTLLib.pdb
 C:\specialMeTL\MeTLMeeting\MeTLLibTests\bin\Release\MeTLLib_Accessor.dll
 C:\specialMeTL\MeTLMeeting\MeTLLibTests\bin\Release\MeTLLib_Accessor.pdb
+C:\specialMeTL\MeTLMeeting\MeTLLibTests\bin\Release\Rhino.Mocks.dll
