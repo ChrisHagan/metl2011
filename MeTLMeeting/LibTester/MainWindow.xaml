@@ -20,9 +20,9 @@
                                 </Grid.RowDefinitions>
                                 <Button Grid.Row="0" Grid.Column="0" Content="{Binding Path=Jid}" Click="joinConversationByButton" Tag="{Binding Path=Jid}"/>
                                 <Label Grid.Row="0" Grid.Column="1" Content="{Binding Path=Title}"/>
-                                <!--<ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                                               HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                    <ItemsControl DataContext="{Binding Path=Slides, Converter={x:Static my:MainWindow.slideConverter}}" ItemsSource="{Binding}">
+                                    <ItemsControl DataContext="{Binding Converter={x:Static my:MainWindow.slideConverter}}" ItemsSource="{Binding}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <WrapPanel Orientation="Horizontal"/>
@@ -30,11 +30,11 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Button Tag="{Binding Path=id}" Click="moveToByButton" Content="{Binding Path=index}" ToolTip="{Binding Path=id}"/>
+                                                <Button Tag="{Binding Converter={x:Static my:MainWindow.slideIdConverter}}" Click="moveToByButton" Content="{Binding Converter={x:Static my:MainWindow.slideIndexConverter}}" ToolTip="{Binding Converter={x:Static my:MainWindow.slideIdConverter}}"/>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
-                                </ScrollViewer>-->
+                                </ScrollViewer>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

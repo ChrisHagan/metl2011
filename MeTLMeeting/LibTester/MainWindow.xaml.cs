@@ -28,13 +28,54 @@ namespace LibTester
         private List<ConversationDetails> ConversationListingSource;
         private ClientConnection client;
         public static SlidesConverter slideConverter = new SlidesConverter();
+        public static SlideIdConverter slideIdConverter = new SlideIdConverter();
+        public static SlideIndexConverter slideIndexConverter = new SlideIndexConverter();
         public class SlidesConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                return (List<Slide>)value;
+                var slides = new ObservableCollection<Slide>();
+                if (value is ConversationDetails)
+                {
+                    var cd = (ConversationDetails)value;
+                    foreach (Slide slide in cd.Slides)
+                    {
+                        slides.Add(slide);
+                    }
+                }
+                return slides;
             }
 
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public class SlideIdConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                if (value is Slide)
+                {
+                    return ((Slide)value).id.ToString();
+                }
+                return "";
+            }
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public class SlideIndexConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                if (value is Slide)
+                {
+                    return ((Slide)value).index.ToString();
+                }
+                return "";
+            }
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
                 throw new NotImplementedException();
@@ -62,7 +103,17 @@ namespace LibTester
                     ;
                 });
             };
-            client.events.TextBoxAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Children.Add(args.textBox.box)); };
+            client.events.TextBoxAvailable += (sender, args) =>
+            {
+                Dispatcher.adoptAsync(() =>
+                {
+                    var box = args.textBox.box;
+                    box.Background = Brushes.Transparent;
+                    box.BorderBrush = Brushes.Transparent;
+                    box.BorderThickness = new Thickness(0);
+                    inkCanvas.Children.Add(box);
+                });
+            };
             client.events.DirtyTextBoxAvailable += (sender, args) =>
                 {
                     Dispatcher.adoptAsync(() =>
