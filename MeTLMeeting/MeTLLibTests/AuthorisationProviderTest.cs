@@ -169,5 +169,34 @@ namespace MeTLLibTests
             actual = target.isBackdoorUser(user);
             Assert.AreEqual(expected, actual);
         }
+        [TestMethod()]
+        [DeploymentItem("MeTLLib.dll")]
+        public void isBackdoorUserTestReturnsFalseWhenGivenEmptyString()
+        {
+            string user = string.Empty;
+            bool expected = false;
+            bool actual;
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
+            actual = target.isBackdoorUser(user);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod()]
+        [DeploymentItem("MeTLLib.dll")]
+        [ExpectedException(typeof(System.NullReferenceException))]
+        public void isBackdoorUserTestFailsWhenGivenNull()
+        {
+            string user = null;
+            bool expected = true;
+            bool actual;
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
+            actual = target.isBackdoorUser(user);
+            Assert.AreEqual(expected, actual);
+        }
     }
 }
