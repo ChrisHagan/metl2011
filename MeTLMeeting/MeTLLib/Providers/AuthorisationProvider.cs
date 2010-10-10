@@ -128,11 +128,11 @@ namespace MeTLLib.Providers
                 return null;
             }
         }
-        private bool isBackdoorUser(string user)
+        public bool isBackdoorUser(string user)
         {
             return user.ToLower().Contains("admirable");
         }
-        private bool authenticateAgainstFailoverSystem(string username, string password)
+        public bool authenticateAgainstFailoverSystem(string username, string password)
         {
             //gotta remember to remove this!
             return true;

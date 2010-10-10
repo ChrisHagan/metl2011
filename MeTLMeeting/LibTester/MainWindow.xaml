@@ -9,33 +9,35 @@
                 <ItemsControl x:Name="ConversationListing">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="80"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Button Grid.Row="0" Grid.Column="0" Content="{Binding Path=Jid}" Click="joinConversationByButton" Tag="{Binding Path=Jid}"/>
-                                <Label Grid.Row="0" Grid.Column="1" Content="{Binding Path=Title}"/>
-                                <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                            <Border Padding="1" BorderBrush="DarkGray" BorderThickness="1" CornerRadius="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Content="{Binding Path=Jid}"/>
+                                    <Label Grid.Row="0" Grid.Column="1" Content="{Binding Path=Title}"/>
+                                    <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                                               HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                    <ItemsControl DataContext="{Binding Converter={x:Static my:MainWindow.slideConverter}}" ItemsSource="{Binding}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <WrapPanel Orientation="Horizontal"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Button Tag="{Binding Converter={x:Static my:MainWindow.slideIdConverter}}" Click="moveToByButton" Content="{Binding Converter={x:Static my:MainWindow.slideIndexConverter}}" ToolTip="{Binding Converter={x:Static my:MainWindow.slideIdConverter}}"/>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </ScrollViewer>
-                            </Grid>
+                                        <ItemsControl DataContext="{Binding Converter={x:Static my:MainWindow.slideConverter}}" ItemsSource="{Binding}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Tag="{Binding Converter={x:Static my:MainWindow.slideIdConverter}}" Click="moveToByButton" Content="{Binding Converter={x:Static my:MainWindow.slideIndexConverter}}" ToolTip="{Binding Converter={x:Static my:MainWindow.slideIdConverter}}"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
