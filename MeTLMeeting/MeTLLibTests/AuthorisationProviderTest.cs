@@ -11,6 +11,128 @@ using System.Net;
 namespace MeTLLibTests
 {
     [TestClass()]
+    public class AuthorisationProviderIntegrationTests
+    {
+        private TestContext testContextInstance;
+        public TestContext TestContext
+        {
+            get
+            {
+                return testContextInstance;
+            }
+            set
+            {
+                testContextInstance = value;
+            }
+        }
+        #region Additional test attributes
+        // 
+        //You can use the following additional attributes as you write your tests:
+        //
+        //Use ClassInitialize to run code before running the first test in the class
+        //[ClassInitialize()]
+        //public static void MyClassInitialize(TestContext testContext)
+        //{
+        //}
+        //
+        //Use ClassCleanup to run code after all tests in a class have run
+        //[ClassCleanup()]
+        //public static void MyClassCleanup()
+        //{
+        //}
+        //
+        //Use TestInitialize to run code before running each test
+        //[TestInitialize()]
+        //public void MyTestInitialize()
+        //{
+        //}
+        //
+        //Use TestCleanup to run code after each test has run
+        //[TestCleanup()]
+        //public void MyTestCleanup()
+        //{
+        //}
+        //
+        #endregion
+        [TestMethod()]
+        [DeploymentItem("MeTLLib.dll")]
+        public void authenticateAgainstFailoverSystemTest()
+        {
+            string username = "eecrole";
+            string password = "m0nash2008";
+            bool expected = true;
+            bool actual;
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
+            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
+            actual = target.authenticateAgainstFailoverSystem(username, password);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod()]
+        public void getEligibleGroupsTest()
+        {
+            string AuthcateName = "eecrole";
+            string AuthcatePassword = "m0nash2008";
+            List<AuthorizedGroup> expected = new List<AuthorizedGroup> { new AuthorizedGroup { groupKey = "Unrestricted", groupType = "" }, new AuthorizedGroup { groupKey = "Office of the Deputy Vice-Chancellor (Education)", groupType = "ou" }, new AuthorizedGroup { groupKey = "Administration", groupType = "ou" }, new AuthorizedGroup { groupKey = "Staff", groupType = "ou" }, new AuthorizedGroup { groupKey = "eecrole", groupType = "username" } };
+            List<AuthorizedGroup> actual;
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
+            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
+            actual = target.getEligibleGroups(AuthcateName, AuthcatePassword);
+            Assert.IsTrue(TestExtensions.comparedCollection<AuthorizedGroup>(expected, actual));
+        }
+        [TestMethod()]
+        public void isAuthenticatedAgainstLDAPTest()
+        {
+            string username = "eecrole";
+            string password = "m0nash2008";
+            bool expected = true;
+            bool actual;
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
+            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
+            actual = target.isAuthenticatedAgainstLDAP(username, password);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod()]
+        public void isAuthenticatedAgainstWebProxyTest()
+        {
+            string username = "eecrole";
+            string password = "m0nash2008";
+            bool expected = true;
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
+            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
+            bool actual = target.isAuthenticatedAgainstWebProxy(username, password);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod()]
+        public void attemptAuthenticationIntegrationTest()
+        {
+            string username = "eecrole";
+            string password = "m0nash2008";
+            IKernel kernel = new StandardKernel(new BaseModule());
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
+            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
+            Credentials expected = new Credentials { name = "eecrole", password = "m0nash2008", authorizedGroups = new List<AuthorizedGroup> { new AuthorizedGroup { groupKey = "Unrestricted", groupType = "" }, new AuthorizedGroup { groupKey = "Office of the Deputy Vice-Chancellor (Education)", groupType = "ou" }, new AuthorizedGroup { groupKey = "Administration", groupType = "ou" }, new AuthorizedGroup { groupKey = "Staff", groupType = "ou" }, new AuthorizedGroup { groupKey = "eecrole", groupType = "username" }, } };
+            Credentials actual = target.attemptAuthentication(username, password);
+            Assert.IsTrue(TestExtensions.comparedCollection<AuthorizedGroup>(expected.authorizedGroups, actual.authorizedGroups));
+            Assert.AreEqual(expected.name, actual.name);
+            Assert.AreEqual(expected.password, actual.password);
+        }
+    }
+    
+    [TestClass()]
     public class AuthorisationProviderTest
     {
         private TestContext testContextInstance;
@@ -64,81 +186,45 @@ namespace MeTLLibTests
             Assert.IsInstanceOfType(target, typeof(AuthorisationProvider));
         }
         [TestMethod()]
-        public void attemptAuthenticationTest()
+        public void attemptAuthenticationTestReturnsNullWhenPassedNullUsername()
         {
-            string username = "eecrole"; 
-            string password = "m0nash2008"; 
+            string username = null;
+            string password = "m0nash2008";
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            Credentials expected = new Credentials { name = "eecrole", password = "m0nash2008", authorizedGroups = new List<AuthorizedGroup> { new AuthorizedGroup { groupKey = "Unrestricted", groupType = "" }, new AuthorizedGroup { groupKey = "Office of the Deputy Vice-Chancellor (Education)", groupType = "ou" }, new AuthorizedGroup { groupKey = "Administration", groupType = "ou" }, new AuthorizedGroup { groupKey = "Staff", groupType = "ou" }, new AuthorizedGroup { groupKey = "eecrole", groupType = "username" }, } };
+            Credentials expected = null; 
             Credentials actual;
             actual = target.attemptAuthentication(username, password);
-            Assert.IsTrue(TestExtensions.comparedCollection<AuthorizedGroup>(expected.authorizedGroups,actual.authorizedGroups));
-            Assert.AreEqual(expected.name,actual.name);
-            Assert.AreEqual(expected.password, actual.password);
-        }
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void authenticateAgainstFailoverSystemTest()
-        {
-            string username = "eecrole"; 
-            string password = "m0nash2008"; 
-            bool expected = true; 
-            bool actual; 
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            actual = target.authenticateAgainstFailoverSystem(username, password);
             Assert.AreEqual(expected, actual);
         }
         [TestMethod()]
-        public void getEligibleGroupsTest()
+        public void attemptAuthenticationTestReturnsNullWhenPassedNullPassword()
         {
-            string AuthcateName = "eecrole"; 
-            string AuthcatePassword = "m0nash2008";
-            List<AuthorizedGroup> expected = new List<AuthorizedGroup> { new AuthorizedGroup { groupKey = "Unrestricted", groupType = "" }, new AuthorizedGroup { groupKey = "Office of the Deputy Vice-Chancellor (Education)", groupType = "ou" }, new AuthorizedGroup { groupKey = "Administration", groupType = "ou" }, new AuthorizedGroup { groupKey = "Staff", groupType = "ou" }, new AuthorizedGroup { groupKey = "eecrole", groupType = "username" }}; 
-            List<AuthorizedGroup> actual;
+            string username = "eecrole";
+            string password = null;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            actual = target.getEligibleGroups(AuthcateName, AuthcatePassword);
-            Assert.IsTrue(TestExtensions.comparedCollection<AuthorizedGroup>(expected, actual));
-        }
-        [TestMethod()]
-        public void isAuthenticatedAgainstLDAPTest()
-        {
-            string username = "eecrole"; 
-            string password = "m0nash2008"; 
-            bool expected = true; 
-            bool actual;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            actual = target.isAuthenticatedAgainstLDAP(username, password);
+            Credentials expected = null;
+            Credentials actual;
+            actual = target.attemptAuthentication(username, password);
             Assert.AreEqual(expected, actual);
         }
         [TestMethod()]
-        public void isAuthenticatedAgainstWebProxyTest()
+        public void attemptAuthenticationTestReturnsNullWhenPassedNullUsernameAndNullPassword()
         {
-            string username = "eecrole"; 
-            string password = "m0nash2008"; 
-            bool expected = true; 
-            bool actual;
+            string username = null;
+            string password = null;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            actual = target.isAuthenticatedAgainstWebProxy(username, password);
+            Credentials expected = null;
+            Credentials actual;
+            actual = target.attemptAuthentication(username, password);
             Assert.AreEqual(expected, actual);
         }
         [TestMethod()]
@@ -147,12 +233,11 @@ namespace MeTLLibTests
         {
             string user = "eecrole"; 
             bool expected = false; 
-            bool actual;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            actual = target.isBackdoorUser(user);
+            bool actual = target.isBackdoorUser(user);
             Assert.AreEqual(expected, actual);
         }
         [TestMethod()]
@@ -161,12 +246,11 @@ namespace MeTLLibTests
         {
             string user = "AdmirableEecrole";
             bool expected = true;
-            bool actual;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            actual = target.isBackdoorUser(user);
+            bool actual = target.isBackdoorUser(user);
             Assert.AreEqual(expected, actual);
         }
         [TestMethod()]
@@ -175,12 +259,11 @@ namespace MeTLLibTests
         {
             string user = string.Empty;
             bool expected = false;
-            bool actual;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            actual = target.isBackdoorUser(user);
+            bool actual = target.isBackdoorUser(user);
             Assert.AreEqual(expected, actual);
         }
         [TestMethod()]
@@ -190,12 +273,11 @@ namespace MeTLLibTests
         {
             string user = null;
             bool expected = true;
-            bool actual;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            actual = target.isBackdoorUser(user);
+            bool actual = target.isBackdoorUser(user);
             Assert.AreEqual(expected, actual);
         }
     }
