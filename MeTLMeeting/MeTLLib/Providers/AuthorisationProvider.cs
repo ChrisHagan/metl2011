@@ -91,6 +91,8 @@ namespace MeTLLib.Providers
         }
         public Credentials attemptAuthentication(string username, string password)
         {
+            if (String.IsNullOrEmpty(username)) throw new ArgumentNullException("username", "Argument cannot be null");
+            if (String.IsNullOrEmpty(password)) throw new ArgumentNullException("password", "Argument cannot be null");
             string AuthcateUsername = "";
             if (username.Contains("_"))
             {

@@ -92,6 +92,7 @@
     <Compile Include="MeTLStanzasTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderMonitorTest.cs" />
+    <Compile Include="ResourceUploaderTest.cs" />
     <Compile Include="Test Helper Functions\TestExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

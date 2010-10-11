@@ -186,7 +186,8 @@ namespace MeTLLibTests
             Assert.IsInstanceOfType(target, typeof(AuthorisationProvider));
         }
         [TestMethod()]
-        public void attemptAuthenticationTestReturnsNullWhenPassedNullUsername()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void attemptAuthenticationTestFailsWhenPassedNullUsername()
         {
             string username = null;
             string password = "m0nash2008";
@@ -200,7 +201,8 @@ namespace MeTLLibTests
             Assert.AreEqual(expected, actual);
         }
         [TestMethod()]
-        public void attemptAuthenticationTestReturnsNullWhenPassedNullPassword()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void attemptAuthenticationTestFailsWhenPassedNullPassword()
         {
             string username = "eecrole";
             string password = null;
@@ -214,7 +216,8 @@ namespace MeTLLibTests
             Assert.AreEqual(expected, actual);
         }
         [TestMethod()]
-        public void attemptAuthenticationTestReturnsNullWhenPassedNullUsernameAndNullPassword()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void attemptAuthenticationTestFailsWhenPassedNullUsernameAndNullPassword()
         {
             string username = null;
             string password = null;
@@ -235,7 +238,7 @@ namespace MeTLLibTests
             bool expected = false; 
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<AuthorizationProviderWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
             bool actual = target.isBackdoorUser(user);
             Assert.AreEqual(expected, actual);
@@ -248,7 +251,7 @@ namespace MeTLLibTests
             bool expected = true;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<AuthorizationProviderWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
             bool actual = target.isBackdoorUser(user);
             Assert.AreEqual(expected, actual);
@@ -261,7 +264,7 @@ namespace MeTLLibTests
             bool expected = false;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<AuthorizationProviderWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
             bool actual = target.isBackdoorUser(user);
             Assert.AreEqual(expected, actual);
@@ -275,10 +278,64 @@ namespace MeTLLibTests
             bool expected = true;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<AuthorizationProviderWebClientFactory>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
             bool actual = target.isBackdoorUser(user);
             Assert.AreEqual(expected, actual);
+        }
+        class AuthorizationProviderWebClientFactory : IWebClientFactory
+        {
+            public IWebClient client()
+            {
+                return new AuthorizationProviderWebClient();
+            }
+        }
+        class AuthorizationProviderWebClient : IWebClient
+        {
+            public long getSize(Uri resource)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool exists(Uri resource)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void downloadStringAsync(Uri resource)
+            {
+                throw new NotImplementedException();
+            }
+
+            public string downloadString(Uri resource)
+            {
+                throw new NotImplementedException();
+            }
+
+            public byte[] downloadData(Uri resource)
+            {
+                throw new NotImplementedException();
+            }
+
+            public string uploadData(Uri resource, byte[] data)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void uploadDataAsync(Uri resource, byte[] data)
+            {
+                throw new NotImplementedException();
+            }
+
+            public byte[] uploadFile(Uri resource, string filename)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void uploadFileAsync(Uri resource, string filename)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

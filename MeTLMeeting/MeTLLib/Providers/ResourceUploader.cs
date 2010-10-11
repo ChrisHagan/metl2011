@@ -5,6 +5,7 @@ using MeTLLib.Providers.Connection;
 using MeTLLib.Providers;
 using System.Diagnostics;
 using Ninject;
+using System;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -24,6 +25,8 @@ namespace MeTLLib.Providers.Connection
         }
         public string uploadResource(string path, string file, bool overwrite)
         {
+            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException("path", "Argument cannot be null");
+            if (string.IsNullOrEmpty(file)) throw new ArgumentNullException("file", "Argument cannot be null");
             try
             {
                 var fullPath = string.Format("{0}?path=Resource/{1}&overwrite={2}", RESOURCE_SERVER_UPLOAD, path, overwrite);
@@ -43,6 +46,9 @@ namespace MeTLLib.Providers.Connection
         }
         public string uploadResourceToPath(byte[] resourceData, string path, string name, bool overwrite)
         {
+            if (resourceData == null || resourceData.Length == 0) throw new ArgumentNullException("resourceData", "Argument cannot be null"); 
+            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException("path", "Argument cannot be null");
+            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name", "Argument cannot be null");
             var url = string.Format("{0}?path={1}&overwrite={2}&filename={3}", RESOURCE_SERVER_UPLOAD, path, overwrite.ToString().ToLower(), name);
             var res = _httpResourceProvider.securePutData(new System.Uri(url), resourceData);
             return XElement.Parse(res).Attribute("url").Value;
@@ -53,6 +59,9 @@ namespace MeTLLib.Providers.Connection
         }
         public string uploadResourceToPath(string localFile, string remotePath, string name, bool overwrite)
         {
+            if (string.IsNullOrEmpty(localFile)) throw new ArgumentNullException("localFile", "Argument cannot be null");
+            if (string.IsNullOrEmpty(remotePath)) throw new ArgumentNullException("remotePath", "Argument cannot be null");
+            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name", "Argument cannot be null");
             var url = string.Format("{0}?path=Resource/{1}&overwrite={2}&filename={3}", RESOURCE_SERVER_UPLOAD, remotePath, overwrite.ToString().ToLower(), name);
             var res = _httpResourceProvider.securePutFile(new System.Uri(url), localFile);
             return XElement.Parse(res).Attribute("url").Value;
