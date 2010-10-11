@@ -80,7 +80,7 @@ namespace MeTLLib
         [Inject]
         public AuthorisationProvider authorisationProvider { private get; set; }
         [Inject]
-        public ResourceUploader resourceUploader { private get; set; }
+        public IResourceUploader resourceUploader { private get; set; }
         [Inject]
         public HttpHistoryProvider historyProvider { private get; set; }
         [Inject]

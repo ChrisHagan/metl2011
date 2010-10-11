@@ -16,6 +16,7 @@ namespace MeTLLib
             Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             Bind<ClientConnection>().ToSelf().InSingletonScope();
+            Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
             Bind<WebClientWithTimeout>().ToSelf();
             Bind<JabberWireFactory>().ToSelf().InSingletonScope();
             Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();

@@ -127,7 +127,7 @@ namespace MeTLLib.Providers
             else
             {
                 Trace.TraceError("Failed to Login.");
-                return null;
+                return new Credentials { name = "", password = "", authorizedGroups = new List<AuthorizedGroup> { } };
             }
         }
         public bool isBackdoorUser(string user)

@@ -9,12 +9,34 @@ using System;
 
 namespace MeTLLib.Providers.Connection
 {
-    public class ResourceUploader
+    public interface ResourceUploaderFactory
+    {
+        IResourceUploader get();
+    }
+    public class ProductionResourceUploaderFactory : ResourceUploaderFactory
+    {
+        [Inject]
+        public HttpResourceProvider provider { private get; set; }
+        public IResourceUploader get()
+        {
+            return new ProductionResourceUploader(provider);
+        }
+    }
+    public interface IResourceUploader
+    {
+        string uploadResource(string path, string file);
+        string uploadResource(string path, string file, bool overwrite);
+        string uploadResourceToPath(byte[] data, string file, string name);
+        string uploadResourceToPath(byte[] data, string file, string name, bool overwrite);
+        string uploadResourceToPath(string localFile, string remotePath, string name);
+        string uploadResourceToPath(string localFile, string remotePath, string name, bool overwrite);
+    }
+    public class ProductionResourceUploader : IResourceUploader
     {
         [Inject]
         public MeTLServerAddress metlServerAddress { private get; set; }
         private HttpResourceProvider _httpResourceProvider;
-        public ResourceUploader(HttpResourceProvider provider)
+        public ProductionResourceUploader(HttpResourceProvider provider)
         {
             _httpResourceProvider = provider;
         }

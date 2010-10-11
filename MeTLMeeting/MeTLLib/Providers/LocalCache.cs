@@ -15,7 +15,7 @@ namespace MeTLLib.Providers
     public class ResourceCache
     {
         [Inject] public HttpResourceProvider resourceProvider{private get; set;}
-        [Inject] public ResourceUploader resourceUploader{private get;set;}
+        [Inject] public IResourceUploader resourceUploader{private get;set;}
         [Inject] public MeTLServerAddress server { private get; set; }
         public static readonly string cacheName = "resourceCache";
         private string cacheXMLfile = cacheName + "\\" + cacheName + ".xml";

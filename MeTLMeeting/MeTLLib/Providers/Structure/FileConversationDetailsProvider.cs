@@ -21,8 +21,8 @@ namespace MeTLLib.Providers.Structure
     {
         [Inject] public IProviderMonitor providerMonitor { private get;set;}
         [Inject] public MeTLServerAddress server { private get; set; }
-        private ResourceUploader resourceUploader;
-        public FileConversationDetailsProvider(IWebClientFactory factory, ResourceUploader uploader) : base(factory)
+        private IResourceUploader resourceUploader;
+        public FileConversationDetailsProvider(IWebClientFactory factory, IResourceUploader uploader) : base(factory)
         {
             resourceUploader = uploader;
             ListConversations();

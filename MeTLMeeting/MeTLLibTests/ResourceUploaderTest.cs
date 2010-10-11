@@ -63,7 +63,8 @@ namespace MeTLLibTests
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file, true);
             Assert.AreEqual(expected, actual);
         }
@@ -79,7 +80,8 @@ namespace MeTLLibTests
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(data, path, name, true);
             Assert.AreEqual(expected, actual);
         }
@@ -134,8 +136,9 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<StubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
-            Assert.IsInstanceOfType(target, typeof(ResourceUploader));
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
+            Assert.IsInstanceOfType(target, typeof(ProductionResourceUploader));
         }
         [TestMethod()]
         public void uploadResourceTest()
@@ -146,7 +149,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file);
             Assert.AreEqual(expected, actual);
         }
@@ -160,7 +164,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file);
             Assert.AreEqual(expected, actual);
         }
@@ -174,7 +179,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file);
             Assert.AreEqual(expected, actual);
         }
@@ -188,7 +194,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file);
             Assert.AreEqual(expected, actual);
         }
@@ -202,7 +209,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file);
             Assert.AreEqual(expected, actual);
         }
@@ -216,7 +224,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file);
             Assert.AreEqual(expected, actual);
         }
@@ -230,7 +239,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file);
             Assert.AreEqual(expected, actual);
         }
@@ -244,7 +254,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file);
             Assert.AreEqual(expected, actual);
         }
@@ -258,7 +269,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file);
             Assert.AreEqual(expected, actual);
         }
@@ -273,7 +285,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file,overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -288,7 +301,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -303,7 +317,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -318,7 +333,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -333,7 +349,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -349,7 +366,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -364,7 +382,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -379,7 +398,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -394,7 +414,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResource(path, file, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -409,7 +430,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name);
             Assert.AreEqual(expected, actual);
         }
@@ -424,7 +446,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name);
             Assert.AreEqual(expected, actual);
         }
@@ -439,7 +462,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name);
             Assert.AreEqual(expected, actual);
         }
@@ -454,7 +478,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name);
             Assert.AreEqual(expected, actual);
         }
@@ -469,7 +494,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name);
             Assert.AreEqual(expected, actual);
         }
@@ -484,7 +510,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name);
             Assert.AreEqual(expected, actual);
         }
@@ -499,7 +526,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name);
             Assert.AreEqual(expected, actual);
         }
@@ -514,7 +542,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -530,7 +559,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -546,7 +576,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -562,7 +593,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -578,7 +610,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -594,7 +627,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -610,7 +644,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(localFile, remotePath, name, overwrite);
             Assert.AreEqual(expected, actual);
         }
@@ -624,7 +659,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(data, remotePath, name);
             Assert.AreEqual(expected, actual);
         }
@@ -639,7 +675,8 @@ namespace MeTLLibTests
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
             kernel.Bind<IWebClientFactory>().To<ResourceUploaderStubWebClientFactory>().InSingletonScope();
-            ResourceUploader target = kernel.Get<ResourceUploader>();
+            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            IResourceUploader target = kernel.Get<IResourceUploader>();
             string actual = target.uploadResourceToPath(data, remotePath, name, overwrite);
             Assert.AreEqual(expected, actual);
         }

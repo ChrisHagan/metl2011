@@ -88,6 +88,7 @@
   <ItemGroup>
     <Compile Include="AuthorisationProviderTest.cs" />
     <Compile Include="CryptoTest.cs" />
+    <Compile Include="FileConversationDetailsProviderTest.cs" />
     <Compile Include="HttpResourceProviderTest.cs" />
     <Compile Include="MeTLStanzasTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
