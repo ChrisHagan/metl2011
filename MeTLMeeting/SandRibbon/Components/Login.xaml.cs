@@ -59,6 +59,11 @@ namespace SandRibbon.Components
                     this.Visibility = Visibility.Collapsed;
                 }));
             Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
+            if (WorkspaceStateProvider.workSpaceFileExits())
+            {
+                loggingIn.Visibility = Visibility.Visible;
+                usernameAndPassword.Visibility = Visibility.Collapsed;
+            }
         }
         private void ServersDown(IEnumerable<ServerStatus> servers)
         {
@@ -153,6 +158,8 @@ namespace SandRibbon.Components
                     password = AuthcatePassword,
                     authorizedGroups = eligibleGroups
                 });
+                if(rememberMe.IsChecked == true)
+                    WorkspaceStateProvider.SaveCurrentSettings();
             }
             else
             {

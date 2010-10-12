@@ -63,7 +63,7 @@
       <Item value="currentSlide" priority="6" />
       <Item value="details" priority="11" />
       <Item value="thoughtBubble" priority="6" />
-      <Item value="if" priority="97" />
+      <Item value="if" priority="98" />
       <Item value="opened" priority="3" />
       <Item value="position" priority="5" />
       <Item value="PointCollectionExtension" priority="3" />
@@ -555,6 +555,8 @@
       <Item value="filename" priority="1" />
       <Item value="slideDirectory" priority="2" />
       <Item value="Directory`0" priority="1" />
+      <Item value="WorkspaceStateProvider`0" priority="0" />
+      <Item value="rememberMe" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.FrameworkElement">
       <Item value="BeginAnimation" priority="0" />
@@ -1311,16 +1313,16 @@
       <Item value="MeTLCollaborator" priority="0" />
       <Item value="MeTL" priority="0" />
     </ItemStatistics>
+    <ItemStatistics item="Qualified:@SandRibbon.Providers.WorkspaceStateProvider">
+      <Item value="SaveCurrentSettings`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Controls.CheckBox">
+      <Item value="IsChecked" priority="0" />
+    </ItemStatistics>
   </CompletionStatisticsManager>
   <RecentFiles>
     <RecentFiles>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:AuthorisationProvider.cs" caret="835" fromTop="15" />
-      <File id="C2BC5886-C540-4DF0-88C7-C8E00AFF935B/f:Window1.xaml.cs" caret="1676" fromTop="47" />
-      <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="17138" fromTop="38" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Projector.xaml.cs" caret="8798" fromTop="15" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Utility/f:GlobalTimers.cs" caret="448" fromTop="15" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ConfigurationProvider.cs" caret="2461" fromTop="19" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="1108" fromTop="33" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ProviderMonitor.cs" caret="2770" fromTop="26" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Submissions/f:ViewSubmissions.xaml" caret="2441" fromTop="37" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/d:Connection/d:Jabber/f:JabberWire.cs" caret="23483" fromTop="23" />
@@ -1340,16 +1342,18 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="45476" fromTop="26" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AssessAQuiz.xaml" caret="691" fromTop="13" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Quizzes.xaml.cs" caret="891" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Quizzes.xaml" caret="1869" fromTop="14" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Attachments.xaml" caret="1010" fromTop="9" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml" caret="6062" fromTop="20" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/d:Groups/f:ZoomControlsHost.xaml" caret="1186" fromTop="19" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Quizzes.xaml" caret="0" fromTop="0" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="16461" fromTop="12" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:CursorExtensions.cs" caret="283" fromTop="10" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Login.xaml" caret="608" fromTop="9" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:WorkspaceStateProvider.cs" caret="4753" fromTop="11" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="7427" fromTop="17" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Login.xaml.cs" caret="6392" fromTop="5" />
     </RecentFiles>
     <RecentEdits>
-      <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:LocalCache.cs" caret="3509" fromTop="14" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:ResourceDictionaries/f:ToolTips.xaml" caret="7688" fromTop="8" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:ResourceDictionaries/f:ToolTips.xaml" caret="7678" fromTop="10" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:AbstractCanvas.cs" caret="2169" fromTop="29" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="15828" fromTop="23" />
       <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:LocalCache.cs" caret="3947" fromTop="9" />
       <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:LocalCache.cs" caret="4991" fromTop="27" />
@@ -1376,6 +1380,10 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml" caret="4596" fromTop="6" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/d:Groups/f:ZoomControlsHost.xaml" caret="858" fromTop="13" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/d:Groups/f:ZoomControlsHost.xaml" caret="1187" fromTop="19" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Login.xaml" caret="5876" fromTop="21" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="7428" fromTop="17" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Login.xaml.cs" caret="6931" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Login.xaml.cs" caret="7223" fromTop="21" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>

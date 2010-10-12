@@ -28,6 +28,14 @@ namespace SandRibbon.Providers
             Commands.MoveTo,
             Commands.JoinConversation
         };
+        public static bool workSpaceFileExits()
+        {
+             if (!Directory.Exists(WORKSPACE_DIRECTORY))
+                 return false;
+             if (!File.Exists(WORKSPACE_SAVE_FILE))
+                 return false;
+            return true;
+        }
         public static void ensureWorkspaceDirectoryExists() { 
             if (!Directory.Exists(WORKSPACE_DIRECTORY)) {
                 Directory.CreateDirectory(WORKSPACE_DIRECTORY);

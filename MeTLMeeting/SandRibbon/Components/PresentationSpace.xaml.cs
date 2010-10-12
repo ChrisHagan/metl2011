@@ -361,7 +361,8 @@ namespace SandRibbon.Components
             withDragMarquee(marquee =>
             {
                 Commands.EndGrabZoom.Execute(null);
-                Commands.SetZoomRect.Execute(marquee);
+                if(marquee.Width > 10)
+                    Commands.SetZoomRect.Execute(marquee);
             });
         }
         private void withDragMarquee(Action<Rectangle> doWithRect)

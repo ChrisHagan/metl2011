@@ -43,8 +43,11 @@
                     <StackPanel Orientation="Horizontal" >
                         <Image Margin="10" Source="\Resources\CrudeMeTLMockup.png"/>
                         <StackPanel VerticalAlignment="Center">
-                            <Border Padding="5" Background="{StaticResource BackgroundBlueGradient}" CornerRadius="4" BorderBrush="DarkGray" BorderThickness="1">
-                                <StackPanel>
+                            <Border x:Name="loggingIn" Padding="5" Background="{StaticResource BackgroundBlueGradient}" CornerRadius="4" BorderBrush="DarkGray" BorderThickness="1">
+                                <Label FontSize="20" Content="MeTL is logging you in"/>
+                            </Border>
+                            <Border x:Name="usernameAndPassword" Padding="5" Background="{StaticResource BackgroundBlueGradient}" CornerRadius="4" BorderBrush="DarkGray" BorderThickness="1">
+                                <StackPanel >
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="150"/>
@@ -68,6 +71,7 @@
                                         </PasswordBox>
                                     </Grid>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <CheckBox x:Name="rememberMe">Stay signed in</CheckBox>
                                         <Button Command="{x:Static components:Login.CheckAuthentication}">login</Button>
                                     </StackPanel>
                                 </StackPanel>
