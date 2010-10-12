@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Ninject;
 using MeTLLib;
 using MeTLLib.Providers.Connection;
+using System.Net;
 
 namespace MeTLLibTests
 {
@@ -60,7 +61,11 @@ namespace MeTLLibTests
             ConversationDetails expectedDetails = new ConversationDetails { };
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
+            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.Update(proposedDetails);
             Assert.AreEqual(actual, expectedDetails);
@@ -72,7 +77,11 @@ namespace MeTLLibTests
             ConversationDetails expectedDetails = new ConversationDetails { };
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
+            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.AppendSlide(proposedTitle);
             Assert.AreEqual(actual, expectedDetails);
@@ -84,7 +93,11 @@ namespace MeTLLibTests
             ConversationDetails expectedDetails = new ConversationDetails { };
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
+            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.AppendSlide(proposedTitle);
             Assert.AreEqual(actual, expectedDetails);
@@ -92,38 +105,134 @@ namespace MeTLLibTests
         [TestMethod()]
         public void detailsOfTest()
         {
-            String conversationJid = String.Empty;
-            ConversationDetails expectedDetails = new ConversationDetails { };
+            String conversationJid = "100";
+            ConversationDetails expectedDetails = new ConversationDetails
+            {
+                Author = "hagand",
+                Created = new DateTime(2010, 05, 18, 15, 00, 53),
+                Jid = "100",
+                LastAccessed = new DateTime(0001, 01, 1, 0, 0, 0),
+                Permissions = new Permissions
+                {
+                    conversationGroup = String.Empty,
+                    Label = null,
+                    studentCanOpenFriends = true,
+                    studentCanPublish = true,
+                    usersAreCompulsorilySynced = false
+                },
+                Slides = new List<Slide> 
+                {
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=true,
+                        id=101,
+                        index=0,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=106,
+                        index=1,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=105,
+                        index=2,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=104,
+                        index=3,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=102,
+                        index=4,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=103,
+                        index=5,
+                        type= Slide.TYPE.SLIDE
+                    },
+                },
+                Subject = "Unrestricted",
+                Tag = "",
+                Title = "Welcome to Staging on Madam"
+            };
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
+            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.DetailsOf(conversationJid);
-            Assert.AreEqual(actual, expectedDetails);
+            Assert.IsTrue(TestExtensions.deepComparedObject<ConversationDetails>(actual, expectedDetails));
         }
+        [TestMethod()]
         public void CreateTest()
         {
             ConversationDetails proposedConversationDetails = new ConversationDetails { };
             ConversationDetails expectedDetails = new ConversationDetails { };
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
+            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.Create(proposedConversationDetails);
             Assert.AreEqual(actual, expectedDetails);
         }
+        [TestMethod()]
         public void getApplicationInformationTest()
         {
-            ApplicationLevelInformation expected = new ApplicationLevelInformation { };
+            //Don't know what ApplicationLevelInformation to expect yet.
+            //ApplicationLevelInformation expected = new ApplicationLevelInformation { };
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
+            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            kernel.Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
+            kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ApplicationLevelInformation actual = provider.GetApplicationLevelInformation();
-            Assert.AreEqual(actual, expected);
+            Assert.IsInstanceOfType(actual, typeof(ApplicationLevelInformation));
+            //Assert.AreEqual(actual, expected);
         }
     }
-    
+
     [TestClass()]
     public class FileConversationDetailsProviderTest
     {
