@@ -172,8 +172,8 @@ namespace MeTLLibTests
         public void FileConversationDetailsProviderConstructorTest()
         {
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             Assert.IsInstanceOfType(provider, typeof(FileConversationDetailsProvider));
         }
@@ -184,8 +184,8 @@ namespace MeTLLibTests
             string title = string.Empty; // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.AppendSlide(title);
             Assert.AreEqual(expected, actual);
@@ -198,8 +198,8 @@ namespace MeTLLibTests
             string title = string.Empty; // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.AppendSlideAfter(currentSlide, title);
             Assert.AreEqual(expected, actual);
@@ -213,8 +213,8 @@ namespace MeTLLibTests
             Slide.TYPE type = new Slide.TYPE(); // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.AppendSlideAfter(currentSlide, title, type);
             Assert.AreEqual(expected, actual);
@@ -226,8 +226,8 @@ namespace MeTLLibTests
             ConversationDetails proposedDetails = new ConversationDetails { }; // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.Create(proposedDetails);
             Assert.AreEqual(expected, actual);
@@ -240,8 +240,8 @@ namespace MeTLLibTests
             String conversationJid = String.Empty; // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.DetailsOf(conversationJid);
             Assert.AreEqual(expected, actual);
@@ -252,8 +252,8 @@ namespace MeTLLibTests
         {
             ApplicationLevelInformation expected = null; // TODO: Initialize to an appropriate value
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ApplicationLevelInformation actual = provider.GetApplicationLevelInformation();
             Assert.AreEqual(expected, actual);
@@ -264,8 +264,8 @@ namespace MeTLLibTests
         {
             IEnumerable<ConversationDetails> expected = null; // TODO: Initialize to an appropriate value
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             IEnumerable<ConversationDetails> actual = provider.ListConversations();
             Assert.AreEqual(expected, actual);
@@ -277,8 +277,8 @@ namespace MeTLLibTests
         {
             string jid = string.Empty; // TODO: Initialize to an appropriate value
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             provider.ReceiveDirtyConversationDetails(jid);
             Assert.Inconclusive("A method that does not return a value cannot be verified.");
@@ -306,8 +306,8 @@ namespace MeTLLibTests
             ConversationDetails details = null; // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
             IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<ProductionResourceUploader>().InSingletonScope();
+            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
+            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.Update(details);
             Assert.AreEqual(expected, actual);
@@ -352,5 +352,91 @@ namespace MeTLLibTests
             Assert.Inconclusive("Verify the correctness of this test method.");
         }
          */
+    }
+    public class FileConversationDetailsProviderWebClientFactory : IWebClientFactory
+    {
+        public IWebClient client()
+        {
+            return new FileConversationDetailsProviderWebClient();
+        }
+    }
+    public class FileConversationDetailsProviderWebClient : IWebClient
+    {
+        public long getSize(Uri resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool exists(Uri resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void downloadStringAsync(Uri resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string downloadString(Uri resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] downloadData(Uri resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string uploadData(Uri resource, byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void uploadDataAsync(Uri resource, byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] uploadFile(Uri resource, string filename)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void uploadFileAsync(Uri resource, string filename)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class FileConversationDetailsResourceUploader : IResourceUploader
+    {
+        public string uploadResource(string path, string file)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string uploadResource(string path, string file, bool overwrite)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string uploadResourceToPath(byte[] data, string file, string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string uploadResourceToPath(byte[] data, string file, string name, bool overwrite)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string uploadResourceToPath(string localFile, string remotePath, string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string uploadResourceToPath(string localFile, string remotePath, string name, bool overwrite)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
