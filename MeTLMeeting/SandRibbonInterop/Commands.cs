@@ -183,6 +183,7 @@ namespace SandRibbon
         public static CompositeCommand FitToPageWidth= new CompositeCommand();
         #endregion
         #region AppLevel
+        public static CompositeCommand MeTLType = new CompositeCommand();
         public static CompositeCommand LogOut = new CompositeCommand();
         public static CompositeCommand SetIdentity = new CompositeCommand();
         public static CompositeCommand EstablishPrivileges = new CompositeCommand();

@@ -94,6 +94,7 @@
             <Grid x:Name="loginParent">
                 <components:ConversationSearchBox x:Name="currentConversationSearchBox" Visibility="Collapsed"/>
                 <components:Login x:Name="login"/>
+                <TextBlock x:Name="autoLoginMessage" Visibility="Collapsed">Logging you in automatically for your convience </TextBlock>
             </Grid>
         </Grid>
 </sr:RibbonWindow>

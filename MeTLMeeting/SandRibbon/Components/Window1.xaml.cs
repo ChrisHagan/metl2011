@@ -59,11 +59,12 @@ namespace SandRibbon
         private void DoConstructor()
         {
             InitializeComponent();
-            var MeTLType = ConfigurationProvider.instance.getMeTLType();
-            Title = MeTLType;
+            var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
+            CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(level);
+            Title = Globals.MeTLType;
             try
             {
-                Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + MeTLType + ".ico");
+                Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
             catch (Exception) { }
             userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
@@ -133,7 +134,6 @@ namespace SandRibbon
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
 
             adornerScroll.scroll = scroll;
@@ -146,6 +146,7 @@ namespace SandRibbon
             WorkspaceStateProvider.RestorePreviousSettings();
             App.Now("Started MeTL");
         }
+
         private void noop(object unused)
         {
         }

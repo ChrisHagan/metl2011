@@ -17,7 +17,7 @@ using System.Collections.ObjectModel;
 
 namespace SandRibbon.Chrome
 {
-    public partial class ToolBar : Divelements.SandRibbon.ToolBar
+    public partial class ToolBar
     {
         private ObservableCollection<FrameworkElement> icons = new ObservableCollection<FrameworkElement>();
         public ToolBar()

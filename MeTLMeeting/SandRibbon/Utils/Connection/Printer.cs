@@ -59,11 +59,12 @@ namespace SandRibbon.Utils.Connection
                 }
                 foreach (var image in images)
                 {
-                    image.Value.image.Margin = new Thickness(5,5,5,5);
+                    var imageToAdd = image.Value.image;
+                    imageToAdd.Margin = new Thickness(5,5,5,5);
                     if (image.Value.privacy == "public" || image.Value.target == "presentationSpace")
-                        publicCanvas.images.Children.Add(image.Value.image);
+                        publicCanvas.images.Children.Add(imageToAdd);
                     else if(image.Value.target== "notepad")
-                        privateCanvas.images.Children.Add(image.Value.image);    
+                        privateCanvas.images.Children.Add(imageToAdd);    
                 }
                 foreach (var box in text)
                 {

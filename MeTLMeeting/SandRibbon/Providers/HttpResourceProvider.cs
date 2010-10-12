@@ -3,6 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Linq;
 using System;
 using System.Threading;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Providers
 {
@@ -15,6 +16,7 @@ namespace SandRibbon.Providers
             return request;
         }
     }
+
     public class HttpResourceProvider
     {
         private static readonly string StagingMeTLCertificateSubject = "E=nobody@nowhere.gondwanaland, CN=localhost, OU=Janitorial section, O=Hyber Inc., L=Yawstown, S=Gondwanaland, C=se";
@@ -436,7 +438,7 @@ namespace SandRibbon.Providers
         {
             return;
             var filenameDescriptor = string.IsNullOrEmpty(filename) ? "" : " : " + filename;
-            App.Now(status + "(" + type + " : " + uri + filenameDescriptor + ")");
+            Logger.Log(status + "(" + type + " : " + uri + filenameDescriptor + ")");
         }
         private static void NotifyProgress(int attempts, string type, string resource, long recBytes, long size, int percentage, bool isPercentage)
         {
@@ -444,10 +446,10 @@ namespace SandRibbon.Providers
             if (isPercentage)
             {
                 percentage = (int)(recBytes / size);
-                App.Now("Attempt " + attempts + " waiting on " + type + ": " + percentage + "% (" + resource + ")");
+                Logger.Log("Attempt " + attempts + " waiting on " + type + ": " + percentage + "% (" + resource + ")");
             }
             else
-                App.Now("Attempt " + attempts + " waiting on " + type + ": " + recBytes + "B (" + resource + ")");
+                Logger.Log("Attempt " + attempts + " waiting on " + type + ": " + recBytes + "B (" + resource + ")");
         }
     }
 }
