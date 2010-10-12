@@ -572,7 +572,7 @@ namespace SandRibbonInterop
                 var tag = this.Parent != null && this.Parent is FrameworkElement ?
                     ((FrameworkElement)this.Parent).Tag :
                     null;
-                if (tag != null)
+                if (tag != null && this.GroupName != null)
                     this.GroupName = (string)tag;
             };
         }

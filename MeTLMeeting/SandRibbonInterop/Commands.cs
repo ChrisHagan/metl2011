@@ -32,6 +32,8 @@ namespace SandRibbon
         public static CompositeCommand receiveCurrentClasses = new CompositeCommand();
         #endregion
 
+        public static CompositeCommand BackstageModeChanged = new CompositeCommand();
+
         public static CompositeCommand AddPrivacyToggleButton = new CompositeCommand();
         public static CompositeCommand UserVisibility = new CompositeCommand();
         public static CompositeCommand RemovePrivacyAdorners = new CompositeCommand();

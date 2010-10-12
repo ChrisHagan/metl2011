@@ -65,6 +65,21 @@ namespace SandRibbon
         public static availablePenContentConverter AvailablePenContentConverter = new availablePenContentConverter();
         public static availablePenDropDownContentConverter AvailablePenDropDownContentConverter = new availablePenDropDownContentConverter();
         public static colourToNameConverter ColourToNameConverter = new colourToNameConverter();
+        public static conversationDetailsToDescription ConversationDetailsToDescription = new conversationDetailsToDescription();
+    }
+    public class conversationDetailsToDescription : IValueConverter { 
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var details = (ConversationDetails)value;
+            var slides = string.Format("{0} Slide", details.Slides.Count);
+            if(details.Slides.Count > 1)
+                slides = string.Format("{0}s", slides);
+            return string.Format("created by: {0}\nrestricted to: {1}\ncreated on: {2}\n{3}", details.Author, details.Subject, details.Created, slides);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
     }
     public class privacyToBoolConverter : IValueConverter
     {

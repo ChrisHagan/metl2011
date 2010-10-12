@@ -5,15 +5,13 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:interop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop">
     <UserControl.Resources>
         <core:Double x:Key="browsePane">0.25</core:Double>
         <core:Double x:Key="searchPane">0.60</core:Double>
         <core:Double x:Key="searchBoxMargin">0.05</core:Double>
     </UserControl.Resources>
-    <UserControl.CommandBindings>
-        <CommandBinding Command="{x:Static components:ConversationSearchBox.Search}"  CanExecute="checkWhetherCanSearch" Executed="SearchConversationButton_Click"/>
-    </UserControl.CommandBindings>
     <DockPanel Background="White" x:Name="TotalWidth" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
         <Border DockPanel.Dock="Bottom" BorderThickness="1" Padding="2" CornerRadius="4" BorderBrush="DarkGray" x:Name="ConversationSearchFooter" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Bottom">
             <Grid>
@@ -42,255 +40,45 @@
                 </StackPanel>
             </Grid>
         </Border>
-
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Width="Auto">
-            <Grid>
-                <Grid.Width>
-                    <MultiBinding Converter="{x:Static sr:Converters.multiply}">
-                        <Binding ElementName="TotalWidth" Path="ActualWidth" />
-                        <Binding Source="{StaticResource searchBoxMargin}"/>
-                    </MultiBinding>
-                </Grid.Width>
-            </Grid>
-           
-            <Grid>
-                <Grid.Width>
-                    <MultiBinding Converter="{x:Static sr:Converters.multiply}">
-                        <Binding ElementName="TotalWidth" Path="ActualWidth" />
-                        <Binding Source="{StaticResource searchBoxMargin}"/>
-                    </MultiBinding>
-                </Grid.Width>
-            </Grid>
-            <ScrollViewer
-                      VerticalAlignment="Stretch" Height="Auto"
-                      HorizontalAlignment="Stretch"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Auto">
-                <!--ScrollViewer.Width>
-                    <MultiBinding Converter="{x:Static sr:Converters.multiply}">
-                        <Binding ElementName="TotalWidth" Path="ActualWidth" />
-                        <Binding Source="{StaticResource searchPane}"/>
-                    </MultiBinding>
-                </ScrollViewer.Width-->
-                <Grid x:Name="searchBoxTotalWidth" VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition>
-                            <ColumnDefinition.Width>
-                                <MultiBinding Converter="{x:Static sr:Converters.multiply}">
-                                    <Binding ElementName="searchBoxTotalWidth" Path="ActualWidth" />
-                                    <Binding Source="{StaticResource searchBoxMargin}"/>
-                                </MultiBinding>
-                            </ColumnDefinition.Width>
-                        </ColumnDefinition>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition>
-                            <!--ColumnDefinition.Width>
-                                <MultiBinding Converter="{x:Static sr:Converters.multiply}">
-                                    <Binding ElementName="searchBoxTotalWidth" Path="ActualWidth" />
-                                    <Binding Source="{StaticResource searchBoxMargin}"/>
-                                </MultiBinding>
-                            </ColumnDefinition.Width-->
-                        </ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Label FontSize="12" Content="Search for a conversation"
-                                   HorizontalAlignment="Left"
-                                   Grid.Row="0" Grid.Column="1" />
-                    <Grid Grid.Column="2" Grid.Row="0" x:Name="HideConversationSearchBoxButton"  Visibility="Collapsed" >
-                         <Button  Command="{x:Static api:Commands.HideConversationSearchBox}" 
-                            CommandManager.CanExecute="HideConversationSearchBoxButton_CanExecute" 
-                            Content="Return to current conversation"/>
-                    </Grid>
+        <components:BackStageNav DockPanel.Dock="Left" x:Name="backstageNav"/>
+        <ScrollViewer
+                  VerticalAlignment="Stretch" Height="Auto"
+                  HorizontalAlignment="Stretch"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Auto">
+            <StackPanel x:Name="searchBoxTotalWidth" VerticalAlignment="Top" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Margin="0 40 0 0">                
                     <TextBox x:Name="SearchInput" AcceptsReturn="False" AcceptsTab="False"
-                                             Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" 
+                                             MinWidth="400"
+                                             TextChanged="SearchInput_TextChanged"
+                                             TextWrapping="Wrap" 
                                              Width="Auto" HorizontalAlignment="Stretch">
-                        <TextBox.InputBindings>
-                            <KeyBinding Key="Enter" Command="{x:Static components:ConversationSearchBox.Search}"/>
-                        </TextBox.InputBindings>
                     </TextBox>
-    
-                    <Button Command="{x:Static components:ConversationSearchBox.Search}" Content="Search" 
-                                        Grid.Column="2" Grid.Row="1" x:Name="searchConversations" HorizontalContentAlignment="Left"/>
-                    <ScrollViewer Grid.Column="2" Grid.Row="3" 
-                                      VerticalAlignment="Top" Height="Auto" 
-                                      VerticalScrollBarVisibility="Auto"
-                                      HorizontalScrollBarVisibility="Auto">
-                                <ScrollViewer.Width>
-                                    <MultiBinding Converter="{x:Static sr:Converters.multiply}">
-                                        <Binding ElementName="TotalWidth" Path="ActualWidth" />
-                                        <Binding Source="{StaticResource browsePane}"/>
-                                    </MultiBinding>
-                                </ScrollViewer.Width>
-                                <StackPanel VerticalAlignment="Center">
-                                    <Label x:Name="recommendedConversationsLabel" Cursor="Hand" PreviewMouseUp="recommendedConversations_PreviewMouseDown">[+] Browse conversations</Label>
-                                    <StackPanel x:Name="recommendedConversations" Visibility="Collapsed" Margin="20,0,0,0">
-                                        <StackPanel Orientation="Horizontal" Cursor="Hand" PreviewMouseUp="allConversations_PreviewMouseDown">
-                                            <Label x:Name="allConversationsLabel" >[+] All Conversations</Label>
-                                            <Label x:Name="allConversationsCount"/>
-                                        </StackPanel>
-                                        <ItemsControl x:Name="allConversationsItemsControl" HorizontalAlignment="Left" Margin="20,0,0,0" Visibility="Collapsed">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
-                                                        <Label FontSize="14" Foreground="Blue" Cursor="Hand" PreviewMouseUp="SelectConversation_MouseDown" Content="{Binding Path=title}" Tag="{Binding Path=jid}">
-                                                            <Label.Template>
-                                                                <ControlTemplate TargetType="{x:Type Label}">
-                                                                    <ContentPresenter Content="{TemplateBinding Content}"/>
-                                                                    <ControlTemplate.Triggers>
-                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter Property="FontWeight" Value="Bold"/>
-                                                                        </Trigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                </ControlTemplate>
-                                                            </Label.Template>
-                                                        </Label>
-                                                        <Label HorizontalAlignment="Left" Margin="20,0,0,0" Content="{Binding Path=description}"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                        <StackPanel Orientation="Horizontal" Cursor="Hand" PreviewMouseUp="myOwnedConversations_PreviewMouseDown">
-                                            <Label x:Name="myOwnedConversationsLabel">[+] My conversations</Label>
-                                            <Label x:Name="myOwnedConversationsCount"/>
-                                        </StackPanel>
-                                        <ItemsControl x:Name="myOwnedConversationsItemsControl" HorizontalAlignment="Left" Margin="20,0,0,0" Visibility="Collapsed">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
-                                                        <Label FontSize="14" Foreground="Blue" Cursor="Hand" PreviewMouseUp="SelectConversation_MouseDown" Content="{Binding Path=title}" Tag="{Binding Path=jid}">
-                                                            <Label.Template>
-                                                                <ControlTemplate TargetType="{x:Type Label}">
-                                                                    <ContentPresenter Content="{TemplateBinding Content}"/>
-                                                                    <ControlTemplate.Triggers>
-                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter Property="FontWeight" Value="Bold"/>
-                                                                        </Trigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                </ControlTemplate>
-                                                            </Label.Template>
-                                                        </Label>
-                                                        <Label HorizontalAlignment="Left" Margin="20,0,0,0" Content="{Binding Path=description}"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                        <StackPanel Orientation="Horizontal" Cursor="Hand" PreviewMouseUp="myRecentConversations_PreviewMouseDown">
-                                            <Label x:Name="myRecentConversationsLabel" >[+] Conversations I've recently visited</Label>
-                                            <Label x:Name="myRecentConversationsCount"/>
-                                        </StackPanel>
-                                        <ItemsControl x:Name="myRecentConversationsItemsControl" HorizontalAlignment="Left" Margin="20,0,0,0" Visibility="Collapsed">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
-                                                        <Label FontSize="14" Foreground="Blue" Cursor="Hand" PreviewMouseUp="SelectConversation_MouseDown" Content="{Binding Path=title}" Tag="{Binding Path=jid}">
-                                                            <Label.Template>
-                                                                <ControlTemplate TargetType="{x:Type Label}">
-                                                                    <ContentPresenter Content="{TemplateBinding Content}"/>
-                                                                    <ControlTemplate.Triggers>
-                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter Property="FontWeight" Value="Bold"/>
-                                                                        </Trigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                </ControlTemplate>
-                                                            </Label.Template>
-                                                        </Label>
-                                                        <Label HorizontalAlignment="Left" Margin="20,0,0,0" Content="{Binding Path=description}"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                        <StackPanel Orientation="Horizontal" Cursor="Hand" PreviewMouseUp="myRecommendedConversations_PreviewMouseDown">
-                                            <Label x:Name="myRecommendedConversationsLabel" >[+] Other conversations by these authors</Label>
-                                            <Label x:Name="myRecommendedConversationsCount"/>
-                                        </StackPanel>
-                                        <ItemsControl x:Name="myRecommendedConversationsItemsControl" HorizontalAlignment="Left" Margin="20,0,0,0" Visibility="Collapsed">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
-                                                        <Label FontSize="14" Foreground="Blue" Cursor="Hand" PreviewMouseUp="SelectConversation_MouseDown" Content="{Binding Path=title}" Tag="{Binding Path=jid}">
-                                                            <Label.Template>
-                                                                <ControlTemplate TargetType="{x:Type Label}">
-                                                                    <ContentPresenter Content="{TemplateBinding Content}"/>
-                                                                    <ControlTemplate.Triggers>
-                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter Property="FontWeight" Value="Bold"/>
-                                                                        </Trigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                </ControlTemplate>
-                                                            </Label.Template>
-                                                        </Label>
-                                                        <Label HorizontalAlignment="Left" Margin="20,0,0,0" Content="{Binding Path=description}"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                        <StackPanel Orientation="Horizontal" Cursor="Hand" PreviewMouseUp="currentlyTeachingConversations_PreviewMouseDown">
-                                            <Label x:Name="currentlyTeachingConversationsLabel">[+] Conversations currently being taught</Label>
-                                            <Label x:Name="currentlyTeachingConversationsCount"/>
-                                        </StackPanel>
-                                        <ItemsControl x:Name="currentlyTeachingConversationsItemsControl" HorizontalAlignment="Left" Margin="20,0,0,0" Visibility="Collapsed">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
-                                                        <Label FontSize="14" Foreground="Blue" Cursor="Hand" PreviewMouseUp="SelectConversation_MouseDown" Content="{Binding Path=title}" Tag="{Binding Path=jid}">
-                                                            <Label.Template>
-                                                                <ControlTemplate TargetType="{x:Type Label}">
-                                                                    <ContentPresenter Content="{TemplateBinding Content}"/>
-                                                                    <ControlTemplate.Triggers>
-                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                            <Setter Property="FontWeight" Value="Bold"/>
-                                                                        </Trigger>
-                                                                    </ControlTemplate.Triggers>
-                                                                </ControlTemplate>
-                                                            </Label.Template>
-                                                        </Label>
-                                                        <Label HorizontalAlignment="Left" Margin="20,0,0,0" Content="{Binding Path=description}"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </StackPanel>
-                                </StackPanel>
-                            </ScrollViewer>
-                    <Label Grid.Column="1" Grid.Row="2" Visibility="Collapsed" Foreground="DarkGray" x:Name="ResultsCount"/>
-
-                    <ItemsControl Grid.Column="1" Grid.Row="3" x:Name="SearchResults" HorizontalAlignment="Left" Visibility="Collapsed">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
-                                    <Label FontSize="14" Foreground="Blue" Cursor="Hand" PreviewMouseUp="SelectConversation_MouseDown" Content="{Binding Path=title}" Tag="{Binding Path=jid}">
-                                        <Label.Template>
-                                            <ControlTemplate TargetType="{x:Type Label}">
-                                                <ContentPresenter Content="{TemplateBinding Content}"/>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="FontWeight" Value="Bold"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Label.Template>
-                                    </Label>
-                                    <Label HorizontalAlignment="Left" Margin="20,0,0,0" Content="{Binding Path=description}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Grid>
-            </ScrollViewer>
-            <Grid>
-                <Grid.Width>
-                    <MultiBinding Converter="{x:Static sr:Converters.multiply}">
-                        <Binding ElementName="TotalWidth" Path="ActualWidth" />
-                        <Binding Source="{StaticResource searchBoxMargin}"/>
-                    </MultiBinding>
-                </Grid.Width>
-            </Grid>
-        </StackPanel>
+                    <Button Content="Search" x:Name="searchConversations" HorizontalContentAlignment="Left" Click="searchConversations_Click" />
+                </StackPanel>
+                <Label Grid.Column="1" Grid.Row="2" Visibility="Collapsed" Foreground="DarkGray" x:Name="ResultsCount"/>
+                <ItemsControl Grid.Column="1" Grid.Row="3" x:Name="SearchResults" HorizontalAlignment="Left" >
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
+                                <Label FontSize="14" Foreground="Blue" Cursor="Hand" PreviewMouseUp="SelectConversation_MouseDown" Content="{Binding Path=Title}" Tag="{Binding Path=Jid}">
+                                    <Label.Template>
+                                        <ControlTemplate TargetType="{x:Type Label}">
+                                            <ContentPresenter Content="{TemplateBinding Content}"/>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Label.Template>
+                                </Label>
+                                <Label HorizontalAlignment="Left" Margin="20,0,0,0" Content="{Binding Converter={x:Static sr:Converters.ConversationDetailsToDescription}}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
     </DockPanel>
 </UserControl>
