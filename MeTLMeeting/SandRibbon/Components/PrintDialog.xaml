@@ -1,7 +1,13 @@
 ﻿<Window x:Class="SandRibbon.Components.PrintDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     Height="300" Width="300">
     <StackPanel>
+        <sr:Button x:Name="startPrinting" Text="Print this conversation" Click="startPrinting_Click"/>
+        <StackPanel Orientation="Horizontal">
+            <Label Content="Print my private notes as well" />
+            <CheckBox IsChecked="{Binding Path=IncludePrivateContent}"/>
+        </StackPanel>
     </StackPanel>
 </Window>

@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
+using System.Windows.Media.Animation;
 
 namespace SandRibbon.Components
 {
@@ -33,7 +34,7 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(UpdateAllConversations));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(UpdateAllConversations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox, CanShowConversationSearchBox));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
             Commands.receiveCurrentClasses.RegisterCommand(new DelegateCommand<object>(receiveCurrentClasses));
             Loaded += new RoutedEventHandler(ConversationSearchBox_Loaded);
@@ -47,10 +48,25 @@ namespace SandRibbon.Components
             DoUpdateAllConversations();
             this.Visibility = Visibility.Visible;
             Commands.RequerySuggested();
+            slideOut();
         }
-        private bool CanShowConversationSearchBox(object o)
+        private void slideOut()
         {
-            return this.Visibility != Visibility.Visible;
+            if (this.ActualWidth > 0)
+            {
+                VerticalAlignment = VerticalAlignment.Top;
+                HorizontalAlignment = HorizontalAlignment.Left;
+                slidePropertyOut(FrameworkElement.WidthProperty, this.ActualWidth);
+                slidePropertyOut(FrameworkElement.HeightProperty, this.ActualHeight);
+            }
+        }
+        private void slidePropertyOut(DependencyProperty property, double limit){
+            DoubleAnimation anim = new DoubleAnimation();
+            anim.From = 150;
+            anim.To = limit;
+            anim.Duration = new Duration(TimeSpan.FromSeconds(0.8));
+            anim.AutoReverse = false;
+            BeginAnimation(property, anim);
         }
         private void HideConversationSearchBox(object o)
         {

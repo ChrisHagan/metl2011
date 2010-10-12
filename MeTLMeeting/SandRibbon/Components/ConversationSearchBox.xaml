@@ -5,8 +5,7 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
-    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
->
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop">
     <UserControl.Resources>
         <core:Double x:Key="browsePane">0.25</core:Double>
         <core:Double x:Key="searchPane">0.60</core:Double>

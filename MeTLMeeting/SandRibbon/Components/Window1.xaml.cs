@@ -75,6 +75,7 @@ namespace SandRibbon
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
+            Commands.ShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerPoint, mustBeLoggedIn));
