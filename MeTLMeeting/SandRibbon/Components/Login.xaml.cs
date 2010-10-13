@@ -160,6 +160,8 @@ namespace SandRibbon.Components
                 });
                 if(rememberMe.IsChecked == true)
                     WorkspaceStateProvider.SaveCurrentSettings();
+                else
+                    WorkspaceStateProvider.ClearSettings();
             }
             else
             {

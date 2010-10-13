@@ -161,6 +161,7 @@ namespace SandRibbon.Components
             var title = conversation.Title.ToLower();
             var searchField = new[]{author,title};
             var searchQuery = SearchInput.Text.ToLower().Trim();
+            if (backstageNav.currentMode == "find" && searchQuery.Length == 0) return false;
             if (backstageNav.currentMode == "mine" && author != Globals.me) return false;
             var target = searchQuery.Split(' ').Aggregate(false, (acc, token) =>
             {

@@ -22,7 +22,7 @@ namespace SandRibbon.Components
         }
         public string currentMode { 
             get{
-                return new[]{help,mine,all}.Where(box=>box.IsChecked.Value).First().Name;
+                return new[]{help,mine,all, find}.Where(box=>box.IsChecked.Value).First().Name;
             }
         }
         private void mode_Checked(object sender, RoutedEventArgs e)

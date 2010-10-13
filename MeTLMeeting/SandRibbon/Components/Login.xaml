@@ -70,8 +70,8 @@
                                             </PasswordBox.InputBindings>
                                         </PasswordBox>
                                     </Grid>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <CheckBox x:Name="rememberMe">Stay signed in</CheckBox>
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
+                                        <CheckBox VerticalAlignment="Center" x:Name="rememberMe">Stay signed in</CheckBox>
                                         <Button Command="{x:Static components:Login.CheckAuthentication}">login</Button>
                                     </StackPanel>
                                 </StackPanel>
