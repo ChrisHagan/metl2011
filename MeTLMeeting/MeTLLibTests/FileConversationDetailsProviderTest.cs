@@ -63,76 +63,15 @@ namespace MeTLLibTests
                 Created = new DateTime(2010, 05, 18, 15, 00, 53),
                 Jid = "100",
                 LastAccessed = new DateTime(0001, 01, 1, 0, 0, 0),
-                Permissions = new Permissions
-                {
-                    conversationGroup = String.Empty,
-                    Label = null,
-                    studentCanOpenFriends = true,
-                    studentCanPublish = true,
-                    usersAreCompulsorilySynced = false
-                },
+                Permissions = new Permissions(null,true,true,false),
                 Slides = new List<Slide> 
                 {
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=true,
-                        id=101,
-                        index=0,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=106,
-                        index=1,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=105,
-                        index=2,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=104,
-                        index=3,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=102,
-                        index=4,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=103,
-                        index=5,
-                        type= Slide.TYPE.SLIDE
-                    },
+                    new Slide(101,"hagand",Slide.TYPE.SLIDE,0,720,540),
+                    new Slide(106,"hagand",Slide.TYPE.SLIDE,1,720,540),
+                    new Slide(105,"hagand",Slide.TYPE.SLIDE,2,720,540),
+                    new Slide(104,"hagand",Slide.TYPE.SLIDE,3,720,540),
+                    new Slide(102,"hagand",Slide.TYPE.SLIDE,4,720,540),
+                    new Slide(103,"hagand",Slide.TYPE.SLIDE,5,720,540)
                 },
                 Subject = "Unrestricted",
                 Tag = "",
@@ -144,76 +83,15 @@ namespace MeTLLibTests
                 Created = new DateTime(2010, 05, 18, 15, 00, 53),
                 Jid = "100",
                 LastAccessed = new DateTime(0001, 01, 1, 0, 0, 0),
-                Permissions = new Permissions
-                {
-                    conversationGroup = String.Empty,
-                    Label = null,
-                    studentCanOpenFriends = true,
-                    studentCanPublish = true,
-                    usersAreCompulsorilySynced = false
-                },
+                Permissions = new Permissions(null, true,true,false),
                 Slides = new List<Slide> 
                 {
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=true,
-                        id=101,
-                        index=0,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=106,
-                        index=1,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=105,
-                        index=2,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=104,
-                        index=3,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=102,
-                        index=4,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=103,
-                        index=5,
-                        type= Slide.TYPE.SLIDE
-                    },
+                    new Slide(101,"hagand",Slide.TYPE.SLIDE,0,720,540),
+                    new Slide(106,"hagand",Slide.TYPE.SLIDE,1,720,540),
+                    new Slide(105,"hagand",Slide.TYPE.SLIDE,2,720,540),
+                    new Slide(104,"hagand",Slide.TYPE.SLIDE,3,720,540),
+                    new Slide(102,"hagand",Slide.TYPE.SLIDE,4,720,540),
+                    new Slide(103,"hagand",Slide.TYPE.SLIDE,5,720,540)
                 },
                 Subject = "Unrestricted",
                 Tag = "",
@@ -272,76 +150,15 @@ namespace MeTLLibTests
                 Created = new DateTime(2010, 05, 18, 15, 00, 53),
                 Jid = "100",
                 LastAccessed = new DateTime(0001, 01, 1, 0, 0, 0),
-                Permissions = new Permissions
-                {
-                    conversationGroup = String.Empty,
-                    Label = null,
-                    studentCanOpenFriends = true,
-                    studentCanPublish = true,
-                    usersAreCompulsorilySynced = false
-                },
+                Permissions = new Permissions(null, true,true,false),
                 Slides = new List<Slide> 
                 {
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=true,
-                        id=101,
-                        index=0,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=106,
-                        index=1,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=105,
-                        index=2,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=104,
-                        index=3,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=102,
-                        index=4,
-                        type= Slide.TYPE.SLIDE
-                    },
-                    new Slide
-                    {
-                        author="hagand",
-                        defaultHeight=540,
-                        defaultWidth=720,
-                        exposed=false,
-                        id=103,
-                        index=5,
-                        type= Slide.TYPE.SLIDE
-                    },
+                    new Slide(101,"hagand",Slide.TYPE.SLIDE,0,720,540),
+                    new Slide(106,"hagand",Slide.TYPE.SLIDE,1,720,540),
+                    new Slide(105,"hagand",Slide.TYPE.SLIDE,2,720,540),
+                    new Slide(104,"hagand",Slide.TYPE.SLIDE,3,720,540),
+                    new Slide(102,"hagand",Slide.TYPE.SLIDE,4,720,540),
+                    new Slide(103,"hagand",Slide.TYPE.SLIDE,5,720,540)
                 },
                 Subject = "Unrestricted",
                 Tag = "",
@@ -356,7 +173,7 @@ namespace MeTLLibTests
             kernel.Bind<ITimerFactory>().To<TestTimerFactory>().InSingletonScope();
             FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
             ConversationDetails actual = provider.DetailsOf(conversationJid);
-            Assert.IsTrue(TestExtensions.deepComparedObject<ConversationDetails>(actual, expectedDetails));
+            Assert.IsTrue(TestExtensions.valueEquals(actual, expectedDetails));
         }
         [TestMethod()]
         public void CreateTest()

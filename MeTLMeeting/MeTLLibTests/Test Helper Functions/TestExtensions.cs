@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace MeTLLibTests
 {
@@ -32,19 +33,32 @@ namespace MeTLLibTests
         public static bool comparedCollection<T>(List<T> collection1, List<T> collection2)
         {
             var results = new Dictionary<int, KeyValuePair<bool, KeyValuePair<T, T>>>();
-            var fieldType = typeof(T);
             for (int a = 0; a < collection1.Count; a++)
             {
+                var fieldType = collection1[a].GetType();
                 bool result = false;
                 if (fieldType.IsPrimitive || fieldType.IsEnum || simpleTypes.Contains(fieldType))
                     result = (collection1[a].Equals(collection2[a])) ? true : false;
                 else
-                    result = deepComparedObject(collection1[a], collection2[a]);
+                    result = valueEquals(collection1[a], collection2[a]);
                 results.Add(a, new KeyValuePair<bool, KeyValuePair<T, T>>(result, new KeyValuePair<T, T>(collection1[a], collection2[a])));
             }
             return !(results.Any(s => s.Value.Key == false));
         }
-        public static bool deepComparedObject<T>(T object1, T object2)
+        public static bool valueEquals(object a, object b)
+        {
+            var serializerA = new System.Xml.Serialization.XmlSerializer(a.GetType());
+            var serializerB = new System.Xml.Serialization.XmlSerializer(b.GetType());
+            var streamA = new MemoryStream();
+            var streamB = new MemoryStream();
+            serializerA.Serialize(streamA,a);
+            serializerB.Serialize(streamB,b);
+            var stringA = Encoding.UTF8.GetString(streamA.ToArray());
+            var stringB = Encoding.UTF8.GetString(streamB.ToArray());
+            return stringA == stringB;
+        }
+
+        public static bool valueEqualsUsingReflection<T>(T object1, T object2)
         {
             var type = typeof(T);
             if (type == typeof(object))
@@ -75,7 +89,7 @@ namespace MeTLLibTests
                     result = comparedCollection<object>(list1, list2);
                 }
                 else
-                    result = deepComparedObject(object1Value, object2Value);
+                    result = valueEquals(object1Value, object2Value);
                 results.Add(a, new KeyValuePair<bool, KeyValuePair<String, KeyValuePair<object, object>>>(result, new KeyValuePair<String, KeyValuePair<object, object>>(fieldName, new KeyValuePair<object, object>(object1Value, object2Value))));
                 a++;
             }
@@ -100,7 +114,7 @@ namespace MeTLLibTests
                     result = comparedCollection<object>(list1, list2);
                 }
                 else
-                    result = deepComparedObject(object1Value, object2Value);
+                    result = valueEquals(object1Value, object2Value);
                 results.Add(a, new KeyValuePair<bool, KeyValuePair<String, KeyValuePair<object, object>>>(result, new KeyValuePair<String, KeyValuePair<object, object>>(fieldName, new KeyValuePair<object, object>(object1Value, object2Value))));
                 a++;
             }

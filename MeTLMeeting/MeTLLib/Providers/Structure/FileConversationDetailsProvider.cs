@@ -50,7 +50,7 @@ namespace MeTLLib.Providers.Structure
             {
                 var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, conversationJid, DETAILS));
                 var response = XElement.Parse(secureGetString(url));
-                var result = new ConversationDetails().ReadXml(response);
+                var result = ConversationDetails.ReadXml(response);
                 return result;
             }
             catch (UriFormatException e)
@@ -79,15 +79,15 @@ namespace MeTLLib.Providers.Structure
                 var slideId = details.Slides.Select(s => s.id).Max() + 1;
                 var position = getPosition(currentSlide, details.Slides);
                 if (position == -1) return details;
-                var slide = new Slide
-                                {
+                var slide = new Slide(slideId,details.Author,type,position+1,720,540);
+                                /*{
                                     author = details.Author,
                                     id = slideId,
                                     index = position + 1,
                                     type = type,
                                     defaultHeight = 540,
                                     defaultWidth = 720
-                                };
+                                };*/
                 foreach (var existingSlide in details.Slides)
                     if (existingSlide.index >= slide.index)
                         existingSlide.index++;
@@ -114,14 +114,14 @@ namespace MeTLLib.Providers.Structure
             {
                 var details = DetailsOf(title);
                 var slideId = details.Slides.Select(s => s.id).Max() + 1;
-                details.Slides.Add(new Slide
-                {
+                details.Slides.Add(new Slide(slideId,details.Author,Slide.TYPE.SLIDE,details.Slides.Count,720,540));
+                /*{
                     author = details.Author,
                     id = slideId,
                     index = details.Slides.Count,
                     defaultHeight = 540,
                     defaultWidth = 720
-                });
+                });*/
                 Update(details);
                 return details;
             }
@@ -198,7 +198,7 @@ namespace MeTLLib.Providers.Structure
                                         {
                                             e.Extract(stream);
                                             return
-                                                new ConversationDetails().ReadXml(
+                                                ConversationDetails.ReadXml(
                                                     XElement.Parse(Encoding.UTF8.GetString(stream.ToArray())));
                                         }
                                     }).ToList();
@@ -229,14 +229,15 @@ namespace MeTLLib.Providers.Structure
             {
                 var id = GetApplicationLevelInformation().currentId;
                 details.Jid = id.ToString();
-                details.Slides.Add(new Slide
+                details.Slides.Add(new Slide(id+1,details.Author,Slide.TYPE.SLIDE,0,720,540));
+                /*
                 {
                     author = details.Author,
                     id = id + 1,
                     type = Slide.TYPE.SLIDE,
                     defaultHeight = 540,
                     defaultWidth = 720
-                });
+                });*/
             }
             details.Created = DateTimeFactory.Now();
             resourceUploader.uploadResourceToPath(Encoding.UTF8.GetBytes(details.WriteXml().ToString(SaveOptions.DisableFormatting)),
@@ -246,7 +247,7 @@ namespace MeTLLib.Providers.Structure
         }
         public ApplicationLevelInformation GetApplicationLevelInformation()
         {
-            return new ApplicationLevelInformation { currentId = Int32.Parse(secureGetString(new System.Uri(NEXT_AVAILABLE_ID))) };
+            return new ApplicationLevelInformation(Int32.Parse(secureGetString(new System.Uri(NEXT_AVAILABLE_ID))));
         }
     }
 }
