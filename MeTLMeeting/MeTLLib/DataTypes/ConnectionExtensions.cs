@@ -3,6 +3,14 @@ namespace MeTLLib.DataTypes
 {
     public class Credentials
     {
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is Credentials)) return false;
+            var foreignCredentials = ((Credentials)obj);
+            return ((foreignCredentials.name == name)
+                && (foreignCredentials.password == password)
+                && (foreignCredentials.authorizedGroups.TrueForAll(s => s.ValueEquals(authorizedGroups[foreignCredentials.authorizedGroups.IndexOf(s)]))));
+        }
         public string name;
         public string password;
         public List<AuthorizedGroup> authorizedGroups;
@@ -42,12 +50,25 @@ namespace MeTLLib.DataTypes
     }
     public class Location
     {
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is Location)) return false;
+            var foreignLocation = ((Location)obj);
+            return ((foreignLocation.activeConversation == activeConversation)
+                &&(foreignLocation.currentSlide == currentSlide)
+                &&(foreignLocation.availableSlides.TrueForAll(s=>s.Equals(availableSlides[foreignLocation.availableSlides.IndexOf(s)]))));
+        }
         public string activeConversation;
         public int currentSlide;
         public List<int> availableSlides = new List<int>();
     }
     public class Policy
     {
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is Policy)) return false;
+            return ((((Policy)obj).isAuthor == isAuthor) && (((Policy)obj).isSynced == isSynced));
+        }
         private bool authorProperty;
         public bool isSynced;
         public bool isAuthor
@@ -65,6 +86,14 @@ namespace MeTLLib.DataTypes
     }
     public class UserInformation
     {
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is UserInformation)) return false;
+            var foreignUserInformation = ((UserInformation)obj);
+            return ((foreignUserInformation.credentials.ValueEquals(credentials))
+                && (foreignUserInformation.location.ValueEquals(location))
+                && (foreignUserInformation.policy.ValueEquals(policy)));
+        }
         public Credentials credentials;
         public Location location;
         public Policy policy;
