@@ -63,8 +63,6 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Create";
-                    if (isFirstRun && startingContentSelector != null && startingContentSelector.Items.Count > 0)
-                        startingContentSelector.SelectedIndex = 0;
                     if (details == null)
                         details = new ConversationDetails { Author = Globals.me, Created = SandRibbonObjects.DateTimeFactory.Now(), Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
@@ -86,8 +84,6 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Visible;
                     CommitButton.Content = "Create";
-                    if (isFirstRun && startingContentSelector != null && startingContentSelector.Items.Count > 1)
-                        startingContentSelector.SelectedIndex = 1;
                     if (details == null)
                         details = new ConversationDetails { Author = Globals.me, Created = SandRibbonObjects.DateTimeFactory.Now(), Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
                     break;
@@ -194,6 +190,11 @@ namespace SandRibbon.Components
                 case "highquality":
                     dialogMode = ConversationConfigurationMode.IMPORT;
                     importType = PowerPointLoader.PowerpointImportType.HighDefImage;
+                    UpdateDialogBoxAppearance();
+                    break;
+                case "lowquality":
+                    dialogMode = ConversationConfigurationMode.IMPORT;
+                    importType = PowerPointLoader.PowerpointImportType.Image;
                     UpdateDialogBoxAppearance();
                     break;
             }
