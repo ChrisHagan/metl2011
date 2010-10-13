@@ -66,6 +66,28 @@ namespace SandRibbon
         public static availablePenDropDownContentConverter AvailablePenDropDownContentConverter = new availablePenDropDownContentConverter();
         public static colourToNameConverter ColourToNameConverter = new colourToNameConverter();
         public static conversationDetailsToDescription ConversationDetailsToDescription = new conversationDetailsToDescription();
+        public static IsMeConverter isMe = new IsMeConverter();
+    }
+    public class IsMeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool result = false;
+            try
+            {
+                result = Globals.me == ((ConversationDetails)value).Author;
+            }
+            catch (NotSetException)
+            {
+                result = false;
+            }
+            Console.WriteLine(String.Format("{0} is by me: {1}",((ConversationDetails)value).Jid,result));
+            return result.ToString();
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return false;
+        }
     }
     public class conversationDetailsToDescription : IValueConverter { 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -74,7 +96,7 @@ namespace SandRibbon
             var slides = string.Format("{0} Slide", details.Slides.Count);
             if(details.Slides.Count > 1)
                 slides = string.Format("{0}s", slides);
-            return string.Format("created by: {0}\nrestricted to: {1}\ncreated on: {2}\n{3}", details.Author, details.Subject, details.Created, slides);
+            return string.Format("Created by {0} and restricted to {1}\n({3}) Created on: {2}", details.Author, details.Subject, details.Created, slides);
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

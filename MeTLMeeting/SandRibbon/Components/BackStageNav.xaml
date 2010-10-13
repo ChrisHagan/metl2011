@@ -20,7 +20,7 @@
         </Grid.Resources>
             <StackPanel VerticalAlignment="Top">
                 <interop:Button Text="Return to conversation" Foreground="{StaticResource ResourceKey=foreground}" Command="{x:Static api:Commands.HideConversationSearchBox}"/>
-                <interop:RadioButton Text="Find conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="find" Checked="mode_Checked" IsChecked="True"/>
+                <interop:RadioButton Text="Search" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="find" Checked="mode_Checked" IsChecked="True"/>
                 <interop:RadioButton Text="My conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="mine" Checked="mode_Checked"/>
                 <interop:RadioButton Text="All conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="all"  Checked="mode_Checked"/>
             </StackPanel>

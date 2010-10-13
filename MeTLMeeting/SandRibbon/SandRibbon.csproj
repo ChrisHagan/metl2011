@@ -1027,6 +1027,8 @@
     <Resource Include="Resources\PenOut.png" />
     <Resource Include="Resources\QuizResults.png" />
     <Resource Include="Resources\Quizzes.png" />
+    <Resource Include="Resources\Print_w-out_notes.png" />
+    <Resource Include="Resources\Print_w_notes.png" />
     <Content Include="Resources\Ribbon-Palette.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1036,6 +1038,7 @@
     <Resource Include="Resources\showOriginal.png" />
     <Resource Include="Resources\Show.png" />
     <Resource Include="Resources\SendSubmission.png" />
+    <Resource Include="Resources\sexyDelete.png" />
     <Content Include="Resources\Slide_Not_Loaded.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

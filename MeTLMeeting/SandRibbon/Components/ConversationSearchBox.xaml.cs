@@ -162,10 +162,6 @@ namespace SandRibbon.Components
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
-        private void SelectConversation_MouseDown(object sender, MouseEventArgs e)
-        {
-            Commands.JoinConversation.Execute(((FrameworkElement)sender).Tag);
-        }
         private void searchConversations_Click(object sender, RoutedEventArgs e)
         {
             GetListCollectionView().Refresh();
@@ -174,6 +170,10 @@ namespace SandRibbon.Components
         {
             if(((TextBox)sender).Text.Count() > 2)
                 GetListCollectionView().Refresh();
+        }
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Commands.JoinConversation.Execute(((FrameworkElement)sender).Tag);
         }
     }
     public class ConversationComparator : System.Collections.IComparer

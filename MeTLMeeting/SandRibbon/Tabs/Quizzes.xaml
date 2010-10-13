@@ -13,7 +13,6 @@
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">5</core:String>
     </sr:RibbonTab.Resources>
-
     <sr:RibbonGroup Header="Create" x:Name="quizRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Quizzes.png">
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Small" Priority="5"/>
@@ -49,28 +48,30 @@
             </SandRibbonInterop:QuizContainer.ItemsPanel>
             <SandRibbonInterop:QuizContainer.ItemTemplate>
                 <DataTemplate>
-                    <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
-                        <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
-                            <Button.ToolTip>
-                                <SandRibbonInterop:MeTLImageToolTip TitleText="View quiz results" ImageSource="\Resources\Ribbon-Quiz.png"
-                                                                        ContentText="{Binding Path=title}"/>
-                            </Button.ToolTip>
-                            <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="/Resources/Ribbon-Quiz.png" Height="15" Width="15"/>
-                                    <Label FontSize="10" Background="Transparent">
-                                        <Label.Content>
-                                            <MultiBinding Converter="{x:Static metl:Converters.quizPositionConverter}" >
-                                                <Binding ElementName="quiz" Path="DataContext"/>
-                                                <Binding ElementName="quizzes" Path="ItemsSource"/>
-                                            </MultiBinding>
-                                        </Label.Content>
-                                    </Label>
+                    <Grid>
+                        <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
+                            <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
+                                <Button.ToolTip>
+                                    <SandRibbonInterop:MeTLImageToolTip TitleText="View quiz results" ImageSource="\Resources\Ribbon-Quiz.png"
+                                                                            ContentText="{Binding Path=title}"/>
+                                </Button.ToolTip>
+                                <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="/Resources/Ribbon-Quiz.png" Height="15" Width="15"/>
+                                        <Label FontSize="10" Background="Transparent">
+                                            <Label.Content>
+                                                <MultiBinding Converter="{x:Static metl:Converters.quizPositionConverter}" >
+                                                    <Binding ElementName="quiz" Path="DataContext"/>
+                                                    <Binding ElementName="quizzes" Path="ItemsSource"/>
+                                                </MultiBinding>
+                                            </Label.Content>
+                                        </Label>
+                                    </StackPanel>
+                                    <TextBlock FontSize="8" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
                                 </StackPanel>
-                                <TextBlock FontSize="8" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
-                            </StackPanel>
-                        </Button>
-                    </Border>
+                            </Button>
+                        </Border>
+                    </Grid>
                 </DataTemplate>
             </SandRibbonInterop:QuizContainer.ItemTemplate>
             <SandRibbonInterop:QuizContainer.Template>
