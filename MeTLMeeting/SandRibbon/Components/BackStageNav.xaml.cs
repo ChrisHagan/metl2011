@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace SandRibbon.Components
 {
@@ -19,10 +20,42 @@ namespace SandRibbon.Components
         public BackStageNav()
         {
             InitializeComponent();
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(showConversationSearchBox));
+        }
+
+        private void showConversationSearchBox(object mode)
+        {
+            openCorrectTab((string)mode);
+        }
+
+        private void openMyConversations()
+        {
+            mine.IsChecked = true;
+        }
+        private void openAllConversations()
+        {
+            all.IsChecked = true;
+        }
+        private void openFindConversations()
+        {
+            find.IsChecked = true;
+        }
+        private void openCorrectTab(string mode) {
+            if ("MyConversations" == mode)
+                openMyConversations();
+            else if ("AllConversations" == mode)
+                openAllConversations();
+            else
+                openFindConversations();
         }
         public string currentMode { 
             get{
-                return new[]{help,mine,all, find}.Where(box=>box.IsChecked.Value).First().Name;
+                return new[]{help,mine,all, find}.Aggregate(all, (acc, item) =>
+                                                                     {
+                                                                         if (true == item.IsChecked)
+                                                                             return item;
+                                                                         return acc;
+                                                                     }).Name;
             }
         }
         private void mode_Checked(object sender, RoutedEventArgs e)

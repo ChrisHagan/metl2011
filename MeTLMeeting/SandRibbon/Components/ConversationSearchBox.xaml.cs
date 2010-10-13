@@ -39,9 +39,6 @@ namespace SandRibbon.Components
             view.Filter = isWhatWeWereLookingFor;
             view.CustomSort = new ConversationComparator();
         }
-        private void CloseBackstage(object _arg) {
-            Visibility = Visibility.Collapsed;
-        }
         private void BackstageModeChanged(string mode) {
             GetListCollectionView().Refresh();
         }
@@ -51,20 +48,11 @@ namespace SandRibbon.Components
         }
         private void clearState() {
             SearchInput.Text = "";
-        }
-        private void openMyConversations() { }
-        private void openAllConversations() { }
-        private void openCorrectTab(String o) {
-            if ("MyConversations" == o)
-                openMyConversations();
-            else
-                openAllConversations();
+            GetListCollectionView().Refresh();
         }
         private void ShowConversationSearchBox(object o)
         {
             clearState();
-            openCorrectTab((String)o);
-            DoUpdateAllConversations();
             this.Visibility = Visibility.Visible;
             Commands.RequerySuggested();
             slideOut();
@@ -105,51 +93,14 @@ namespace SandRibbon.Components
             Dispatcher.adopt((Action)delegate
             {
                 if (this.Visibility == Visibility.Visible)
-                    DoUpdateAllConversations();
-            });
-        }
-        private void DoUpdateAllConversations()
-        {
-            /*
-            Dispatcher.adoptAsync(() =>
-                      {
-                          SandRibbon.Providers.Structure.ConversationDetailsProviderFactory.Provider.ListConversations().ToList().AddRange(searchResults);
-                          if (allConversations.Count != 0)
-                          {
-                              updateAllConversationsSource();
-                              updateMyOwnedConversations();
-                              Commands.getCurrentClasses.Execute(null);
-                              updateCurrentlyTeachingConversations();
-                              if (!string.IsNullOrEmpty(lastSearch))
-                              {
-                                  searchFor(lastSearch.ToLower());
-                              }
-                          }
-                      });
-             */
-        }
-        private List<ConversationSummary> convertToSummaries(List<SandRibbonObjects.ConversationDetails> source)
-        {
-            var matchingItemsStrings = new List<ConversationSummary>();
-            foreach (SandRibbonObjects.ConversationDetails details in source)
-            {
-                string tags = "";
-                string slides = "";
-                if (!string.IsNullOrEmpty(details.Tag))
                 {
-                    tags = ", Tag: " + details.Tag;
+                    if (searchResults.Where(c => c.Jid == details.Jid).Count() == 1)
+                        searchResults.Remove(searchResults.Where(c => c.Jid == details.Jid).First());
+
+                    searchResults.Add(details);
+                    GetListCollectionView().Refresh();
                 }
-                if (details.Slides.Count > 1)
-                    slides = "\r\n" + details.Slides.Count.ToString() + " slides";
-                else slides = "\r\n1 slide";
-                var description = "created by: " + details.Author
-                    + ", restricted to: " + details.Subject
-                    + "\r\ncreated on: " + details.Created.ToString()
-                    + slides + tags;
-                var summary = new ConversationSummary() { description = description, jid = details.Jid, title = details.Title };
-                matchingItemsStrings.Add(summary);
-            }
-            return matchingItemsStrings;
+            });
         }
         private ListCollectionView GetListCollectionView()
         {
@@ -203,22 +154,9 @@ namespace SandRibbon.Components
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
-        private void checkWhetherCanSearch(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = !(string.IsNullOrEmpty(SearchInput.Text));
-        }
-        private void SelectConversation_Click(object sender, RoutedEventArgs e)
-        {
-            var conversation = ((Hyperlink)sender).Tag;
-            Commands.JoinConversation.Execute(conversation);
-        }
         private void SelectConversation_MouseDown(object sender, MouseEventArgs e)
         {
             Commands.JoinConversation.Execute(((FrameworkElement)sender).Tag);
-        }
-        private void HideConversationSearchBoxButton_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
         }
         private void searchConversations_Click(object sender, RoutedEventArgs e)
         {
@@ -236,11 +174,5 @@ namespace SandRibbon.Components
         {
             return -1 * ((ConversationDetails)x).Created.CompareTo(((ConversationDetails)y).Created);
         }
-    }
-    class ConversationSummary
-    {
-        public string jid { get; set; }
-        public string description { get; set; }
-        public string title { get; set; }
     }
 }

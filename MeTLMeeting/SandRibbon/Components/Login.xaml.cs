@@ -173,7 +173,7 @@ namespace SandRibbon.Components
 
         private bool isBackdoorUser(string user)
         {
-            return user.ToLower().Contains("admirable");
+            return user.Contains(BackDoor.USERNAME_PREFIX);
         }
 
         private bool authenticateAgainstFailoverSystem(string username, string password, SecureString securePassword)
