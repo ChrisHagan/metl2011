@@ -58,13 +58,12 @@ namespace MeTLLibTests
         public void UpdateTest()
         {
             ConversationDetails proposedDetails = new ConversationDetails
-            {
-                Author = "hagand",
-                Created = new DateTime(2010, 05, 18, 15, 00, 53),
-                Jid = "100",
-                LastAccessed = new DateTime(0001, 01, 1, 0, 0, 0),
-                Permissions = new Permissions(null,true,true,false),
-                Slides = new List<Slide> 
+            (
+                "Welcome to Staging on Madam",
+                "100",
+                "hagand",
+                "",
+                new List<Slide> 
                 {
                     new Slide(101,"hagand",Slide.TYPE.SLIDE,0,720,540),
                     new Slide(106,"hagand",Slide.TYPE.SLIDE,1,720,540),
@@ -73,18 +72,18 @@ namespace MeTLLibTests
                     new Slide(102,"hagand",Slide.TYPE.SLIDE,4,720,540),
                     new Slide(103,"hagand",Slide.TYPE.SLIDE,5,720,540)
                 },
-                Subject = "Unrestricted",
-                Tag = "",
-                Title = "Welcome to Staging on Madam"
-            };
+                new Permissions(null, true, true, false),
+                "Unrestricted",
+                new DateTime(2010, 05, 18, 15, 00, 53),
+                new DateTime(0001, 01, 1, 0, 0, 0)
+            );
             ConversationDetails expectedDetails = new ConversationDetails
-            {
-                Author = "hagand",
-                Created = new DateTime(2010, 05, 18, 15, 00, 53),
-                Jid = "100",
-                LastAccessed = new DateTime(0001, 01, 1, 0, 0, 0),
-                Permissions = new Permissions(null, true,true,false),
-                Slides = new List<Slide> 
+            (
+                "Welcome to Staging on Madam",
+                "100",
+                "hagand",
+                "",
+                new List<Slide> 
                 {
                     new Slide(101,"hagand",Slide.TYPE.SLIDE,0,720,540),
                     new Slide(106,"hagand",Slide.TYPE.SLIDE,1,720,540),
@@ -93,10 +92,11 @@ namespace MeTLLibTests
                     new Slide(102,"hagand",Slide.TYPE.SLIDE,4,720,540),
                     new Slide(103,"hagand",Slide.TYPE.SLIDE,5,720,540)
                 },
-                Subject = "Unrestricted",
-                Tag = "",
-                Title = "Welcome to Staging on Madam"
-            };
+                new Permissions(null, true,true,false),
+                "Unrestricted",
+                new DateTime(2010, 05, 18, 15, 00, 53),
+                new DateTime(0001, 01, 1, 0, 0, 0)
+            );
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
@@ -112,7 +112,7 @@ namespace MeTLLibTests
         public void appendSlideTest()
         {
             String proposedTitle = String.Empty;
-            ConversationDetails expectedDetails = new ConversationDetails { };
+            ConversationDetails expectedDetails = null;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
@@ -128,7 +128,7 @@ namespace MeTLLibTests
         public void appendSlideAfterTest()
         {
             String proposedTitle = String.Empty;
-            ConversationDetails expectedDetails = new ConversationDetails { };
+            ConversationDetails expectedDetails = null;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
@@ -145,13 +145,12 @@ namespace MeTLLibTests
         {
             String conversationJid = "100";
             ConversationDetails expectedDetails = new ConversationDetails
-            {
-                Author = "hagand",
-                Created = new DateTime(2010, 05, 18, 15, 00, 53),
-                Jid = "100",
-                LastAccessed = new DateTime(0001, 01, 1, 0, 0, 0),
-                Permissions = new Permissions(null, true,true,false),
-                Slides = new List<Slide> 
+            (
+                "Welcome to Staging on Madam",
+                "100",
+                "hagand",
+                "",
+                new List<Slide> 
                 {
                     new Slide(101,"hagand",Slide.TYPE.SLIDE,0,720,540),
                     new Slide(106,"hagand",Slide.TYPE.SLIDE,1,720,540),
@@ -160,10 +159,11 @@ namespace MeTLLibTests
                     new Slide(102,"hagand",Slide.TYPE.SLIDE,4,720,540),
                     new Slide(103,"hagand",Slide.TYPE.SLIDE,5,720,540)
                 },
-                Subject = "Unrestricted",
-                Tag = "",
-                Title = "Welcome to Staging on Madam"
-            };
+                new Permissions(null, true,true,false),
+                "Unrestricted",
+                new DateTime(2010, 05, 18, 15, 00, 53),
+                new DateTime(0001, 01, 1, 0, 0, 0)
+            );
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
@@ -178,8 +178,8 @@ namespace MeTLLibTests
         [TestMethod()]
         public void CreateTest()
         {
-            ConversationDetails proposedConversationDetails = new ConversationDetails { };
-            ConversationDetails expectedDetails = new ConversationDetails { };
+            ConversationDetails proposedConversationDetails = null;
+            ConversationDetails expectedDetails = null;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
@@ -309,7 +309,7 @@ namespace MeTLLibTests
         [TestMethod()]
         public void CreateTest()
         {
-            ConversationDetails proposedDetails = new ConversationDetails { }; // TODO: Initialize to an appropriate value
+            ConversationDetails proposedDetails = null; // TODO: Initialize to an appropriate value
             ConversationDetails expected = null; // TODO: Initialize to an appropriate value
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();

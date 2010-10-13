@@ -64,7 +64,7 @@ namespace MeTLLib.Providers.Structure
             catch (WebException e)
             {
                 providerMonitor.HealthCheck(() => { });
-                return new ConversationDetails();
+                return null;
             }
         }
         public ConversationDetails AppendSlideAfter(int currentSlide, string title)
@@ -98,7 +98,7 @@ namespace MeTLLib.Providers.Structure
             catch (WebException)
             {
                 providerMonitor.HealthCheck(() => { /*Everything is AOk*/});
-                return new ConversationDetails();
+                return null;
             }
         }
         private int getPosition(int slide, List<Slide> slides)
@@ -128,7 +128,7 @@ namespace MeTLLib.Providers.Structure
             catch (WebException)
             {
                 providerMonitor.HealthCheck(() => { /*Everything is AOk*/});
-                return new ConversationDetails();
+                return null;
             }
         }
         public void ReceiveDirtyConversationDetails(string jid)
@@ -155,7 +155,7 @@ namespace MeTLLib.Providers.Structure
             catch (WebException e)
             {
                 providerMonitor.HealthCheck(() => { /*Everything is AOk*/});
-                return new ConversationDetails();
+                return null;
             }
         }
         class UniqueConversationComparator : IEqualityComparer<ConversationDetails>

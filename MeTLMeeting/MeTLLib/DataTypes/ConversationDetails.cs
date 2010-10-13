@@ -13,7 +13,7 @@ namespace MeTLLib.DataTypes
 {
     public class ConversationDetails : INotifyPropertyChanged
     {
-        public ConversationDetails(String title, String jid, String author, String tag, List<Slide> slides, Permissions permissions, String subject)
+        public ConversationDetails(String title, String jid, String author, String tag, List<Slide> slides, Permissions permissions, String subject, DateTime created, DateTime lastAccessed)
             : base()
         {
             this.Title = title;
@@ -23,12 +23,14 @@ namespace MeTLLib.DataTypes
             this.Slides = slides;
             this.Permissions = permissions;
             this.Subject = subject;
+            this.Created = created;
+            this.LastAccessed = lastAccessed;
         }
-        public ConversationDetails()
+        /*public ConversationDetails()
             : base()
         {
             this.Permissions = new Permissions("unspecified", false, false, false);
-        }
+        }*/
         public int NextAvailableSlideId()
         {
             return Slides.Select(s => s.id).Max() + 1;
@@ -89,6 +91,7 @@ namespace MeTLLib.DataTypes
         private static readonly string TITLE_TAG = "title";
         private static readonly string AUTHOR_TAG = "author";
         private static readonly string CREATED_TAG = "created";
+        private static readonly string LAST_ACCESSED_TAG = "lastAccessed";
         private static readonly string TAG_TAG = "tag";
         private static readonly string SUBJECT_TAG = "subject";
         private static readonly string JID_TAG = "jid";
@@ -106,6 +109,9 @@ namespace MeTLLib.DataTypes
             var Author = doc.Element(AUTHOR_TAG).Value;
             var Created = DateTimeFactory.Parse(doc.Element(CREATED_TAG).Value);
             var Tag = doc.Element(TAG_TAG).Value;
+            DateTime LastAccessed = new DateTime();
+            if (doc.Element(LAST_ACCESSED_TAG) != null)
+                LastAccessed = DateTimeFactory.Parse(doc.Element(LAST_ACCESSED_TAG).Value);
             var Subject = "";
             if (doc.Element(SUBJECT_TAG) != null)
                 Subject = doc.Element(SUBJECT_TAG).Value;
@@ -120,7 +126,7 @@ namespace MeTLLib.DataTypes
                 d.Element(DEFAULT_HEIGHT) != null ? float.Parse(d.Element(DEFAULT_HEIGHT).Value) : 540,
                 d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true
             )).ToList();
-            return new ConversationDetails(Title,Jid,Author,Tag,Slides,internalPermissions,Subject);
+            return new ConversationDetails(Title,Jid,Author,Tag,Slides,internalPermissions,Subject, Created, LastAccessed);
         }
         public XElement WriteXml()
         {
@@ -129,6 +135,7 @@ namespace MeTLLib.DataTypes
                 new XElement(TITLE_TAG, Title),
                 new XElement(AUTHOR_TAG, Author),
                 new XElement(CREATED_TAG, Created.ToString()),
+                new XElement(LAST_ACCESSED_TAG, LastAccessed.ToString()),
                 new XElement(TAG_TAG, Tag),
                 new XElement(SUBJECT_TAG, Subject),
                 new XElement(JID_TAG, Jid),
@@ -188,46 +195,10 @@ namespace MeTLLib.DataTypes
                 && (foreignPermissions.usersAreCompulsorilySynced == usersAreCompulsorilySynced));
         }
         public static Permissions CUSTOM_PERMISSIONS = new Permissions("custom", false, false, false);
-        /*
-        {
-            Label="custom",
-            studentCanPublish = false,
-            studentCanOpenFriends = false,
-            usersAreCompulsorilySynced = false
-        };*/
         public static Permissions LECTURE_PERMISSIONS = new Permissions("lecture", false, false, true);
-        /*
-        {
-            Label="lecture",
-            studentCanPublish = false,
-            studentCanOpenFriends = false,
-            usersAreCompulsorilySynced = true
-        };*/
         public static Permissions LABORATORY_PERMISSIONS = new Permissions("laboratory", false, true, false);
-        /*
-        {
-            Label="laboratory",
-            studentCanPublish = false,
-            studentCanOpenFriends = true,
-            usersAreCompulsorilySynced = false
-        };*/
         public static Permissions TUTORIAL_PERMISSIONS = new Permissions("tutorial", true, true, false);
-        /*    
-        {
-                Label="tutorial",
-                studentCanPublish = true,
-                studentCanOpenFriends = true,
-                usersAreCompulsorilySynced = false
-            };*/
         public static Permissions MEETING_PERMISSIONS = new Permissions("meeting", true, true, true);
-        /*
-        {
-            Label="meeting",
-            studentCanPublish = true,
-            studentCanOpenFriends = true,
-            usersAreCompulsorilySynced = true
-        };
-         * */
         private static readonly Permissions[] OPTIONS = new[]{
             LECTURE_PERMISSIONS,
             LABORATORY_PERMISSIONS,
