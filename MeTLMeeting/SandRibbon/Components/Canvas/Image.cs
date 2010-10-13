@@ -688,7 +688,6 @@ namespace SandRibbon.Components.Canvas
             AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
         */
         }
-
         private void transmitImageAltered(object sender, EventArgs e)
         {
             foreach (UIElement selectedImage in GetSelectedElements())

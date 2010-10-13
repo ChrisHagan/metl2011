@@ -16,7 +16,6 @@ namespace SandRibbon.Providers
             return request;
         }
     }
-
     public class HttpResourceProvider
     {
         private static readonly string StagingMeTLCertificateSubject = "E=nobody@nowhere.gondwanaland, CN=localhost, OU=Janitorial section, O=Hyber Inc., L=Yawstown, S=Gondwanaland, C=se";

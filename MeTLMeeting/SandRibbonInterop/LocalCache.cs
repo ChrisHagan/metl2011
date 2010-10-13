@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Xml.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 
 namespace SandRibbonInterop.LocalCache
 {
@@ -92,8 +93,13 @@ namespace SandRibbonInterop.LocalCache
             }
             if (!CacheDict.ContainsKey(remoteUri.ToString()))
             {
+                var match = new Regex(@"Resource/(\d+)/").Match(remoteUri.ToString());
+                var resourceJid = match.Groups[1].Value;
+                var dirName = string.Format(@"{0}\{1}", cacheName, resourceJid);
                 if (!Directory.Exists(cacheName))
                     Directory.CreateDirectory(cacheName);
+                if (!Directory.Exists(dirName))
+                    Directory.CreateDirectory(dirName);
                 var localUriString = generateLocalFilename(remoteUri.ToString());
                 //check if file exists
                 if(!File.Exists(localUriString))
