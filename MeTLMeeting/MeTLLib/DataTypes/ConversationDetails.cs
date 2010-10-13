@@ -61,12 +61,12 @@ namespace MeTLLib.DataTypes
         }
         public override bool Equals(object obj)
         {
-            if (!(obj is ConversationDetails)) return false;
+            if (obj == null || !(obj is ConversationDetails)) return false;
             return ((ConversationDetails)obj).Jid == Jid;
         }
         public bool ValueEquals(object obj)
         {
-            if (!(obj is ConversationDetails)) return false;
+            if (obj == null || !(obj is ConversationDetails)) return false;
             var foreignConversationDetails = ((ConversationDetails)obj);
             return ((foreignConversationDetails.Author == Author)
                 &&(foreignConversationDetails.Created == Created)
@@ -157,12 +157,12 @@ namespace MeTLLib.DataTypes
         }
         public override bool Equals(object obj)
         {
-            if (!(obj is Permissions)) return false;
+            if (obj == null || !(obj is Permissions)) return false;
             return (((Permissions)obj).Label == Label);
         }
         public bool ValueEquals(object obj)
         {
-            if (!(obj is Permissions)) return false;
+            if (obj == null || !(obj is Permissions)) return false;
             var foreignPermissions = ((Permissions)obj);
             return ((foreignPermissions.studentCanOpenFriends == studentCanOpenFriends)
                 && (foreignPermissions.studentCanPublish == studentCanPublish)
@@ -236,12 +236,12 @@ namespace MeTLLib.DataTypes
     {
         public override bool Equals(object obj)
         {
-            if (!(obj is Slide)) return false;
+            if (obj == null || !(obj is Slide)) return false;
             return ((Slide)obj).id == id;
         }
         public bool ValueEquals(object obj)
         {
-            if (!(obj is Slide)) return false;
+            if (obj == null || !(obj is Slide)) return false;
             var foreignSlide = ((Slide)obj); 
             return ((foreignSlide.id == id)
                 &&(foreignSlide.author == author)

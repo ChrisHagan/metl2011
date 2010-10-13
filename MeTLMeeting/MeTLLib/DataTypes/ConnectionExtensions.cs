@@ -9,7 +9,8 @@ namespace MeTLLib.DataTypes
     }
     public class AuthorizedGroup
     {
-        public AuthorizedGroup() { }
+        public AuthorizedGroup() {}
+        //What's this method here for?  Seriously?
         public AuthorizedGroup(string newGroupKey)
         {
             groupType = "test only";
@@ -24,10 +25,15 @@ namespace MeTLLib.DataTypes
         public string groupKey { get; set; }
         public override bool Equals(object obj)
         {
-            if (obj == null) return false;
-            if (!(obj is AuthorizedGroup)) return false;
+            if (obj == null || !(obj is AuthorizedGroup)) return false;
             var otherGroup = (AuthorizedGroup)obj;
             return otherGroup.groupKey == this.groupKey;
+        }
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is AuthorizedGroup)) return false;
+            var otherGroup = (AuthorizedGroup)obj;
+            return (otherGroup.groupKey == this.groupKey && otherGroup.groupType == this.groupType);
         }
         public override int GetHashCode()
         {
