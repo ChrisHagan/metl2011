@@ -43,16 +43,23 @@ namespace MeTLLib.Providers.Structure
         private readonly string SUMMARY = "summary.xml";
         public ConversationDetails DetailsOf(string conversationJid)
         {
+            //So, from a design perspective, conversationJid must be a string, which must be non-empty, non-null.  But it might be a string that isn't currently a conversation Jid.
+            //Expected behavious is return a valid conversationDetails, or return an empty conversationDetails to reflect that the conversation doesn't exist.
+            if (String.IsNullOrEmpty(conversationJid)) throw new ArgumentNullException("conversationJid", "Argument cannot be null or empty");
             try
             {
-                var url = string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, conversationJid, DETAILS);
-                var response = XElement.Parse(secureGetString(new System.Uri(url)));
+                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, conversationJid, DETAILS));
+                var response = XElement.Parse(secureGetString(url));
                 var result = new ConversationDetails().ReadXml(response);
                 return result;
             }
+            catch (UriFormatException e)
+            {
+                throw new Exception(string.Format("Could not create valid Uri for DetailsOf, using conversationJid: {0}", conversationJid), e);
+            }
             catch (XmlException e)
             {
-                throw new Exception(string.Format("Could not retrieve details of {0}", conversationJid), e);
+                throw new Exception(string.Format("Could not parse retrieved details of {0}", conversationJid), e);
             }
             catch (WebException e)
             {

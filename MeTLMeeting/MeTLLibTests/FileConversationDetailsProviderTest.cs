@@ -57,8 +57,168 @@ namespace MeTLLibTests
         [TestMethod()]
         public void UpdateTest()
         {
-            ConversationDetails proposedDetails = new ConversationDetails { };
-            ConversationDetails expectedDetails = new ConversationDetails { };
+            ConversationDetails proposedDetails = new ConversationDetails
+            {
+                Author = "hagand",
+                Created = new DateTime(2010, 05, 18, 15, 00, 53),
+                Jid = "100",
+                LastAccessed = new DateTime(0001, 01, 1, 0, 0, 0),
+                Permissions = new Permissions
+                {
+                    conversationGroup = String.Empty,
+                    Label = null,
+                    studentCanOpenFriends = true,
+                    studentCanPublish = true,
+                    usersAreCompulsorilySynced = false
+                },
+                Slides = new List<Slide> 
+                {
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=true,
+                        id=101,
+                        index=0,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=106,
+                        index=1,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=105,
+                        index=2,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=104,
+                        index=3,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=102,
+                        index=4,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=103,
+                        index=5,
+                        type= Slide.TYPE.SLIDE
+                    },
+                },
+                Subject = "Unrestricted",
+                Tag = "",
+                Title = "Welcome to Staging on Madam"
+            };
+            ConversationDetails expectedDetails = new ConversationDetails
+            {
+                Author = "hagand",
+                Created = new DateTime(2010, 05, 18, 15, 00, 53),
+                Jid = "100",
+                LastAccessed = new DateTime(0001, 01, 1, 0, 0, 0),
+                Permissions = new Permissions
+                {
+                    conversationGroup = String.Empty,
+                    Label = null,
+                    studentCanOpenFriends = true,
+                    studentCanPublish = true,
+                    usersAreCompulsorilySynced = false
+                },
+                Slides = new List<Slide> 
+                {
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=true,
+                        id=101,
+                        index=0,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=106,
+                        index=1,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=105,
+                        index=2,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=104,
+                        index=3,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=102,
+                        index=4,
+                        type= Slide.TYPE.SLIDE
+                    },
+                    new Slide
+                    {
+                        author="hagand",
+                        defaultHeight=540,
+                        defaultWidth=720,
+                        exposed=false,
+                        id=103,
+                        index=5,
+                        type= Slide.TYPE.SLIDE
+                    },
+                },
+                Subject = "Unrestricted",
+                Tag = "",
+                Title = "Welcome to Staging on Madam"
+            };
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();

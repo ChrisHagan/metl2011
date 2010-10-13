@@ -13,6 +13,16 @@ namespace MeTLLib.DataTypes
 {
     public class ConversationDetails : INotifyPropertyChanged
     {
+        public ConversationDetails(String title, String jid, String author, String tag, List<Slide> slides, Permissions permissions, String subject) : base()
+        {
+            this.Title = title;
+            this.Jid = jid;
+            this.Author = author;
+            this.Tag = tag;
+            this.Slides = slides;
+            this.Permissions = permissions;
+            this.Subject = subject;
+        }
         public ConversationDetails() : base()
         {
             this.Permissions = new Permissions();
@@ -53,6 +63,21 @@ namespace MeTLLib.DataTypes
         {
             if (!(obj is ConversationDetails)) return false;
             return ((ConversationDetails)obj).Jid == Jid;
+        }
+        public bool ValueEquals(object obj)
+        {
+            if (!(obj is ConversationDetails)) return false;
+            var foreignConversationDetails = ((ConversationDetails)obj);
+            return ((foreignConversationDetails.Author == Author)
+                &&(foreignConversationDetails.Created == Created)
+                &&(foreignConversationDetails.IsValid == IsValid)
+                &&(foreignConversationDetails.Jid == Jid)
+                &&(foreignConversationDetails.LastAccessed == LastAccessed)
+                &&(foreignConversationDetails.Permissions.ValueEquals(Permissions))
+                &&(foreignConversationDetails.Slides.All(s=>s.ValueEquals(Slides[foreignConversationDetails.Slides.IndexOf(s)])))
+                &&(foreignConversationDetails.Subject == Subject)
+                &&(foreignConversationDetails.Tag == Tag)
+                &&(foreignConversationDetails.Title == Title));
         }
         public override int GetHashCode()
         {
@@ -130,6 +155,19 @@ namespace MeTLLib.DataTypes
             if(typeOfPermissions != null) return typeOfPermissions;
             return CUSTOM_PERMISSIONS;
         }
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Permissions)) return false;
+            return (((Permissions)obj).Label == Label);
+        }
+        public bool ValueEquals(object obj)
+        {
+            if (!(obj is Permissions)) return false;
+            var foreignPermissions = ((Permissions)obj);
+            return ((foreignPermissions.studentCanOpenFriends == studentCanOpenFriends)
+                && (foreignPermissions.studentCanPublish == studentCanPublish)
+                && (foreignPermissions.usersAreCompulsorilySynced == usersAreCompulsorilySynced));
+        }
         public static Permissions CUSTOM_PERMISSIONS = new Permissions{
             Label="custom",
             studentCanPublish = false,
@@ -195,7 +233,24 @@ namespace MeTLLib.DataTypes
         }
     }
     public class Slide
-    {  
+    {
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Slide)) return false;
+            return ((Slide)obj).id == id;
+        }
+        public bool ValueEquals(object obj)
+        {
+            if (!(obj is Slide)) return false;
+            var foreignSlide = ((Slide)obj); 
+            return ((foreignSlide.id == id)
+                &&(foreignSlide.author == author)
+                &&(foreignSlide.defaultHeight == defaultHeight)
+                &&(foreignSlide.defaultWidth == defaultWidth)
+                &&(foreignSlide.exposed == exposed)
+                &&(foreignSlide.index == index)
+                &&(foreignSlide.type.Equals(type)));
+        }
         public static int conversationFor(int id) {
             var sId = id.ToString();
             return Int32.Parse(string.Format("{0}00",sId.Substring(0,sId.Length-2)));
