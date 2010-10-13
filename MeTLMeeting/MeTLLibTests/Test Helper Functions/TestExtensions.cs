@@ -7,7 +7,7 @@ namespace MeTLLibTests
 {
     public class TestExtensions
     {
-        private static Type[] simpleTypes = new[] { typeof(Single), typeof(Int32), typeof(String), typeof(DateTime) };
+        private static Type[] simpleTypes = new[] { typeof(Single), typeof(Int32), typeof(String), typeof(DateTime), typeof(float), typeof(Double), typeof(Char) };
 
         public static TimeSpan ConditionallyDelayFor(int timeout, bool condition)
         {
@@ -68,7 +68,7 @@ namespace MeTLLibTests
                     result = false;
                 else if (fieldType.IsPrimitive || fieldType.IsEnum || simpleTypes.Contains(fieldType))
                     result = (object1Value.ToString() == object2Value.ToString()) ? true : false;
-                else if (fieldType.FullName.StartsWith("System.Collections.Generic."))
+                else if (fieldType.FullName.StartsWith("System.Collections."))
                 {
                     var list1 = ((IEnumerable<object>)object1Value).ToList();
                     var list2 = ((IEnumerable<object>)object2Value).ToList();

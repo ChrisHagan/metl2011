@@ -75,7 +75,7 @@ namespace MeTLLibTests
         {
             string AuthcateName = "eecrole";
             string AuthcatePassword = "m0nash2008";
-            List<AuthorizedGroup> expected = new List<AuthorizedGroup> { new AuthorizedGroup { groupKey = "Unrestricted", groupType = "" }, new AuthorizedGroup { groupKey = "Office of the Deputy Vice-Chancellor (Education)", groupType = "ou" }, new AuthorizedGroup { groupKey = "Administration", groupType = "ou" }, new AuthorizedGroup { groupKey = "Staff", groupType = "ou" }, new AuthorizedGroup { groupKey = "eecrole", groupType = "username" } };
+            List<AuthorizedGroup> expected = new List<AuthorizedGroup> { new AuthorizedGroup("Unrestricted",""), new AuthorizedGroup { groupKey = "Office of the Deputy Vice-Chancellor (Education)", groupType = "ou" }, new AuthorizedGroup { groupKey = "Administration", groupType = "ou" }, new AuthorizedGroup { groupKey = "Staff", groupType = "ou" }, new AuthorizedGroup { groupKey = "eecrole", groupType = "username" } };
             List<AuthorizedGroup> actual;
             IKernel kernel = new StandardKernel(new BaseModule());
             kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();

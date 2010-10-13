@@ -10,12 +10,30 @@ namespace MeTLLib.DataTypes
 {
     public struct TextTag
     {
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is TextTag)) return false;
+            var foreignTextTag = ((TextTag)obj);
+            return ((foreignTextTag.author == author)
+                && (foreignTextTag.id == id)
+                && (foreignTextTag.privacy == privacy));
+        }
         public string author;
         public string privacy;
         public string id;
     }
     public struct ImageTag
     {
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is ImageTag)) return false;
+            var foreignImageTag = ((ImageTag)obj);
+            return ((foreignImageTag.author == author)
+                && (foreignImageTag.id == id)
+                && (foreignImageTag.privacy == privacy)
+                && (foreignImageTag.isBackground == isBackground)
+                && (foreignImageTag.zIndex == zIndex));
+        }
         public string author;
         public string privacy;
         public string id;
@@ -24,6 +42,16 @@ namespace MeTLLib.DataTypes
     }
     public struct StrokeTag
     {
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is StrokeTag)) return false;
+            var foreignStrokeTag = ((StrokeTag)obj);
+            return ((foreignStrokeTag.author == author)
+                && (foreignStrokeTag.isHighlighter == isHighlighter)
+                && (foreignStrokeTag.privacy == privacy)
+                && (foreignStrokeTag.startingSum == startingSum)
+                && (foreignStrokeTag.startingColor == startingColor));
+        }
         public string author;
         public string privacy;
         public double startingSum;
@@ -32,6 +60,11 @@ namespace MeTLLib.DataTypes
     }
     public struct StrokeChecksum
     {
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is StrokeChecksum)) return false;
+            return (((StrokeChecksum)obj).checksum == checksum);
+        }
         public double checksum;
     }
     public struct UserHighlight

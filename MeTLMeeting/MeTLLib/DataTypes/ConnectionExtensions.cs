@@ -17,13 +17,6 @@ namespace MeTLLib.DataTypes
     }
     public class AuthorizedGroup
     {
-        public AuthorizedGroup() {}
-        //What's this method here for?  Seriously?
-        public AuthorizedGroup(string newGroupKey)
-        {
-            groupType = "test only";
-            groupKey = newGroupKey;
-        }
         public AuthorizedGroup(string newGroupKey, string newGroupType)
         {
             groupType = newGroupType;
