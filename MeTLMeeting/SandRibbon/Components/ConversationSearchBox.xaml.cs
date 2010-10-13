@@ -41,6 +41,14 @@ namespace SandRibbon.Components
         }
         private void BackstageModeChanged(string mode) {
             GetListCollectionView().Refresh();
+            string searchButtonText;
+            switch (mode)
+            {
+                case "mine": searchButtonText = "Filter my Conversations"; break;
+                case "all": searchButtonText = "Filter all Conversations"; break;
+                default: searchButtonText = "Search all Conversations"; break;
+            }
+            searchConversations.Content = searchButtonText;
         }
         private void SetIdentity(object _arg){
             foreach(var conversation in SandRibbon.Providers.Structure.ConversationDetailsProviderFactory.Provider.ListConversations())

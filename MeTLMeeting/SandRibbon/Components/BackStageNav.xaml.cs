@@ -43,8 +43,6 @@ namespace SandRibbon.Components
         private void openCorrectTab(string mode) {
             if ("MyConversations" == mode)
                 openMyConversations();
-            else if ("AllConversations" == mode)
-                openAllConversations();
             else
                 openFindConversations();
         }

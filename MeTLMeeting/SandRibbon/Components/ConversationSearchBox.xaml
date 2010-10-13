@@ -54,7 +54,7 @@
                                              TextWrapping="Wrap" 
                                              Width="Auto" HorizontalAlignment="Stretch">
                     </TextBox>
-                    <Button Content="Search" x:Name="searchConversations" HorizontalContentAlignment="Left" Click="searchConversations_Click" />
+                    <Button Content="Search all conversations" x:Name="searchConversations" HorizontalContentAlignment="Left" Click="searchConversations_Click" />
                 </StackPanel>
                 <Label Grid.Column="1" Grid.Row="2" Visibility="Collapsed" Foreground="DarkGray" x:Name="ResultsCount"/>
                 <ItemsControl Grid.Column="1" Grid.Row="3" x:Name="SearchResults" HorizontalAlignment="Left" >
