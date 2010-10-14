@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="clr-namespace:SandRibbon"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:interop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     Topmost="True"
     WindowStyle="ToolWindow"
     MaxHeight="600"
@@ -11,8 +12,9 @@
         <DockPanel>
             <Border DockPanel.Dock="Bottom" Background="{StaticResource BackgroundBlueGradient}" Padding="20 20 20 20">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Display results" Click="SnapshotButton_Click"/>
-                    <Button Content="Close" Click="CloseButton_Click"/>
+                    <Button Content="Display results" Click="SnapshotButton_Click" Padding="0 10 0 0 "/>
+                    <interop:Button Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"/>
+                    <Button Content="Close" Click="CloseButton_Click" />
                 </StackPanel>
             </Border>
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">

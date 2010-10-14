@@ -99,7 +99,35 @@ namespace SandRibbon.Components.Canvas
             userImages.Clear(); 
             userVideo.Clear();
         }
+        private void updateVisibility(VisibilityInformation info)
+        {
+            switch (info.user)
+            {
+                case "toggleTeacher":
+                    {
+                        userVisibility["Teacher"] = info.visible;
+                        break;
+                    }
+                case "toggleMe":
+                    {
+                        userVisibility[Globals.me] = info.visible;
+                        break;
+                    }
+                case "toggleStudents":
+                    {
+                        var keys = userVisibility.Keys.Where(k => k != "Teacher" && k != Globals.me).ToList();
+                        foreach(var key in keys)
+                            userVisibility[key] = info.visible;
+                        break;
+                    }
+                    default:
+                    {
+                        userVisibility[info.user] = info.visible;
+                        break;
+                    }
+            }
 
+        }
         private void setUserVisibility(VisibilityInformation info)
         {
                     Dispatcher.adoptAsync(() =>
@@ -660,7 +688,6 @@ namespace SandRibbon.Components.Canvas
             AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
         */
         }
-
         private void transmitImageAltered(object sender, EventArgs e)
         {
             foreach (UIElement selectedImage in GetSelectedElements())
@@ -918,7 +945,8 @@ namespace SandRibbon.Components.Canvas
         }
         private void addImageFromQuizSnapshot(string filename)
         {
-            handleDrop(filename, new Point(10, 10), 1);
+            if(target == "presentationSpace" && me != "projector")
+                handleDrop(filename, new Point(200, 100), 1);
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {

@@ -1,0 +1,6 @@
+textboxes privacy color
+	-- now not the clearest
+privacy changing buttons now appear on selection.
+
+changed privacy halo on highlighters
+

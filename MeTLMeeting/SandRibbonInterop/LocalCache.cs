@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Xml.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 
 namespace SandRibbonInterop.LocalCache
 {
@@ -83,17 +84,50 @@ namespace SandRibbonInterop.LocalCache
         {
             if (remoteUri.ToString().StartsWith(cacheName + "\\"))
                 return remoteUri;
+            var file = remoteUri.ToString().Split('/').Reverse().First();
+            if(file.Contains("submission"))
+            {
+                int num;
+                if (!(int.TryParse(file.Substring(0, 1), out num)))
+                    return remoteUri;
+            }
             if (!CacheDict.ContainsKey(remoteUri.ToString()))
             {
+                var match = new Regex(@"Resource/(\d+)/").Match(remoteUri.ToString());
+                var resourceJid = match.Groups[1].Value;
+                var dirName = string.Format(@"{0}\{1}", cacheName, resourceJid);
                 if (!Directory.Exists(cacheName))
                     Directory.CreateDirectory(cacheName);
-                var localUriString = cacheName + "\\" + remoteUri.ToString().Split('/').Reverse().First();
-                File.WriteAllBytes(localUriString, HttpResourceProvider.secureGetData(remoteUri.ToString()));
+                if (!Directory.Exists(dirName))
+                    Directory.CreateDirectory(dirName);
+                var localUriString = generateLocalFilename(remoteUri.ToString());
+                //check if file exists
+                if(!File.Exists(localUriString))
+                    File.WriteAllBytes(localUriString, HttpResourceProvider.secureGetData(remoteUri.ToString()));
                 var localUri = new Uri(localUriString, UriKind.Relative);
                 Add(remoteUri.ToString(), localUri);
             }
             return CacheDict[remoteUri.ToString()];
         }
+
+        private static string generateLocalFilename(string uri)
+        {
+            var uriParts = uri.Split('/').Reverse();
+            var filename = uriParts.First();
+            int tmp;
+            if (int.TryParse(uriParts.ElementAt(1), out tmp))
+            {
+                var slideDirectory = uriParts.ElementAt(1);
+                if (!Directory.Exists(cacheName + "\\" + slideDirectory))
+                    Directory.CreateDirectory(cacheName + "\\" + slideDirectory);
+                return cacheName + "\\" + slideDirectory + "\\" + filename;
+            }
+            else
+            {
+                return cacheName + "\\" + filename;
+            }
+        }
+
         public static Uri RemoteSource(Uri media)
         {
 

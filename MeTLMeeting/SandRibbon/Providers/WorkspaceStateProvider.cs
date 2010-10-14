@@ -28,6 +28,14 @@ namespace SandRibbon.Providers
             Commands.MoveTo,
             Commands.JoinConversation
         };
+        public static bool workSpaceFileExits()
+        {
+             if (!Directory.Exists(WORKSPACE_DIRECTORY))
+                 return false;
+             if (!File.Exists(WORKSPACE_SAVE_FILE))
+                 return false;
+            return true;
+        }
         public static void ensureWorkspaceDirectoryExists() { 
             if (!Directory.Exists(WORKSPACE_DIRECTORY)) {
                 Directory.CreateDirectory(WORKSPACE_DIRECTORY);
@@ -63,6 +71,7 @@ namespace SandRibbon.Providers
                         var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
                         CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(level);
                     break;
+                   
                     case "SetIdentity":
                         var values = (Crypto.decrypt(param.Attribute("authentication").Value)).Split(':');
                         Commands.SetIdentity.Execute(
@@ -72,6 +81,7 @@ namespace SandRibbon.Providers
                                 authorizedGroups=new AuthorisationProvider().getEligibleGroups(values[0],values[1])
                             });
                     break;
+                    
                     /*case "JoinConversation":
                         Commands.JoinConversation.Execute(param.Attribute("conversation").Value);
                     break;*/

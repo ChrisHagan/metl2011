@@ -59,6 +59,11 @@ namespace SandRibbon.Components
                     this.Visibility = Visibility.Collapsed;
                 }));
             Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
+            if (WorkspaceStateProvider.workSpaceFileExits())
+            {
+                loggingIn.Visibility = Visibility.Visible;
+                usernameAndPassword.Visibility = Visibility.Collapsed;
+            }
         }
         private void ServersDown(IEnumerable<ServerStatus> servers)
         {
@@ -153,6 +158,10 @@ namespace SandRibbon.Components
                     password = AuthcatePassword,
                     authorizedGroups = eligibleGroups
                 });
+                if(rememberMe.IsChecked == true)
+                    WorkspaceStateProvider.SaveCurrentSettings();
+                else
+                    WorkspaceStateProvider.ClearSettings();
             }
             else
             {
@@ -164,11 +173,12 @@ namespace SandRibbon.Components
 
         private bool isBackdoorUser(string user)
         {
-            return user.ToLower().Contains("admirable");
+            return user.Contains(BackDoor.USERNAME_PREFIX);
         }
 
         private bool authenticateAgainstFailoverSystem(string username, string password, SecureString securePassword)
         {
+            //return true;
             if (isAuthenticatedAgainstLDAP(username, password))
                 return true;
             else if (isAuthenticatedAgainstWebProxy(username, securePassword))

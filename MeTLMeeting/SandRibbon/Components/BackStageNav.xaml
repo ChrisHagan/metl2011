@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="SandRibbon.Components.BackStageNav"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:interop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+             xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+    <Grid>
+        <Grid.Background>
+                <LinearGradientBrush StartPoint="0.3,0.5" EndPoint="0.8,0.5">
+                    <GradientStop Color="#666a7f" Offset="0" />
+                    <GradientStop Color="#535368" Offset="1" />
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Grid.Resources>
+            <SolidColorBrush x:Key="foreground" Color="White" />
+            <Style TargetType="StackPanel">
+                    <Setter Property="Margin" Value="20 20" />
+            </Style>
+        </Grid.Resources>
+            <StackPanel VerticalAlignment="Top">
+                <interop:Button Text="Return to conversation" Foreground="{StaticResource ResourceKey=foreground}" Command="{x:Static api:Commands.HideConversationSearchBox}"/>
+                <interop:RadioButton Text="Search" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="find" Checked="mode_Checked" IsChecked="True"/>
+                <interop:RadioButton Text="My conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="mine" Checked="mode_Checked"/>
+                <interop:RadioButton Text="All conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="all"  Checked="mode_Checked"/>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Bottom">
+                <interop:RadioButton Text="Help" Icon="\Resources\Help.png" GroupName="options"  Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" x:Name="help" Checked="mode_Checked"/>
+                <interop:Button Text="Exit" Icon="\Resources\Delete.png" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.CloseApplication}"/>
+                <interop:Button Text="Logout and exit"  Icon="\Resources\logoutAndExit.png" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.LogOut}"/>
+            </StackPanel>
+        </Grid>
+</UserControl>

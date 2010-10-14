@@ -11,12 +11,31 @@ namespace SandRibbon.Providers
 {
     public class Globals
     {
+        public const string METLCOLLABORATOR = "MeTL Collaborator";
+        public const string METLDEMONSTRATOR = "MeTL Demonstrator";
+        public const string METL = "MeTL";
+        public const string METLPRESENTER = "MeTL Presenter";
         public static bool isAuthor
         {
             get
             {
                 return me == conversationDetails.Author;
             }
+        }
+        public static string MeTLType
+        {
+            get
+            {
+                try
+                {
+                    return Commands.MeTLType.lastValue().ToString();
+                }
+                catch (Exception)
+                {
+                    return METLCOLLABORATOR;
+                }
+            }
+
         }
         public static PedagogyLevel pedagogy
         {

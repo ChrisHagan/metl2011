@@ -59,11 +59,12 @@ namespace SandRibbon
         private void DoConstructor()
         {
             InitializeComponent();
-            var MeTLType = ConfigurationProvider.instance.getMeTLType();
-            Title = MeTLType;
+            var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
+            CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(level);
+            Title = Globals.MeTLType;
             try
             {
-                Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + MeTLType + ".ico");
+                Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
             catch (Exception) { }
             userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
@@ -75,6 +76,7 @@ namespace SandRibbon
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
+            Commands.ShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerPoint, mustBeLoggedIn));
@@ -124,7 +126,7 @@ namespace SandRibbon
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-
+            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
@@ -132,7 +134,6 @@ namespace SandRibbon
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
 
             adornerScroll.scroll = scroll;
@@ -145,6 +146,7 @@ namespace SandRibbon
             WorkspaceStateProvider.RestorePreviousSettings();
             App.Now("Started MeTL");
         }
+
         private void noop(object unused)
         {
         }
@@ -345,7 +347,7 @@ namespace SandRibbon
         private void EditConversation(object _unused)
         {
             ShowPowerpointBlocker("Editing Conversation Dialog Open");
-            Commands.EditConversation.Execute(null);
+            Commands.EditConversation.Execute(Globals.location.activeConversation);
         }
         private void BlockInput(string message)
         {
@@ -562,7 +564,10 @@ namespace SandRibbon
         {
             try
             {
-                return Globals.location.activeConversation != null;
+                if (Globals.location.activeConversation != null && ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation).Subject != "Deleted")
+                    return true;
+                return false;
+
             }
             catch (NotSetException)
             {

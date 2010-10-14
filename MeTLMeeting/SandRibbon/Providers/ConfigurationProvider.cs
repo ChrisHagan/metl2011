@@ -29,7 +29,7 @@ namespace SandRibbon.Providers
         {
             get 
             {
-                isStaging = true;
+                //isStaging = true;
                 if (isStaging)
                 {
                     if (stagingServer == null)
@@ -66,24 +66,24 @@ namespace SandRibbon.Providers
             var type = getMeTLType();
             switch (type)
             {
-                case "MeTL":
+                case Globals.METL:
                     level = 3;
                     break;
-                case "MeTL Presenter":
+                case Globals.METLPRESENTER:
                     level = 2;
                     break;
-                case "MeTL Collaborator":
+                case Globals.METLCOLLABORATOR:
                     level = 3;
                     break;
-                case "MeTL Demonstrator":
+                case Globals.METLDEMONSTRATOR:
                     level = 3;
-                    MessageBox.Show("Gordon Special");
                     break;
                 default:
                     level = 3;
                     break;
             }
-            Commands.SendMeTLType.Execute(type);
+
+            Commands.MeTLType.Execute(type);
             return level;
         }
         

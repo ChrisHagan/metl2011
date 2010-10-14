@@ -210,17 +210,18 @@ namespace SandRibbon.Components
         }
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var source = (ListBox)sender;
-            if (source.SelectedItem != null)
-            {
-                var proposedIndex = source.SelectedIndex;
-                var proposedId = ((ThumbnailInformation)source.SelectedItem).slideId;
-                if (proposedId == currentSlideId) return;
-                currentSlideIndex = proposedIndex;
-                currentSlideId = proposedId;
-                Commands.MoveTo.Execute(currentSlideId);
-                slides.ScrollIntoView(slides.SelectedItem);
-            }
+              var source = (ListBox) sender;
+              if (source.SelectedItem != null)
+              {
+                  var proposedIndex = source.SelectedIndex;
+                  var proposedId =
+                      ((ThumbnailInformation) source.SelectedItem).slideId;
+                  if (proposedId == currentSlideId) return;
+                  currentSlideIndex = proposedIndex;
+                  currentSlideId = proposedId;
+                  Commands.MoveTo.Execute(currentSlideId);
+                  slides.ScrollIntoView(slides.SelectedItem);
+              }
         }
     }
     public class ThumbListBox : ListBox

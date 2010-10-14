@@ -14,11 +14,29 @@ using System.Windows.Shapes;
 
 namespace SandRibbon.Components
 {
+    class PrintOptions : DependencyObject{
+        public bool IncludePrivateContent
+        {
+            get { return (bool)GetValue(IncludePrivateContentProperty); }
+            set { SetValue(IncludePrivateContentProperty, value); }
+        }
+        public static readonly DependencyProperty IncludePrivateContentProperty =
+            DependencyProperty.Register("IncludePrivateContent", typeof(bool), typeof(PrintOptions), new UIPropertyMetadata(false));
+    }
     public partial class PrintDialog : Window
     {
         public PrintDialog()
         {
             InitializeComponent();
+            DataContext = new PrintOptions();
+        }
+        private void startPrinting_Click(object sender, RoutedEventArgs e)
+        {
+            var options = (PrintOptions)((FrameworkElement)sender).DataContext;
+            if (options.IncludePrivateContent)
+                Commands.PrintConversationHandout.Execute(null);
+            else
+                Commands.PrintConversation.Execute(null);
         }
     }
 }

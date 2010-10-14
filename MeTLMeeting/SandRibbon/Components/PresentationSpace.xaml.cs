@@ -177,7 +177,7 @@ namespace SandRibbon.Components
 
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            var file = string.Format("{0}submission.png", Globals.me);
+            var file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks,Globals.me);
             using (Stream stream = File.Create(file))
             {
                 encoder.Save(stream);
@@ -361,7 +361,8 @@ namespace SandRibbon.Components
             withDragMarquee(marquee =>
             {
                 Commands.EndGrabZoom.Execute(null);
-                Commands.SetZoomRect.Execute(marquee);
+                if(marquee.Width > 10)
+                    Commands.SetZoomRect.Execute(marquee);
             });
         }
         private void withDragMarquee(Action<Rectangle> doWithRect)

@@ -65,6 +65,42 @@ namespace SandRibbon
         public static availablePenContentConverter AvailablePenContentConverter = new availablePenContentConverter();
         public static availablePenDropDownContentConverter AvailablePenDropDownContentConverter = new availablePenDropDownContentConverter();
         public static colourToNameConverter ColourToNameConverter = new colourToNameConverter();
+        public static conversationDetailsToDescription ConversationDetailsToDescription = new conversationDetailsToDescription();
+        public static IsMeConverter isMe = new IsMeConverter();
+    }
+    public class IsMeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool result = false;
+            try
+            {
+                result = Globals.me == ((ConversationDetails)value).Author;
+            }
+            catch (NotSetException)
+            {
+                result = false;
+            }
+            return result.ToString();
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return false;
+        }
+    }
+    public class conversationDetailsToDescription : IValueConverter { 
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var details = (ConversationDetails)value;
+            var slides = string.Format("{0} Slide", details.Slides.Count);
+            if(details.Slides.Count > 1)
+                slides = string.Format("{0}s", slides);
+            return string.Format("Created by {0} and restricted to {1}\n({3}) Created on: {2}", details.Author, details.Subject, details.Created, slides);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
     }
     public class privacyToBoolConverter : IValueConverter
     {

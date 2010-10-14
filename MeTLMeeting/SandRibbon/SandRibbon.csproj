@@ -194,6 +194,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Components\BackStageNav.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConversationSearchBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -576,6 +580,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Components\BackStageNav.xaml.cs">
+      <DependentUpon>BackStageNav.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Window1.xaml.cs">
       <DependentUpon>Window1.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -908,6 +915,10 @@
     <Resource Include="Resources\fontSize.png" />
     <Resource Include="Resources\Ribbon-ApplicationButton.png" />
     <Resource Include="Resources\MeTL Collaborator.ico" />
+    <Resource Include="Resources\HandToolWide.png" />
+    <Resource Include="Resources\Exit button mine.png" />
+    <Resource Include="Resources\Help.png" />
+    <Resource Include="Resources\logoutAndExit.png" />
     <Content Include="Resources\MeTL.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1016,6 +1027,8 @@
     <Resource Include="Resources\PenOut.png" />
     <Resource Include="Resources\QuizResults.png" />
     <Resource Include="Resources\Quizzes.png" />
+    <Resource Include="Resources\Print_w-out_notes.png" />
+    <Resource Include="Resources\Print_w_notes.png" />
     <Content Include="Resources\Ribbon-Palette.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1025,6 +1038,7 @@
     <Resource Include="Resources\showOriginal.png" />
     <Resource Include="Resources\Show.png" />
     <Resource Include="Resources\SendSubmission.png" />
+    <Resource Include="Resources\sexyDelete.png" />
     <Content Include="Resources\Slide_Not_Loaded.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

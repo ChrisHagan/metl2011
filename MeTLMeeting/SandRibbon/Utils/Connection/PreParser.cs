@@ -192,6 +192,17 @@ namespace SandRibbon.Utils.Connection
         }
         public static int ParentRoom(string room)
         {
+            if (room.Contains('/'))
+            {
+                try
+                {
+                    return Int32.Parse(room.Split('/')[1]);
+                }
+                catch(FormatException e)
+                {
+                    //guess this wasn't a parent room okay?
+                }
+            }
             var regex = new Regex(@"(\d+).*");
             var parent = regex.Matches(room)[0].Groups[1].Value;
             return Int32.Parse(parent);

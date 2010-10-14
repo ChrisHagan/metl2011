@@ -68,7 +68,7 @@ namespace SandRibbon.Components.Canvas
                 }
                 catch (NotSetException e)
                 {
-                    return 0;
+                    return -1;
                 }
             }
             set
@@ -127,35 +127,7 @@ namespace SandRibbon.Components.Canvas
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<object>(ItemsPrivacyChange));
         }
-        protected void updateVisibility(VisibilityInformation info)
-        {
-            switch (info.user)
-            {
-                case "toggleTeacher":
-                    {
-                        userVisibility["Teacher"] = info.visible;
-                        break;
-                    }
-                case "toggleMe":
-                    {
-                        userVisibility[Globals.me] = info.visible;
-                        break;
-                    }
-                case "toggleStudents":
-                    {
-                        var keys = userVisibility.Keys.Where(k => k != "Teacher" && k != Globals.me).ToList();
-                        foreach(var key in keys)
-                            userVisibility[key] = info.visible;
-                        break;
-                    }
-                    default:
-                    {
-                        userVisibility[info.user] = info.visible;
-                        break;
-                    }
-            }
 
-        }
         private void moveTo(object obj)
         {
             ClearAdorners();

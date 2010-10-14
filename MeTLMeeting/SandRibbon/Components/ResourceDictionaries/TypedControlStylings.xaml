@@ -196,6 +196,7 @@
         <Setter Property="FontFamily" Value="Verdana"/>
         <Setter Property="FontSize" Value="12px"/>
         <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -207,7 +208,7 @@
 			Background="Transparent">
                         <Grid>
                             <Rectangle Fill="{TemplateBinding Background}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Name="content"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Name="content"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>

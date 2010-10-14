@@ -17,7 +17,7 @@ using System.Collections.ObjectModel;
 
 namespace SandRibbon.Chrome
 {
-    public partial class ToolBar : Divelements.SandRibbon.ToolBar
+    public partial class ToolBar
     {
         private ObservableCollection<FrameworkElement> icons = new ObservableCollection<FrameworkElement>();
         public ToolBar()
@@ -49,10 +49,10 @@ namespace SandRibbon.Chrome
                         break;
                     case 3:
                         add("friends");
-                        add("notes");
+                        //add("notes");
                         add("lectureStyle");
                         add("tutorialStyle");
-                        add("meetingStyle");
+                        //add("meetingStyle");
                         break; 
                 }
             }

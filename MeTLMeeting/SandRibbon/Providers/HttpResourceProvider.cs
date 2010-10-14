@@ -3,6 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Linq;
 using System;
 using System.Threading;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Providers
 {
@@ -32,14 +33,18 @@ namespace SandRibbon.Providers
 
         private static WebClient client()
         {
+            configureServicePointManager();
+            var wc = new WebClientWithTimeout { Credentials = MeTLCredentials };
+            return wc;
+        }
+        private static void configureServicePointManager()
+        {
             if (firstRun)
             {
                 ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
                 ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
                 firstRun = false;
             }
-            var wc = new WebClientWithTimeout { Credentials = MeTLCredentials };
-            return wc;
         }
         private static bool bypassAllCertificateStuff(object sender, X509Certificate cert, X509Chain chain, System.Net.Security.SslPolicyErrors error)
         {
@@ -54,6 +59,7 @@ namespace SandRibbon.Providers
         }
         public static long getSize(string resource)
         {
+            configureServicePointManager();
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = MeTLCredentials;
             request.Method = "HEAD";
@@ -70,6 +76,7 @@ namespace SandRibbon.Providers
         }
         public static bool exists(string resource)
         {
+            configureServicePointManager();
             var request = (HttpWebRequest)HttpWebRequest.Create(resource);
             request.Credentials = MeTLCredentials;
             request.Method = "HEAD";
@@ -86,6 +93,7 @@ namespace SandRibbon.Providers
         }
         public static string secureGetString(string resource)
         {
+            return client().DownloadString(resource);
             string type = "secureGetString";
             string responseString = "";
             int attempts = 0;
@@ -155,6 +163,7 @@ namespace SandRibbon.Providers
 
         public static string insecureGetString(string resource)
         {
+            return client().DownloadString(resource);
             string type = "insecureGet";
             string responseString = "";
             int attempts = 0;
@@ -223,6 +232,7 @@ namespace SandRibbon.Providers
         }
         public static string securePutData(string uri, byte[] data)
         {
+            return decode(client().UploadData(uri, data));
             string type = "securePutData";
             byte[] responseBytes = new byte[0];
             int attempts = 0;
@@ -286,6 +296,7 @@ namespace SandRibbon.Providers
         }
         public static byte[] secureGetData(string resource)
         {
+            return client().DownloadData(resource);
             string type = "secureGetData";
             byte[] responseBytes = new byte[0];
             int attempts = 0;
@@ -352,35 +363,38 @@ namespace SandRibbon.Providers
         }
         public static string securePutFile(string uri, string filename)
         {
-            const string type = "securePutFile";
-            var responseBytes = new byte[0];
+            return decode(client().UploadFile(uri, filename));
+            string type = "securePutFile";
+            byte[] responseBytes = new byte[0];
             int attempts = 0;
             int percentage = 0;
             bool isDownloaded = false;
+            bool isCancelled = false;
             while (!isDownloaded && attempts < 5)
             {
                 try
                 {
                     percentage = 0;
+                    isCancelled = false;
+                    long recBytes = 0;
                     var webclient = client();
                     var threadAction = new Thread(new ThreadStart(() =>
                     {
                         webclient.UploadFileAsync(new System.Uri(uri, UriKind.RelativeOrAbsolute), filename);
                         NotifyStatus("starting", type, uri, filename);
                     }));
-                    bool downloaded = isDownloaded;
-                    int attempts1 = attempts;
                     webclient.UploadProgressChanged += (sender, args) =>
                     {
-                        if (!downloaded)
+                        if (!isDownloaded)
                         {
-                            long recBytes = args.BytesSent + args.BytesReceived;
+                            recBytes = args.BytesSent + args.BytesReceived;
                             percentage = (int)(recBytes / (args.TotalBytesToSend + args.TotalBytesToReceive));
-                            NotifyProgress(attempts1, type, uri, recBytes, args.TotalBytesToSend, percentage, true);
+                            NotifyProgress(attempts, type, uri, recBytes, args.TotalBytesToSend, percentage, true);
                         }
                     };
                     webclient.UploadFileCompleted += (sender, args) =>
                     {
+                        isCancelled = args.Cancelled;
                         responseBytes = args.Result;
                         NotifyStatus("completed", type, uri);
                         isDownloaded = true;
@@ -423,7 +437,7 @@ namespace SandRibbon.Providers
         {
             return;
             var filenameDescriptor = string.IsNullOrEmpty(filename) ? "" : " : " + filename;
-            App.Now(status + "(" + type + " : " + uri + filenameDescriptor + ")");
+            Logger.Log(status + "(" + type + " : " + uri + filenameDescriptor + ")");
         }
         private static void NotifyProgress(int attempts, string type, string resource, long recBytes, long size, int percentage, bool isPercentage)
         {
@@ -431,10 +445,10 @@ namespace SandRibbon.Providers
             if (isPercentage)
             {
                 percentage = (int)(recBytes / size);
-                App.Now("Attempt " + attempts + " waiting on " + type + ": " + percentage + "% (" + resource + ")");
+                Logger.Log("Attempt " + attempts + " waiting on " + type + ": " + percentage + "% (" + resource + ")");
             }
             else
-                App.Now("Attempt " + attempts + " waiting on " + type + ": " + recBytes + "B (" + resource + ")");
+                Logger.Log("Attempt " + attempts + " waiting on " + type + ": " + recBytes + "B (" + resource + ")");
         }
     }
 }

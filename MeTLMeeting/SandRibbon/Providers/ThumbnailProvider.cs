@@ -52,5 +52,11 @@ namespace SandRibbon.Providers
             }
             return bi;
         }
+
+        public static void ClearThumbnails()
+        {
+            //foreach(var file in Directory.GetFiles(string.Format(@"{0}\thumbs", Directory.GetCurrentDirectory())))
+            //    File.Delete(file);
+        }
     }
 }
