@@ -13,8 +13,8 @@
         <core:Double x:Key="searchBoxMargin">0.05</core:Double>
         <DataTemplate x:Key="authorOptions">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <interop:Button Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium" />
-                <interop:Button Icon="\Resources\Slide_Not_Loaded.png" Text="Edit" InternalButtonSize="Medium" />
+                <interop:Button Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Click="deleteConversation"/>
+                <interop:Button Icon="\Resources\Slide_Not_Loaded.png" Text="Edit" InternalButtonSize="Medium" Click="editConversation" />
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="nonauthorOptions" />

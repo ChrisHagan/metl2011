@@ -211,6 +211,7 @@ namespace SandRibbon.Providers.Structure
             return summary
                 .Where(c => !String.IsNullOrEmpty(c.Subject))
                 .Where(c => myGroups.Contains(c.Subject))
+                .Where(c => c.Subject != "Deleted")
                 .Distinct(new UniqueConversationComparator()).ToList();
         }
         public ConversationDetails Create(ConversationDetails details)

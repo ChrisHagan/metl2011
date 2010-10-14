@@ -34,9 +34,14 @@ namespace SandRibbon.Components
         private int magnification = 2;
         private PowerPointLoader.PowerpointImportType importType;
         private string importFile;
+        private string conversationJid;
 
         public static RoutedCommand CompleteConversationDialog = new RoutedCommand();
 
+        public ConversationConfigurationDialog(ConversationConfigurationMode mode, string activeConversation):this(mode)
+        {
+            conversationJid = activeConversation;
+        }
         public ConversationConfigurationDialog(ConversationConfigurationMode mode)
         {
             InitializeComponent();
@@ -71,7 +76,7 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Update";
-                    details = ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation);
+                    details = ConversationDetailsProviderFactory.Provider.DetailsOf(conversationJid);
                     PopulateFields();
                     if (details == null)
                     {

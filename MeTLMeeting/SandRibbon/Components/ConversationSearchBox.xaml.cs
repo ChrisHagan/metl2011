@@ -15,6 +15,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using System.Windows.Media.Animation;
 using System.Collections.ObjectModel;
+using SandRibbon.Providers.Structure;
 using SandRibbon.Utils;
 using SandRibbonObjects;
 
@@ -100,14 +101,19 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt((Action)delegate
             {
-                if (this.Visibility == Visibility.Visible)
-                {
-                    if (searchResults.Where(c => c.Jid == details.Jid).Count() == 1)
-                        searchResults.Remove(searchResults.Where(c => c.Jid == details.Jid).First());
-
+                if (searchResults.Where(c => c.Jid == details.Jid).Count() == 1)
+                    searchResults.Remove(searchResults.Where(c => c.Jid == details.Jid).First());
+                if(!details.Subject.Contains("Deleted"))
                     searchResults.Add(details);
-                    GetListCollectionView().Refresh();
+                else //conversation deleted
+                {
+                    Commands.RequerySuggested();
+                    if(Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
+                    {
+                        this.Visibility = Visibility.Visible;
+                    }
                 }
+                GetListCollectionView().Refresh();
             });
         }
         private ListCollectionView GetListCollectionView()
@@ -174,6 +180,21 @@ namespace SandRibbon.Components
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Commands.JoinConversation.Execute(((FrameworkElement)sender).Tag);
+        }
+
+        private void deleteConversation(object sender, RoutedEventArgs e)
+        {
+            if( MessageBox.Show("Are You sure You want to delete", "Delete Confirmation", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                return;
+            
+            var details = (ConversationDetails)((SandRibbonInterop.Button) sender).DataContext;
+            details.Subject = "Deleted";
+            ConversationDetailsProviderFactory.Provider.Update(details);
+        }
+
+        private void editConversation(object sender, RoutedEventArgs e)
+        {
+            Commands.EditConversation.Execute(((ConversationDetails)((SandRibbonInterop.Button) sender).DataContext).Jid);
         }
     }
     public class ConversationComparator : System.Collections.IComparer

@@ -347,7 +347,7 @@ namespace SandRibbon
         private void EditConversation(object _unused)
         {
             ShowPowerpointBlocker("Editing Conversation Dialog Open");
-            Commands.EditConversation.Execute(null);
+            Commands.EditConversation.Execute(Globals.location.activeConversation);
         }
         private void BlockInput(string message)
         {
@@ -564,7 +564,10 @@ namespace SandRibbon
         {
             try
             {
-                return Globals.location.activeConversation != null;
+                if (Globals.location.activeConversation != null && ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation).Subject != "Deleted")
+                    return true;
+                return false;
+
             }
             catch (NotSetException)
             {
