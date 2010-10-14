@@ -195,7 +195,12 @@ namespace SandRibbon.Utils
             int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
             var slideThumbnailPath = Directory.GetCurrentDirectory() + "\\thumbs\\" + conversationSlideNumber + ".png";
             slide.Export(slideThumbnailPath, "PNG", Convert.ToInt32(slide.Master.Width), Convert.ToInt32(slide.Master.Height));
-            SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(slideThumbnailPath, conversationSlideNumber + "/thumbs", "slideThumb.png");
+            var thumbUrl = SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(slideThumbnailPath, conversationSlideNumber + "/thumbs", "slideThumb.png");
+            details.Slides.Where(s => s.id == conversationSlideNumber).Select(s =>
+            {
+                s.thumbnailUrl = thumbUrl;
+                return s;
+            });
         }
 
         public void LoadPowerpoint(string file, ConversationDetails details)
@@ -402,7 +407,6 @@ namespace SandRibbon.Utils
                 {
                     shape.Visible = MsoTriState.msoFalse;
                 }
-                //slide.Export(Backgroundfile, "PNG", 724, 543);
                 slide.Export(Backgroundfile, "PNG", backgroundWidth, backgroundHeight);
                 foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                 {
