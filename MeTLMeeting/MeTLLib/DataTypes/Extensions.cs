@@ -10,6 +10,12 @@ namespace MeTLLib.DataTypes
 {
     public struct TextTag
     {
+        public TextTag(string Author, string Privacy, string Id)
+        {
+            author = Author;
+            privacy = Privacy;
+            id = Id;
+        }
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TextTag)) return false;
@@ -24,6 +30,14 @@ namespace MeTLLib.DataTypes
     }
     public struct ImageTag
     {
+        public ImageTag(string Author, string Privacy, string Id, bool IsBackground, int ZIndex)
+        {
+            author = Author;
+            privacy = Privacy;
+            id = Id;
+            isBackground = IsBackground;
+            zIndex = ZIndex;
+        }
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is ImageTag)) return false;
@@ -42,6 +56,14 @@ namespace MeTLLib.DataTypes
     }
     public struct StrokeTag
     {
+        public StrokeTag(string Author, string Privacy, double StartingSum, string StartingColor, bool IsHighlighter)
+        {
+            author = Author;
+            privacy = Privacy;
+            startingSum = StartingSum;
+            startingColor = StartingColor;
+            isHighlighter = IsHighlighter;
+        }
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is StrokeTag)) return false;
@@ -60,6 +82,10 @@ namespace MeTLLib.DataTypes
     }
     public struct StrokeChecksum
     {
+        public StrokeChecksum(double Checksum)
+        {
+            checksum = Checksum;
+        }
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is StrokeChecksum)) return false;
@@ -69,6 +95,11 @@ namespace MeTLLib.DataTypes
     }
     public struct UserHighlight
     {
+        public UserHighlight(string User, Color Color)
+        {
+            user = User;
+            color = Color;
+        }
         public Color color;
         public string user;
     }

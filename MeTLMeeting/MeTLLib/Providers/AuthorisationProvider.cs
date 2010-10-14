@@ -115,19 +115,14 @@ namespace MeTLLib.Providers
             if (authenticateAgainstFailoverSystem(AuthcateUsername, AuthcatePassword) || isBackdoorUser(AuthcateUsername))
             {
                 var eligibleGroups = getEligibleGroups(AuthcateUsername, AuthcatePassword);
-                var credentials = new Credentials
-                 {
-                     name = AuthcateUsername,
-                     password = AuthcatePassword,
-                     authorizedGroups = eligibleGroups
-                 };
+                var credentials = new Credentials(AuthcateUsername,AuthcatePassword,eligibleGroups);
                 Globals.credentials = credentials;
                 return credentials;
             }
             else
             {
                 Trace.TraceError("Failed to Login.");
-                return new Credentials { name = "", password = "", authorizedGroups = new List<AuthorizedGroup> { } };
+                return new Credentials("","",new List<AuthorizedGroup>());
             }
         }
         public bool isBackdoorUser(string user)

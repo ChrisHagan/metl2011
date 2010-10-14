@@ -3,6 +3,12 @@ namespace MeTLLib.DataTypes
 {
     public class Credentials
     {
+        public Credentials(string Name, string Password, List<AuthorizedGroup> AuthorizedGroups)
+        {
+            name = Name;
+            password = Password;
+            authorizedGroups = AuthorizedGroups;
+        }
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is Credentials)) return false;
@@ -57,6 +63,11 @@ namespace MeTLLib.DataTypes
     }
     public class Policy
     {
+        public Policy(bool IsAuthor, bool IsSynced)
+        {
+            isAuthor = IsAuthor;
+            isSynced = IsSynced;
+        }
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is Policy)) return false;
@@ -79,6 +90,12 @@ namespace MeTLLib.DataTypes
     }
     public class UserInformation
     {
+        public UserInformation(Credentials Credentials, Location Location, Policy Policy)
+        {
+            credentials = Credentials;
+            location = Location;
+            policy = Policy;
+        }
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is UserInformation)) return false;

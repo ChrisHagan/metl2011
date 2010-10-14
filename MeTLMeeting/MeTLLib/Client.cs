@@ -126,7 +126,7 @@ namespace MeTLLib
         {
             Trace.TraceInformation("Attempting authentication with username:" + username);
             var credentials = authorisationProvider.attemptAuthentication(username, password);
-            var jabberCredentials = new Credentials { authorizedGroups = credentials.authorizedGroups, name = credentials.name, password = "examplePassword" };
+            var jabberCredentials = new Credentials(credentials.name,"examplePassword",credentials.authorizedGroups);
             jabberWireFactory.credentials = jabberCredentials;
             wire = jabberWireFactory.wire();
             wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
@@ -266,14 +266,7 @@ namespace MeTLLib
                 Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
                 Image newImage = lii.image;
                 newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
-                wire.SendImage(new TargettedImage
-                {
-                    author = lii.author,
-                    privacy = lii.privacy,
-                    slide = lii.slide,
-                    target = lii.target,
-                    image = newImage
-                });
+                wire.SendImage(new TargettedImage(lii.slide,lii.author,lii.target,lii.privacy,newImage));
             };
             tryIfConnected(work);
         }
@@ -282,17 +275,7 @@ namespace MeTLLib
             Action work = delegate
             {
                 var newPath = resourceUploader.uploadResource(lfi.path, lfi.file, lfi.overwrite);
-                wire.sendFileResource(new TargettedFile
-                {
-                    author = lfi.author,
-                    name = lfi.name,
-                    privacy = lfi.privacy,
-                    size = lfi.size,
-                    slide = lfi.slide,
-                    target = lfi.target,
-                    uploadTime = lfi.uploadTime,
-                    url = newPath
-                });
+                wire.sendFileResource(new TargettedFile(lfi.slide,lfi.author,lfi.target,lfi.privacy,newPath,lfi.uploadTime,lfi.size,lfi.name));
             };
             tryIfConnected(work);
         }
@@ -305,14 +288,7 @@ namespace MeTLLib
                 newVideo.VideoSource = newPath;
                 newVideo.MediaElement = new MediaElement();
                 newVideo.MediaElement.Source = newPath;
-                wire.SendVideo(new TargettedVideo
-                {
-                    author = lvi.author,
-                    privacy = lvi.privacy,
-                    slide = lvi.slide,
-                    target = lvi.target,
-                    video = newVideo
-                });
+                wire.SendVideo(new TargettedVideo(lvi.slide,lvi.author,lvi.target,lvi.privacy,newVideo));
             };
             tryIfConnected(work);
         }

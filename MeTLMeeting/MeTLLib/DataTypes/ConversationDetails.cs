@@ -13,24 +13,32 @@ namespace MeTLLib.DataTypes
 {
     public class ConversationDetails : INotifyPropertyChanged
     {
-        public ConversationDetails(String title, String jid, String author, String tag, List<Slide> slides, Permissions permissions, String subject, DateTime created, DateTime lastAccessed)
+        public ConversationDetails(String title, String jid, String author, List<Slide> slides, Permissions permissions, String subject)
             : base()
         {
             this.Title = title;
             this.Jid = jid;
             this.Author = author;
-            this.Tag = tag;
             this.Slides = slides;
             this.Permissions = permissions;
             this.Subject = subject;
+        }
+        public ConversationDetails(String title, String jid, String author, List<Slide> slides, Permissions permissions, String subject, DateTime created, DateTime lastAccessed)
+            : this(title,jid,author,slides,permissions,subject)
+        {
             this.Created = created;
             this.LastAccessed = lastAccessed;
         }
-        /*public ConversationDetails()
-            : base()
+        public ConversationDetails(String title, String jid, String author, String tag, List<Slide> slides, Permissions permissions, String subject, DateTime created, DateTime lastAccessed)
+            : this(title,jid,author,slides,permissions,subject,created,lastAccessed)
         {
-            this.Permissions = new Permissions("unspecified", false, false, false);
-        }*/
+            this.Tag = tag;
+        }
+        public ConversationDetails(String title, String jid, String author, String tag, List<Slide> slides, Permissions permissions, String subject)
+            : this(title, jid, author, slides, permissions, subject)
+        {
+            this.Tag = tag;
+        }
         public int NextAvailableSlideId()
         {
             return Slides.Select(s => s.id).Max() + 1;
