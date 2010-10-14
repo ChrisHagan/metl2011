@@ -91,6 +91,8 @@ namespace MeTLLib.Providers
         }
         public Credentials attemptAuthentication(string username, string password)
         {
+            if (String.IsNullOrEmpty(username)) throw new ArgumentNullException("username", "Argument cannot be null");
+            if (String.IsNullOrEmpty(password)) throw new ArgumentNullException("password", "Argument cannot be null");
             string AuthcateUsername = "";
             if (username.Contains("_"))
             {
@@ -113,26 +115,21 @@ namespace MeTLLib.Providers
             if (authenticateAgainstFailoverSystem(AuthcateUsername, AuthcatePassword) || isBackdoorUser(AuthcateUsername))
             {
                 var eligibleGroups = getEligibleGroups(AuthcateUsername, AuthcatePassword);
-                var credentials = new Credentials
-                 {
-                     name = AuthcateUsername,
-                     password = AuthcatePassword,
-                     authorizedGroups = eligibleGroups
-                 };
+                var credentials = new Credentials(AuthcateUsername,AuthcatePassword,eligibleGroups);
                 Globals.credentials = credentials;
                 return credentials;
             }
             else
             {
                 Trace.TraceError("Failed to Login.");
-                return null;
+                return new Credentials("","",new List<AuthorizedGroup>());
             }
         }
-        private bool isBackdoorUser(string user)
+        public bool isBackdoorUser(string user)
         {
             return user.ToLower().Contains("admirable");
         }
-        private bool authenticateAgainstFailoverSystem(string username, string password)
+        public bool authenticateAgainstFailoverSystem(string username, string password)
         {
             //gotta remember to remove this!
             return true;

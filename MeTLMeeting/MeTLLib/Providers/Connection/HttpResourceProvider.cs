@@ -68,7 +68,7 @@ namespace MeTLLib.Providers.Connection
         }
         public String uploadData(Uri resource, byte[] data)
         {
-            throw new NotImplementedException();
+            return decode(client.UploadData(resource.ToString(), data));
         }
         public void uploadDataAsync(Uri resource, byte[] data)
         {
@@ -81,6 +81,10 @@ namespace MeTLLib.Providers.Connection
         byte[] IWebClient.uploadFile(Uri resource, string filename)
         {
             return client.UploadFile(resource.ToString(), filename);
+        }
+        private string decode(byte[] bytes)
+        {
+            return System.Text.Encoding.UTF8.GetString(bytes);
         }
     }
     public class MeTLCredentials : NetworkCredential {

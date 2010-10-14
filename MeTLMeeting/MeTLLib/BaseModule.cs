@@ -16,7 +16,6 @@ namespace MeTLLib
         {
             Bind<HttpResourceProvider>().ToSelf().InSingletonScope();
             Bind<AuthorisationProvider>().ToSelf().InSingletonScope();
-            Bind<ResourceUploader>().ToSelf().InSingletonScope();
             Bind<HttpHistoryProvider>().ToSelf().InSingletonScope();
             Bind<IConversationDetailsProvider>().To<FileConversationDetailsProvider>().InSingletonScope();
         }

@@ -273,14 +273,7 @@ namespace LibTester
             if (client != null)
             {
                 var internalStroke = e.Stroke;
-                var newStroke = new TargettedStroke
-                {
-                    stroke = internalStroke,
-                    privacy = "public",
-                    author = client.username,
-                    slide = client.location.currentSlide,
-                    target = "presentationSpace",
-                };
+                var newStroke = new TargettedStroke(client.location.currentSlide,client.username,"presentationSpace","public",internalStroke);
                 client.SendStroke(newStroke);
             }
         }
@@ -292,14 +285,7 @@ namespace LibTester
                 internalTextBox.Text = "this is a new textbox from MeTLLib";
                 Canvas.SetLeft(internalTextBox, 100);
                 Canvas.SetTop(internalTextBox, 100);
-                var newTargettedTextBox = new TargettedTextBox
-                {
-                    privacy = "public",
-                    author = client.username,
-                    slide = client.location.currentSlide,
-                    target = "presentationSpace",
-                    box = internalTextBox,
-                };
+                var newTargettedTextBox = new TargettedTextBox(client.location.currentSlide,client.username,"presentationSpace","public",internalTextBox);
                 client.SendTextBox(newTargettedTextBox);
             }
         }

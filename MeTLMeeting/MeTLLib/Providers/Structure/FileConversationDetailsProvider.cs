@@ -21,8 +21,8 @@ namespace MeTLLib.Providers.Structure
     {
         [Inject] public IProviderMonitor providerMonitor { private get;set;}
         [Inject] public MeTLServerAddress server { private get; set; }
-        private ResourceUploader resourceUploader;
-        public FileConversationDetailsProvider(IWebClientFactory factory, ResourceUploader uploader) : base(factory)
+        private IResourceUploader resourceUploader;
+        public FileConversationDetailsProvider(IWebClientFactory factory, IResourceUploader uploader) : base(factory)
         {
             resourceUploader = uploader;
             ListConversations();
@@ -43,21 +43,28 @@ namespace MeTLLib.Providers.Structure
         private readonly string SUMMARY = "summary.xml";
         public ConversationDetails DetailsOf(string conversationJid)
         {
+            //So, from a design perspective, conversationJid must be a string, which must be non-empty, non-null.  But it might be a string that isn't currently a conversation Jid.
+            //Expected behavious is return a valid conversationDetails, or return an empty conversationDetails to reflect that the conversation doesn't exist.
+            if (String.IsNullOrEmpty(conversationJid)) throw new ArgumentNullException("conversationJid", "Argument cannot be null or empty");
             try
             {
-                var url = string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, conversationJid, DETAILS);
-                var response = XElement.Parse(secureGetString(new System.Uri(url)));
-                var result = new ConversationDetails().ReadXml(response);
+                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, conversationJid, DETAILS));
+                var response = XElement.Parse(secureGetString(url));
+                var result = ConversationDetails.ReadXml(response);
                 return result;
+            }
+            catch (UriFormatException e)
+            {
+                throw new Exception(string.Format("Could not create valid Uri for DetailsOf, using conversationJid: {0}", conversationJid), e);
             }
             catch (XmlException e)
             {
-                throw new Exception(string.Format("Could not retrieve details of {0}", conversationJid), e);
+                throw new Exception(string.Format("Could not parse retrieved details of {0}", conversationJid), e);
             }
             catch (WebException e)
             {
                 providerMonitor.HealthCheck(() => { });
-                return new ConversationDetails();
+                return null;
             }
         }
         public ConversationDetails AppendSlideAfter(int currentSlide, string title)
@@ -72,15 +79,15 @@ namespace MeTLLib.Providers.Structure
                 var slideId = details.Slides.Select(s => s.id).Max() + 1;
                 var position = getPosition(currentSlide, details.Slides);
                 if (position == -1) return details;
-                var slide = new Slide
-                                {
+                var slide = new Slide(slideId,details.Author,type,position+1,720,540);
+                                /*{
                                     author = details.Author,
                                     id = slideId,
                                     index = position + 1,
                                     type = type,
                                     defaultHeight = 540,
                                     defaultWidth = 720
-                                };
+                                };*/
                 foreach (var existingSlide in details.Slides)
                     if (existingSlide.index >= slide.index)
                         existingSlide.index++;
@@ -91,7 +98,7 @@ namespace MeTLLib.Providers.Structure
             catch (WebException)
             {
                 providerMonitor.HealthCheck(() => { /*Everything is AOk*/});
-                return new ConversationDetails();
+                return null;
             }
         }
         private int getPosition(int slide, List<Slide> slides)
@@ -107,21 +114,21 @@ namespace MeTLLib.Providers.Structure
             {
                 var details = DetailsOf(title);
                 var slideId = details.Slides.Select(s => s.id).Max() + 1;
-                details.Slides.Add(new Slide
-                {
+                details.Slides.Add(new Slide(slideId,details.Author,Slide.TYPE.SLIDE,details.Slides.Count,720,540));
+                /*{
                     author = details.Author,
                     id = slideId,
                     index = details.Slides.Count,
                     defaultHeight = 540,
                     defaultWidth = 720
-                });
+                });*/
                 Update(details);
                 return details;
             }
             catch (WebException)
             {
                 providerMonitor.HealthCheck(() => { /*Everything is AOk*/});
-                return new ConversationDetails();
+                return null;
             }
         }
         public void ReceiveDirtyConversationDetails(string jid)
@@ -148,7 +155,7 @@ namespace MeTLLib.Providers.Structure
             catch (WebException e)
             {
                 providerMonitor.HealthCheck(() => { /*Everything is AOk*/});
-                return new ConversationDetails();
+                return null;
             }
         }
         class UniqueConversationComparator : IEqualityComparer<ConversationDetails>
@@ -191,7 +198,7 @@ namespace MeTLLib.Providers.Structure
                                         {
                                             e.Extract(stream);
                                             return
-                                                new ConversationDetails().ReadXml(
+                                                ConversationDetails.ReadXml(
                                                     XElement.Parse(Encoding.UTF8.GetString(stream.ToArray())));
                                         }
                                     }).ToList();
@@ -222,14 +229,15 @@ namespace MeTLLib.Providers.Structure
             {
                 var id = GetApplicationLevelInformation().currentId;
                 details.Jid = id.ToString();
-                details.Slides.Add(new Slide
+                details.Slides.Add(new Slide(id+1,details.Author,Slide.TYPE.SLIDE,0,720,540));
+                /*
                 {
                     author = details.Author,
                     id = id + 1,
                     type = Slide.TYPE.SLIDE,
                     defaultHeight = 540,
                     defaultWidth = 720
-                });
+                });*/
             }
             details.Created = DateTimeFactory.Now();
             resourceUploader.uploadResourceToPath(Encoding.UTF8.GetBytes(details.WriteXml().ToString(SaveOptions.DisableFormatting)),
@@ -239,7 +247,7 @@ namespace MeTLLib.Providers.Structure
         }
         public ApplicationLevelInformation GetApplicationLevelInformation()
         {
-            return new ApplicationLevelInformation { currentId = Int32.Parse(secureGetString(new System.Uri(NEXT_AVAILABLE_ID))) };
+            return new ApplicationLevelInformation(Int32.Parse(secureGetString(new System.Uri(NEXT_AVAILABLE_ID))));
         }
     }
 }
