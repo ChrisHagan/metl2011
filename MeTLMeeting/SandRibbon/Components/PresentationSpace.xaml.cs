@@ -177,7 +177,7 @@ namespace SandRibbon.Components
 
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            var file = string.Format("{0}{1}submission.png", DateTime.Now,Globals.me);
+            var file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks,Globals.me);
             using (Stream stream = File.Create(file))
             {
                 encoder.Save(stream);

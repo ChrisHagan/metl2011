@@ -81,7 +81,6 @@ namespace SandRibbon
             {
                 result = false;
             }
-            Console.WriteLine(String.Format("{0} is by me: {1}",((ConversationDetails)value).Jid,result));
             return result.ToString();
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
