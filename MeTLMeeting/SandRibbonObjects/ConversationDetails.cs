@@ -71,6 +71,7 @@ namespace SandRibbonObjects
         private static readonly string EXPOSED_TAG = "exposed";
         private static readonly string DEFAULT_WIDTH = "defaultWidth";
         private static readonly string DEFAULT_HEIGHT = "defaultHeight";
+        private static readonly string THUMBNAIL_TAG = "thumbnailUrl";
 
         public ConversationDetails ReadXml(XElement doc)
         {
@@ -93,6 +94,7 @@ namespace SandRibbonObjects
                 exposed = d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true,
                 defaultHeight = d.Element(DEFAULT_HEIGHT) != null ? float.Parse(d.Element(DEFAULT_HEIGHT).Value) : 540,
                 defaultWidth = d.Element(DEFAULT_WIDTH) != null ? float.Parse(d.Element(DEFAULT_WIDTH).Value) : 720,
+                thumbnailUrl= d.Element(THUMBNAIL_TAG) == null? null : d.Element(THUMBNAIL_TAG).Value //Could be null
             }).ToList();
             return this;
         }
@@ -114,7 +116,12 @@ namespace SandRibbonObjects
                     new XElement(DEFAULT_HEIGHT, s.defaultHeight),
                     new XElement(DEFAULT_WIDTH, s.defaultWidth),
                     new XElement(EXPOSED_TAG, s.exposed.ToString()),
+                    new XElement(THUMBNAIL_TAG, thumbnailUrl(s)),
                     new XElement(TYPE_TAG, (s.type == null? Slide.TYPE.SLIDE:s.type).ToString()))));
+        }
+        private string thumbnailUrl(Slide s) { 
+            return s.thumbnailUrl == null?
+                String.Format("/{0}/404.png", s.id): s.thumbnailUrl;
         }
         public event PropertyChangedEventHandler PropertyChanged;
     }
@@ -208,6 +215,7 @@ namespace SandRibbonObjects
         public int index;
         public TYPE type;
         public bool exposed;
+        public string thumbnailUrl;
     }
     public class ApplicationLevelInformation
     {

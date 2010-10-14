@@ -69,12 +69,14 @@ namespace SandRibbon.Components
                 //YAAAAAY
             }
         }
-        private void ThumbnailAvailable(int slideId)
+        private void ThumbnailAvailable(int slideId) {
+            foreach (var slide in Globals.slides.Where(s => s.id == slideId))
+                ThumbnailAvailable(slide);
+        }
+        private void ThumbnailAvailable(Slide slide)
         {
-            //App.Now("Thumbnail available for " + slideId);
             Dispatcher.adoptAsync(()=>
-            thumbnailList.Where(ti => ti.slideId == slideId).First().ThumbnailBrush = ThumbnailProvider.get(slideId));
-            //App.Now("Thumbnail bound for " + slideId);
+                thumbnailList.Where(ti => ti.slideId == slide.id).First().ThumbnailBrush = ThumbnailProvider.get(slide));
         }
         private bool canAddSlide(object _slide)
         {
@@ -180,7 +182,7 @@ namespace SandRibbon.Components
                                     Exposed = slide.exposed
                                     //ThumbnailBrush = ThumbnailProvider.get(slide.id)
                                 });
-                        ThumbnailAvailable(slide.id);
+                        ThumbnailAvailable(slide);
                         //App.Now("slideDisplay item created: " + slide.id);
                     }
                 }
