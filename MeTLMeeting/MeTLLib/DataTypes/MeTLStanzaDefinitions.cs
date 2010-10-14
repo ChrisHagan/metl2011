@@ -46,6 +46,23 @@ namespace MeTLLib.DataTypes
             new MeTLStanzas.DirtyLiveWindow();
         }
     }
+    public class WormMove
+    {
+        public WormMove(string Conversation, string Direction)
+        {
+            conversation = Conversation;
+            direction = Direction;
+        }
+        public string conversation;
+        public string direction;
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is WormMove)) return false;
+            var foreignWormMove = (WormMove)obj;
+            return ((foreignWormMove.conversation == conversation) && (foreignWormMove.direction == direction));
+        }
+    }
+
     public class TargettedElement
     {
         public TargettedElement(int Slide, string Author, string Target, string Privacy)
@@ -54,6 +71,12 @@ namespace MeTLLib.DataTypes
             author = Author;
             target = Target;
             privacy = Privacy;
+        }
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is TargettedElement)) return false;
+            var foreignTE = (TargettedElement)obj;
+            return (foreignTE.author == author && foreignTE.privacy == privacy && foreignTE.slide == slide && foreignTE.target == target);
         }
         public string author { get; set; }
         public string target;
@@ -67,6 +90,12 @@ namespace MeTLLib.DataTypes
         {
             autoshape = Autoshape;
         }
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is TargettedAutoShape)) return false;
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj) && ((TargettedAutoShape)obj).autoshape.ValueEquals(autoshape));
+            
+        }
         public MeTLLib.DataTypes.AutoShape autoshape;
     }
     public class TargettedSubmission : TargettedElement
@@ -76,6 +105,12 @@ namespace MeTLLib.DataTypes
         {
             url = Url;
             time = Time;
+        }
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is TargettedSubmission)) return false;
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj) && ((TargettedSubmission)obj).url == url && ((TargettedSubmission)obj).time == time);
+
         }
         public string url { get; set; }
         public long time { get; set; }
@@ -93,6 +128,11 @@ namespace MeTLLib.DataTypes
         {
             startingChecksum = StartingChecksum;
         }
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is TargettedStroke)) return false;
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj) && ((TargettedStroke)obj).stroke.Equals(stroke) && ((TargettedStroke)obj).startingChecksum == startingChecksum);
+        }
         public Stroke stroke;
         public double startingChecksum;
     }
@@ -103,6 +143,12 @@ namespace MeTLLib.DataTypes
         {
             context = Context;
             thoughtSlide = ThoughtSlide;
+        }
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is TargettedBubbleContext)) return false;
+            var foreignContext = (TargettedBubbleContext)obj;
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj) && foreignContext.thoughtSlide == thoughtSlide && foreignContext.context.All(s=>s.ValueEquals(context.ElementAt(foreignContext.context.IndexOf(s)))));
         }
         public List<SelectedIdentity> context;
         public int thoughtSlide;
@@ -116,6 +162,16 @@ namespace MeTLLib.DataTypes
             uploadTime = UploadTime;
             size = Size;
             name = Name;
+        }
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is TargettedFile)) return false;
+            var foreignFile = (TargettedFile)obj;
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj) 
+                && foreignFile.url == url
+                && foreignFile.uploadTime == uploadTime
+                && foreignFile.size == size
+                && foreignFile.name == name);
         }
         public string url { get; set; }
         public string uploadTime { get; set; }
@@ -134,6 +190,16 @@ namespace MeTLLib.DataTypes
         {
             imageSpecification = ImageSpecification;
             id = Identity;
+        }
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is TargettedImage)) return false;
+            var foreign = (TargettedImage)obj;
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj) 
+                && foreign.id == id
+                && foreign.imageProperty.Equals(imageProperty)
+                && foreign.imageSpecification == imageSpecification
+                && foreign.image.Equals(image));
         }
         public System.Windows.Controls.Image imageProperty;
         public MeTLStanzas.Image imageSpecification;
@@ -183,6 +249,20 @@ namespace MeTLLib.DataTypes
             Width = VideoWidth;
             Height = VideoHeight;
         }
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is TargettedVideo)) return false;
+            var foreign = (TargettedVideo)obj;
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj)
+                && foreign.id == id
+                && foreign.Height == Height
+                && foreign.Width == Width
+                && foreign.X == X
+                && foreign.Y == Y
+                && foreign.videoSpecification == videoSpecification
+                && foreign.videoProperty.Equals(videoProperty)
+                && foreign.video.Equals(video));
+        }
 
         public MeTLLib.DataTypes.Video videoProperty;
         public MeTLStanzas.Video videoSpecification;
@@ -226,29 +306,6 @@ namespace MeTLLib.DataTypes
         public double Height { get; set; }
         public double Width { get; set; }
     }
-    /*public class TargettedPowerpointBackgroundVideo : TargettedElement
-    {
-        public MediaElement videoProperty;
-        public MeTLStanzas.PowerpointVideo videoSpecification;
-        public string identity;
-        public MediaState playMode;
-        public string animationTimeLine;
-        public double height;
-        public double width;
-        public string tag;
-        public MeTLStanzas.PowerpointVideo video
-        {
-            get
-            {
-                var reified = videoSpecification.forceEvaluation();
-                return reified;
-            }
-            set
-            {
-                videoProperty = value.video;
-            }
-        }
-    }*/
     public class TargettedTextBox : TargettedElement
     {
         public TargettedTextBox(int Slide, string Author, string Target, string Privacy, TextBox TextBox)
@@ -261,6 +318,16 @@ namespace MeTLLib.DataTypes
         {
             boxSpecification = BoxSpecification;
             identity = Identity;
+        }
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is TargettedTextBox)) return false;
+            var foreign = (TargettedTextBox)obj;
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj)
+                && foreign.identity == identity
+                && foreign.boxProperty.Equals(boxProperty)
+                && foreign.boxSpecification == boxSpecification
+                && foreign.box.Equals(box));
         }
         public TextBox boxProperty;
         public MeTLStanzas.TextBox boxSpecification;
@@ -300,6 +367,13 @@ namespace MeTLLib.DataTypes
             identifier = Identifier;
         }
         public string identifier;
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is TargettedDirtyElement)) return false;
+            var foreign = (TargettedDirtyElement)obj;
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj)
+                && foreign.identifier == identifier);
+        }
     }
     public class SelectedIdentity
     {
@@ -307,6 +381,12 @@ namespace MeTLLib.DataTypes
         {
             id = Id;
             target = Target;
+        }
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is SelectedIdentity)) return false;
+            var foreign = (SelectedIdentity)obj;
+            return (foreign.id == id && foreign.target == target);
         }
         public string id;
         public string target;
@@ -325,124 +405,6 @@ namespace MeTLLib.DataTypes
         public static readonly string answererTag = "answerer";
         public static readonly string identityTag = "identity";
 
-        /*public class PowerpointVideo : Element
-        {
-            static PowerpointVideo()
-            {
-                agsXMPP.Factory.ElementFactory.AddElementType(PowerpointVideo.TAG, METL_NS, typeof(PowerpointVideo));
-            }
-            public PowerpointVideo forceEvaluation()
-            {
-                return this;
-            }
-            public static readonly string TAG = "powerpointvideo";
-            public PowerpointVideo()
-            {
-                this.Namespace = METL_NS;
-                this.TagName = TAG;
-            }
-            public PowerpointVideo(TargettedPowerpointBackgroundVideo video)
-                : this()
-            {
-                this.video = video.video.video;
-            }
-
-            private string AnimationTimeLineTag = "animationTimeLine";
-            private string PlayModeTag = "playmode";
-            private string HeightTag = "height";
-            private string WidthTag = "width";
-            private string XTag = "x";
-            private string YTag = "y";
-            public MediaElement video
-            {
-                get
-                {
-                    var newVideo = new MediaElement();
-                    newVideo.Height = this.height;
-                    newVideo.Width = this.width;
-                    newVideo.LoadedBehavior = this.PlayMode;
-                    InkCanvas.SetLeft(this.video, this.x);
-                    InkCanvas.SetTop(this.video, this.y);
-                    return newVideo;
-                }
-                set
-                {
-                }
-            }
-            public TargettedPowerpointBackgroundVideo targettedVideo
-            {
-                get
-                {
-                    var targettedVideo = new TargettedPowerpointBackgroundVideo
-                    {
-                        video = new MeTLStanzas.PowerpointVideo
-                        {
-                            PlayMode = this.PlayMode,
-                        },
-                        slide = Int32.Parse(GetTag(slideTag)),
-                        animationTimeLine = this.AnimationTimeLine,
-                        target = GetTag(targetTag),
-                        privacy = GetTag(privacyTag),
-                        author = GetTag("author")
-                    };
-                    return targettedVideo;
-                }
-                set
-                {
-                    SetTag(tagTag, value.videoProperty.Tag.ToString());
-                    if (value.video.AnimationTimeLine != null)
-                        SetTag(AnimationTimeLineTag, value.video.AnimationTimeLine.ToString());
-                    else throw new InvalidDataException("Trying to create a PowerpointVideo around invalid AnimationTimeLine Data: " + value.video.AnimationTimeLine.ToString());
-                    SetTag(PlayModeTag, value.video.PlayMode.ToString());
-                    SetTag(widthTag, value.videoProperty.Width.ToString());
-                    SetTag(heightTag, value.videoProperty.Height.ToString());
-                    SetTag(xTag, InkCanvas.GetLeft(value.videoProperty).ToString());
-                    SetTag(yTag, InkCanvas.GetTop(value.videoProperty).ToString());
-                    SetTag(authorTag, value.author);
-                    SetTag(targetTag, value.target);
-                    SetTag(privacyTag, value.privacy);
-                    SetTag(slideTag, value.slide);
-                }
-            }
-            private static readonly string heightTag = "height";
-            private static readonly string widthTag = "width";
-            public MediaState PlayMode
-            {
-                //I'm not sure exactly how to parse into an enum - I would've thought it'd be this.
-                get { return (MediaState)Enum.Parse(typeof(MediaState), GetTag(PlayModeTag).ToString()); }
-                set { SetTag(PlayModeTag, value.ToString()); }
-            }
-            public string AnimationTimeLine
-            {
-                get { return GetTag(AnimationTimeLineTag); }
-                set { SetTag(tagTag, value); }
-            }
-            public string tag
-            {
-                get { return GetTag(tagTag); }
-                set { SetTag(tagTag, value); }
-            }
-            public double x
-            {
-                get { return Double.Parse(GetTag(xTag)); }
-                set { SetTag(xTag, value.ToString()); }
-            }
-            public double y
-            {
-                get { return Double.Parse(GetTag(yTag)); }
-                set { SetTag(yTag, value.ToString()); }
-            }
-            public double width
-            {
-                get { return Double.Parse(GetTag(widthTag)); }
-                set { SetTag(widthTag, value.ToString()); }
-            }
-            public double height
-            {
-                get { return Double.Parse(GetTag(heightTag)); }
-                set { SetTag(heightTag, value.ToString()); }
-            }
-        }*/
         public class AutoShape : Element
         {
             static AutoShape()
@@ -656,7 +618,7 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var stroke = new Stroke(stringToPoints(GetTag(pointsTag)), new DrawingAttributes { Color = stringToColor(GetTag(colorTag)) });
-                    stroke.tag(new StrokeTag(GetTag(authorTag),GetTag(privacyTag),Double.Parse(GetTag(startingSumTag)),stroke.DrawingAttributes.Color.ToString(),Boolean.Parse(GetTag(highlighterTag)))); 
+                    stroke.tag(new StrokeTag(GetTag(authorTag),GetTag(privacyTag),GetTag(startingSumTag) == null ? stroke.sum().checksum:Double.Parse(GetTag(startingSumTag)),stroke.DrawingAttributes.Color.ToString(),Boolean.Parse(GetTag(highlighterTag)))); 
                     stroke.DrawingAttributes.IsHighlighter = Boolean.Parse(GetTag(highlighterTag));
                     stroke.DrawingAttributes.Width = Double.Parse(GetTag(thicknessTag));
                     stroke.DrawingAttributes.Height = Double.Parse(GetTag(thicknessTag));

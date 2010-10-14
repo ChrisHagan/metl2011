@@ -8,12 +8,6 @@ using System.Windows.Shapes;
 
 namespace MeTLLib.DataTypes
 {
-    public class WormMove
-    {
-        public string conversation;
-        public string direction;
-    }
-
     public class AutoShape : System.Windows.Controls.Primitives.Thumb
     {
         public PathGeometry PathData
@@ -47,7 +41,14 @@ namespace MeTLLib.DataTypes
         }
         public static readonly DependencyProperty StrokeThicknessProperty =
             DependencyProperty.Register("StrokeThickness", typeof(System.Double), typeof(Thumb), new UIPropertyMetadata((System.Double)1));
-
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is AutoShape)) return false;
+            var foreign = (AutoShape)obj;
+            return (((Thumb)this).Equals((Thumb)obj) 
+                && foreign.PathData.Equals(PathData)
+                && foreign.StrokeThickness == StrokeThickness);
+        }
         public AutoShape()
             : base()
         {
@@ -60,10 +61,29 @@ namespace MeTLLib.DataTypes
     {
         public class VideoMirrorInformation
         {
+            public VideoMirrorInformation(string Id, Rectangle Rect)
+            {
+                id = Id;
+                rect = Rect;
+            }
             public string id;
             public Rectangle rect;
+            public bool ValueEquals(object obj)
+            {
+                if (obj == null || !(obj is VideoMirrorInformation)) return false;
+                var foreign = (VideoMirrorInformation)obj;
+                return (foreign.id == id
+                    && foreign.rect.Equals(rect));
+            }
         }
-
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is VideoMirror)) return false;
+            var foreign = (VideoMirror)obj;
+            return (((Thumb)this).Equals((Thumb)obj)
+                && foreign.id == id
+                && foreign.Rectangle.Equals(Rectangle));
+        }
         public string id;
         public void UpdateMirror(VideoMirrorInformation info)
         {
@@ -242,7 +262,7 @@ namespace MeTLLib.DataTypes
                 rectToPush.Stroke = Brushes.Red;
                 rectToPush.Height = MediaElement.ActualHeight;
                 rectToPush.Width = MediaElement.ActualWidth;
-                Commands.MirrorVideo.Execute(new VideoMirror.VideoMirrorInformation { id = id, rect = rectToPush });
+                Commands.MirrorVideo.Execute(new VideoMirror.VideoMirrorInformation(id,rectToPush)); 
             }
         }
         public Video()
@@ -256,6 +276,13 @@ namespace MeTLLib.DataTypes
 
     public class RenderedLiveWindow : System.Windows.Controls.Primitives.Thumb
     {
+        public bool ValueEquals(object obj)
+        {
+            if (obj == null || !(obj is RenderedLiveWindow)) return false;
+            var foreign = (RenderedLiveWindow)obj;
+            return (((Thumb)obj).Equals((Thumb)this)
+                && foreign.Rectangle.Equals(Rectangle));
+        }
         public System.Windows.Shapes.Rectangle Rectangle
         {
             get { return (System.Windows.Shapes.Rectangle)GetValue(RectangleProperty); }
