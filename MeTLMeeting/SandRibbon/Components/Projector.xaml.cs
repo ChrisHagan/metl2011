@@ -108,8 +108,8 @@ namespace SandRibbon.Components
             try
             {
                 HistoryProviderFactory.provider.Retrieve<MeTLLib.Providers.Connection.PreParser>(
-                    JabberWire.dontDoAnything,
-                    JabberWire.dontDoAnything,
+                    App.dontDoAnything,
+                    App.dontDoAnything,
                     PreParserAvailable,
                     Globals.slide.ToString());
             }

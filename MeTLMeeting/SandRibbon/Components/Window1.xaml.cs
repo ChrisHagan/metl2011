@@ -44,7 +44,7 @@ namespace SandRibbon
         private PowerPointLoader loader = new PowerPointLoader();
         private UndoHistory history = new UndoHistory();
         public ConversationDetails details;
-        private JabberWire wire;
+        private MeTLLib.Providers.Connection.JabberWire wire;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
         public static ScrollViewer MAIN_SCROLL;

@@ -39,7 +39,7 @@ namespace SandRibbon.Utils
         static MsoTriState FALSE = MsoTriState.msoFalse;
         static MsoTriState TRUE = MsoTriState.msoTrue;
         static int resource = 1;
-        public JabberWire wire;
+        public MeTLLib.Providers.Connection.JabberWire wire;
         public enum PowerpointImportType
         {
             HighDefImage,

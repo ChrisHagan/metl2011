@@ -21,6 +21,14 @@ namespace SandRibbon
         private bool loggingOut = false;
         public NetworkController controller;
 
+        public static void dontDoAnything()
+        {
+        }
+
+        public static void dontDoAnything(int _obj, int _obj2)
+        {
+        }
+
         public static string Now(string title){
             var now = SandRibbonObjects.DateTimeFactory.Now();
             var s = string.Format("{2} {0}:{1}", now, now.Millisecond, title);

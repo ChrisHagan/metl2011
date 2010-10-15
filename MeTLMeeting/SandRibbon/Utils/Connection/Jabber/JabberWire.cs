@@ -23,7 +23,7 @@ using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Utils.Connection
 {/*SPECIAL METL*/
-    public partial class JabberWire
+    public partial class _JabberWire
     {
         protected const string WORM = "/WORM_MOVES";
         protected const string SUBMISSION = "/SUBMISSION";
@@ -113,7 +113,7 @@ namespace SandRibbon.Utils.Connection
         protected bool Debug = false;
 #endif
         public bool LoggedIn = false;
-        static JabberWire()
+        static _JabberWire()
         {
             LookupServer();
         }
@@ -164,12 +164,12 @@ namespace SandRibbon.Utils.Connection
                     Logger.Log(string.Format("Logged into MeTL server {0}", Constants.JabberWire.SERVER));
                 }
         }
-        public JabberWire()
+        public _JabberWire()
         {
         }
 
         public SandRibbonInterop.LocalCache.ResourceCache cache;
-        public JabberWire(JabberWire.Credentials credentials)
+        public _JabberWire(Credentials credentials)
         {
             this.credentials = credentials;
             setUpWire();

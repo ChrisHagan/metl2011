@@ -60,14 +60,14 @@ namespace SandRibbon.Components.Sandpit
                         });
                 }
             }));*/
-            Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.BoardMove>(SendMoveBoardToSlide));
+            Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
             Commands.CloseBoardManager.RegisterCommand(new DelegateCommand<object>(
                 _obj => Commands.ToggleFriendsVisibility.Execute(null)
             ));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(details => Display()));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
         }
-        private void SendMoveBoardToSlide(SandRibbon.Utils.Connection.JabberWire.BoardMove where) 
+        private void SendMoveBoardToSlide(BoardMove where) 
         {
             if(where.boardUsername == ((Board)avatar.DataContext).name){
                 if (currentSlide != where.roomJid)
@@ -113,7 +113,7 @@ namespace SandRibbon.Components.Sandpit
                     draggingSlide = null;
                     stopPulsing();
                     Commands.SendMoveBoardToSlide.Execute(
-                        new SandRibbon.Utils.Connection.JabberWire.BoardMove
+                        new BoardMove
                         {
                             roomJid = board.slide,
                             boardUsername = board.name

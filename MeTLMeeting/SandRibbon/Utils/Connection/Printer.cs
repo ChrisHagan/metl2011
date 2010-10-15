@@ -109,8 +109,8 @@ namespace SandRibbon.Utils.Connection
             {
                 var room = slide.id;
                 HistoryProviderFactory.provider.Retrieve<PrintParser>(
-                                JabberWire.dontDoAnything,
-                                JabberWire.dontDoAnything,
+                                App.dontDoAnything,
+                                App.dontDoAnything,
                                 (parser)=> ReceiveParser(parser, printDocument),
                                 room.ToString());
             }
@@ -131,8 +131,8 @@ namespace SandRibbon.Utils.Connection
                 var room = slide.id;
                 var parsers = new List<PrintParser>();
                 HistoryProviderFactory.provider.Retrieve<PrintParser>(
-                                JabberWire.dontDoAnything,
-                                JabberWire.dontDoAnything,
+                                App.dontDoAnything,
+                                App.dontDoAnything,
                                 (parser)=>{
                                     parsers.Add(parser);
                                     if (parsers.Count() == 2)
@@ -140,8 +140,8 @@ namespace SandRibbon.Utils.Connection
                                 },
                                 room.ToString());
                 HistoryProviderFactory.provider.RetrievePrivateContent<PrintParser>(
-                                JabberWire.dontDoAnything,
-                                JabberWire.dontDoAnything,
+                                App.dontDoAnything,
+                                App.dontDoAnything,
                                 (parser) =>
                                 {
                                     parsers.Add(parser);
