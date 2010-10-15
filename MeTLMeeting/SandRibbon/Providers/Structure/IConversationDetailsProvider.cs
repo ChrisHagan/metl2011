@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using SandRibbonObjects;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Providers.Structure
 {

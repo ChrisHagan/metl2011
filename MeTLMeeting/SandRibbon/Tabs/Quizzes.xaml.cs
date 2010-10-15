@@ -27,13 +27,13 @@ namespace SandRibbon.Tabs
      */
     public partial class Quizzes : Divelements.SandRibbon.RibbonTab
     {
-        public ObservableCollection<QuizQuestion> activeQuizes = new ObservableCollection<QuizQuestion>();
-        public Dictionary<long, ObservableCollection<QuizAnswer>> answers = new Dictionary<long, ObservableCollection<QuizAnswer>>();
+        public ObservableCollection<MeTLLib.DataTypes.QuizQuestion> activeQuizes = new ObservableCollection<MeTLLib.DataTypes.QuizQuestion>();
+        public Dictionary<long, ObservableCollection<MeTLLib.DataTypes.QuizAnswer>> answers = new Dictionary<long, ObservableCollection<MeTLLib.DataTypes.QuizAnswer>>();
         public Quizzes()
         {
             InitializeComponent();
-            Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(ReceiveQuiz));
-            Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(ReceiveQuizAnswer));
+            Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz));
+            Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(updateConversationDetails));
@@ -43,7 +43,7 @@ namespace SandRibbon.Tabs
         }
         private void joinConversation(string jid)
         {
-            activeQuizes = new ObservableCollection<QuizQuestion>();
+            activeQuizes = new ObservableCollection<MeTLLib.DataTypes.QuizQuestion>();
         }
         private void updateConversationDetails(object obj)
         {
@@ -84,7 +84,7 @@ namespace SandRibbon.Tabs
         {
             quizzes.ItemsSource = activeQuizes;
         }
-        private void ReceiveQuizAnswer(QuizAnswer answer)
+        private void ReceiveQuizAnswer(MeTLLib.DataTypes.QuizAnswer answer)
         {
             if (answers.ContainsKey(answer.id))
             {
@@ -97,16 +97,16 @@ namespace SandRibbon.Tabs
             }
             else
             {
-                var newList = new ObservableCollection<QuizAnswer>();
+                var newList = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>();
                 newList.Add(answer);
                 answers.Add(answer.id, newList);
             }
         }
-        private void ReceiveQuiz(QuizQuestion quiz)
+        private void ReceiveQuiz(MeTLLib.DataTypes.QuizQuestion quiz)
         {
             if (activeQuizes.Any(q => q.id == quiz.id)) return;
             if (!answers.ContainsKey(quiz.id))
-                answers[quiz.id] = new ObservableCollection<QuizAnswer>();
+                answers[quiz.id] = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>();
             activeQuizes.Add(quiz);
             quizzes.ScrollToEnd();
         }
@@ -119,7 +119,7 @@ namespace SandRibbon.Tabs
         }
         private void quiz_Click(object sender, RoutedEventArgs e)
         {
-            var thisQuiz = (QuizQuestion)((FrameworkElement)sender).DataContext;
+            var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
             if (thisQuiz.author == Globals.me)
                 new AssessAQuiz(answers[thisQuiz.id], thisQuiz).Show();
             else

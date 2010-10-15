@@ -17,7 +17,8 @@ using SandRibbon.Quizzing;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
-using SandRibbonObjects;
+//using SandRibbonObjects;
+using MeTLLib.DataTypes;
 using System.Diagnostics;
 using System.Windows.Shapes;
 using SandRibbon.Components.Sandpit;
@@ -430,8 +431,9 @@ namespace SandRibbon
         {
             ProviderMonitor.HealthCheck(() =>
             {
-                Commands.LoggedIn.Execute(userInformation.credentials.name);
-                var details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
+                Commands.LoggedIn.Execute(Globals.credentials.name);
+                //var details = ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation);
+                var details = MeTLLib.ClientFactory.Connection().DetailsOf(Globals.location.activeConversation);
                 RecentConversationProvider.addRecentConversation(details, Globals.me);
                 if (details.Author == Globals.me)
                     Commands.SetPrivacy.Execute("public");
@@ -509,7 +511,7 @@ namespace SandRibbon
             ProgressDisplay.Children.Add(sp);
             InputBlocker.Visibility = Visibility.Visible;
         }
-        private void moveToQuiz(QuizQuestion quiz)
+        private void moveToQuiz(MeTLLib.DataTypes.QuizQuestion quiz)
         {
         }
 
@@ -642,7 +644,9 @@ namespace SandRibbon
                 if (details.Tag == null)
                     details.Tag = "unTagged";
                 details.Author = userInformation.credentials.name;
-                details = ConversationDetailsProviderFactory.Provider.Create(details);
+                var connection = MeTLLib.ClientFactory.Connection(); 
+                details = connection.CreateConversation(details);
+                    //ConversationDetailsProviderFactory.Provider.Create(details);
                 CommandManager.InvalidateRequerySuggested();
                 if (Commands.JoinConversation.CanExecute(details.Jid))
                     Commands.JoinConversation.Execute(details.Jid);
@@ -893,7 +897,8 @@ namespace SandRibbon
                 Permissions.MEETING_PERMISSIONS})
                 if (s.Label == style)
                     details.Permissions = s;
-            ConversationDetailsProviderFactory.Provider.Update(details);
+            MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+            //ConversationDetailsProviderFactory.Provider.Update(details);
             try
             {
                 details = Globals.conversationDetails;
@@ -906,7 +911,9 @@ namespace SandRibbon
                                       })
                     if (s.Label == style)
                         details.Permissions = s;
-                ConversationDetailsProviderFactory.Provider.Update(details);
+                var client = MeTLLib.ClientFactory.Connection();
+                client.UpdateConversationDetails(details);
+                //ConversationDetailsProviderFactory.Provider.Update(details);
             }
             catch(NotSetException e)
             {

@@ -15,6 +15,7 @@ using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {
@@ -90,14 +91,7 @@ namespace SandRibbon.Components
                 var details = ConversationDetailsProviderFactory.Provider.AppendSlideAfter(Globals.slide, currentDetails.Jid, Slide.TYPE.THOUGHT);
                 var newSlide = details.Slides.Select(s => s.id).Max();
                 Commands.SendNewBubble.Execute(new TargettedBubbleContext
-                                                   {
-                                                       author = Globals.me,
-                                                       context = selection,
-                                                       privacy = "public",
-                                                       slide = slide,
-                                                       target = target,
-                                                       thoughtSlide =newSlide 
-                                                   });
+                (slide,Globals.me,target,"public",selection,newSlide));
             }
         }
     }

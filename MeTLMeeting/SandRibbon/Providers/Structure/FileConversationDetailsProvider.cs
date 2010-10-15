@@ -15,6 +15,7 @@ using System.Threading;
 using System.Runtime.Remoting.Messaging;
 using Ionic.Zip;
 using System.IO;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Providers.Structure
 {
@@ -34,14 +35,14 @@ namespace SandRibbon.Providers.Structure
         }
         private static readonly string DETAILS = "details.xml";
         private static readonly string SUMMARY = "summary.xml";
-        public SandRibbonObjects.ConversationDetails DetailsOf(string conversationJid)
+        public ConversationDetails DetailsOf(string conversationJid)
         {
             App.Now("Getting details for " + conversationJid);
             try
             {
                 var url = string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, conversationJid, DETAILS);
                 var response = XElement.Parse(HttpResourceProvider.secureGetString(url));
-                var result = new ConversationDetails().ReadXml(response);
+                var result = ConversationDetails.ReadXml(response);
                 return result;
             }
             catch (XmlException e)
@@ -51,7 +52,7 @@ namespace SandRibbon.Providers.Structure
             catch (WebException e)
             {
                 ProviderMonitor.HealthCheck(() => { });
-                return new ConversationDetails();
+                return null;
             }
         }
         public FileConversationDetailsProvider()
@@ -71,15 +72,7 @@ namespace SandRibbon.Providers.Structure
                 var slideId = details.Slides.Select(s => s.id).Max() + 1;
                 var position = getPosition(currentSlide, details.Slides);
                 if (position == -1) return details;
-                var slide = new Slide
-                                {
-                                    author = details.Author,
-                                    id = slideId,
-                                    index = position + 1,
-                                    type = type,
-                                    defaultHeight = 540,
-                                    defaultWidth = 720
-                                };
+                var slide = new Slide(slideId,details.Author,type,position +1,720,540);
                 foreach (var existingSlide in details.Slides)
                     if (existingSlide.index >= slide.index)
                         existingSlide.index++;
@@ -90,7 +83,7 @@ namespace SandRibbon.Providers.Structure
             catch (WebException)
             {
                 ProviderMonitor.HealthCheck(() => { /*Everything is AOk*/});
-                return new ConversationDetails();
+                return null;
             }
         }
         private int getPosition(int slide, List<Slide> slides)
@@ -106,21 +99,14 @@ namespace SandRibbon.Providers.Structure
             {
                 var details = DetailsOf(title);
                 var slideId = details.Slides.Select(s => s.id).Max() + 1;
-                details.Slides.Add(new Slide
-                {
-                    author = details.Author,
-                    id = slideId,
-                    index = details.Slides.Count,
-                    defaultHeight = 540,
-                    defaultWidth = 720
-                });
+                details.Slides.Add(new Slide(slideId,details.Author,Slide.TYPE.SLIDE,details.Slides.Count,720,540));
                 Update(details);
                 return details;
             }
             catch (WebException)
             {
                 ProviderMonitor.HealthCheck(() => { /*Everything is AOk*/});
-                return new ConversationDetails();
+                return null;
             }
         }
         private void ReceiveDirtyConversationDetails(string jid)
@@ -147,7 +133,7 @@ namespace SandRibbon.Providers.Structure
             catch (WebException e)
             {
                 ProviderMonitor.HealthCheck(() => { /*Everything is AOk*/});
-                return new ConversationDetails();
+                return null;
             }
         }
         class UniqueConversationComparator : IEqualityComparer<ConversationDetails>
@@ -163,7 +149,7 @@ namespace SandRibbon.Providers.Structure
         }
         private object cacheLock = new object();
         private List<ConversationDetails> conversationsCache;
-        public IEnumerable<SandRibbonObjects.ConversationDetails> ListConversations()
+        public IEnumerable<ConversationDetails> ListConversations()
         {
             try
             {
@@ -189,7 +175,7 @@ namespace SandRibbon.Providers.Structure
                                         {
                                             e.Extract(stream);
                                             return
-                                                new ConversationDetails().ReadXml(
+                                                ConversationDetails.ReadXml(
                                                     XElement.Parse(Encoding.UTF8.GetString(stream.ToArray())));
                                         }
                                     }).ToList();
@@ -221,14 +207,7 @@ namespace SandRibbon.Providers.Structure
             {
                 var id = GetApplicationLevelInformation().currentId;
                 details.Jid = id.ToString();
-                details.Slides.Add(new Slide
-                {
-                    author = details.Author,
-                    id = id + 1,
-                    type = Slide.TYPE.SLIDE,
-                    defaultHeight = 540,
-                    defaultWidth = 720
-                });
+                details.Slides.Add(new Slide(id+1,details.Author,Slide.TYPE.SLIDE,0,720,540));
             }
             details.Created = DateTimeFactory.Now();
             ResourceUploader.uploadResourceToPath(Encoding.UTF8.GetBytes(details.WriteXml().ToString(SaveOptions.DisableFormatting)),
@@ -238,7 +217,7 @@ namespace SandRibbon.Providers.Structure
         }
         public ApplicationLevelInformation GetApplicationLevelInformation()
         {
-            return new ApplicationLevelInformation { currentId = Int32.Parse(HttpResourceProvider.secureGetString(NEXT_AVAILABLE_ID)) };
+            return new ApplicationLevelInformation(Int32.Parse(HttpResourceProvider.secureGetString(NEXT_AVAILABLE_ID)));
         }
     }
 }

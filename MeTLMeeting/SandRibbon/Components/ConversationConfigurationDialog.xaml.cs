@@ -22,6 +22,7 @@ using ListBox = System.Windows.Controls.ListBox;
 using System.Windows.Forms;
 using SandRibbon.Utils;
 using SandRibbon.Components.Pedagogicometry;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {
@@ -38,7 +39,8 @@ namespace SandRibbon.Components
 
         public static RoutedCommand CompleteConversationDialog = new RoutedCommand();
 
-        public ConversationConfigurationDialog(ConversationConfigurationMode mode, string activeConversation):this(mode)
+        public ConversationConfigurationDialog(ConversationConfigurationMode mode, string activeConversation)
+            : this(mode)
         {
             conversationJid = activeConversation;
         }
@@ -69,7 +71,8 @@ namespace SandRibbon.Components
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Create";
                     if (details == null)
-                        details = new ConversationDetails { Author = Globals.me, Created = SandRibbonObjects.DateTimeFactory.Now(), Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
+                        details = new ConversationDetails
+                        ("Please enter a title here","",Globals.me,new List<Slide>(),Permissions.LECTURE_PERMISSIONS,"Unrestricted",SandRibbonObjects.DateTimeFactory.Now(),SandRibbonObjects.DateTimeFactory.Now());
                     break;
                 case ConversationConfigurationMode.EDIT:
                     deleteMessage.Visibility = Visibility.Collapsed;
@@ -89,8 +92,8 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Visible;
                     CommitButton.Content = "Create";
-                    if (details == null)
-                        details = new ConversationDetails { Author = Globals.me, Created = SandRibbonObjects.DateTimeFactory.Now(), Subject = "Unrestricted", Title = "Please enter title here", Permissions = Permissions.LECTURE_PERMISSIONS };
+                    details = new ConversationDetails
+                    ("Please enter a title here", "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
                     break;
                 case ConversationConfigurationMode.DELETE:
                     deleteMessage.Visibility = Visibility.Visible;

@@ -5,6 +5,7 @@ using System.Windows.Data;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbonInterop;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Quizzing
 {
@@ -12,9 +13,10 @@ namespace SandRibbon.Quizzing
     {
         public static TitleConverter TitleConverter = new TitleConverter();
         public static QuestionConverter QuestionConverter = new QuestionConverter();
-        private QuizQuestion question {
+        private MeTLLib.DataTypes.QuizQuestion question
+        {
             get {
-                return (QuizQuestion)DataContext;
+                return (MeTLLib.DataTypes.QuizQuestion)DataContext;
             }
         }
         public AnswerAQuiz()
@@ -30,7 +32,8 @@ namespace SandRibbon.Quizzing
         {
             Close();
         }
-        public AnswerAQuiz(QuizQuestion thisQuiz):this()
+        public AnswerAQuiz(MeTLLib.DataTypes.QuizQuestion thisQuiz)
+            : this()
         {
             DataContext = thisQuiz; 
         }
@@ -39,12 +42,7 @@ namespace SandRibbon.Quizzing
             var selection = ((Option)e.AddedItems[0]);
             if(selection.correct)
                 MessageBox.Show("Nice Shooting Tex");
-            Commands.SendQuizAnswer.Execute(new QuizAnswer
-                                               {
-                                                    answerer = Globals.me,
-                                                    answer = selection.name,
-                                                    id = question.id
-                                               });
+            Commands.SendQuizAnswer.Execute(new QuizAnswer(question.id,Globals.me,selection.name));
             this.Close();
         }
     }

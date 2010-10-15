@@ -12,6 +12,7 @@ using SandRibbon.Providers;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using CheckBox=System.Windows.Controls.CheckBox;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {
@@ -99,20 +100,14 @@ namespace SandRibbon.Components
         {
             var message = messageField;
             message.Text = SandRibbonObjects.DateTimeFactory.Now().ToString() + " " + Globals.me + ":\n" + message.Text;
-            message.tag(new TextTag
+            message.tag(new MeTLLib.DataTypes.TextTag
             {
                 author = Globals.me,
                 privacy = "public",
                 id = string.Format("{0}:{1}", Globals.me, SandRibbonObjects.DateTimeFactory.Now())
             });
             Commands.SendChatMessage.Execute(new TargettedTextBox
-                {
-                    box = message,
-                    author = Globals.me,
-                    privacy = "public",
-                    slide = 0,
-                    target = "chat",
-                });
+            (0,Globals.me,"chat","public",message));
             clearTextInput();
         }
 

@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace SandRibbonObjects
 {
+    /*
     public class ConversationDetails : INotifyPropertyChanged
     {
         public ConversationDetails() : base()
@@ -21,13 +22,14 @@ namespace SandRibbonObjects
             return Slides.Select(s => s.id).Max() + 1;
         }
         public string Title {get;set;}
-        public string Jid { get; set;}/*The jid is a valid Xmpp jid.  If, for instance, you want
-                                       * to create a room specific to this conversation so that
-                                       * you can restrict broadcast, this is safe to work in Jabber 
-                                       * and on the filesystem, whereas the Title is NOT. 
-                                       * (If anybody finds another character that breaks it - 
-                                       * obvious when history stops working - add it to the illegals 
-                                       * string in generateJid).  Never mind that, we're just using a number.*/
+        public string Jid { get; set;}
+     //The jid is a valid Xmpp jid.  If, for instance, you want
+     //                                  to create a room specific to this conversation so that
+       //                                you can restrict broadcast, this is safe to work in Jabber 
+         //                              and on the filesystem, whereas the Title is NOT. 
+           //                            (If anybody finds another character that breaks it - 
+             //                          obvious when history stops working - add it to the illegals 
+               //                        string in generateJid).  Never mind that, we're just using a number.
         public string Author;
         public Permissions Permissions{get;set;}
         public System.DateTime Created;
@@ -218,4 +220,5 @@ namespace SandRibbonObjects
     {
         public int currentId;
     }
+*/
 }

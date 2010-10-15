@@ -13,6 +13,7 @@ using SandRibbon.Utils.Connection;
 using Ionic.Zip;
 using SandRibbonInterop.MeTLStanzas;
 using agsXMPP.Xml.Dom;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Providers
 {
@@ -70,13 +71,14 @@ namespace SandRibbon.Providers
         private int measure<T>(int acc, T item){
             return acc + item.ToString().Length;
         }
-        public static long cacheSize {
-            get {/*Warning: This does not calculate the size you would expect.  It's been left in here mostly as a breakpoint - we're
-                not storing XML at this point, but in memory structures*/
+        /*public static long cacheSize {
+            get {
+         //Warning: This does not calculate the size you would expect.  It's been left in here mostly as a breakpoint - we're
+         //not storing XML at this point, but in memory structures
                 return ((CachedHistoryProvider)HistoryProviderFactory.provider).cacheTotalSize;
             }
-        }
-        private long cacheTotalSize{
+        }*/
+        /*private long cacheTotalSize{
             get
             {
                 return cache.Values.Aggregate(0, (acc, parser) => 
@@ -85,7 +87,7 @@ namespace SandRibbon.Providers
                         parser.images.Values.Aggregate(0,measure<TargettedImage>)+
                         parser.text.Values.Aggregate(0,measure<TargettedTextBox>));
             }
-        }
+        }*/
         public override void Retrieve<T>(Action retrievalBeginning, Action<int, int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
             /*if (!cache.ContainsKey(room) || isPrivateRoom(room))

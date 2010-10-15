@@ -2,7 +2,7 @@
 using System.Windows.Shapes;
 
 namespace SandRibbonObjects
-{
+{/*
     public class LiveWindowSetup
     {
         public FrameworkElement visualSource;
@@ -13,4 +13,5 @@ namespace SandRibbonObjects
         public string author;
         public int slide;
     }
+  */
 }

@@ -5,7 +5,8 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SandRibbon.Providers.Structure;
-using SandRibbonObjects;
+using MeTLLib.DataTypes;
+//using SandRibbonObjects;
 
 namespace SandRibbon.Providers
 {
@@ -23,14 +24,10 @@ namespace SandRibbon.Providers
                 System.Threading.Thread.CurrentThread.CurrentCulture = current;
                 
                 var recentConversations = recentDocs.Descendants("conversation").Select(
-                    conversation => new ConversationDetails
-                    {
-                        Title = conversation.Attribute("title").Value,
-                        Jid = conversation.Attribute("jid").Value,
-                        Author = conversation.Attribute("author").Value,
-                        LastAccessed = SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value)
-                    }).ToList();
-                var allConversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+                    conversation => new ConversationDetails(conversation.Attribute("title").Value,conversation.Attribute("jid").Value,conversation.Attribute("author").Value,new List<Slide>(),new Permissions("",false,false,false),"",new DateTime(),SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value)))
+                    .ToList();
+                var allConversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
+                    //ConversationDetailsProviderFactory.Provider.ListConversations();
                 return allConversations.Where(ac => recentConversations.Select(c => c.Jid).Contains(ac.Jid)).ToList();
             }
             return new List<ConversationDetails>();

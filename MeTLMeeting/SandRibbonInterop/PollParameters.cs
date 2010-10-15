@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows;
 
 namespace SandRibbonInterop
-{
+{/*
    public class Option : DependencyObject
     {
        public String optionText
@@ -40,4 +40,5 @@ namespace SandRibbonInterop
         public long id { get; set; }
 
     }
+  */
 }

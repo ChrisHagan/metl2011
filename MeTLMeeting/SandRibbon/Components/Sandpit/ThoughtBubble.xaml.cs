@@ -22,6 +22,7 @@ using System.Windows.Ink;
 using SandRibbonObjects;
 using SandRibbon.Quizzing;
 using Image=SandRibbon.Components.Canvas.Image;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components.Sandpit
 {

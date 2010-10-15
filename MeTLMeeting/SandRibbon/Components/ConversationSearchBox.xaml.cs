@@ -78,13 +78,16 @@ namespace SandRibbon.Components
         }
         private void slideOut()
         {
-            if (this.ActualWidth > 0)
+            Dispatcher.adoptAsync(() =>
             {
-                VerticalAlignment = VerticalAlignment.Top;
-                HorizontalAlignment = HorizontalAlignment.Left;
-                slidePropertyOut(FrameworkElement.WidthProperty, this.ActualWidth);
-                slidePropertyOut(FrameworkElement.HeightProperty, this.ActualHeight);
-            }
+                if (this.ActualWidth > 0)
+                {
+                    VerticalAlignment = VerticalAlignment.Top;
+                    HorizontalAlignment = HorizontalAlignment.Left;
+                    slidePropertyOut(FrameworkElement.WidthProperty, this.ActualWidth);
+                    slidePropertyOut(FrameworkElement.HeightProperty, this.ActualHeight);
+                }
+            });
         }
         private void slidePropertyOut(DependencyProperty property, double limit)
         {

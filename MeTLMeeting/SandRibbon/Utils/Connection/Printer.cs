@@ -15,6 +15,7 @@ using SandRibbonInterop;
 using SandRibbonObjects;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using PrintDialog=System.Windows.Controls.PrintDialog;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Utils.Connection
 {
@@ -82,7 +83,7 @@ namespace SandRibbon.Utils.Connection
                 return new [] {publicCanvas, privateCanvas};
             }
 
-            public override void actOnQuizReceived(QuizQuestion quizDetails)
+            public override void actOnQuizReceived(MeTLLib.DataTypes.QuizQuestion quizDetails)
             {
                 //Nothing.  Printer doesn't care about quiz
             }
@@ -97,14 +98,14 @@ namespace SandRibbon.Utils.Connection
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithoutNotes);
             var conversation = ConversationDetailsProviderFactory.Provider.DetailsOf(title);
-            targetPageCount = conversation.Slides.Where(s=>s.type == Slide.TYPE.SLIDE).Count();
+            targetPageCount = conversation.Slides.Where(s=>s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
             PrinterInfo = new PrinterInformation
                               {
                                   parsers = new Dictionary<string, PrintParser>(),
                                   title = title,
                                   slides = conversation.Slides
                               };
-            foreach (var slide in conversation.Slides.Where(s=>s.type==Slide.TYPE.SLIDE).OrderBy(s => s.index))
+            foreach (var slide in conversation.Slides.Where(s=>s.type==MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
             {
                 var room = slide.id;
                 HistoryProviderFactory.provider.Retrieve<PrintParser>(
@@ -118,14 +119,14 @@ namespace SandRibbon.Utils.Connection
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithNotes);
             var conversation = ConversationDetailsProviderFactory.Provider.DetailsOf(title);
-            targetPageCount = conversation.Slides.Where(s=>s.type == Slide.TYPE.SLIDE).Count();
+            targetPageCount = conversation.Slides.Where(s=>s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
             PrinterInfo = new PrinterInformation
                               {
                                   parsers = new Dictionary<string, PrintParser>(),
                                   title = title,
                                   slides = conversation.Slides
                               };
-            foreach (var slide in conversation.Slides.Where(s=>s.type==Slide.TYPE.SLIDE).OrderBy(s => s.index))
+            foreach (var slide in conversation.Slides.Where(s=>s.type==MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
             {
                 var room = slide.id;
                 var parsers = new List<PrintParser>();

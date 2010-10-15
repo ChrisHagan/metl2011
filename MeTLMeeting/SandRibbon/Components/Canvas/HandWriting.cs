@@ -17,19 +17,20 @@ using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbonInterop;
-using SandRibbonInterop.MeTLStanzas;
+//using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using System.Windows;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components.Canvas
 {
     public class HandWriting : AbstractCanvas
     {
 
-        private Dictionary<string, List<TargettedStroke>> userStrokes;
+        private Dictionary<string, List<MeTLLib.DataTypes.TargettedStroke>> userStrokes;
         public HandWriting()
         {
-            userStrokes = new Dictionary<string, List<TargettedStroke>>();
+            userStrokes = new Dictionary<string, List<MeTLLib.DataTypes.TargettedStroke>>();
             Loaded += new System.Windows.RoutedEventHandler(HandWriting_Loaded);
             StrokeCollected += singleStrokeCollected;
             SelectionChanging += selectingStrokes;
@@ -118,10 +119,10 @@ namespace SandRibbon.Components.Canvas
             });
             Commands.UpdateCursor.RegisterCommand(new DelegateCommand<Cursor>(UpdateCursor));
             Commands.SetPenColor.RegisterCommand(colorChangedCommand);
-            Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
+            Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
-            Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
-            Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
+            Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<IEnumerable<MeTLLib.DataTypes.TargettedStroke>>(ReceiveStrokes));
+            Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<MeTLLib.DataTypes.TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
             Commands.UserVisibility.RegisterCommand(new DelegateCommand<VisibilityInformation>(setUserVisibility));
@@ -165,7 +166,7 @@ namespace SandRibbon.Components.Canvas
                                           updateVisibility(info);
                                           var visibleUsers =
                                               userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
-                                          var allVisibleStrokes = new List<TargettedStroke>();
+                                          var allVisibleStrokes = new List<MeTLLib.DataTypes.TargettedStroke>();
                                           foreach (var user in visibleUsers.Where(user => userStrokes.ContainsKey(user)))
                                               allVisibleStrokes.AddRange(userStrokes[user]);
                                           ReceiveStrokes(allVisibleStrokes);
@@ -189,7 +190,7 @@ namespace SandRibbon.Components.Canvas
         private void MoveTo(object obj)
         {
             privacyDictionary = new Dictionary<double, Stroke>();
-            userStrokes = new Dictionary<string, List<TargettedStroke>>();
+            userStrokes = new Dictionary<string, List<MeTLLib.DataTypes.TargettedStroke>>();
 
         }
         private void HandWriting_Loaded(object sender, System.Windows.RoutedEventArgs e)
@@ -197,7 +198,7 @@ namespace SandRibbon.Components.Canvas
             DefaultPenAttributes();
         }
         public static Guid STROKE_PROPERTY = Guid.NewGuid();
-        public List<StrokeChecksum> strokes = new List<StrokeChecksum>();
+        public List<MeTLLib.DataTypes.StrokeChecksum> strokes = new List<MeTLLib.DataTypes.StrokeChecksum>();
         private DelegateCommand<string> modeChangedCommand;
         private DelegateCommand<object> colorChangedCommand;
         protected override void CanEditChanged()
@@ -265,7 +266,7 @@ namespace SandRibbon.Components.Canvas
         {
             return strokeReceiptDurations.Aggregate(0.0, (acc, item) => acc + item.TotalMilliseconds) / strokeReceiptDurations.Count();
         }
-        public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
+        public void ReceiveStrokes(IEnumerable<MeTLLib.DataTypes.TargettedStroke> receivedStrokes)
         {
             if (receivedStrokes.Count() == 0) return;
             if (receivedStrokes.First().slide != currentSlide) return;
@@ -290,7 +291,7 @@ namespace SandRibbon.Components.Canvas
                             var author= stroke.author==Globals.conversationDetails.Author? "Teacher" : stroke.author;
                             Commands.ReceiveAuthor.Execute(author);
                             if(!userStrokes.ContainsKey(author))
-                                userStrokes.Add(author, new List<TargettedStroke>());
+                                userStrokes.Add(author, new List<MeTLLib.DataTypes.TargettedStroke>());
                             if(!userStrokes[author].Contains(stroke))
                                 userStrokes[author].Add(stroke);
                             if(!userVisibility.ContainsKey(author))
@@ -395,14 +396,7 @@ namespace SandRibbon.Components.Canvas
             var bounds = stroke.GetBounds();
             if (stroke != null && stroke is Stroke)
                 RemovePrivacyStylingFromStroke(stroke);
-            Commands.SendDirtyStroke.Execute(new TargettedDirtyElement
-            {
-                identifier = sum,
-                author = Globals.me,
-                slide = currentSlide,
-                privacy = stroke.tag().privacy,
-                target = target
-            });
+            Commands.SendDirtyStroke.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,stroke.tag().privacy,sum));
         }
         private void transmitSelectionAltered(object sender, EventArgs e)
         {
@@ -459,7 +453,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (!strokes.Contains(stroke.sum()))
                 strokes.Add(stroke.sum());
-            stroke.tag(new StrokeTag { author = Globals.me, privacy = thisPrivacy, startingColor = stroke.DrawingAttributes.Color.ToString(), isHighlighter = stroke.DrawingAttributes.IsHighlighter });
+            stroke.tag(new MeTLLib.DataTypes.StrokeTag { author = Globals.me, privacy = thisPrivacy, startingColor = stroke.DrawingAttributes.Color.ToString(), isHighlighter = stroke.DrawingAttributes.IsHighlighter });
             SendTargettedStroke(stroke, thisPrivacy);
             ApplyPrivacyStylingToStroke(stroke, thisPrivacy);
         }
@@ -468,14 +462,7 @@ namespace SandRibbon.Components.Canvas
             try
             {
                 Commands.ActualReportStrokeAttributes.Execute(stroke.DrawingAttributes);
-                Commands.SendStroke.Execute(new TargettedStroke
-                                                {
-                                                    stroke = stroke,
-                                                    target = target,
-                                                    author = Globals.me,
-                                                    privacy = stroke.tag().privacy,
-                                                    slide = currentSlide
-                                                });
+                Commands.SendStroke.Execute(new MeTLLib.DataTypes.TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke));
             }
             catch (NotSetException e)
             {
@@ -484,7 +471,7 @@ namespace SandRibbon.Components.Canvas
         public void FlushStrokes()
         {
             Dispatcher.adoptAsync(delegate { Strokes.Clear(); });
-            strokes = new List<StrokeChecksum>();
+            strokes = new List<MeTLLib.DataTypes.StrokeChecksum>();
         }
         public void Disable()
         {
@@ -526,21 +513,14 @@ namespace SandRibbon.Components.Canvas
         }
         protected override void HandleCut()
         {
-            var listToCut = new List<TargettedDirtyElement>();
+            var listToCut = new List<MeTLLib.DataTypes.TargettedDirtyElement>();
             foreach (var stroke in GetSelectedStrokes())
-                listToCut.Add(new TargettedDirtyElement
-                {
-                    identifier = stroke.sum().checksum.ToString(),
-                    author = Globals.me,
-                    slide = currentSlide,
-                    privacy = stroke.tag().privacy,
-                    target = target
-                });
+                listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,stroke.tag().privacy,stroke.sum().checksum.ToString()));
             CutSelection();
             foreach (var element in listToCut)
                 Commands.SendDirtyStroke.Execute(element);
         }
-        public void ReceiveDirtyStrokes(IEnumerable<TargettedDirtyElement> targettedDirtyStrokes)
+        public void ReceiveDirtyStrokes(IEnumerable<MeTLLib.DataTypes.TargettedDirtyElement> targettedDirtyStrokes)
         {
             if (targettedDirtyStrokes.Count() == 0) return;
             if (!(targettedDirtyStrokes.First().target.Equals(target)) || targettedDirtyStrokes.First().slide != currentSlide) return;
@@ -572,7 +552,7 @@ namespace SandRibbon.Components.Canvas
         private Dictionary<double, Stroke> privacyDictionary = new Dictionary<double, Stroke>();
         private void ApplyPrivacyStylingToStroke(Stroke stroke, string privacy)
         {
-            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == Permissions.LECTURE_PERMISSIONS || target == "notepad") return;
+            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == MeTLLib.DataTypes.Permissions.LECTURE_PERMISSIONS || target == "notepad") return;
             if (privacy == "private")
                 addPrivacyStylingToStroke(stroke);
             else
@@ -580,7 +560,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void RemovePrivacyStylingFromStroke(Stroke stroke)
         {
-            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == Permissions.LECTURE_PERMISSIONS) return;
+            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == MeTLLib.DataTypes.Permissions.LECTURE_PERMISSIONS) return;
             try
             {
                 if (stroke.tag().startingColor != null)
@@ -601,7 +581,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (privacyDictionary.Keys.Where(k => k == stroke.sum().checksum).Count() != 0) return;
             var privacyStroke = new Stroke(stroke.StylusPoints);
-            privacyStroke.tag(new StrokeTag { author = "Privacy", privacy = "private", startingColor = stroke.DrawingAttributes.Color.ToString(), isHighlighter = stroke.DrawingAttributes.IsHighlighter });
+            privacyStroke.tag(new MeTLLib.DataTypes.StrokeTag { author = "Privacy", privacy = "private", startingColor = stroke.DrawingAttributes.Color.ToString(), isHighlighter = stroke.DrawingAttributes.IsHighlighter });
             privacyStroke.DrawingAttributes = new DrawingAttributes
                                                   {
                                                       Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor),
@@ -622,7 +602,7 @@ namespace SandRibbon.Components.Canvas
             {
                 if (stroke.tag().privacy == "private")
                 {
-                    Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First().DrawingAttributes.Color = SandRibbonInterop.MeTLStanzas.MeTLStanzas.Ink.stringToColor(stroke.tag().startingColor);
+                    Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First().DrawingAttributes.Color = MeTLStanzas.Ink.stringToColor(stroke.tag().startingColor);
                     if (Globals.isAuthor)
                         ApplyPrivacyStylingToStroke(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First(), stroke.tag().privacy);
                 }
@@ -649,7 +629,7 @@ namespace SandRibbon.Components.Canvas
                 var oldTag = ((Stroke)stroke).tag();
                 doMyStrokeRemoved(stroke);
                 var newStroke = stroke.Clone();
-                ((Stroke)newStroke).tag(new StrokeTag { author = oldTag.author, privacy = newPrivacy, startingColor = oldTag.startingColor, startingSum = oldTag.startingSum });
+                ((Stroke)newStroke).tag(new MeTLLib.DataTypes.StrokeTag { author = oldTag.author, privacy = newPrivacy, startingColor = oldTag.startingColor, startingSum = oldTag.startingSum });
                 doMyStrokeAdded(newStroke, newPrivacy);
             }
             Select(new StrokeCollection());
@@ -700,14 +680,8 @@ namespace SandRibbon.Components.Canvas
                 var hw = (HandWriting)base.Owner;
                 var sb = new StringBuilder("<strokes>");
                 foreach (var toString in from stroke in hw.Strokes
-                                         select new MeTLStanzas.Ink(new TargettedStroke
-                                         {
-                                             author = Globals.me,
-                                             privacy = hw.privacy,
-                                             slide = Globals.slide,
-                                             stroke = stroke,
-                                             target = hw.target
-                                         }).ToString())
+                                         select new MeTLLib.DataTypes.MeTLStanzas.Ink(new MeTLLib.DataTypes.TargettedStroke(Globals.slide,Globals.me,hw.target,hw.privacy,stroke))
+                                         .ToString())
                     sb.Append(toString);
                 sb.Append("</strokes>");
                 return sb.ToString();

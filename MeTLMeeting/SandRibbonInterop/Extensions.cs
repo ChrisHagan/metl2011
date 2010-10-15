@@ -8,6 +8,7 @@ using System.Windows;
 
 namespace SandRibbonInterop
 {
+    /*
     public struct TextTag
     {
         public string author;
@@ -39,7 +40,8 @@ namespace SandRibbonInterop
         public Color color;
         public string user;
     }
-    public static class TextExtensions
+     */
+/*    public static class TextExtensions
     {
         //Image and TextTags are identical, reusing imagetag
         public static TextTag tag(this TextBox box )
@@ -153,6 +155,8 @@ namespace SandRibbonInterop
         }
         public static int POINT_DECIMAL_PLACE_ROUNDING = 1;
     }
+  
+ */
     class Extensions
     {
     }

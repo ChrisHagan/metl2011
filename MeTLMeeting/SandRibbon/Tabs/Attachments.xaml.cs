@@ -43,7 +43,7 @@ namespace SandRibbon.Tabs
             InitializeComponent();
             files = new ObservableCollection<FileInfo>();
             attachments.ItemsSource = files;
-            Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(receiveFile));
+            Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
         }
@@ -59,7 +59,7 @@ namespace SandRibbon.Tabs
             foreach(var file in preParser.files)
                 receiveFile(file);
         }
-        private void receiveFile(TargettedFile fileInfo)
+        private void receiveFile(MeTLLib.DataTypes.TargettedFile fileInfo)
         {
             var unMangledFileUri = fileInfo.url.EndsWith(".MeTLFileUpload") ? fileInfo.url.Substring(0, fileInfo.url.Length - 15) : fileInfo.url;
             Dispatcher.adoptAsync(() => files.Add(new FileInfo

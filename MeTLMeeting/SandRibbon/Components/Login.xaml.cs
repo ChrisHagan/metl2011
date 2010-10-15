@@ -49,6 +49,7 @@ namespace SandRibbon.Components
             Commands.AddWindowEffect.Execute(null);
             Version = ConfigurationProvider.instance.getMetlVersion();
             App.Now(string.Format("The Version of MeTL is -> {0}", Version));
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
             Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
             //Commands.ConnectWithUnauthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithUnauthenticatedCredentials));
             if (WorkspaceStateProvider.savedStateExists())
@@ -84,21 +85,13 @@ namespace SandRibbon.Components
         private void doAttemptAuthentication(string username, string password)
         {
             var connection = ClientFactory.Connection();
-            connection.events.StatusChanged += new MeTLLibEventHandlers.StatusChangedEventHandler(ConnectionStatusChanged);
             connection.Connect(username, password);
         }
-        private void ConnectionStatusChanged(object sender, StatusChangedEventArgs args) {
-            if (args.isConnected)
-            {
-                Commands.ConnectWithAuthenticatedCredentials.Execute(args.credentials);
-                Commands.SetIdentity.Execute(args.credentials);
-                Commands.RemoveWindowEffect.Execute(null);
-                Commands.ShowConversationSearchBox.Execute(null);
-                Dispatcher.adoptAsync(()=>
+        private void SetIdentity(object _args) {
+            Commands.RemoveWindowEffect.Execute(null);
+            Commands.ShowConversationSearchBox.Execute(null);
+            Dispatcher.adoptAsync(() =>
                 this.Visibility = Visibility.Collapsed);
-            }
-            else
-                MessageBox.Show("Server says it doesn't know who you are");
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

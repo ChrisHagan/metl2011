@@ -1,4 +1,4 @@
-﻿using SandRibbonObjects;
+﻿using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components.Interfaces
 {

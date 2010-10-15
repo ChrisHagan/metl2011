@@ -583,6 +583,7 @@
     <Compile Include="Components\BackStageNav.xaml.cs">
       <DependentUpon>BackStageNav.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\NetworkController.cs" />
     <Compile Include="Components\Window1.xaml.cs">
       <DependentUpon>Window1.xaml</DependentUpon>
       <SubType>Code</SubType>

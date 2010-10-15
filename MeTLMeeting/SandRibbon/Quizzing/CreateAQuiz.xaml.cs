@@ -17,6 +17,7 @@ using SandRibbonInterop;
 using CheckBox = System.Windows.Controls.CheckBox;
 using System.Collections.ObjectModel;
 using WPFColors = System.Windows.Media.Colors;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Quizzing
 {
@@ -26,8 +27,8 @@ namespace SandRibbon.Quizzing
         private string url = "none";
         public static ObservableCollection<Option> options = new ObservableCollection<Option>
                                                      {
-                                                         new Option {name = "A",optionText = "A"},
-                                                         new Option {name = "B",optionText = "B"}
+                                                         new Option("A"," ",false,Colors.Blue),
+                                                         new Option("B"," ",false,Colors.Red)
                                                      };
         public CreateAQuiz(int count)
         {
@@ -58,7 +59,7 @@ namespace SandRibbon.Quizzing
         }
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
-            var quiz = new QuizQuestion { title = quizTitle.Text, url = url, question = question.Text, author = Globals.me, id = SandRibbonObjects.DateTimeFactory.Now().Ticks };
+            var quiz = new QuizQuestion(SandRibbonObjects.DateTimeFactory.Now().Ticks,quizTitle.Text, Globals.me,question.Text,new List<Option>());
             foreach (object obj in quizQuestions.Items)
             {
                 var answer = (Option)obj;
@@ -123,11 +124,7 @@ namespace SandRibbon.Quizzing
                 }
                 newIndex = AllColors.all.IndexOf(options.Last().color) + 1;
             }
-            var newOption = new Option
-            {
-                name = newName,
-                color = AllColors.all.ElementAt(newIndex)
-            };
+            var newOption = new Option(newName," ",false,AllColors.all.ElementAt(newIndex));
             if (shouldAddNewEmptyOption())
             {
                 options.Add(newOption);
@@ -209,8 +206,8 @@ namespace SandRibbon.Quizzing
         {
             options = new ObservableCollection<Option>
                                                      {
-                                                         new Option {name = "A",optionText = "A"},
-                                                         new Option {name = "B",optionText = "B"}
+                                                         new Option("A"," ",false, Colors.Blue),
+                                                         new Option("B"," ",false, Colors.Red)
                                                      };
         }
         private void createAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)

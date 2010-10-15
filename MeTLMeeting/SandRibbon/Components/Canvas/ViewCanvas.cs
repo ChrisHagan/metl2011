@@ -15,7 +15,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbonInterop;
-using SandRibbonInterop.MeTLStanzas;
+//using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using System.Windows;
 

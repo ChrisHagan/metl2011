@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SandRibbon.Components;
 using System.Windows.Controls;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon
 {
@@ -460,8 +461,8 @@ namespace SandRibbon
 
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var list = ((ObservableCollection<QuizQuestion>)values[1]);
-            return string.Format("Quiz: {0}", list.IndexOf((QuizQuestion)values[0]) + 1);
+            var list = ((ObservableCollection<MeTLLib.DataTypes.QuizQuestion>)values[1]);
+            return string.Format("Quiz: {0}", list.IndexOf((MeTLLib.DataTypes.QuizQuestion)values[0]) + 1);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -501,8 +502,8 @@ namespace SandRibbon
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value != null && value is ConversationDetails)
-                return RecentConversationProvider.DisplayNameFor((ConversationDetails)value);
+            if (value != null && value is MeTLLib.DataTypes.ConversationDetails)
+                return RecentConversationProvider.DisplayNameFor((MeTLLib.DataTypes.ConversationDetails)value);
             return value;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -675,13 +676,7 @@ namespace SandRibbon
     {
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return new ConversationDetails
-            {
-                Title = (string)values[0],
-                Tag = (string)values[1],
-                Subject = (string)values[2], // ST***
-                Permissions = (Permissions)values[3]
-            };
+            return new MeTLLib.DataTypes.ConversationDetails((string)values[0],"","",new List<MeTLLib.DataTypes.Slide>(),(MeTLLib.DataTypes.Permissions)values[3],(string)values[2]);
         }
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {

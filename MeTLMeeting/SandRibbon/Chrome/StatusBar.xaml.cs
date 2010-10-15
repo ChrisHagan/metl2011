@@ -15,6 +15,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbonObjects;
 using System.Threading;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Chrome
 {
@@ -52,7 +53,7 @@ namespace SandRibbon.Chrome
                                                          string.Format(
                                                              "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
                                                              Globals.privacy,
-                                                             Permissions.InferredTypeOf(details.Permissions).Label,
+                                                             MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
                                                              details.Subject, Globals.me);
                                                  }
                                                  catch (NotSetException)

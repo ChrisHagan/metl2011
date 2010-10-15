@@ -22,6 +22,7 @@ using TextBox = System.Windows.Controls.TextBox;
 using System.Windows;
 using SandRibbon.Components;
 using System.Collections.ObjectModel;
+using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 
 namespace SandRibbon.Utils
@@ -92,12 +93,12 @@ namespace SandRibbon.Utils
                 var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
                 if (!Directory.Exists(currentWorkingDirectory))
                     Directory.CreateDirectory(currentWorkingDirectory);
-                var provider = ConversationDetailsProviderFactory.Provider;
+                var provider = MeTLLib.ClientFactory.Connection();
                 var xml = new XElement("presentation");
                 xml.Add(new XAttribute("name", details.Title));
                 if (details.Tag == null)
                     details.Tag = "unTagged";
-                var conversation = provider.Create(details);
+                var conversation = provider.CreateConversation(details);
                 conversation.Author = Globals.me;
                 var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
                 var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
@@ -156,15 +157,8 @@ namespace SandRibbon.Utils
                 }
                 var startingId = conversation.Slides.First().id;
                 var index = 0;
-                conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide
-                {
-                    author = Globals.me,
-                    id = startingId++,
-                    index = index++,
-                    defaultHeight = float.Parse(d.Attribute("defaultHeight").Value),
-                    defaultWidth = float.Parse(d.Attribute("defaultWidth").Value)
-                }).ToList();
-                provider.Update(conversation);
+                conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
+                provider.UpdateConversationDetails(conversation);
                 var xmlSlides = xml.Descendants("slide");
                 for (int i = 0; i < xmlSlides.Count(); i++)
                 {
@@ -203,12 +197,12 @@ namespace SandRibbon.Utils
             var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
             try
             {
-                var provider = ConversationDetailsProviderFactory.Provider;
+                var provider = MeTLLib.ClientFactory.Connection();
                 var xml = new XElement("presentation");
                 xml.Add(new XAttribute("name", details.Title));
                 if (details.Tag == null)
                     details.Tag = "unTagged";
-                var conversation = provider.Create(details);
+                var conversation = provider.CreateConversation(details);
                 conversation.Author = Globals.me;
                 foreach (var slide in ppt.Slides)
                 {
@@ -216,8 +210,9 @@ namespace SandRibbon.Utils
                 }
                 var startingId = conversation.Slides.First().id;
                 var index = 0;
-                conversation.Slides = xml.Descendants("slide").Select(d => new SandRibbonObjects.Slide { author = Globals.me, id = startingId++, index = index++ }).ToList();
-                provider.Update(conversation);
+                conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide 
+                (startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
+                provider.UpdateConversationDetails(conversation);
                 var xmlSlides = xml.Descendants("slide");
                 for (int i = 0; i < xmlSlides.Count(); i++)
                 {
@@ -273,14 +268,7 @@ namespace SandRibbon.Utils
                         id = textBoxIdentity,
                         privacy = privacy
                     });
-                wire.SendTextbox(new TargettedTextBox
-                {
-                    slide = id,
-                    author = Globals.me,
-                    privacy = privacy,
-                    target = "presentationSpace",
-                    box = newText
-                });
+                wire.SendTextbox(new TargettedTextBox(id,Globals.me,"presentationSpace",privacy,newText));
             }
             wire.SneakOutOf(id.ToString());
         }
@@ -309,14 +297,7 @@ namespace SandRibbon.Utils
                                         //isBackground = shapeCount == 1
                                         isBackground = false
                                     });
-                wire.SendImage(new TargettedImage
-                {
-                    target = "presentationSpace",
-                    author = me,
-                    image = hostedImage,
-                    slide = id,
-                    privacy = shape.Attribute("privacy").Value
-                });
+                wire.SendImage(new TargettedImage(id,me,"presentationSpace",shape.Attribute("privacy").Value,hostedImage));
             }
             wire.SneakOutOf(id.ToString());
         }
@@ -346,13 +327,7 @@ namespace SandRibbon.Utils
                         });
                 ;
                 wire.SendTextbox(new TargettedTextBox
-                {
-                    slide = id,
-                    author = me,
-                    privacy = "private",
-                    target = "notepad",
-                    box = newText
-                });
+                (id,me,"notepad","private",newText));
             }
             wire.SneakOutOf(privateRoom);
         }

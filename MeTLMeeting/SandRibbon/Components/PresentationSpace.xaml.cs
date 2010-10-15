@@ -25,6 +25,7 @@ using System.Windows.Automation.Provider;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbon.Providers;
 using SandRibbon.Components.Canvas;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {
@@ -40,7 +41,7 @@ namespace SandRibbon.Components
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
+            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.CreateThumbnail.RegisterCommand(new DelegateCommand<int>(CreateThumbnail));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
@@ -58,20 +59,15 @@ namespace SandRibbon.Components
             marquee.Width = this.ActualWidth;
             marquee.Height = this.ActualHeight;
 
-            var setup = new LiveWindowSetup
-                {
-                    frame = marquee,
-                    origin = origin,
-                    target = new Point(0, 0),
-                    snapshotAtTimeOfCreation = ResourceUploader.uploadResourceToPath(
+            var setup = new LiveWindowSetup(Globals.location.currentSlide,Globals.me,
+                    stack,
+                marquee,origin,new Point(0,0),
+
+                ResourceUploader.uploadResourceToPath(
                         toByteArray(this, marquee, origin),
                         "Resource/" + Globals.location.currentSlide.ToString(),
                         "quizSnapshot.png",
-                        false),
-                    author = Globals.me,
-                    slide = Globals.location.currentSlide,
-                    visualSource = stack
-                };
+                        false));
 
             var view = new Rect(setup.origin, new Size(setup.frame.Width, setup.frame.Height));
             var liveWindow = new Rectangle
@@ -214,7 +210,7 @@ namespace SandRibbon.Components
             bitmap.Render(dv);
             return bitmap;
         }
-        private void PreParserAvailable(PreParser parser)
+        private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
             stack.handwriting.ReceiveStrokes(parser.ink);
             stack.images.ReceiveImages(parser.images.Values);
@@ -222,7 +218,7 @@ namespace SandRibbon.Components
                 stack.text.doText(text);
             foreach (var video in parser.videos)
             {
-                var srVideo = ((TargettedVideo)video.Value).video;
+                var srVideo = ((MeTLLib.DataTypes.TargettedVideo)video.Value).video;
                 srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
                 srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
                 srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
@@ -416,18 +412,11 @@ namespace SandRibbon.Components
                 System.Windows.Controls.Canvas.GetLeft(marquee),
                 System.Windows.Controls.Canvas.GetTop(marquee));
             Commands.SendLiveWindow.Execute(new LiveWindowSetup
-                                    {
-                                        frame = marquee,
-                                        origin = origin,
-                                        target = new Point(0, 0),
-                                        snapshotAtTimeOfCreation = ResourceUploader.uploadResourceToPath(
+            (Globals.slide,Globals.me,marquee,origin,new Point(0,0),ResourceUploader.uploadResourceToPath(
                                             toByteArray(this, marquee, origin),
                                             "Resource/" + Globals.slide.ToString(),
                                             "quizSnapshot.png",
-                                            false),
-                                        author = Globals.me,
-                                        slide = Globals.slide
-                                    });
+                                            false)));
         }
         private static byte[] toByteArray(Visual adornee, FrameworkElement marquee, Point origin)
         {
@@ -572,7 +561,7 @@ namespace SandRibbon.Components
         }
         public string Value
         {
-            get { return Permissions.InferredTypeOf(Globals.conversationDetails.Permissions).Label; }
+            get { return MeTLLib.DataTypes.Permissions.InferredTypeOf(Globals.conversationDetails.Permissions).Label; }
         }
         public void SetValue(string value)
         {

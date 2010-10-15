@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Utils.Connection
 {
@@ -16,13 +17,13 @@ namespace SandRibbon.Utils.Connection
         public Dictionary<string, TargettedVideo> videos = new Dictionary<string, TargettedVideo>();
         public Dictionary<string, TargettedAutoShape> autoshapes = new Dictionary<string, TargettedAutoShape>();
         public List<TargettedStroke> ink = new List<TargettedStroke>();
-        public List<QuizQuestion> quizzes = new List<QuizQuestion>();
+        public List<MeTLLib.DataTypes.QuizQuestion> quizzes = new List<MeTLLib.DataTypes.QuizQuestion>();
         public List<TargettedFile> files = new List<TargettedFile>();
         public List<TargettedSubmission> submissions = new List<TargettedSubmission>();
-        public List<QuizAnswer> quizAnswers = new List<QuizAnswer>();
+        public List<MeTLLib.DataTypes.QuizAnswer> quizAnswers = new List<MeTLLib.DataTypes.QuizAnswer>();
         public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
-        public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
+        public Dictionary<string, MeTLLib.DataTypes.LiveWindowSetup> liveWindows = new Dictionary<string, MeTLLib.DataTypes.LiveWindowSetup>();
         public PreParser(int slide):base()
         {
             if (this.location == null)
@@ -107,7 +108,7 @@ namespace SandRibbon.Utils.Connection
         {
             submissions.Add(submission);
         }
-        public override void actOnDirtyImageReceived(SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyImage image)
+        public override void actOnDirtyImageReceived(MeTLLib.DataTypes.MeTLStanzas.DirtyImage image)
         {
             if(images.ContainsKey(image.element.identifier))
                 images.Remove(image.element.identifier);
@@ -154,11 +155,11 @@ namespace SandRibbon.Utils.Connection
         {
             ink.Add(stroke);
         }
-        public override void actOnQuizReceived(QuizQuestion quizDetails)
+        public override void actOnQuizReceived(MeTLLib.DataTypes.QuizQuestion quizDetails)
         {
             quizzes.Add(quizDetails);
         }
-        public override void actOnQuizAnswerReceived(QuizAnswer answer)
+        public override void actOnQuizAnswerReceived(MeTLLib.DataTypes.QuizAnswer answer)
         {
             quizAnswers.Add(answer);
         }
@@ -173,7 +174,7 @@ namespace SandRibbon.Utils.Connection
                 Logger.Log("Null reference in collecting text from preparser");
             }
         }
-        public override void actOnLiveWindowReceived(LiveWindowSetup window)
+        public override void actOnLiveWindowReceived(MeTLLib.DataTypes.LiveWindowSetup window)
         {
             liveWindows[window.snapshotAtTimeOfCreation] = window;
         }

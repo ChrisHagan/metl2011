@@ -15,6 +15,7 @@ using System.IO;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbonObjects;
 using SandRibbon.Providers;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {

@@ -106,6 +106,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
+      <Project>{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}</Project>
+      <Name>MeTLLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SandRibbonObjects\SandRibbonObjects.csproj">
       <Project>{87F30CE0-8265-4934-8E1E-CF90B26B2562}</Project>
       <Name>SandRibbonObjects</Name>

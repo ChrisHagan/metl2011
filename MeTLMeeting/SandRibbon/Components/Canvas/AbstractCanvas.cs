@@ -16,12 +16,13 @@ using SandRibbonObjects;
 using SandRibbonInterop;
 using System.Windows.Media;
 using SandRibbon.Components.Sandpit;
-using SandRibbonInterop.MeTLStanzas;
+//using SandRibbonInterop.MeTLStanzas;
 using SandRibbon.Components.Utility;
 using System.Windows.Ink;
 using Point = System.Windows.Point;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -182,17 +183,9 @@ namespace SandRibbon.Components.Canvas
         public void DoWithCurrentSelection(Action<SelectedIdentity> todo)
         {
             foreach (var stroke in GetSelectedStrokes())
-                todo(new SelectedIdentity
-                {
-                    id = stroke.startingSum().ToString(),
-                    target = this.target
-                });
+                todo(new SelectedIdentity(stroke.startingSum().ToString(),this.target));
             foreach (var element in GetSelectedElements())
-                todo(new SelectedIdentity
-                {
-                    id = (string)((FrameworkElement)element).Tag,
-                    target = this.target
-                });
+                todo(new SelectedIdentity((string)((FrameworkElement)element).Tag,this.target));
         }
         public Rect GetContentBounds()
         {
@@ -281,7 +274,7 @@ namespace SandRibbon.Components.Canvas
         {
             try
             {
-                return Permissions.InferredTypeOf(Globals.conversationDetails.Permissions) == Permissions.MEETING_PERMISSIONS;
+                return MeTLLib.DataTypes.Permissions.InferredTypeOf(Globals.conversationDetails.Permissions) == MeTLLib.DataTypes.Permissions.MEETING_PERMISSIONS;
             }
             catch (NotSetException)
             {

@@ -16,6 +16,7 @@ using SandRibbon.Providers;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -91,13 +92,13 @@ namespace SandRibbon.Components.Submissions
             viewSubmission.Visibility = Visibility.Collapsed;
 
         }
-        private void receiveSubmission(TargettedSubmission submission)
+        private void receiveSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
             if(!IHaveThisSubmission(submission))
                 submissionList.Add(submission);
         }
 
-        private bool IHaveThisSubmission(TargettedSubmission submission)
+        private bool IHaveThisSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
             if (submissionList.Where(s => s.time == submission.time && s.author == submission.author && s.url == submission.url).ToList().Count > 0)
                 return true;
@@ -113,13 +114,7 @@ namespace SandRibbon.Components.Submissions
                                                                  
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  Commands.SendScreenshotSubmission.Execute(new TargettedSubmission
-                                                                                  {
-                                                                                      author = Globals.me,
-                                                                                      url = hostedFileName,
-                                                                                      slide = Globals.slide,
-                                                                                      time = time 
-                                                                                  });
-
+                                 (Globals.location.currentSlide,Globals.me,"submission","public",hostedFileName,time));
                                 MessageBox.Show("Submission sent to " + Globals.conversationDetails.Author);
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);

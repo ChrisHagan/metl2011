@@ -20,6 +20,7 @@ using SandRibbonObjects;
 using System.Threading;
 using SandRibbonInterop;
 using SandRibbon.Utils;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components.Sandpit
 {
@@ -40,7 +41,7 @@ namespace SandRibbon.Components.Sandpit
         {
             InitializeComponent();
             moveTo(NO_BOARD);
-            Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(_nothing=>{
+            /*Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(arg=>{
                 Commands.HideConversationSearchBox.Execute(null);
                 Commands.ToggleFriendsVisibility.Execute(null);
                 Commands.ChangeTab.Execute("Home");
@@ -58,7 +59,7 @@ namespace SandRibbon.Components.Sandpit
                             roomJid = BoardManager.DEFAULT_CONVERSATION.Slides[i].id
                         });
                 }
-            }));
+            }));*/
             Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.BoardMove>(SendMoveBoardToSlide));
             Commands.CloseBoardManager.RegisterCommand(new DelegateCommand<object>(
                 _obj => Commands.ToggleFriendsVisibility.Execute(null)
@@ -129,7 +130,7 @@ namespace SandRibbon.Components.Sandpit
                             targetSlide);
                         Commands.JoinConversation.UnregisterCommand(onConversationJoined);
                     });
-                    var desiredConversation = Slide.conversationFor(targetSlide).ToString();
+                    var desiredConversation = MeTLLib.DataTypes.Slide.conversationFor(targetSlide).ToString();
                     try
                     {
                         if (Globals.conversationDetails.Jid != desiredConversation)
@@ -148,16 +149,16 @@ namespace SandRibbon.Components.Sandpit
            Dispatcher.adoptAsync(delegate
             {
 
-                var thumbs = new ObservableCollection<SandRibbonInterop.ThumbnailInformation>();
+                var thumbs = new ObservableCollection<ThumbnailInformation>();
                 foreach (var slide in Globals.slides)
                 {
-                    if (slide.type == Slide.TYPE.SLIDE)
+                    if (slide.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE)
                     {
                         thumbs.Add(
-                            new SandRibbonInterop.ThumbnailInformation
+                            new ThumbnailInformation
                                 {
                                     slideId = slide.id,
-                                    slideNumber = Globals.slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
+                                    slideNumber = Globals.slides.Where(s => s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
                                 });
                     }
                 }

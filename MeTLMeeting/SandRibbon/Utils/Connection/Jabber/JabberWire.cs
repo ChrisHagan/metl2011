@@ -18,6 +18,7 @@ using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using SandRibbon.Components.Sandpit;
 using agsXMPP.protocol.iq.disco;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Utils.Connection
 {/*SPECIAL METL*/
@@ -171,29 +172,29 @@ namespace SandRibbon.Utils.Connection
         {
             this.credentials = credentials;
             setUpWire();
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            //Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(SendSyncMoveTo));
             Commands.SendDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(SendDirtyConversationDetails));
-            Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>((textbox) => SendTextbox(textbox)));
-            Commands.SendDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyText));
-            Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
-            Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(sendDirtyStroke));
-            Commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(SendImage));
-            Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(SendVideo));
-            Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
-            Commands.SendFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(sendFileResource));
-            Commands.SendDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyVideo));
-            Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoShape));
-            Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoShape));
-            Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
-            Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
+            Commands.SendTextBox.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedTextBox>((textbox) => SendTextbox(textbox)));
+            Commands.SendDirtyText.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(SendDirtyText));
+            Commands.SendStroke.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedStroke>(SendStroke));
+            Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(sendDirtyStroke));
+            Commands.SendImage.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedImage>(SendImage));
+            Commands.SendVideo.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedVideo>(SendVideo));
+            Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(SendDirtyImage));
+            Commands.SendFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(sendFileResource));
+            Commands.SendDirtyVideo.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(SendDirtyVideo));
+            Commands.SendAutoShape.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedAutoShape>(SendAutoShape));
+            Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(SendDirtyAutoShape));
+            Commands.SendQuiz.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(SendQuiz));
+            Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(SendQuizAnswer));
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>((_arg) => new Printer().PrintPrivate(location.activeConversation, credentials.name)));
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>((_arg) => new Printer().PrintHandout(location.activeConversation, credentials.name)));
             Commands.SendChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendChat));
-            Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
-            Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
-            Commands.SendWormMove.RegisterCommand(new DelegateCommand<WormMove>(SendWormMove));
+            Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.LiveWindowSetup>(SendLiveWindow));
+            Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(SendDirtyLiveWindow));
+            Commands.SendWormMove.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.WormMove>(SendWormMove));
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
             Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
             Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
@@ -225,13 +226,13 @@ namespace SandRibbon.Utils.Connection
                             currentRooms.Add(name);
                         }
                     }
-                    var populatedConversations = new List<ConversationDetails>();
-                    var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+                    var populatedConversations = new List<MeTLLib.DataTypes.ConversationDetails>();
+                    var conversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
                     int dummy;
                     var conversationJids = currentRooms.Where(r => Int32.TryParse(r, out dummy))
                         .Select(r => Int32.Parse(r))
-                        .Where(r => Slide.conversationFor(r) == r).Distinct().Select(r => r.ToString());
-                    foreach (ConversationDetails conversation in conversations.Where(c => conversationJids.Contains(c.Jid)))
+                        .Where(r => MeTLLib.DataTypes.Slide.conversationFor(r) == r).Distinct().Select(r => r.ToString());
+                    foreach (MeTLLib.DataTypes.ConversationDetails conversation in conversations.Where(c => conversationJids.Contains(c.Jid)))
                     {
                         var discoOccupants = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
                         discoOccupants.To = new Jid(conversation.Jid.ToString() + "@" + Constants.JabberWire.MUC);
@@ -276,17 +277,17 @@ namespace SandRibbon.Utils.Connection
         {
             return new Jid(username + "@" + Constants.JabberWire.SERVER);
         }
-        private void SendWormMove(WormMove move)
+        private void SendWormMove(MeTLLib.DataTypes.WormMove move)
         {
             send(credentials.name, string.Format("{0} {1}", WORM, move.direction));
         }
-        public void SendLiveWindow(LiveWindowSetup window)
+        public void SendLiveWindow(MeTLLib.DataTypes.LiveWindowSetup window)
         {
-            stanza(new MeTLStanzas.LiveWindow(window));
+            stanza(new MeTLLib.DataTypes.MeTLStanzas.LiveWindow(window));
         }
-        public void SendDirtyLiveWindow(TargettedDirtyElement dirty)
+        public void SendDirtyLiveWindow(MeTLLib.DataTypes.TargettedDirtyElement dirty)
         {
-            stanza(new MeTLStanzas.DirtyLiveWindow(dirty));
+            stanza(new MeTLLib.DataTypes.MeTLStanzas.DirtyLiveWindow(dirty));
         }
         public void SendMoveBoardToSlide(BoardMove boardMove)
         {
@@ -574,12 +575,12 @@ namespace SandRibbon.Utils.Connection
         {
             stanza(box.slide.ToString(), new MeTLStanzas.TextBox(box));
         }
-        public void SendQuiz(QuizQuestion parameters)
+        public void SendQuiz(MeTLLib.DataTypes.QuizQuestion parameters)
         {
             var quiz = new MeTLStanzas.Quiz(parameters);
             stanza(Globals.location.activeConversation, quiz);
         }
-        private void SendQuizAnswer(QuizAnswer parameters)
+        private void SendQuizAnswer(MeTLLib.DataTypes.QuizAnswer parameters)
         {
             var quiz = new MeTLStanzas.QuizResponse(parameters);
             stanza(Globals.location.activeConversation, quiz);
@@ -672,11 +673,11 @@ namespace SandRibbon.Utils.Connection
         public virtual void handleGoToSlide(string[] parts)
         {
             var id = Int32.Parse(parts[1]);
-            var desiredConversation = Slide.conversationFor(id).ToString();
+            var desiredConversation = MeTLLib.DataTypes.Slide.conversationFor(id).ToString();
             if (desiredConversation != location.activeConversation)
             {
-                DelegateCommand<ConversationDetails> joinedConversation = null;
-                joinedConversation = new DelegateCommand<ConversationDetails>(
+                DelegateCommand<MeTLLib.DataTypes.ConversationDetails> joinedConversation = null;
+                joinedConversation = new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(
                     _conversationJid =>
                     {
                         Commands.UpdateConversationDetails.UnregisterCommand(joinedConversation);
@@ -753,106 +754,106 @@ namespace SandRibbon.Utils.Connection
                 actOnScreenshotSubmission(submission.parameters);
             foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
                 actOnTextReceived(box.Box);
-            foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
+            foreach (var image in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.Image>(true))
                 actOnImageReceived(image.Img);
-            foreach (var autoshape in message.SelectElements<MeTLStanzas.AutoShape>(true))
+            foreach (var autoshape in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.AutoShape>(true))
                 actOnAutoShapeReceived(autoshape.autoshape);
-            foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
+            foreach (var quiz in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.Quiz>(true))
                 actOnQuizReceived(quiz.parameters);
-            foreach (var quizAnswer in message.SelectElements<MeTLStanzas.QuizResponse>(true))
+            foreach (var quizAnswer in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.QuizResponse>(true))
                 actOnQuizAnswerReceived(quizAnswer.parameters);
-            foreach (var liveWindow in message.SelectElements<MeTLStanzas.LiveWindow>(true))
+            foreach (var liveWindow in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.LiveWindow>(true))
                 actOnLiveWindowReceived(liveWindow.parameters);
-            foreach (var dirtyLiveWindow in message.SelectElements<MeTLStanzas.DirtyLiveWindow>(true))
+            foreach (var dirtyLiveWindow in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.DirtyLiveWindow>(true))
                 actOnDirtyLiveWindowReceived(dirtyLiveWindow.element);
-            foreach (var dirtyText in message.SelectElements<MeTLStanzas.DirtyText>(true))
+            foreach (var dirtyText in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.DirtyText>(true))
                 actOnDirtyTextReceived(dirtyText);
-            foreach (var dirtyInk in message.SelectElements<MeTLStanzas.DirtyInk>(true))
+            foreach (var dirtyInk in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.DirtyInk>(true))
                 actOnDirtyStrokeReceived(dirtyInk);
-            foreach (var dirtyImage in message.SelectElements<MeTLStanzas.DirtyImage>(true))
+            foreach (var dirtyImage in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.DirtyImage>(true))
                 actOnDirtyImageReceived(dirtyImage);
-            foreach (var dirtyAutoShape in message.SelectElements<MeTLStanzas.DirtyAutoshape>(true))
+            foreach (var dirtyAutoShape in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.DirtyAutoshape>(true))
                 actOnDirtyAutoshapeReceived(dirtyAutoShape);
-            foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
+            foreach (var bubble in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.Bubble>(true))
                 actOnBubbleReceived(bubble.context);
-            foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
+            foreach (var video in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.Video>(true))
             {
                 var vid = video.Vid;
                 actOnVideoReceived(vid);
             }
-            foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
+            foreach (var dirtyVideo in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.DirtyVideo>(true))
                 actOnDirtyVideoReceived(dirtyVideo);
-            foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))
+            foreach (var file in message.SelectElements<MeTLLib.DataTypes.MeTLStanzas.FileResource>(true))
                 actOnFileResource(file);
         }
-        public virtual void actOnFileResource(MeTLStanzas.FileResource resource)
+        public virtual void actOnFileResource(MeTLLib.DataTypes.MeTLStanzas.FileResource resource)
         {
             Commands.ReceiveFileResource.Execute(resource.fileResource);
         }
-        public virtual void actOnScreenshotSubmission(TargettedSubmission submission)
+        public virtual void actOnScreenshotSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
             Commands.ReceiveScreenshotSubmission.Execute(submission);
         }
-        public virtual void actOnVideoReceived(TargettedVideo video)
+        public virtual void actOnVideoReceived(MeTLLib.DataTypes.TargettedVideo video)
         {
             Commands.ReceiveVideo.Execute(video);
         }
-        public virtual void actOnBubbleReceived(TargettedBubbleContext bubble)
+        public virtual void actOnBubbleReceived(MeTLLib.DataTypes.TargettedBubbleContext bubble)
         {
             Commands.ReceiveNewBubble.Execute(bubble);
         }
-        public virtual void actOnDirtyAutoshapeReceived(MeTLStanzas.DirtyAutoshape dirtyAutoShape)
+        public virtual void actOnDirtyAutoshapeReceived(MeTLLib.DataTypes.MeTLStanzas.DirtyAutoshape dirtyAutoShape)
         {
             Commands.ReceiveDirtyAutoShape.Execute(dirtyAutoShape.element);
         }
-        public virtual void actOnDirtyVideoReceived(MeTLStanzas.DirtyVideo dirtyVideo)
+        public virtual void actOnDirtyVideoReceived(MeTLLib.DataTypes.MeTLStanzas.DirtyVideo dirtyVideo)
         {
             Commands.ReceiveDirtyVideo.Execute(dirtyVideo.element);
         }
-        public virtual void actOnDirtyImageReceived(MeTLStanzas.DirtyImage dirtyImage)
+        public virtual void actOnDirtyImageReceived(MeTLLib.DataTypes.MeTLStanzas.DirtyImage dirtyImage)
         {
             Commands.ReceiveDirtyImage.Execute(dirtyImage.element);
         }
-        public virtual void actOnDirtyStrokeReceived(MeTLStanzas.DirtyInk element)
+        public virtual void actOnDirtyStrokeReceived(MeTLLib.DataTypes.MeTLStanzas.DirtyInk element)
         {
             Commands.ReceiveDirtyStrokes.Execute(new[] { element.element });
         }
-        public virtual void actOnDirtyTextReceived(MeTLStanzas.DirtyText dirtyText)
+        public virtual void actOnDirtyTextReceived(MeTLLib.DataTypes.MeTLStanzas.DirtyText dirtyText)
         {
             Commands.ReceiveDirtyText.Execute(dirtyText.element);
         }
-        public virtual void actOnImageReceived(TargettedImage image)
+        public virtual void actOnImageReceived(MeTLLib.DataTypes.TargettedImage image)
         {
             Commands.ReceiveImage.Execute(new[] { image });
         }
-        public virtual void actOnAutoShapeReceived(TargettedAutoShape autoshape)
+        public virtual void actOnAutoShapeReceived(MeTLLib.DataTypes.TargettedAutoShape autoshape)
         {
             Commands.ReceiveAutoShape.Execute(autoshape);
         }
-        public virtual void actOnQuizReceived(QuizQuestion quiz)
+        public virtual void actOnQuizReceived(MeTLLib.DataTypes.QuizQuestion quiz)
         {
             Commands.ReceiveQuiz.Execute(quiz);
         }
-        public virtual void actOnQuizAnswerReceived(QuizAnswer answer)
+        public virtual void actOnQuizAnswerReceived(MeTLLib.DataTypes.QuizAnswer answer)
         {
             Commands.ReceiveQuizAnswer.Execute(answer);
         }
-        public virtual void actOnStrokeReceived(TargettedStroke stroke)
+        public virtual void actOnStrokeReceived(MeTLLib.DataTypes.TargettedStroke stroke)
         {
             Commands.ReceiveStroke.Execute(stroke);
         }
-        public virtual void actOnTextReceived(TargettedTextBox box)
+        public virtual void actOnTextReceived(MeTLLib.DataTypes.TargettedTextBox box)
         {
             if (box.target == "chat")
                 Commands.ReceiveChatMessage.Execute(box);
             else
                 Commands.ReceiveTextBox.Execute(box);
         }
-        public virtual void actOnLiveWindowReceived(LiveWindowSetup window)
+        public virtual void actOnLiveWindowReceived(MeTLLib.DataTypes.LiveWindowSetup window)
         {
             Commands.ReceiveLiveWindow.Execute(window);
         }
-        public virtual void actOnDirtyLiveWindowReceived(TargettedDirtyElement element)
+        public virtual void actOnDirtyLiveWindowReceived(MeTLLib.DataTypes.TargettedDirtyElement element)
         {
             Commands.ReceiveDirtyLiveWindow.Execute(element);
         }

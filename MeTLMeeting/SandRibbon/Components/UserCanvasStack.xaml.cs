@@ -15,6 +15,7 @@ using SandRibbonInterop;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using System.Windows.Controls;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {
@@ -28,11 +29,11 @@ namespace SandRibbon.Components
             handwriting.Disable();
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(setTopLayer));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(loggedIn));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
             Commands.SetLayer.Execute("Sketch");
-            Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(ReceiveNewBubble));
+            Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedBubbleContext>(ReceiveNewBubble));
         }
-        public void ReceiveNewBubble(TargettedBubbleContext context)
+        public void ReceiveNewBubble(MeTLLib.DataTypes.TargettedBubbleContext context)
         {
             if (context.target != handwriting.target) return;
             var bubble = getBubble(context);
@@ -46,7 +47,7 @@ namespace SandRibbon.Components
                                         }
                                     });
         }
-        private ThoughtBubble getBubble(TargettedBubbleContext bubble)
+        private ThoughtBubble getBubble(MeTLLib.DataTypes.TargettedBubbleContext bubble)
         {
             try
             {
@@ -97,7 +98,7 @@ namespace SandRibbon.Components
             handwriting.Enable();
             Commands.SetTutorialVisibility.Execute(System.Windows.Visibility.Visible);
         }
-        private void UpdateConversationDetails(ConversationDetails details)
+        private void UpdateConversationDetails(MeTLLib.DataTypes.ConversationDetails details)
         {
             Dispatcher.adoptAsync(delegate
             {
@@ -107,11 +108,11 @@ namespace SandRibbon.Components
                 images.SetCanEdit(editingMode);
             });
         }
-        private bool isAuthor(ConversationDetails details)
+        private bool isAuthor(MeTLLib.DataTypes.ConversationDetails details)
         {
             return details.Author == Globals.me ? true : false;
         }
-        private bool canStudentPublish(ConversationDetails details)
+        private bool canStudentPublish(MeTLLib.DataTypes.ConversationDetails details)
         {
             return details.Permissions.studentCanPublish;
         }

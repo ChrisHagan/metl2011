@@ -14,7 +14,8 @@ using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbonInterop;
-using SandRibbonObjects;
+//using SandRibbonObjects;
+using MeTLLib.DataTypes;
 using SandRibbon.Providers.Structure;
 using Divelements.SandRibbon;
 using SandRibbon.Utils.Connection;
@@ -54,7 +55,7 @@ namespace SandRibbon.Components
                 Commands.UpdateConversationDetails.RegisterCommand(onConversationDetailsReady);
 
             }));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(Display));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(Display));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));

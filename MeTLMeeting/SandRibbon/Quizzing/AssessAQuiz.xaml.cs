@@ -33,7 +33,8 @@ namespace SandRibbon.Quizzing
         {
             Close();
         }
-        public AssessAQuiz(ObservableCollection<QuizAnswer> answers, QuizQuestion question) : this() 
+        public AssessAQuiz(ObservableCollection<MeTLLib.DataTypes.QuizAnswer> answers, MeTLLib.DataTypes.QuizQuestion question)
+            : this() 
         {
             DataContext = question;
             represent(answers, question);
@@ -41,7 +42,7 @@ namespace SandRibbon.Quizzing
                 (sender,args)=>
                     represent(answers, question);
         }
-        private void represent(IEnumerable<QuizAnswer> answers, QuizQuestion question)
+        private void represent(IEnumerable<MeTLLib.DataTypes.QuizAnswer> answers, MeTLLib.DataTypes.QuizQuestion question)
         {
             responseCount.Content = string.Format("({0} responses)",answers.Count());
             resultDisplay.ItemsSource = question.options.Select(o =>{

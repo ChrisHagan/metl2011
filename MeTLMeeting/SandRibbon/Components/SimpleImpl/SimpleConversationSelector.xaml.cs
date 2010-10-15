@@ -11,7 +11,8 @@ using SandRibbon.Automation.AutomationPeers;
 using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbonInterop.Interfaces;
-using SandRibbonObjects;
+//using SandRibbonObjects;
+using MeTLLib.DataTypes;
 using SandRibbon.Utils;
 
 namespace SandRibbon.Components
@@ -22,12 +23,12 @@ namespace SandRibbon.Components
         public SimpleConversationSelector()
         {
             InitializeComponent();
-            this.conversations.ItemsSource = new List<SandRibbonObjects.ConversationDetails>();
+            this.conversations.ItemsSource = new List<ConversationDetails>();
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>((_details) => {}, doesConversationAlreadyExist));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(RedrawList));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(
                 (_arg) => 
-                    List(ConversationDetailsProviderFactory.Provider.ListConversations()),
+                    List(MeTLLib.ClientFactory.Connection().AvailableConversations),
                 details=>
                     rawConversationList.Where(c=>c.Title == details.Title || string.IsNullOrEmpty(details.Title)).Count() == 0));
             RedrawList(null);
@@ -41,7 +42,7 @@ namespace SandRibbon.Components
                 return true;
             if (details.Title.Length == 0) 
                 return true;
-            var currentConversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+            var currentConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
             bool conversationExists = currentConversations.Any(c=> c.Title.Equals(details.Title));
             Logger.Log(currentConversations.Aggregate("", (acc,item)=>acc+" "+item.Title));
             Logger.Log(string.Format("[{0}] already exists: {1}", details.Title, conversationExists));
@@ -49,7 +50,8 @@ namespace SandRibbon.Components
         }
         public void ListStartupConversations()
         {
-            var allConversation = ConversationDetailsProviderFactory.Provider.ListConversations();
+            var allConversation = MeTLLib.ClientFactory.Connection().AvailableConversations;
+                //ConversationDetailsProviderFactory.Provider.ListConversations();
             List(allConversation);
         }
         private void RedrawList(object _unused)
@@ -63,7 +65,7 @@ namespace SandRibbon.Components
                         .Take(6);
                 });
         }
-        public void List(IEnumerable<SandRibbonObjects.ConversationDetails> conversations)
+        public void List(IEnumerable<ConversationDetails> conversations)
         {
             Dispatcher.adopt((Action)delegate
             {
@@ -125,7 +127,7 @@ namespace SandRibbon.Components
             get { return base.Title; }
             set { base.Title = value; }
         }
-        public SeparatorConversation(string label)
+        public SeparatorConversation(string label) : base(label == null?"":label,"","",new List<Slide>(),new Permissions("",false,false,false),"")
         {
             if (label == null) label = String.Empty;
             Title = label;

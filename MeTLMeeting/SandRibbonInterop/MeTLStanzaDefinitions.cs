@@ -15,10 +15,14 @@ using SandRibbonObjects;
 using Constants;
 using System.Collections.Generic;
 using Path=System.IO.Path;
+using MeTLLib.DataTypes;
 
 namespace SandRibbonInterop.MeTLStanzas
 {
-    public class TargettedElement
+    public class Rubbish
+    {
+    }
+    /*public class TargettedElement
     {
         public string author { get; set;}
         public string target;
@@ -76,7 +80,7 @@ namespace SandRibbonInterop.MeTLStanzas
         public SandRibbonInterop.Video videoProperty;
         public MeTLStanzas.Video videoSpecification;
         public string id;
-        public SandRibbonInterop.Video video { 
+        public MeTLLib.DataTypes.Video video { 
             get{
                 var reified = videoSpecification.forceEvaluation();
                 id = reified.tag().id;
@@ -508,7 +512,7 @@ namespace SandRibbonInterop.MeTLStanzas
                 get
                 {
                     var stroke = new Stroke(stringToPoints(GetTag(pointsTag)), new DrawingAttributes { Color = stringToColor(GetTag(colorTag)) });
-                    stroke.tag(new StrokeTag { author = GetTag("author"), privacy = GetTag(privacyTag), startingColor = stroke.DrawingAttributes.Color.ToString()});
+                    stroke.tag(new MeTLLib.DataTypes.StrokeTag { author = GetTag("author"), privacy = GetTag(privacyTag), startingColor = stroke.DrawingAttributes.Color.ToString() });
                     stroke.DrawingAttributes.IsHighlighter = Boolean.Parse(GetTag(highlighterTag));
                     stroke.DrawingAttributes.Width = Double.Parse(GetTag(thicknessTag));
                     stroke.DrawingAttributes.Height = Double.Parse(GetTag(thicknessTag));
@@ -1382,5 +1386,5 @@ namespace SandRibbonInterop.MeTLStanzas
                 this.TagName = TAG;
             }
         }
-    }
+    }*/
 }

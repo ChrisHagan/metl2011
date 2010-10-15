@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    xmlns:SandRibbonInterop="clr-namespace:MeTLLib.DataTypes;assembly=MeTLLib"   
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!--This area is for defining colours and gradients for use on other controls-->
     <core:Int32 x:Key="ToolTipDelay">400</core:Int32>

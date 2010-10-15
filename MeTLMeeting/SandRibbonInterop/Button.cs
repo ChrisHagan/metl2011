@@ -8,6 +8,7 @@ using Divelements.SandRibbon;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using SandRibbon;
+using MeTLLib.DataTypes;
 
 namespace SandRibbonInterop
 {
@@ -101,6 +102,7 @@ namespace SandRibbonInterop
             };
         }
     }
+   /*
     public class AutoShape : System.Windows.Controls.Primitives.Thumb
     {
         public PathGeometry PathData
@@ -143,6 +145,7 @@ namespace SandRibbonInterop
             };
         }
     }
+    */
     public class VideoMirror : System.Windows.Controls.Primitives.Thumb
     {
         public class VideoMirrorInformation
@@ -229,7 +232,7 @@ namespace SandRibbonInterop
             };
         }
     }
-
+/*
     public class Video : System.Windows.Controls.Primitives.Thumb
     {
         public Duration Duration
@@ -340,8 +343,8 @@ namespace SandRibbonInterop
             };
         }
     }
-
-    public class RenderedLiveWindow : System.Windows.Controls.Primitives.Thumb
+    */
+   /* public class RenderedLiveWindow : System.Windows.Controls.Primitives.Thumb
     {
         public System.Windows.Shapes.Rectangle Rectangle
         {
@@ -356,7 +359,8 @@ namespace SandRibbonInterop
         }
         public static readonly DependencyProperty RectangleProperty =
             DependencyProperty.Register("Rectangle", typeof(System.Windows.Shapes.Rectangle), typeof(Thumb), new UIPropertyMetadata(null));
-        /*public System.Double RectHeight
+     */
+    /*public System.Double RectHeight
         {
             get { return (System.Double)((System.Windows.Shapes.Rectangle)GetValue(RectangleProperty)).Height; }
             set
@@ -385,7 +389,8 @@ namespace SandRibbonInterop
         public static readonly DependencyProperty RectWidthProperty =
             DependencyProperty.Register("RectWidth", typeof(System.Double), typeof(System.Windows.Shapes.Rectangle), new UIPropertyMetadata((System.Double)0));
         */
-        public Brush RectFill
+    /*
+    public Brush RectFill
         {
             get { return (Brush)((System.Windows.Shapes.Rectangle)GetValue(RectangleProperty)).Fill; }
             set
@@ -399,7 +404,9 @@ namespace SandRibbonInterop
         }
         public static readonly DependencyProperty RectFillProperty =
             DependencyProperty.Register("RectFill", typeof(Brush), typeof(Thumb), new UIPropertyMetadata(Brushes.Transparent));
-        /*public Brush Background
+      
+      */
+    /*public Brush Background
         {
             get { return (Brush)GetValue(BackgroundProperty); }
             set { SetValue(BackgroundProperty, value); }
@@ -423,7 +430,7 @@ namespace SandRibbonInterop
         public static readonly DependencyProperty StrokeThicknessProperty =
             DependencyProperty.Register("StrokeThickness", typeof(System.Double), typeof(Thumb), new UIPropertyMetadata((System.Double)1));
         */
-
+    /*
         public RenderedLiveWindow()
             : base()
         {
@@ -432,7 +439,7 @@ namespace SandRibbonInterop
             };
         }
     }
-
+    */
 
     public enum ButtonSize
     {

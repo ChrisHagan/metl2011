@@ -11,6 +11,7 @@ using SandRibbon.Providers;
 using SandRibbon.Utils.Connection;
 using SandRibbon.Quizzing;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Components;
 
 [assembly:UIPermission(SecurityAction.RequestMinimum)]
 namespace SandRibbon
@@ -18,6 +19,7 @@ namespace SandRibbon
     public partial class App : Application
     {
         private bool loggingOut = false;
+        public NetworkController controller;
 
         public static string Now(string title){
             var now = SandRibbonObjects.DateTimeFactory.Now();
@@ -41,10 +43,12 @@ namespace SandRibbon
         {
             //This is to ensure that all the static constructors are called.
             base.OnStartup(e);
+            controller = new NetworkController();
             new Worm();
             new Printer();
             new CommandParameterProvider();
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(LogOut));
+            /*
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Ink();
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Quiz();
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Image();
@@ -62,12 +66,14 @@ namespace SandRibbon
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyElement();
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyAutoshape();
             new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyLiveWindow();
+            */
             App.Now("Finished static constructor");
             try
             {
                 new Worm();
                 new Printer();
                 new CommandParameterProvider();
+                /*
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Ink();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.Quiz();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.QuizResponse();
@@ -86,6 +92,7 @@ namespace SandRibbon
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyAutoshape();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.DirtyLiveWindow();
                 new SandRibbonInterop.MeTLStanzas.MeTLStanzas.ScreenshotSubmission();
+                */
                 Console.WriteLine("End ", SandRibbonObjects.DateTimeFactory.Now().ToString());
                 Console.WriteLine(@"End ");
 

@@ -65,10 +65,12 @@ namespace MeTLLib
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
         void MoveTo(int slide);
         void JoinConversation(string conversation);
+        ConversationDetails UpdateConversationDetails(ConversationDetails details);
+        ConversationDetails CreateConversation(ConversationDetails details);
+        ConversationDetails DetailsOf(String jid);
         void SneakInto(string room);
         void SneakOutOf(string room);
         void AsyncRetrieveHistoryOf(int room);
-        void UpdateConversationDetails(ConversationDetails details);
 //        List<ConversationDetails> AvailableConversations;
 //        List<ConversationDetails> CurrentConversations;
 
@@ -359,13 +361,35 @@ namespace MeTLLib
             });
             return finishedParser;
         }
-        public void UpdateConversationDetails(ConversationDetails details)
+        public ConversationDetails UpdateConversationDetails(ConversationDetails details)
         {
+            ConversationDetails cd = null;
             Action work = delegate
             {
-                conversationDetailsProvider.Update(details);
+                cd = conversationDetailsProvider.Update(details);
             };
             tryIfConnected(work);
+            return cd;
+        }
+        public ConversationDetails DetailsOf(string room)
+        {
+            ConversationDetails cd = null;
+            Action work = delegate
+            {
+                cd = conversationDetailsProvider.DetailsOf(room);
+            };
+            tryIfConnected(work);
+            return cd;
+        }
+        public ConversationDetails CreateConversation(ConversationDetails details)
+        {
+            ConversationDetails cd = null;
+            Action work = delegate
+            {
+                cd = conversationDetailsProvider.Create(details);
+            };
+            tryIfConnected(work);
+            return cd;
         }
         public List<ConversationDetails> AvailableConversations
         {
