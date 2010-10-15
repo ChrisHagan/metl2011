@@ -122,7 +122,8 @@ namespace SandRibbon.Components
                 else //conversation deleted
                 {
                     Commands.RequerySuggested();
-                    if (Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
+                    //if (Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
+                    if (Globals.conversationDetails.Jid == details.Jid && this.Visibility == Visibility.Collapsed)
                     {
                         this.Visibility = Visibility.Visible;
                     }

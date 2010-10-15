@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Windows.Navigation;
 using MeTLLib.DataTypes;
 using MeTLLib;
+using SandRibbon.Components.Sandpit;
 
 namespace SandRibbon.Components
 {
@@ -75,23 +76,28 @@ namespace SandRibbon.Components
         {
             e.CanExecute = username != null && username.Text.Length > 0 && password != null && password.Password.Length > 0;
         }
-        private void ConnectWithUnauthenticatedCredentials(MeTLLib.DataTypes.Credentials credentials) {
+        private void ConnectWithUnauthenticatedCredentials(MeTLLib.DataTypes.Credentials credentials)
+        {
             doAttemptAuthentication(credentials.name, credentials.password);
         }
         private void attemptAuthentication(object sender, ExecutedRoutedEventArgs e)
         {
-            doAttemptAuthentication(username.Text,password.Password);
+            doAttemptAuthentication(username.Text, password.Password);
         }
         private void doAttemptAuthentication(string username, string password)
         {
             var connection = ClientFactory.Connection();
             connection.Connect(username, password);
         }
-        private void SetIdentity(object _args) {
+        private void SetIdentity(object _args)
+        {
             Commands.RemoveWindowEffect.Execute(null);
             Commands.ShowConversationSearchBox.Execute(null);
             Dispatcher.adoptAsync(() =>
-                this.Visibility = Visibility.Collapsed);
+                {
+                    Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);
+                    this.Visibility = Visibility.Collapsed;
+                });
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

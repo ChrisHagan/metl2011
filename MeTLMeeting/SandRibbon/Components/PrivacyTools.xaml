@@ -3,21 +3,22 @@
     xmlns:interop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     VerticalAlignment="Top"
     HorizontalAlignment="Right"
     AutomationProperties.AutomationId="privacyTools"
     >
     <!--Margin="0 0 30 0"-->
-    <interop:RibbonPanel>
-        <interop:Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecuteForPrivacyTools" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
-        <interop:CheckBox x:Name="WorkPubliclyButton" Text="Work Publicly" Icon="..\Resources\Ribbon-Public.png" 
+    <dict:RibbonPanel>
+        <dict:Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecuteForPrivacyTools" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
+        <dict:CheckBox x:Name="WorkPubliclyButton" Text="Work Publicly" Icon="..\Resources\Ribbon-Public.png" 
                           ToolTip="{DynamicResource WorkPubliclyToolTip}" ClickMode="Release" Click="CheckBox_Click"
                           IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-        <!--<interop:Button Text="Become Private" Icon="..\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>
-        <interop:Button Text="Become Public" Icon="..\Resources\Ribbon-Public.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public"/>
-        <interop:Button Text="Make selection Public" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="public"/>
-        <interop:Button Text="Make selection Private" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="private"/>
+        <!--<dict:Button Text="Become Private" Icon="..\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>
+        <dict:Button Text="Become Public" Icon="..\Resources\Ribbon-Public.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public"/>
+        <dict:Button Text="Make selection Public" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="public"/>
+        <dict:Button Text="Make selection Private" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="private"/>
     -->
-        </interop:RibbonPanel>
+        </dict:RibbonPanel>
 </UserControl>

@@ -173,7 +173,7 @@ namespace SandRibbon.Utils.Connection
             this.credentials = credentials;
             setUpWire();
             //Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            /*Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(SendSyncMoveTo));
             Commands.SendDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(SendDirtyConversationDetails));
             Commands.SendTextBox.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedTextBox>((textbox) => SendTextbox(textbox)));
@@ -204,6 +204,7 @@ namespace SandRibbon.Utils.Connection
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
             Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
+        */
         }
         private void doGetCurrentClasses()
         {

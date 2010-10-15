@@ -4,20 +4,21 @@
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl" >
     <StackPanel Orientation="Horizontal">
-        <!--<SandRibbonInterop:RibbonPanel Tag="inkModes" x:Name="InkOptions" >
-        </SandRibbonInterop:RibbonPanel>-->
-        <SandRibbonInterop:RibbonPanel x:Name="TextOptions" >
-            <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectTextBoxToolTip}" Icon="\Resources\SelectText.png" Text="Select" Command="api:Commands.SetTextCanvasMode" CommandParameter="Select" />
-            <SandRibbonInterop:RadioButton ToolTip="{StaticResource TextBoxToolTip}" Icon="\Resources\PlaceTextBox.png" Text="Type" Command="api:Commands.SetTextCanvasMode" CommandParameter="None"  IsChecked="True"/>
-        </SandRibbonInterop:RibbonPanel>
-        <SandRibbonInterop:RibbonPanel x:Name="ImageOptions">
-            <SandRibbonInterop:Button ToolTip="{StaticResource AddImageToolTip}"  x:Name="addMedia" Icon="\Resources\AddImage.png" Text="Add Picture" Command="api:Commands.AddImage"/>
-            <!--SandRibbonInterop:Button ToolTip="{StaticResource AddLiveWindowToolTip}" Text="Live View" Icon="\Resources\Ribbon-LivePreviewDraft02.png" Command="{x:Static api:Commands.InitiateDig}" /-->
+        <!--<dict:RibbonPanel Tag="inkModes" x:Name="InkOptions" >
+        </dict:RibbonPanel>-->
+        <dict:RibbonPanel x:Name="TextOptions" >
+            <dict:RadioButton ToolTip="{StaticResource SelectTextBoxToolTip}" Icon="\Resources\SelectText.png" Text="Select" Command="api:Commands.SetTextCanvasMode" CommandParameter="Select" />
+            <dict:RadioButton ToolTip="{StaticResource TextBoxToolTip}" Icon="\Resources\PlaceTextBox.png" Text="Type" Command="api:Commands.SetTextCanvasMode" CommandParameter="None"  IsChecked="True"/>
+        </dict:RibbonPanel>
+        <dict:RibbonPanel x:Name="ImageOptions">
+            <dict:Button ToolTip="{StaticResource AddImageToolTip}"  x:Name="addMedia" Icon="\Resources\AddImage.png" Text="Add Picture" Command="api:Commands.AddImage"/>
+            <!--dict:Button ToolTip="{StaticResource AddLiveWindowToolTip}" Text="Live View" Icon="\Resources\Ribbon-LivePreviewDraft02.png" Command="{x:Static api:Commands.InitiateDig}" /-->
             
-        </SandRibbonInterop:RibbonPanel>
+        </dict:RibbonPanel>
     </StackPanel>
 </UserControl>

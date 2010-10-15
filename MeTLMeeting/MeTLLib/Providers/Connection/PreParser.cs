@@ -27,7 +27,7 @@ namespace MeTLLib.Providers.Connection
         public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents) : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents)
         {
             if (this.location == null)
-                this.location = new Location();
+                this.location = new Location("0",1,new List<int>{1});
             this.location.currentSlide = room;
             this.receiveEvents = receiveEvents;
         }

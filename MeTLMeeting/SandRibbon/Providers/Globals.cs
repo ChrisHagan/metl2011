@@ -53,19 +53,16 @@ namespace SandRibbon.Providers
                 return (PedagogyLevel)Commands.SetPedagogyLevel.lastValue();
             }
         }
-        public static Utils.Connection.JabberWire.Location location
+        public static Location location
         {
             get
             {
                 try
                 {
+                    var loc = MeTLLib.ClientFactory.Connection().location;
+                    if (loc != null) return loc;
                     var conversationDetails = Globals.conversationDetails;
-                    return new SandRibbon.Utils.Connection.JabberWire.Location
-                    {
-                        activeConversation = conversationDetails.Jid,
-                        currentSlide = slide,
-                        availableSlides = conversationDetails.Slides.Select(s => s.id).ToList()
-                    };
+                    return new Location(conversationDetails.Jid, slide, conversationDetails.Slides.Select(s => s.id).ToList());
                 }
                 catch (NotSetException e)
                 {
@@ -95,15 +92,33 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
+                ConversationDetails cd = null;
+                try
+                {
+                    cd = (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
+                }
+                catch (NotSetException e)
+                {
+                    var client = MeTLLib.ClientFactory.Connection();
+                    cd = client.DetailsOf(client.location.activeConversation);
+                }
+                if (cd == null) return new ConversationDetails("", "", "", "", new List<Slide>(), new Permissions("", false, false, false), "");
+                return cd;
             }
         }
         public static MeTLLib.DataTypes.Credentials credentials
         {
             get
             {
-                var credentials = Commands.ConnectWithAuthenticatedCredentials.lastValue();
-                return (MeTLLib.DataTypes.Credentials)credentials;
+                try
+                {
+                    var credentials = Commands.ConnectWithAuthenticatedCredentials.lastValue();
+                    return (MeTLLib.DataTypes.Credentials)credentials;
+                }
+                catch (NotSetException e)
+                {
+                    return new Credentials("", "", new List<AuthorizedGroup>());
+                }
             }
         }
         public static List<MeTLLib.DataTypes.AuthorizedGroup> authorizedGroups
@@ -154,6 +169,14 @@ namespace SandRibbon.Providers
             {
                 return (string)Commands.SetPrivacy.lastValue();
             }
+        }
+        public static Policy policy
+        {
+            get { return new Policy(isAuthor, false); }
+        }
+        public static UserInformation userInformation
+        {
+            get { return new UserInformation(credentials, location, policy); }
         }
     }
 }

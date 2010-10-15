@@ -102,7 +102,7 @@ namespace MeTLLib
             get
             {
                 if (wire != null && wire.location != null) return wire.location;
-                else return null;
+                else return new Location("0", 1, new List<int>{1});
             }
         }
         public string username
@@ -130,7 +130,7 @@ namespace MeTLLib
             var credentials = authorisationProvider.attemptAuthentication(username, password);
             jabberWireFactory.credentials = credentials;
             wire = jabberWireFactory.wire();
-            wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
+            wire.Login(new Location("100",101,new List<int>{101,102,103,104,105,106}));
             Trace.TraceInformation("set up jabberwire");
             Commands.AllStaticCommandsAreRegistered();
             Trace.TraceInformation("Connection state: " + isConnected.ToString());

@@ -49,6 +49,12 @@ namespace MeTLLib.DataTypes
     }
     public class Location
     {
+        public Location(string ActiveConversation, int CurrentSlide, List<int> AvailableSlides)
+        {
+            activeConversation = ActiveConversation;
+            currentSlide = CurrentSlide;
+            availableSlides = AvailableSlides;
+        }
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is Location)) return false;

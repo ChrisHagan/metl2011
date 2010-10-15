@@ -38,7 +38,7 @@ namespace SandRibbon
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
         #endregion
-        public JabberWire.UserInformation userInformation = new JabberWire.UserInformation();
+        //public JabberWire.UserInformation userInformation = new JabberWire.UserInformation();
         private DelegateCommand<string> powerpointProgress;
         private DelegateCommand<string> powerPointFinished;
         private PowerPointLoader loader = new PowerPointLoader();
@@ -68,7 +68,7 @@ namespace SandRibbon
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
             catch (Exception) { }
-            userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
+            Globals.userInformation.policy = new Policy(false,false);
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             //Commands.ConnectWithAuthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithAuthenticatedCredentials));
             Commands.PowerpointFinished.RegisterCommand(new DelegateCommand<object>(UnblockInput));
@@ -358,7 +358,7 @@ namespace SandRibbon
         }
         private void ConnectWithAuthenticatedCredentials(MeTLLib.DataTypes.Credentials credentials)
         {
-            connect(credentials.name, credentials.password, 0, null);
+            //connect(credentials.name, credentials.password, 0, null);
             Commands.AllStaticCommandsAreRegistered();
             Commands.RequerySuggested();
             Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);
@@ -408,8 +408,8 @@ namespace SandRibbon
                         {
                             InputBlocker.Visibility = Visibility.Collapsed;
                             reconnecting = false;
-                            wire.JoinConversation(userInformation.location.activeConversation);
-                            Commands.MoveTo.Execute(userInformation.location.currentSlide);
+                            wire.JoinConversation(Globals.userInformation.location.activeConversation);
+                            Commands.MoveTo.Execute(Globals.userInformation.location.currentSlide);
                         }
                     }
                     catch (Exception e)
@@ -432,8 +432,10 @@ namespace SandRibbon
             ProviderMonitor.HealthCheck(() =>
             {
                 Commands.LoggedIn.Execute(Globals.credentials.name);
+                //var activeConversation = MeTLLib.ClientFactory.Connection().location.activeConversation;
                 //var details = ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation);
-                var details = MeTLLib.ClientFactory.Connection().DetailsOf(Globals.location.activeConversation);
+                var details = Globals.conversationDetails;
+                //MeTLLib.ClientFactory.Connection().DetailsOf(Globals.location.activeConversation);
                 RecentConversationProvider.addRecentConversation(details, Globals.me);
                 if (details.Author == Globals.me)
                     Commands.SetPrivacy.Execute("public");
@@ -457,11 +459,11 @@ namespace SandRibbon
         private string messageFor(ConversationDetails details)
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
-            return string.Format("{3} is in {0}'s \"{1}\", currently in {2} style", details.Author, details.Title, permissionLabel, userInformation.credentials.name);
+            return string.Format("{3} is in {0}'s \"{1}\", currently in {2} style", details.Author, details.Title, permissionLabel, Globals.userInformation.credentials.name);
         }
         private void MoveTo(int slide)
         {
-            if ((userInformation.policy.isAuthor && userInformation.policy.isSynced) || (Globals.synched && userInformation.policy.isAuthor))
+            if ((Globals.userInformation.policy.isAuthor && Globals.userInformation.policy.isSynced) || (Globals.synched && Globals.userInformation.policy.isAuthor))
                 Commands.SendSyncMove.Execute(slide);
             Dispatcher.adoptAsync(delegate
                                      {
@@ -482,7 +484,7 @@ namespace SandRibbon
             {
                 showReconnectingDialog();
                 reconnecting = true;
-                connect(userInformation.credentials.name, userInformation.credentials.password, userInformation.location.currentSlide, userInformation.location.activeConversation);
+                connect(Globals.userInformation.credentials.name, Globals.userInformation.credentials.password, Globals.userInformation.location.currentSlide, Globals.userInformation.location.activeConversation);
             }
         }
         private void showReconnectingDialog()
@@ -522,7 +524,7 @@ namespace SandRibbon
         }
         private void HideTutorial()
         {
-            if (userInformation.location != null && !String.IsNullOrEmpty(userInformation.location.activeConversation))
+            if (Globals.userInformation.location != null && !String.IsNullOrEmpty(Globals.userInformation.location.activeConversation))
                 TutorialLayer.Visibility = Visibility.Collapsed;
         }
 
@@ -577,7 +579,8 @@ namespace SandRibbon
         {
             try
             {
-                if (details.Jid != Globals.location.activeConversation) return;
+                if (String.IsNullOrEmpty(details.Jid) || details.Jid != Globals.conversationDetails.Jid ) return;
+                //if (details.Jid != Globals.location.activeConversation) return;
             }
             catch (NotSetException)
             {
@@ -585,11 +588,11 @@ namespace SandRibbon
             }
             Dispatcher.adoptAsync(delegate
             {
-                userInformation.location.availableSlides = details.Slides.Select(s => s.id).ToList();
+                Globals.userInformation.location.availableSlides = details.Slides.Select(s => s.id).ToList();
                 HideTutorial();
                 UpdateTitle();
-                var isAuthor = (details.Author != null) && details.Author == userInformation.credentials.name;
-                userInformation.policy.isAuthor = isAuthor;
+                var isAuthor = (details.Author != null) && details.Author == Globals.userInformation.credentials.name;
+                Globals.userInformation.policy.isAuthor = isAuthor;
                 Commands.RequerySuggested();
             });
         }
@@ -620,20 +623,20 @@ namespace SandRibbon
         }
         private void connect(string username, string pass, int location, string conversation)
         {
-            if (wire == null)
+         /*   if (wire == null)
             {
-                userInformation.location = new JabberWire.Location { currentSlide = location, activeConversation = conversation };
-                userInformation.credentials = new JabberWire.Credentials { name = username, password = pass };
-                wire = new JabberWire(userInformation.credentials);
-                wire.Login(userInformation.location);
+                Globals.userInformation.location = new Location { currentSlide = location, activeConversation = conversation };
+                Globals.userInformation.credentials = new Credentials { name = username, password = pass };
+                wire = new JabberWire(Globals.userInformation.credentials);
+                wire.Login(Globals.userInformation.location);
             }
             else
             {
-                userInformation.location.activeConversation = conversation;
-                userInformation.location.currentSlide = location;
+                Globals.userInformation.location.activeConversation = conversation;
+                Globals.userInformation.location.currentSlide = location;
                 wire.Reset("Window1");
             }
-            loader.wire = wire;
+            loader.wire = wire;*/
         }
         private void createConversation(object detailsObject)
         {
@@ -643,7 +646,7 @@ namespace SandRibbon
             {
                 if (details.Tag == null)
                     details.Tag = "unTagged";
-                details.Author = userInformation.credentials.name;
+                details.Author = Globals.userInformation.credentials.name;
                 var connection = MeTLLib.ClientFactory.Connection(); 
                 details = connection.CreateConversation(details);
                     //ConversationDetailsProviderFactory.Provider.Create(details);
@@ -667,7 +670,7 @@ namespace SandRibbon
         }
         private void setSync(object _obj)
         {
-            userInformation.policy.isSynced = !userInformation.policy.isSynced;
+            Globals.userInformation.policy.isSynced = !Globals.userInformation.policy.isSynced;
         }
         private void OriginalView(object _unused)
         {
@@ -922,10 +925,10 @@ namespace SandRibbon
         }
         private bool CanSetConversationPermissions(object _style)
         {
-            return details != null && userInformation.credentials.name == details.Author;
+            return details != null && Globals.userInformation.credentials.name == details.Author;
             try
             {
-                return Globals.conversationDetails != null && userInformation.credentials.name == Globals.conversationDetails.Author;
+                return Globals.conversationDetails != null && Globals.userInformation.credentials.name == Globals.conversationDetails.Author;
             }
             catch(NotSetException e)
             {

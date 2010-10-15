@@ -900,7 +900,10 @@ namespace MeTLLib.DataTypes
                     var fileuploadTime = HasTag(TIME) ? GetTag(TIME) : DateTimeFactory.Now().ToString();
                     var filesize = HasTag(SIZE) ? long.Parse(GetTag(SIZE)) : 0;
                     var filename = HasTag(NAME) ? GetTag(NAME) : Path.GetFileNameWithoutExtension(GetTag(URL));
-                    var file = new TargettedFile(Int32.Parse(GetTag(slideTag)),GetTag(authorTag),GetTag(targetTag),GetTag(privacyTag),GetTag(URL),fileuploadTime,filesize,filename);
+                    var slide = HasTag(slideTag) ? GetTag(slideTag) : "0";
+                    var target = HasTag(targetTag) ? GetTag(targetTag) : "";
+                    var privacy = HasTag(privacyTag) ? GetTag(privacyTag) : "public";
+                    var file = new TargettedFile(Int32.Parse(slide),GetTag(authorTag),target,privacy,GetTag(URL),fileuploadTime,filesize,filename);
                     return file;
                 }
                 set

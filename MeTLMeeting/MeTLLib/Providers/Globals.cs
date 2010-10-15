@@ -24,12 +24,7 @@ namespace MeTLLib.Providers
                 try
                 {
                     if (conversationDetails == null) return null;
-                    return new Location
-                    {
-                        activeConversation = conversationDetails.Jid,
-                        currentSlide = slide,
-                        availableSlides = conversationDetails.Slides.Select(s => s.id).ToList()
-                    };
+                    return new Location(conversationDetails.Jid, slide, conversationDetails.Slides.Select(s => s.id).ToList());
                 }
                 catch (NotSetException e)
                 {
@@ -37,22 +32,24 @@ namespace MeTLLib.Providers
                 }
             }
         }
- 
+
         public static List<Slide> slides
         {
             get
             {
                 if (conversationDetails == null) return new List<Slide>();
-                return conversationDetails.Slides; 
+                return conversationDetails.Slides;
             }
         }
         public static ConversationDetails conversationDetails
         {
-            get;set;
+            get;
+            set;
         }
         public static Credentials credentials
         {
-            get; set;
+            get;
+            set;
         }
         public static List<AuthorizedGroup> authorizedGroups
         {
@@ -88,7 +85,8 @@ namespace MeTLLib.Providers
         }
         public static int slide
         {
-            get;set;
+            get;
+            set;
         }
         public static string me
         {

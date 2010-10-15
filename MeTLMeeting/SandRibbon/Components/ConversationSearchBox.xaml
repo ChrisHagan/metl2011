@@ -6,6 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:interop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop">
     <UserControl.Resources>
         <core:Double x:Key="browsePane">0.25</core:Double>
@@ -13,8 +14,8 @@
         <core:Double x:Key="searchBoxMargin">0.05</core:Double>
         <DataTemplate x:Key="authorOptions">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <interop:Button Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Click="deleteConversation"/>
-                <interop:Button Icon="\Resources\Slide_Not_Loaded.png" Text="Edit" InternalButtonSize="Medium" Click="editConversation" />
+                <dict:Button Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Click="deleteConversation"/>
+                <dict:Button Icon="\Resources\Slide_Not_Loaded.png" Text="Edit" InternalButtonSize="Medium" Click="editConversation" />
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="nonauthorOptions" />

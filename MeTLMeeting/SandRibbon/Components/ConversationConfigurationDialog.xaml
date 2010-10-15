@@ -3,7 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:interop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
-    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:my="clr-namespace:SandRibbon"
     Width="480"
     Height="425"
@@ -39,7 +40,7 @@
                                 <Label Content="Create" FontWeight="Bold"  Background="White"/>
                                 <StackPanel Background="White">
                                     <Label Content="Blank" HorizontalAlignment="Center"  />
-                                    <interop:RadioButton  GroupName="conversationType" x:Name="WhiteboardListBoxItem" Icon="..\Resources\Whiteboard.png" Text="Whiteboard"  FontWeight="Bold" Tag="whiteboard" Checked="selectChoice" ToolTip="{StaticResource BlankWhiteboardConversationTypeToolTip}"/>
+                                    <dict:RadioButton  GroupName="conversationType" x:Name="WhiteboardListBoxItem" Icon="..\Resources\Whiteboard.png" Text="Whiteboard"  FontWeight="Bold" Tag="whiteboard" Checked="selectChoice" ToolTip="{StaticResource BlankWhiteboardConversationTypeToolTip}"/>
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel  >
@@ -49,13 +50,13 @@
                                 <StackPanel Orientation="Horizontal">
                                     <StackPanel Background="White">
                                         <Label HorizontalAlignment="Center" Content="Approximate Layout"/>
-                                        <interop:RadioButton GroupName="conversationType" Icon="..\Resources\FlexiblePowerpoint.png" x:Name="EditablePowerpointListBoxItem" Tag="editable" Text="Editable" FontWeight="Bold" Checked="selectChoice" ToolTip="{StaticResource EditablePowerpointConversationTypeToolTip}"/>
+                                        <dict:RadioButton GroupName="conversationType" Icon="..\Resources\FlexiblePowerpoint.png" x:Name="EditablePowerpointListBoxItem" Tag="editable" Text="Editable" FontWeight="Bold" Checked="selectChoice" ToolTip="{StaticResource EditablePowerpointConversationTypeToolTip}"/>
                                     </StackPanel>
                                     <StackPanel Background="White">
                                         <Label HorizontalAlignment="Center" Content="True Layout"/>
                                         <StackPanel Orientation="Horizontal">
-                                            <interop:RadioButton GroupName="conversationType" Icon="..\Resources\ExactPowerpoint.png" x:Name="LowQualityPowerpointListBoxItem" Tag="lowquality" Text="Low Quality" FontWeight="Bold"  Checked="selectChoice" ToolTip="{StaticResource ExactPowerpointConversationTypeToolTip}"/>
-                                            <interop:RadioButton GroupName="conversationType" Icon="..\Resources\ExactPowerpoint.png" x:Name="HighQualityPowerpointListBoxItem" Tag="highquality" Text="High Quality" FontWeight="Bold"  Checked="selectChoice" ToolTip="{StaticResource ExactPowerpointConversationTypeToolTip}"/>
+                                            <dict:RadioButton GroupName="conversationType" Icon="..\Resources\ExactPowerpoint.png" x:Name="LowQualityPowerpointListBoxItem" Tag="lowquality" Text="Low Quality" FontWeight="Bold"  Checked="selectChoice" ToolTip="{StaticResource ExactPowerpointConversationTypeToolTip}"/>
+                                            <dict:RadioButton GroupName="conversationType" Icon="..\Resources\ExactPowerpoint.png" x:Name="HighQualityPowerpointListBoxItem" Tag="highquality" Text="High Quality" FontWeight="Bold"  Checked="selectChoice" ToolTip="{StaticResource ExactPowerpointConversationTypeToolTip}"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </StackPanel>

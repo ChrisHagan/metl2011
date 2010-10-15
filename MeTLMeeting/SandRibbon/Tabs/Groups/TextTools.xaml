@@ -5,15 +5,16 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:my="clr-namespace:SandRibbon"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     Loaded="setUpTools">
     <StackPanel Orientation="Horizontal" x:Name="LayoutRoot">
-        <SandRibbonInterop:RibbonPanel>
-            <SandRibbonInterop:Button ToolTip="{StaticResource CutToolTip}" Icon="..\..\Resources\cut.png" Text="Cut" Command="ApplicationCommands.Cut" InternalButtonSize="Small"/>
-            <SandRibbonInterop:Button ToolTip="{StaticResource PasteToolTip}" Icon="..\..\Resources\paste.png" Text="Paste" Command="ApplicationCommands.Paste" InternalButtonSize="Small"/>
-            <SandRibbonInterop:Button ToolTip="{StaticResource CopyToolTip}" Icon="..\..\Resources\copy.png" Text="Copy" Command="ApplicationCommands.Copy" InternalButtonSize="Small"/>
-        </SandRibbonInterop:RibbonPanel>
+        <dict:RibbonPanel>
+            <dict:Button ToolTip="{StaticResource CutToolTip}" Icon="..\..\Resources\cut.png" Text="Cut" Command="ApplicationCommands.Cut" InternalButtonSize="Small"/>
+            <dict:Button ToolTip="{StaticResource PasteToolTip}" Icon="..\..\Resources\paste.png" Text="Paste" Command="ApplicationCommands.Paste" InternalButtonSize="Small"/>
+            <dict:Button ToolTip="{StaticResource CopyToolTip}" Icon="..\..\Resources\copy.png" Text="Copy" Command="ApplicationCommands.Copy" InternalButtonSize="Small"/>
+        </dict:RibbonPanel>
         <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
         <StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">
@@ -21,14 +22,14 @@
                 <ComboBox ToolTip="{StaticResource FontSizeToolTip}" Text="Font size" Width="40" x:Name="fontSize"  SelectionChanged="fontSizeSelected" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
             </StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">
-                <SandRibbonInterop:CheckBox x:Name="TextBoldButton" Icon="..\..\Resources\bold.png" Text="B" ToolTip="{StaticResource BoldToolTip}" Command ="{x:Static api:Commands.ToggleBold}" InternalButtonSize="Small"/>
-                <SandRibbonInterop:CheckBox x:Name="TextItalicButton" Icon="..\..\Resources\italic.png" Text="I" ToolTip="{StaticResource ItalicToolTip}" Command ="{x:Static api:Commands.ToggleItalic}" InternalButtonSize="Small"/>
-                <SandRibbonInterop:CheckBox x:Name="TextUnderlineButton" Icon="..\..\Resources\underline.png" Text="U" ToolTip="{StaticResource UnderlineToolTip}" Command ="{x:Static api:Commands.ToggleUnderline}" InternalButtonSize="Small"/>
-                <SandRibbonInterop:CheckBox x:Name="TextStrikethroughButton" Icon="..\..\Resources\strikethrough.png" Text="S" ToolTip="{StaticResource StrikeThroughToolTip}" Command ="{x:Static api:Commands.ToggleStrikethrough}" InternalButtonSize="Small"/>
-                <SandRibbonInterop:Button ToolTip="{StaticResource ClearFormattingToolTip}" Icon="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Text="Clear Formatting" Command="{x:Static api:Commands.RestoreTextDefaults}" InternalButtonSize="Small"/>
+                <dict:CheckBox x:Name="TextBoldButton" Icon="..\..\Resources\bold.png" Text="B" ToolTip="{StaticResource BoldToolTip}" Command ="{x:Static api:Commands.ToggleBold}" InternalButtonSize="Small"/>
+                <dict:CheckBox x:Name="TextItalicButton" Icon="..\..\Resources\italic.png" Text="I" ToolTip="{StaticResource ItalicToolTip}" Command ="{x:Static api:Commands.ToggleItalic}" InternalButtonSize="Small"/>
+                <dict:CheckBox x:Name="TextUnderlineButton" Icon="..\..\Resources\underline.png" Text="U" ToolTip="{StaticResource UnderlineToolTip}" Command ="{x:Static api:Commands.ToggleUnderline}" InternalButtonSize="Small"/>
+                <dict:CheckBox x:Name="TextStrikethroughButton" Icon="..\..\Resources\strikethrough.png" Text="S" ToolTip="{StaticResource StrikeThroughToolTip}" Command ="{x:Static api:Commands.ToggleStrikethrough}" InternalButtonSize="Small"/>
+                <dict:Button ToolTip="{StaticResource ClearFormattingToolTip}" Icon="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Text="Clear Formatting" Command="{x:Static api:Commands.RestoreTextDefaults}" InternalButtonSize="Small"/>
                 <Border x:Name="ColourPickerBorder" BorderBrush="Black" BorderThickness="2">
-                    <SandRibbonInterop:DoubleButton IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" Click="ShowColourSelector" x:Name="FontColourButton" Icon="..\..\Resources\changeFontColour.png" Text="C" ToolTip="{StaticResource FontColourToolTip}" InternalButtonSize="Small">
-                        <SandRibbonInterop:DoubleButton.Popup>
+                    <dict:DoubleButton IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" Click="ShowColourSelector" x:Name="FontColourButton" Icon="..\..\Resources\changeFontColour.png" Text="C" ToolTip="{StaticResource FontColourToolTip}" InternalButtonSize="Small">
+                        <dict:DoubleButton.Popup>
                             <Border x:Name="ColourSelection"  Background="{StaticResource BackgroundBlueGradient}" Visibility="Visible" Padding="2">
                                 <StackPanel>
                                     <Label Content="Font Colour"/>
@@ -41,14 +42,14 @@
                                     </sr:ColorPicker>
                                 </StackPanel>
                             </Border>
-                        </SandRibbonInterop:DoubleButton.Popup>
-                    </SandRibbonInterop:DoubleButton>
+                        </dict:DoubleButton.Popup>
+                    </dict:DoubleButton>
                 </Border>
             </StackPanel>
         </StackPanel>
-        <SandRibbonInterop:RibbonPanel >
-            <SandRibbonInterop:Button ToolTip="{StaticResource IncreaseFontSizeToolTip}" Icon="..\..\Resources\increaseFontSize.png" x:Name="IncreaseFontSizeButton" Text="Increase" Click="increaseFont" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-            <SandRibbonInterop:Button ToolTip="{StaticResource DecreaseFontSizeToolTip}" Icon="..\..\Resources\decreaseFontSize.png" x:Name="DecreaseFontSizeButton" Text="Decrease" Click="decreaseFont" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-        </SandRibbonInterop:RibbonPanel>
+        <dict:RibbonPanel >
+            <dict:Button ToolTip="{StaticResource IncreaseFontSizeToolTip}" Icon="..\..\Resources\increaseFontSize.png" x:Name="IncreaseFontSizeButton" Text="Increase" Click="increaseFont" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+            <dict:Button ToolTip="{StaticResource DecreaseFontSizeToolTip}" Icon="..\..\Resources\decreaseFontSize.png" x:Name="DecreaseFontSizeButton" Text="Decrease" Click="decreaseFont" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+        </dict:RibbonPanel>
     </StackPanel>
 </UserControl>

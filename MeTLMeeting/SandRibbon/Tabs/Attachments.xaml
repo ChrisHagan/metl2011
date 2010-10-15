@@ -1,7 +1,8 @@
 ﻿<sr:RibbonTab sr:KeyboardAccess.Keys="A" Text="Attachments"
     x:Class="SandRibbon.Tabs.Attachments"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
@@ -11,7 +12,7 @@
         <core:String x:Key="preferredDisplayIndex">7</core:String>
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup Header="Uploads">
-        <SandRibbonInterop:Button ToolTip="{StaticResource UploadFileToolTip}"  x:Name="fileUpload" Icon="\Resources\AddImage.png" Text="Upload file" Command="api:Commands.FileUpload"/>
+        <dict:Button ToolTip="{StaticResource UploadFileToolTip}"  x:Name="fileUpload" Icon="\Resources\AddImage.png" Text="Upload file" Command="api:Commands.FileUpload"/>
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Downloadable Items">
         <Label VerticalAlignment="Center" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"

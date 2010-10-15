@@ -2,7 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
+                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl"
     xmlns:components="clr-namespace:SandRibbon.Components"
@@ -16,18 +17,18 @@
         <sr:GroupVariant Variant="Medium" Priority="3"/>
         <sr:GroupVariant Variant="Collapsed" Priority="7"/>
     </sr:RibbonGroup.Variants>
-    <SandRibbonInterop:RibbonPanel>
-        <SandRibbonInterop:RadioButton x:Name="View" Icon="\Resources\HandToolWide.png" Text="Move" Command="api:Commands.SetLayer" CommandParameter="View" ToolTip="{DynamicResource GrabMoveToolTip}"/>
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}"/>
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}"/>
+    <dict:RibbonPanel>
+        <dict:RadioButton x:Name="View" Icon="\Resources\HandToolWide.png" Text="Move" Command="api:Commands.SetLayer" CommandParameter="View" ToolTip="{DynamicResource GrabMoveToolTip}"/>
+        <dict:Button Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}"/>
+        <dict:Button Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}"/>
         <Grid>
-        <SandRibbonInterop:RadioButton x:Name="GrabZoomButton" Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="\Resources\GrabZoom.png" ToolTip="{DynamicResource GrabZoomToolTip}"/>
+        <dict:RadioButton x:Name="GrabZoomButton" Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="\Resources\GrabZoom.png" ToolTip="{DynamicResource GrabZoomToolTip}"/>
         </Grid>
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.OriginalView}" Text="Show slide" Icon="\Resources\ShowOriginal.png" ToolTip="{DynamicResource ShowSlideToolTip}"/>
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToView}" Icon="\Resources\ShowAll.png" Text="Show all" ToolTip="{DynamicResource FitToViewToolTip}"/>
+        <dict:Button Command="{x:Static api:Commands.OriginalView}" Text="Show slide" Icon="\Resources\ShowOriginal.png" ToolTip="{DynamicResource ShowSlideToolTip}"/>
+        <dict:Button Command="{x:Static api:Commands.FitToView}" Icon="\Resources\ShowAll.png" Text="Show all" ToolTip="{DynamicResource FitToViewToolTip}"/>
         <!--
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.FitToPageWidth}" Icon="\Resources\FitToPage.png" Text="Fit to page" ToolTip="{DynamicResource FitToPageToolTip}"/>
+        <dict:Button Command="{x:Static api:Commands.FitToPageWidth}" Icon="\Resources\FitToPage.png" Text="Fit to page" ToolTip="{DynamicResource FitToPageToolTip}"/>
         -->
-        <SandRibbonInterop:Button Command="{x:Static api:Commands.ExtendCanvasBothWays}" Text="Extend Canvas" Icon="\Resources\ExtendCanvas.png" ToolTip="{DynamicResource ExtendCanvasToolTip}"/>
-    </SandRibbonInterop:RibbonPanel>
+        <dict:Button Command="{x:Static api:Commands.ExtendCanvasBothWays}" Text="Extend Canvas" Icon="\Resources\ExtendCanvas.png" ToolTip="{DynamicResource ExtendCanvasToolTip}"/>
+    </dict:RibbonPanel>
 </sr:RibbonGroup>           

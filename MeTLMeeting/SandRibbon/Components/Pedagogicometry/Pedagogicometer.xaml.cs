@@ -14,10 +14,14 @@ using System.Windows.Shapes;
 using SandRibbon.Components.Pedagogicometry;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
+using System.Windows.Threading;
+using SandRibbon.Components.Utility;
+using SandRibbon;
 
 namespace SandRibbon.Components.Sandpit
 {
-    public interface PedagogicallyVariable {
+    public interface PedagogicallyVariable
+    {
         bool CanSetLevel(PedagogyLevel level);
         bool SetLevel(PedagogyLevel level);
     }
@@ -38,24 +42,27 @@ namespace SandRibbon.Components.Sandpit
                 new PedagogyLevel{ code = i++, label= "Crowdsourced Conversation" }};
             pedagogies.ItemsSource = allPedagogies;
         }
-        public static void SetDefaultPedagogyLevel() 
+        public static void SetDefaultPedagogyLevel()
         {
             instance.pedagogies.SelectedItem = allPedagogies.ElementAt(2);
         }
-        public static void SetPedagogyLevel(PedagogyLevel level) 
+        public static void SetPedagogyLevel(PedagogyLevel level)
         {
             if (Commands.SetPedagogyLevel.CanExecute(level))
+            {
                 instance.pedagogies.SelectedItem = level;
+            }
         }
-        private static void doSetPedagogyLevel(PedagogyLevel level) 
-        { 
+        private static void doSetPedagogyLevel(PedagogyLevel level)
+        {
             Commands.SetPedagogyLevel.Execute(level);
         }
-        public static void SetPedagogyLevel(int code) 
+        public static void SetPedagogyLevel(int code)
         {
-            SetPedagogyLevel(level(code));     
+            SetPedagogyLevel(level(code));
         }
-        public static PedagogyLevel level(int level) {
+        public static PedagogyLevel level(int level)
+        {
             return allPedagogies.Where(p => p.code == level).Single();
         }
         private void pedagogies_SelectionChanged(object sender, SelectionChangedEventArgs e)

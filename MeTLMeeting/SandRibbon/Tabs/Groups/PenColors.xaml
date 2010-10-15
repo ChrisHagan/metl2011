@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:my="clr-namespace:SandRibbon"
     xmlns:groups="clr-namespace:SandRibbon.Tabs.Groups"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
@@ -26,23 +27,24 @@
                 </DrawingBrush.Drawing>
             </DrawingBrush>
         </StackPanel.Resources>
-        <SandRibbonInterop:RibbonPanel>
-            <SandRibbonInterop:RadioButton x:Name="Draw" Visibility="Collapsed" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
-            <SandRibbonInterop:RadioButton ToolTip="{StaticResource SelectToolTip}"  Icon="\Resources\SelectInk.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
-            <SandRibbonInterop:RadioButton ToolTip="{StaticResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
-        </SandRibbonInterop:RibbonPanel>
+        <dict:RibbonPanel>
+            <dict:RadioButton x:Name="Draw" Visibility="Collapsed" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
+            <dict:RadioButton ToolTip="{StaticResource SelectToolTip}"  Icon="\Resources\SelectInk.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
+            <dict:RadioButton ToolTip="{StaticResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
+        </dict:RibbonPanel>
         <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
-        <SandRibbonInterop:PenColorsListBox x:Name="defaultColours" SelectionChanged="ChangeColorFromPreset" Background="Transparent" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
+        <dict:PenColorsListBox x:Name="defaultColours" Background="Transparent" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                 ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Padding="0" BorderBrush="Transparent">
-            <SandRibbonInterop:PenColorsListBox.ItemTemplate>
+<!--SelectionChanged="ChangeColorFromPreset" -->
+            <dict:PenColorsListBox.ItemTemplate>
                 <DataTemplate>
                     <Border Tag="{Binding Path=Index}"
                             Padding="2" BorderBrush="Transparent" Name="buttonBorder" BorderThickness="1" Height="18" Width="30">
                         <Border.ToolTip>
-                            <SandRibbonInterop:MeTLContentToolTip TitleText="{Binding Path=Attributes, Converter={x:Static my:Converters.AvailablePenTitleConverter}}"
+                            <dict:MeTLContentToolTip TitleText="{Binding Path=Attributes, Converter={x:Static my:Converters.AvailablePenTitleConverter}}"
                                                                           ContentText="{Binding Path=Attributes, Converter={x:Static my:Converters.AvailablePenContentConverter}}">
-                                <SandRibbonInterop:MeTLContentToolTip.ContentElement>
+                                <dict:MeTLContentToolTip.ContentElement>
                                     <Viewbox>
                                         <Grid Width="40" Height="40" >
                                             <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
@@ -67,8 +69,8 @@
                                             </Border>
                                         </Grid>
                                     </Viewbox>
-                                </SandRibbonInterop:MeTLContentToolTip.ContentElement>
-                            </SandRibbonInterop:MeTLContentToolTip>
+                                </dict:MeTLContentToolTip.ContentElement>
+                            </dict:MeTLContentToolTip>
                         </Border.ToolTip>
                         <StackPanel Name="Stack" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
                             <Viewbox Name="Main" Height="Auto" Width="18">
@@ -100,9 +102,9 @@
                                     Margin="0" HorizontalAlignment="Stretch" 
                                         Grid.Row="1" x:Name="OpenPopup" Click="OpenColourSettingPopup" Tag="{Binding Path=Index}">
                                 <Button.ToolTip>
-                                    <SandRibbonInterop:MeTLContentToolTip TitleText="{Binding Path=Attributes, Converter={x:Static my:Converters.AvailablePenDropDownConverter}}"
+                                    <dict:MeTLContentToolTip TitleText="{Binding Path=Attributes, Converter={x:Static my:Converters.AvailablePenDropDownConverter}}"
                                                                           ContentText="{Binding Path=Attributes, Converter={x:Static my:Converters.AvailablePenDropDownContentConverter}}">
-                                        <SandRibbonInterop:MeTLContentToolTip.ContentElement>
+                                        <dict:MeTLContentToolTip.ContentElement>
                                             <Viewbox>
                                                 <Grid Width="40" Height="40" >
                                                     <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
@@ -127,8 +129,8 @@
                                                     </Border>
                                                 </Grid>
                                             </Viewbox>
-                                        </SandRibbonInterop:MeTLContentToolTip.ContentElement>
-                                    </SandRibbonInterop:MeTLContentToolTip>
+                                        </dict:MeTLContentToolTip.ContentElement>
+                                    </dict:MeTLContentToolTip>
                                 </Button.ToolTip>
                                 <Viewbox>
                                     <Grid Width="30" Height="30">
@@ -180,24 +182,24 @@
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
-            </SandRibbonInterop:PenColorsListBox.ItemTemplate>
-            <SandRibbonInterop:PenColorsListBox.Template>
+            </dict:PenColorsListBox.ItemTemplate>
+            <dict:PenColorsListBox.Template>
                 <ControlTemplate>
                     <WrapPanel Name="penStack" Orientation="Vertical" IsItemsHost="True"/>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="SandRibbonInterop:PenColorsListBox.ParentActiveVariant" Value="Small">
+                        <Trigger Property="dict:PenColorsListBox.ParentActiveVariant" Value="Small">
                             <Setter TargetName="penStack" Property="WrapPanel.Orientation" Value="Vertical"/>
                         </Trigger>
-                        <Trigger Property="SandRibbonInterop:PenColorsListBox.ParentActiveVariant" Value="Medium">
+                        <Trigger Property="dict:PenColorsListBox.ParentActiveVariant" Value="Medium">
                             <Setter TargetName="penStack" Property="WrapPanel.Orientation" Value="Vertical"/>
                         </Trigger>
-                        <Trigger Property="SandRibbonInterop:PenColorsListBox.ParentActiveVariant" Value="Large">
+                        <Trigger Property="dict:PenColorsListBox.ParentActiveVariant" Value="Large">
                             <Setter TargetName="penStack" Property="WrapPanel.Orientation" Value="Horizontal"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
-            </SandRibbonInterop:PenColorsListBox.Template>
-        </SandRibbonInterop:PenColorsListBox>
+            </dict:PenColorsListBox.Template>
+        </dict:PenColorsListBox>
         <Popup x:Name="ColourSettingPopup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
             <Border Height="300" Width="250" BorderThickness="1" BorderBrush="LightGray" CornerRadius="2" Padding="2" Background="{StaticResource BackgroundBlueGradient}">
                 <StackPanel>
@@ -238,7 +240,7 @@
                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                         Width="Auto" Height="Auto" Background="Transparent">
                                     <Grid.ToolTip>
-                                        <SandRibbonInterop:MeTLImageToolTip TitleText="Change the thickness of this tool" ContentText="{Binding}"/>
+                                        <dict:MeTLImageToolTip TitleText="Change the thickness of this tool" ContentText="{Binding}"/>
                                     </Grid.ToolTip>
                                     <Rectangle Margin="2"
                                     Fill="Black" IsHitTestVisible="False" 

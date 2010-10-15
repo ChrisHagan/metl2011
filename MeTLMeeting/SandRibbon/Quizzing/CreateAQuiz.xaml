@@ -2,7 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:q="clr-namespace:SandRibbon.Quizzing"
-    xmlns:metl="clr-namespace:SandRibbon"
+                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+xmlns:metl="clr-namespace:SandRibbon"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:SandRibbon="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
@@ -49,7 +50,7 @@
                                     <TextBox MaxHeight="300" MinWidth="100" Width="300" x:Name="question" AcceptsReturn="True" TextWrapping="WrapWithOverflow"></TextBox>
                                 </ScrollViewer>
                                 <Grid Grid.Column="1" x:Name="questionSnapshotContainer">
-                                    <SandRibbonInterop:Button x:Name="screenshot" Click="screenshotAsAQuestion" ToolTip="{StaticResource AttachCurrentSlideToQuizToolTip}" Icon="\Resources\AttachSnapshot.png" Text="Attach Current Slide"/>
+                                    <dict:Button x:Name="screenshot" Click="screenshotAsAQuestion" ToolTip="{StaticResource AttachCurrentSlideToQuizToolTip}" Icon="\Resources\AttachSnapshot.png" Text="Attach Current Slide"/>
                                 </Grid>
                             </Grid>
                         </StackPanel>
