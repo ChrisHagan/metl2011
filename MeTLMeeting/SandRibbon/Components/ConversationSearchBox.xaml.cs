@@ -41,7 +41,8 @@ namespace SandRibbon.Components
             view.Filter = isWhatWeWereLookingFor;
             view.CustomSort = new ConversationComparator();
         }
-        private void BackstageModeChanged(string mode) {
+        private void BackstageModeChanged(string mode)
+        {
             GetListCollectionView().Refresh();
             string searchButtonText;
             switch (mode)
@@ -53,10 +54,14 @@ namespace SandRibbon.Components
             searchConversations.Content = searchButtonText;
         }
         private void SetIdentity(object _arg){
-            foreach(var conversation in MeTLLib.ClientFactory.Connection().AvailableConversations)
+            var availableConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
+            Dispatcher.adoptAsync(()=>{
+            foreach(var conversation in availableConversations)
                 searchResults.Add(conversation);
+            });
         }
-        private void clearState() {
+        private void clearState()
+        {
             Dispatcher.adoptAsync(() =>
             {
                 SearchInput.Text = "";
@@ -66,7 +71,7 @@ namespace SandRibbon.Components
         private void ShowConversationSearchBox(object o)
         {
             clearState();
-            Dispatcher.adoptAsync(()=>
+            Dispatcher.adoptAsync(() =>
             this.Visibility = Visibility.Visible);
             Commands.RequerySuggested();
             slideOut();
@@ -81,7 +86,8 @@ namespace SandRibbon.Components
                 slidePropertyOut(FrameworkElement.HeightProperty, this.ActualHeight);
             }
         }
-        private void slidePropertyOut(DependencyProperty property, double limit){
+        private void slidePropertyOut(DependencyProperty property, double limit)
+        {
             DoubleAnimation anim = new DoubleAnimation();
             anim.From = 150;
             anim.To = limit;
@@ -108,12 +114,12 @@ namespace SandRibbon.Components
             {
                 if (searchResults.Where(c => c.Jid == details.Jid).Count() == 1)
                     searchResults.Remove(searchResults.Where(c => c.Jid == details.Jid).First());
-                if(!details.Subject.Contains("Deleted"))
+                if (!details.Subject.Contains("Deleted"))
                     searchResults.Add(details);
                 else //conversation deleted
                 {
                     Commands.RequerySuggested();
-                    if(Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
+                    if (Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
                     {
                         this.Visibility = Visibility.Visible;
                     }
@@ -123,13 +129,14 @@ namespace SandRibbon.Components
         }
         private ListCollectionView GetListCollectionView()
         {
-            return (ListCollectionView) CollectionViewSource.GetDefaultView(this.searchResults );
+            return (ListCollectionView)CollectionViewSource.GetDefaultView(this.searchResults);
         }
-        private bool isWhatWeWereLookingFor(object o) {
-            var conversation = (MeTLLib.DataTypes.ConversationDetails) o;     
+        private bool isWhatWeWereLookingFor(object o)
+        {
+            var conversation = (MeTLLib.DataTypes.ConversationDetails)o;
             var author = conversation.Author.ToLower();
             var title = conversation.Title.ToLower();
-            var searchField = new[]{author,title};
+            var searchField = new[] { author, title };
             var searchQuery = SearchInput.Text.ToLower().Trim();
             if (backstageNav.currentMode == "find" && searchQuery.Length == 0) return false;
             if (backstageNav.currentMode == "mine" && author != Globals.me) return false;
@@ -140,7 +147,7 @@ namespace SandRibbon.Components
                 var criteria = token.Split(':');
                 bool result = false;
                 if (criteria.Count() == 1)
-                    result = searchField.Any(field=>field.Contains(token));
+                    result = searchField.Any(field => field.Contains(token));
                 else
                 {
                     var criterion = criteria[0];
@@ -179,7 +186,7 @@ namespace SandRibbon.Components
         }
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if(((TextBox)sender).Text.Count() > 2)
+            if (((TextBox)sender).Text.Count() > 2)
                 GetListCollectionView().Refresh();
         }
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -200,7 +207,7 @@ namespace SandRibbon.Components
 
         private void editConversation(object sender, RoutedEventArgs e)
         {
-            Commands.EditConversation.Execute(((MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button) sender).DataContext).Jid);
+            Commands.EditConversation.Execute(((MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext).Jid);
         }
     }
     public class ConversationComparator : System.Collections.IComparer

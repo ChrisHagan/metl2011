@@ -50,7 +50,7 @@ namespace SandRibbon.Components
             Version = ConfigurationProvider.instance.getMetlVersion();
             App.Now(string.Format("The Version of MeTL is -> {0}", Version));
             Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
-            Commands.ConnectWithUnauthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithUnauthenticatedCredentials));
+            //Commands.ConnectWithUnauthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithUnauthenticatedCredentials));
             if (WorkspaceStateProvider.savedStateExists())
             {
                 rememberMe.IsChecked = true;
@@ -90,6 +90,7 @@ namespace SandRibbon.Components
         private void ConnectionStatusChanged(object sender, StatusChangedEventArgs args) {
             if (args.isConnected)
             {
+                Commands.ConnectWithAuthenticatedCredentials.Execute(args.credentials);
                 Commands.SetIdentity.Execute(args.credentials);
                 Commands.RemoveWindowEffect.Execute(null);
                 Commands.ShowConversationSearchBox.Execute(null);

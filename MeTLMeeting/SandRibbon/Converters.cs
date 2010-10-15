@@ -75,7 +75,7 @@ namespace SandRibbon
             bool result = false;
             try
             {
-                result = Globals.me == ((ConversationDetails)value).Author;
+                result = Globals.me == ((MeTLLib.DataTypes.ConversationDetails)value).Author;
             }
             catch (NotSetException)
             {
@@ -91,7 +91,7 @@ namespace SandRibbon
     public class conversationDetailsToDescription : IValueConverter { 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var details = (ConversationDetails)value;
+            var details = (MeTLLib.DataTypes.ConversationDetails)value;
             var slides = string.Format("{0} Slide", details.Slides.Count);
             if(details.Slides.Count > 1)
                 slides = string.Format("{0}s", slides);
@@ -474,8 +474,8 @@ namespace SandRibbon
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value != null && value is ConversationDetails)
-                return ((ConversationDetails)value).Title;
+            if (value != null && value is MeTLLib.DataTypes.ConversationDetails)
+                return ((MeTLLib.DataTypes.ConversationDetails)value).Title;
             return value;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

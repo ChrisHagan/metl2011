@@ -46,7 +46,7 @@ namespace MeTLLib
     }
     public interface IClientBehaviour
     {
-        bool Connect(string username, string password);
+        Credentials Connect(string username, string password);
         bool Disconnect();
         void SendTextBox(TargettedTextBox textbox);
         void SendStroke(TargettedStroke stroke);
@@ -94,8 +94,7 @@ namespace MeTLLib
             Trace.TraceInformation("MeTL client connection started.  Server set to:" + server.ToString(), "Connection");
         }
         #region fields
-        [Inject]
-        private JabberWire wire { private get; set; }
+        private JabberWire wire;
         public Location location
         {
             get
@@ -123,17 +122,17 @@ namespace MeTLLib
         }
         #endregion
         #region connection
-        public bool Connect(string username, string password)
+        public Credentials Connect(string username, string password)
         {
             Trace.TraceInformation("Attempting authentication with username:" + username);
             var credentials = authorisationProvider.attemptAuthentication(username, password);
             jabberWireFactory.credentials = credentials;
-            //wire = jabberWireFactory.wire();
+            wire = jabberWireFactory.wire();
             wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
             Trace.TraceInformation("set up jabberwire");
             Commands.AllStaticCommandsAreRegistered();
             Trace.TraceInformation("Connection state: " + isConnected.ToString());
-            return isConnected;
+            return credentials;
         }
         public bool Disconnect()
         {
