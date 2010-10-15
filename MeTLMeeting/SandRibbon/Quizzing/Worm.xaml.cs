@@ -10,6 +10,7 @@ using SandRibbonInterop.MeTLStanzas;
 using SandRibbon.Utils.Connection;
 using SandRibbon.Components;
 using SandRibbon.Providers;
+using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Quizzing
 {

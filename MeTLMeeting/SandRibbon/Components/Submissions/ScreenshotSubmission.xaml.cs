@@ -17,6 +17,7 @@ using SandRibbon.Utils.Connection;
 using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using MeTLLib.DataTypes;
+using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Components.Submissions
 {

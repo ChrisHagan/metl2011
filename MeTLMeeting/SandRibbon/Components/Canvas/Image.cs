@@ -89,7 +89,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(ReceiveDirtyLiveWindow));
             Commands.DugPublicSpace.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.LiveWindowSetup>(DugPublicSpace));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedImages));
-            Commands.MirrorVideo.RegisterCommand(new DelegateCommand<SandRibbonInterop.VideoMirror.VideoMirrorInformation>(mirrorVideo));
+            Commands.MirrorVideo.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation>(mirrorVideo));
             Commands.VideoMirrorRefreshRectangle.RegisterCommand(new DelegateCommand<string>(mirrorVideoRefresh));
             Commands.UserVisibility.RegisterCommand(new DelegateCommand<VisibilityInformation>(setUserVisibility));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(clearVisibilityDictionary));
@@ -173,16 +173,16 @@ namespace SandRibbon.Components.Canvas
             }
             catch (Exception) { }
         }
-        private void mirrorVideo(SandRibbonInterop.VideoMirror.VideoMirrorInformation info)
+        private void mirrorVideo(MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation info)
         {
             if (me != "projector") return;
             try
             {
                 foreach (FrameworkElement fe in Children.ToList())
                 {
-                    if (fe is SandRibbonInterop.VideoMirror)
+                    if (fe is MeTLLib.DataTypes.VideoMirror)
                     {
-                        var vm = (SandRibbonInterop.VideoMirror)fe;
+                        var vm = (MeTLLib.DataTypes.VideoMirror)fe;
                         if (info.rect == null)
                             Children.Remove(vm);
                         else vm.UpdateMirror(info);

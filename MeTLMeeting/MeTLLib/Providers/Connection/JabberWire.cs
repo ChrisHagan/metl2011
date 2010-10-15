@@ -101,8 +101,6 @@ namespace MeTLLib.Providers.Connection
             this.metlServerAddress = metlServerAddress;
             this.cache = cache;
             this.receiveEvents = events;
-            setUpWire();
-            registerCommands();
         }
         internal List<ConversationDetails> CurrentClasses
         {
@@ -255,6 +253,8 @@ namespace MeTLLib.Providers.Connection
         {
             if (this.location == null)
                 this.location = location;
+            setUpWire();
+            registerCommands();
             unregisterHandlers();
             conn.OnAuthError += OnAuthError;
             conn.OnLogin += OnLogin;

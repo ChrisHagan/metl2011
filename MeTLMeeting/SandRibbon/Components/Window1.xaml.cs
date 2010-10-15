@@ -55,7 +55,12 @@ namespace SandRibbon
         public Window1()
         {
             App.Now("Window 1 Constructor start");
-            ProviderMonitor.HealthCheck(DoConstructor);
+            //This following healthcheck is providing a slowdown that allows the window to instantiate correctly.
+            //We should fine out why it needs it at some point.  SimpleConversationSelector results in a XAML parse exception if it's not in.
+            ProviderMonitor.HealthCheck(() =>
+            {
+                DoConstructor();
+            });
             Commands.AllStaticCommandsAreRegistered();
         }
         private void DoConstructor()
@@ -422,7 +427,8 @@ namespace SandRibbon
         }
         private void ExecuteMoveTo(int slide)
         {
-            ProviderMonitor.HealthCheck(() => MoveTo(slide));
+            MoveTo(slide);
+           // ProviderMonitor.HealthCheck(() => MoveTo(slide));
         }
         private bool CanExecuteMoveTo(int slide)
         {
@@ -430,8 +436,8 @@ namespace SandRibbon
         }
         private void JoinConversation(string title)
         {
-            ProviderMonitor.HealthCheck(() =>
-            {
+            //ProviderMonitor.HealthCheck(() =>
+            //{
                 Commands.LoggedIn.Execute(Globals.credentials.name);
                 //var activeConversation = MeTLLib.ClientFactory.Connection().location.activeConversation;
                 //var details = ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation);
@@ -449,7 +455,7 @@ namespace SandRibbon
                 Commands.SetLayer.Execute("Sketch");
                 if (automatedTest(details.Title))
                     ribbon.SelectedTab = ribbon.Tabs[1];
-            });
+            //});
         }
 
         private bool automatedTest(string conversationName)
@@ -481,6 +487,7 @@ namespace SandRibbon
 
         private void Relogin(object obj)
         {
+            return;
             lock (reconnectionLock)
             {
                 showReconnectingDialog();

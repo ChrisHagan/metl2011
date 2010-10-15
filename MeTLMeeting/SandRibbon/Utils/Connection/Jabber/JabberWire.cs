@@ -19,6 +19,7 @@ using SandRibbonObjects;
 using SandRibbon.Components.Sandpit;
 using agsXMPP.protocol.iq.disco;
 using MeTLLib.DataTypes;
+using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Utils.Connection
 {/*SPECIAL METL*/
@@ -208,6 +209,7 @@ namespace SandRibbon.Utils.Connection
         }
         private void doGetCurrentClasses()
         {
+            return;
             try
             {
                 var currentRooms = new List<string>();
@@ -262,6 +264,7 @@ namespace SandRibbon.Utils.Connection
         }
         private void setUpWire()
         {
+            return;
             this.jid = createJid(credentials.name);
             if (conn == null)
             {
@@ -308,6 +311,7 @@ namespace SandRibbon.Utils.Connection
         }
         protected virtual void openConnection(string username)
         {
+            return;
             conn.Open(username, "examplePassword", SandRibbonObjects.DateTimeFactory.Now().Ticks.ToString(), 1);
         }
         private void OnLogin(object o)
@@ -350,6 +354,7 @@ namespace SandRibbon.Utils.Connection
         }
         public void Login(Location location)
         {
+            return;
             if (this.location == null)
                 this.location = location;
             conn.OnAuthError += OnAuthError;
@@ -496,7 +501,7 @@ namespace SandRibbon.Utils.Connection
         }
         private void retrieveHistory(string room)
         {
-            HistoryProviderFactory.provider.Retrieve<PreParser>(
+            HistoryProviderFactory.provider.Retrieve<MeTLLib.Providers.Connection.PreParser>(
                 onStart,
                 onProgress,
                 null,
@@ -528,7 +533,7 @@ namespace SandRibbon.Utils.Connection
                 new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), Constants.JabberWire.MUC, jid.Resource), credentials.name);
             location.currentSlide = where;
             joinRooms();
-            HistoryProviderFactory.provider.Retrieve<PreParser>(
+            HistoryProviderFactory.provider.Retrieve<MeTLLib.Providers.Connection.PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => Commands.PreParserAvailable.Execute(finishedParser),

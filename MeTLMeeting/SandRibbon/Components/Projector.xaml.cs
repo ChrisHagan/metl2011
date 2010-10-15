@@ -65,7 +65,7 @@ namespace SandRibbon.Components
             stack.SetEditable(false);
             this.MouseLeave += Projector_MouseLeave;
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
+            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(setLayer));
@@ -107,7 +107,7 @@ namespace SandRibbon.Components
             setProjectionLayers();
             try
             {
-                HistoryProviderFactory.provider.Retrieve<PreParser>(
+                HistoryProviderFactory.provider.Retrieve<MeTLLib.Providers.Connection.PreParser>(
                     JabberWire.dontDoAnything,
                     JabberWire.dontDoAnything,
                     PreParserAvailable,
@@ -148,7 +148,7 @@ namespace SandRibbon.Components
         private static Color deleteColor = Colors.Red;
         private static string currentMode;
         private static string privacy;
-        public void PreParserAvailable(PreParser parser)
+        public void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
             if (!isPrivate(parser) && IsParserNotEmpty(parser))
             {
@@ -159,7 +159,7 @@ namespace SandRibbon.Components
                     stack.text.doText(text);
             }
         }
-        private bool IsParserNotEmpty(PreParser parser)
+        private bool IsParserNotEmpty(MeTLLib.Providers.Connection.PreParser parser)
         {
             return (parser.images.Count > 0
                     || parser.ink.Count > 0
@@ -169,7 +169,7 @@ namespace SandRibbon.Components
                     || parser.autoshapes.Count > 0);
         }
 
-        private bool isPrivate(PreParser parser)
+        private bool isPrivate(MeTLLib.Providers.Connection.PreParser parser)
         {
             if (parser.ink.Where(s => s.privacy == "private").Count() > 0)
                 return true;

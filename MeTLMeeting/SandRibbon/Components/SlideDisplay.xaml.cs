@@ -22,6 +22,7 @@ using SandRibbon.Utils.Connection;
 using System.Collections.Generic;
 using System.Windows.Ink;
 using System.Drawing;
+using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Components
 {
@@ -244,7 +245,7 @@ namespace SandRibbon.Components
             visibleContainers[slide.slideId] = container;
             if (SlideDisplay.parsers.ContainsKey(slide.slideId))
                 Add(slide.slideId, SlideDisplay.parsers[slide.slideId]);
-            else Add(slide.slideId, new PreParser(slide.slideId));
+            else Add(slide.slideId, new PreParser(null,slide.slideId,null,null,null,null,null,null));
         }
         public static void Add(int id, PreParser parser)
         {

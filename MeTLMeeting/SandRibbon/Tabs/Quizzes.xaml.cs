@@ -18,6 +18,7 @@ using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
 using SandRibbon.Providers;
 using Button=System.Windows.Controls.Button;
+using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Tabs
 {

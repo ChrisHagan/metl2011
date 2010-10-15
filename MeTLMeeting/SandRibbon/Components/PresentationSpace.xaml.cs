@@ -18,7 +18,7 @@ using SandRibbon.Components.Utility;
 using SandRibbon.Quizzing;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
-using SandRibbonObjects;
+//using SandRibbonObjects;
 using SandRibbon.Utils;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
@@ -51,6 +51,7 @@ namespace SandRibbon.Components
             Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
             Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
+            Commands.AllStaticCommandsAreRegistered();
         }
         private void exploreBubble(ThoughtBubble thoughtBubble)
         {

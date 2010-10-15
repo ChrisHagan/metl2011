@@ -30,11 +30,11 @@ namespace SandRibbon.Utils.Connection
             var pcDialog = new Components.PrintDialog();
             pcDialog.ShowDialog(); 
         }
-        public class PrintParser : PreParser
+        public class PrintParser : MeTLLib.Providers.Connection.PreParser
         {
             public List<object> history = new List<object>();
             public PrintParser(int slide)
-                : base(slide)
+                : base(new Credentials("","",new List<AuthorizedGroup>()),slide,null,null,null,null,null,null)
             {//This int constructor only passes to the superclass
             }
             //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.

@@ -14,6 +14,7 @@ using Ionic.Zip;
 using SandRibbonInterop.MeTLStanzas;
 using agsXMPP.Xml.Dom;
 using MeTLLib.DataTypes;
+using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Providers
 {
@@ -39,14 +40,14 @@ namespace SandRibbon.Providers
             Action<int, int> retrievalProceeding,
             Action<T> retrievalComplete,
             string room
-        ) where T : PreParser;
+        ) where T : MeTLLib.Providers.Connection.PreParser;
         void RetrievePrivateContent<T>(
             Action retrievalBeginning,
             Action<int, int> retrievalProceeding,
             Action<T> retrievalComplete,
             string author,
             string room
-        ) where T : PreParser;
+        ) where T : MeTLLib.Providers.Connection.PreParser;
     }
     public abstract class BaseHistoryProvider : IHistoryProvider {
         public abstract void Retrieve<T>(
@@ -54,20 +55,20 @@ namespace SandRibbon.Providers
             Action<int, int> retrievalProceeding,
             Action<T> retrievalComplete,
             string room
-        ) where T : PreParser;
+        ) where T : MeTLLib.Providers.Connection.PreParser;
         public void RetrievePrivateContent<T>(
             Action retrievalBeginning,
             Action<int, int> retrievalProceeding,
             Action<T> retrievalComplete,
             string author,
             string room
-        ) where T : PreParser {
+        ) where T : MeTLLib.Providers.Connection.PreParser{
             this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{1}{0}", author,room));
             this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{0}/{1}", author,room));
         }
     }
     public class CachedHistoryProvider : BaseHistoryProvider {
-        private Dictionary<string, PreParser> cache = new Dictionary<string,PreParser>();
+        private Dictionary<string, MeTLLib.Providers.Connection.PreParser> cache = new Dictionary<string, MeTLLib.Providers.Connection.PreParser>();
         private int measure<T>(int acc, T item){
             return acc + item.ToString().Length;
         }
@@ -125,7 +126,7 @@ namespace SandRibbon.Providers
             if(isPrivateRoom(to)) return;
             var room = Int32.Parse(to);
             if (!cache.ContainsKey(room.ToString()))
-                cache[room.ToString()] = new PreParser(room);
+                cache[room.ToString()] = new MeTLLib.Providers.Connection.PreParser(null,room,null,null,null,null,null,null);
             cache[room.ToString()].ActOnUntypedMessage(message);
         }
     }
@@ -134,7 +135,7 @@ namespace SandRibbon.Providers
         public override void Retrieve<T>(Action retrievalBeginning, Action<int,int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
             Logger.Log(string.Format("HttpHistoryProvider.Retrieve: Beginning retrieve for {0}", room));
-            var accumulatingParser = (T)Activator.CreateInstance(typeof(T), PreParser.ParentRoom(room));
+            var accumulatingParser = (T)Activator.CreateInstance(typeof(T), MeTLLib.Providers.Connection.PreParser.ParentRoom(room));
             if(retrievalBeginning != null)
                 Application.Current.Dispatcher.adoptAsync(retrievalBeginning);
             var worker = new BackgroundWorker();
@@ -179,7 +180,7 @@ namespace SandRibbon.Providers
                     };
             worker.RunWorkerAsync(null);
         }
-        protected virtual void parseHistoryItem(string item, JabberWire wire)
+        protected virtual void parseHistoryItem(string item, MeTLLib.Providers.Connection.JabberWire wire)
         {//This takes all the time
             Application.Current.Dispatcher.adoptAsync((Action)delegate
             {//Creating and event setting on the dispatcher thread?  Might be expensive, might not.  Needs bench.

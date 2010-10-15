@@ -11,6 +11,7 @@ using MeTLLib.DataTypes;
 
 namespace SandRibbon.Utils.Connection
 {
+    /*
     public class PreParser : JabberWire
     {
         public Dictionary<string, TargettedImage> images = new Dictionary<string, TargettedImage>();
@@ -209,4 +210,5 @@ namespace SandRibbon.Utils.Connection
             return Int32.Parse(parent);
         }
     }
+     */
 }
