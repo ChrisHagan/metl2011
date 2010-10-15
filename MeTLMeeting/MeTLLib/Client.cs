@@ -65,6 +65,9 @@ namespace MeTLLib
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
         void MoveTo(int slide);
         void JoinConversation(string conversation);
+        ConversationDetails AppendSlide(string Jid);
+        ConversationDetails AppendSlideAfter(int slide, string Jid);
+        ConversationDetails AppendSlideAfter(int slide, string Jid, Slide.TYPE type);
         ConversationDetails UpdateConversationDetails(ConversationDetails details);
         ConversationDetails CreateConversation(ConversationDetails details);
         ConversationDetails DetailsOf(String jid);
@@ -404,6 +407,36 @@ namespace MeTLLib
                 tryIfConnected(work);
                 return list;
             }
+        }
+        public ConversationDetails AppendSlide(string Jid)
+        {
+            ConversationDetails details = new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), "");
+            Action work = delegate
+            {
+               details = conversationDetailsProvider.AppendSlide(Jid);
+            };
+            tryIfConnected(work);
+            return details;
+        }
+        public ConversationDetails AppendSlideAfter(int slide, String Jid)
+        {
+            ConversationDetails details = new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), "");
+            Action work = delegate
+            {
+               details = conversationDetailsProvider.AppendSlideAfter(slide, Jid);
+            };
+            tryIfConnected(work);
+            return details;
+        }
+        public ConversationDetails AppendSlideAfter(int slide, String Jid, Slide.TYPE type)
+        {
+            ConversationDetails details = new ConversationDetails("","","",new List<Slide>(),new Permissions("",false,false,false),"");
+            Action work = delegate
+            {
+                details = conversationDetailsProvider.AppendSlideAfter(slide, Jid,type);
+            };
+            tryIfConnected(work);
+            return details;
         }
         public List<ConversationDetails> CurrentConversations
         {

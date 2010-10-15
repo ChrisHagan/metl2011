@@ -910,7 +910,7 @@ namespace SandRibbon.Utils.Connection
         {
             var jid = parts[1];
             Commands.ReceiveDirtyConversationDetails.Execute(jid);
-            var newDetails = ConversationDetailsProviderFactory.Provider.DetailsOf(jid);
+            var newDetails = MeTLLib.ClientFactory.Connection().DetailsOf(jid);
             Commands.UpdateForeignConversationDetails.Execute(newDetails);
             if (isCurrentConversation(jid))
                 Commands.UpdateConversationDetails.Execute(newDetails);

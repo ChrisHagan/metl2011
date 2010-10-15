@@ -49,7 +49,8 @@ namespace SandRibbon.Components
             InitializeComponent();
             this.dialogMode = mode;
             conversationSubjectListBox.ItemsSource = Globals.authorizedGroups.Select(ag => ag.groupKey);
-            extantConversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+            extantConversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
+                //ConversationDetailsProviderFactory.Provider.ListConversations();
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             this.CommandBindings.Add(new CommandBinding(CompleteConversationDialog, Create, CanCompleteDialog));
         }
@@ -79,7 +80,7 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Update";
-                    details = ConversationDetailsProviderFactory.Provider.DetailsOf(conversationJid);
+                    details = MeTLLib.ClientFactory.Connection().DetailsOf(conversationJid);
                     PopulateFields();
                     if (details == null)
                     {
@@ -100,7 +101,7 @@ namespace SandRibbon.Components
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Delete";
-                    details = ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation);
+                    details = MeTLLib.ClientFactory.Connection().DetailsOf(Globals.location.activeConversation);
                     if (details == null)
                     {
                         MessageBox.Show("No valid conversation currently selected.  Please ensure you are in a conversation you own when deleting a conversation.");
@@ -145,7 +146,7 @@ namespace SandRibbon.Components
         private void UpdateConversationDetails(ConversationDetails details)
         {
             extantConversations = null;
-            extantConversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+            extantConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
         }
         private void UpdateImportFile(object sender, TextChangedEventArgs e)
         {
@@ -245,11 +246,11 @@ namespace SandRibbon.Components
                     Commands.PowerpointFinished.Execute(null);
                     break;
                 case ConversationConfigurationMode.EDIT:
-                    ConversationDetailsProviderFactory.Provider.Update(details);
+                    MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
                     Commands.PowerpointFinished.Execute(null);
                     break;
                 case ConversationConfigurationMode.DELETE:
-                    ConversationDetailsProviderFactory.Provider.Update(details);
+                    MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
                     Commands.PowerpointFinished.Execute(null);
                     break;
             }

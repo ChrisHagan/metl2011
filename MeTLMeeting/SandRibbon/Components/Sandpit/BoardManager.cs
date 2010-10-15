@@ -39,7 +39,7 @@ namespace SandRibbon.Components.Sandpit
         }
         public static ConversationDetails DEFAULT_CONVERSATION
         {
-            get { return ConversationDetailsProviderFactory.Provider.DetailsOf("34000"); }
+            get { return MeTLLib.ClientFactory.Connection().DetailsOf("34000"); }
         }
         public static int slide(int index) {
             var slides = DEFAULT_CONVERSATION.Slides;

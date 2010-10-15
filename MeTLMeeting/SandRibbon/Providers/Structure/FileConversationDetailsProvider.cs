@@ -19,7 +19,7 @@ using MeTLLib.DataTypes;
 
 namespace SandRibbon.Providers.Structure
 {
-    public class FileConversationDetailsProvider : HttpResourceProvider, IConversationDetailsProvider
+ /*   public class FileConversationDetailsProvider : HttpResourceProvider, IConversationDetailsProvider
     {
         private static readonly int HTTP_PORT = 1188;
         private static string ROOT_ADDRESS
@@ -82,7 +82,7 @@ namespace SandRibbon.Providers.Structure
             }
             catch (WebException)
             {
-                ProviderMonitor.HealthCheck(() => { /*Everything is AOk*/});
+                ProviderMonitor.HealthCheck(() => {});
                 return null;
             }
         }
@@ -105,7 +105,7 @@ namespace SandRibbon.Providers.Structure
             }
             catch (WebException)
             {
-                ProviderMonitor.HealthCheck(() => { /*Everything is AOk*/});
+                ProviderMonitor.HealthCheck(() => {});
                 return null;
             }
         }
@@ -132,7 +132,7 @@ namespace SandRibbon.Providers.Structure
             }
             catch (WebException e)
             {
-                ProviderMonitor.HealthCheck(() => { /*Everything is AOk*/});
+                ProviderMonitor.HealthCheck(() => {});
                 return null;
             }
         }
@@ -220,4 +220,5 @@ namespace SandRibbon.Providers.Structure
             return new ApplicationLevelInformation(Int32.Parse(HttpResourceProvider.secureGetString(NEXT_AVAILABLE_ID)));
         }
     }
+  */
 }

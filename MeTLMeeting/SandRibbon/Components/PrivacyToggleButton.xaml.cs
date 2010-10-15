@@ -88,7 +88,7 @@ namespace SandRibbon.Components
                 }));
             if (selection.Count() > 0)
             {
-                var details = ConversationDetailsProviderFactory.Provider.AppendSlideAfter(Globals.slide, currentDetails.Jid, Slide.TYPE.THOUGHT);
+                var details = MeTLLib.ClientFactory.Connection().AppendSlideAfter(Globals.slide, currentDetails.Jid, Slide.TYPE.THOUGHT);
                 var newSlide = details.Slides.Select(s => s.id).Max();
                 Commands.SendNewBubble.Execute(new TargettedBubbleContext
                 (slide,Globals.me,target,"public",selection,newSlide));

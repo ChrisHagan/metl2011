@@ -1,5 +1,6 @@
 ﻿namespace SandRibbon.Providers.Structure
 {
+    /*
     public class ConversationDetailsProviderFactory
     {
         private static object instanceLock = new object();
@@ -13,5 +14,5 @@
                 }
             }
         }
-    }
+    }*/
 }

@@ -12,7 +12,7 @@ namespace SandRibbon.Providers
 {
     public class RecentConversationProvider
     {
-        public static IConversationDetailsProvider conversationProvider = ConversationDetailsProviderFactory.Provider;
+        public static MeTLLib.ClientConnection ConversationProvider = MeTLLib.ClientFactory.Connection();
         public static readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         public static IEnumerable<ConversationDetails> loadRecentConversations()
         {

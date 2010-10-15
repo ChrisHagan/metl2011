@@ -97,7 +97,7 @@ namespace SandRibbon.Utils.Connection
         public void PrintHandout(string title, string user)
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithoutNotes);
-            var conversation = ConversationDetailsProviderFactory.Provider.DetailsOf(title);
+            var conversation =  MeTLLib.ClientFactory.Connection().DetailsOf(title);
             targetPageCount = conversation.Slides.Where(s=>s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
             PrinterInfo = new PrinterInformation
                               {
@@ -118,7 +118,7 @@ namespace SandRibbon.Utils.Connection
         public void PrintPrivate(string title, string user)
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithNotes);
-            var conversation = ConversationDetailsProviderFactory.Provider.DetailsOf(title);
+            var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(title);
             targetPageCount = conversation.Slides.Where(s=>s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
             PrinterInfo = new PrinterInformation
                               {
