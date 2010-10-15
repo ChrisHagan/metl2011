@@ -210,7 +210,7 @@ namespace MeTLLib.Providers.Connection
         private void OnLogin(object o)
         {
             this.LoggedIn = true;
-            receiveEvents.statusChanged(this.LoggedIn);
+            receiveEvents.statusChanged(this.LoggedIn, this.credentials);
             joinRooms();
         }
         private void OnMessage(object sender, Message message)
@@ -272,7 +272,6 @@ namespace MeTLLib.Providers.Connection
             openConnection(jid.User);
         }
         private object resetLock = new object();
-        private Credentials credentials_2;
         private IConversationDetailsProvider conversationDetailsProvider;
         private HttpHistoryProvider historyProvider;
         private CachedHistoryProvider cachedHistoryProvider;

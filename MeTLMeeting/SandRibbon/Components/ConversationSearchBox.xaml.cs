@@ -17,20 +17,21 @@ using System.Windows.Media.Animation;
 using System.Collections.ObjectModel;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Utils;
-using SandRibbonObjects;
+using MeTLLib.DataTypes;
+//using SandRibbonObjects;
 
 namespace SandRibbon.Components
 {
     public partial class ConversationSearchBox : UserControl
     {
-        private ObservableCollection<ConversationDetails> searchResults = new ObservableCollection<ConversationDetails>();
+        private ObservableCollection<MeTLLib.DataTypes.ConversationDetails> searchResults = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
 
         public ConversationSearchBox()
         {
             InitializeComponent();
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(UpdateAllConversations));
-            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<SandRibbonObjects.ConversationDetails>(UpdateAllConversations));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
+            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
@@ -52,17 +53,21 @@ namespace SandRibbon.Components
             searchConversations.Content = searchButtonText;
         }
         private void SetIdentity(object _arg){
-            foreach(var conversation in SandRibbon.Providers.Structure.ConversationDetailsProviderFactory.Provider.ListConversations())
+            foreach(var conversation in MeTLLib.ClientFactory.Connection().AvailableConversations)
                 searchResults.Add(conversation);
         }
         private void clearState() {
-            SearchInput.Text = "";
-            GetListCollectionView().Refresh();
+            Dispatcher.adoptAsync(() =>
+            {
+                SearchInput.Text = "";
+                GetListCollectionView().Refresh();
+            });
         }
         private void ShowConversationSearchBox(object o)
         {
             clearState();
-            this.Visibility = Visibility.Visible;
+            Dispatcher.adoptAsync(()=>
+            this.Visibility = Visibility.Visible);
             Commands.RequerySuggested();
             slideOut();
         }
@@ -97,7 +102,7 @@ namespace SandRibbon.Components
             this.Visibility = Visibility.Collapsed;
             Commands.RequerySuggested();
         }
-        private void UpdateAllConversations(SandRibbonObjects.ConversationDetails details)
+        private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
             Dispatcher.adopt((Action)delegate
             {
@@ -121,7 +126,7 @@ namespace SandRibbon.Components
             return (ListCollectionView) CollectionViewSource.GetDefaultView(this.searchResults );
         }
         private bool isWhatWeWereLookingFor(object o) {
-            var conversation = (ConversationDetails) o;     
+            var conversation = (MeTLLib.DataTypes.ConversationDetails) o;     
             var author = conversation.Author.ToLower();
             var title = conversation.Title.ToLower();
             var searchField = new[]{author,title};
@@ -186,22 +191,23 @@ namespace SandRibbon.Components
         {
             if (MessageBox.Show("Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                var details = (ConversationDetails)((SandRibbonInterop.Button)sender).DataContext;
+                var details = (MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext;
                 details.Subject = "Deleted";
-                ConversationDetailsProviderFactory.Provider.Update(details);
+                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                //ConversationDetailsProviderFactory.Provider.Update(details);
             }
         }
 
         private void editConversation(object sender, RoutedEventArgs e)
         {
-            Commands.EditConversation.Execute(((ConversationDetails)((SandRibbonInterop.Button) sender).DataContext).Jid);
+            Commands.EditConversation.Execute(((MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button) sender).DataContext).Jid);
         }
     }
     public class ConversationComparator : System.Collections.IComparer
     {
         public int Compare(object x, object y)
         {
-            return -1 * ((ConversationDetails)x).Created.CompareTo(((ConversationDetails)y).Created);
+            return -1 * ((MeTLLib.DataTypes.ConversationDetails)x).Created.CompareTo(((MeTLLib.DataTypes.ConversationDetails)y).Created);
         }
     }
 }

@@ -94,7 +94,8 @@ namespace MeTLLib
             Trace.TraceInformation("MeTL client connection started.  Server set to:" + server.ToString(), "Connection");
         }
         #region fields
-        private JabberWire wire;
+        [Inject]
+        private JabberWire wire { private get; set; }
         public Location location
         {
             get
@@ -126,9 +127,8 @@ namespace MeTLLib
         {
             Trace.TraceInformation("Attempting authentication with username:" + username);
             var credentials = authorisationProvider.attemptAuthentication(username, password);
-            var jabberCredentials = new Credentials(credentials.name,"examplePassword",credentials.authorizedGroups);
-            jabberWireFactory.credentials = jabberCredentials;
-            wire = jabberWireFactory.wire();
+            jabberWireFactory.credentials = credentials;
+            //wire = jabberWireFactory.wire();
             wire.Login(new Location { currentSlide = 101, activeConversation = "100" });
             Trace.TraceInformation("set up jabberwire");
             Commands.AllStaticCommandsAreRegistered();
@@ -372,8 +372,8 @@ namespace MeTLLib
         {
             get
             {
-                if (wire == null) return null;
                 var list = new List<ConversationDetails>();
+                if (wire.IsConnected() == false) return list;
                 Action work = delegate
                 {
                     list = conversationDetailsProvider.ListConversations().ToList();

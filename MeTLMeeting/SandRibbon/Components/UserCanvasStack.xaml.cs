@@ -27,7 +27,7 @@ namespace SandRibbon.Components
             stack = canvasStack;
             handwriting.Disable();
             Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(setTopLayer));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(loggedIn));
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(loggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetLayer.Execute("Sketch");
             Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(ReceiveNewBubble));
@@ -92,7 +92,7 @@ namespace SandRibbon.Components
                 ((FrameworkElement)c)).Where(c => c.Tag != null && ids.Contains(c.Tag.ToString()))
                 .ToList();
         }
-        private void loggedIn(SandRibbon.Utils.Connection.JabberWire.Credentials identity)
+        private void loggedIn(MeTLLib.DataTypes.Credentials identity)
         {
             handwriting.Enable();
             Commands.SetTutorialVisibility.Execute(System.Windows.Visibility.Visible);

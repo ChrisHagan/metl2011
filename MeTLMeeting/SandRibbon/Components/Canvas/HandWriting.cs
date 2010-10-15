@@ -492,8 +492,11 @@ namespace SandRibbon.Components.Canvas
         }
         public void Enable()
         {
-            if (EditingMode == InkCanvasEditingMode.None)
-                EditingMode = InkCanvasEditingMode.Ink;
+            Dispatcher.adoptAsync(() =>
+            {
+                if (EditingMode == InkCanvasEditingMode.None)
+                    EditingMode = InkCanvasEditingMode.Ink;
+            });
         }
         public void setPenColor(Color color)
         {

@@ -38,7 +38,8 @@ namespace SandRibbon.Components
         }
         private void openFindConversations()
         {
-            find.IsChecked = true;
+            Dispatcher.adoptAsync(() =>
+            find.IsChecked = true);
         }
         private void openCorrectTab(string mode) {
             if ("MyConversations" == mode)

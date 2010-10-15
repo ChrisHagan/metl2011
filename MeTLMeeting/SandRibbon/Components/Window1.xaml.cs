@@ -69,7 +69,7 @@ namespace SandRibbon
             catch (Exception) { }
             userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
-            Commands.ConnectWithAuthenticatedCredentials.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(ConnectWithAuthenticatedCredentials));
+            Commands.ConnectWithAuthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithAuthenticatedCredentials));
             Commands.PowerpointFinished.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
@@ -355,7 +355,7 @@ namespace SandRibbon
         {
             Dispatcher.adoptAsync((HideProgressBlocker));
         }
-        private void ConnectWithAuthenticatedCredentials(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
+        private void ConnectWithAuthenticatedCredentials(MeTLLib.DataTypes.Credentials credentials)
         {
             connect(credentials.name, credentials.password, 0, null);
             Commands.AllStaticCommandsAreRegistered();
@@ -390,8 +390,9 @@ namespace SandRibbon
         }
         private void RemoveWindowEffect(object _o)
         {
-            CanvasBlocker.Visibility = Visibility.Collapsed;
-        }
+            Dispatcher.adoptAsync(()=>
+            CanvasBlocker.Visibility = Visibility.Collapsed);
+            }
         private void ReceiveWormMove(string _move)
         {
             if (!reconnecting) return;
@@ -514,7 +515,8 @@ namespace SandRibbon
 
         private void ShowTutorial()
         {
-            TutorialLayer.Visibility = Visibility.Visible;
+            Dispatcher.adoptAsync(()=>
+            TutorialLayer.Visibility = Visibility.Visible);
         }
         private void HideTutorial()
         {

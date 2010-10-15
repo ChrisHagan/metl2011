@@ -8,8 +8,8 @@ namespace MeTLLib
 {
     public class ClientFactory
     {
+        public static StandardKernel kernel = new StandardKernel(new BaseModule(), new ProductionModule());
         public static ClientConnection Connection() {
-            var kernel = new StandardKernel(new BaseModule(), new ProductionModule());
             return kernel.Get<ClientConnection>();
         } 
     }

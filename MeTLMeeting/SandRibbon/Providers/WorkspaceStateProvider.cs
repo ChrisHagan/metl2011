@@ -72,11 +72,7 @@ namespace SandRibbon.Providers
                     case "SetIdentity":
                         var values = (Crypto.decrypt(param.Attribute("authentication").Value)).Split(':');
                         Commands.ConnectWithUnauthenticatedCredentials.Execute(
-                            new SandRibbon.Utils.Connection.JabberWire.Credentials{
-                                name=values[0],
-                                password=values[1],
-                                authorizedGroups=new List<Utils.Connection.JabberWire.AuthorizedGroup>()
-                            });
+                            new MeTLLib.DataTypes.Credentials(values[0],values[1],new List<MeTLLib.DataTypes.AuthorizedGroup>()));
                     break;
                 }
             }

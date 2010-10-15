@@ -763,7 +763,6 @@
     <Compile Include="Components\ZoomControls.xaml.cs">
       <DependentUpon>ZoomControls.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Providers\AuthorisationProvider.cs" />
     <Compile Include="Providers\ConfigurationProvider.cs" />
     <Compile Include="Providers\Globals.cs" />
     <Compile Include="Providers\HistoryProvider.cs" />

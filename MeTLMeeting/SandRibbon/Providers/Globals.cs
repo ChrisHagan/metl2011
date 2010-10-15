@@ -97,15 +97,15 @@ namespace SandRibbon.Providers
                 return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
             }
         }
-        public static SandRibbon.Utils.Connection.JabberWire.Credentials credentials
+        public static MeTLLib.DataTypes.Credentials credentials
         {
             get
             {
                 var credentials = Commands.ConnectWithAuthenticatedCredentials.lastValue();
-                return (SandRibbon.Utils.Connection.JabberWire.Credentials)credentials;
+                return (MeTLLib.DataTypes.Credentials)credentials;
             }
         }
-        public static List<Utils.Connection.JabberWire.AuthorizedGroup> authorizedGroups
+        public static List<MeTLLib.DataTypes.AuthorizedGroup> authorizedGroups
         {
             get
             {

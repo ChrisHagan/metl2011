@@ -34,7 +34,7 @@ namespace MeTLLib
     #region EventArgs
     public class SubmissionAvailableEventArgs : EventArgs { public TargettedSubmission submission;}
     public class FileAvailableEventArgs : EventArgs { public TargettedFile file;}
-    public class StatusChangedEventArgs : EventArgs { public bool isConnected;}
+    public class StatusChangedEventArgs : EventArgs { public bool isConnected; public Credentials credentials;}
     public class PreParserAvailableEventArgs : EventArgs { public PreParser parser; }
     public class StrokeAvailableEventArgs : EventArgs { public TargettedStroke stroke;}
     public class ImageAvailableEventArgs : EventArgs { public TargettedImage image;}
@@ -75,7 +75,7 @@ namespace MeTLLib
         void receiveDirtyAutoShape(TargettedDirtyElement tde);
         void receiveBubble(TargettedBubbleContext tbc);
         void receiveConversationDetails(ConversationDetails cd);
-        void statusChanged(bool isConnected);
+        void statusChanged(bool isConnected, Credentials credentials);
         event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
         event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
         event MeTLLibEventHandlers.StatusChangedEventHandler StatusChanged;
@@ -219,9 +219,9 @@ namespace MeTLLib
         {
             ConversationDetailsAvailable(this, new ConversationDetailsAvailableEventArgs { conversationDetails = cd });
         }
-        public void statusChanged(bool isConnected)
+        public void statusChanged(bool isConnected, Credentials credentials)
         {
-            StatusChanged(this, new StatusChangedEventArgs { isConnected = isConnected });
+            StatusChanged(this, new StatusChangedEventArgs { isConnected = isConnected, credentials = credentials });
         }
 
         #region Events
