@@ -20,15 +20,13 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.Windows.Navigation;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {
     public partial class Login : UserControl
     {
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
-        public static List<int> HOLES = Enumerable.Range(0, 4).ToList();
-        static int TOOTH_COUNT = 18;
-        public static List<double> TEETH = Enumerable.Range(1, TOOTH_COUNT).Select(i => (360.0 / TOOTH_COUNT) * i).ToList();
         static Random random = new Random();
         public string Version { get; set; }
         public string ReleaseNotes
@@ -47,23 +45,22 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.DataContext = this;
-            Loaded += loaded;
             Commands.AddWindowEffect.Execute(null);
             Version = ConfigurationProvider.instance.getMetlVersion();
             Logger.Log(string.Format("The Version of MeTL is -> {0}", Version));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(
-                _credentials =>
-                {
-                    Commands.RemoveWindowEffect.Execute(null);
-                    Commands.ShowConversationSearchBox.Execute(null);
-                    this.Visibility = Visibility.Collapsed;
-                }));
             Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
-            if (WorkspaceStateProvider.workSpaceFileExits())
+            Commands.ConnectWithUnauthenticatedCredentials.RegisterCommand(new DelegateCommand<Utils.Connection.JabberWire.Credentials>(ConnectWithUnauthenticatedCredentials));
+            if (WorkspaceStateProvider.savedStateExists())
             {
+                rememberMe.IsChecked = true;
                 loggingIn.Visibility = Visibility.Visible;
                 usernameAndPassword.Visibility = Visibility.Collapsed;
             }
+            Loaded += loaded;
+        }
+        private void loaded(object sender, RoutedEventArgs e)
+        {
+            username.Focus();
         }
         private void ServersDown(IEnumerable<ServerStatus> servers)
         {
@@ -101,13 +98,11 @@ namespace SandRibbon.Components
             }
             return true;
         }
-        public bool isAuthenticatedAgainstWebProxy(string username, SecureString password)
+        public bool isAuthenticatedAgainstWebProxy(string username, string password)
         {
             try
             {
-                IntPtr ptr = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(password);
-                string sDecrypString = System.Runtime.InteropServices.Marshal.PtrToStringUni(ptr);
-                var resource = String.Format("https://my.monash.edu.au/login?username={0}&password={1}", username, sDecrypString);
+                var resource = String.Format("https://my.monash.edu.au/login?username={0}&password={1}", username, password);
                 String test = HttpResourceProvider.insecureGetString(resource);
                 return !test.Contains("error-text");
             }
@@ -121,10 +116,16 @@ namespace SandRibbon.Components
         {
             e.CanExecute = username != null && username.Text.Length > 0 && password != null && password.Password.Length > 0;
         }
+        private void ConnectWithUnauthenticatedCredentials(Utils.Connection.JabberWire.Credentials credentials) {
+            doAttemptAuthentication(credentials.name, credentials.password);
+        }
         private void attemptAuthentication(object sender, ExecutedRoutedEventArgs e)
         {
-            string TempUsername = username.Text;
-            string AuthcateUsername = username.Text;
+            doAttemptAuthentication(username.Text,password.Password);
+        }
+        private void doAttemptAuthentication(string username, string password){
+            var TempUsername = username;
+            var AuthcateUsername = username;
 #if DEBUG
             JabberWire.SwitchServer("staging");
 #else
@@ -146,50 +147,42 @@ namespace SandRibbon.Components
             else
                 AuthcateUsername = TempUsername;
 
-            string AuthcatePassword = password.Password;
-            SecureString secureAuthcatePassword = password.SecurePassword;
-
-            if (authenticateAgainstFailoverSystem(AuthcateUsername, AuthcatePassword, secureAuthcatePassword) || isBackdoorUser(AuthcateUsername))
+            if (authenticateAgainstFailoverSystem(AuthcateUsername, password) || isBackdoorUser(AuthcateUsername))
             {
-                var eligibleGroups = new AuthorisationProvider().getEligibleGroups(AuthcateUsername, AuthcatePassword);
-                Commands.SetIdentity.Execute(new SandRibbon.Utils.Connection.JabberWire.Credentials
+                var eligibleGroups = new AuthorisationProvider().getEligibleGroups(AuthcateUsername, password);
+                Commands.ConnectWithAuthenticatedCredentials.Execute(new SandRibbon.Utils.Connection.JabberWire.Credentials
                 {
                     name = AuthcateUsername,
-                    password = AuthcatePassword,
+                    password = password,
                     authorizedGroups = eligibleGroups
                 });
                 if(rememberMe.IsChecked == true)
                     WorkspaceStateProvider.SaveCurrentSettings();
                 else
                     WorkspaceStateProvider.ClearSettings();
+                Commands.RemoveWindowEffect.Execute(null);
+                Commands.ShowConversationSearchBox.Execute(null);
+                this.Visibility = Visibility.Collapsed;
             }
             else
             {
                 MessageBox.Show("Failed to Login.  Please check your details and try again.");
-                password.Clear();
-                password.Focus();
+                this.password.Clear();
+                this.password.Focus();
             }
         }
-
         private bool isBackdoorUser(string user)
         {
             return user.Contains(BackDoor.USERNAME_PREFIX);
         }
-
-        private bool authenticateAgainstFailoverSystem(string username, string password, SecureString securePassword)
+        private bool authenticateAgainstFailoverSystem(string username, string password)
         {
-            //return true;
             if (isAuthenticatedAgainstLDAP(username, password))
                 return true;
-            else if (isAuthenticatedAgainstWebProxy(username, securePassword))
+            else if (isAuthenticatedAgainstWebProxy(username, password))
                 return true;
             else
                 return false;
-        }
-        private void loaded(object sender, RoutedEventArgs e)
-        {
-            checkDestinationAlreadyKnown();
-            username.Focus();
         }
         private void checkDestinationAlreadyKnown()
         {

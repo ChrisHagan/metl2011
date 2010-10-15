@@ -843,6 +843,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
+      <Project>{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}</Project>
+      <Name>MeTLLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SandRibbonInterop\SandRibbonInterop.csproj">
       <Project>{936C46AC-5A2F-4476-A89C-52537260DBE4}</Project>
       <Name>SandRibbonInterop</Name>

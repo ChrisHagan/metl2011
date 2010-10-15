@@ -146,8 +146,6 @@ namespace SandRibbon
         }
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            if (loggingOut) return;
-            WorkspaceStateProvider.SaveCurrentSettings();
         }
     }
 }

@@ -23,21 +23,21 @@ namespace SandRibbon.Tabs.Groups
         public PrivacyToolsHost()
         {
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(updatePrivacyTools));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(UpdateConversationDetails));
         }
-        private void updatePrivacyTools(string jid)
+        private void UpdateConversationDetails(object _arg)
         {
             try
             {
-                if (new FileConversationDetailsProvider().DetailsOf(jid).Author == Globals.me || Globals.pedagogy.code > 2)
-                    //ribbonPrivacyTools.Visibility = Visibility.Visible;
+                if (Globals.isAuthor || Globals.pedagogy.code > 2)
                     this.Visibility = Visibility.Visible;
                 else {
-                    //ribbonPrivacyTools.Visibility = Visibility.Collapsed; 
                     this.Visibility = Visibility.Collapsed; 
                 }
             }
-            catch (Exception ex) { }
+            catch (NotSetException e) {
+                throw new Exception("PrivacyToolsHost tried to use unset values ",e);
+            }
         }
      }
 }

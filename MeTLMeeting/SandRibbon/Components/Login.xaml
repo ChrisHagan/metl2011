@@ -4,11 +4,13 @@
     xmlns:sr="clr-namespace:SandRibbon"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:util="clr-namespace:Components.Utility"
-    Loaded="loaded" >
+    xmlns:util="clr-namespace:Components.Utility">
     <UserControl.CommandBindings>
         <CommandBinding Command="{x:Static components:Login.CheckAuthentication}"  CanExecute="checkAuthenticationAttemptIsPlausible" Executed="attemptAuthentication"/>
     </UserControl.CommandBindings>
+    <UserControl.InputBindings>
+        <KeyBinding Command="{x:Static components:Login.CheckAuthentication}" Key="Enter" />
+    </UserControl.InputBindings>
     <DockPanel Background="White" Height="Auto" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Border DockPanel.Dock="Bottom" BorderThickness="1" Padding="2" CornerRadius="4" BorderBrush="DarkGray">
             <Grid>

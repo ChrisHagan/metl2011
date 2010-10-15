@@ -837,12 +837,14 @@ namespace SandRibbonInterop.MeTLStanzas
             {
                 get
                 {
+                    var time = DateTime.Now.Ticks;
+                    long.TryParse(GetTag(TIME), out time);
                     return new TargettedSubmission
                                {
                                    author = GetTag(AUTHOR),
                                    url = GetTag(URL),
                                    slide = int.Parse(GetTag(SLIDE)),
-                                   time = long.Parse(GetTag(TIME))
+                                   time = time
                                };
                 }
                 set

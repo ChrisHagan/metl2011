@@ -69,7 +69,7 @@ namespace SandRibbon
             catch (Exception) { }
             userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(SetIdentity));
+            Commands.ConnectWithAuthenticatedCredentials.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(ConnectWithAuthenticatedCredentials));
             Commands.PowerpointFinished.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
@@ -140,8 +140,6 @@ namespace SandRibbon
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
-            if (SmartBoardMeTLAlreadyLoaded)
-                checkIfSmartboard();
             App.Now("Restoring settings");
             WorkspaceStateProvider.RestorePreviousSettings();
             App.Now("Started MeTL");
@@ -357,13 +355,13 @@ namespace SandRibbon
         {
             Dispatcher.adoptAsync((HideProgressBlocker));
         }
-        private void SetIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
+        private void ConnectWithAuthenticatedCredentials(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
         {
             connect(credentials.name, credentials.password, 0, null);
-            var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
             Commands.AllStaticCommandsAreRegistered();
             Commands.RequerySuggested();
             Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);
+            Commands.SetIdentity.Execute(credentials);
         }
         private void SetZoomRect(Rectangle viewbox)
         {
@@ -382,20 +380,6 @@ namespace SandRibbon
                     p.Id != thisProcess.Id &&
                     (p.MainWindowTitle.StartsWith("S15") || p.MainWindowTitle.Equals("")));
             }
-        }
-        public void checkIfSmartboard()
-        {
-            var path = "C:\\Program Files\\MeTL\\boardIdentity.txt";
-            if (!File.Exists(path)) return;
-            var myFile = new StreamReader(path);
-            var username = myFile.ReadToEnd();
-            MessageBox.Show("Logging in as {0}", username);
-            JabberWire.SwitchServer("staging");
-            Dispatcher.adoptAsync(delegate
-            {
-                Title = username + " MeTL waiting for wakeup";
-            });
-            Commands.SetIdentity.Execute(new JabberWire.Credentials { authorizedGroups = new List<JabberWire.AuthorizedGroup>(), name = username, password = "examplePassword" });
         }
         private static object reconnectionLock = new object();
         private static bool reconnecting = false;
@@ -564,7 +548,7 @@ namespace SandRibbon
         {
             try
             {
-                if (Globals.location.activeConversation != null && ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation).Subject != "Deleted")
+                if (Globals.location.activeConversation != null && Globals.conversationDetails.Subject != "Deleted")
                     return true;
                 return false;
 

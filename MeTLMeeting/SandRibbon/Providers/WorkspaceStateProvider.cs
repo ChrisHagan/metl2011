@@ -24,17 +24,16 @@ namespace SandRibbon.Providers
         public static readonly string WORKSPACE_PARAMETER_ELEMENT = "parameter";
         private static readonly IEnumerable<ICommand> workspaceCommands = new ICommand[]{
             Commands.SetPedagogyLevel,
-            Commands.SetIdentity,
-            Commands.MoveTo,
-            Commands.JoinConversation
+            Commands.SetIdentity
         };
-        public static bool workSpaceFileExits()
+        public static bool savedStateExists()
         {
-             if (!Directory.Exists(WORKSPACE_DIRECTORY))
-                 return false;
-             if (!File.Exists(WORKSPACE_SAVE_FILE))
-                 return false;
-            return true;
+            if (!Directory.Exists(WORKSPACE_DIRECTORY) || !File.Exists(WORKSPACE_SAVE_FILE)) return false;
+            var xml = XElement.Load(WORKSPACE_SAVE_FILE);
+            return new[]{"SetIdentity", "SetPedagogyLevel"}.All(p=>xml.Descendants(WORKSPACE_PREFERENCE_ELEMENT).Where(node=>{
+                var preference = node.Attribute(WORKSPACE_COMMAND_ATTRIBUTE);
+                return preference != null && preference.Value == p;
+            }).Count() > 0);
         }
         public static void ensureWorkspaceDirectoryExists() { 
             if (!Directory.Exists(WORKSPACE_DIRECTORY)) {
@@ -67,44 +66,18 @@ namespace SandRibbon.Providers
                 var param = element.Element(WORKSPACE_PARAMETER_ELEMENT);
                 switch (which) { 
                     case "SetPedagogyLevel":
-                        //CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = (Pedagogicometer.level(Int32.Parse(param.Value)));
                         var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
                         CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(level);
                     break;
-                   
                     case "SetIdentity":
                         var values = (Crypto.decrypt(param.Attribute("authentication").Value)).Split(':');
-                        Commands.SetIdentity.Execute(
+                        Commands.ConnectWithUnauthenticatedCredentials.Execute(
                             new SandRibbon.Utils.Connection.JabberWire.Credentials{
                                 name=values[0],
                                 password=values[1],
-                                authorizedGroups=new AuthorisationProvider().getEligibleGroups(values[0],values[1])
+                                authorizedGroups=new List<Utils.Connection.JabberWire.AuthorizedGroup>()
                             });
                     break;
-                    
-                    /*case "JoinConversation":
-                        Commands.JoinConversation.Execute(param.Attribute("conversation").Value);
-                    break;*/
-                        /*
-                    case "MoveTo":
-                        DelegateCommand<object> onJoin = null;
-                        onJoin = new DelegateCommand<object>((details) =>
-                        {
-                            Commands.UpdateConversationDetails.UnregisterCommand(onJoin);
-                            var slide = Int32.Parse(param.Attribute("slide").Value);
-                            try
-                            {
-                                if (Globals.slide != slide)
-                                    Commands.MoveTo.Execute(slide);
-                            }
-                            catch (NotSetException)
-                            {
-                                Commands.MoveTo.Execute(slide);
-                            }
-                        });
-                        Commands.UpdateConversationDetails.RegisterCommand(onJoin);
-                    break;
-                         */
                 }
             }
             App.Now("Finished restoring settings");
@@ -137,14 +110,6 @@ namespace SandRibbon.Providers
                         case "SetIdentity":
                             commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
                                 new XAttribute("authentication", Crypto.encrypt(string.Format(@"{0}:{1}", Globals.credentials.name, Globals.credentials.password)))));
-                            break;
-                        case "JoinConversation":
-                            commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
-                                new XAttribute("conversation", Globals.conversationDetails.Jid)));
-                            break;
-                        case "MoveTo":
-                            commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
-                                new XAttribute("slide", Globals.slide)));
                             break;
                     }
                 }

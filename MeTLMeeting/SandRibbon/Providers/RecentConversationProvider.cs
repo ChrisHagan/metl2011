@@ -35,7 +35,6 @@ namespace SandRibbon.Providers
             }
             return new List<ConversationDetails>();
         }
-
         public static void addRecentConversation(ConversationDetails document, String me)
         {
             try

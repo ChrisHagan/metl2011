@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace SandRibbon.Providers
 {
-    public class AuthorisationProvider : HttpResourceProvider
+    class AuthorisationProvider : HttpResourceProvider
     {
         public List<JabberWire.AuthorizedGroup> getEligibleGroups( string AuthcateName, string AuthcatePassword) 
         {

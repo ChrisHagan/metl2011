@@ -121,7 +121,6 @@ namespace SandRibbon.Components
             OnNotifyMessage(msg);
             return IntPtr.Zero;
         }
-
         private void OnNotifyMessage(int m)
         {
             if (m.Equals(SBSDKMessageID) && Sbsdk != null)

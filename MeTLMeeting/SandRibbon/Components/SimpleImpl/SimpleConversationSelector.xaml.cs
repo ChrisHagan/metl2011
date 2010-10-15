@@ -24,13 +24,13 @@ namespace SandRibbon.Components
             InitializeComponent();
             this.conversations.ItemsSource = new List<SandRibbonObjects.ConversationDetails>();
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>((_details) => {}, doesConversationAlreadyExist));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(JoinConversation));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(RedrawList));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(
                 (_arg) => 
                     List(ConversationDetailsProviderFactory.Provider.ListConversations()),
                 details=>
                     rawConversationList.Where(c=>c.Title == details.Title || string.IsNullOrEmpty(details.Title)).Count() == 0));
+            RedrawList(null);
         }
         private bool doesConversationAlreadyExist(object obj)
         {
@@ -52,16 +52,15 @@ namespace SandRibbon.Components
             var allConversation = ConversationDetailsProviderFactory.Provider.ListConversations();
             List(allConversation);
         }
-        private void JoinConversation(object _unused)
+        private void RedrawList(object _unused)
         {
-            Dispatcher.adopt((Action) delegate
+            Dispatcher.adoptAsync((Action) delegate
                 {
                     this.conversations.ItemsSource =
                         RecentConversationProvider.loadRecentConversations()
                         .Where(c => c.IsValid)
                         .Reverse()
                         .Take(6);
-
                 });
         }
         public void List(IEnumerable<SandRibbonObjects.ConversationDetails> conversations)

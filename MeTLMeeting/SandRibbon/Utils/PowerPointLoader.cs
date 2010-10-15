@@ -195,12 +195,7 @@ namespace SandRibbon.Utils
             int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
             var slideThumbnailPath = Directory.GetCurrentDirectory() + "\\thumbs\\" + conversationSlideNumber + ".png";
             slide.Export(slideThumbnailPath, "PNG", Convert.ToInt32(slide.Master.Width), Convert.ToInt32(slide.Master.Height));
-            var thumbUrl = SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(slideThumbnailPath, conversationSlideNumber + "/thumbs", "slideThumb.png");
-            details.Slides.Where(s => s.id == conversationSlideNumber).Select(s =>
-            {
-                s.thumbnailUrl = thumbUrl;
-                return s;
-            });
+            SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(slideThumbnailPath, conversationSlideNumber + "/thumbs", "slideThumb.png");
         }
 
         public void LoadPowerpoint(string file, ConversationDetails details)

@@ -36,6 +36,7 @@ namespace SandRibbon.Providers.Structure
         private static readonly string SUMMARY = "summary.xml";
         public SandRibbonObjects.ConversationDetails DetailsOf(string conversationJid)
         {
+            App.Now("Getting details for " + conversationJid);
             try
             {
                 var url = string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, conversationJid, DETAILS);

@@ -52,20 +52,6 @@ namespace SandRibbon.Providers
                 return (PedagogyLevel)Commands.SetPedagogyLevel.lastValue();
             }
         }
-        public static string MeTLType
-        {
-            get
-            {
-                try
-                {
-                    return Commands.SendMeTLType.lastValue().ToString();
-                }
-                catch(NotSetException e)
-                {
-                    return "MeTL Collaborator";
-                }
-            }
-        }
         public static Utils.Connection.JabberWire.Location location
         {
             get
@@ -115,7 +101,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                var credentials = Commands.SetIdentity.lastValue();
+                var credentials = Commands.ConnectWithAuthenticatedCredentials.lastValue();
                 return (SandRibbon.Utils.Connection.JabberWire.Credentials)credentials;
             }
         }
@@ -123,8 +109,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                var credentials = Commands.SetIdentity.lastValue();
-                return ((Utils.Connection.JabberWire.Credentials)credentials).authorizedGroups;
+                return credentials.authorizedGroups;
             }
         }
         public static bool synched

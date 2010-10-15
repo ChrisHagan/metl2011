@@ -40,20 +40,9 @@ namespace SandRibbon.Tabs
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
                 quizzes.ItemsSource = activeQuizes;
-
         }
         private void joinConversation(string jid)
         {
-            if (new SandRibbon.Providers.Structure.FileConversationDetailsProvider().DetailsOf(jid).Author == Globals.me)
-            {
-                quizResultsRibbonGroup.Header = "View results";
-                quizRibbonGroup.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                quizResultsRibbonGroup.Header = "Respond";
-                quizRibbonGroup.Visibility = Visibility.Collapsed;
-            }
             activeQuizes = new ObservableCollection<QuizQuestion>();
         }
         private void updateConversationDetails(object obj)
@@ -64,11 +53,15 @@ namespace SandRibbon.Tabs
                                           {
                                               if (Globals.isAuthor)
                                               {
+                                                  quizResultsRibbonGroup.Header = "View results";
+                                                  quizRibbonGroup.Visibility = Visibility.Visible;
                                                   createQuiz.Visibility = Visibility.Visible;
                                                   createQuiz.IsEnabled = true;
                                               }
                                               else
                                               {
+                                                  quizResultsRibbonGroup.Header = "Respond";
+                                                  quizRibbonGroup.Visibility = Visibility.Collapsed;
                                                   createQuiz.Visibility = Visibility.Collapsed;
                                               }
                                           }

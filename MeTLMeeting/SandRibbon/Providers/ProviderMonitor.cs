@@ -44,7 +44,6 @@ namespace SandRibbon.Components
                 };
         public static void HealthCheck(Action healthyBehaviour)
         {
-            //var currentStack = new System.Diagnostics.StackTrace();
             try
             {
                 foreach (var server in SERVERS)

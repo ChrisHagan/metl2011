@@ -184,12 +184,12 @@ namespace SandRibbon.Components
 
         private void deleteConversation(object sender, RoutedEventArgs e)
         {
-            if( MessageBox.Show("Are You sure You want to delete", "Delete Confirmation", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                return;
-            
-            var details = (ConversationDetails)((SandRibbonInterop.Button) sender).DataContext;
-            details.Subject = "Deleted";
-            ConversationDetailsProviderFactory.Provider.Update(details);
+            if (MessageBox.Show("Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                var details = (ConversationDetails)((SandRibbonInterop.Button)sender).DataContext;
+                details.Subject = "Deleted";
+                ConversationDetailsProviderFactory.Provider.Update(details);
+            }
         }
 
         private void editConversation(object sender, RoutedEventArgs e)

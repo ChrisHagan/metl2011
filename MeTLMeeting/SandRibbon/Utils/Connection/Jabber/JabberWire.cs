@@ -888,12 +888,11 @@ namespace SandRibbon.Utils.Connection
             {
                 var muc = new MucManager(conn);
                 muc.LeaveRoom(new Jid(location.activeConversation + "@" + Constants.JabberWire.MUC), credentials.name);
-                foreach (var slide in ConversationDetailsProviderFactory.Provider.DetailsOf(location.activeConversation).Slides.Select(s => s.id))
+                foreach (var slide in Globals.slides.Select(s => s.id))
                     muc.LeaveRoom(new Jid(slide + "@" + Constants.JabberWire.MUC), credentials.name);
             }
             location.activeConversation = room;
             joinRooms();
-
         }
         private void handleSyncMoveReceived(string[] parts)
         {
