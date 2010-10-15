@@ -56,6 +56,7 @@ namespace SandRibbon
         {
             App.Now("Window 1 Constructor start");
             ProviderMonitor.HealthCheck(DoConstructor);
+            Commands.AllStaticCommandsAreRegistered();
         }
         private void DoConstructor()
         {

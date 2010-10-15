@@ -33,10 +33,9 @@
             <dict:RadioButton ToolTip="{StaticResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
         </dict:RibbonPanel>
         <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
-        <dict:PenColorsListBox x:Name="defaultColours" Background="Transparent" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
+        <dict:PenColorsListBox x:Name="defaultColours" SelectionChanged="ChangeColorFromPreset" Background="Transparent" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                 ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Padding="0" BorderBrush="Transparent">
-<!--SelectionChanged="ChangeColorFromPreset" -->
             <dict:PenColorsListBox.ItemTemplate>
                 <DataTemplate>
                     <Border Tag="{Binding Path=Index}"

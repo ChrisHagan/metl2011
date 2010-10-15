@@ -449,7 +449,7 @@ namespace SandRibbon.Tabs.Groups
                                                this.Effect = null;
                                            });
         }
-        private void ChangeColorFromPreset(object sender, RoutedEventArgs e)
+        private void ChangeColorFromPreset(object sender, SelectionChangedEventArgs e)
         {
             var listBox = ((ListBox)sender);
             if (listBox.SelectedItem != null)
