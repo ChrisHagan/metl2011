@@ -17,7 +17,7 @@ namespace SandRibbon.Components
     {
         static ProviderMonitor()
         {
-            _JabberWire.LookupServer();
+            App.LookupServer();
         }
         private static List<ServerStatus> SERVERS =
                 new List<ServerStatus>(){

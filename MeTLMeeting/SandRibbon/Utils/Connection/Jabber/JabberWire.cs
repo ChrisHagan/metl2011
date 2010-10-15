@@ -22,8 +22,8 @@ using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Utils.Connection
-{/*SPECIAL METL*/
-    public partial class _JabberWire
+{ }/*SPECIAL METL*/
+    /*public partial class _JabberWire
     {
         protected const string WORM = "/WORM_MOVES";
         protected const string SUBMISSION = "/SUBMISSION";
@@ -174,7 +174,9 @@ namespace SandRibbon.Utils.Connection
             this.credentials = credentials;
             setUpWire();
             //Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
-            /*Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            
+     */
+    /*Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(SendSyncMoveTo));
             Commands.SendDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(SendDirtyConversationDetails));
             Commands.SendTextBox.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedTextBox>((textbox) => SendTextbox(textbox)));
@@ -206,7 +208,7 @@ namespace SandRibbon.Utils.Connection
             Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendScreenshotSubmission));
             Commands.getCurrentClasses.RegisterCommand(new DelegateCommand<object>(getCurrentClasses));
         */
-        }
+        /*}
         private void doGetCurrentClasses()
         {
             return;
@@ -926,4 +928,4 @@ namespace SandRibbon.Utils.Connection
             log(string.Format("Received unknown message: {0}", message));
         }
     }
-}
+}*/
