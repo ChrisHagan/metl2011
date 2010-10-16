@@ -91,6 +91,8 @@ namespace MeTLLib
         [Inject]
         public IConversationDetailsProvider conversationDetailsProvider { private get; set; }
         [Inject]
+        public ResourceCache cache { private get; set; }
+        [Inject]
         public JabberWireFactory jabberWireFactory { private get; set; }
         private MeTLServerAddress server;
         public ClientConnection(MeTLServerAddress address)
@@ -176,6 +178,26 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Image send: " + image.id);
             Action work = delegate
             {
+                image.adoptCache(cache, server);
+                var newImage = image.image;
+                newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(cache.RemoteSource(new Uri(((System.Windows.Controls.Image)newImage).Source.ToString(), UriKind.Relative)));
+                image.image = newImage;
+
+                /*var selectedImageLeft = InkCanvas.GetLeft((System.Windows.Controls.Image)selectedImage);
+                var selectedImageTop = InkCanvas.GetTop((System.Windows.Controls.Image)selectedImage);
+                var newImage = new System.Windows.Controls.Image
+                          {
+                              Height = ((System.Windows.Controls.Image) selectedImage).ActualHeight,
+                              Width = ((System.Windows.Controls.Image) selectedImage).Width,
+                              Source = (ImageSource) new ImageSourceConverter().ConvertFrom(SandRibbonInterop.LocalCache.ResourceCache.RemoteSource( new Uri( ((System.Windows.Controls.Image) selectedImage).Source. ToString(), UriKind.Relative)))
+                          };
+       InkCanvas.SetLeft(newImage, selectedImageLeft);
+       InkCanvas.SetTop(newImage, selectedImageTop);
+       var tag = ((System.Windows.Controls.Image)selectedImage).tag();
+       tag.zIndex = -1;
+       newImage.tag(tag);
+       Commands.SendImage.Execute(new MeTLLib.DataTypes.TargettedImage(currentSlide,Globals.me,target,((System.Windows.Controls.Image)selectedImage).tag().privacy,(System.Windows.Controls.Image)selectedImage));
+   */
                 wire.SendImage(image);
             };
             tryIfConnected(work);
@@ -185,6 +207,28 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Video send: " + video.id);
             Action work = delegate
             {
+                    video.adoptCache(cache, server);
+                    var selectedImage = video.video;
+                    //((MeTLLib.DataTypes.Video)selectedImage).Tag = ((MeTLLib.DataTypes.Video)selectedImage).MediaElement.Tag;
+                    //var tag = ((MeTLLib.DataTypes.Video)selectedImage).tag();
+                    //tag.privacy = video.privacy;
+                    //tag.zIndex = -1;
+                    //var oldVideo = ((MeTLLib.DataTypes.Video)selectedImage);
+                    //oldVideo.UpdateLayout();
+                    //var srVideo = new MeTLLib.DataTypes.Video();
+                    /*srVideo.tag(tag);
+                    srVideo.X = InkCanvas.GetLeft(oldVideo);
+                    srVideo.Y = InkCanvas.GetTop(oldVideo);
+                    srVideo.VideoHeight = oldVideo.MediaElement.ActualHeight;
+                    srVideo.VideoWidth = oldVideo.MediaElement.ActualWidth;
+                    srVideo.Height = oldVideo.ActualHeight;
+                    srVideo.Width = oldVideo.ActualWidth;*/
+                    //srVideo.VideoSource = oldVideo.VideoSource;
+                    //selectedImage.X = InkCanvas.GetLeft(selectedImage);
+                    //selectedImage.Y = InkCanvas.GetTop(selectedImage);
+                    selectedImage.VideoSource = cache.RemoteSource(selectedImage.VideoSource);
+                    video.video = selectedImage;    
+
                 wire.SendVideo(video);
             };
             tryIfConnected(work);

@@ -97,7 +97,7 @@ namespace SandRibbon.Components.Canvas
 
         private void clearVisibilityDictionary(object obj)
         {
-            userImages.Clear(); 
+            userImages.Clear();
             userVideo.Clear();
         }
         private void updateVisibility(VisibilityInformation info)
@@ -117,11 +117,11 @@ namespace SandRibbon.Components.Canvas
                 case "toggleStudents":
                     {
                         var keys = userVisibility.Keys.Where(k => k != "Teacher" && k != Globals.me).ToList();
-                        foreach(var key in keys)
+                        foreach (var key in keys)
                             userVisibility[key] = info.visible;
                         break;
                     }
-                    default:
+                default:
                     {
                         userVisibility[info.user] = info.visible;
                         break;
@@ -131,25 +131,25 @@ namespace SandRibbon.Components.Canvas
         }
         private void setUserVisibility(VisibilityInformation info)
         {
-                    Dispatcher.adoptAsync(() =>
-                                  {
+            Dispatcher.adoptAsync(() =>
+                          {
 
-                                      Children.Clear();
-                                      updateVisibility(info); 
-                                      var visibleUsers =
-                                          userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
-                                      var allVisibleImages = new List<MeTLLib.DataTypes.TargettedImage>();
-                                      var allVisibleVideos = new List<MeTLLib.DataTypes.TargettedVideo>();
-                                      foreach(var user in visibleUsers)
-                                      {
-                                        if(userImages.ContainsKey(user))
-                                            allVisibleImages.AddRange(userImages[user]);
-                                        if(userVideo.ContainsKey(user))
-                                            allVisibleVideos.AddRange(userVideo[user]);
-                                      }
-                                      ReceiveImages(allVisibleImages);
-                                      ReceiveVideos(allVisibleVideos);
-                                  });
+                              Children.Clear();
+                              updateVisibility(info);
+                              var visibleUsers =
+                                  userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
+                              var allVisibleImages = new List<MeTLLib.DataTypes.TargettedImage>();
+                              var allVisibleVideos = new List<MeTLLib.DataTypes.TargettedVideo>();
+                              foreach (var user in visibleUsers)
+                              {
+                                  if (userImages.ContainsKey(user))
+                                      allVisibleImages.AddRange(userImages[user]);
+                                  if (userVideo.ContainsKey(user))
+                                      allVisibleVideos.AddRange(userVideo[user]);
+                              }
+                              ReceiveImages(allVisibleImages);
+                              ReceiveVideos(allVisibleVideos);
+                          });
         }
 
         private void deleteSelectedImages(object obj)
@@ -222,33 +222,33 @@ namespace SandRibbon.Components.Canvas
                         {
                             AddImage(image);
                             Commands.SendImage.Execute(new TargettedImage
-                            (currentSlide,image.tag().author,target,privacy,image));
+                            (currentSlide, image.tag().author, target, privacy, image));
                         },
                         () =>
                         {
                             Children.Remove(image);
                             Commands.SendDirtyImage.Execute(new TargettedDirtyElement
-                            (currentSlide,image.tag().author,target,image.tag().privacy,image.tag().id));
+                            (currentSlide, image.tag().author, target, image.tag().privacy, image.tag().id));
                         });
 
-                    Commands.SendDirtyImage.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,image.tag().privacy,image.tag().id));
+                    Commands.SendDirtyImage.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, image.tag().privacy, image.tag().id));
                 }
                 if ((GetSelectedElements().ElementAt(i)) is MeTLLib.DataTypes.AutoShape)
                 {
                     var autoshape = (MeTLLib.DataTypes.AutoShape)GetSelectedElements().ElementAt(i);
-                    Commands.SendDirtyAutoShape.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,privacy,autoshape.Tag.ToString()));
+                    Commands.SendDirtyAutoShape.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, privacy, autoshape.Tag.ToString()));
                 }
                 if ((GetSelectedElements().ElementAt(i)) is MeTLLib.DataTypes.Video)
                 {
                     var video = (MeTLLib.DataTypes.Video)GetSelectedElements().ElementAt(i);
-                    Commands.SendDirtyVideo.Execute(new TargettedDirtyElement(currentSlide,Globals.me,target,privacy,video.Tag.ToString()));
+                    Commands.SendDirtyVideo.Execute(new TargettedDirtyElement(currentSlide, Globals.me, target, privacy, video.Tag.ToString()));
                     Commands.MirrorVideo.Execute(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(video.tag().id, null));
                 }
                 if ((GetSelectedElements().ElementAt(i)) is MeTLLib.DataTypes.RenderedLiveWindow)
                 {
                     var liveWindow = (MeTLLib.DataTypes.RenderedLiveWindow)GetSelectedElements().ElementAt(i);
                     Commands.SendDirtyLiveWindow.Execute(new TargettedDirtyElement
-                    (currentSlide,Globals.me,target,privacy,((Rectangle)((MeTLLib.DataTypes.RenderedLiveWindow)liveWindow).Rectangle).Tag.ToString()));
+                    (currentSlide, Globals.me, target, privacy, ((Rectangle)((MeTLLib.DataTypes.RenderedLiveWindow)liveWindow).Rectangle).Tag.ToString()));
                 }
             }
         }
@@ -294,9 +294,9 @@ namespace SandRibbon.Components.Canvas
                     Commands.ReceiveAuthor.Execute(author);
                     if (!userVisibility.ContainsKey(author))
                         userVisibility.Add(author, true);
-                    if(!userImages.ContainsKey(author))
+                    if (!userImages.ContainsKey(author))
                         userImages.Add(author, new List<MeTLLib.DataTypes.TargettedImage>());
-                    if(!userImages[author].Contains(image))
+                    if (!userImages[author].Contains(image))
                         userImages[author].Add(image);
                 }
                 AddImage(image.image);
@@ -314,9 +314,9 @@ namespace SandRibbon.Components.Canvas
                     Commands.ReceiveAuthor.Execute(author);
                     if (!userVisibility.ContainsKey(author))
                         userVisibility.Add(author, true);
-                    if(!userVideo.ContainsKey(author))
+                    if (!userVideo.ContainsKey(author))
                         userVideo.Add(author, new List<MeTLLib.DataTypes.TargettedVideo>());
-                    if(!userVideo[author].Contains(video))
+                    if (!userVideo[author].Contains(video))
                         userVideo[author].Add(video);
                 }
                 if (me == "projector")
@@ -382,7 +382,7 @@ namespace SandRibbon.Components.Canvas
                     ApplyPrivacyStylingToElement(image, image.tag().privacy);
                 foreach (MeTLLib.DataTypes.Video video in videos)
                     ApplyPrivacyStylingToElement(video, video.tag().privacy);
-           
+
             });
         }
         public static IEnumerable<Point> getImagePoints(System.Windows.Controls.Image image)
@@ -405,7 +405,7 @@ namespace SandRibbon.Components.Canvas
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
             var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
-            if(userImages.ContainsKey(author) && element.target == target)
+            if (userImages.ContainsKey(author) && element.target == target)
             {
                 var dirtyImage = userImages[author].Where(i => i.id == element.identifier).FirstOrDefault();
                 if (dirtyImage != null)
@@ -418,7 +418,7 @@ namespace SandRibbon.Components.Canvas
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
             var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
-            if(userVideo.ContainsKey(author) && element.target == target)
+            if (userVideo.ContainsKey(author) && element.target == target)
             {
                 var dirtyImage = userVideo[author].Where(i => i.id == element.identifier).FirstOrDefault();
                 if (dirtyImage != null)
@@ -546,11 +546,11 @@ namespace SandRibbon.Components.Canvas
                     {
                         Source = new BitmapImage(uri)
                     };
-                    image.tag(new MeTLLib.DataTypes.ImageTag(Globals.me,privacy,string.Format("{0}:{1}:{2}",Globals.me,SandRibbonObjects.DateTimeFactory.Now(),1),false,-1));
+                    image.tag(new MeTLLib.DataTypes.ImageTag(Globals.me, privacy, string.Format("{0}:{1}:{2}", Globals.me, SandRibbonObjects.DateTimeFactory.Now(), 1), false, -1));
                     InkCanvas.SetLeft(image, 15);
                     InkCanvas.SetTop(image, 15);
                     Commands.SendImage.Execute(new TargettedImage
-                    (currentSlide,Globals.me,target,privacy,image));
+                    (currentSlide, Globals.me, target, privacy, image));
                 }
                 else MessageBox.Show("Sorry, your file could not be pasted.  Try dragging and dropping, or selecting with the add image button.");
             }
@@ -569,7 +569,7 @@ namespace SandRibbon.Components.Canvas
                 var image = (System.Windows.Controls.Image)element;
                 ApplyPrivacyStylingToElement(image, image.tag().privacy);
                 Clipboard.SetImage((BitmapSource)image.Source);
-                listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,image.tag().privacy,image.tag().id));
+                listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, image.tag().privacy, image.tag().id));
             }
             foreach (var element in listToCut)
                 Commands.SendDirtyImage.Execute(element);
@@ -637,7 +637,10 @@ namespace SandRibbon.Components.Canvas
             {
                 if (selectedImage is System.Windows.Controls.Image)
                 {
-                    selectedImage.UpdateLayout();
+                    var newImage = (System.Windows.Controls.Image)selectedImage;
+                    newImage.UpdateLayout();
+                    Commands.SendImage.Execute(new TargettedImage(currentSlide, Globals.me, target, newImage.tag().privacy, newImage));
+                    /*selectedImage.UpdateLayout();
                     var selectedImageLeft = InkCanvas.GetLeft((System.Windows.Controls.Image)selectedImage);
                     var selectedImageTop = InkCanvas.GetTop((System.Windows.Controls.Image)selectedImage);
                     var newImage = new System.Windows.Controls.Image
@@ -652,9 +655,10 @@ namespace SandRibbon.Components.Canvas
                     tag.zIndex = -1;
                     newImage.tag(tag);
                     Commands.SendImage.Execute(new MeTLLib.DataTypes.TargettedImage(currentSlide,Globals.me,target,((System.Windows.Controls.Image)selectedImage).tag().privacy,(System.Windows.Controls.Image)selectedImage));
+                */
                 }
                 else if (selectedImage is MeTLLib.DataTypes.AutoShape)
-                    Commands.SendAutoShape.Execute(new MeTLLib.DataTypes.TargettedAutoShape(currentSlide,Globals.me,target,privacy,(MeTLLib.DataTypes.AutoShape)selectedImage));
+                    Commands.SendAutoShape.Execute(new MeTLLib.DataTypes.TargettedAutoShape(currentSlide, Globals.me, target, privacy, (MeTLLib.DataTypes.AutoShape)selectedImage));
                 else if (selectedImage is MeTLLib.DataTypes.RenderedLiveWindow)
                 {
                     var container = (MeTLLib.DataTypes.RenderedLiveWindow)selectedImage;
@@ -662,11 +666,16 @@ namespace SandRibbon.Components.Canvas
                     var box = ((VisualBrush)window.Fill).Viewbox;
                     window.Height = container.Height;
                     window.Width = container.Width;
-                    Commands.SendLiveWindow.Execute(new MeTLLib.DataTypes.LiveWindowSetup(currentSlide,Globals.me,window,box.TopLeft,new Point(InkCanvas.GetLeft(container),InkCanvas.GetTop(container)),window.Tag.ToString()));
+                    Commands.SendLiveWindow.Execute(new MeTLLib.DataTypes.LiveWindowSetup(currentSlide, Globals.me, window, box.TopLeft, new Point(InkCanvas.GetLeft(container), InkCanvas.GetTop(container)), window.Tag.ToString()));
                 }
                 else if (selectedImage is MeTLLib.DataTypes.Video)
                 {
-                    ((MeTLLib.DataTypes.Video)selectedImage).Tag = ((MeTLLib.DataTypes.Video)selectedImage).MediaElement.Tag;
+                    var srVideo = (MeTLLib.DataTypes.Video)selectedImage;
+                    srVideo.UpdateLayout();
+                    srVideo.X = InkCanvas.GetLeft(srVideo);
+                    srVideo.Y = InkCanvas.GetTop(srVideo);
+                    Commands.SendVideo.Execute(new TargettedVideo(currentSlide, Globals.me, target, srVideo.tag().privacy, srVideo));
+                    /*((MeTLLib.DataTypes.Video)selectedImage).Tag = ((MeTLLib.DataTypes.Video)selectedImage).MediaElement.Tag;
                     var tag = ((MeTLLib.DataTypes.Video)selectedImage).tag();
                     tag.privacy = privacy;
                     tag.zIndex = -1;
@@ -683,6 +692,8 @@ namespace SandRibbon.Components.Canvas
                     //srVideo.VideoSource = oldVideo.VideoSource;
                     srVideo.VideoSource = new System.Uri("https://" + Constants.JabberWire.SERVER + ":1188/" + ( SandRibbonInterop.LocalCache.ResourceCache.RemoteSource(oldVideo.VideoSource).ToString()), UriKind.Absolute);
                     Commands.SendVideo.Execute(new MeTLLib.DataTypes.TargettedVideo(currentSlide,Globals.me,target,privacy,srVideo));
+                
+                     */
                 }
             }
         }
@@ -709,7 +720,7 @@ namespace SandRibbon.Components.Canvas
                     var image = (System.Windows.Controls.Image)selectedImage;
 
                     ApplyPrivacyStylingToElement(image, image.tag().privacy);
-                    Commands.SendDirtyImage.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,((System.Windows.Controls.Image)selectedImage).tag().privacy,((System.Windows.Controls.Image)selectedImage).tag().id));
+                    Commands.SendDirtyImage.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, ((System.Windows.Controls.Image)selectedImage).tag().privacy, ((System.Windows.Controls.Image)selectedImage).tag().id));
                 }
                 else if (selectedImage is MeTLLib.DataTypes.RenderedLiveWindow)
                 {
@@ -717,16 +728,16 @@ namespace SandRibbon.Components.Canvas
                     {
                         var rect = ((MeTLLib.DataTypes.RenderedLiveWindow)selectedImage).Rectangle;
                         Commands.SendDirtyLiveWindow.Execute(
-                            new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,"private",(string)((Rectangle)rect).Tag));
+                            new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, "private", (string)((Rectangle)rect).Tag));
                     }
                 }
                 else if (selectedImage is MeTLLib.DataTypes.AutoShape)
-                    Commands.SendDirtyAutoShape.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,selectedElementPrivacy,((MeTLLib.DataTypes.AutoShape)selectedImage).Tag.ToString()));
+                    Commands.SendDirtyAutoShape.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, selectedElementPrivacy, ((MeTLLib.DataTypes.AutoShape)selectedImage).Tag.ToString()));
                 else if (selectedImage is MeTLLib.DataTypes.Video)
                 {
-                    Commands.MirrorVideo.Execute(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(((MeTLLib.DataTypes.Video)selectedImage).tag().id,null));
+                    Commands.MirrorVideo.Execute(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(((MeTLLib.DataTypes.Video)selectedImage).tag().id, null));
                     Commands.SendDirtyVideo.Execute(
-                        new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,selectedElementPrivacy,((MeTLLib.DataTypes.Video)selectedImage).MediaElement.Tag.ToString()));
+                        new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, selectedElementPrivacy, ((MeTLLib.DataTypes.Video)selectedImage).MediaElement.Tag.ToString()));
                 }
             }
         }
@@ -764,7 +775,7 @@ namespace SandRibbon.Components.Canvas
             });
         }
         #endregion
-                
+
         #region Video
         private MeTLLib.DataTypes.Video newVideo(System.Uri Source)
         {
@@ -775,7 +786,7 @@ namespace SandRibbon.Components.Canvas
             return MeTLVideo;
         }
         #endregion
-  
+
         #region AutoShapes
         private void createNewAutoShape(object obj)
         {
@@ -793,7 +804,7 @@ namespace SandRibbon.Components.Canvas
                 SetLeft(newAutoShape, 0);
                 SetTop(newAutoShape, 0);
                 tagAutoShape(newAutoShape, 1);
-                Commands.SendAutoShape.Execute(new MeTLLib.DataTypes.TargettedAutoShape(currentSlide,Globals.me,target,privacy,newAutoShape));
+                Commands.SendAutoShape.Execute(new MeTLLib.DataTypes.TargettedAutoShape(currentSlide, Globals.me, target, privacy, newAutoShape));
             }
             catch (Exception ex)
             {//Don't do as I do, do as I say.  DON'T do this.
@@ -815,15 +826,15 @@ namespace SandRibbon.Components.Canvas
         {
             addResourceFromDisk((files) =>
                                     {
-                                        foreach(var file in files)
+                                        foreach (var file in files)
                                         {
-                                                uploadFileForUse(file);
+                                            uploadFileForUse(file);
                                         }
                                     });
         }
         private void addImageFromQuizSnapshot(string filename)
         {
-            if(target == "presentationSpace" && me != "projector")
+            if (target == "presentationSpace" && me != "projector")
                 handleDrop(filename, new Point(200, 100), 1);
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
@@ -897,7 +908,7 @@ namespace SandRibbon.Components.Canvas
                     {
                         Children.Remove(video);
                         Commands.SendDirtyImage.Execute(new MeTLLib.DataTypes.TargettedDirtyElement
-                        (currentSlide,video.tag().author,target,video.tag().privacy,video.tag().id));                                    
+                        (currentSlide, video.tag().author, target, video.tag().privacy, video.tag().id));
                     },
                     () =>
                     {
@@ -906,7 +917,7 @@ namespace SandRibbon.Components.Canvas
                 video.VideoHeight = video.MediaElement.NaturalVideoHeight;
                 video.VideoWidth = video.MediaElement.NaturalVideoWidth;
                 var tv = new MeTLLib.DataTypes.TargettedVideo
-                (currentSlide,Globals.me,target,privacy,video);
+                (currentSlide, Globals.me, target, privacy, video);
                 tv.X = InkCanvas.GetLeft(video);
                 tv.Y = InkCanvas.GetTop(video);
                 tv.Height = video.ActualHeight;
@@ -951,7 +962,7 @@ namespace SandRibbon.Components.Canvas
             }
             else
                 hostedFileName = filename;
-            Commands.SendFileResource.Execute(new MeTLLib.DataTypes.TargettedFile(currentSlide,Globals.me,target,"public",hostedFileName,DateTime.Now.Ticks.ToString(), new System.IO.FileInfo(filename).Length,Path.GetFileNameWithoutExtension(unMangledFilename)));
+            Commands.SendFileResource.Execute(new MeTLLib.DataTypes.TargettedFile(currentSlide, Globals.me, target, "public", hostedFileName, DateTime.Now.Ticks.ToString(), new System.IO.FileInfo(filename).Length, Path.GetFileNameWithoutExtension(unMangledFilename)));
             File.Delete(filename);
         }
         public void dropImageOnCanvas(string fileName, Point pos, int count)
@@ -983,11 +994,28 @@ namespace SandRibbon.Components.Canvas
             string hostedFileName;
             if (!fileName.Contains("http"))
             {
-                hostedFileName = ResourceUploader.uploadResource(currentSlide.ToString(), fileName);
-                if (hostedFileName == "failed") return;
+    
+                MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide,Globals.me,target,privacy,image,fileName,false));
+                //hostedFileName = ResourceUploader.uploadResource(currentSlide.ToString(), fileName);
+                //if (hostedFileName == "failed") return;
+                Children.Remove(image);
+      /*        UndoHistory.Queue(
+                () =>
+                {
+                    Children.Remove(hostedImage);
+                    Commands.SendDirtyImage.Execute(new MeTLLib.DataTypes.TargettedDirtyElement
+                    (currentSlide,hostedImage.tag().author,target,hostedImage.tag().privacy,hostedImage.tag().id));
+                },
+                () =>
+                {
+                    AddImage(hostedImage);
+                    Commands.SendImage.Execute(new MeTLLib.DataTypes.TargettedImage
+                    (currentSlide,Globals.me,target,privacy,hostedImage));
+                });*/
             }
-            else
-                hostedFileName = fileName;
+            else {
+
+            hostedFileName = fileName;
             var uri = new Uri(hostedFileName, UriKind.Absolute);
             var hostedImage = new System.Windows.Controls.Image();
             try
@@ -1011,7 +1039,7 @@ namespace SandRibbon.Components.Canvas
                                   privacy = privacy,
                                   zIndex = -1
                               });
-            UndoHistory.Queue(
+        UndoHistory.Queue(
                 () =>
                 {
                     Children.Remove(hostedImage);
@@ -1026,6 +1054,7 @@ namespace SandRibbon.Components.Canvas
                 });
             Commands.SendImage.Execute(new MeTLLib.DataTypes.TargettedImage
             (currentSlide,Globals.me,target,privacy,hostedImage));
+        }
         }
         public void tagAutoShape(MeTLLib.DataTypes.AutoShape autoshape, int count)
         {
@@ -1161,11 +1190,11 @@ namespace SandRibbon.Components.Canvas
                 {
                     var oldTag = ((System.Windows.Controls.Image)image).tag();
                     Commands.SendDirtyImage.Execute(new MeTLLib.DataTypes.TargettedDirtyElement
-                    (currentSlide,Globals.me,target,((System.Windows.Controls.Image)image).tag().privacy,((System.Windows.Controls.Image)image).tag().id));
+                    (currentSlide, Globals.me, target, ((System.Windows.Controls.Image)image).tag().privacy, ((System.Windows.Controls.Image)image).tag().id));
                     oldTag.privacy = newPrivacy;
                     ((System.Windows.Controls.Image)image).tag(oldTag);
                     Commands.SendImage.Execute(new MeTLLib.DataTypes.TargettedImage
-                    (currentSlide,Globals.me,target,newPrivacy,(System.Windows.Controls.Image)image));
+                    (currentSlide, Globals.me, target, newPrivacy, (System.Windows.Controls.Image)image));
                 }
                 foreach (MeTLLib.DataTypes.Video video in GetSelectedElements().ToList().Where(i =>
                     i is MeTLLib.DataTypes.Video
@@ -1173,11 +1202,11 @@ namespace SandRibbon.Components.Canvas
                 {
                     var oldTag = ((MeTLLib.DataTypes.Video)video).tag();
                     Commands.SendDirtyVideo.Execute(new MeTLLib.DataTypes.TargettedDirtyElement
-                    (currentSlide,Globals.me,target,((MeTLLib.DataTypes.Video)video).tag().privacy,((MeTLLib.DataTypes.Video)video).tag().id));
+                    (currentSlide, Globals.me, target, ((MeTLLib.DataTypes.Video)video).tag().privacy, ((MeTLLib.DataTypes.Video)video).tag().id));
                     oldTag.privacy = newPrivacy;
                     ((MeTLLib.DataTypes.Video)video).tag(oldTag);
                     Commands.SendVideo.Execute(new MeTLLib.DataTypes.TargettedVideo
-                    (currentSlide,Globals.me,target,newPrivacy,(MeTLLib.DataTypes.Video)video));
+                    (currentSlide, Globals.me, target, newPrivacy, (MeTLLib.DataTypes.Video)video));
                 }
             }
             Select(new List<UIElement>());
@@ -1227,7 +1256,7 @@ namespace SandRibbon.Components.Canvas
                 var sb = new StringBuilder("<image>");
                 foreach (var toString in from UIElement image in img.Children
                                          select new MeTLStanzas.Image(new TargettedImage
-                                         (Globals.slide,Globals.me,img.target,img.privacy,(System.Windows.Controls.Image)image)).ToString())
+                                         (Globals.slide, Globals.me, img.target, img.privacy, (System.Windows.Controls.Image)image)).ToString())
                     sb.Append(toString);
                 sb.Append("</image>");
                 return sb.ToString();

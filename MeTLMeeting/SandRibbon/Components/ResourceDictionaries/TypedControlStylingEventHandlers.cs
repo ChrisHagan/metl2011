@@ -67,7 +67,7 @@ namespace SandRibbon.Components.ResourceDictionaries
             MediaElement.DataContext = (System.Windows.Controls.Slider)sender;
             MediaElement.MediaOpened += new RoutedEventHandler(MediaElement_MediaOpened);
             MediaElement.LoadedBehavior = MediaState.Manual;
-            MediaElement.Source = SandRibbonInterop.LocalCache.ResourceCache.LocalSource(MediaElement.Source);
+            //MediaElement.Source = SandRibbonInterop.LocalCache.ResourceCache.LocalSource(MediaElement.Source);
             Video_Play(sender, new RoutedEventArgs());
             Video_Pause(sender, new RoutedEventArgs());
         }

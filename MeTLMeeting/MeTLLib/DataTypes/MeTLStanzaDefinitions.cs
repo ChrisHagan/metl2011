@@ -86,7 +86,7 @@ namespace MeTLLib.DataTypes
     public class TargettedAutoShape : TargettedElement
     {
         public TargettedAutoShape(int Slide, string Author, string Target, string Privacy, AutoShape Autoshape)
-            : base(Slide,Author,Target,Privacy)
+            : base(Slide, Author, Target, Privacy)
         {
             autoshape = Autoshape;
         }
@@ -94,7 +94,7 @@ namespace MeTLLib.DataTypes
         {
             if (obj == null || !(obj is TargettedAutoShape)) return false;
             return (((TargettedElement)this).ValueEquals((TargettedElement)obj) && ((TargettedAutoShape)obj).autoshape.ValueEquals(autoshape));
-            
+
         }
         public MeTLLib.DataTypes.AutoShape autoshape;
     }
@@ -148,7 +148,7 @@ namespace MeTLLib.DataTypes
         {
             if (obj == null || !(obj is TargettedBubbleContext)) return false;
             var foreignContext = (TargettedBubbleContext)obj;
-            return (((TargettedElement)this).ValueEquals((TargettedElement)obj) && foreignContext.thoughtSlide == thoughtSlide && foreignContext.context.All(s=>s.ValueEquals(context.ElementAt(foreignContext.context.IndexOf(s)))));
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj) && foreignContext.thoughtSlide == thoughtSlide && foreignContext.context.All(s => s.ValueEquals(context.ElementAt(foreignContext.context.IndexOf(s)))));
         }
         public List<SelectedIdentity> context;
         public int thoughtSlide;
@@ -167,7 +167,7 @@ namespace MeTLLib.DataTypes
         {
             if (obj == null || !(obj is TargettedFile)) return false;
             var foreignFile = (TargettedFile)obj;
-            return (((TargettedElement)this).ValueEquals((TargettedElement)obj) 
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj)
                 && foreignFile.url == url
                 && foreignFile.uploadTime == uploadTime
                 && foreignFile.size == size
@@ -180,7 +180,7 @@ namespace MeTLLib.DataTypes
     }
     public class TargettedImage : TargettedElement
     {
-        public TargettedImage(int Slide, string Author, string Target, string Privacy,Image Image)
+        public TargettedImage(int Slide, string Author, string Target, string Privacy, Image Image)
             : base(Slide, Author, Target, Privacy)
         {
             image = Image;
@@ -195,7 +195,7 @@ namespace MeTLLib.DataTypes
         {
             if (obj == null || !(obj is TargettedImage)) return false;
             var foreign = (TargettedImage)obj;
-            return (((TargettedElement)this).ValueEquals((TargettedElement)obj) 
+            return (((TargettedElement)this).ValueEquals((TargettedElement)obj)
                 && foreign.id == id
                 && foreign.imageProperty.Equals(imageProperty)
                 && foreign.imageSpecification == imageSpecification
@@ -204,10 +204,16 @@ namespace MeTLLib.DataTypes
         public System.Windows.Controls.Image imageProperty;
         public MeTLStanzas.Image imageSpecification;
         public string id;
+        public void adoptCache(ResourceCache cache, MeTLServerAddress server)
+        {
+            if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
+            imageSpecification.adoptCache(cache, server);
+        }
         public System.Windows.Controls.Image image
         {
             get
             {
+                if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
                 var reified = imageSpecification.forceEvaluation();
                 id = reified.tag().id;
                 return reified;
@@ -240,7 +246,7 @@ namespace MeTLLib.DataTypes
 
         }
         public TargettedVideo(int Slide, string Author, string Target, string Privacy, MeTLStanzas.Video VideoSpecification, string Identity, double VideoX, double VideoY, double VideoWidth, double VideoHeight)
-            :base(Slide, Author, Target,Privacy)
+            : base(Slide, Author, Target, Privacy)
         {
             videoSpecification = VideoSpecification;
             id = Identity;
@@ -267,10 +273,16 @@ namespace MeTLLib.DataTypes
         public MeTLLib.DataTypes.Video videoProperty;
         public MeTLStanzas.Video videoSpecification;
         public string id;
+        public void adoptCache(ResourceCache cache, MeTLServerAddress server)
+        {
+            if (videoSpecification == null) videoSpecification = new MeTLStanzas.Video(this);
+            videoSpecification.adoptCache(cache, server);
+        }
         public MeTLLib.DataTypes.Video video
         {
             get
             {
+                if (videoSpecification == null) videoSpecification = new MeTLStanzas.Video(this);
                 var reified = videoSpecification.forceEvaluation();
                 id = reified.tag().id;
                 reified.Height = Height;
@@ -437,7 +449,7 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var targettedAutoShape = new TargettedAutoShape(
-                        Int32.Parse(GetTag(slideTag)),GetTag(authorTag),GetTag(targetTag),GetTag(privacyTag),
+                        Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag),
                         new MeTLLib.DataTypes.AutoShape
                         {
                             Tag = this.tag,
@@ -560,12 +572,12 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var target = GetTag(targetTag);
-                    var context = new TargettedBubbleContext(Int32.Parse(GetTag(slideTag)),GetTag(authorTag),target,GetTag(privacyTag),new List<SelectedIdentity>(),Int32.Parse(GetTag(thoughtTag)));
+                    var context = new TargettedBubbleContext(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), target, GetTag(privacyTag), new List<SelectedIdentity>(), Int32.Parse(GetTag(thoughtTag)));
                     var ids = SelectSingleElement(idsTag).SelectElements(entityIdTag);
                     var identityList = new List<SelectedIdentity>();
                     foreach (var element in ids)
                     {
-                        context.context.Add(new SelectedIdentity(((Element)element).GetAttribute(idAttribute),target));
+                        context.context.Add(new SelectedIdentity(((Element)element).GetAttribute(idAttribute), target));
                     }
                     context.context = identityList;
                     return context;
@@ -618,7 +630,7 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var stroke = new Stroke(stringToPoints(GetTag(pointsTag)), new DrawingAttributes { Color = stringToColor(GetTag(colorTag)) });
-                    stroke.tag(new StrokeTag(GetTag(authorTag),GetTag(privacyTag),GetTag(startingSumTag) == null ? stroke.sum().checksum:Double.Parse(GetTag(startingSumTag)),stroke.DrawingAttributes.Color.ToString(),Boolean.Parse(GetTag(highlighterTag)))); 
+                    stroke.tag(new StrokeTag(GetTag(authorTag), GetTag(privacyTag), GetTag(startingSumTag) == null ? stroke.sum().checksum : Double.Parse(GetTag(startingSumTag)), stroke.DrawingAttributes.Color.ToString(), Boolean.Parse(GetTag(highlighterTag))));
                     stroke.DrawingAttributes.IsHighlighter = Boolean.Parse(GetTag(highlighterTag));
                     stroke.DrawingAttributes.Width = Double.Parse(GetTag(thicknessTag));
                     stroke.DrawingAttributes.Height = Double.Parse(GetTag(thicknessTag));
@@ -629,7 +641,7 @@ namespace MeTLLib.DataTypes
                     else
                         if (HasTag(sumTag))
                             stroke.AddPropertyData(stroke.startingId(), Double.Parse(GetTag(sumTag)));
-                    var targettedStroke = new TargettedStroke(Int32.Parse(GetTag(slideTag)),GetTag(authorTag),GetTag(targetTag),GetTag(privacyTag),stroke);
+                    var targettedStroke = new TargettedStroke(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), stroke);
                     return targettedStroke;
                 }
                 set
@@ -749,7 +761,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var box = new TargettedTextBox(Int32.Parse(GetTag(slideTag)),GetTag(authorTag),GetTag(targetTag),GetTag(privacyTag),this,GetTag(identityTag));
+                    var box = new TargettedTextBox(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), this, GetTag(identityTag));
                     return box;
                 }
                 set
@@ -903,7 +915,7 @@ namespace MeTLLib.DataTypes
                     var slide = HasTag(slideTag) ? GetTag(slideTag) : "0";
                     var target = HasTag(targetTag) ? GetTag(targetTag) : "";
                     var privacy = HasTag(privacyTag) ? GetTag(privacyTag) : "public";
-                    var file = new TargettedFile(Int32.Parse(slide),GetTag(authorTag),target,privacy,GetTag(URL),fileuploadTime,filesize,filename);
+                    var file = new TargettedFile(Int32.Parse(slide), GetTag(authorTag), target, privacy, GetTag(URL), fileuploadTime, filesize, filename);
                     return file;
                 }
                 set
@@ -931,6 +943,16 @@ namespace MeTLLib.DataTypes
         }
         public class LocalImageInformation
         {
+            public LocalImageInformation(int Slide, string Author, string Target, string Privacy, System.Windows.Controls.Image Image, string File, bool Overwrite)
+            {
+                slide = Slide;
+                author = Author;
+                target = Target;
+                privacy = Privacy;
+                image = Image;
+                file = File;
+                overwrite = Overwrite;
+            }
             public string author;
             public System.Windows.Controls.Image image;
             public string file;
@@ -941,10 +963,19 @@ namespace MeTLLib.DataTypes
         }
         public class LocalVideoInformation
         {
+            public LocalVideoInformation(int Slide, string Author, string Target, string Privacy, MeTLLib.DataTypes.Video Video, string File, bool Overwrite)
+            {
+                slide = Slide;
+                author = Author;
+                target = Target;
+                privacy = Privacy;
+                video = Video;
+                file = File;
+                overwrite = Overwrite;
+            }
             public string author;
             public MeTLLib.DataTypes.Video video;
             public string file;
-            public string room;
             public bool overwrite;
             public string privacy;
             public int slide;
@@ -978,7 +1009,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    return new TargettedSubmission(int.Parse(GetTag(SLIDE)),GetTag(AUTHOR),GetTag(targetTag),GetTag(privacyTag),GetTag(URL),long.Parse(GetTag(TIME)));
+                    return new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), GetTag(URL), long.Parse(GetTag(TIME)));
                 }
                 set
                 {
@@ -1017,7 +1048,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    return new Option(GetTag(NAME),GetTag(TEXT),GetTag(CORRECT).ToString().ToLower() == "true",Ink.stringToColor(GetTag(COLOR)));
+                    return new Option(GetTag(NAME), GetTag(TEXT), GetTag(CORRECT).ToString().ToLower() == "true", Ink.stringToColor(GetTag(COLOR)));
                 }
                 set
                 {
@@ -1054,7 +1085,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    return new QuizAnswer(long.Parse(GetTag(ID)),GetTag(ANSWERER),GetTag(ANSWER));
+                    return new QuizAnswer(long.Parse(GetTag(ID)), GetTag(ANSWERER), GetTag(ANSWER));
                 }
                 set
                 {
@@ -1091,7 +1122,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var quiz = new QuizQuestion(long.Parse(GetTag(ID)),GetTag(TITLE),GetTag(AUTHOR),GetTag(QUESTION),new List<Option>());
+                    var quiz = new QuizQuestion(long.Parse(GetTag(ID)), GetTag(TITLE), GetTag(AUTHOR), GetTag(QUESTION), new List<Option>());
                     quiz.url = HasTag(URL) ? GetTag(URL) : "none";
                     foreach (var node in ChildNodes)
                     {
@@ -1146,9 +1177,9 @@ namespace MeTLLib.DataTypes
                     return new LiveWindowSetup(
                         Int32.Parse(GetTag(slideTag)),
                         GetTag(authorTag),
-                        new Rectangle{Width=Double.Parse(GetTag(widthTag)),Height=Double.Parse(GetTag(heightTag))},
-                        new Point(Double.Parse(GetTag(xTag)),Double.Parse(GetTag(yTag))),
-                        new Point(Double.Parse(GetTag(destXTag)),Double.Parse(GetTag(destYTag))),
+                        new Rectangle { Width = Double.Parse(GetTag(widthTag)), Height = Double.Parse(GetTag(heightTag)) },
+                        new Point(Double.Parse(GetTag(xTag)), Double.Parse(GetTag(yTag))),
+                        new Point(Double.Parse(GetTag(destXTag)), Double.Parse(GetTag(destYTag))),
                         GetTag(snapshotTag));
                 }
                 set
@@ -1212,9 +1243,9 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var targettedVideo = 
-                        new TargettedVideo(Int32.Parse(GetTag(slideTag)),GetTag(authorTag),GetTag(targetTag),GetTag(privacyTag),
-                        this,GetTag(identityTag),Double.Parse(GetTag(xTag)),Double.Parse(GetTag(yTag)),Double.Parse(GetTag(widthTag)),Double.Parse(GetTag(heightTag)));
+                    var targettedVideo =
+                        new TargettedVideo(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag),
+                        this, GetTag(identityTag), Double.Parse(GetTag(xTag)), Double.Parse(GetTag(yTag)), Double.Parse(GetTag(widthTag)), Double.Parse(GetTag(heightTag)));
                     return targettedVideo;
                 }
                 set
@@ -1320,7 +1351,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var targettedImage = new TargettedImage(Int32.Parse(GetTag(slideTag)),GetTag(authorTag),GetTag(targetTag),GetTag(privacyTag),this,GetTag(identityTag));
+                    var targettedImage = new TargettedImage(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), this, GetTag(identityTag));
                     return targettedImage;
                 }
                 set
@@ -1405,7 +1436,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    return new TargettedDirtyElement(Int32.Parse(GetTag(slideTag)),GetTag(authorTag),GetTag(targetTag),GetTag(privacyTag),GetTag(identityTag));
+                    return new TargettedDirtyElement(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), GetTag(identityTag));
                 }
                 set
                 {

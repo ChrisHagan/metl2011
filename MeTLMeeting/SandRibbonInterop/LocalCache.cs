@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace SandRibbonInterop.LocalCache
 {
+    /*
     public class ResourceCache
     {
         public static string cacheName = "resourceCache";
@@ -293,5 +294,5 @@ namespace SandRibbonInterop.LocalCache
         {
             return System.Text.Encoding.UTF8.GetString(bytes);
         }
-    }
+    }*/
 }
