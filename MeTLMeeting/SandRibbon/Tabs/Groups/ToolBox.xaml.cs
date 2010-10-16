@@ -10,7 +10,7 @@ namespace SandRibbon.Tabs.Groups
         public ToolBox()
         {
             InitializeComponent();
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(SetLayer));
+            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             SetLayer((string)Commands.SetLayer.lastValue());
         }
         private void SetLayer(string layer)
@@ -36,7 +36,6 @@ namespace SandRibbon.Tabs.Groups
         }
         private void hideAll()
         {
-            //InkOptions.Visibility = Visibility.Collapsed;
             TextOptions.Visibility = Visibility.Collapsed;
             ImageOptions.Visibility = Visibility.Collapsed;
         }

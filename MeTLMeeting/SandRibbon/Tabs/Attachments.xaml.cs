@@ -46,10 +46,10 @@ namespace SandRibbon.Tabs
             attachments.ItemsSource = files;
             Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
+            Commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
         }
 
-        private void joinConversation(object obj)
+        private void JoinConversation(object obj)
         {
             files = new ObservableCollection<FileInfo>();
             attachments.ItemsSource = files;

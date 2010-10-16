@@ -18,7 +18,7 @@ using System.Collections.ObjectModel;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Utils;
 using MeTLLib.DataTypes;
-//using SandRibbonObjects;
+using System.ComponentModel;
 
 namespace SandRibbon.Components
 {
@@ -108,7 +108,7 @@ namespace SandRibbon.Components
         }
         private void CloseConversationSearchBox()
         {
-            this.Visibility = Visibility.Collapsed;
+            Dispatcher.adoptAsync(delegate { this.Visibility = Visibility.Collapsed; });
             Commands.RequerySuggested();
         }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
@@ -195,9 +195,8 @@ namespace SandRibbon.Components
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Commands.JoinConversation.Execute(((FrameworkElement)sender).Tag);
+            Commands.JoinConversation.ExecuteAsync(((FrameworkElement)sender).Tag);
         }
-
         private void deleteConversation(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
@@ -208,7 +207,6 @@ namespace SandRibbon.Components
                 //ConversationDetailsProviderFactory.Provider.Update(details);
             }
         }
-
         private void editConversation(object sender, RoutedEventArgs e)
         {
             Commands.EditConversation.Execute(((MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext).Jid);

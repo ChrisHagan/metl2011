@@ -23,7 +23,7 @@ namespace SandRibbon.Tabs.Groups
         public PrivacyToolsHost()
         {
             InitializeComponent();
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(UpdateConversationDetails));
         }
         private void UpdateConversationDetails(object _arg)
         {

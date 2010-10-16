@@ -27,7 +27,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             stack = canvasStack;
             handwriting.Disable();
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(setTopLayer));
+            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(loggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
             Commands.SetLayer.Execute("Sketch");
@@ -122,7 +122,7 @@ namespace SandRibbon.Components
             images.SetCanEdit(canEdit);
             text.SetCanEdit(canEdit);
         }
-        private void setTopLayer(string newLayer)
+        private void SetLayer(string newLayer)
         {
             UIElement currentCanvas;
             switch (newLayer)

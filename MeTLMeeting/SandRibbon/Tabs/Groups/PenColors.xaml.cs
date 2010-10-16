@@ -342,22 +342,26 @@ namespace SandRibbon.Tabs.Groups
             InitializeComponent();
 
             this.DataContext = currentColourValues;
-            //Commands.EnablePens.RegisterCommand(new DelegateCommand<object>((_unused => Enable()), mustBeInConversation));
-            //Commands.DisablePens.RegisterCommand(new DelegateCommand<object>((_unused => Disable())));
             Commands.TogglePens.RegisterCommand(new DelegateCommand<bool>(SetPens, delegate { return mustBeInConversation(null); }));
             Commands.ReportStrokeAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((DrawingAttributes) => updatePreviousDrawingAttributes(DrawingAttributes)));
             Commands.ReportDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((drawingAttributes => receiveDrawingAttributesChanged(drawingAttributes))));
             SetupPreviousColoursWithDefaults();
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(changeInkCanvasMode));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(setDefaults));
-            Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(setDefaults));
+            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
+            Commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
+            Commands.SetDrawingAttributes.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SetDrawingAttributes));
             InvokeAlteredPreset(2);
         }
-        private void setDefaults(object obj)
-        {
+        private void checkDraw() { 
             Draw.IsChecked = true;
             Commands.SetInkCanvasMode.Execute("Ink");
+        }
+        private void JoinConversation(object obj){
+            checkDraw();
+        }
+        private void SetDrawingAttributes(object obj)
+        {
+            checkDraw();
         }
         private bool mustBeInConversation(object _unused)
         {
@@ -377,7 +381,7 @@ namespace SandRibbon.Tabs.Groups
                 defaultColours.SelectedIndex = -1;
             }
         }
-        private void updateToolBox(string layer)
+        private void SetLayer(string layer)
         {
             if (layer == "Sketch")
                 Visibility = Visibility.Visible;

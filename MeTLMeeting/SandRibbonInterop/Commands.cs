@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Xml.Linq;
+using System.ComponentModel;
+using System.Windows.Threading;
 
 namespace SandRibbon
 {
@@ -324,5 +326,20 @@ namespace SandRibbon
                 delegateCommand.GetType().InvokeMember("RaiseCanExecuteChanged", BindingFlags.InvokeMethod, null, delegateCommand, new object[] { });
             }
         }
+    }
+    public static class CommandExtensions
+    {
+        private static Dispatcher dispatcher = Application.Current.Dispatcher; 
+        public static void ExecuteAsync(this CompositeCommand command, object arg) { 
+            var worker =  new BackgroundWorker();
+            worker.DoWork += delegate {
+                command.Execute(arg);
+            };
+            worker.RunWorkerAsync();
+        }
+        public static void RegisterCommandToDispatcher<T>(this CompositeCommand command, DelegateCommand<T> handler) {
+            command.RegisterCommand(new DelegateCommand<T>(arg=>
+                dispatcher.BeginInvoke((Action)delegate { handler.Execute(arg); }), handler.CanExecute));
+        } 
     }
 }

@@ -22,7 +22,8 @@ namespace SandRibbon.Components
         public Friends()
         {
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(_obj => history.Children.Clear()));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(_obj => 
+                history.Children.Clear()));
             Commands.ReceiveChatMessage.RegisterCommand(new DelegateCommand<TargettedTextBox>(receiveChatMessage));
             publishers = new ObservableCollection<VisibilityInformation>();
             Commands.ReceiveAuthor.RegisterCommand(new DelegateCommand<string>(ReceiveAuthor));

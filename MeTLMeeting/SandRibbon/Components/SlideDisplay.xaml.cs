@@ -42,7 +42,7 @@ namespace SandRibbon.Components
             slides.ItemsSource = thumbnailList;
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(jid =>
+            Commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(jid =>
             {
                 currentSlideIndex = 0;
                 slides.SelectedIndex = 0;

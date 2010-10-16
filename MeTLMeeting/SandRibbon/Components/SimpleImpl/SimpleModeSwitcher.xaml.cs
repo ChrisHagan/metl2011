@@ -13,11 +13,11 @@ namespace SandRibbon.Components.SimpleImpl
         public SimpleModeSwitcher()
         {
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(setDefaults));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(setLayer));
+            Commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
+            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
         }
 
-        private void setLayer(string layer)
+        private void SetLayer(string layer)
         {
             switch(layer)
             {
@@ -35,13 +35,10 @@ namespace SandRibbon.Components.SimpleImpl
                     break;
             }
         }
-        private void setDefaults(object obj)
+        private void JoinConversation(object obj)
         {
-            Dispatcher.adoptAsync(delegate
-            {
-                Commands.SetLayer.Execute("Sketch");
-                Pen.IsChecked = true;
-            });
+            Commands.SetLayer.ExecuteAsync("Sketch");
+            Pen.IsChecked = true;
         }
     }
 }

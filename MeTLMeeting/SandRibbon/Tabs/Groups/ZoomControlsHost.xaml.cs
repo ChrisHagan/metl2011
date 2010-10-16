@@ -21,14 +21,14 @@ namespace SandRibbon.Tabs.Groups
         public ZoomControlsHost()
         {
             InitializeComponent();
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(setLayer));
+            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.EndGrabZoom.RegisterCommand(new DelegateCommand<object>(EndGrabZoom));
         }
         private void EndGrabZoom(object _unused)
         {
             GrabZoomButton.IsChecked = false;
         }
-        private void setLayer(string layer)
+        private void SetLayer(string layer)
         {
             switch (layer)
             {

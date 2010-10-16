@@ -23,9 +23,9 @@ namespace SandRibbon.Tabs.Groups
         public EditingOptions()
         {
             InitializeComponent();
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(switchTools));
+            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
         }
-        private void switchTools(string mode)
+        private void SetLayer(string mode)
         {
             hideAll();
             this.Visibility = Visibility.Visible;

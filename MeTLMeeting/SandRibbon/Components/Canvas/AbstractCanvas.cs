@@ -124,7 +124,7 @@ namespace SandRibbon.Components.Canvas
                 }
             });
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(ClearSelectionOnLayerChanged));
+            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(ClearSelectionOnLayerChanged));
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<object>(ItemsPrivacyChange));
         }

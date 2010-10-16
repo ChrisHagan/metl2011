@@ -23,7 +23,7 @@ namespace SandRibbon.Tabs.Groups
             fontFamily.ItemsSource = fontList;
             fontSize.ItemsSource = fontSizes;
             fontSize.SelectedIndex = 0;
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<string>(updateToolBox));
+            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(update));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
@@ -51,7 +51,7 @@ namespace SandRibbon.Tabs.Groups
             TextStrikethroughButton.IsChecked = info.strikethrough;
         }
 
-        private void updateToolBox(string layer)
+        private void SetLayer(string layer)
         {
             if (layer == "Text")
                 Visibility = Visibility.Visible;

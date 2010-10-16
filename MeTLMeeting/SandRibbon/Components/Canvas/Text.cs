@@ -77,7 +77,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveTextBox.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedTextBox>(ReceiveTextBox));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
             Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(receiveDirtyText));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<String>(setupText));
+            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
@@ -156,7 +156,7 @@ namespace SandRibbon.Components.Canvas
             myTextBox = null;
         }
         private bool focusable = true;
-        private void setupText(string layer)
+        private void SetLayer(string layer)
         {
             focusable = layer == "Text";
             foreach (var box in Children)
