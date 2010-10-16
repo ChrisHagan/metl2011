@@ -66,7 +66,7 @@ namespace SandRibbon.Quizzing
                 if (!string.IsNullOrEmpty(answer.optionText))
                     quiz.options.Add(answer);
             }
-            Commands.SendQuiz.Execute(quiz);
+            Commands.SendQuiz.ExecuteAsync(quiz);
             this.Close();
         }
         private void QuizButton_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -190,7 +190,7 @@ namespace SandRibbon.Quizzing
                                 quizTitle.Text = string.Format("Quiz referencing slide {0}", slide.index + 1);
                             });
             Commands.ScreenshotGenerated.RegisterCommand(gotScreenshot);
-            Commands.GenerateScreenshot.Execute(new ScreenshotDetails
+            Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
                                                     {
                                                         time = SandRibbonObjects.DateTimeFactory.Now().Ticks,
                                                         message = ""
@@ -213,7 +213,7 @@ namespace SandRibbon.Quizzing
         private void createAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             refreshCollection();
-            Commands.UnblockInput.Execute(null);
+            Commands.UnblockInput.ExecuteAsync(null);
         }
 
         private void createAQuiz_Loaded(object sender, RoutedEventArgs e)

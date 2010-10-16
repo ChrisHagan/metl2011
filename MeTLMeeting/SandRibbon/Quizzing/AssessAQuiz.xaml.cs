@@ -70,7 +70,7 @@ namespace SandRibbon.Quizzing
                 context.DrawRectangle(new VisualBrush(SnapshotHost), null, dimensions);
             bitmap.Render(dv);
             TimestampLabel.Text = "";
-            Commands.QuizResultsAvailableForSnapshot.Execute(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
             this.Close();
         }
 

@@ -64,7 +64,7 @@ namespace SandRibbon.Components.Submissions
                {
                    Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
                    var image = (TargettedSubmission) item;
-                   Commands.ImageDropped.Execute(new ImageDrop { 
+                   Commands.ImageDropped.ExecuteAsync(new ImageDrop { 
                          filename = image.url.ToString (), 
                          target = "presentationSpace",
                          point = new Point (0, 0),
@@ -73,7 +73,7 @@ namespace SandRibbon.Components.Submissions
                      });
                });
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
-            Commands.AddSlide.Execute(null);
+            Commands.AddSlide.ExecuteAsync(null);
             this.Close();
         }
         private void canImportSubmission(object sender, CanExecuteRoutedEventArgs e)

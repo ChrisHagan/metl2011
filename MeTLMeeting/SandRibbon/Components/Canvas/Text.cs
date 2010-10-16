@@ -206,7 +206,7 @@ namespace SandRibbon.Components.Canvas
         private void dirtyTextBoxWithoutHistory(TextBox box)
         {
             RemovePrivacyStylingFromElement(box);
-            Commands.SendDirtyText.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,box.tag().privacy,box.tag().id));
+            Commands.SendDirtyText.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,box.tag().privacy,box.tag().id));
         }
 
         private void receiveDirtyText(MeTLLib.DataTypes.TargettedDirtyElement element)
@@ -286,7 +286,7 @@ namespace SandRibbon.Components.Canvas
                 if (box != null)
                     box.UpdateLayout();
             }
-            Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
+            Commands.AddPrivacyToggleButton.ExecuteAsync(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
         }
 
         private void selectingText(object sender, InkCanvasSelectionChangingEventArgs e)
@@ -388,21 +388,24 @@ namespace SandRibbon.Components.Canvas
                                family = box.FontFamily,
                                size = box.FontSize,
                            };
-            Commands.TextboxFocused.Execute(info);
+            Commands.TextboxFocused.ExecuteAsync(info);
             sendText(box);
         }
         private void setTextSize(double size)
         {
-            var selection = GetSelectedElements();
             currentSize = size;
-            if (myTextBox == null) return;
-            RemovePrivacyStylingFromElement(myTextBox);
-            myTextBox.FontSize = size;
-            myTextBox.Focus();
-            Select(null, null);
-            sendText(myTextBox);
-            myTextBox.UpdateLayout();
-            Select(new[] { myTextBox });
+            Dispatcher.adoptAsync(() =>
+            {
+                var selection = GetSelectedElements();
+                if (myTextBox == null) return;
+                RemovePrivacyStylingFromElement(myTextBox);
+                myTextBox.FontSize = size;
+                myTextBox.Focus();
+                Select(null, null);
+                sendText(myTextBox);
+                myTextBox.UpdateLayout();
+                Select(new[] { myTextBox });
+            });
         }
         private void setTextColor(Color color)
         {
@@ -523,10 +526,10 @@ namespace SandRibbon.Components.Canvas
             var currentTag = box.tag();
             if (currentTag.privacy != Globals.privacy)
             {
-                Commands.SendDirtyText.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,currentTag.privacy,currentTag.id));
+                Commands.SendDirtyText.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,currentTag.privacy,currentTag.id));
                 currentTag.privacy = privacy;
                 box.tag(currentTag);
-                Commands.SendTextBox.Execute(new MeTLLib.DataTypes.TargettedTextBox(currentSlide,Globals.me,target,currentTag.privacy,box));
+                Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(currentSlide,Globals.me,target,currentTag.privacy,box));
             }
             myTextBox = null;
             textBoxSelected = false;
@@ -560,7 +563,7 @@ namespace SandRibbon.Components.Canvas
                                underline = underline
 
                            };
-            Commands.TextboxFocused.Execute(info);
+            Commands.TextboxFocused.ExecuteAsync(info);
         }
 
         public static Timer typingTimer = null;
@@ -613,7 +616,7 @@ namespace SandRibbon.Components.Canvas
             var oldTextTag = box.tag();
             var newTextTag = new MeTLLib.DataTypes.TextTag(oldTextTag.author,thisPrivacy,oldTextTag.id);
             box.tag(newTextTag);
-            Commands.SendTextBox.Execute(new MeTLLib.DataTypes.TargettedTextBox(currentSlide,Globals.me,target,thisPrivacy,box));
+            Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(currentSlide,Globals.me,target,thisPrivacy,box));
         }
 
         private void setAppropriatePrivacyHalo(TextBox box)
@@ -706,7 +709,7 @@ namespace SandRibbon.Components.Canvas
             Dispatcher.adoptAsync(delegate
                                       {
                                           var author = targettedBox.author == Globals.conversationDetails.Author ? "Teacher" : targettedBox.author;
-                                          Commands.ReceiveAuthor.Execute(author);
+                                          Commands.ReceiveAuthor.ExecuteAsync(author);
                                           if (!userVisibility.ContainsKey(author))
                                               userVisibility.Add(author, true);
                                           if(!userText.ContainsKey(author))
@@ -773,7 +776,7 @@ namespace SandRibbon.Components.Canvas
                 listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,box.tag().privacy,box.tag().id));
             }
             foreach (var element in listToCut)
-                Commands.SendDirtyText.Execute(element);
+                Commands.SendDirtyText.ExecuteAsync(element);
         }
         public override void showPrivateContent()
         {

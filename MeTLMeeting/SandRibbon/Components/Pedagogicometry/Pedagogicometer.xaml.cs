@@ -55,7 +55,7 @@ namespace SandRibbon.Components.Sandpit
         }
         private static void doSetPedagogyLevel(PedagogyLevel level)
         {
-            Commands.SetPedagogyLevel.Execute(level);
+            Commands.SetPedagogyLevel.ExecuteAsync(level);
         }
         public static void SetPedagogyLevel(int code)
         {

@@ -26,10 +26,10 @@ namespace SandRibbon.Tabs.Groups
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(update));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
+            Commands.MoveTo.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(MoveTo));
         }
 
-        private void moveTo(object obj)
+        private void MoveTo(object obj)
         {
             fontSize.SelectedItem = generateDefaultFontSize();
         }   
@@ -88,7 +88,7 @@ namespace SandRibbon.Tabs.Groups
             {
                 var newSize = fontSizes[currentItem - 1];
                 fontSize.SelectedIndex = currentItem - 1;
-                Commands.FontSizeChanged.Execute(newSize);
+                Commands.FontSizeChanged.ExecuteAsync(newSize);
             }
         }
         private void increaseFont(object sender, RoutedEventArgs e)
@@ -99,7 +99,7 @@ namespace SandRibbon.Tabs.Groups
             {
                 var newSize = fontSizes[currentItem + 1];
                 fontSize.SelectedIndex = currentItem +1;
-                Commands.FontSizeChanged.Execute(newSize);
+                Commands.FontSizeChanged.ExecuteAsync(newSize);
             }
         }
         private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
@@ -107,19 +107,19 @@ namespace SandRibbon.Tabs.Groups
             if(fontSize.SelectedIndex == -1) return;
             if(e.AddedItems.Count == 0) return;
             var size = Double.Parse(e.AddedItems[0].ToString());
-            Commands.FontSizeChanged.Execute(size);
+            Commands.FontSizeChanged.ExecuteAsync(size);
         }
         private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         {
             if(e.AddedItems.Count == 0) return;
             var font = new FontFamily(e.AddedItems[0].ToString());
-            Commands.FontChanged.Execute(font);
+            Commands.FontChanged.ExecuteAsync(font);
         }
         private void textColorSelected(object sender, ColorEventArgs e)
         {
             ColourPickerBorder.BorderBrush = new SolidColorBrush(e.Color);
             ((System.Windows.Controls.Primitives.Popup)ColourSelection.Parent).IsOpen = false;
-            Commands.SetTextColor.Execute(e.Color);
+            Commands.SetTextColor.ExecuteAsync(e.Color);
         }
 
         private void ShowColourSelector(object sender, RoutedEventArgs e)

@@ -62,7 +62,7 @@ namespace SandRibbon.Tabs.Groups
                 if (currentDrawingAttributes != null && currentDrawingAttributes.Color != value.Color)
                 {
                     currentdrawingattributes = value;
-                    Commands.SetDrawingAttributes.Execute(value);
+                    Commands.SetDrawingAttributes.ExecuteAsync(value);
                 }
                 else currentdrawingattributes = value;
                 internalUpdating = true;
@@ -354,7 +354,7 @@ namespace SandRibbon.Tabs.Groups
         }
         private void checkDraw() { 
             Draw.IsChecked = true;
-            Commands.SetInkCanvasMode.Execute("Ink");
+            Commands.SetInkCanvasMode.ExecuteAsync("Ink");
         }
         private void JoinConversation(object obj){
             checkDraw();
@@ -460,7 +460,7 @@ namespace SandRibbon.Tabs.Groups
             {
                 var IndexNumber = listBox.Items.IndexOf(listBox.SelectedItem);
                 var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[IndexNumber])).Attributes);
-                Commands.SetDrawingAttributes.Execute(drawingAttributes);
+                Commands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
                 e.Handled = true;
             }
         }
@@ -511,7 +511,7 @@ namespace SandRibbon.Tabs.Groups
         {
             defaultColours.SelectedItem = defaultColours.Items[index];
             var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[index])).Attributes);
-            Commands.SetDrawingAttributes.Execute(drawingAttributes);
+            Commands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
             ColourSettingPopup.IsOpen = false;
         }
         private void ResetToDefault(object sender, RoutedEventArgs e)

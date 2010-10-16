@@ -30,7 +30,7 @@ namespace SandRibbon.Components
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(loggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
-            Commands.SetLayer.Execute("Sketch");
+            Commands.SetLayer.ExecuteAsync("Sketch");
             Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedBubbleContext>(ReceiveNewBubble));
         }
         public void ReceiveNewBubble(MeTLLib.DataTypes.TargettedBubbleContext context)
@@ -96,7 +96,7 @@ namespace SandRibbon.Components
         private void loggedIn(MeTLLib.DataTypes.Credentials identity)
         {
             handwriting.Enable();
-            Commands.SetTutorialVisibility.Execute(System.Windows.Visibility.Visible);
+            Commands.SetTutorialVisibility.ExecuteAsync(System.Windows.Visibility.Visible);
         }
         private void UpdateConversationDetails(MeTLLib.DataTypes.ConversationDetails details)
         {

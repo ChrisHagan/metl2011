@@ -127,7 +127,7 @@ namespace SandRibbon.Providers.Structure
             {
                 var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}&filename={4}", ROOT_ADDRESS, UPLOAD, STRUCTURE, details.Jid, DETAILS);
                 securePutData(url, details.GetBytes());
-                Commands.SendDirtyConversationDetails.Execute(details.Jid);
+                Commands.SendDirtyConversationDetails.ExecuteAsync(details.Jid);
                 return details;
             }
             catch (WebException e)

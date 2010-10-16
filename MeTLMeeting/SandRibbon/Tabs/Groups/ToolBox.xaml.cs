@@ -21,15 +21,15 @@ namespace SandRibbon.Tabs.Groups
             {
                 case "Text":
                     TextOptions.Visibility = Visibility.Visible;
-                    Commands.TogglePens.Execute(false);
+                    Commands.TogglePens.ExecuteAsync(false);
                     break;
                 case "Insert":
                     ImageOptions.Visibility = Visibility.Visible;
-                    Commands.TogglePens.Execute(false);
+                    Commands.TogglePens.ExecuteAsync(false);
                     break;
                 default:
                     this.Visibility = Visibility.Collapsed;
-                    Commands.TogglePens.Execute(true);
+                    Commands.TogglePens.ExecuteAsync(true);
                     //InkOptions.Visibility = Visibility.Visible;
                     break;
             }

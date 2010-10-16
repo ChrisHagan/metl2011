@@ -76,25 +76,25 @@ namespace SandRibbon.Utils.Connection
         }
         public void Regurgitate()
         {
-            Commands.ReceiveStrokes.Execute(ink);
+            Commands.ReceiveStrokes.ExecuteAsync(ink);
             foreach (var autoshape in autoshapes.Values)
-                Commands.ReceiveAutoShape.Execute(autoshape);
+                Commands.ReceiveAutoShape.ExecuteAsync(autoshape);
             if(images.Values.Count > 0)
-                Commands.ReceiveImage.Execute(images.Values);
+                Commands.ReceiveImage.ExecuteAsync(images.Values);
             foreach (var box in text.Values)
-                Commands.ReceiveTextBox.Execute(box);
+                Commands.ReceiveTextBox.ExecuteAsync(box);
             foreach(var quiz in quizzes)
-                Commands.ReceiveQuiz.Execute(quiz);
+                Commands.ReceiveQuiz.ExecuteAsync(quiz);
             foreach(var answer in quizAnswers)
-                Commands.ReceiveQuizAnswer.Execute(answer);
+                Commands.ReceiveQuizAnswer.ExecuteAsync(answer);
             foreach (var window in liveWindows.Values)
-                Commands.ReceiveLiveWindow.Execute(window);
+                Commands.ReceiveLiveWindow.ExecuteAsync(window);
             //Videos currently disabled.
             foreach (var video in videos.Values)
-                Commands.ReceiveVideo.Execute(video);
+                Commands.ReceiveVideo.ExecuteAsync(video);
             foreach(var file in files)
-                Commands.ReceiveFileResource.Execute(file);
-            Commands.AllContentSent.Execute(location.currentSlide);
+                Commands.ReceiveFileResource.ExecuteAsync(file);
+            Commands.AllContentSent.ExecuteAsync(location.currentSlide);
             Logger.Log(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
         public override void actOnFileResource(MeTLStanzas.FileResource resource)

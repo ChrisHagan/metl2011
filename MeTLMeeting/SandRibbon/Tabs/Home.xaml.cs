@@ -5,7 +5,7 @@
         public Home()
         {
             InitializeComponent();
-            Commands.SetLayer.Execute("Sketch");
+            Commands.SetLayer.ExecuteAsync("Sketch");
         }
     }
 }

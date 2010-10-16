@@ -83,7 +83,7 @@ namespace SandRibbon.Providers
                     break;
             }
 
-            Commands.MeTLType.Execute(type);
+            Commands.MeTLType.ExecuteAsync(type);
             return level;
         }
         

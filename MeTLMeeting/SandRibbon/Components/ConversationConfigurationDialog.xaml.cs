@@ -217,7 +217,7 @@ namespace SandRibbon.Components
                     {
                         try
                         {
-                            Commands.UploadPowerpoint.Execute(new PowerpointSpec
+                            Commands.UploadPowerpoint.ExecuteAsync(new PowerpointSpec
                             {
                                 File = importFile,
                                 Details = details,
@@ -232,7 +232,7 @@ namespace SandRibbon.Components
                         }
                         finally
                         {
-                            Commands.PowerpointFinished.Execute(null);
+                            Commands.PowerpointFinished.ExecuteAsync(null);
                         }
                         return;
                     }
@@ -242,19 +242,19 @@ namespace SandRibbon.Components
                     }
                     break;
                 case ConversationConfigurationMode.CREATE:
-                    Commands.CreateConversation.Execute(details);
-                    Commands.PowerpointFinished.Execute(null);
+                    Commands.CreateConversation.ExecuteAsync(details);
+                    Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
                 case ConversationConfigurationMode.EDIT:
                     MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
-                    Commands.PowerpointFinished.Execute(null);
+                    Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
                 case ConversationConfigurationMode.DELETE:
                     MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
-                    Commands.PowerpointFinished.Execute(null);
+                    Commands.PowerpointFinished.ExecuteAsync(null);
                     break;
             }
-            Commands.PowerpointFinished.Execute(null);
+            Commands.PowerpointFinished.ExecuteAsync(null);
         }
         private void Create(object sender, ExecutedRoutedEventArgs e)
         {
@@ -267,7 +267,7 @@ namespace SandRibbon.Components
 
         private void Close(object sender, RoutedEventArgs e)
         {
-            Commands.PowerpointFinished.Execute(null);
+            Commands.PowerpointFinished.ExecuteAsync(null);
             this.Close();
         }
         private void startingContentListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -335,7 +335,7 @@ namespace SandRibbon.Components
 
         private void createConversation_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Commands.PowerpointFinished.Execute(null);
+            Commands.PowerpointFinished.ExecuteAsync(null);
         }
 
         private void selectAll(object sender, RoutedEventArgs e)

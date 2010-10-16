@@ -209,7 +209,7 @@ namespace SandRibbon.Components
         }
         private void editConversation(object sender, RoutedEventArgs e)
         {
-            Commands.EditConversation.Execute(((MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext).Jid);
+            Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext).Jid);
         }
     }
     public class ConversationComparator : System.Collections.IComparer

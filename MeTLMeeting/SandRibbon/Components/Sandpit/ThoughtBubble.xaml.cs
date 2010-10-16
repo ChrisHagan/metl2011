@@ -57,7 +57,7 @@ namespace SandRibbon.Components.Sandpit
         private void mainWindowMove(int newSlide)
         {
             if (newSlide != parent)
-                Commands.SneakOutOf.Execute(room.ToString());
+                Commands.SneakOutOf.ExecuteAsync(room.ToString());
         }
         private void PreParserAvailable(PreParser parser)
         {
@@ -93,7 +93,7 @@ namespace SandRibbon.Components.Sandpit
         }
         public void enterBubble()
         {
-            Commands.SneakInto.Execute(room.ToString());
+            Commands.SneakInto.ExecuteAsync(room.ToString());
         }
         private Rect getBounds()
         {
@@ -146,7 +146,7 @@ namespace SandRibbon.Components.Sandpit
                 thoughtView.Height = ((System.Windows.Controls.Canvas)Parent).ActualHeight;
                 RLWViewBox.Visibility = Visibility.Visible;
                 Dispatcher.adoptAsync(() => setThoughtAccess(true));
-                Commands.ExploreBubble.Execute(this);
+                Commands.ExploreBubble.ExecuteAsync(this);
             }
             else
             {
@@ -172,7 +172,7 @@ namespace SandRibbon.Components.Sandpit
             {
                 var bounds = stroke.GetBounds();
                 var verticies = new[] {bounds.TopLeft, bounds.TopRight, bounds.BottomRight, bounds.BottomLeft};
-                Commands.Highlight.Execute(new HighlightParameters
+                Commands.Highlight.ExecuteAsync(new HighlightParameters
                                                {
                                                    color = Colors.Blue,
                                                    verticies = verticies
@@ -186,7 +186,7 @@ namespace SandRibbon.Components.Sandpit
                 else
                     points = Image.getImagePoints((System.Windows.Controls.Image) child);
                 if(points != null)
-                    Commands.Highlight.Execute(new HighlightParameters
+                    Commands.Highlight.ExecuteAsync(new HighlightParameters
                                                    {
                                                        color = Colors.Blue,
                                                        verticies =points 
@@ -201,7 +201,7 @@ namespace SandRibbon.Components.Sandpit
             {
                 var bounds = stroke.GetBounds();
                 var verticies = new[] {bounds.TopLeft, bounds.TopRight, bounds.BottomRight, bounds.BottomLeft};
-                Commands.RemoveHighlight.Execute(new HighlightParameters
+                Commands.RemoveHighlight.ExecuteAsync(new HighlightParameters
                                                      {
                                                          color = Colors.Blue,
                                                          verticies = verticies
@@ -215,7 +215,7 @@ namespace SandRibbon.Components.Sandpit
                 else
                     points = Image.getImagePoints((System.Windows.Controls.Image) child);
                 if (points != null)
-                    Commands.RemoveHighlight.Execute(new HighlightParameters
+                    Commands.RemoveHighlight.ExecuteAsync(new HighlightParameters
                                                          {
                                                              color = Colors.Blue,
                                                              verticies = points

@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.IO;
+using SandRibbon;
 
 namespace SandRibbon.Utils
 {
@@ -67,15 +68,20 @@ namespace SandRibbon.Utils
         }
         public static Cursor generateCursor(DrawingAttributes pen)
         {
-            var colour = new SolidColorBrush(pen.Color);
-            var poly = new System.Windows.Shapes.Ellipse
+            Cursor cursor = null;
+            App.Current.Dispatcher.adopt(() =>
             {
-                Height = pen.Height,
-                Width = pen.Width,
-                Fill = colour,
-                Stroke = colour
-            };
-            return CursorExtensions.ConvertToCursor(poly, new System.Windows.Point(0.5, 0.5));
+                var colour = new SolidColorBrush(pen.Color);
+                var poly = new System.Windows.Shapes.Ellipse
+                {
+                    Height = pen.Height,
+                    Width = pen.Width,
+                    Fill = colour,
+                    Stroke = colour
+                };
+                cursor = CursorExtensions.ConvertToCursor(poly, new System.Windows.Point(0.5, 0.5));
+            });
+            return cursor;
         }
         public static Cursor generateCursor(InkCanvasEditingMode mode)
         {

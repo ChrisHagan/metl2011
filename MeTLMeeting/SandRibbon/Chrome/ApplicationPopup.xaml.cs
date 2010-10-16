@@ -28,11 +28,11 @@ namespace SandRibbon.Chrome
         }
         private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
         {
-            Commands.SetTutorialVisibility.Execute(Visibility.Collapsed);
+            Commands.SetTutorialVisibility.ExecuteAsync(Visibility.Collapsed);
         }
         private void ApplicationButtonPopup_Opened(object sender, EventArgs e)
         {
-            Commands.SetTutorialVisibility.Execute(Visibility.Visible);
+            Commands.SetTutorialVisibility.ExecuteAsync(Visibility.Visible);
         }
         #region helpLinks
         private void OpenEULABrowser(object sender, RoutedEventArgs e)

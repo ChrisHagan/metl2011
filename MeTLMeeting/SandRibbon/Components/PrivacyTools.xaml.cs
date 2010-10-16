@@ -22,13 +22,13 @@ namespace SandRibbon.Components
             try
             {
                 if (Globals.isAuthor)
-                    Commands.SetPrivacy.Execute("public");
+                    Commands.SetPrivacy.ExecuteAsync("public");
                 else
-                    Commands.SetPrivacy.Execute("private");
+                    Commands.SetPrivacy.ExecuteAsync("private");
             }
             catch (NotSetException)
             {
-                Commands.SetPrivacy.Execute("Private");
+                Commands.SetPrivacy.ExecuteAsync("Private");
             }
             DataContext = this;
         }
@@ -79,10 +79,10 @@ namespace SandRibbon.Components
             }
             if (thisButton.IsChecked == true)
             {
-                Commands.SetPrivacy.Execute("public");
+                Commands.SetPrivacy.ExecuteAsync("public");
             }
             else
-                Commands.SetPrivacy.Execute("private");
+                Commands.SetPrivacy.ExecuteAsync("private");
         }
     }
     class PrivacyToolsAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
@@ -107,7 +107,7 @@ namespace SandRibbon.Components
         }
         public void SetValue(string value)
         {
-            Commands.SetPrivacy.Execute(value);
+            Commands.SetPrivacy.ExecuteAsync(value);
         }
         public string Value
         {

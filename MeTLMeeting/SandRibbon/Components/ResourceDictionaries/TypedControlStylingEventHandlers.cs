@@ -41,7 +41,7 @@ namespace SandRibbon.Components.ResourceDictionaries
             rectToPush.Stroke = Brushes.Red;
             rectToPush.Height = newMediaElement.ActualHeight;
             rectToPush.Width = newMediaElement.ActualWidth;
-            Commands.MirrorVideo.Execute(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(srVideo.tag().id, rectToPush));
+            Commands.MirrorVideo.ExecuteAsync(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(srVideo.tag().id, rectToPush));
             newMediaElement.Play();
         }
         public void Video_Pause(object sender, RoutedEventArgs e)
@@ -127,7 +127,7 @@ namespace SandRibbon.Components.ResourceDictionaries
             rectToPush.Stroke = Brushes.Red;
             rectToPush.Height = MediaElement.ActualHeight;
             rectToPush.Width = MediaElement.ActualWidth;
-            Commands.MirrorVideo.Execute(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(srVideo.tag().id, rectToPush ));
+            Commands.MirrorVideo.ExecuteAsync(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(srVideo.tag().id, rectToPush ));
         }
     }
     public class MeTLImageToolTip : System.Windows.Controls.ToolTip

@@ -34,9 +34,9 @@ namespace SandRibbon.Components
         {
             var options = (PrintOptions)((FrameworkElement)sender).DataContext;
             if (options.IncludePrivateContent)
-                Commands.PrintConversationHandout.Execute(null);
+                Commands.PrintConversationHandout.ExecuteAsync(null);
             else
-                Commands.PrintConversation.Execute(null);
+                Commands.PrintConversation.ExecuteAsync(null);
         }
     }
 }

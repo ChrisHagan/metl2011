@@ -60,7 +60,7 @@ namespace SandRibbon.Components
         private void mode_Checked(object sender, RoutedEventArgs e)
         {
             var mode = ((FrameworkElement)sender).Name;
-            Commands.BackstageModeChanged.Execute(mode);
+            Commands.BackstageModeChanged.ExecuteAsync(mode);
         }
     }
 }

@@ -64,7 +64,7 @@ namespace SandRibbon.Components
                     }
                     else
                     {
-                        Commands.ServersDown.Execute(brokenServers);
+                        Commands.ServersDown.ExecuteAsync(brokenServers);
                     }
                 };
                 timer.Elapsed += (sender, args) => timerAction();

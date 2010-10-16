@@ -42,17 +42,17 @@ namespace SandRibbon.Components.Sandpit
             InitializeComponent();
             moveTo(NO_BOARD);
             /*Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(arg=>{
-                Commands.HideConversationSearchBox.Execute(null);
-                Commands.ToggleFriendsVisibility.Execute(null);
-                Commands.ChangeTab.Execute("Home");
+                Commands.HideConversationSearchBox.ExecuteAsync(null);
+                Commands.ToggleFriendsVisibility.ExecuteAsync(null);
+                Commands.ChangeTab.ExecuteAsync("Home");
                 BoardManager.ClearBoards("S15");
                 var boards = BoardManager.boards["S15"].ToList();
                 boardDisplay.ItemsSource = boards;
                 for (int i = 0; i < 5; i++)
                 {
                     var user = boards[i].name;
-                    Commands.SendPing.Execute(user);
-                    Commands.SendMoveBoardToSlide.Execute(
+                    Commands.SendPing.ExecuteAsync(user);
+                    Commands.SendMoveBoardToSlide.ExecuteAsync(
                         new SandRibbon.Utils.Connection.JabberWire.BoardMove
                         {
                             boardUsername = user,
@@ -62,7 +62,7 @@ namespace SandRibbon.Components.Sandpit
             }));*/
             Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
             Commands.CloseBoardManager.RegisterCommand(new DelegateCommand<object>(
-                _obj => Commands.ToggleFriendsVisibility.Execute(null)
+                _obj => Commands.ToggleFriendsVisibility.ExecuteAsync(null)
             ));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(details => Display()));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
@@ -112,7 +112,7 @@ namespace SandRibbon.Components.Sandpit
                     board.slide = draggingSlide.slideId;
                     draggingSlide = null;
                     stopPulsing();
-                    Commands.SendMoveBoardToSlide.Execute(
+                    Commands.SendMoveBoardToSlide.ExecuteAsync(
                         new BoardMove
                         {
                             roomJid = board.slide,
@@ -126,7 +126,7 @@ namespace SandRibbon.Components.Sandpit
                     DelegateCommand<int> onConversationJoined = null;
                     onConversationJoined = new DelegateCommand<int>(_nothing =>
                     {
-                        Commands.MoveTo.Execute(
+                        Commands.MoveTo.ExecuteAsync(
                             targetSlide);
                         Commands.JoinConversation.UnregisterCommand(onConversationJoined);
                     });
@@ -134,9 +134,9 @@ namespace SandRibbon.Components.Sandpit
                     try
                     {
                         if (Globals.conversationDetails.Jid != desiredConversation)
-                            Commands.JoinConversation.Execute(desiredConversation);
+                            Commands.JoinConversation.ExecuteAsync(desiredConversation);
                         else
-                            onConversationJoined.Execute(0);
+                           onConversationJoined.Execute(0);
                     }
                     catch(NotSetException ex)
                     {

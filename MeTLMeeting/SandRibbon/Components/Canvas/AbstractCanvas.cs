@@ -148,7 +148,7 @@ namespace SandRibbon.Components.Canvas
 
         protected void ClearAdorners()
         {
-            Commands.RemovePrivacyAdorners.Execute(null);
+            Commands.RemovePrivacyAdorners.ExecuteAsync(null);
         }
         private void ClearSelectionOnLayerChanged(string layer)
         {
@@ -160,7 +160,7 @@ namespace SandRibbon.Components.Canvas
             else
                 try
                 {
-                    Commands.UpdateCursor.Execute(Commands.UpdateCursor.lastValue());
+                    Commands.UpdateCursor.ExecuteAsync(Commands.UpdateCursor.lastValue());
                 }
                 catch (Exception) { UseCustomCursor = false; }
             if (this.GetSelectedElements().Count > 0 || this.GetSelectedStrokes().Count > 0)
@@ -168,7 +168,7 @@ namespace SandRibbon.Components.Canvas
                 this.Select(null, null);
                 try
                 {
-                    Commands.SetInkCanvasMode.Execute(Commands.SetInkCanvasMode.lastValue());
+                    Commands.SetInkCanvasMode.ExecuteAsync(Commands.SetInkCanvasMode.lastValue());
                 }
                 catch (Exception) { }
             }
@@ -242,7 +242,7 @@ namespace SandRibbon.Components.Canvas
                 MessageBox.Show("Cannot Drop this onto the canvas");
                 return;
             }
-            Commands.SetLayer.Execute("Insert");
+            Commands.SetLayer.ExecuteAsync("Insert");
             var pos = e.GetPosition(this);
             var origX = pos.X;
             //lets try for a 4xN grid
@@ -251,7 +251,7 @@ namespace SandRibbon.Components.Canvas
             {
                 var filename = fileNames[i];
            //     var image = Image.createImageFromUri(new Uri(filename, UriKind.RelativeOrAbsolute));
-                Commands.ImageDropped.Execute(new ImageDrop { filename = filename, point = pos, target = target, position = i });
+                Commands.ImageDropped.ExecuteAsync(new ImageDrop { filename = filename, point = pos, target = target, position = i });
            /*     pos.X += image.Width + 30;
                 if (image.Height > height) height = image.Height;
                 if ((i + 1) % 4 == 0)

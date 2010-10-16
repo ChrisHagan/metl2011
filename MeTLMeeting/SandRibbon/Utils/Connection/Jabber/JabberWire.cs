@@ -250,7 +250,7 @@ namespace SandRibbon.Utils.Connection
                             populatedConversations.Add(conversation);
                         }
                     }
-                    Commands.receiveCurrentClasses.Execute(populatedConversations);
+                    Commands.receiveCurrentClasses.ExecuteAsync(populatedConversations);
                 }
             }
             catch (Exception) { }
@@ -352,7 +352,7 @@ namespace SandRibbon.Utils.Connection
         }
         private void OnPresence(object sender, Element element)
         {
-            Commands.ReceiveWormMove.Execute("=");
+            Commands.ReceiveWormMove.ExecuteAsync("=");
         }
         public void Login(Location location)
         {
@@ -499,7 +499,7 @@ namespace SandRibbon.Utils.Connection
         }
         private void onProgress(int upTo, int outOf)
         {
-            //Commands.RetrievedHistoryPortion.Execute(new[] { upTo, outOf });
+            //Commands.RetrievedHistoryPortion.ExecuteAsync(new[] { upTo, outOf });
         }
         private void retrieveHistory(string room)
         {
@@ -538,12 +538,12 @@ namespace SandRibbon.Utils.Connection
             HistoryProviderFactory.provider.Retrieve<MeTLLib.Providers.Connection.PreParser>(
                 onStart,
                 onProgress,
-                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                finishedParser => Commands.PreParserAvailable.ExecuteAsync(finishedParser),
                 location.currentSlide.ToString());
             HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                finishedParser => Commands.PreParserAvailable.ExecuteAsync(finishedParser),
                 credentials.name,
                 location.currentSlide.ToString());
         }
@@ -669,13 +669,13 @@ namespace SandRibbon.Utils.Connection
         }
         public virtual void handlePong(string[] parts)
         {
-            Commands.ReceivePong.Execute(parts[1]);
+            Commands.ReceivePong.ExecuteAsync(parts[1]);
         }
         public virtual void handleGoToConversation(string[] parts)
         {
             Application.Current.Dispatcher.adopt((Action)delegate
             {
-                Commands.JoinConversation.Execute(parts[1]);
+                Commands.JoinConversation.ExecuteAsync(parts[1]);
             });
         }
         public virtual void handleGoToSlide(string[] parts)
@@ -691,21 +691,21 @@ namespace SandRibbon.Utils.Connection
                         Commands.UpdateConversationDetails.UnregisterCommand(joinedConversation);
                         Application.Current.Dispatcher.adopt((Action)delegate
                         {
-                            Commands.MoveTo.Execute(id);
-                            Commands.ReceiveMoveBoardToSlide.Execute(id);
+                            Commands.MoveTo.ExecuteAsync(id);
+                            Commands.ReceiveMoveBoardToSlide.ExecuteAsync(id);
                         });
                     });
                 Commands.UpdateConversationDetails.RegisterCommand(joinedConversation);
                 Application.Current.Dispatcher.adopt((Action)delegate
                 {
-                    Commands.JoinConversation.Execute(desiredConversation);
+                    Commands.JoinConversation.ExecuteAsync(desiredConversation);
                 });
             }
             else
             {
                 Application.Current.Dispatcher.adopt((Action)delegate
                 {
-                    Commands.MoveTo.Execute(id);
+                    Commands.MoveTo.ExecuteAsync(id);
                 });
             }
         }
@@ -713,19 +713,19 @@ namespace SandRibbon.Utils.Connection
         {
             Application.Current.Dispatcher.adopt((Action)delegate
             {
-                Commands.ReceiveWakeUp.Execute(null);
+                Commands.ReceiveWakeUp.ExecuteAsync(null);
             });
         }
         public virtual void handleSleep(string[] parts)
         {
             Application.Current.Dispatcher.adopt((Action)delegate
             {
-                Commands.ReceiveSleep.Execute(null);
+                Commands.ReceiveSleep.ExecuteAsync(null);
             });
         }
         public virtual void handleWormMoved(string[] parts)
         {
-            Commands.ReceiveWormMove.Execute(parts[1]);
+            Commands.ReceiveWormMove.ExecuteAsync(parts[1]);
         }
         public virtual void ReceivedMessage(object obj)
         {
@@ -796,74 +796,74 @@ namespace SandRibbon.Utils.Connection
         }
         public virtual void actOnFileResource(MeTLLib.DataTypes.MeTLStanzas.FileResource resource)
         {
-            Commands.ReceiveFileResource.Execute(resource.fileResource);
+            Commands.ReceiveFileResource.ExecuteAsync(resource.fileResource);
         }
         public virtual void actOnScreenshotSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
-            Commands.ReceiveScreenshotSubmission.Execute(submission);
+            Commands.ReceiveScreenshotSubmission.ExecuteAsync(submission);
         }
         public virtual void actOnVideoReceived(MeTLLib.DataTypes.TargettedVideo video)
         {
-            Commands.ReceiveVideo.Execute(video);
+            Commands.ReceiveVideo.ExecuteAsync(video);
         }
         public virtual void actOnBubbleReceived(MeTLLib.DataTypes.TargettedBubbleContext bubble)
         {
-            Commands.ReceiveNewBubble.Execute(bubble);
+            Commands.ReceiveNewBubble.ExecuteAsync(bubble);
         }
         public virtual void actOnDirtyAutoshapeReceived(MeTLLib.DataTypes.MeTLStanzas.DirtyAutoshape dirtyAutoShape)
         {
-            Commands.ReceiveDirtyAutoShape.Execute(dirtyAutoShape.element);
+            Commands.ReceiveDirtyAutoShape.ExecuteAsync(dirtyAutoShape.element);
         }
         public virtual void actOnDirtyVideoReceived(MeTLLib.DataTypes.MeTLStanzas.DirtyVideo dirtyVideo)
         {
-            Commands.ReceiveDirtyVideo.Execute(dirtyVideo.element);
+            Commands.ReceiveDirtyVideo.ExecuteAsync(dirtyVideo.element);
         }
         public virtual void actOnDirtyImageReceived(MeTLLib.DataTypes.MeTLStanzas.DirtyImage dirtyImage)
         {
-            Commands.ReceiveDirtyImage.Execute(dirtyImage.element);
+            Commands.ReceiveDirtyImage.ExecuteAsync(dirtyImage.element);
         }
         public virtual void actOnDirtyStrokeReceived(MeTLLib.DataTypes.MeTLStanzas.DirtyInk element)
         {
-            Commands.ReceiveDirtyStrokes.Execute(new[] { element.element });
+            Commands.ReceiveDirtyStrokes.ExecuteAsync(new[] { element.element });
         }
         public virtual void actOnDirtyTextReceived(MeTLLib.DataTypes.MeTLStanzas.DirtyText dirtyText)
         {
-            Commands.ReceiveDirtyText.Execute(dirtyText.element);
+            Commands.ReceiveDirtyText.ExecuteAsync(dirtyText.element);
         }
         public virtual void actOnImageReceived(MeTLLib.DataTypes.TargettedImage image)
         {
-            Commands.ReceiveImage.Execute(new[] { image });
+            Commands.ReceiveImage.ExecuteAsync(new[] { image });
         }
         public virtual void actOnAutoShapeReceived(MeTLLib.DataTypes.TargettedAutoShape autoshape)
         {
-            Commands.ReceiveAutoShape.Execute(autoshape);
+            Commands.ReceiveAutoShape.ExecuteAsync(autoshape);
         }
         public virtual void actOnQuizReceived(MeTLLib.DataTypes.QuizQuestion quiz)
         {
-            Commands.ReceiveQuiz.Execute(quiz);
+            Commands.ReceiveQuiz.ExecuteAsync(quiz);
         }
         public virtual void actOnQuizAnswerReceived(MeTLLib.DataTypes.QuizAnswer answer)
         {
-            Commands.ReceiveQuizAnswer.Execute(answer);
+            Commands.ReceiveQuizAnswer.ExecuteAsync(answer);
         }
         public virtual void actOnStrokeReceived(MeTLLib.DataTypes.TargettedStroke stroke)
         {
-            Commands.ReceiveStroke.Execute(stroke);
+            Commands.ReceiveStroke.ExecuteAsync(stroke);
         }
         public virtual void actOnTextReceived(MeTLLib.DataTypes.TargettedTextBox box)
         {
             if (box.target == "chat")
-                Commands.ReceiveChatMessage.Execute(box);
+                Commands.ReceiveChatMessage.ExecuteAsync(box);
             else
-                Commands.ReceiveTextBox.Execute(box);
+                Commands.ReceiveTextBox.ExecuteAsync(box);
         }
         public virtual void actOnLiveWindowReceived(MeTLLib.DataTypes.LiveWindowSetup window)
         {
-            Commands.ReceiveLiveWindow.Execute(window);
+            Commands.ReceiveLiveWindow.ExecuteAsync(window);
         }
         public virtual void actOnDirtyLiveWindowReceived(MeTLLib.DataTypes.TargettedDirtyElement element)
         {
-            Commands.ReceiveDirtyLiveWindow.Execute(element);
+            Commands.ReceiveDirtyLiveWindow.ExecuteAsync(element);
         }
         public void SneakInto(string room)
         {
@@ -876,13 +876,13 @@ namespace SandRibbon.Utils.Connection
                 finishedParser =>
                 {
                     Logger.Log(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
-                    Commands.PreParserAvailable.Execute(finishedParser);
+                    Commands.PreParserAvailable.ExecuteAsync(finishedParser);
                 },
                 room);
             HistoryProviderFactory.provider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
-                finishedParser => Commands.PreParserAvailable.Execute(finishedParser),
+                finishedParser => Commands.PreParserAvailable.ExecuteAsync(finishedParser),
                 credentials.name,
                 room);
         }
@@ -906,16 +906,16 @@ namespace SandRibbon.Utils.Connection
         private void handleSyncMoveReceived(string[] parts)
         {
             var where = parts[1];
-            Commands.SyncedMoveRequested.Execute(Int32.Parse(where));
+            Commands.SyncedMoveRequested.ExecuteAsync(Int32.Parse(where));
         }
         private void handleConversationDetailsUpdated(string[] parts)
         {
             var jid = parts[1];
-            Commands.ReceiveDirtyConversationDetails.Execute(jid);
+            Commands.ReceiveDirtyConversationDetails.ExecuteAsync(jid);
             var newDetails = MeTLLib.ClientFactory.Connection().DetailsOf(jid);
-            Commands.UpdateForeignConversationDetails.Execute(newDetails);
+            Commands.UpdateForeignConversationDetails.ExecuteAsync(newDetails);
             if (isCurrentConversation(jid))
-                Commands.UpdateConversationDetails.Execute(newDetails);
+                Commands.UpdateConversationDetails.ExecuteAsync(newDetails);
         }
         private bool isCurrentConversation(string jid)
         {

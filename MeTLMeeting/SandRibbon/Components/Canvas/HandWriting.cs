@@ -46,7 +46,7 @@ namespace SandRibbon.Components.Canvas
             defaultHeight = DefaultDrawingAttributes.Height;
             modeChangedCommand = new DelegateCommand<string>(setInkCanvasMode, canChangeMode);
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedStrokes));
-            Commands.SetInkCanvasMode.RegisterCommand(modeChangedCommand);
+            Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(modeChangedCommand);
             Commands.ActualChangePenSize.RegisterCommand(new DelegateCommand<double>(penSize =>
             {
                 var newAttributes = DefaultDrawingAttributes.Clone();
@@ -88,7 +88,8 @@ namespace SandRibbon.Components.Canvas
             }));
             Commands.ActualSetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(attributes =>
              {
-                 DefaultDrawingAttributes = attributes;
+                 Dispatcher.adoptAsync(()=>
+                 DefaultDrawingAttributes = attributes);
              }));
             Commands.ToggleHighlighterMode.RegisterCommand(new DelegateCommand<object>(_obj =>
             {
@@ -178,8 +179,11 @@ namespace SandRibbon.Components.Canvas
         {
             if (obj is Cursor)
             {
-                UseCustomCursor = true;
-                Cursor = (Cursor)obj;
+                Dispatcher.adoptAsync(() =>
+                {
+                    UseCustomCursor = true;
+                    Cursor = (Cursor)obj;
+                });
             }
         }
         private void deleteSelectedItems(object obj)
@@ -259,7 +263,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void announceDrawingAttributesChanged(object sender, DrawingAttributesReplacedEventArgs e)
         {
-            Commands.ActualReportDrawingAttributes.Execute(this.DefaultDrawingAttributes);
+            Commands.ActualReportDrawingAttributes.ExecuteAsync(this.DefaultDrawingAttributes);
         }
         private static List<TimeSpan> strokeReceiptDurations = new List<TimeSpan>();
         private static double averageStrokeReceiptDuration()
@@ -289,7 +293,7 @@ namespace SandRibbon.Components.Canvas
                         if (stroke.target == target)
                         {
                             var author= stroke.author==Globals.conversationDetails.Author? "Teacher" : stroke.author;
-                            Commands.ReceiveAuthor.Execute(author);
+                            Commands.ReceiveAuthor.ExecuteAsync(author);
                             if(!userStrokes.ContainsKey(author))
                                 userStrokes.Add(author, new List<MeTLLib.DataTypes.TargettedStroke>());
                             if(!userStrokes[author].Contains(stroke))
@@ -323,7 +327,7 @@ namespace SandRibbon.Components.Canvas
                 privacyChoice = "hide";
             else
                 privacyChoice = "both";
-            Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
+            Commands.AddPrivacyToggleButton.ExecuteAsync(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
         }
 
         public StrokeCollection GetSelectedStrokes()
@@ -396,7 +400,7 @@ namespace SandRibbon.Components.Canvas
             var bounds = stroke.GetBounds();
             if (stroke != null && stroke is Stroke)
                 RemovePrivacyStylingFromStroke(stroke);
-            Commands.SendDirtyStroke.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,stroke.tag().privacy,sum));
+            Commands.SendDirtyStroke.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,stroke.tag().privacy,sum));
         }
         private void transmitSelectionAltered(object sender, EventArgs e)
         {
@@ -461,8 +465,8 @@ namespace SandRibbon.Components.Canvas
         {
             try
             {
-                Commands.ActualReportStrokeAttributes.Execute(stroke.DrawingAttributes);
-                Commands.SendStroke.Execute(new MeTLLib.DataTypes.TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke));
+                Commands.ActualReportStrokeAttributes.ExecuteAsync(stroke.DrawingAttributes);
+                Commands.SendStroke.ExecuteAsync(new MeTLLib.DataTypes.TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke));
             }
             catch (NotSetException e)
             {
@@ -518,7 +522,7 @@ namespace SandRibbon.Components.Canvas
                 listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,stroke.tag().privacy,stroke.sum().checksum.ToString()));
             CutSelection();
             foreach (var element in listToCut)
-                Commands.SendDirtyStroke.Execute(element);
+                Commands.SendDirtyStroke.ExecuteAsync(element);
         }
         public void ReceiveDirtyStrokes(IEnumerable<MeTLLib.DataTypes.TargettedDirtyElement> targettedDirtyStrokes)
         {

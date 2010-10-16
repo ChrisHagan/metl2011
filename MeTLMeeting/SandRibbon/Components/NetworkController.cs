@@ -16,7 +16,7 @@ namespace SandRibbon.Components
         {
             registerCommands();
             attachToClient();
-            Commands.UpdateConversationDetails.Execute(new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), ""));
+            Commands.UpdateConversationDetails.ExecuteAsync(new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), ""));
         }
         #region commands
         private void registerCommands()
@@ -159,7 +159,7 @@ namespace SandRibbon.Components
         }
         private void autoShapeAvailable(object sender, AutoshapeAvailableEventArgs e)
         {
-            Commands.ReceiveAutoShape.Execute(e.autoshape);
+            Commands.ReceiveAutoShape.ExecuteAsync(e.autoshape);
         }
         private void bubbleAvailable(object sender, BubbleAvailableEventArgs e)
         {
@@ -172,83 +172,83 @@ namespace SandRibbon.Components
         }
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
-            Commands.UpdateConversationDetails.Execute(e.conversationDetails);
+            Commands.UpdateConversationDetails.ExecuteAsync(e.conversationDetails);
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyAutoShape.Execute(e.dirtyElement);
+            Commands.ReceiveDirtyAutoShape.ExecuteAsync(e.dirtyElement);
         }
         private void dirtyImageAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyImage.Execute(e.dirtyElement);
+            Commands.ReceiveDirtyImage.ExecuteAsync(e.dirtyElement);
         }
         private void dirtyLiveWindowAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyLiveWindow.Execute(e.dirtyElement);
+            Commands.ReceiveDirtyLiveWindow.ExecuteAsync(e.dirtyElement);
         }
         private void dirtyStrokeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyStrokes.Execute(new[] { e.dirtyElement });
+            Commands.ReceiveDirtyStrokes.ExecuteAsync(new[] { e.dirtyElement });
         }
         private void dirtyTextBoxAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyText.Execute(e.dirtyElement);
+            Commands.ReceiveDirtyText.ExecuteAsync(e.dirtyElement);
         }
         private void dirtyVideoAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
-            Commands.ReceiveDirtyVideo.Execute(e.dirtyElement);
+            Commands.ReceiveDirtyVideo.ExecuteAsync(e.dirtyElement);
         }
         private void discoAvailable(object sender, DiscoAvailableEventArgs e)
         {
         }
         private void fileAvailable(object sender, FileAvailableEventArgs e)
         {
-            Commands.ReceiveFileResource.Execute(e.file);
+            Commands.ReceiveFileResource.ExecuteAsync(e.file);
         }
         private void imageAvailable(object sender, ImageAvailableEventArgs e)
         {
-            Commands.ReceiveImage.Execute(new []{e.image});
+            Commands.ReceiveImage.ExecuteAsync(new []{e.image});
         }
         private void liveWindowAvailable(object sender, LiveWindowAvailableEventArgs e)
         {
-            Commands.ReceiveLiveWindow.Execute(e.livewindow);
+            Commands.ReceiveLiveWindow.ExecuteAsync(e.livewindow);
         }
         private void preParserAvailable(object sender, PreParserAvailableEventArgs e)
         {
-            Commands.PreParserAvailable.Execute(e.parser);
+            Commands.PreParserAvailable.ExecuteAsync(e.parser);
         }
         private void quizAnswerAvailable(object sender, QuizAnswerAvailableEventArgs e)
         {
-            Commands.ReceiveQuizAnswer.Execute(e.quizAnswer);
+            Commands.ReceiveQuizAnswer.ExecuteAsync(e.quizAnswer);
         }
         private void quizQuestionAvailable(object sender, QuizQuestionAvailableEventArgs e)
-        { Commands.ReceiveQuiz.Execute(e.quizQuestion); }
+        { Commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }
         private void statusChanged(object sender, StatusChangedEventArgs e)
         {
             if (e.isConnected)
             {
                 Commands.AllStaticCommandsAreRegistered();
-                Commands.ConnectWithAuthenticatedCredentials.Execute(e.credentials);
-                Commands.SetIdentity.Execute(e.credentials);
+                Commands.ConnectWithAuthenticatedCredentials.ExecuteAsync(e.credentials);
+                Commands.SetIdentity.ExecuteAsync(e.credentials);
             }
             else
                 App.Now("MeTLLib has indicated that it is disconnected");
         }
         private void strokeAvailable(object sender, StrokeAvailableEventArgs e)
         {
-            Commands.ReceiveStroke.Execute(e.stroke);
+            Commands.ReceiveStroke.ExecuteAsync(e.stroke);
         }
         private void submissionAvailable(object sender, SubmissionAvailableEventArgs e)
         {
-            Commands.ReceiveScreenshotSubmission.Execute(e.submission);
+            Commands.ReceiveScreenshotSubmission.ExecuteAsync(e.submission);
         }
         private void textBoxAvailable(object sender, TextBoxAvailableEventArgs e)
         {
-            Commands.ReceiveTextBox.Execute(e.textBox);
+            Commands.ReceiveTextBox.ExecuteAsync(e.textBox);
         }
         private void videoAvailable(object sender, VideoAvailableEventArgs e)
         {
-            Commands.ReceiveVideo.Execute(e.video);
+            Commands.ReceiveVideo.ExecuteAsync(e.video);
         }
         #endregion
     }

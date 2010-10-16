@@ -34,7 +34,7 @@ namespace SandRibbon.Components.Canvas
             this.PreviewMouseUp += clearMouseMode;
             this.MouseLeave += mouseLeave;
             target = "";
-            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(setInkCanvasMode));
+            Commands.SetInkCanvasMode.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(setInkCanvasMode));
         }
         private void setInkCanvasMode(object _unused)
         {
@@ -59,7 +59,7 @@ namespace SandRibbon.Components.Canvas
                     {
                         var newPosition = e.GetPosition(this);
                         var delta = new Point(oldPosition.X - newPosition.X, oldPosition.Y - newPosition.Y);
-                        Commands.MoveCanvasByDelta.Execute(delta);
+                        Commands.MoveCanvasByDelta.ExecuteAsync(delta);
                         oldPosition = new Point(-1, -1);
                     }
                     break;

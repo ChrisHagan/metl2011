@@ -35,7 +35,7 @@ namespace SandRibbon.Tabs
             InitializeComponent();
             Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz));
             Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
+            Commands.MoveTo.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(MoveTo));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(updateConversationDetails));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
@@ -107,13 +107,17 @@ namespace SandRibbon.Tabs
         {
             if (activeQuizes.Any(q => q.id == quiz.id)) return;
             if (!answers.ContainsKey(quiz.id))
-                answers[quiz.id] = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>();
-            activeQuizes.Add(quiz);
-            quizzes.ScrollToEnd();
+           Dispatcher.adoptAsync(()=>
+                answers[quiz.id] = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>());
+            Dispatcher.adoptAsync(() =>
+            {
+                activeQuizes.Add(quiz);
+                quizzes.ScrollToEnd();
+            });
         }
         private void CreateQuiz(object sender, RoutedEventArgs e)
         {
-            Commands.BlockInput.Execute("Create a quiz dialog open.");
+            Commands.BlockInput.ExecuteAsync("Create a quiz dialog open.");
             var quizDialog = new CreateAQuiz(activeQuizes.Count);
             quizDialog.Owner = Window.GetWindow(this);
             quizDialog.ShowDialog();
@@ -133,10 +137,10 @@ namespace SandRibbon.Tabs
             onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
             {
                 Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
-                Commands.PlaceQuizSnapshot.Execute(filename);
+                Commands.PlaceQuizSnapshot.ExecuteAsync(filename);
             });
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
-            Commands.AddSlide.Execute(null);
+            Commands.AddSlide.ExecuteAsync(null);
         }
     }
 }

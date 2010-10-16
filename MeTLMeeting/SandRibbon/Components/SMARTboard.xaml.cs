@@ -143,8 +143,8 @@ namespace SandRibbon.Components
             SMARTboardConsole("SMARTboard pen: R" + penRed + ", G" + penGreen + ", B" + penBlue + ", A" + penAlpha);
             var color = new Color { A = SMARTboardPenColor.A, R = SMARTboardPenColor.R, G = SMARTboardPenColor.G, B = SMARTboardPenColor.B };
             var drawingAttributes = new DrawingAttributes() { Color = color, IsHighlighter = false, Height = 3, Width = 3 };
-            SandRibbon.Commands.SetDrawingAttributes.Execute(drawingAttributes);
-            SandRibbon.Commands.SetInkCanvasMode.Execute("Ink");
+            SandRibbon.Commands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
+            SandRibbon.Commands.SetInkCanvasMode.ExecuteAsync("Ink");
         }
 
         private void OnNoTool(int iPointerID)
@@ -154,7 +154,7 @@ namespace SandRibbon.Components
 
         private void OnEraser(int iPointerID)
         {
-            SandRibbon.Commands.SetInkCanvasMode.Execute("EraseByStroke");
+            SandRibbon.Commands.SetInkCanvasMode.ExecuteAsync("EraseByStroke");
             SMARTboardConsole("SMARTboard Eraser");
         }
 

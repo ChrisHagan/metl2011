@@ -172,7 +172,7 @@ namespace SandRibbon.Utils
                     powerpointThread.SetApartmentState(ApartmentState.STA);
                     powerpointThread.Start();
                 }
-                Commands.JoinConversation.Execute(conversation.Jid);
+                Commands.JoinConversation.ExecuteAsync(conversation.Jid);
             }
             catch (Exception ex)
             {
@@ -181,7 +181,7 @@ namespace SandRibbon.Utils
             finally
             {
                 ppt.Close();
-                Commands.PowerpointFinished.Execute(null);
+                Commands.PowerpointFinished.ExecuteAsync(null);
             }
         }
         private static void createThumbnail(ConversationDetails details, Microsoft.Office.Interop.PowerPoint.Slide slide)
@@ -226,13 +226,13 @@ namespace SandRibbon.Utils
                     powerpointThread.SetApartmentState(ApartmentState.STA);
                     powerpointThread.Start();
                 }
-                Commands.JoinConversation.Execute(conversation.Jid);
+                Commands.JoinConversation.ExecuteAsync(conversation.Jid);
             }
             finally
             {/*How do we know when a parallelized operation has actually finished?
               * We don't.  But the content comes in live.*/
                 ppt.Close();
-                Commands.PowerpointFinished.Execute(null);
+                Commands.PowerpointFinished.ExecuteAsync(null);
             }
         }
         private void sendSlide(int id, XElement slide)

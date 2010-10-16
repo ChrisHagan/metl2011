@@ -87,7 +87,7 @@ namespace SandRibbon.Components
                 },
                 Tag = setup.snapshotAtTimeOfCreation
             };
-            Commands.ThoughtLiveWindow.Execute(new ThoughtBubbleLiveWindow
+            Commands.ThoughtLiveWindow.ExecuteAsync(new ThoughtBubbleLiveWindow
                                                    {
                                                        LiveWindow = liveWindow,
                                                        Bubble = thoughtBubble
@@ -117,13 +117,13 @@ namespace SandRibbon.Components
             try
             {
                 if (Globals.conversationDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
-                    Commands.SetPrivacy.Execute(stack.handwriting.actualPrivacy);
+                    Commands.SetPrivacy.ExecuteAsync(stack.handwriting.actualPrivacy);
                 else
-                    Commands.SetPrivacy.Execute("private");
+                    Commands.SetPrivacy.ExecuteAsync("private");
             }
             catch (NotSetException)
             {
-                Commands.SetPrivacy.Execute("private");
+                Commands.SetPrivacy.ExecuteAsync("private");
             }
         }
         public FrameworkElement GetAdorner()
@@ -145,7 +145,7 @@ namespace SandRibbon.Components
                 MessageBox.Show("cannot upload submission");
                 return;
             }
-            Commands.ScreenshotGenerated.Execute(hostedFileName);
+            Commands.ScreenshotGenerated.ExecuteAsync(hostedFileName);
 
         }
 
@@ -187,7 +187,7 @@ namespace SandRibbon.Components
             try
             {
                 var bitmap = generateCapture(512);
-                Commands.ThumbnailGenerated.Execute(new UnscaledThumbnailData { id = Globals.location.currentSlide, data = bitmap });
+                Commands.ThumbnailGenerated.ExecuteAsync(new UnscaledThumbnailData { id = Globals.location.currentSlide, data = bitmap });
             }
             catch (OverflowException)
             {
@@ -204,11 +204,15 @@ namespace SandRibbon.Components
         {
             var dpi = 96;
             var dimensions = measureToAspect(ActualWidth, ActualHeight, side);
-            var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
-            var dv = new DrawingVisual();
-            using (var context = dv.RenderOpen())
-                context.DrawRectangle(new VisualBrush(stack), null, dimensions);
-            bitmap.Render(dv);
+            RenderTargetBitmap bitmap = null;
+            Dispatcher.adopt(() =>
+            {
+                bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
+                var dv = new DrawingVisual();
+                using (var context = dv.RenderOpen())
+                    context.DrawRectangle(new VisualBrush(stack), null, dimensions);
+                bitmap.Render(dv);
+            });
             return bitmap;
         }
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
@@ -254,13 +258,16 @@ namespace SandRibbon.Components
             thumbnailGenerated = new DelegateCommand<object>(obj =>
                                  {
                                      Commands.ThumbnailAvailable.UnregisterCommand(thumbnailGenerated);
-                                     foreach (AbstractCanvas ac in stack.canvasStack.Children)
+                                     Dispatcher.adoptAsync(() =>
                                      {
-                                         ac.showPrivateContent();
-                                     }
+                                         foreach (AbstractCanvas ac in stack.canvasStack.Children)
+                                         {
+                                             ac.showPrivateContent();
+                                         }
+                                     });
                                  });
             Commands.ThumbnailAvailable.RegisterCommand(thumbnailGenerated);
-            Commands.CreateThumbnail.Execute(Globals.slide);
+            Commands.CreateThumbnail.ExecuteAsync(Globals.slide);
         }
         private void MirrorPresentationSpace(Window1 parent)
         {
@@ -274,8 +281,8 @@ namespace SandRibbon.Components
                 mirror.AllowsTransparency = true;
                 setSecondaryWindowBounds(mirror);
                 mirror.Show();
-                Commands.SetDrawingAttributes.Execute(currentAttributes);
-                Commands.SetPrivacy.Execute(stack.handwriting.privacy);
+                Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
+                Commands.SetPrivacy.ExecuteAsync(stack.handwriting.privacy);
             }
             catch (NotSetException)
             {
@@ -347,7 +354,7 @@ namespace SandRibbon.Components
         {
             if (window.slide != Globals.slide || window.author != Globals.me) return;
             window.visualSource = stack;
-            Commands.DugPublicSpace.Execute(window);
+            Commands.DugPublicSpace.ExecuteAsync(window);
         }
         private void InitiateDig(object _param)
         {
@@ -357,9 +364,9 @@ namespace SandRibbon.Components
         {
             withDragMarquee(marquee =>
             {
-                Commands.EndGrabZoom.Execute(null);
+                Commands.EndGrabZoom.ExecuteAsync(null);
                 if(marquee.Width > 10)
-                    Commands.SetZoomRect.Execute(marquee);
+                    Commands.SetZoomRect.ExecuteAsync(marquee);
             });
         }
         private void withDragMarquee(Action<Rectangle> doWithRect)
@@ -403,7 +410,7 @@ namespace SandRibbon.Components
             canvas.MouseLeave += (_sender, _args) =>
             {
                 adornerLayer.Remove(adorner);
-                Commands.EndGrabZoom.Execute(null);
+                Commands.EndGrabZoom.ExecuteAsync(null);
             };
             adornerLayer.Add(adorner);
         }
@@ -412,7 +419,7 @@ namespace SandRibbon.Components
             var origin = new Point(
                 System.Windows.Controls.Canvas.GetLeft(marquee),
                 System.Windows.Controls.Canvas.GetTop(marquee));
-            Commands.SendLiveWindow.Execute(new LiveWindowSetup
+            Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
             (Globals.slide,Globals.me,marquee,origin,new Point(0,0),ResourceUploader.uploadResourceToPath(
                                             toByteArray(this, marquee, origin),
                                             "Resource/" + Globals.slide.ToString(),

@@ -66,7 +66,7 @@ namespace SandRibbon.Components
             {
                 source = new BitmapImage(deSynced);
             }
-            syncButton.Icon = source;
+            Dispatcher.adoptAsync(()=>syncButton.Icon = source);
         }
         private void toggleSync(object sender, RoutedEventArgs e)
         {

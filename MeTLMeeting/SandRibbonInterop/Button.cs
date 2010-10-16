@@ -164,7 +164,7 @@ namespace SandRibbonInterop
         }
         public void RequestNewRectangle()
         {
-            Commands.VideoMirrorRefreshRectangle.Execute(id);
+            Commands.VideoMirrorRefreshRectangle.ExecuteAsync(id);
         }
 
         public System.Windows.Shapes.Rectangle Rectangle
@@ -332,7 +332,7 @@ namespace SandRibbonInterop
                 rectToPush.Stroke = Brushes.Red;
                 rectToPush.Height = MediaElement.ActualHeight;
                 rectToPush.Width = MediaElement.ActualWidth;
-                Commands.MirrorVideo.Execute(new SandRibbonInterop.VideoMirror.VideoMirrorInformation { id = id, rect = rectToPush });
+                Commands.MirrorVideo.ExecuteAsync(new SandRibbonInterop.VideoMirror.VideoMirrorInformation { id = id, rect = rectToPush });
             }
         }
         public Video()

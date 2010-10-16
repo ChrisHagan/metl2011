@@ -22,23 +22,23 @@ namespace SandRibbon.Components
         }
         private void colors_ColorPicked(object sender, Divelements.SandRibbon.ColorEventArgs e)
         {
-            Commands.SetPenColor.Execute(e.Color);
+            Commands.SetPenColor.ExecuteAsync(e.Color);
         }
         public void pressHighlighterButton(object sender, RoutedEventArgs e)
         {
-            Commands.ToggleHighlighterMode.Execute(null);
+            Commands.ToggleHighlighterMode.ExecuteAsync(null);
         }
         public void pressDecreasePenSizeButton(object sender, RoutedEventArgs e)
         {
-            Commands.DecreasePenSize.Execute(null);
+            Commands.DecreasePenSize.ExecuteAsync(null);
         }
         public void pressIncreasePenSizeButton(object sender, RoutedEventArgs e)
         {
-            Commands.IncreasePenSize.Execute(null);
+            Commands.IncreasePenSize.ExecuteAsync(null);
         }
         public void pressDefaultPenSizeButton(object sender, RoutedEventArgs e)
         {
-            Commands.RestorePenSize.Execute(null);
+            Commands.RestorePenSize.ExecuteAsync(null);
         }
         public void Disable()
         {

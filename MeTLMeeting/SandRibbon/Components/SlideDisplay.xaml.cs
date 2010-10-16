@@ -51,7 +51,7 @@ namespace SandRibbon.Components
                 onConversationDetailsReady = new DelegateCommand<ConversationDetails>(details =>
                                                   {
                                                       Commands.UpdateConversationDetails.UnregisterCommand(onConversationDetailsReady);
-                                                      Commands.SneakInto.Execute(details.Jid);
+                                                      Commands.SneakInto.ExecuteAsync(details.Jid);
                                                   });
                 Commands.UpdateConversationDetails.RegisterCommand(onConversationDetailsReady);
 
@@ -133,7 +133,7 @@ namespace SandRibbon.Components
             var action = (Action)(() => Dispatcher.adoptAsync((Action)delegate
                                          {
                                              if (thumbnailList.Where(t => t.slideId == where).Count() == 1)
-                                                 Commands.MoveTo.Execute(where);
+                                                 Commands.MoveTo.ExecuteAsync(where);
                                          }));
             GlobalTimers.SetSyncTimer(action);
         }
@@ -223,7 +223,7 @@ namespace SandRibbon.Components
                   if (proposedId == currentSlideId) return;
                   currentSlideIndex = proposedIndex;
                   currentSlideId = proposedId;
-                  Commands.MoveTo.Execute(currentSlideId);
+                  Commands.MoveTo.ExecuteAsync(currentSlideId);
                   slides.ScrollIntoView(slides.SelectedItem);
               }
         }

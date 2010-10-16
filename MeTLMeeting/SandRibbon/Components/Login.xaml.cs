@@ -47,7 +47,7 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.DataContext = this;
-            Commands.AddWindowEffect.Execute(null);
+            Commands.AddWindowEffect.ExecuteAsync(null);
             Version = ConfigurationProvider.instance.getMetlVersion();
             App.Now(string.Format("The Version of MeTL is -> {0}", Version));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
@@ -91,8 +91,8 @@ namespace SandRibbon.Components
         }
         private void SetIdentity(object _args)
         {
-            Commands.RemoveWindowEffect.Execute(null);
-            Commands.ShowConversationSearchBox.Execute(null);
+            Commands.RemoveWindowEffect.ExecuteAsync(null);
+            Commands.ShowConversationSearchBox.ExecuteAsync(null);
             Dispatcher.adoptAsync(() =>
                 {
                     Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);

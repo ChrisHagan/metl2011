@@ -42,7 +42,7 @@ namespace SandRibbon.Quizzing
             var selection = ((Option)e.AddedItems[0]);
             if(selection.correct)
                 MessageBox.Show("Nice Shooting Tex");
-            Commands.SendQuizAnswer.Execute(new QuizAnswer(question.id,Globals.me,selection.name));
+            Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.id,Globals.me,selection.name));
             this.Close();
         }
     }

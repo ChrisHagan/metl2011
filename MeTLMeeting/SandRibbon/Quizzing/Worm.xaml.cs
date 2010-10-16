@@ -60,7 +60,7 @@ namespace SandRibbon.Quizzing
             {
                 var screenCount = System.Windows.Forms.Screen.AllScreens.Count();
                 if (Projector.Window == null && screenCount > 1)
-                    Commands.ProxyMirrorPresentationSpace.Execute(null);
+                    Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
                 else if (Projector.Window != null && screenCount == 1)
                     Projector.Window.Close();
             }
@@ -69,7 +69,7 @@ namespace SandRibbon.Quizzing
         {
             try
             {
-                Commands.SendWormMove.Execute(new WormMove { conversation = Globals.conversationDetails.Jid, direction = "=" });
+                Commands.SendWormMove.ExecuteAsync(new WormMove { conversation = Globals.conversationDetails.Jid, direction = "=" });
             }
             catch (NotSetException)
             { 
@@ -79,7 +79,7 @@ namespace SandRibbon.Quizzing
             if (missedHeartbeats >= HEARTBEAT_FAIL_THRESHOLD)
             {
                 ResetHeartbeat();
-                Commands.Relogin.Execute(null);
+                Commands.Relogin.ExecuteAsync(null);
             }
             while(movements.Count > POINTS)
                 movements = movements.Skip(1).ToList();

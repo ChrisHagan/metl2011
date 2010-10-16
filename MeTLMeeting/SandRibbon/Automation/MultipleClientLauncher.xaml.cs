@@ -66,8 +66,8 @@ namespace SandRibbon.Automation
         {
             foreach (var child in windows)
             {
-                Commands.JoinConversation.Execute("Sample");
-                Commands.MoveTo.Execute(e.Parameter);
+                Commands.JoinConversation.ExecuteAsync("Sample");
+                Commands.MoveTo.ExecuteAsync(e.Parameter);
             }
         }
         private void CanIMove(object sender, CanExecuteRoutedEventArgs e)

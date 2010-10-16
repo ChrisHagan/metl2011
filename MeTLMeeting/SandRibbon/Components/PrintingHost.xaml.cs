@@ -16,7 +16,7 @@ namespace SandRibbon.Components
         public PrintingHost()
         {
             InitializeComponent();
-            Commands.ThumbnailGenerated.RegisterCommand(new DelegateCommand<UnscaledThumbnailData>(ThumbnailGenerated));
+            Commands.ThumbnailGenerated.RegisterCommandToDispatcher<UnscaledThumbnailData>(new DelegateCommand<UnscaledThumbnailData>(ThumbnailGenerated));
             Commands.QuizResultsAvailableForSnapshot.RegisterCommand(new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated));
         }
         private void ThumbnailGenerated(UnscaledThumbnailData thumbData)
@@ -29,7 +29,7 @@ namespace SandRibbon.Components
             var frombitmap = new Bitmap(stream);
             stream.Close();
             saveUnscaledBitmapToDisk(ThumbnailPath(thumbData.id), frombitmap);
-            Commands.ThumbnailAvailable.Execute(thumbData.id);
+            Commands.ThumbnailAvailable.ExecuteAsync(thumbData.id);
         }
         private void QuizResultsGenerated(UnscaledThumbnailData quizData)
         {
@@ -42,7 +42,7 @@ namespace SandRibbon.Components
             stream.Close();
             string path = QuizPath(quizData.id);
             saveUnscaledBitmapToDisk(path, frombitmap);
-            Commands.QuizResultsSnapshotAvailable.Execute(path);
+            Commands.QuizResultsSnapshotAvailable.ExecuteAsync(path);
         }
         public string QuizPath(int id)
         {

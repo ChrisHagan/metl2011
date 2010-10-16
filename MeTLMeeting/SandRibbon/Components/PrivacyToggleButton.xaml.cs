@@ -53,16 +53,16 @@ namespace SandRibbon.Components
         }
         private void showContent(object sender, RoutedEventArgs e)
         {
-            Commands.SetPrivacyOfItems.Execute("public");
+            Commands.SetPrivacyOfItems.ExecuteAsync("public");
         }
         private void hideContent(object sender, RoutedEventArgs e)
         {
-            Commands.SetPrivacyOfItems.Execute("private");
+            Commands.SetPrivacyOfItems.ExecuteAsync("private");
         }
 
         private void deleteContent(object sender, RoutedEventArgs e)
         {
-            Commands.DeleteSelectedItems.Execute(null);
+            Commands.DeleteSelectedItems.ExecuteAsync(null);
         }
         public class PrivacyToggleButtonInfo
         {
@@ -90,7 +90,7 @@ namespace SandRibbon.Components
             {
                 var details = MeTLLib.ClientFactory.Connection().AppendSlideAfter(Globals.slide, currentDetails.Jid, Slide.TYPE.THOUGHT);
                 var newSlide = details.Slides.Select(s => s.id).Max();
-                Commands.SendNewBubble.Execute(new TargettedBubbleContext
+                Commands.SendNewBubble.ExecuteAsync(new TargettedBubbleContext
                 (slide,Globals.me,target,"public",selection,newSlide));
             }
         }

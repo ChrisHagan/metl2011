@@ -27,15 +27,21 @@ namespace SandRibbon.Chrome
         }
         private void clearUI()
         {
-            foreach (var item in (ItemCollection)Items)
+            Dispatcher.adoptAsync(() =>
             {
-                var button = (Divelements.SandRibbon.Button)item;
-                button.Visibility = Visibility.Collapsed;
-            }
+                foreach (var item in (ItemCollection)Items)
+                {
+                    var button = (Divelements.SandRibbon.Button)item;
+                    button.Visibility = Visibility.Collapsed;
+                }
+            });
         }
         private void add(string key) {
-            var element = ((Divelements.SandRibbon.Button)this.FindName(key));
-            element.Visibility = Visibility.Visible;
+            Dispatcher.adoptAsync(() =>
+            {
+                var element = ((Divelements.SandRibbon.Button)this.FindName(key));
+                element.Visibility = Visibility.Visible;
+            });
         }
         private void SetPedagogyLevel(PedagogyLevel level) 
         { 

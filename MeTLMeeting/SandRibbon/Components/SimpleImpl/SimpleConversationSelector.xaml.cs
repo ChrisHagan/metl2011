@@ -99,7 +99,7 @@ namespace SandRibbon.Components
         }
         private void doJoinConversation(object sender, ExecutedRoutedEventArgs e)
         {
-            Commands.JoinConversation.Execute((string)e.Parameter);
+            Commands.JoinConversation.ExecuteAsync((string)e.Parameter);
         }
         private void canJoinConversation(object sender, CanExecuteRoutedEventArgs e)
         {//CommandParameter is conversation title

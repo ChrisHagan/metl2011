@@ -114,12 +114,12 @@ namespace SandRibbon.Components.Submissions
                              {
                                                                  
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 Commands.SendScreenshotSubmission.Execute(new TargettedSubmission
+                                 Commands.SendScreenshotSubmission.ExecuteAsync(new TargettedSubmission
                                  (Globals.location.currentSlide,Globals.me,"submission","public",hostedFileName,time));
                                 MessageBox.Show("Submission sent to " + Globals.conversationDetails.Author);
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
-            Commands.GenerateScreenshot.Execute(new ScreenshotDetails
+            Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
                                                     {
                                                         time = time,
                                                         message = string.Format("{0}'s submission at {1}", Globals.me, new DateTime(time)),
