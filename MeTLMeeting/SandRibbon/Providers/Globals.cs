@@ -153,7 +153,11 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (int)Commands.MoveTo.lastValue();
+                try
+                {
+                    return (int)Commands.MoveTo.lastValue();
+                }
+                catch (NotSetException e) { return location.currentSlide; }
             }
         }
         public static string me

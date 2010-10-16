@@ -45,7 +45,7 @@ namespace MeTLLib.DataTypes
         {
             if (obj == null || !(obj is AutoShape)) return false;
             var foreign = (AutoShape)obj;
-            return (((Thumb)this).Equals((Thumb)obj) 
+            return (((Thumb)this).Equals((Thumb)obj)
                 && foreign.PathData.Equals(PathData)
                 && foreign.StrokeThickness == StrokeThickness);
         }
@@ -222,7 +222,13 @@ namespace MeTLLib.DataTypes
             DependencyProperty.Register("MediaElement", typeof(System.Windows.Controls.MediaElement), typeof(Thumb), new UIPropertyMetadata(null));
         public System.Uri VideoSource
         {
-            get { return (System.Uri)GetValue(VideoSourceProperty); }
+            get
+            {
+                var dispatcher = this.Dispatcher;
+                Uri newUri = null;
+                dispatcher.adopt(()=>newUri = (System.Uri)GetValue(VideoSourceProperty));
+                return newUri;
+            }
             set
             {
                 SetValue(VideoSourceProperty, value);
@@ -262,7 +268,7 @@ namespace MeTLLib.DataTypes
                 rectToPush.Stroke = Brushes.Red;
                 rectToPush.Height = MediaElement.ActualHeight;
                 rectToPush.Width = MediaElement.ActualWidth;
-                Commands.MirrorVideo.Execute(new VideoMirror.VideoMirrorInformation(id,rectToPush)); 
+                Commands.MirrorVideo.Execute(new VideoMirror.VideoMirrorInformation(id, rectToPush));
             }
         }
         public Video()

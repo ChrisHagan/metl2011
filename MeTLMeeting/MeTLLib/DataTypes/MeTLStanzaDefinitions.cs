@@ -243,7 +243,7 @@ namespace MeTLLib.DataTypes
             : base(Slide, Author, Target, Privacy)
         {
             video = Video;
-
+            Video.Dispatcher.adoptAsync(()=>videoSpecification = new MeTLStanzas.Video(this));
         }
         public TargettedVideo(int Slide, string Author, string Target, string Privacy, MeTLStanzas.Video VideoSpecification, string Identity, double VideoX, double VideoY, double VideoWidth, double VideoHeight)
             : base(Slide, Author, Target, Privacy)
@@ -254,6 +254,7 @@ namespace MeTLLib.DataTypes
             Y = VideoY;
             Width = VideoWidth;
             Height = VideoHeight;
+            Application.Current.Dispatcher.adoptAsync(()=>video = videoSpecification.forceEvaluation());
         }
         public bool ValueEquals(object obj)
         {
@@ -283,12 +284,16 @@ namespace MeTLLib.DataTypes
             get
             {
                 if (videoSpecification == null) videoSpecification = new MeTLStanzas.Video(this);
-                var reified = videoSpecification.forceEvaluation();
-                id = reified.tag().id;
-                reified.Height = Height;
-                reified.Width = Width;
-                reified.X = X;
-                reified.Y = Y;
+                Video reified = null;
+                videoProperty.Dispatcher.adopt(() =>
+                {
+                    reified = videoSpecification.forceEvaluation();
+                    id = reified.tag().id;
+                    reified.Height = Height;
+                    reified.Width = Width;
+                    reified.X = X;
+                    reified.Y = Y;
+                });
                 return reified;
             }
             set
@@ -1250,19 +1255,22 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-
-                    var absolutePath = value.videoProperty.VideoSource != null ? value.videoProperty.VideoSource.ToString() : value.videoProperty.MediaElement.Source.ToString();
-                    SetTag(tagTag, value.videoProperty.Tag.ToString());
-                    SetTag(sourceTag, absolutePath);
-                    SetTag(xTag, value.X.ToString());
-                    SetTag(yTag, value.Y.ToString());
-                    SetTag(heightTag, (value.videoProperty.Height).ToString());
-                    SetTag(widthTag, (value.videoProperty.Width).ToString());
-                    SetTag(authorTag, value.author);
-                    SetTag(targetTag, value.target);
-                    SetTag(privacyTag, value.privacy);
-                    SetTag(slideTag, value.slide);
-                    SetTag(identityTag, value.id);
+                    var Dispatcher = value.videoProperty.Dispatcher;
+                    Dispatcher.adopt(() =>
+                    {
+                        var absolutePath = value.videoProperty.VideoSource != null ? value.videoProperty.VideoSource.ToString() : value.videoProperty.MediaElement.Source.ToString();
+                        SetTag(tagTag, value.videoProperty.Tag.ToString());
+                        SetTag(sourceTag, absolutePath);
+                        SetTag(xTag, value.X.ToString());
+                        SetTag(yTag, value.Y.ToString());
+                        SetTag(heightTag, (value.videoProperty.Height).ToString());
+                        SetTag(widthTag, (value.videoProperty.Width).ToString());
+                        SetTag(authorTag, value.author);
+                        SetTag(targetTag, value.target);
+                        SetTag(privacyTag, value.privacy);
+                        SetTag(slideTag, value.slide);
+                        SetTag(identityTag, value.id);
+                    });
                 }
             }
             private static readonly string widthTag = "width";

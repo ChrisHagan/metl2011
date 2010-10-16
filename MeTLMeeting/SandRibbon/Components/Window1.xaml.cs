@@ -74,7 +74,7 @@ namespace SandRibbon
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
             catch (Exception) { }
-            Globals.userInformation.policy = new Policy(false,false);
+            Globals.userInformation.policy = new Policy(false, false);
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             //Commands.ConnectWithAuthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithAuthenticatedCredentials));
             Commands.PowerpointFinished.RegisterCommand(new DelegateCommand<object>(UnblockInput));
@@ -186,10 +186,12 @@ namespace SandRibbon
         private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
         {
             var adorner = ((FrameworkElement)canvasViewBox);
-            var adornerRect = new Rect(canvas.TranslatePoint(info.ElementBounds.TopLeft, canvasViewBox), canvas.TranslatePoint(info.ElementBounds.BottomRight, canvasViewBox));
+            Dispatcher.adoptAsync(()=>{
+                var adornerRect = new Rect(canvas.TranslatePoint(info.ElementBounds.TopLeft, canvasViewBox), canvas.TranslatePoint(info.ElementBounds.BottomRight, canvasViewBox));
             if (adornerRect.Right < 0 || adornerRect.Right > canvasViewBox.ActualWidth
                 || adornerRect.Top < 0 || adornerRect.Top > canvasViewBox.ActualHeight) return;
             AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(info.privacyChoice, adornerRect)));
+            });
         }
         private Adorner[] getPrivacyAdorners()
         {
@@ -236,16 +238,16 @@ namespace SandRibbon
             {
                 if (moveDelta.X != 0)
                 {
-                    var HZoomRatio = (scroll.ExtentWidth/scroll.Width);
-                    scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + (moveDelta.X*HZoomRatio));
+                    var HZoomRatio = (scroll.ExtentWidth / scroll.Width);
+                    scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + (moveDelta.X * HZoomRatio));
                 }
                 if (moveDelta.Y != 0)
                 {
-                    var VZoomRatio = (scroll.ExtentHeight/scroll.Height);
-                    scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y*VZoomRatio);
+                    var VZoomRatio = (scroll.ExtentHeight / scroll.Height);
+                    scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y * VZoomRatio);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {//out of range exceptions and the like 
             }
         }
@@ -262,9 +264,9 @@ namespace SandRibbon
         private void AdjustReportedDrawingAttributesAccordingToZoom(object attributes)
         {
             var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
-            if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN) 
             if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN)
-                return;
+                if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN)
+                    return;
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
             var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
@@ -397,9 +399,9 @@ namespace SandRibbon
         }
         private void RemoveWindowEffect(object _o)
         {
-            Dispatcher.adoptAsync(()=>
+            Dispatcher.adoptAsync(() =>
             CanvasBlocker.Visibility = Visibility.Collapsed);
-            }
+        }
         private void ReceiveWormMove(string _move)
         {
             if (!reconnecting) return;
@@ -428,7 +430,7 @@ namespace SandRibbon
         private void ExecuteMoveTo(int slide)
         {
             MoveTo(slide);
-           // ProviderMonitor.HealthCheck(() => MoveTo(slide));
+            // ProviderMonitor.HealthCheck(() => MoveTo(slide));
         }
         private bool CanExecuteMoveTo(int slide)
         {
@@ -438,23 +440,23 @@ namespace SandRibbon
         {
             //ProviderMonitor.HealthCheck(() =>
             //{
-                Commands.LoggedIn.ExecuteAsync(Globals.credentials.name);
-                //var activeConversation = MeTLLib.ClientFactory.Connection().location.activeConversation;
-                //var details = ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation);
-                var details = Globals.conversationDetails;
-                //MeTLLib.ClientFactory.Connection().DetailsOf(Globals.location.activeConversation);
-                RecentConversationProvider.addRecentConversation(details, Globals.me);
-                if (details.Author == Globals.me)
-                    Commands.SetPrivacy.ExecuteAsync("public");
-                else
-                    Commands.SetPrivacy.ExecuteAsync("private");
-                applyPermissions(details.Permissions);
-                Commands.UpdateConversationDetails.ExecuteAsync(details);
-                Logger.Log("Joined conversation " + title);
-                Commands.RequerySuggested(Commands.SetConversationPermissions);
-                Commands.SetLayer.ExecuteAsync("Sketch");
-                if (automatedTest(details.Title))
-                    ribbon.SelectedTab = ribbon.Tabs[1];
+            Commands.LoggedIn.ExecuteAsync(Globals.credentials.name);
+            //var activeConversation = MeTLLib.ClientFactory.Connection().location.activeConversation;
+            //var details = ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation);
+            var details = Globals.conversationDetails;
+            //MeTLLib.ClientFactory.Connection().DetailsOf(Globals.location.activeConversation);
+            RecentConversationProvider.addRecentConversation(details, Globals.me);
+            if (details.Author == Globals.me)
+                Commands.SetPrivacy.ExecuteAsync("public");
+            else
+                Commands.SetPrivacy.ExecuteAsync("private");
+            applyPermissions(details.Permissions);
+            Commands.UpdateConversationDetails.ExecuteAsync(details);
+            Logger.Log("Joined conversation " + title);
+            Commands.RequerySuggested(Commands.SetConversationPermissions);
+            Commands.SetLayer.ExecuteAsync("Sketch");
+            if (automatedTest(details.Title))
+                ribbon.SelectedTab = ribbon.Tabs[1];
             //});
         }
 
@@ -527,7 +529,7 @@ namespace SandRibbon
 
         private void ShowTutorial()
         {
-            Dispatcher.adoptAsync(()=>
+            Dispatcher.adoptAsync(() =>
             TutorialLayer.Visibility = Visibility.Visible);
         }
         private void HideTutorial()
@@ -587,7 +589,7 @@ namespace SandRibbon
         {
             try
             {
-                if (String.IsNullOrEmpty(details.Jid) || details.Jid != Globals.conversationDetails.Jid ) return;
+                if (String.IsNullOrEmpty(details.Jid) || details.Jid != Globals.conversationDetails.Jid) return;
                 //if (details.Jid != Globals.location.activeConversation) return;
             }
             catch (NotSetException)
@@ -631,20 +633,20 @@ namespace SandRibbon
         }
         private void connect(string username, string pass, int location, string conversation)
         {
-         /*   if (wire == null)
-            {
-                Globals.userInformation.location = new Location { currentSlide = location, activeConversation = conversation };
-                Globals.userInformation.credentials = new Credentials { name = username, password = pass };
-                wire = new JabberWire(Globals.userInformation.credentials);
-                wire.Login(Globals.userInformation.location);
-            }
-            else
-            {
-                Globals.userInformation.location.activeConversation = conversation;
-                Globals.userInformation.location.currentSlide = location;
-                wire.Reset("Window1");
-            }
-            loader.wire = wire;*/
+            /*   if (wire == null)
+               {
+                   Globals.userInformation.location = new Location { currentSlide = location, activeConversation = conversation };
+                   Globals.userInformation.credentials = new Credentials { name = username, password = pass };
+                   wire = new JabberWire(Globals.userInformation.credentials);
+                   wire.Login(Globals.userInformation.location);
+               }
+               else
+               {
+                   Globals.userInformation.location.activeConversation = conversation;
+                   Globals.userInformation.location.currentSlide = location;
+                   wire.Reset("Window1");
+               }
+               loader.wire = wire;*/
         }
         private void createConversation(object detailsObject)
         {
@@ -655,9 +657,9 @@ namespace SandRibbon
                 if (details.Tag == null)
                     details.Tag = "unTagged";
                 details.Author = Globals.userInformation.credentials.name;
-                var connection = MeTLLib.ClientFactory.Connection(); 
+                var connection = MeTLLib.ClientFactory.Connection();
                 details = connection.CreateConversation(details);
-                    //ConversationDetailsProviderFactory.Provider.Create(details);
+                //ConversationDetailsProviderFactory.Provider.Create(details);
                 CommandManager.InvalidateRequerySuggested();
                 if (Commands.JoinConversation.CanExecute(details.Jid))
                     Commands.JoinConversation.ExecuteAsync(details.Jid);
@@ -926,7 +928,7 @@ namespace SandRibbon
                 client.UpdateConversationDetails(details);
                 //ConversationDetailsProviderFactory.Provider.Update(details);
             }
-            catch(NotSetException e)
+            catch (NotSetException e)
             {
                 return;
             }
@@ -938,7 +940,7 @@ namespace SandRibbon
             {
                 return Globals.conversationDetails != null && Globals.userInformation.credentials.name == Globals.conversationDetails.Author;
             }
-            catch(NotSetException e)
+            catch (NotSetException e)
             {
                 return false;
             }

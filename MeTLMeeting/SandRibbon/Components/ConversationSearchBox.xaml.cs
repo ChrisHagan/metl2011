@@ -43,7 +43,8 @@ namespace SandRibbon.Components
         }
         private void BackstageModeChanged(string mode)
         {
-            GetListCollectionView().Refresh();
+            Dispatcher.adoptAsync(()=>
+            GetListCollectionView().Refresh());
             string searchButtonText;
             switch (mode)
             {
@@ -51,7 +52,8 @@ namespace SandRibbon.Components
                 case "all": searchButtonText = "Filter all Conversations"; break;
                 default: searchButtonText = "Search all Conversations"; break;
             }
-            searchConversations.Content = searchButtonText;
+            Dispatcher.adoptAsync(()=>
+            searchConversations.Content = searchButtonText);
         }
         private void SetIdentity(object _arg){
             var availableConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
@@ -113,23 +115,20 @@ namespace SandRibbon.Components
         }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
-            Dispatcher.adopt((Action)delegate
-            {
                 if (searchResults.Where(c => c.Jid == details.Jid).Count() == 1)
-                    searchResults.Remove(searchResults.Where(c => c.Jid == details.Jid).First());
+                    Dispatcher.adoptAsync(()=>searchResults.Remove(searchResults.Where(c => c.Jid == details.Jid).First()));
                 if (!details.Subject.Contains("Deleted"))
-                    searchResults.Add(details);
+                       Dispatcher.adopt(()=>searchResults.Add(details));
                 else //conversation deleted
                 {
                     Commands.RequerySuggested();
                     //if (Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
                     if (Globals.conversationDetails.Jid == details.Jid && this.Visibility == Visibility.Collapsed)
                     {
-                        this.Visibility = Visibility.Visible;
+                          Dispatcher.adopt(()=>this.Visibility = Visibility.Visible);
                     }
                 }
-                GetListCollectionView().Refresh();
-            });
+            Dispatcher.adoptAsync(()=>GetListCollectionView().Refresh());
         }
         private ListCollectionView GetListCollectionView()
         {

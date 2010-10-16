@@ -60,9 +60,9 @@ namespace SandRibbon.Components
             marquee.Width = this.ActualWidth;
             marquee.Height = this.ActualHeight;
 
-            var setup = new LiveWindowSetup(Globals.location.currentSlide,Globals.me,
+            var setup = new LiveWindowSetup(Globals.location.currentSlide, Globals.me,
                     stack,
-                marquee,origin,new Point(0,0),
+                marquee, origin, new Point(0, 0),
 
                 ResourceUploader.uploadResourceToPath(
                         toByteArray(this, marquee, origin),
@@ -153,7 +153,7 @@ namespace SandRibbon.Components
         {
             var dpi = 96;
             var size = 1024;
-            var ratio = ActualWidth/ActualHeight;
+            var ratio = ActualWidth / ActualHeight;
             var bitmap = new RenderTargetBitmap(size, size, dpi, dpi, PixelFormats.Default);
             var dv = new DrawingVisual();
             using (var context = dv.RenderOpen())
@@ -174,7 +174,7 @@ namespace SandRibbon.Components
 
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            var file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks,Globals.me);
+            var file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
             using (Stream stream = File.Create(file))
             {
                 encoder.Save(stream);
@@ -217,20 +217,23 @@ namespace SandRibbon.Components
         }
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            stack.handwriting.ReceiveStrokes(parser.ink);
-            stack.images.ReceiveImages(parser.images.Values);
-            foreach (var text in parser.text.Values)
-                stack.text.doText(text);
-            foreach (var video in parser.videos)
+            Dispatcher.adoptAsync(() =>
             {
-                var srVideo = ((MeTLLib.DataTypes.TargettedVideo)video.Value).video;
-                srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
-                srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
-                srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
-                srVideo.MediaElement.ScrubbingEnabled = true;
-                stack.images.AddVideo(srVideo);
-            } foreach (var bubble in parser.bubbleList)
-                stack.ReceiveNewBubble(bubble);
+                stack.handwriting.ReceiveStrokes(parser.ink);
+                stack.images.ReceiveImages(parser.images.Values);
+                foreach (var text in parser.text.Values)
+                    stack.text.doText(text);
+                foreach (var video in parser.videos)
+                {
+                    var srVideo = ((MeTLLib.DataTypes.TargettedVideo)video.Value).video;
+                    srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
+                    srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
+                    srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
+                    srVideo.MediaElement.ScrubbingEnabled = true;
+                    stack.images.AddVideo(srVideo);
+                } foreach (var bubble in parser.bubbleList)
+                    stack.ReceiveNewBubble(bubble);
+            });
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
             try
             {
@@ -242,7 +245,7 @@ namespace SandRibbon.Components
                                                       }, null, 600, Timeout.Infinite);
                     else snapshotTimer.Change(900, Timeout.Infinite);
             }
-            catch(NotSetException e)
+            catch (NotSetException e)
             {
             }
         }
@@ -365,7 +368,7 @@ namespace SandRibbon.Components
             withDragMarquee(marquee =>
             {
                 Commands.EndGrabZoom.ExecuteAsync(null);
-                if(marquee.Width > 10)
+                if (marquee.Width > 10)
                     Commands.SetZoomRect.ExecuteAsync(marquee);
             });
         }
@@ -420,7 +423,7 @@ namespace SandRibbon.Components
                 System.Windows.Controls.Canvas.GetLeft(marquee),
                 System.Windows.Controls.Canvas.GetTop(marquee));
             Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
-            (Globals.slide,Globals.me,marquee,origin,new Point(0,0),ResourceUploader.uploadResourceToPath(
+            (Globals.slide, Globals.me, marquee, origin, new Point(0, 0), ResourceUploader.uploadResourceToPath(
                                             toByteArray(this, marquee, origin),
                                             "Resource/" + Globals.slide.ToString(),
                                             "quizSnapshot.png",

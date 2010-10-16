@@ -207,6 +207,8 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Video send: " + video.id);
             Action work = delegate
             {
+                video.video.Dispatcher.adoptAsync(() =>
+                {
                     video.adoptCache(cache, server);
                     var selectedImage = video.video;
                     //((MeTLLib.DataTypes.Video)selectedImage).Tag = ((MeTLLib.DataTypes.Video)selectedImage).MediaElement.Tag;
@@ -227,9 +229,10 @@ namespace MeTLLib
                     //selectedImage.X = InkCanvas.GetLeft(selectedImage);
                     //selectedImage.Y = InkCanvas.GetTop(selectedImage);
                     selectedImage.VideoSource = cache.RemoteSource(selectedImage.VideoSource);
-                    video.video = selectedImage;    
+                    video.video = selectedImage;
 
-                wire.SendVideo(video);
+                    wire.SendVideo(video);
+                });
             };
             tryIfConnected(work);
         }
