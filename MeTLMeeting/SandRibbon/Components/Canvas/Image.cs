@@ -22,7 +22,6 @@ using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
-//using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using System.Windows.Media.Effects;
 using Brushes = System.Windows.Media.Brushes;
@@ -675,25 +674,6 @@ namespace SandRibbon.Components.Canvas
                     srVideo.X = InkCanvas.GetLeft(srVideo);
                     srVideo.Y = InkCanvas.GetTop(srVideo);
                     Commands.SendVideo.ExecuteAsync(new TargettedVideo(currentSlide, Globals.me, target, srVideo.tag().privacy, srVideo));
-                    /*((MeTLLib.DataTypes.Video)selectedImage).Tag = ((MeTLLib.DataTypes.Video)selectedImage).MediaElement.Tag;
-                    var tag = ((MeTLLib.DataTypes.Video)selectedImage).tag();
-                    tag.privacy = privacy;
-                    tag.zIndex = -1;
-                    var oldVideo = ((MeTLLib.DataTypes.Video)selectedImage);
-                    oldVideo.UpdateLayout();
-                    var srVideo = new MeTLLib.DataTypes.Video();
-                    srVideo.tag(tag);
-                    srVideo.X = InkCanvas.GetLeft(oldVideo);
-                    srVideo.Y = InkCanvas.GetTop(oldVideo);
-                    srVideo.VideoHeight = oldVideo.MediaElement.ActualHeight;
-                    srVideo.VideoWidth = oldVideo.MediaElement.ActualWidth;
-                    srVideo.Height = oldVideo.ActualHeight;
-                    srVideo.Width = oldVideo.ActualWidth;
-                    //srVideo.VideoSource = oldVideo.VideoSource;
-                    srVideo.VideoSource = new System.Uri("https://" + Constants.JabberWire.SERVER + ":1188/" + ( SandRibbonInterop.LocalCache.ResourceCache.RemoteSource(oldVideo.VideoSource).ToString()), UriKind.Absolute);
-                    Commands.SendVideo.ExecuteAsync(new MeTLLib.DataTypes.TargettedVideo(currentSlide,Globals.me,target,privacy,srVideo));
-                
-                     */
                 }
             }
         }

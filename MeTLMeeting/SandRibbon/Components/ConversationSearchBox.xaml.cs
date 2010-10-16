@@ -68,6 +68,7 @@ namespace SandRibbon.Components
             {
                 SearchInput.Text = "";
                 GetListCollectionView().Refresh();
+                SearchInput.Focus();
             });
         }
         private void ShowConversationSearchBox(object o)

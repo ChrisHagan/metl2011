@@ -7,7 +7,8 @@
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:interop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop">
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    FocusManager.FocusedElement="{Binding ElementName=SearchInput}">
     <UserControl.Resources>
         <core:Double x:Key="browsePane">0.25</core:Double>
         <core:Double x:Key="searchPane">0.60</core:Double>
