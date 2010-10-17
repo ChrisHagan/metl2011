@@ -182,9 +182,9 @@ namespace MeTLLib
                 image.imageProperty.Dispatcher.adoptAsync(() =>
                 {
                     var newImage = image.imageProperty;
-                    Uri localSource = new System.Uri(((System.Windows.Controls.Image)newImage).Source.ToString(),UriKind.Relative);
+                    Uri localSource = new System.Uri(((System.Windows.Controls.Image)newImage).Source.ToString(),UriKind.RelativeOrAbsolute);
                     Uri remoteSource = cache.RemoteSource(localSource);
-                    newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(remoteSource); 
+                    newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(remoteSource);
                     image.image = newImage;
                     wire.SendImage(image);
                 });
@@ -241,6 +241,17 @@ namespace MeTLLib
             Action work = delegate
             {
                 wire.SendDirtyVideo(tde);
+            };
+            tryIfConnected(work);
+        }
+        public void uploadAndSendSubmission(MeTLStanzas.LocalSubmissionInformation lii)
+        {
+            Action work = delegate
+            {
+                Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
+                var newPath = resourceUploader.uploadResource("/Resource/" + lii.slide, lii.file, false);
+                Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
+                wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide,lii.author,lii.target,lii.privacy,newPath,DateTimeFactory.Now().Ticks));
             };
             tryIfConnected(work);
         }

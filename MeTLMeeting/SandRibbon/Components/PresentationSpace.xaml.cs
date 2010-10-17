@@ -139,13 +139,8 @@ namespace SandRibbon.Components
         }
         private void SendScreenShot(ScreenshotDetails details)
         {
-            string hostedFileName = generateScreenshot(details);
-            if (hostedFileName == "failed")
-            {
-                MessageBox.Show("cannot upload submission");
-                return;
-            }
-            Commands.ScreenshotGenerated.ExecuteAsync(hostedFileName);
+            string filename = generateScreenshot(details);
+            Commands.ScreenshotGenerated.ExecuteAsync(filename);
 
         }
 
@@ -174,7 +169,6 @@ namespace SandRibbon.Components
                                      new Point(5, 10));
                 }
                 bitmap.Render(dv);
-
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
                 file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
@@ -183,8 +177,7 @@ namespace SandRibbon.Components
                     encoder.Save(stream);
                 }
             });
-            var hostedFileName = ResourceUploader.uploadResource(Globals.slide.ToString(), file);
-            return hostedFileName;
+            return file;
         }
         private void CreateThumbnail(int id)
         {

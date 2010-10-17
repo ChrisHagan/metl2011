@@ -110,7 +110,7 @@ namespace MeTLLib.Providers
         public Uri RemoteSource(Uri media)
         {
 
-            if (media.ToString().StartsWith("Resource\\"))
+            if (media.ToString().StartsWith("Resource\\") || media.ToString().StartsWith("https://"))
                 return media;
             var uri = CacheDict.Where(kv => kv.Value == media).FirstOrDefault().Key;
             return uri == null ? null : new Uri(uri, UriKind.RelativeOrAbsolute);

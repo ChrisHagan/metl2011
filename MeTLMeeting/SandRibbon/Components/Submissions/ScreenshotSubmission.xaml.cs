@@ -112,10 +112,9 @@ namespace SandRibbon.Components.Submissions
             DelegateCommand<string> sendScreenshot = null;
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>
                              {
-                                                                 
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
-                                 Commands.SendScreenshotSubmission.ExecuteAsync(new TargettedSubmission
-                                 (Globals.location.currentSlide,Globals.me,"submission","public",hostedFileName,time));
+                                 MeTLLib.ClientFactory.Connection().uploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
+                                 (Globals.location.currentSlide,Globals.me,"submission","public",hostedFileName));
                                 MessageBox.Show("Submission sent to " + Globals.conversationDetails.Author);
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);

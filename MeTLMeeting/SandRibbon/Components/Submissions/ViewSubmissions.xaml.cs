@@ -26,7 +26,7 @@ namespace SandRibbon.Components.Submissions
         public ViewSubmissions()
         {
             InitializeComponent();
-            Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(recieveSubmission));
+            Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(recieveSubmission));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
             Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(closeMe));

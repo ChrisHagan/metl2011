@@ -535,7 +535,10 @@ namespace SandRibbon
         private void HideTutorial()
         {
             if (Globals.userInformation.location != null && !String.IsNullOrEmpty(Globals.userInformation.location.activeConversation))
-                TutorialLayer.Visibility = Visibility.Collapsed;
+                Dispatcher.adoptAsync(() =>
+                {
+                    TutorialLayer.Visibility = Visibility.Collapsed;
+                });
         }
 
         private bool mustBeLoggedIn(object _arg)

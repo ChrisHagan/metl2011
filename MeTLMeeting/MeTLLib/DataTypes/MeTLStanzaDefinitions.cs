@@ -996,6 +996,22 @@ namespace MeTLLib.DataTypes
             public int slide;
             public string target;
         }
+        public class LocalSubmissionInformation
+        {
+            public LocalSubmissionInformation(int Slide, string Author, string Target, string Privacy, string File)
+            {
+                slide = Slide;
+                author = Author;
+                target = Target;
+                privacy = Privacy;
+                file = File;
+            }
+            public string author;
+            public string file;
+            public string privacy;
+            public int slide;
+            public string target;
+        }
         public class LocalVideoInformation
         {
             public LocalVideoInformation(int Slide, string Author, string Target, string Privacy, MeTLLib.DataTypes.Video Video, string File, bool Overwrite)
