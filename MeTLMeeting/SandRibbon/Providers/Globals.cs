@@ -99,6 +99,7 @@ namespace SandRibbon.Providers
                 }
                 catch (NotSetException e)
                 {
+                    //this needs to be fixed.  I think the MeTLLib can solve this by caching the current conversationDetails.
                     var client = MeTLLib.ClientFactory.Connection();
                     cd = client.DetailsOf(client.location.activeConversation);
                 }

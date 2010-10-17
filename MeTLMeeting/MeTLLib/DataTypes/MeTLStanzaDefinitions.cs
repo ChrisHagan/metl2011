@@ -17,6 +17,7 @@ using MeTLLib.DataTypes;
 using MeTLLib.Providers;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Ninject;
+using System.Threading;
 
 namespace MeTLLib.DataTypes
 {
@@ -253,7 +254,11 @@ namespace MeTLLib.DataTypes
             Y = VideoY;
             Width = VideoWidth;
             Height = VideoHeight;
+            if (cache == null && VideoSpecification.resourceCache != null) cache = VideoSpecification.resourceCache;
+            if (server == null && VideoSpecification.server != null) server = VideoSpecification.server;
         }
+        public ResourceCache cache;
+        public MeTLServerAddress server;
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedVideo)) return false;
@@ -283,15 +288,13 @@ namespace MeTLLib.DataTypes
             {
                 if (videoSpecification == null) videoSpecification = new MeTLStanzas.Video(this);
                 Video reified = null;
-                videoProperty.Dispatcher.adopt(() =>
-                {
-                    reified = videoSpecification.forceEvaluation();
-                    id = reified.tag().id;
-                    reified.Height = Height;
-                    reified.Width = Width;
-                    reified.X = X;
-                    reified.Y = Y;
-                });
+                if (server != null && cache != null) videoSpecification.adoptCache(cache,server);
+                reified = videoSpecification.forceEvaluation();
+                id = reified.tag().id;
+                reified.Height = Height;
+                reified.Width = Width;
+                reified.X = X;
+                reified.Y = Y;
                 return reified;
             }
             set
@@ -1201,8 +1204,8 @@ namespace MeTLLib.DataTypes
         }
         public class Video : Element
         {
-            private ResourceCache resourceCache;
-            private MeTLServerAddress server;
+            public ResourceCache resourceCache;
+            public MeTLServerAddress server;
             static Video()
             {
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Video));
@@ -1226,21 +1229,32 @@ namespace MeTLLib.DataTypes
             }
             public MeTLLib.DataTypes.Video forceEvaluation()
             {
-                var video = new MediaElement
+                MeTLLib.DataTypes.Video srVideo = null;
+                //ThreadStart ts = new ThreadStart(() =>
+                //{
+                Application.Current.Dispatcher.adopt(() =>
                 {
-                    Tag = this.tag,
-                    LoadedBehavior = MediaState.Manual,
-                    Source = source
-                };
-                var srVideo = new MeTLLib.DataTypes.Video
-                {
-                    MediaElement = video,
-                    Tag = this.tag,
-                    VideoSource = video.Source,
-                    VideoHeight = video.NaturalVideoHeight,
-                    VideoWidth = video.NaturalVideoWidth
-                };
-                return srVideo;;
+                    var video = new MediaElement
+                    {
+                        Tag = this.tag,
+                        LoadedBehavior = MediaState.Manual,
+                        Source = source
+                    };
+                    srVideo = new MeTLLib.DataTypes.Video
+                    {
+                        MediaElement = video,
+                        Tag = this.tag,
+                        VideoSource = video.Source,
+                        VideoHeight = video.NaturalVideoHeight,
+                        VideoWidth = video.NaturalVideoWidth
+                    };
+                    //});
+                    //Thread t = new Thread(ts);
+                    //t.SetApartmentState(ApartmentState.STA);
+                    //t.Start();
+                    //t.Join();
+                });
+                return srVideo;
             }
             public TargettedVideo Vid
             {
@@ -1249,6 +1263,7 @@ namespace MeTLLib.DataTypes
                     var targettedVideo =
                         new TargettedVideo(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag),
                         this, GetTag(identityTag), Double.Parse(GetTag(xTag)), Double.Parse(GetTag(yTag)), Double.Parse(GetTag(widthTag)), Double.Parse(GetTag(heightTag)));
+                    if (resourceCache != null && server != null) targettedVideo.adoptCache(resourceCache, server);
                     return targettedVideo;
                 }
                 set
@@ -1291,6 +1306,7 @@ namespace MeTLLib.DataTypes
             }
             private Uri getCachedVideo(string url)
             {
+                //how do I ensure that there's a resourceCache here?  How did I end up here without one?
                 return resourceCache.LocalSource(url);
             }
             public Uri source

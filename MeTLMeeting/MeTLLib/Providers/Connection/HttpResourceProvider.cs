@@ -80,7 +80,8 @@ namespace MeTLLib.Providers.Connection
         }
         byte[] IWebClient.uploadFile(Uri resource, string filename)
         {
-            return client.UploadFile(resource.ToString(), filename);
+            var response = client.UploadFile(resource.ToString(), filename);
+            return response;
         }
         private string decode(byte[] bytes)
         {

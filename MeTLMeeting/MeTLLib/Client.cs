@@ -207,27 +207,10 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Video send: " + video.id);
             Action work = delegate
             {
-                video.video.Dispatcher.adoptAsync(() =>
+                video.adoptCache(cache, server);
+                video.videoProperty.Dispatcher.adoptAsync(() =>
                 {
-                    video.adoptCache(cache, server);
                     var selectedImage = video.video;
-                    //((MeTLLib.DataTypes.Video)selectedImage).Tag = ((MeTLLib.DataTypes.Video)selectedImage).MediaElement.Tag;
-                    //var tag = ((MeTLLib.DataTypes.Video)selectedImage).tag();
-                    //tag.privacy = video.privacy;
-                    //tag.zIndex = -1;
-                    //var oldVideo = ((MeTLLib.DataTypes.Video)selectedImage);
-                    //oldVideo.UpdateLayout();
-                    //var srVideo = new MeTLLib.DataTypes.Video();
-                    /*srVideo.tag(tag);
-                    srVideo.X = InkCanvas.GetLeft(oldVideo);
-                    srVideo.Y = InkCanvas.GetTop(oldVideo);
-                    srVideo.VideoHeight = oldVideo.MediaElement.ActualHeight;
-                    srVideo.VideoWidth = oldVideo.MediaElement.ActualWidth;
-                    srVideo.Height = oldVideo.ActualHeight;
-                    srVideo.Width = oldVideo.ActualWidth;*/
-                    //srVideo.VideoSource = oldVideo.VideoSource;
-                    //selectedImage.X = InkCanvas.GetLeft(selectedImage);
-                    //selectedImage.Y = InkCanvas.GetTop(selectedImage);
                     selectedImage.VideoSource = cache.RemoteSource(selectedImage.VideoSource);
                     video.video = selectedImage;
 

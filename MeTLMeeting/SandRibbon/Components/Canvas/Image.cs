@@ -63,10 +63,10 @@ namespace SandRibbon.Components.Canvas
             SelectionResizing += dirtyImage;
             SelectionResized += transmitImageAltered;
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<IEnumerable<MeTLLib.DataTypes.TargettedImage>>(ReceiveImages));
-            Commands.ReceiveVideo.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedVideo>(ReceiveVideo));
+            Commands.ReceiveVideo.RegisterCommandToDispatcher<TargettedVideo>(new DelegateCommand<MeTLLib.DataTypes.TargettedVideo>(ReceiveVideo));
             Commands.ReceiveAutoShape.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedAutoShape>(ReceiveAutoShape));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(ReceiveDirtyImage));
-            Commands.ReceiveDirtyVideo.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(ReceiveDirtyVideo));
+            Commands.ReceiveDirtyVideo.RegisterCommandToDispatcher<TargettedDirtyElement>(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(ReceiveDirtyVideo));
             Commands.ReceiveDirtyAutoShape.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(ReceiveDirtyAutoShape));
             Commands.AddAutoShape.RegisterCommand(new DelegateCommand<object>(createNewAutoShape));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(addImageFromDisk));
@@ -848,41 +848,45 @@ namespace SandRibbon.Components.Canvas
             FileType type = GetFileType(fileName);
             if (type == FileType.Video)
             {
-                var placeHolderMe = new MediaElement
+                Dispatcher.adopt(() =>
                 {
-                    Source = new Uri(fileName, UriKind.RelativeOrAbsolute),
-                    Width = 200,
-                    Height = 200,
-                    LoadedBehavior = MediaState.Manual
-                };
-                var placeHolder = new Video { MediaElement = placeHolderMe, VideoSource = placeHolderMe.Source };
-                InkCanvas.SetLeft(placeHolder, pos.X);
-                InkCanvas.SetTop(placeHolder, pos.Y);
-                Children.Add(placeHolder);
-                var animationPulse = new DoubleAnimation
-                                         {
-                                             From = .3,
-                                             To = 1,
-                                             Duration = new Duration(TimeSpan.FromSeconds(1)),
-                                             AutoReverse = true,
-                                             RepeatBehavior = RepeatBehavior.Forever
-                                         };
-                placeHolder.BeginAnimation(OpacityProperty, animationPulse);
-
+                    var placeHolderMe = new MediaElement
+                    {
+                        Source = new Uri(fileName, UriKind.Relative),
+                        Width = 200,
+                        Height = 200,
+                        LoadedBehavior = MediaState.Manual
+                    };
+                    var placeHolder = new Video { MediaElement = placeHolderMe, VideoSource = placeHolderMe.Source };
+                    InkCanvas.SetLeft(placeHolder, pos.X);
+                    InkCanvas.SetTop(placeHolder, pos.Y);
+                    //Children.Add(placeHolder);
+                    var animationPulse = new DoubleAnimation
+                                             {
+                                                 From = .3,
+                                                 To = 1,
+                                                 Duration = new Duration(TimeSpan.FromSeconds(1)),
+                                                 AutoReverse = true,
+                                                 RepeatBehavior = RepeatBehavior.Forever
+                                             };
+                    placeHolder.BeginAnimation(OpacityProperty, animationPulse);
+                    placeHolder.tag(new MeTLLib.DataTypes.ImageTag
+                                      {
+                                          author = Globals.me,
+                                          id = string.Format("{0}:{1}:{2}", Globals.me, SandRibbonObjects.DateTimeFactory.Now(), count),
+                                          privacy = privacy,
+                                          zIndex = -1
+                                      });
+                    MeTLLib.ClientFactory.Connection().UploadAndSendVideo(new MeTLStanzas.LocalVideoInformation
+                    (currentSlide, Globals.me, target, privacy, placeHolder, fileName, false));
+                    //Children.Remove(placeHolder);
+                });
+/*
                 var hostedFileName = ResourceUploader.uploadResource(currentSlide.ToString(), fileName);
                 if (hostedFileName == "failed") return;
-                var me = new MediaElement { Source = new Uri(hostedFileName, UriKind.Absolute), LoadedBehavior = MediaState.Manual };
-                var video = new MeTLLib.DataTypes.Video { MediaElement = me, VideoSource = me.Source, VideoHeight = me.NaturalVideoHeight, VideoWidth = me.NaturalVideoWidth };
                 Children.Remove(placeHolder);
                 InkCanvas.SetLeft(video, pos.X);
                 InkCanvas.SetTop(video, pos.Y);
-                video.tag(new MeTLLib.DataTypes.ImageTag
-                                  {
-                                      author = Globals.me,
-                                      id = string.Format("{0}:{1}:{2}", Globals.me, SandRibbonObjects.DateTimeFactory.Now(), count),
-                                      privacy = privacy,
-                                      zIndex = -1
-                                  });
                 UndoHistory.Queue(
                     () =>
                     {
@@ -904,6 +908,7 @@ namespace SandRibbon.Components.Canvas
                 tv.Width = video.ActualWidth;
                 tv.id = video.tag().id;
                 Commands.SendVideo.ExecuteAsync(tv);
+                */
             }
         }
         public void handleDrop(string fileName, Point pos, int count)
