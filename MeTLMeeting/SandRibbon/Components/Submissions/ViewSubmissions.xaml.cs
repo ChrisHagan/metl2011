@@ -27,10 +27,10 @@ namespace SandRibbon.Components.Submissions
         {
             InitializeComponent();
             Commands.ReceiveScreenshotSubmission.RegisterCommandToDispatcher<TargettedSubmission>(new DelegateCommand<TargettedSubmission>(recieveSubmission));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
-            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
-            Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(closeMe));
+            Commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(joinConversation));
+            Commands.PreEditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
+            Commands.PreCreateConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
+            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
         }
 
         private void closeMe(object obj)
