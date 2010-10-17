@@ -154,31 +154,35 @@ namespace SandRibbon.Components
             var dpi = 96;
             var size = 1024;
             var ratio = ActualWidth / ActualHeight;
-            var bitmap = new RenderTargetBitmap(size, size, dpi, dpi, PixelFormats.Default);
-            var dv = new DrawingVisual();
-            using (var context = dv.RenderOpen())
+            string file = "";
+            Dispatcher.adopt(() =>
             {
-                context.DrawRectangle(new VisualBrush(stack), null,
-                                      new Rect(new Point(), new Size(size, size)));
-                context.DrawText(new FormattedText(
-                                     details.message,
-                                     CultureInfo.GetCultureInfo("en-us"),
-                                     FlowDirection.LeftToRight,
-                                     new Typeface("Arial"),
-                                     24,
-                                     Brushes.Black
-                                     ),
-                                 new Point(5, 10));
-            }
-            bitmap.Render(dv);
+                var bitmap = new RenderTargetBitmap(size, size, dpi, dpi, PixelFormats.Default);
+                var dv = new DrawingVisual();
+                using (var context = dv.RenderOpen())
+                {
+                    context.DrawRectangle(new VisualBrush(stack), null,
+                                          new Rect(new Point(), new Size(size, size)));
+                    context.DrawText(new FormattedText(
+                                         details.message,
+                                         CultureInfo.GetCultureInfo("en-us"),
+                                         FlowDirection.LeftToRight,
+                                         new Typeface("Arial"),
+                                         24,
+                                         Brushes.Black
+                                         ),
+                                     new Point(5, 10));
+                }
+                bitmap.Render(dv);
 
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            var file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
-            using (Stream stream = File.Create(file))
-            {
-                encoder.Save(stream);
-            }
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
+                using (Stream stream = File.Create(file))
+                {
+                    encoder.Save(stream);
+                }
+            });
             var hostedFileName = ResourceUploader.uploadResource(Globals.slide.ToString(), file);
             return hostedFileName;
         }
