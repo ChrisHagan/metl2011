@@ -100,11 +100,11 @@ namespace SandRibbon.Components.Canvas
                 case "toggleStudents":
                     {
                         var keys = userVisibility.Keys.Where(k => k != "Teacher" && k != Globals.me).ToList();
-                        foreach(var key in keys)
+                        foreach (var key in keys)
                             userVisibility[key] = info.visible;
                         break;
                     }
-                    default:
+                default:
                     {
                         userVisibility[info.user] = info.visible;
                         break;
@@ -121,8 +121,8 @@ namespace SandRibbon.Components.Canvas
                                       var visibleUsers =
                                           userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
                                       var allVisibleText = new List<MeTLLib.DataTypes.TargettedTextBox>();
-                                      foreach(var user in visibleUsers.Where(u => userText.ContainsKey(u)))
-                                            allVisibleText.AddRange(userText[user]);
+                                      foreach (var user in visibleUsers.Where(u => userText.ContainsKey(u)))
+                                          allVisibleText.AddRange(userText[user]);
                                       ReceiveTextBoxes(allVisibleText);
                                   });
         }
@@ -206,23 +206,23 @@ namespace SandRibbon.Components.Canvas
         private void dirtyTextBoxWithoutHistory(TextBox box)
         {
             RemovePrivacyStylingFromElement(box);
-            Commands.SendDirtyText.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,box.tag().privacy,box.tag().id));
+            Commands.SendDirtyText.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, box.tag().privacy, box.tag().id));
         }
 
         private void receiveDirtyText(MeTLLib.DataTypes.TargettedDirtyElement element)
         {
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
-            if (myTextBox != null && element.identifier == myTextBox.tag().id) return;
-            var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
-            if(userText.ContainsKey(author) && element.target == target)
-            {
-                var dirtyImage = userText[author].Where(t => t.identity  == element.identifier).FirstOrDefault();
-                if (dirtyImage != null)
-                    userText[author].Remove(dirtyImage);
-            }
             Dispatcher.adoptAsync(delegate
             {
+                if (myTextBox != null && element.identifier == myTextBox.tag().id) return;
+                var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
+                if (userText.ContainsKey(author) && element.target == target)
+                {
+                    var dirtyImage = userText[author].Where(t => t.identity == element.identifier).FirstOrDefault();
+                    if (dirtyImage != null)
+                        userText[author].Remove(dirtyImage);
+                }
 
                 for (int i = 0; i < Children.Count; i++)
                 {
@@ -526,10 +526,10 @@ namespace SandRibbon.Components.Canvas
             var currentTag = box.tag();
             if (currentTag.privacy != Globals.privacy)
             {
-                Commands.SendDirtyText.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,currentTag.privacy,currentTag.id));
+                Commands.SendDirtyText.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, currentTag.privacy, currentTag.id));
                 currentTag.privacy = privacy;
                 box.tag(currentTag);
-                Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(currentSlide,Globals.me,target,currentTag.privacy,box));
+                Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(currentSlide, Globals.me, target, currentTag.privacy, box));
             }
             myTextBox = null;
             textBoxSelected = false;
@@ -614,9 +614,9 @@ namespace SandRibbon.Components.Canvas
             if (box.tag().privacy != Globals.privacy)
                 dirtyTextBoxWithoutHistory(box);
             var oldTextTag = box.tag();
-            var newTextTag = new MeTLLib.DataTypes.TextTag(oldTextTag.author,thisPrivacy,oldTextTag.id);
+            var newTextTag = new MeTLLib.DataTypes.TextTag(oldTextTag.author, thisPrivacy, oldTextTag.id);
             box.tag(newTextTag);
-            Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(currentSlide,Globals.me,target,thisPrivacy,box));
+            Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(currentSlide, Globals.me, target, thisPrivacy, box));
         }
 
         private void setAppropriatePrivacyHalo(TextBox box)
@@ -645,7 +645,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void ReceiveTextBoxes(IEnumerable<MeTLLib.DataTypes.TargettedTextBox> boxes)
         {
-            foreach(var box in boxes)
+            foreach (var box in boxes)
                 ReceiveTextBox(box);
         }
         public void ReceiveTextBox(MeTLLib.DataTypes.TargettedTextBox targettedBox)
@@ -655,7 +655,8 @@ namespace SandRibbon.Components.Canvas
             {
                 var box = textBoxFromId(targettedBox.identity);
                 if (box != null)
-                    ApplyPrivacyStylingToElement(box, box.tag().privacy);
+                    Dispatcher.adoptAsync(()=>
+                    ApplyPrivacyStylingToElement(box, box.tag().privacy));
                 return;
             }//I never want my live text to collide with me.
             if (targettedBox.slide == currentSlide && (targettedBox.privacy == "private" || me == "projector"))
@@ -690,19 +691,27 @@ namespace SandRibbon.Components.Canvas
 
         private bool alreadyHaveThisTextBox(TextBox box)
         {
-            var boxId = box.tag().id;
-            var privacy = box.tag().privacy;
-            foreach (var text in Children)
-                if (text is TextBox)
-                    if (((TextBox)text).tag().id == boxId && ((TextBox)text).tag().privacy == privacy) return true;
-            return false;
+            bool result = false;
+            Dispatcher.adopt(() =>
+            {
+                var boxId = box.tag().id;
+                var privacy = box.tag().privacy;
+                foreach (var text in Children)
+                    if (text is TextBox)
+                        if (((TextBox)text).tag().id == boxId && ((TextBox)text).tag().privacy == privacy) result = true;
+            });
+            return result;
         }
         private TextBox textBoxFromId(string boxId)
         {
-            foreach (var text in Children)
-                if (text.GetType() == typeof(TextBox))
-                    if (((TextBox)text).tag().id == boxId) return (TextBox)text;
-            return null;
+            TextBox result = null;
+            Dispatcher.adopt(() =>
+            {
+                foreach (var text in Children)
+                    if (text.GetType() == typeof(TextBox))
+                        if (((TextBox)text).tag().id == boxId) result = (TextBox)text;
+            });
+            return result;
         }
         public void doText(MeTLLib.DataTypes.TargettedTextBox targettedBox)
         {
@@ -712,9 +721,9 @@ namespace SandRibbon.Components.Canvas
                                           Commands.ReceiveAuthor.ExecuteAsync(author);
                                           if (!userVisibility.ContainsKey(author))
                                               userVisibility.Add(author, true);
-                                          if(!userText.ContainsKey(author))
+                                          if (!userText.ContainsKey(author))
                                               userText.Add(author, new List<MeTLLib.DataTypes.TargettedTextBox>());
-                                          if(!userText[author].Contains(targettedBox))
+                                          if (!userText[author].Contains(targettedBox))
                                               userText[author].Add(targettedBox);
                                           if (targettedBox.target != target) return;
                                           //if (targettedBox.author == Globals.me &&
@@ -773,7 +782,7 @@ namespace SandRibbon.Components.Canvas
             {
 
                 Clipboard.SetText(box.Text);
-                listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,box.tag().privacy,box.tag().id));
+                listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, box.tag().privacy, box.tag().id));
             }
             foreach (var element in listToCut)
                 Commands.SendDirtyText.ExecuteAsync(element);
@@ -859,9 +868,9 @@ namespace SandRibbon.Components.Canvas
                 var text = Text;
                 var sb = new StringBuilder("<text>");
                 foreach (var toString in from UIElement box in text.Children
-                            select new MeTLLib.DataTypes.MeTLStanzas.TextBox(
-                                 new MeTLLib.DataTypes.TargettedTextBox(Globals.slide,Globals.me,text.target,text.privacy,(TextBox)box)
-                                             ).ToString())
+                                         select new MeTLLib.DataTypes.MeTLStanzas.TextBox(
+                                              new MeTLLib.DataTypes.TargettedTextBox(Globals.slide, Globals.me, text.target, text.privacy, (TextBox)box)
+                                                          ).ToString())
                     sb.Append(toString);
                 sb.Append("</text>");
                 return sb.ToString();

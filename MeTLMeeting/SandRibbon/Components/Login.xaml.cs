@@ -52,7 +52,7 @@ namespace SandRibbon.Components
             App.Now(string.Format("The Version of MeTL is -> {0}", Version));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
             Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
-            //Commands.ConnectWithUnauthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithUnauthenticatedCredentials));
+            Commands.ConnectWithUnauthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithUnauthenticatedCredentials));
             if (WorkspaceStateProvider.savedStateExists())
             {
                 rememberMe.IsChecked = true;
