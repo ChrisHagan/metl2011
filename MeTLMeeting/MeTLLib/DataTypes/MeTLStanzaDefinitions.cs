@@ -954,9 +954,20 @@ namespace MeTLLib.DataTypes
         }
         public class LocalFileInformation
         {
+            public LocalFileInformation(int Slide, string Author, string Target, string Privacy, string File, string Name, bool Overwrite, long Size, string UploadTime)
+            {
+                slide = Slide;
+                author = Author;
+                target = Target;
+                privacy = Privacy;
+                file = File;
+                name = Name;
+                overwrite = Overwrite;
+                size = Size;
+                uploadTime = UploadTime;
+            }
             public string author;
             public string file;
-            public string path;
             public bool overwrite;
             public string name;
             public string privacy;

@@ -934,20 +934,7 @@ namespace SandRibbon.Components.Canvas
         {
             string filename = unMangledFilename + ".MeTLFileUpload";
             File.Copy(unMangledFilename, filename);
-            /*if (filename.EndsWith(".yaws") || filename.EndsWith(".beam") || filename.EndsWith(".erl"))
-            {
-                MessageBox.Show("Sorry, MeTL cannot upload this file: " + filename);
-                return;
-            }*/
-            string hostedFileName;
-            if (!filename.StartsWith("http"))
-            {
-                hostedFileName = ResourceUploader.uploadResource(currentSlide.ToString(), filename);
-                if (hostedFileName == "failed") return;
-            }
-            else
-                hostedFileName = filename;
-            Commands.SendFileResource.ExecuteAsync(new MeTLLib.DataTypes.TargettedFile(currentSlide, Globals.me, target, "public", hostedFileName, DateTime.Now.Ticks.ToString(), new System.IO.FileInfo(filename).Length, Path.GetFileNameWithoutExtension(unMangledFilename)));
+            MeTLLib.ClientFactory.Connection().UploadAndSendFile(new MeTLStanzas.LocalFileInformation(currentSlide,Globals.me,target,"public",filename,Path.GetFileNameWithoutExtension(filename),false,new System.IO.FileInfo(filename).Length,DateTimeFactory.Now().Ticks.ToString()));
             File.Delete(filename);
         }
         public void dropImageOnCanvas(string fileName, Point pos, int count)

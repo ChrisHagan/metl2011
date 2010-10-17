@@ -297,7 +297,7 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                var newPath = resourceUploader.uploadResource(lfi.path, lfi.file, lfi.overwrite);
+                var newPath = resourceUploader.uploadResource(lfi.slide.ToString(), lfi.file, lfi.overwrite);
                 wire.sendFileResource(new TargettedFile(lfi.slide,lfi.author,lfi.target,lfi.privacy,newPath,lfi.uploadTime,lfi.size,lfi.name));
             };
             tryIfConnected(work);
