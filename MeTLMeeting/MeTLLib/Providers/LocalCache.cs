@@ -9,6 +9,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using MeTLLib.Providers.Connection;
 using Ninject;
+using System.Xml;
 
 namespace MeTLLib.Providers
 {
@@ -38,18 +39,20 @@ namespace MeTLLib.Providers
         private Dictionary<string, Uri> ReadDictFromFile()
         {
             var newDict = new Dictionary<string, Uri>();
-            if (!System.IO.Directory.Exists(cacheName))
-                System.IO.Directory.CreateDirectory(cacheName);
-            if (System.IO.File.Exists(cacheXMLfile))
+            using (XmlReader reader = XmlReader.Create(cacheXMLfile))
             {
-                var XDoc = XElement.Load(cacheXMLfile);
-                foreach (XElement name in XDoc.Elements("CachedUri"))
+                if (!System.IO.Directory.Exists(cacheName))
+                    System.IO.Directory.CreateDirectory(cacheName);
+                if (System.IO.File.Exists(cacheXMLfile))
                 {
-                    newDict.Add(name.Attribute("remote").Value.ToString(),
-                        new Uri(name.Attribute("local").Value.ToString(), UriKind.Relative));
+                    var XDoc = XElement.Load(reader);
+                    foreach (XElement name in XDoc.Elements("CachedUri"))
+                    {
+                        newDict.Add(name.Attribute("remote").Value.ToString(),
+                            new Uri(name.Attribute("local").Value.ToString(), UriKind.Relative));
+                    }
                 }
             }
-            
             return newDict;
         }
         //we keep 7 days worth of cached images, 
@@ -68,20 +71,21 @@ namespace MeTLLib.Providers
         }
         private void Add(string remoteUri, Uri localUri)
         {
-            if (CacheDict.Contains(new KeyValuePair<string, Uri>(remoteUri, localUri))) return;
-            CacheDict.Add(remoteUri, localUri);
-            if (!System.IO.Directory.Exists(cacheName))
-                System.IO.Directory.CreateDirectory(cacheName);
-            var XDoc = new XDocument();
-            var root = new XElement("CachedUris");
-            XDoc.Add(root);
-            foreach (var key in CacheDict.Keys)
+            using (XmlWriter writer = XmlWriter.Create(cacheXMLfile))
             {
-                root.Add(new XElement("CachedUri", new XAttribute("remote", key), new XAttribute("local", CacheDict[key].ToString())));
+                if (CacheDict.Contains(new KeyValuePair<string, Uri>(remoteUri, localUri))) return;
+                CacheDict.Add(remoteUri, localUri);
+                if (!System.IO.Directory.Exists(cacheName))
+                    System.IO.Directory.CreateDirectory(cacheName);
+                var XDoc = new XDocument();
+                var root = new XElement("CachedUris");
+                XDoc.Add(root);
+                foreach (var key in CacheDict.Keys)
+                {
+                    root.Add(new XElement("CachedUri", new XAttribute("remote", key), new XAttribute("local", CacheDict[key].ToString())));
+                }
+                XDoc.Save(writer);
             }
-            if (File.Exists(cacheXMLfile))
-                File.Delete(cacheXMLfile);
-            XDoc.Save(cacheXMLfile);
         }
         public Uri LocalSource(string uri)
         {
