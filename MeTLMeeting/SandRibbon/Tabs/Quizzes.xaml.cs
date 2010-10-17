@@ -17,7 +17,7 @@ using SandRibbon.Quizzing;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
 using SandRibbon.Providers;
-using Button=System.Windows.Controls.Button;
+using Button = System.Windows.Controls.Button;
 using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Tabs
@@ -40,7 +40,7 @@ namespace SandRibbon.Tabs
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(updateConversationDetails));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
-                quizzes.ItemsSource = activeQuizes;
+            quizzes.ItemsSource = activeQuizes;
         }
         private void joinConversation(string jid)
         {
@@ -87,40 +87,49 @@ namespace SandRibbon.Tabs
         }
         private void ReceiveQuizAnswer(MeTLLib.DataTypes.QuizAnswer answer)
         {
-            if (answers.ContainsKey(answer.id))
+            Dispatcher.adoptAsync(() =>
             {
-                if (answers[answer.id].Where(a => a.answerer == answer.answerer).Count() > 0)
+                if (answers.ContainsKey(answer.id))
                 {
-                    var oldAnswer = answers[answer.id].Where(a => a.answerer == answer.answerer).First();
-                    answers[answer.id].Remove(oldAnswer);
+                    if (answers[answer.id].Where(a => a.answerer == answer.answerer).Count() > 0)
+                    {
+                        var oldAnswer = answers[answer.id].Where(a => a.answerer == answer.answerer).First();
+                        answers[answer.id].Remove(oldAnswer);
+                    }
+                    answers[answer.id].Add(answer);
                 }
-                answers[answer.id].Add(answer);
-            }
-            else
-            {
-                var newList = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>();
-                newList.Add(answer);
-                answers.Add(answer.id, newList);
-            }
+                else
+                {
+                    var newList = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>();
+                    newList.Add(answer);
+                    answers.Add(answer.id, newList);
+                }
+            });
         }
         private void ReceiveQuiz(MeTLLib.DataTypes.QuizQuestion quiz)
         {
-            if (activeQuizes.Any(q => q.id == quiz.id)) return;
-            if (!answers.ContainsKey(quiz.id))
-           Dispatcher.adoptAsync(()=>
-                answers[quiz.id] = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>());
             Dispatcher.adoptAsync(() =>
             {
-                activeQuizes.Add(quiz);
-                quizzes.ScrollToEnd();
+                if (activeQuizes.Any(q => q.id == quiz.id)) return;
+                if (!answers.ContainsKey(quiz.id))
+                    Dispatcher.adoptAsync(() =>
+                         answers[quiz.id] = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>());
+                Dispatcher.adoptAsync(() =>
+                {
+                    activeQuizes.Add(quiz);
+                    quizzes.ScrollToEnd();
+                });
             });
         }
         private void CreateQuiz(object sender, RoutedEventArgs e)
         {
             Commands.BlockInput.ExecuteAsync("Create a quiz dialog open.");
-            var quizDialog = new CreateAQuiz(activeQuizes.Count);
-            quizDialog.Owner = Window.GetWindow(this);
-            quizDialog.ShowDialog();
+            Dispatcher.adoptAsync(() =>
+            {
+                var quizDialog = new CreateAQuiz(activeQuizes.Count);
+                quizDialog.Owner = Window.GetWindow(this);
+                quizDialog.ShowDialog();
+            });
         }
         private void quiz_Click(object sender, RoutedEventArgs e)
         {

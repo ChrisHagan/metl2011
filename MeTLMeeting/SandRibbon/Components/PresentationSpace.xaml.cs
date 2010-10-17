@@ -271,23 +271,26 @@ namespace SandRibbon.Components
         }
         private void MirrorPresentationSpace(Window1 parent)
         {
-            try
+            Dispatcher.adoptAsync(() =>
             {
-                var currentAttributes = stack.handwriting.DefaultDrawingAttributes;
-                var mirror = new Window { Content = new Projector { viewConstraint = parent.scroll } };
-                Projector.Window = mirror;
-                parent.Closed += (_sender, _args) => mirror.Close();
-                mirror.WindowStyle = WindowStyle.None;
-                mirror.AllowsTransparency = true;
-                setSecondaryWindowBounds(mirror);
-                mirror.Show();
-                Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
-                Commands.SetPrivacy.ExecuteAsync(stack.handwriting.privacy);
-            }
-            catch (NotSetException)
-            {
-                //Fine it's not time yet anyway.  I don't care.
-            }
+                try
+                {
+                    var currentAttributes = stack.handwriting.DefaultDrawingAttributes;
+                    var mirror = new Window { Content = new Projector { viewConstraint = parent.scroll } };
+                    Projector.Window = mirror;
+                    parent.Closed += (_sender, _args) => mirror.Close();
+                    mirror.WindowStyle = WindowStyle.None;
+                    mirror.AllowsTransparency = true;
+                    setSecondaryWindowBounds(mirror);
+                    mirror.Show();
+                    Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
+                    Commands.SetPrivacy.ExecuteAsync(stack.handwriting.privacy);
+                }
+                catch (NotSetException)
+                {
+                    //Fine it's not time yet anyway.  I don't care.
+                }
+            });
         }
         private static bool CanMirrorPresentationSpace(object _param)
         {

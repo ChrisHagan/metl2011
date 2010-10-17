@@ -296,7 +296,7 @@ namespace MeTLLib
             Action work = delegate
             {
                 Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
-                var newPath = resourceUploader.uploadResource("/Resource/" + lii.slide, lii.file, false);
+                var newPath = resourceUploader.uploadResource(lii.slide.ToString(),lii.file, false);
                 Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
                 Image newImage = lii.image;
                 newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);

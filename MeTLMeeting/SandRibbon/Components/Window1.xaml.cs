@@ -715,10 +715,13 @@ namespace SandRibbon
         }
         private void ShowPowerpointBlocker(string explanation)
         {
-            showPowerPointProgress(explanation);
-            Canvas.SetTop(ProgressDisplay, (canvas.ActualHeight / 2));
-            Canvas.SetLeft(ProgressDisplay, (ActualWidth / 2) - 100);
-            InputBlocker.Visibility = Visibility.Visible;
+            Dispatcher.adoptAsync(() =>
+            {
+                showPowerPointProgress(explanation);
+                Canvas.SetTop(ProgressDisplay, (canvas.ActualHeight / 2));
+                Canvas.SetLeft(ProgressDisplay, (ActualWidth / 2) - 100);
+                InputBlocker.Visibility = Visibility.Visible;
+            });
         }
         private void HideProgressBlocker()
         {

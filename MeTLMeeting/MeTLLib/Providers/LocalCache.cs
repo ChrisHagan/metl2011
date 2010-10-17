@@ -49,6 +49,7 @@ namespace MeTLLib.Providers
                         new Uri(name.Attribute("local").Value.ToString(), UriKind.Relative));
                 }
             }
+            
             return newDict;
         }
         //we keep 7 days worth of cached images, 
@@ -71,13 +72,16 @@ namespace MeTLLib.Providers
             CacheDict.Add(remoteUri, localUri);
             if (!System.IO.Directory.Exists(cacheName))
                 System.IO.Directory.CreateDirectory(cacheName);
-            var XDoc = "<CachedUris>";
+            var XDoc = new XDocument();
+            var root = new XElement("CachedUris");
+            XDoc.Add(root);
             foreach (var key in CacheDict.Keys)
             {
-                XDoc += string.Format("<CachedUri remote='{0}' local='{1}'/>", key, CacheDict[key].ToString());
+                root.Add(new XElement("CachedUri", new XAttribute("remote", key), new XAttribute("local", CacheDict[key].ToString())));
             }
-            XDoc += "</CachedUris>";
-            File.WriteAllText(cacheXMLfile, XDoc);
+            if (File.Exists(cacheXMLfile))
+                File.Delete(cacheXMLfile);
+            XDoc.Save(cacheXMLfile);
         }
         public Uri LocalSource(string uri)
         {
@@ -87,12 +91,6 @@ namespace MeTLLib.Providers
         {
             if (remoteUri.ToString().StartsWith(cacheName + "\\"))
                 return remoteUri;
-           //This is a quick and dirty fix for a problem that should be solved elsewhere.  
-            //Somwehow, the source attribute of some stanzas is having the server section repeated when it's constructed.
-            // eg:  https://madam.adm.monash.edu.au:1188/https://madam.adm.monash.edu.au:1188/https://madam.adm.monash.edu.au:1188/Resource/101/Bear.wmv"
-            if (remoteUri.ToString().StartsWith("https://") && remoteUri.ToString().Contains(":1188/https://"))
-                remoteUri = new System.Uri(server.secureUri.ToString().TrimEnd('/')+remoteUri.ToString().Substring(remoteUri.ToString().LastIndexOf(":1188/")), UriKind.Absolute);
-            // Turns out it was actually some bad stanzas in the history.  I don't know what they were doing there, but it wasn't caused by this library.
             if (!CacheDict.ContainsKey(remoteUri.ToString()))
             {
                 if (!Directory.Exists(cacheName))
@@ -112,8 +110,10 @@ namespace MeTLLib.Providers
 
             if (media.ToString().StartsWith("Resource\\") || media.ToString().StartsWith("https://"))
                 return media;
+            if (!CacheDict.Values.Contains(media))
+                CacheDict = ReadDictFromFile();
             var uri = CacheDict.Where(kv => kv.Value == media).FirstOrDefault().Key;
-            return uri == null ? null : new Uri(uri, UriKind.RelativeOrAbsolute);
+            return new Uri(uri, UriKind.RelativeOrAbsolute);
         }
     }
 }

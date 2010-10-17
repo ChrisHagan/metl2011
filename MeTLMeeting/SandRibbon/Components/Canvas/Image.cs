@@ -639,22 +639,6 @@ namespace SandRibbon.Components.Canvas
                     var newImage = (System.Windows.Controls.Image)selectedImage;
                     newImage.UpdateLayout();
                     Commands.SendImage.ExecuteAsync(new TargettedImage(currentSlide, Globals.me, target, newImage.tag().privacy, newImage));
-                    /*selectedImage.UpdateLayout();
-                    var selectedImageLeft = InkCanvas.GetLeft((System.Windows.Controls.Image)selectedImage);
-                    var selectedImageTop = InkCanvas.GetTop((System.Windows.Controls.Image)selectedImage);
-                    var newImage = new System.Windows.Controls.Image
-                                       {
-                                           Height = ((System.Windows.Controls.Image) selectedImage).ActualHeight,
-                                           Width = ((System.Windows.Controls.Image) selectedImage).Width,
-                                           Source = (ImageSource) new ImageSourceConverter().ConvertFrom(SandRibbonInterop.LocalCache.ResourceCache.RemoteSource( new Uri( ((System.Windows.Controls.Image) selectedImage).Source. ToString(), UriKind.Relative)))
-                                       };
-                    InkCanvas.SetLeft(newImage, selectedImageLeft);
-                    InkCanvas.SetTop(newImage, selectedImageTop);
-                    var tag = ((System.Windows.Controls.Image)selectedImage).tag();
-                    tag.zIndex = -1;
-                    newImage.tag(tag);
-                    Commands.SendImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedImage(currentSlide,Globals.me,target,((System.Windows.Controls.Image)selectedImage).tag().privacy,(System.Windows.Controls.Image)selectedImage));
-                */
                 }
                 else if (selectedImage is MeTLLib.DataTypes.AutoShape)
                     Commands.SendAutoShape.ExecuteAsync(new MeTLLib.DataTypes.TargettedAutoShape(currentSlide, Globals.me, target, privacy, (MeTLLib.DataTypes.AutoShape)selectedImage));
@@ -879,36 +863,8 @@ namespace SandRibbon.Components.Canvas
                                       });
                     MeTLLib.ClientFactory.Connection().UploadAndSendVideo(new MeTLStanzas.LocalVideoInformation
                     (currentSlide, Globals.me, target, privacy, placeHolder, fileName, false));
-                    //Children.Remove(placeHolder);
+                    Children.Remove(placeHolder);
                 });
-                /*
-                                var hostedFileName = ResourceUploader.uploadResource(currentSlide.ToString(), fileName);
-                                if (hostedFileName == "failed") return;
-                                Children.Remove(placeHolder);
-                                InkCanvas.SetLeft(video, pos.X);
-                                InkCanvas.SetTop(video, pos.Y);
-                                UndoHistory.Queue(
-                                    () =>
-                                    {
-                                        Children.Remove(video);
-                                        Commands.SendDirtyImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement
-                                        (currentSlide, video.tag().author, target, video.tag().privacy, video.tag().id));
-                                    },
-                                    () =>
-                                    {
-                                    });
-                                video.MediaElement.LoadedBehavior = MediaState.Manual;
-                                video.VideoHeight = video.MediaElement.NaturalVideoHeight;
-                                video.VideoWidth = video.MediaElement.NaturalVideoWidth;
-                                var tv = new MeTLLib.DataTypes.TargettedVideo
-                                (currentSlide, Globals.me, target, privacy, video);
-                                tv.X = InkCanvas.GetLeft(video);
-                                tv.Y = InkCanvas.GetTop(video);
-                                tv.Height = video.ActualHeight;
-                                tv.Width = video.ActualWidth;
-                                tv.id = video.tag().id;
-                                Commands.SendVideo.ExecuteAsync(tv);
-                                */
             }
         }
         public void handleDrop(string fileName, Point pos, int count)
@@ -921,8 +877,6 @@ namespace SandRibbon.Components.Canvas
                     break;
                 case FileType.Video:
                     dropVideoOnCanvas(fileName, pos, count);
-                    //MessageBox.Show("The object you're trying to import is a video.  At present, MeTL does not support videos.");
-                    //return;
                     break;
                 default:
                     uploadFileForUse(fileName);
@@ -966,68 +920,15 @@ namespace SandRibbon.Components.Canvas
                                          };
                 image.BeginAnimation(OpacityProperty, animationPulse);
                 string hostedFileName;
-                if (!fileName.Contains("http"))
+                if (!fileName.StartsWith("http"))
                 {
-
                     MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, target, privacy, image, fileName, false));
-                    Children.Remove(image);
-                    /*        UndoHistory.Queue(
-                              () =>
-                              {
-                                  Children.Remove(hostedImage);
-                                  Commands.SendDirtyImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement
-                                  (currentSlide,hostedImage.tag().author,target,hostedImage.tag().privacy,hostedImage.tag().id));
-                              },
-                              () =>
-                              {
-                                  AddImage(hostedImage);
-                                  Commands.SendImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedImage
-                                  (currentSlide,Globals.me,target,privacy,hostedImage));
-                              });*/
                 }
                 else
                 {
-
-                    hostedFileName = fileName;
-                    var uri = new Uri(hostedFileName, UriKind.Absolute);
-                    var hostedImage = new System.Windows.Controls.Image();
-                    try
-                    {
-                        var bitmap = new BitmapImage(uri);
-                        hostedImage.Source = bitmap;
-                    }
-                    catch (Exception e1)
-                    {
-                        MessageBox.Show("Cannot create image: " + e1.Message);
-                    }
-                    hostedImage.Height = image.Height;
-                    hostedImage.Width = image.Width;
-                    Children.Remove(image);
-                    InkCanvas.SetLeft(hostedImage, pos.X);
-                    InkCanvas.SetTop(hostedImage, pos.Y);
-                    hostedImage.tag(new MeTLLib.DataTypes.ImageTag
-                                      {
-                                          author = Globals.me,
-                                          id = string.Format("{0}:{1}:{2}", Globals.me, SandRibbonObjects.DateTimeFactory.Now(), count),
-                                          privacy = privacy,
-                                          zIndex = -1
-                                      });
-                    UndoHistory.Queue(
-                            () =>
-                            {
-                                Children.Remove(hostedImage);
-                                Commands.SendDirtyImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement
-                                (currentSlide, hostedImage.tag().author, target, hostedImage.tag().privacy, hostedImage.tag().id));
-                            },
-                            () =>
-                            {
-                                AddImage(hostedImage);
-                                Commands.SendImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedImage
-                                (currentSlide, Globals.me, target, privacy, hostedImage));
-                            });
-                    Commands.SendImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedImage
-                    (currentSlide, Globals.me, target, privacy, hostedImage));
+                    MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, target, privacy, image));
                 }
+                Children.Remove(image);
             });
         }
         public void tagAutoShape(MeTLLib.DataTypes.AutoShape autoshape, int count)
