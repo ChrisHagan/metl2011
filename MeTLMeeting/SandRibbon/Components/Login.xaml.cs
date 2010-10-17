@@ -96,6 +96,8 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(() =>
                 {
                     Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);
+                    if (rememberMe.IsChecked == true)
+                        WorkspaceStateProvider.SaveCurrentSettings();
                     this.Visibility = Visibility.Collapsed;
                 });
         }

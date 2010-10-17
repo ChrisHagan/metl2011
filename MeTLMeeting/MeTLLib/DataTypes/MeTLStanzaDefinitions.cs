@@ -204,16 +204,21 @@ namespace MeTLLib.DataTypes
         }
         public System.Windows.Controls.Image imageProperty;
         public MeTLStanzas.Image imageSpecification;
+        public ResourceCache cache;
+        public MeTLServerAddress server;
         public string id;
         public void adoptCache(ResourceCache cache, MeTLServerAddress server)
         {
             if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
+            this.cache = cache;
+            this.server = server;
             imageSpecification.adoptCache(cache, server);
         }
         public System.Windows.Controls.Image image
         {
             get
             {
+                if (server != null && cache != null) imageSpecification.adoptCache(cache, server);
                 if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
                 var reified = imageSpecification.forceEvaluation();
                 id = reified.tag().id;
@@ -288,7 +293,7 @@ namespace MeTLLib.DataTypes
             {
                 if (videoSpecification == null) videoSpecification = new MeTLStanzas.Video(this);
                 Video reified = null;
-                if (server != null && cache != null) videoSpecification.adoptCache(cache,server);
+                if (server != null && cache != null) videoSpecification.adoptCache(cache, server);
                 reified = videoSpecification.forceEvaluation();
                 id = reified.tag().id;
                 reified.Height = Height;
@@ -745,22 +750,26 @@ namespace MeTLLib.DataTypes
             }
             public System.Windows.Controls.TextBox forceEvaluation()
             {
-                var textBox = new System.Windows.Controls.TextBox
+                System.Windows.Controls.TextBox textBox = null;
+                Application.Current.Dispatcher.adopt(() =>
                 {
-                    FontWeight = weight,
-                    FontFamily = family,
-                    FontSize = size,
-                    FontStyle = style,
-                    Foreground = color,
-                    TextDecorations = decoration,
-                    Tag = tag,
-                    Text = text,
-                    Height = height,
-                    Width = width
-                };
+                    textBox = new System.Windows.Controls.TextBox
+                    {
+                        FontWeight = weight,
+                        FontFamily = family,
+                        FontSize = size,
+                        FontStyle = style,
+                        Foreground = color,
+                        TextDecorations = decoration,
+                        Tag = tag,
+                        Text = text,
+                        Height = height,
+                        Width = width
+                    };
 
-                InkCanvas.SetLeft(textBox, x);
-                InkCanvas.SetTop(textBox, y);
+                    InkCanvas.SetLeft(textBox, x);
+                    InkCanvas.SetTop(textBox, y);
+                });
                 return textBox;
             }
             public TargettedTextBox Box
@@ -772,24 +781,28 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-                    this.height = value.boxProperty.Height;
-                    this.width = value.boxProperty.Width;
-                    this.caret = value.boxProperty.CaretIndex;
-                    this.x = InkCanvas.GetLeft(value.boxProperty);
-                    this.y = InkCanvas.GetTop(value.boxProperty);
-                    this.text = value.boxProperty.Text;
-                    this.tag = (string)value.boxProperty.Tag;
-                    this.style = value.boxProperty.FontStyle;
-                    this.family = value.boxProperty.FontFamily;
-                    this.weight = value.boxProperty.FontWeight;
-                    this.size = value.boxProperty.FontSize;
-                    this.decoration = value.boxProperty.TextDecorations;
-                    this.SetTag(authorTag, value.author);
-                    this.SetTag(identityTag, value.boxProperty.tag().id);
-                    this.SetTag(targetTag, value.target);
-                    this.SetTag(privacyTag, value.privacy);
-                    this.SetTag(slideTag, value.slide);
-                    this.color = value.boxProperty.Foreground;
+                    var Dispatcher = value.boxProperty.Dispatcher;
+                    Dispatcher.adopt(() =>
+                    {
+                        this.height = value.boxProperty.Height;
+                        this.width = value.boxProperty.Width;
+                        this.caret = value.boxProperty.CaretIndex;
+                        this.x = InkCanvas.GetLeft(value.boxProperty);
+                        this.y = InkCanvas.GetTop(value.boxProperty);
+                        this.text = value.boxProperty.Text;
+                        this.tag = (string)value.boxProperty.Tag;
+                        this.style = value.boxProperty.FontStyle;
+                        this.family = value.boxProperty.FontFamily;
+                        this.weight = value.boxProperty.FontWeight;
+                        this.size = value.boxProperty.FontSize;
+                        this.decoration = value.boxProperty.TextDecorations;
+                        this.SetTag(authorTag, value.author);
+                        this.SetTag(identityTag, value.boxProperty.tag().id);
+                        this.SetTag(targetTag, value.target);
+                        this.SetTag(privacyTag, value.privacy);
+                        this.SetTag(slideTag, value.slide);
+                        this.color = value.boxProperty.Foreground;
+                    });
                 }
             }
             public static readonly string widthTag = "width";
@@ -1230,8 +1243,6 @@ namespace MeTLLib.DataTypes
             public MeTLLib.DataTypes.Video forceEvaluation()
             {
                 MeTLLib.DataTypes.Video srVideo = null;
-                //ThreadStart ts = new ThreadStart(() =>
-                //{
                 Application.Current.Dispatcher.adopt(() =>
                 {
                     var video = new MediaElement
@@ -1248,11 +1259,6 @@ namespace MeTLLib.DataTypes
                         VideoHeight = video.NaturalVideoHeight,
                         VideoWidth = video.NaturalVideoWidth
                     };
-                    //});
-                    //Thread t = new Thread(ts);
-                    //t.SetApartmentState(ApartmentState.STA);
-                    //t.Start();
-                    //t.Join();
                 });
                 return srVideo;
             }
@@ -1345,15 +1351,19 @@ namespace MeTLLib.DataTypes
             }
             public System.Windows.Controls.Image forceEvaluation()
             {
-                var image = new System.Windows.Controls.Image
+                System.Windows.Controls.Image image = null;
+                Application.Current.Dispatcher.adopt(() =>
                 {
-                    Tag = this.tag,
-                    Source = this.source,
-                    Height = this.height,
-                    Width = this.width
-                };
-                InkCanvas.SetLeft(image, this.x);
-                InkCanvas.SetTop(image, this.y);
+                    image = new System.Windows.Controls.Image
+                    {
+                        Tag = this.tag,
+                        Source = this.source,
+                        Height = this.height,
+                        Width = this.width
+                    };
+                    InkCanvas.SetLeft(image, this.x);
+                    InkCanvas.SetTop(image, this.y);
+                });
                 return image;
             }
             public string GetCachedImage(string url)
@@ -1378,24 +1388,28 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-                    var absolutePath = value.imageProperty.Source.ToString();
-                    var uri = new Uri(absolutePath, UriKind.RelativeOrAbsolute);
-                    string relativePath;
-                    if (uri.IsAbsoluteUri)
-                        relativePath = uri.LocalPath;
-                    else
-                        relativePath = uri.ToString();
-                    SetTag(tagTag, value.imageProperty.Tag.ToString());
-                    SetTag(sourceTag, relativePath);
-                    SetTag(widthTag, value.imageProperty.Width.ToString());
-                    SetTag(heightTag, value.imageProperty.Height.ToString());
-                    SetTag(xTag, InkCanvas.GetLeft(value.imageProperty).ToString());
-                    SetTag(yTag, InkCanvas.GetTop(value.imageProperty).ToString());
-                    SetTag(authorTag, value.author);
-                    SetTag(targetTag, value.target);
-                    SetTag(privacyTag, value.privacy);
-                    SetTag(slideTag, value.slide);
-                    SetTag(identityTag, value.id);
+                    var Dispatcher = value.imageProperty.Dispatcher;
+                    Dispatcher.adopt(() =>
+                        {
+                            var absolutePath = value.imageProperty.Source.ToString();
+                            var uri = new Uri(absolutePath, UriKind.RelativeOrAbsolute);
+                            string relativePath;
+                            if (uri.IsAbsoluteUri)
+                                relativePath = uri.LocalPath;
+                            else
+                                relativePath = uri.ToString();
+                            SetTag(tagTag, value.imageProperty.Tag.ToString());
+                            SetTag(sourceTag, relativePath);
+                            SetTag(widthTag, value.imageProperty.Width.ToString());
+                            SetTag(heightTag, value.imageProperty.Height.ToString());
+                            SetTag(xTag, InkCanvas.GetLeft(value.imageProperty).ToString());
+                            SetTag(yTag, InkCanvas.GetTop(value.imageProperty).ToString());
+                            SetTag(authorTag, value.author);
+                            SetTag(targetTag, value.target);
+                            SetTag(privacyTag, value.privacy);
+                            SetTag(slideTag, value.slide);
+                            SetTag(identityTag, value.id);
+                        });
                 }
             }
             private static readonly string sourceTag = "source";

@@ -12,11 +12,11 @@ using SandRibbonInterop.Interfaces;
 
 namespace SandRibbon.Tabs.Groups
 {
-    public partial class TextTools : UserControl, ITextTools 
+    public partial class TextTools : UserControl, ITextTools
     {
         private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
-        private List<string> fontList = new List<string> {"Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings"};
-        
+        private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
+
         public TextTools()
         {
             InitializeComponent();
@@ -24,7 +24,7 @@ namespace SandRibbon.Tabs.Groups
             fontSize.ItemsSource = fontSizes;
             fontSize.SelectedIndex = 0;
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
-            Commands.TextboxFocused.RegisterCommand(new DelegateCommand<TextInformation>(update));
+            Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));
             Commands.MoveTo.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(MoveTo));
         }
@@ -32,7 +32,7 @@ namespace SandRibbon.Tabs.Groups
         private void MoveTo(object obj)
         {
             fontSize.SelectedItem = generateDefaultFontSize();
-        }   
+        }
 
         private void restoreTextDefaults(object obj)
         {
@@ -63,18 +63,18 @@ namespace SandRibbon.Tabs.Groups
             fontFamily.SelectedItem = "Arial";
             fontSize.SelectedItem = generateDefaultFontSize();
         }
-        private const double defaultWidth  = 720;
+        private const double defaultWidth = 720;
         private const double defaultFontSize = 24.0;
         private static double generateDefaultFontSize()
         {
             try
             {
                 var currentSlide = Globals.slides.Where(s => s.id == Globals.slide).First();
-                var multiply = (currentSlide.defaultWidth/defaultWidth) > 0
-                                     ? (int)(currentSlide.defaultWidth/defaultWidth) : 1;
-                return defaultFontSize* multiply;
+                var multiply = (currentSlide.defaultWidth / defaultWidth) > 0
+                                     ? (int)(currentSlide.defaultWidth / defaultWidth) : 1;
+                return defaultFontSize * multiply;
             }
-            catch(NotSetException e)
+            catch (NotSetException e)
             {
                 return defaultFontSize;
             }
@@ -82,7 +82,7 @@ namespace SandRibbon.Tabs.Groups
 
         private void decreaseFont(object sender, RoutedEventArgs e)
         {
-            if(fontSize.ItemsSource == null) return; 
+            if (fontSize.ItemsSource == null) return;
             int currentItem = fontSize.SelectedIndex;
             if (currentItem - 1 >= 0)
             {
@@ -98,20 +98,20 @@ namespace SandRibbon.Tabs.Groups
             if (currentItem + 1 < fontSizes.Count())
             {
                 var newSize = fontSizes[currentItem + 1];
-                fontSize.SelectedIndex = currentItem +1;
+                fontSize.SelectedIndex = currentItem + 1;
                 Commands.FontSizeChanged.ExecuteAsync(newSize);
             }
         }
         private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
         {
-            if(fontSize.SelectedIndex == -1) return;
-            if(e.AddedItems.Count == 0) return;
+            if (fontSize.SelectedIndex == -1) return;
+            if (e.AddedItems.Count == 0) return;
             var size = Double.Parse(e.AddedItems[0].ToString());
             Commands.FontSizeChanged.ExecuteAsync(size);
         }
         private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         {
-            if(e.AddedItems.Count == 0) return;
+            if (e.AddedItems.Count == 0) return;
             var font = new FontFamily(e.AddedItems[0].ToString());
             Commands.FontChanged.ExecuteAsync(font);
         }

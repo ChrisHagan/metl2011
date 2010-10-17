@@ -179,26 +179,15 @@ namespace MeTLLib
             Action work = delegate
             {
                 image.adoptCache(cache, server);
-                var newImage = image.image;
-                newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(cache.RemoteSource(new Uri(((System.Windows.Controls.Image)newImage).Source.ToString(), UriKind.Relative)));
-                image.image = newImage;
-
-                /*var selectedImageLeft = InkCanvas.GetLeft((System.Windows.Controls.Image)selectedImage);
-                var selectedImageTop = InkCanvas.GetTop((System.Windows.Controls.Image)selectedImage);
-                var newImage = new System.Windows.Controls.Image
-                          {
-                              Height = ((System.Windows.Controls.Image) selectedImage).ActualHeight,
-                              Width = ((System.Windows.Controls.Image) selectedImage).Width,
-                              Source = (ImageSource) new ImageSourceConverter().ConvertFrom(SandRibbonInterop.LocalCache.ResourceCache.RemoteSource( new Uri( ((System.Windows.Controls.Image) selectedImage).Source. ToString(), UriKind.Relative)))
-                          };
-       InkCanvas.SetLeft(newImage, selectedImageLeft);
-       InkCanvas.SetTop(newImage, selectedImageTop);
-       var tag = ((System.Windows.Controls.Image)selectedImage).tag();
-       tag.zIndex = -1;
-       newImage.tag(tag);
-       Commands.SendImage.Execute(new MeTLLib.DataTypes.TargettedImage(currentSlide,Globals.me,target,((System.Windows.Controls.Image)selectedImage).tag().privacy,(System.Windows.Controls.Image)selectedImage));
-   */
-                wire.SendImage(image);
+                image.imageProperty.Dispatcher.adoptAsync(() =>
+                {
+                    var newImage = image.imageProperty;
+                    Uri localSource = new System.Uri(((System.Windows.Controls.Image)newImage).Source.ToString(),UriKind.Relative);
+                    Uri remoteSource = cache.RemoteSource(localSource);
+                    newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(remoteSource); 
+                    image.image = newImage;
+                    wire.SendImage(image);
+                });
             };
             tryIfConnected(work);
         }
