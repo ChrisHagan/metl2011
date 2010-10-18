@@ -96,22 +96,6 @@ namespace SandRibbon.Components
                     details = new ConversationDetails
                     ("Please enter a title here", "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
                     break;
-                case ConversationConfigurationMode.DELETE:
-                    deleteMessage.Visibility = Visibility.Visible;
-                    createGroup.Visibility = Visibility.Collapsed;
-                    importGroup.Visibility = Visibility.Collapsed;
-                    CommitButton.Content = "Delete";
-                    details = MeTLLib.ClientFactory.Connection().DetailsOf(Globals.location.activeConversation);
-                    if (details == null)
-                    {
-                        MessageBox.Show("No valid conversation currently selected.  Please ensure you are in a conversation you own when deleting a conversation.");
-                        this.Close();
-                    }
-                    details.Subject = details.Author;
-                    details.Title = "DELETED - " + details.Title;
-                    var addendumTag = String.IsNullOrEmpty(details.Tag)?"":"OldTag: " + details.Tag;
-                    details.Tag = "This conversation is deleted.  That means that it has been renamed and restricted so that only you can see it.  Nothing in MeTL is ever truly deleted."+addendumTag;
-                    break;
             }
             isFirstRun = false;
         }

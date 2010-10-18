@@ -89,7 +89,6 @@ namespace SandRibbon
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerPoint, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(CreateConversation));
-            Commands.PreDeleteConversation.RegisterCommand(new DelegateCommand<object>(DeleteConversation, mustBeAuthor));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
@@ -345,11 +344,6 @@ namespace SandRibbon
         {
             ShowPowerpointBlocker("Creating Conversation Dialog Open");
             Commands.CreateConversationDialog.ExecuteAsync(null);
-        }
-        private void DeleteConversation(object _unused)
-        {
-            ShowPowerpointBlocker("Delete Conversation Dialog Open");
-            Commands.DeleteConversation.ExecuteAsync(null);
         }
         private void EditConversation(object _unused)
         {

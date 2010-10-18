@@ -229,8 +229,6 @@ namespace SandRibbon
         public static CompositeCommand CreateConversation = new CompositeCommand();
         public static CompositeCommand PreEditConversation = new CompositeCommand();
         public static CompositeCommand EditConversation = new CompositeCommand();
-        public static CompositeCommand PreDeleteConversation = new CompositeCommand();
-        public static CompositeCommand DeleteConversation = new CompositeCommand();
         public static CompositeCommand AllContentSent = new CompositeCommand();
         public static CompositeCommand BlockInput = new CompositeCommand();
         public static CompositeCommand UnblockInput = new CompositeCommand();
