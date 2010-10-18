@@ -209,12 +209,16 @@ namespace SandRibbon.Components.Canvas
         }
         private void deleteImages()
         {
-            var numberOfImages = GetSelectedElements().Count;
-            for (var i = 0; i < numberOfImages; i++)
+            List<UIElement> selectedElements = new List<UIElement>();
+            Dispatcher.adopt(() =>
+                                 {
+                                    selectedElements = GetSelectedElements().ToList();
+                                 });
+            for (var i = 0; i < selectedElements.Count; i++)
             {
-                if ((GetSelectedElements().ElementAt(i)).GetType().ToString() == "System.Windows.Controls.Image")
+                if ((selectedElements.ElementAt(i)).GetType().ToString() == "System.Windows.Controls.Image")
                 {
-                    var image = (System.Windows.Controls.Image)GetSelectedElements().ElementAt(i);
+                    var image = (System.Windows.Controls.Image)selectedElements.ElementAt(i);
                     ApplyPrivacyStylingToElement(image, image.tag().privacy);
                     UndoHistory.Queue(
                         () =>
@@ -232,20 +236,20 @@ namespace SandRibbon.Components.Canvas
 
                     Commands.SendDirtyImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, image.tag().privacy, image.tag().id));
                 }
-                if ((GetSelectedElements().ElementAt(i)) is MeTLLib.DataTypes.AutoShape)
+                if ((selectedElements.ElementAt(i)) is MeTLLib.DataTypes.AutoShape)
                 {
-                    var autoshape = (MeTLLib.DataTypes.AutoShape)GetSelectedElements().ElementAt(i);
+                    var autoshape = (MeTLLib.DataTypes.AutoShape)selectedElements.ElementAt(i);
                     Commands.SendDirtyAutoShape.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, privacy, autoshape.Tag.ToString()));
                 }
-                if ((GetSelectedElements().ElementAt(i)) is MeTLLib.DataTypes.Video)
+                if ((selectedElements.ElementAt(i)) is MeTLLib.DataTypes.Video)
                 {
-                    var video = (MeTLLib.DataTypes.Video)GetSelectedElements().ElementAt(i);
+                    var video = (MeTLLib.DataTypes.Video)selectedElements.ElementAt(i);
                     Commands.SendDirtyVideo.ExecuteAsync(new TargettedDirtyElement(currentSlide, Globals.me, target, privacy, video.Tag.ToString()));
                     Commands.MirrorVideo.ExecuteAsync(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(video.tag().id, null));
                 }
-                if ((GetSelectedElements().ElementAt(i)) is MeTLLib.DataTypes.RenderedLiveWindow)
+                if ((selectedElements.ElementAt(i)) is MeTLLib.DataTypes.RenderedLiveWindow)
                 {
-                    var liveWindow = (MeTLLib.DataTypes.RenderedLiveWindow)GetSelectedElements().ElementAt(i);
+                    var liveWindow = (MeTLLib.DataTypes.RenderedLiveWindow)selectedElements.ElementAt(i);
                     Commands.SendDirtyLiveWindow.ExecuteAsync(new TargettedDirtyElement
                     (currentSlide, Globals.me, target, privacy, ((Rectangle)((MeTLLib.DataTypes.RenderedLiveWindow)liveWindow).Rectangle).Tag.ToString()));
                 }
