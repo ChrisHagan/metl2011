@@ -185,11 +185,12 @@ namespace SandRibbon
         private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
         {
             var adorner = ((FrameworkElement)canvasViewBox);
-            Dispatcher.adoptAsync(()=>{
+            Dispatcher.adoptAsync(() =>
+            {
                 var adornerRect = new Rect(canvas.TranslatePoint(info.ElementBounds.TopLeft, canvasViewBox), canvas.TranslatePoint(info.ElementBounds.BottomRight, canvasViewBox));
-            if (adornerRect.Right < 0 || adornerRect.Right > canvasViewBox.ActualWidth
-                || adornerRect.Top < 0 || adornerRect.Top > canvasViewBox.ActualHeight) return;
-            AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(info.privacyChoice, adornerRect)));
+                if (adornerRect.Right < 0 || adornerRect.Right > canvasViewBox.ActualWidth
+                    || adornerRect.Top < 0 || adornerRect.Top > canvasViewBox.ActualHeight) return;
+                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(info.privacyChoice, adornerRect)));
             });
         }
         private Adorner[] getPrivacyAdorners()
@@ -264,7 +265,7 @@ namespace SandRibbon
         {
             var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
             if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN)
-                    return;
+                return;
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
             var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
@@ -276,11 +277,16 @@ namespace SandRibbon
         }
         private void UpdateCursorWithAttributes(DrawingAttributes attributes)
         {
-            try {
-            if (!(attributes.Equals(Commands.UpdateCursorWithAttributes.lastValue()))) Commands.UpdateCursor.ExecuteAsync(CursorExtensions.generateCursor(attributes));
+            try
+            {
+                if (!(attributes.Equals(Commands.UpdateCursorWithAttributes.lastValue())))
+                {
+                    App.Now(String.Format("generating cursor {0},{1},{2}", attributes.Width, attributes.Color, attributes.IsHighlighter));
+                    Commands.UpdateCursor.ExecuteAsync(CursorExtensions.generateCursor(attributes));
+                }
             }
-                catch (NotSetException e)
-            {}
+            catch (NotSetException e)
+            { }
 
         }
         private void AdjustReportedStrokeAttributesAccordingToZoom(object attributes)
