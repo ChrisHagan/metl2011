@@ -21,110 +21,109 @@ namespace SandRibbon.Components
         #region commands
         private void registerCommands()
         {
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(moveTo));
-            Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(sendAutoshape));
-            Commands.SendChatMessage.RegisterCommand(new DelegateCommand<object>(sendChatMessage));
-            Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(sendDirtyAutoshape));
-            Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(sendDirtyImage));
-            Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(sendDirtyLiveWindow));
-            Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(sendDirtyStroke));
-            Commands.SendDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(sendDirtyText));
-            Commands.SendDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(sendDirtyVideo));
-            Commands.SendFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(sendFile));
-            Commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(sendImage));
-            Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(sendLiveWindow));
-            Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(sendBubble));
-            Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(sendQuiz));
-            Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(sendQuizAnswer));
-            Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(sendSubmission));
-            Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(sendStroke));
-            Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(sendTextBox));
-            Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(sendVideo));
-            Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(sneakInto));
-            Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(sneakOutOf));
-            //Commands._.RegisterCommand(new DelegateCommand<_>(_));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoshape));
+            Commands.SendChatMessage.RegisterCommand(new DelegateCommand<object>(SendChatMessage));
+            Commands.SendDirtyAutoShape.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyAutoshape));
+            Commands.SendDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyImage));
+            Commands.SendDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyLiveWindow));
+            Commands.SendDirtyStroke.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyStroke));
+            Commands.SendDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyText));
+            Commands.SendDirtyVideo.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(SendDirtyVideo));
+            Commands.SendFileResource.RegisterCommand(new DelegateCommand<TargettedFile>(SendFile));
+            Commands.SendImage.RegisterCommand(new DelegateCommand<TargettedImage>(SendImage));
+            Commands.SendLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(SendLiveWindow));
+            Commands.SendNewBubble.RegisterCommand(new DelegateCommand<TargettedBubbleContext>(SendBubble));
+            Commands.SendQuiz.RegisterCommand(new DelegateCommand<QuizQuestion>(SendQuiz));
+            Commands.SendQuizAnswer.RegisterCommand(new DelegateCommand<QuizAnswer>(SendQuizAnswer));
+            Commands.SendScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(SendSubmission));
+            Commands.SendStroke.RegisterCommand(new DelegateCommand<TargettedStroke>(SendStroke));
+            Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendTextBox));
+            Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(SendVideo));
+            Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
+            Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
         }
-        private void joinConversation(object Jid)
+        private void JoinConversation(object Jid)
         {
             if (Jid is string)
                 client.JoinConversation((string)Jid);
         }
-        private void moveTo(int slide)
+        private void MoveTo(int slide)
         {
             client.MoveTo(slide);
         }
-        private void sendAutoshape(TargettedAutoShape tas)
+        private void SendAutoshape(TargettedAutoShape tas)
         {
         }
-        private void sendChatMessage(object _obj)
+        private void SendChatMessage(object _obj)
         {
         }
-        private void sendDirtyAutoshape(TargettedDirtyElement tde)
+        private void SendDirtyAutoshape(TargettedDirtyElement tde)
         {
         }
-        private void sendDirtyImage(TargettedDirtyElement tde)
+        private void SendDirtyImage(TargettedDirtyElement tde)
         {
             client.SendDirtyImage(tde);
         }
-        private void sendDirtyLiveWindow(TargettedDirtyElement tde)
+        private void SendDirtyLiveWindow(TargettedDirtyElement tde)
         {
         }
-        private void sendDirtyStroke(TargettedDirtyElement tde)
+        private void SendDirtyStroke(TargettedDirtyElement tde)
         {
             client.SendDirtyStroke(tde);
         }
-        private void sendDirtyText(TargettedDirtyElement tde)
+        private void SendDirtyText(TargettedDirtyElement tde)
         {
             client.SendDirtyTextBox(tde);
         }
-        private void sendDirtyVideo(TargettedDirtyElement tde)
+        private void SendDirtyVideo(TargettedDirtyElement tde)
         {
             client.SendDirtyVideo(tde);
         }
-        private void sendFile(TargettedFile tf)
+        private void SendFile(TargettedFile tf)
         {
             client.SendFile(tf);
         }
-        private void sendImage(TargettedImage ti)
+        private void SendImage(TargettedImage ti)
         {
             client.SendImage(ti);
         }
-        private void sendLiveWindow(LiveWindowSetup lws)
+        private void SendLiveWindow(LiveWindowSetup lws)
         {
         }
-        private void sendBubble(TargettedBubbleContext tbc)
+        private void SendBubble(TargettedBubbleContext tbc)
         {
         }
-        private void sendQuiz(QuizQuestion qq)
+        private void SendQuiz(QuizQuestion qq)
         {
             client.SendQuizQuestion(qq);
         }
-        private void sendQuizAnswer(QuizAnswer qa)
+        private void SendQuizAnswer(QuizAnswer qa)
         {
             client.SendQuizAnswer(qa);
         }
-        private void sendSubmission(TargettedSubmission ts)
+        private void SendSubmission(TargettedSubmission ts)
         {
             client.SendSubmission(ts);
         }
-        private void sendStroke(TargettedStroke ts)
+        private void SendStroke(TargettedStroke ts)
         {
             client.SendStroke(ts);
         }
-        private void sendTextBox(TargettedTextBox ttb)
+        private void SendTextBox(TargettedTextBox ttb)
         {
             client.SendTextBox(ttb);
         }
-        private void sendVideo(TargettedVideo tv)
+        private void SendVideo(TargettedVideo tv)
         {
             client.SendVideo(tv);
         }
-        private void sneakInto(string room)
+        private void SneakInto(string room)
         {
             client.SneakInto(room);
         }
-        private void sneakOutOf(string room)
+        private void SneakOutOf(string room)
         {
             client.SneakOutOf(room);
         }

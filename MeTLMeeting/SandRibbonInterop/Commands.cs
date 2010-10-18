@@ -193,7 +193,6 @@ namespace SandRibbon
         public static CompositeCommand LogOut = new CompositeCommand();
         public static CompositeCommand SetIdentity = new CompositeCommand();
         public static CompositeCommand EstablishPrivileges = new CompositeCommand();
-        public static CompositeCommand LoggedIn = new CompositeCommand();
         public static RoutedCommand CloseApplication = new RoutedCommand();
         public static CompositeCommand SetLayer = new CompositeCommand();
         public static CompositeCommand SetTutorialVisibility = new CompositeCommand();
