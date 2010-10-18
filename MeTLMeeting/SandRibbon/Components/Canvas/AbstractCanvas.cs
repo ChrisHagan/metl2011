@@ -152,17 +152,6 @@ namespace SandRibbon.Components.Canvas
         }
         private void ClearSelectionOnLayerChanged(string layer)
         {
-            if (layer.ToLower() == "view")
-            {
-                UseCustomCursor = true;
-                Cursor = Cursors.Hand;
-            }
-            else
-                try
-                {
-                    Commands.UpdateCursor.ExecuteAsync(Commands.UpdateCursor.lastValue());
-                }
-                catch (Exception) { UseCustomCursor = false; }
             if (this.GetSelectedElements().Count > 0 || this.GetSelectedStrokes().Count > 0)
             {
                 this.Select(null, null);

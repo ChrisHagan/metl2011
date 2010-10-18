@@ -103,7 +103,6 @@ namespace SandRibbon
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.SetTutorialVisibility.RegisterCommand(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
-            Commands.Relogin.RegisterCommand(new DelegateCommand<object>(Relogin));
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(ProxyMirrorPresentationSpace));
             Commands.ReceiveWormMove.RegisterCommand(new DelegateCommand<string>(ReceiveWormMove));
@@ -119,7 +118,7 @@ namespace SandRibbon
             Commands.SetZoomRect.RegisterCommand(new DelegateCommand<Rectangle>(SetZoomRect));
             Commands.ChangePenSize.RegisterCommand(new DelegateCommand<object>(AdjustPenSizeAccordingToZoom));
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustDrawingAttributesAccordingToZoom));
-            Commands.ActualReportDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedDrawingAttributesAccordingToZoom));
+            Commands.ActualReportDrawingAttributes.RegisterCommand(new DelegateCommand<object>(ActualReportDrawingAttributes));
             Commands.ActualReportStrokeAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedStrokeAttributesAccordingToZoom));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
             Commands.ShowEditSlidesDialog.RegisterCommand(new DelegateCommand<object>(ShowEditSlidesDialog, mustBeInConversation));
@@ -260,7 +259,7 @@ namespace SandRibbon
         {
             ShowPowerpointBlocker("Starting PowerPoint Import");
         }
-        private void AdjustReportedDrawingAttributesAccordingToZoom(object attributes)
+        private void ActualReportDrawingAttributes(object attributes)
         {
             var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
             if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN)
@@ -473,16 +472,6 @@ namespace SandRibbon
         }
 
 
-        private void Relogin(object obj)
-        {
-            return;
-            lock (reconnectionLock)
-            {
-                showReconnectingDialog();
-                reconnecting = true;
-                connect(Globals.userInformation.credentials.name, Globals.userInformation.credentials.password, Globals.userInformation.location.currentSlide, Globals.userInformation.location.activeConversation);
-            }
-        }
         private void showReconnectingDialog()
         {
             if (InputBlocker.Visibility == Visibility.Visible) return;
@@ -576,23 +565,21 @@ namespace SandRibbon
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            try
+            /*try
             {
                 if (String.IsNullOrEmpty(details.Jid) || details.Jid != Globals.conversationDetails.Jid) return;
-                //if (details.Jid != Globals.location.activeConversation) return;
             }
             catch (NotSetException)
             {
-                //We're not anywhere yet so update away
-            }
+            }*/
             Dispatcher.adoptAsync(delegate
             {
-                Globals.userInformation.location.availableSlides = details.Slides.Select(s => s.id).ToList();
+                //Globals.userInformation.location.availableSlides = details.Slides.Select(s => s.id).ToList();
                 HideTutorial();
                 UpdateTitle();
-                var isAuthor = (details.Author != null) && details.Author == Globals.userInformation.credentials.name;
-                Globals.userInformation.policy.isAuthor = isAuthor;
-                Commands.RequerySuggested();
+                //var isAuthor = (details.Author != null) && details.Author == Globals.userInformation.credentials.name;
+                //Globals.userInformation.policy.isAuthor = isAuthor;
+                //Commands.RequerySuggested();
             });
         }
         private void UpdateTitle()
@@ -620,23 +607,6 @@ namespace SandRibbon
                            };
             ProgressDisplay.Children.Add(text);
         }
-        private void connect(string username, string pass, int location, string conversation)
-        {
-            /*   if (wire == null)
-               {
-                   Globals.userInformation.location = new Location { currentSlide = location, activeConversation = conversation };
-                   Globals.userInformation.credentials = new Credentials { name = username, password = pass };
-                   wire = new JabberWire(Globals.userInformation.credentials);
-                   wire.Login(Globals.userInformation.location);
-               }
-               else
-               {
-                   Globals.userInformation.location.activeConversation = conversation;
-                   Globals.userInformation.location.currentSlide = location;
-                   wire.Reset("Window1");
-               }
-               loader.wire = wire;*/
-        }
         private void createConversation(object detailsObject)
         {
             var details = (ConversationDetails)detailsObject;
@@ -648,7 +618,6 @@ namespace SandRibbon
                 details.Author = Globals.userInformation.credentials.name;
                 var connection = MeTLLib.ClientFactory.Connection();
                 details = connection.CreateConversation(details);
-                //ConversationDetailsProviderFactory.Provider.Create(details);
                 CommandManager.InvalidateRequerySuggested();
                 if (Commands.JoinConversation.CanExecute(details.Jid))
                     Commands.JoinConversation.ExecuteAsync(details.Jid);

@@ -35,6 +35,21 @@ namespace SandRibbon.Components.Canvas
             this.MouseLeave += mouseLeave;
             target = "";
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(setInkCanvasMode));
+            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
+        }
+        private void SetLayer(string layer)
+        {
+            if (layer.ToLower() == "view")
+            {
+                UseCustomCursor = true;
+                Cursor = Cursors.Hand;
+            }
+            else
+                try
+                {
+                    Commands.UpdateCursor.ExecuteAsync(Commands.UpdateCursor.lastValue());
+                }
+                catch (Exception) { UseCustomCursor = false; }
         }
         private void setInkCanvasMode(object _unused)
         {

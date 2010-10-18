@@ -64,8 +64,8 @@ namespace SandRibbon.Utils
             }
             catch (System.Runtime.InteropServices.ExternalException) {
                 App.Now("cursor generation exception");
+                return Cursors.Cross;
             }
-            return Cursors.Cross;
         }
         public static Cursor generateCursor(DrawingAttributes pen)
         {
