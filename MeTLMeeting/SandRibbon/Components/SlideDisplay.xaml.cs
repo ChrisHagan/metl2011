@@ -42,20 +42,6 @@ namespace SandRibbon.Components
             slides.ItemsSource = thumbnailList;
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
-            Commands.JoinConversation.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(jid =>
-            {
-                currentSlideIndex = 0;
-                slides.SelectedIndex = 0;
-                slides.ScrollIntoView(slides.SelectedIndex);
-                DelegateCommand<ConversationDetails> onConversationDetailsReady = null;
-                onConversationDetailsReady = new DelegateCommand<ConversationDetails>(details =>
-                                                  {
-                                                      Commands.UpdateConversationDetails.UnregisterCommand(onConversationDetailsReady);
-                                                      Commands.SneakInto.ExecuteAsync(details.Jid);
-                                                  });
-                Commands.UpdateConversationDetails.RegisterCommand(onConversationDetailsReady);
-
-            }));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(Display));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
@@ -164,6 +150,7 @@ namespace SandRibbon.Components
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
+            Commands.SneakInto.ExecuteAsync(details.Jid);
             Dispatcher.adoptAsync((Action)delegate
             {
                 if (Globals.me == details.Author)

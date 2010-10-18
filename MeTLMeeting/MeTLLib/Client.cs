@@ -334,7 +334,6 @@ namespace MeTLLib
             Action work = delegate
             {
                 wire.MoveTo(slide);
-                Trace.TraceWarning("CommandHandlers: " + Commands.allHandlers().Count().ToString());
                 Trace.TraceInformation(String.Format("Location: (conv:{0}),(slide:{1}),(slides:{2})",
                     Globals.conversationDetails.Title + " : " + Globals.conversationDetails.Jid,
                     Globals.slide,
@@ -346,7 +345,9 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                wire.MoveTo(conversationDetailsProvider.DetailsOf(conversation).Slides[0].id);
+                var cd = conversationDetailsProvider.DetailsOf(conversation);
+                events.receiveConversationDetails(cd);
+                //wire.MoveTo(cd.Slides[0].id);
             };
             tryIfConnected(work);
         }

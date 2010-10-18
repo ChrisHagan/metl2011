@@ -432,26 +432,18 @@ namespace SandRibbon
         }
         private void JoinConversation(string title)
         {
-            //ProviderMonitor.HealthCheck(() =>
-            //{
-            Commands.LoggedIn.ExecuteAsync(Globals.credentials.name);
-            //var activeConversation = MeTLLib.ClientFactory.Connection().location.activeConversation;
-            //var details = ConversationDetailsProviderFactory.Provider.DetailsOf(Globals.location.activeConversation);
             var details = Globals.conversationDetails;
-            //MeTLLib.ClientFactory.Connection().DetailsOf(Globals.location.activeConversation);
             RecentConversationProvider.addRecentConversation(details, Globals.me);
             if (details.Author == Globals.me)
                 Commands.SetPrivacy.ExecuteAsync("public");
             else
                 Commands.SetPrivacy.ExecuteAsync("private");
             applyPermissions(details.Permissions);
-            Commands.UpdateConversationDetails.ExecuteAsync(details);
             Logger.Log("Joined conversation " + title);
             Commands.RequerySuggested(Commands.SetConversationPermissions);
             Commands.SetLayer.ExecuteAsync("Sketch");
             if (automatedTest(details.Title))
                 ribbon.SelectedTab = ribbon.Tabs[1];
-            //});
         }
 
         private bool automatedTest(string conversationName)
