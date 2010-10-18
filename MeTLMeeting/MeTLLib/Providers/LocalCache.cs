@@ -15,9 +15,12 @@ namespace MeTLLib.Providers
 {
     public class ResourceCache
     {
-        [Inject] public HttpResourceProvider resourceProvider{private get; set;}
-        [Inject] public IResourceUploader resourceUploader{private get;set;}
-        [Inject] public MeTLServerAddress server { private get; set; }
+        [Inject]
+        public HttpResourceProvider resourceProvider { private get; set; }
+        [Inject]
+        public IResourceUploader resourceUploader { private get; set; }
+        [Inject]
+        public MeTLServerAddress server { private get; set; }
         public static readonly string cacheName = "resourceCache";
         private string cacheXMLfile = cacheName + "\\" + cacheName + ".xml";
         private Dictionary<string, System.Uri> ActualDict = null;
@@ -58,16 +61,26 @@ namespace MeTLLib.Providers
         //we keep 7 days worth of cached images, 
         public void CleanUpCache()
         {
-            var XDoc = "<CachedUris>";
-            foreach (var uri in Directory.GetFiles(cacheName + "\\"))
+            if (!System.IO.Directory.Exists(cacheName))
+                System.IO.Directory.CreateDirectory(cacheName);
+            using (XmlWriter writer = XmlWriter.Create(cacheXMLfile))
             {
-                if (Directory.GetLastAccessTime(uri).Ticks < DateTimeFactory.Now().Subtract(new TimeSpan(7, 0, 0, 0)).Ticks)
-                    File.Delete(cacheName + "\\" + uri);
-                else
-                    XDoc += string.Format("<CachedUri remote='{0}' local='{1}'/>", uri, RemoteSource(new Uri(uri, UriKind.RelativeOrAbsolute)));
+                var XDoc = new XDocument();
+                var root = new XElement("CachedUris");
+                XDoc.Add(root);
+
+                foreach (var dir in Directory.GetDirectories(cacheName + "\\"))
+                {
+                    foreach (var uri in Directory.GetFiles(cacheName + "\\" + dir))
+                    {
+                        if (Directory.GetLastAccessTime(uri).Ticks < DateTimeFactory.Now().Subtract(new TimeSpan(7, 0, 0, 0)).Ticks)
+                            File.Delete(cacheName + "\\" + dir + "\\" + uri);
+                        else
+                            root.Add(new XElement("CachedUri", new XAttribute("remote", RemoteSource(new Uri(uri, UriKind.RelativeOrAbsolute))), new XAttribute("local", CacheDict + "\\" + dir + "\\" + uri)));
+                    }
+                }
+                XDoc.Save(writer);
             }
-            XDoc += "</CachesUris>";
-            File.WriteAllText(cacheXMLfile, XDoc);
         }
         private void Add(string remoteUri, Uri localUri)
         {
@@ -100,9 +113,9 @@ namespace MeTLLib.Providers
                 if (!Directory.Exists(cacheName))
                     Directory.CreateDirectory(cacheName);
                 var splitString = remoteUri.ToString().Split('/').Reverse();
-                if (!Directory.Exists(cacheName + "\\"+splitString.ElementAt(1)))
-                    Directory.CreateDirectory(cacheName + "\\"+splitString.ElementAt(1));
-                var localUriString = cacheName + "\\" +splitString.ElementAt(1) + "\\" + splitString.ElementAt(0);
+                if (!Directory.Exists(cacheName + "\\" + splitString.ElementAt(1)))
+                    Directory.CreateDirectory(cacheName + "\\" + splitString.ElementAt(1));
+                var localUriString = cacheName + "\\" + splitString.ElementAt(1) + "\\" + splitString.ElementAt(0);
                 File.WriteAllBytes(localUriString, resourceProvider.secureGetData(remoteUri));
                 var localUri = new Uri(localUriString, UriKind.Relative);
                 Add(remoteUri.ToString(), localUri);
