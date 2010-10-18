@@ -45,13 +45,13 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
-            Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(exploreBubble));
+            Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(ExploreBubble));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
             Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
             Loaded += presentationSpaceLoaded;
         }
-        private void exploreBubble(ThoughtBubble thoughtBubble)
+        private void ExploreBubble(ThoughtBubble thoughtBubble)
         {
             var origin = new Point(0, 0);
             var marquee = new Rectangle();
@@ -96,7 +96,6 @@ namespace SandRibbon.Components
                                                        Bubble = thoughtBubble
                                                    });
         }
-
         private void presentationSpaceLoaded(object sender, RoutedEventArgs e)
         {
             //remove these if you want the on-canvas privacy buttons to disappear.  If you do that, you MUST uncomment the static declaration of currentPrivacyTools
@@ -119,13 +118,12 @@ namespace SandRibbon.Components
                             AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new SyncDisplay()));
                         });
         }
-        private void UpdateConversationDetails(ConversationDetails details)
+        private void UpdateConversationDetails(ConversationDetails _details)
         {
-            currentDetails = details;
             joiningConversation = false;
             try
             {
-                if (currentDetails.Author == Globals.me || currentDetails.Permissions.studentCanPublish)
+                if (currentDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
                     Commands.SetPrivacy.Execute(stack.handwriting.actualPrivacy);
             }
             catch (NotSetException) 
