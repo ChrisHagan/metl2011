@@ -466,7 +466,7 @@ namespace SandRibbon.Components.Canvas
             try
             {
                 Commands.ActualReportStrokeAttributes.ExecuteAsync(stroke.DrawingAttributes);
-                Commands.SendStroke.ExecuteAsync(new MeTLLib.DataTypes.TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke));
+                Commands.SendStroke.ExecuteAsync(new MeTLLib.DataTypes.TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke, stroke.tag().startingSum, stroke.tag().startingColor));
             }
             catch (NotSetException e)
             {

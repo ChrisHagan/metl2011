@@ -129,6 +129,12 @@ namespace MeTLLib.DataTypes
         {
             startingChecksum = StartingChecksum;
         }
+        public TargettedStroke(int Slide, string Author, string Target, string Privacy, Stroke Stroke, double StartingChecksum, string strokeStartingColor)
+            : this(Slide, Author, Target, Privacy, Stroke, StartingChecksum)
+        {
+            startingColor = strokeStartingColor;
+        }
+
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedStroke)) return false;
@@ -136,6 +142,7 @@ namespace MeTLLib.DataTypes
         }
         public Stroke stroke;
         public double startingChecksum;
+        public string startingColor;
     }
     public class TargettedBubbleContext : TargettedElement
     {
@@ -640,13 +647,14 @@ namespace MeTLLib.DataTypes
             private string highlighterTag = "highlight";
             private string sumTag = "checksum";
             private string startingSumTag = "startingSum";
+            private string startingColorTag = "startingColor";
 
             public TargettedStroke Stroke
             {
                 get
                 {
                     var stroke = new Stroke(stringToPoints(GetTag(pointsTag)), new DrawingAttributes { Color = stringToColor(GetTag(colorTag)) });
-                    stroke.tag(new StrokeTag(GetTag(authorTag), GetTag(privacyTag), GetTag(startingSumTag) == null ? stroke.sum().checksum : Double.Parse(GetTag(startingSumTag)), stroke.DrawingAttributes.Color.ToString(), Boolean.Parse(GetTag(highlighterTag))));
+
                     stroke.DrawingAttributes.IsHighlighter = Boolean.Parse(GetTag(highlighterTag));
                     stroke.DrawingAttributes.Width = Double.Parse(GetTag(thicknessTag));
                     stroke.DrawingAttributes.Height = Double.Parse(GetTag(thicknessTag));
@@ -657,6 +665,11 @@ namespace MeTLLib.DataTypes
                     else
                         if (HasTag(sumTag))
                             stroke.AddPropertyData(stroke.startingId(), Double.Parse(GetTag(sumTag)));
+                    stroke.tag(new StrokeTag(
+                        GetTag(authorTag), GetTag(privacyTag), 
+                        GetTag(startingSumTag) == null ? stroke.sum().checksum : Double.Parse(GetTag(startingSumTag)), 
+                        GetTag(startingColorTag) == null ? stringToColor(GetTag(colorTag)).ToString() : GetTag(startingColorTag), 
+                        Boolean.Parse(GetTag(highlighterTag))));
                     var targettedStroke = new TargettedStroke(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), stroke);
                     return targettedStroke;
                 }
@@ -681,6 +694,7 @@ namespace MeTLLib.DataTypes
                     this.SetTag(targetTag, value.target);
                     this.SetTag(privacyTag, value.privacy);
                     this.SetTag(slideTag, value.slide);
+                    this.SetTag(startingColorTag, value.startingColor );
                 }
             }
             public static string strokeToPoints(Stroke s)

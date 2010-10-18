@@ -17,7 +17,8 @@ using SandRibbon.Quizzing;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
-using SandRibbonObjects;
+//using SandRibbonObjects;
+using MeTLLib.DataTypes;
 using System.Diagnostics;
 using System.Windows.Shapes;
 using SandRibbon.Components.Sandpit;
@@ -37,13 +38,13 @@ namespace SandRibbon
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
         #endregion
-        public JabberWire.UserInformation userInformation = new JabberWire.UserInformation();
+        //public JabberWire.UserInformation userInformation = new JabberWire.UserInformation();
         private DelegateCommand<string> powerpointProgress;
         private DelegateCommand<string> powerPointFinished;
         private PowerPointLoader loader = new PowerPointLoader();
         private UndoHistory history = new UndoHistory();
         public ConversationDetails details;
-        private JabberWire wire;
+        private MeTLLib.Providers.Connection.JabberWire wire;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
         public static ScrollViewer MAIN_SCROLL;
@@ -54,7 +55,13 @@ namespace SandRibbon
         public Window1()
         {
             App.Now("Window 1 Constructor start");
-            ProviderMonitor.HealthCheck(DoConstructor);
+            //This following healthcheck is providing a slowdown that allows the window to instantiate correctly.
+            //We should fine out why it needs it at some point.  SimpleConversationSelector results in a XAML parse exception if it's not in.
+            ProviderMonitor.HealthCheck(() =>
+            {
+                DoConstructor();
+            });
+            Commands.AllStaticCommandsAreRegistered();
         }
         private void DoConstructor()
         {
@@ -67,9 +74,9 @@ namespace SandRibbon
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
             catch (Exception) { }
-            userInformation.policy = new JabberWire.Policy { isSynced = false, isAuthor = false };
+            Globals.userInformation.policy = new Policy(false, false);
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<SandRibbon.Utils.Connection.JabberWire.Credentials>(SetIdentity));
+            //Commands.ConnectWithAuthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithAuthenticatedCredentials));
             Commands.PowerpointFinished.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
@@ -82,7 +89,6 @@ namespace SandRibbon
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerPoint, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(CreateConversation));
-            Commands.PreDeleteConversation.RegisterCommand(new DelegateCommand<object>(DeleteConversation, mustBeAuthor));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
@@ -117,7 +123,7 @@ namespace SandRibbon
             Commands.ActualReportStrokeAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedStrokeAttributesAccordingToZoom));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
             Commands.ShowEditSlidesDialog.RegisterCommand(new DelegateCommand<object>(ShowEditSlidesDialog, mustBeInConversation));
-            Commands.SetLayer.Execute("Sketch");
+            Commands.SetLayer.ExecuteAsync("Sketch");
             Commands.MoveCanvasByDelta.RegisterCommand(new DelegateCommand<Point>(GrabMove));
             Commands.BlockInput.RegisterCommand(new DelegateCommand<string>(BlockInput));
             Commands.UnblockInput.RegisterCommand(new DelegateCommand<object>(UnblockInput));
@@ -126,7 +132,7 @@ namespace SandRibbon
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-
+            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
@@ -140,8 +146,6 @@ namespace SandRibbon
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
-            if (SmartBoardMeTLAlreadyLoaded)
-                checkIfSmartboard();
             App.Now("Restoring settings");
             WorkspaceStateProvider.RestorePreviousSettings();
             App.Now("Started MeTL");
@@ -176,15 +180,17 @@ namespace SandRibbon
         }
         private void SetInkCanvasMode(object unused)
         {
-            Commands.SetLayer.Execute("Sketch");
+            Commands.SetLayer.ExecuteAsync("Sketch");
         }
         private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
         {
             var adorner = ((FrameworkElement)canvasViewBox);
-            var adornerRect = new Rect(canvas.TranslatePoint(info.ElementBounds.TopLeft, canvasViewBox), canvas.TranslatePoint(info.ElementBounds.BottomRight, canvasViewBox));
+            Dispatcher.adoptAsync(()=>{
+                var adornerRect = new Rect(canvas.TranslatePoint(info.ElementBounds.TopLeft, canvasViewBox), canvas.TranslatePoint(info.ElementBounds.BottomRight, canvasViewBox));
             if (adornerRect.Right < 0 || adornerRect.Right > canvasViewBox.ActualWidth
                 || adornerRect.Top < 0 || adornerRect.Top > canvasViewBox.ActualHeight) return;
             AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(info.privacyChoice, adornerRect)));
+            });
         }
         private Adorner[] getPrivacyAdorners()
         {
@@ -219,7 +225,7 @@ namespace SandRibbon
         }
         private void ProxyMirrorPresentationSpace(object unused)
         {
-            Commands.MirrorPresentationSpace.Execute(this);
+            Commands.MirrorPresentationSpace.ExecuteAsync(this);
         }
         private void GrabMove(Point moveDelta)
         {
@@ -231,16 +237,16 @@ namespace SandRibbon
             {
                 if (moveDelta.X != 0)
                 {
-                    var HZoomRatio = (scroll.ExtentWidth/scroll.Width);
-                    scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + (moveDelta.X*HZoomRatio));
+                    var HZoomRatio = (scroll.ExtentWidth / scroll.Width);
+                    scroll.ScrollToHorizontalOffset(scroll.HorizontalOffset + (moveDelta.X * HZoomRatio));
                 }
                 if (moveDelta.Y != 0)
                 {
-                    var VZoomRatio = (scroll.ExtentHeight/scroll.Height);
-                    scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y*VZoomRatio);
+                    var VZoomRatio = (scroll.ExtentHeight / scroll.Height);
+                    scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y * VZoomRatio);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {//out of range exceptions and the like 
             }
         }
@@ -257,17 +263,17 @@ namespace SandRibbon
         private void AdjustReportedDrawingAttributesAccordingToZoom(object attributes)
         {
             var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
-            if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN) 
             if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN)
-                return;
+                if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN)
+                    return;
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
             var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
             var desiredZoom = zoomIndependentAttributes.Height / currentZoom;
             zoomIndependentAttributes.Height = correctZoom(desiredZoom);
             zoomIndependentAttributes.Width = correctZoom(desiredZoom);
-            Commands.UpdateCursor.Execute(CursorExtensions.generateCursor(zoomIndependentAttributes));
-            Commands.ReportDrawingAttributes.Execute(zoomIndependentAttributes);
+            Commands.UpdateCursor.ExecuteAsync(CursorExtensions.generateCursor(zoomIndependentAttributes));
+            Commands.ReportDrawingAttributes.ExecuteAsync(zoomIndependentAttributes);
         }
         private void AdjustReportedStrokeAttributesAccordingToZoom(object attributes)
         {
@@ -280,7 +286,7 @@ namespace SandRibbon
             var desiredZoom = zoomIndependentAttributes.Height / currentZoom;
             zoomIndependentAttributes.Height = correctZoom(desiredZoom);
             zoomIndependentAttributes.Width = correctZoom(desiredZoom);
-            Commands.ReportStrokeAttributes.Execute(zoomIndependentAttributes);
+            Commands.ReportStrokeAttributes.ExecuteAsync(zoomIndependentAttributes);
         }
         private double correctZoom(double desiredZoom)
         {
@@ -307,7 +313,7 @@ namespace SandRibbon
             var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
             var desiredZoom = zoomCorrectPenSize * currentZoom;
-            Commands.ActualChangePenSize.Execute(correctZoom(desiredZoom));
+            Commands.ActualChangePenSize.ExecuteAsync(correctZoom(desiredZoom));
         }
         private void AdjustDrawingAttributesAccordingToZoom(object attributes)
         {
@@ -318,8 +324,8 @@ namespace SandRibbon
             var desiredZoom = zoomCorrectAttributes.Height * currentZoom;
             zoomCorrectAttributes.Width = correctZoom(desiredZoom);
             zoomCorrectAttributes.Height = correctZoom(desiredZoom);
-            Commands.UpdateCursor.Execute(CursorExtensions.generateCursor(zoomCorrectAttributes));
-            Commands.ActualSetDrawingAttributes.Execute(zoomCorrectAttributes);
+            Commands.UpdateCursor.ExecuteAsync(CursorExtensions.generateCursor(zoomCorrectAttributes));
+            Commands.ActualSetDrawingAttributes.ExecuteAsync(zoomCorrectAttributes);
         }
         private void SetTutorialVisibility(object visibilityObject)
         {
@@ -337,17 +343,12 @@ namespace SandRibbon
         private void CreateConversation(object _unused)
         {
             ShowPowerpointBlocker("Creating Conversation Dialog Open");
-            Commands.CreateConversationDialog.Execute(null);
-        }
-        private void DeleteConversation(object _unused)
-        {
-            ShowPowerpointBlocker("Delete Conversation Dialog Open");
-            Commands.DeleteConversation.Execute(null);
+            Commands.CreateConversationDialog.ExecuteAsync(null);
         }
         private void EditConversation(object _unused)
         {
             ShowPowerpointBlocker("Editing Conversation Dialog Open");
-            Commands.EditConversation.Execute(null);
+            Commands.EditConversation.ExecuteAsync(Globals.location.activeConversation);
         }
         private void BlockInput(string message)
         {
@@ -357,13 +358,13 @@ namespace SandRibbon
         {
             Dispatcher.adoptAsync((HideProgressBlocker));
         }
-        private void SetIdentity(SandRibbon.Utils.Connection.JabberWire.Credentials credentials)
+        private void ConnectWithAuthenticatedCredentials(MeTLLib.DataTypes.Credentials credentials)
         {
-            connect(credentials.name, credentials.password, 0, null);
-            var conversations = ConversationDetailsProviderFactory.Provider.ListConversations();
+            //connect(credentials.name, credentials.password, 0, null);
             Commands.AllStaticCommandsAreRegistered();
             Commands.RequerySuggested();
             Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);
+            Commands.SetIdentity.ExecuteAsync(credentials);
         }
         private void SetZoomRect(Rectangle viewbox)
         {
@@ -383,20 +384,6 @@ namespace SandRibbon
                     (p.MainWindowTitle.StartsWith("S15") || p.MainWindowTitle.Equals("")));
             }
         }
-        public void checkIfSmartboard()
-        {
-            var path = "C:\\Program Files\\MeTL\\boardIdentity.txt";
-            if (!File.Exists(path)) return;
-            var myFile = new StreamReader(path);
-            var username = myFile.ReadToEnd();
-            MessageBox.Show("Logging in as {0}", username);
-            JabberWire.SwitchServer("staging");
-            Dispatcher.adoptAsync(delegate
-            {
-                Title = username + " MeTL waiting for wakeup";
-            });
-            Commands.SetIdentity.Execute(new JabberWire.Credentials { authorizedGroups = new List<JabberWire.AuthorizedGroup>(), name = username, password = "examplePassword" });
-        }
         private static object reconnectionLock = new object();
         private static bool reconnecting = false;
         private void AddWindowEffect(object _o)
@@ -406,7 +393,8 @@ namespace SandRibbon
         }
         private void RemoveWindowEffect(object _o)
         {
-            CanvasBlocker.Visibility = Visibility.Collapsed;
+            Dispatcher.adoptAsync(() =>
+            CanvasBlocker.Visibility = Visibility.Collapsed);
         }
         private void ReceiveWormMove(string _move)
         {
@@ -422,8 +410,8 @@ namespace SandRibbon
                         {
                             InputBlocker.Visibility = Visibility.Collapsed;
                             reconnecting = false;
-                            wire.JoinConversation(userInformation.location.activeConversation);
-                            Commands.MoveTo.Execute(userInformation.location.currentSlide);
+                            wire.JoinConversation(Globals.userInformation.location.activeConversation);
+                            Commands.MoveTo.ExecuteAsync(Globals.userInformation.location.currentSlide);
                         }
                     }
                     catch (Exception e)
@@ -435,7 +423,8 @@ namespace SandRibbon
         }
         private void ExecuteMoveTo(int slide)
         {
-            ProviderMonitor.HealthCheck(() => MoveTo(slide));
+            MoveTo(slide);
+            // ProviderMonitor.HealthCheck(() => MoveTo(slide));
         }
         private bool CanExecuteMoveTo(int slide)
         {
@@ -443,23 +432,22 @@ namespace SandRibbon
         }
         private void JoinConversation(string title)
         {
-            ProviderMonitor.HealthCheck(() =>
-            {
-                Commands.LoggedIn.Execute(userInformation.credentials.name);
-                var details = ConversationDetailsProviderFactory.Provider.DetailsOf(userInformation.location.activeConversation);
-                RecentConversationProvider.addRecentConversation(details, Globals.me);
-                if (details.Author == Globals.me)
-                    Commands.SetPrivacy.Execute("public");
-                else
-                    Commands.SetPrivacy.Execute("private");
-                applyPermissions(details.Permissions);
-                Commands.UpdateConversationDetails.Execute(details);
-                Logger.Log("Joined conversation " + title);
-                Commands.RequerySuggested(Commands.SetConversationPermissions);
-                Commands.SetLayer.Execute("Sketch");
-                if (automatedTest(details.Title))
-                    ribbon.SelectedTab = ribbon.Tabs[1];
-            });
+<<<<<<< my
+            Commands.LoggedIn.ExecuteAsync(Globals.credentials.name);
+=======
+>>>>>>> your
+            var details = Globals.conversationDetails;
+            RecentConversationProvider.addRecentConversation(details, Globals.me);
+            if (details.Author == Globals.me)
+                Commands.SetPrivacy.ExecuteAsync("public");
+            else
+                Commands.SetPrivacy.ExecuteAsync("private");
+            applyPermissions(details.Permissions);
+            Logger.Log("Joined conversation " + title);
+            Commands.RequerySuggested(Commands.SetConversationPermissions);
+            Commands.SetLayer.ExecuteAsync("Sketch");
+            if (automatedTest(details.Title))
+                ribbon.SelectedTab = ribbon.Tabs[1];
         }
 
         private bool automatedTest(string conversationName)
@@ -470,12 +458,12 @@ namespace SandRibbon
         private string messageFor(ConversationDetails details)
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
-            return string.Format("{3} is in {0}'s \"{1}\", currently in {2} style", details.Author, details.Title, permissionLabel, userInformation.credentials.name);
+            return string.Format("{3} is in {0}'s \"{1}\", currently in {2} style", details.Author, details.Title, permissionLabel, Globals.userInformation.credentials.name);
         }
         private void MoveTo(int slide)
         {
-            if ((userInformation.policy.isAuthor && userInformation.policy.isSynced) || (Globals.synched && userInformation.policy.isAuthor))
-                Commands.SendSyncMove.Execute(slide);
+            if ((Globals.userInformation.policy.isAuthor && Globals.userInformation.policy.isSynced) || (Globals.synched && Globals.userInformation.policy.isAuthor))
+                Commands.SendSyncMove.ExecuteAsync(slide);
             Dispatcher.adoptAsync(delegate
                                      {
                                          if (canvas.Visibility == Visibility.Collapsed)
@@ -491,11 +479,12 @@ namespace SandRibbon
 
         private void Relogin(object obj)
         {
+            return;
             lock (reconnectionLock)
             {
                 showReconnectingDialog();
                 reconnecting = true;
-                connect(userInformation.credentials.name, userInformation.credentials.password, userInformation.location.currentSlide, userInformation.location.activeConversation);
+                connect(Globals.userInformation.credentials.name, Globals.userInformation.credentials.password, Globals.userInformation.location.currentSlide, Globals.userInformation.location.activeConversation);
             }
         }
         private void showReconnectingDialog()
@@ -524,18 +513,22 @@ namespace SandRibbon
             ProgressDisplay.Children.Add(sp);
             InputBlocker.Visibility = Visibility.Visible;
         }
-        private void moveToQuiz(QuizQuestion quiz)
+        private void moveToQuiz(MeTLLib.DataTypes.QuizQuestion quiz)
         {
         }
 
         private void ShowTutorial()
         {
-            TutorialLayer.Visibility = Visibility.Visible;
+            Dispatcher.adoptAsync(() =>
+            TutorialLayer.Visibility = Visibility.Visible);
         }
         private void HideTutorial()
         {
-            if (userInformation.location != null && !String.IsNullOrEmpty(userInformation.location.activeConversation))
-                TutorialLayer.Visibility = Visibility.Collapsed;
+            if (Globals.userInformation.location != null && !String.IsNullOrEmpty(Globals.userInformation.location.activeConversation))
+                Dispatcher.adoptAsync(() =>
+                {
+                    TutorialLayer.Visibility = Visibility.Collapsed;
+                });
         }
 
         private bool mustBeLoggedIn(object _arg)
@@ -564,7 +557,10 @@ namespace SandRibbon
         {
             try
             {
-                return Globals.location.activeConversation != null;
+                if (Globals.location.activeConversation != null && Globals.conversationDetails.Subject != "Deleted")
+                    return true;
+                return false;
+
             }
             catch (NotSetException)
             {
@@ -586,7 +582,8 @@ namespace SandRibbon
         {
             try
             {
-                if (details.Jid != Globals.location.activeConversation) return;
+                if (String.IsNullOrEmpty(details.Jid) || details.Jid != Globals.conversationDetails.Jid) return;
+                //if (details.Jid != Globals.location.activeConversation) return;
             }
             catch (NotSetException)
             {
@@ -594,11 +591,11 @@ namespace SandRibbon
             }
             Dispatcher.adoptAsync(delegate
             {
-                userInformation.location.availableSlides = details.Slides.Select(s => s.id).ToList();
+                Globals.userInformation.location.availableSlides = details.Slides.Select(s => s.id).ToList();
                 HideTutorial();
                 UpdateTitle();
-                var isAuthor = (details.Author != null) && details.Author == userInformation.credentials.name;
-                userInformation.policy.isAuthor = isAuthor;
+                var isAuthor = (details.Author != null) && details.Author == Globals.userInformation.credentials.name;
+                Globals.userInformation.policy.isAuthor = isAuthor;
                 Commands.RequerySuggested();
             });
         }
@@ -629,20 +626,20 @@ namespace SandRibbon
         }
         private void connect(string username, string pass, int location, string conversation)
         {
-            if (wire == null)
-            {
-                userInformation.location = new JabberWire.Location { currentSlide = location, activeConversation = conversation };
-                userInformation.credentials = new JabberWire.Credentials { name = username, password = pass };
-                wire = new JabberWire(userInformation.credentials);
-                wire.Login(userInformation.location);
-            }
-            else
-            {
-                userInformation.location.activeConversation = conversation;
-                userInformation.location.currentSlide = location;
-                wire.Reset("Window1");
-            }
-            loader.wire = wire;
+            /*   if (wire == null)
+               {
+                   Globals.userInformation.location = new Location { currentSlide = location, activeConversation = conversation };
+                   Globals.userInformation.credentials = new Credentials { name = username, password = pass };
+                   wire = new JabberWire(Globals.userInformation.credentials);
+                   wire.Login(Globals.userInformation.location);
+               }
+               else
+               {
+                   Globals.userInformation.location.activeConversation = conversation;
+                   Globals.userInformation.location.currentSlide = location;
+                   wire.Reset("Window1");
+               }
+               loader.wire = wire;*/
         }
         private void createConversation(object detailsObject)
         {
@@ -652,11 +649,13 @@ namespace SandRibbon
             {
                 if (details.Tag == null)
                     details.Tag = "unTagged";
-                details.Author = userInformation.credentials.name;
-                details = ConversationDetailsProviderFactory.Provider.Create(details);
+                details.Author = Globals.userInformation.credentials.name;
+                var connection = MeTLLib.ClientFactory.Connection();
+                details = connection.CreateConversation(details);
+                //ConversationDetailsProviderFactory.Provider.Create(details);
                 CommandManager.InvalidateRequerySuggested();
                 if (Commands.JoinConversation.CanExecute(details.Jid))
-                    Commands.JoinConversation.Execute(details.Jid);
+                    Commands.JoinConversation.ExecuteAsync(details.Jid);
             }
         }
         private void debugTrue(object sender, CanExecuteRoutedEventArgs e)
@@ -674,7 +673,7 @@ namespace SandRibbon
         }
         private void setSync(object _obj)
         {
-            userInformation.policy.isSynced = !userInformation.policy.isSynced;
+            Globals.userInformation.policy.isSynced = !Globals.userInformation.policy.isSynced;
         }
         private void OriginalView(object _unused)
         {
@@ -706,10 +705,13 @@ namespace SandRibbon
         }
         private void ShowPowerpointBlocker(string explanation)
         {
-            showPowerPointProgress(explanation);
-            Canvas.SetTop(ProgressDisplay, (canvas.ActualHeight / 2));
-            Canvas.SetLeft(ProgressDisplay, (ActualWidth / 2) - 100);
-            InputBlocker.Visibility = Visibility.Visible;
+            Dispatcher.adoptAsync(() =>
+            {
+                showPowerPointProgress(explanation);
+                Canvas.SetTop(ProgressDisplay, (canvas.ActualHeight / 2));
+                Canvas.SetLeft(ProgressDisplay, (ActualWidth / 2) - 100);
+                InputBlocker.Visibility = Visibility.Visible;
+            });
         }
         private void HideProgressBlocker()
         {
@@ -904,7 +906,8 @@ namespace SandRibbon
                 Permissions.MEETING_PERMISSIONS})
                 if (s.Label == style)
                     details.Permissions = s;
-            ConversationDetailsProviderFactory.Provider.Update(details);
+            MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+            //ConversationDetailsProviderFactory.Provider.Update(details);
             try
             {
                 details = Globals.conversationDetails;
@@ -917,21 +920,23 @@ namespace SandRibbon
                                       })
                     if (s.Label == style)
                         details.Permissions = s;
-                ConversationDetailsProviderFactory.Provider.Update(details);
+                var client = MeTLLib.ClientFactory.Connection();
+                client.UpdateConversationDetails(details);
+                //ConversationDetailsProviderFactory.Provider.Update(details);
             }
-            catch(NotSetException e)
+            catch (NotSetException e)
             {
                 return;
             }
         }
         private bool CanSetConversationPermissions(object _style)
         {
-            return details != null && userInformation.credentials.name == details.Author;
+            return details != null && Globals.userInformation.credentials.name == details.Author;
             try
             {
-                return Globals.conversationDetails != null && userInformation.credentials.name == Globals.conversationDetails.Author;
+                return Globals.conversationDetails != null && Globals.userInformation.credentials.name == Globals.conversationDetails.Author;
             }
-            catch(NotSetException e)
+            catch (NotSetException e)
             {
                 return false;
             }
@@ -962,9 +967,12 @@ namespace SandRibbon
         public void ClearUI()
         {
             Commands.UnregisterAllCommands();
-            ribbon.Tabs.Clear();
-            privacyTools.Children.Clear();
-            RHSDrawerDefinition.Width = new GridLength(0);
+            Dispatcher.adoptAsync(() =>
+            {
+                ribbon.Tabs.Clear();
+                privacyTools.Children.Clear();
+                RHSDrawerDefinition.Width = new GridLength(0);
+            });
         }
         private GridSplitter split()
         {
@@ -979,58 +987,61 @@ namespace SandRibbon
         }
         public void SetupUI(PedagogyLevel level)
         {
-            List<FrameworkElement> homeGroups = new List<FrameworkElement>();
-            List<FrameworkElement> tabs = new List<FrameworkElement>();
-            foreach (var i in Enumerable.Range(0, level.code + 1))
+            Dispatcher.adoptAsync(() =>
             {
-                switch (i)
+                List<FrameworkElement> homeGroups = new List<FrameworkElement>();
+                List<FrameworkElement> tabs = new List<FrameworkElement>();
+                foreach (var i in Enumerable.Range(0, level.code + 1))
                 {
-                    case 0:
-                        ClearUI();
-                        homeGroups.Add(new EditingOptions());
-                        //homeGroups.Add(new PenColors());
-                        break;
-                    case 1:
-                        tabs.Add(new Tabs.Quizzes());
-                        tabs.Add(new Tabs.Submissions());
-                        tabs.Add(new Tabs.Attachments());
-                        homeGroups.Add(new PrivacyToolsHost());
-                        homeGroups.Add(new EditingModes());
-                        //homeGroups.Add(new ToolBox());
-                        //homeGroups.Add(new TextTools());
-                        break;
-                    case 2:
-                        ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
-                        RHSDrawerDefinition.Width = new GridLength(180);
-                        homeGroups.Add(new ZoomControlsHost());
-                        homeGroups.Add(new MiniMap());
-                        break;
-                    case 3:
-                        homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
-                        //privacyTools.Children.Add(new PrivacyTools());
-                        //homeGroups.Add(new Notes());
-                        break;
-                    case 4:
-                        homeGroups.Add(new Notes());
-                        tabs.Add(new Tabs.Analytics());
-                        tabs.Add(new Tabs.Plugins());
-                        break;
-                    default:
-                        break;
+                    switch (i)
+                    {
+                        case 0:
+                            ClearUI();
+                            homeGroups.Add(new EditingOptions());
+                            //homeGroups.Add(new PenColors());
+                            break;
+                        case 1:
+                            tabs.Add(new Tabs.Quizzes());
+                            tabs.Add(new Tabs.Submissions());
+                            tabs.Add(new Tabs.Attachments());
+                            homeGroups.Add(new PrivacyToolsHost());
+                            homeGroups.Add(new EditingModes());
+                            //homeGroups.Add(new ToolBox());
+                            //homeGroups.Add(new TextTools());
+                            break;
+                        case 2:
+                            ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
+                            RHSDrawerDefinition.Width = new GridLength(180);
+                            homeGroups.Add(new ZoomControlsHost());
+                            homeGroups.Add(new MiniMap());
+                            break;
+                        case 3:
+                            homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
+                            //privacyTools.Children.Add(new PrivacyTools());
+                            //homeGroups.Add(new Notes());
+                            break;
+                        case 4:
+                            homeGroups.Add(new Notes());
+                            tabs.Add(new Tabs.Analytics());
+                            tabs.Add(new Tabs.Plugins());
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
-            var home = new Tabs.Home { DataContext = scroll };
-            homeGroups.Sort(new PreferredDisplayIndexComparer());
-            foreach (var group in homeGroups)
-                home.Items.Add((RibbonGroup)group);
-            tabs.Add(home);
-            tabs.Sort(new PreferredDisplayIndexComparer());
-            foreach (var tab in tabs)
-                ribbon.Tabs.Add((RibbonTab)tab);
-            ribbon.SelectedTab = home;
+                var home = new Tabs.Home { DataContext = scroll };
+                homeGroups.Sort(new PreferredDisplayIndexComparer());
+                foreach (var group in homeGroups)
+                    home.Items.Add((RibbonGroup)group);
+                tabs.Add(home);
+                tabs.Sort(new PreferredDisplayIndexComparer());
+                foreach (var tab in tabs)
+                    ribbon.Tabs.Add((RibbonTab)tab);
+                ribbon.SelectedTab = home;
+            });
             CommandManager.InvalidateRequerySuggested();
             Commands.RequerySuggested();
-            Commands.SetLayer.Execute("Sketch");
+            Commands.SetLayer.ExecuteAsync("Sketch");
         }
         private class PreferredDisplayIndexComparer : IComparer<FrameworkElement>
         {
