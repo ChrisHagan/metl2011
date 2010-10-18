@@ -42,6 +42,7 @@ namespace SandRibbon
         public static CompositeCommand UserVisibility = new CompositeCommand();
         public static CompositeCommand RemovePrivacyAdorners = new CompositeCommand();
         public static CompositeCommand UpdateCursor = new CompositeCommand();
+        public static CompositeCommand UpdateCursorWithAttributes = new CompositeCommand();
         public static CompositeCommand MirrorVideo = new CompositeCommand();
         public static CompositeCommand VideoMirrorRefreshRectangle = new CompositeCommand();
 

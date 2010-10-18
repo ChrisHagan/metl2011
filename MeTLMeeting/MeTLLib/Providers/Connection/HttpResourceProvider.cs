@@ -12,6 +12,7 @@ namespace MeTLLib.Providers.Connection
     {
         protected override WebRequest GetWebRequest(Uri address)
         {
+            //Permissions failure appeared here.
             WebRequest request = (WebRequest)base.GetWebRequest(address);
             request.Timeout = int.MaxValue;
             return request;
