@@ -56,12 +56,11 @@ namespace MeTLLib.DataTypes
     }
     public struct StrokeTag
     {
-        public StrokeTag(string Author, string Privacy, double StartingSum, string StartingColor, bool IsHighlighter)
+        public StrokeTag(string Author, string Privacy, double StartingSum, bool IsHighlighter)
         {
             author = Author;
             privacy = Privacy;
             startingSum = StartingSum;
-            startingColor = StartingColor;
             isHighlighter = IsHighlighter;
         }
         public bool ValueEquals(object obj)
@@ -71,13 +70,11 @@ namespace MeTLLib.DataTypes
             return ((foreignStrokeTag.author == author)
                 && (foreignStrokeTag.isHighlighter == isHighlighter)
                 && (foreignStrokeTag.privacy == privacy)
-                && (foreignStrokeTag.startingSum == startingSum)
-                && (foreignStrokeTag.startingColor == startingColor));
+                && (foreignStrokeTag.startingSum == startingSum));
         }
         public string author;
         public string privacy;
         public double startingSum;
-        public string startingColor;
         public bool isHighlighter;
     }
     public struct StrokeChecksum
@@ -169,14 +166,13 @@ namespace MeTLLib.DataTypes
         private static Guid STARTINGCHECKSUM = Guid.NewGuid();
         private static Guid STARTING_COLOR = Guid.NewGuid();
         private static Guid IS_HIGHLIGHTER = Guid.NewGuid();
-
+        private static readonly string NONPERSISTENT_STROKE = "nonPersistent";
         public static StrokeTag tag(this Stroke stroke)
         {
             return new StrokeTag
                        {
                            author = (string) stroke.GetPropertyData(STROKE_TAG_GUID),
                            privacy = (string) stroke.GetPropertyData(STROKE_PRIVACY_GUID),
-                           startingColor = (string) stroke.GetPropertyData(STARTING_COLOR),
                            isHighlighter = (bool) stroke.GetPropertyData(IS_HIGHLIGHTER)
                        };
         }
@@ -184,11 +180,25 @@ namespace MeTLLib.DataTypes
         {
             stroke.AddPropertyData(STROKE_TAG_GUID, tag.author);
             stroke.AddPropertyData(STROKE_PRIVACY_GUID, tag.privacy);
-            stroke.AddPropertyData(STARTING_COLOR, tag.startingColor.ToString());
             stroke.AddPropertyData(IS_HIGHLIGHTER, tag.isHighlighter);
             return tag;
         }
         private static Guid CHECKSUM = Guid.NewGuid();
+        public static void doNotPersist(this Stroke stroke)
+        {
+            var oldTag = stroke.tag();
+            var newTag = new StrokeTag(
+                NONPERSISTENT_STROKE,
+                oldTag.privacy,
+                oldTag.startingSum,
+                oldTag.isHighlighter
+                );
+            stroke.tag(newTag);
+        }
+        public static bool shouldPersist(this Stroke stroke)
+        {
+            return stroke.tag().author != NONPERSISTENT_STROKE;
+        }
         public static Guid sumId(this Stroke stroke)
         {
             return StrokeExtensions.CHECKSUM;

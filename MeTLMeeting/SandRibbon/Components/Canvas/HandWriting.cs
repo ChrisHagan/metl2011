@@ -24,6 +24,7 @@ using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components.Canvas
 {
+
     public class HandWriting : AbstractCanvas
     {
 
@@ -121,8 +122,8 @@ namespace SandRibbon.Components.Canvas
             Commands.UpdateCursor.RegisterCommand(new DelegateCommand<Cursor>(UpdateCursor));
             Commands.SetPenColor.RegisterCommand(colorChangedCommand);
             Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
-            Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<IEnumerable<MeTLLib.DataTypes.TargettedStroke>>(ReceiveStrokes));
+            Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<MeTLLib.DataTypes.TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(MoveTo));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
@@ -284,7 +285,7 @@ namespace SandRibbon.Components.Canvas
                         .Where(s => s.privacy == "public" || (s.author == Globals.me && me != "projector"))
                         //    when uncommenting line above, remove line below. WENDYS EXPERIMENT!
                         //    .Where(s => s.author == Globals.me)
-                        .Select(s => s.stroke)
+                        .Select(s => (Stroke)new PrivateAwareStroke(s.stroke))
                         .Where(s => !(this.strokes.Contains(s.sum()))));
                     Strokes.Add(newStrokes);
                     this.strokes.AddRange(newStrokes.Select(s => s.sum()));
@@ -343,9 +344,13 @@ namespace SandRibbon.Components.Canvas
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
+            var privateAwareStroke = new PrivateAwareStroke(e.Stroke);
+            privateAwareStroke.tag(new MeTLLib.DataTypes.StrokeTag { author = Globals.me, privacy = Globals.privacy, isHighlighter = e.Stroke.DrawingAttributes.IsHighlighter });
+            Strokes.Remove(e.Stroke);
+            privateAwareStroke.startingSum(privateAwareStroke.sum().checksum);
+            Strokes.Add(privateAwareStroke);
+            doMyStrokeAdded(privateAwareStroke);
             Commands.RequerySuggested(Commands.Undo);
-            e.Stroke.startingSum(e.Stroke.sum().checksum);
-            doMyStrokeAdded(e.Stroke);
         }
         private void erasingStrokes(object sender, InkCanvasStrokeErasingEventArgs e)
         {
@@ -457,20 +462,15 @@ namespace SandRibbon.Components.Canvas
         {
             if (!strokes.Contains(stroke.sum()))
                 strokes.Add(stroke.sum());
-            stroke.tag(new MeTLLib.DataTypes.StrokeTag { author = Globals.me, privacy = thisPrivacy, startingColor = stroke.DrawingAttributes.Color.ToString(), isHighlighter = stroke.DrawingAttributes.IsHighlighter });
+            stroke.tag(new MeTLLib.DataTypes.StrokeTag { author = Globals.me, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
             SendTargettedStroke(stroke, thisPrivacy);
             ApplyPrivacyStylingToStroke(stroke, thisPrivacy);
         }
         public void SendTargettedStroke(Stroke stroke, string thisPrivacy)
         {
-            try
-            {
-                Commands.ActualReportStrokeAttributes.ExecuteAsync(stroke.DrawingAttributes);
-                Commands.SendStroke.ExecuteAsync(new MeTLLib.DataTypes.TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke, stroke.tag().startingSum, stroke.tag().startingColor));
-            }
-            catch (NotSetException e)
-            {
-            }
+            if (!stroke.shouldPersist()) return;
+            Commands.ActualReportStrokeAttributes.ExecuteAsync(stroke.DrawingAttributes);
+            Commands.SendStroke.ExecuteAsync(new MeTLLib.DataTypes.TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke, stroke.tag().startingSum));
         }
         public void FlushStrokes()
         {
@@ -506,7 +506,6 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             foreach (var stroke in newStrokes)
             {
-                stroke.DrawingAttributes.Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor);
                 doMyStrokeAdded(stroke, stroke.tag().privacy);
             }
             addAdorners();
@@ -564,76 +563,31 @@ namespace SandRibbon.Components.Canvas
         }
         private void RemovePrivacyStylingFromStroke(Stroke stroke)
         {
-            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == MeTLLib.DataTypes.Permissions.LECTURE_PERMISSIONS) return;
-            try
-            {
-                if (stroke.tag().startingColor != null)
-                {
-
-                    stroke.DrawingAttributes.Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor);
-                    if (privacyDictionary.Keys.Where(k => k == stroke.sum().checksum).Count() == 0) return;
-                    stroke.DrawingAttributes.IsHighlighter =
-                        privacyDictionary[stroke.sum().checksum].tag().isHighlighter;
-                    Strokes.Remove(privacyDictionary[stroke.sum().checksum]);
-                    privacyDictionary.Remove(stroke.sum().checksum);
-                }
-            }
-            catch (Exception e)
-            { }
+         
+        
         }
         private void addPrivacyStylingToStroke(Stroke stroke)
         {
-            if (privacyDictionary.Keys.Where(k => k == stroke.sum().checksum).Count() != 0) return;
-            var privacyStroke = new Stroke(stroke.StylusPoints);
-            privacyStroke.tag(new MeTLLib.DataTypes.StrokeTag { author = "Privacy", privacy = "private", startingColor = stroke.DrawingAttributes.Color.ToString(), isHighlighter = stroke.DrawingAttributes.IsHighlighter });
-            privacyStroke.DrawingAttributes = new DrawingAttributes
-                                                  {
-                                                      Color = (Color)ColorConverter.ConvertFromString(stroke.tag().startingColor),
-                                                      Width = stroke.DrawingAttributes.Width * 2,
-                                                      Height = stroke.DrawingAttributes.Height * 2,
-                                                      IsHighlighter = true
-                                                  };
-            stroke.DrawingAttributes.Color = Colors.White;
-            stroke.DrawingAttributes.IsHighlighter = false;
-            privacyStroke.startingSum(privacyStroke.sum().checksum);
-            privacyDictionary[stroke.sum().checksum] = (privacyStroke);
-            Strokes.Add(privacyStroke);
+
         }
         public override void showPrivateContent()
         {
-            var currentStrokes = Strokes.Clone();
-            foreach (Stroke stroke in currentStrokes)
-            {
-                if (stroke.tag().privacy == "private")
-                {
-                    Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First().DrawingAttributes.Color = MeTLStanzas.Ink.stringToColor(stroke.tag().startingColor);
-                    if (Globals.isAuthor)
-                        ApplyPrivacyStylingToStroke(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First(), stroke.tag().privacy);
-                }
-            }
         }
         public override void hidePrivateContent()
         {
-            var validStrokes = Strokes.Where(s => s.tag().author.ToLower() != "privacy").ToList();
-            foreach (Stroke stroke in validStrokes)
-            {
-                if (stroke.tag().privacy == "private")
-                {
-                    var selectedStroke = Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First();
-                    RemovePrivacyStylingFromStroke(selectedStroke);
-                    selectedStroke.DrawingAttributes.Color = Colors.Transparent;
-                }
-            }
+          
         }
         private void changeSelectedItemsPrivacy(string newPrivacy)
         {
             if (me == "projector") return;
-            foreach (Stroke stroke in GetSelectedStrokes().ToList().Where(i => i is Stroke && i.tag().privacy != newPrivacy))
+            List<Stroke> selectedStrokes = new List<Stroke>();
+            Dispatcher.adopt(() => selectedStrokes = GetSelectedStrokes().ToList());
+            foreach (Stroke stroke in selectedStrokes.Where(i => i is Stroke && i.tag().privacy != newPrivacy))
             {
                 var oldTag = ((Stroke)stroke).tag();
                 doMyStrokeRemoved(stroke);
                 var newStroke = stroke.Clone();
-                ((Stroke)newStroke).tag(new MeTLLib.DataTypes.StrokeTag { author = oldTag.author, privacy = newPrivacy, startingColor = oldTag.startingColor, startingSum = oldTag.startingSum });
+                ((Stroke)newStroke).tag(new MeTLLib.DataTypes.StrokeTag { author = oldTag.author, privacy = newPrivacy, startingSum = oldTag.startingSum });
                 doMyStrokeAdded(newStroke, newPrivacy);
             }
             Select(new StrokeCollection());
@@ -642,6 +596,24 @@ namespace SandRibbon.Components.Canvas
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
         {
             return new HandWritingAutomationPeer(this);
+        }
+    }
+    public class PrivateAwareStroke: Stroke
+    {
+        private Stroke stroke;
+        private Brush fill = new SolidColorBrush(Colors.Red);
+        private Pen pen = new Pen(new SolidColorBrush(Colors.Black), 2);
+        public PrivateAwareStroke(Stroke stroke) : base(stroke.StylusPoints, stroke.DrawingAttributes)
+        {
+            this.stroke = stroke;
+        }
+        protected override void DrawCore(DrawingContext drawingContext, DrawingAttributes drawingAttributes)
+        {
+            var isPrivate = this.tag().privacy == "private";
+             if(isPrivate)
+                foreach(var point in stroke.StylusPoints)
+                    drawingContext.DrawEllipse(fill, pen, point.ToPoint(), 20, 20);
+             base.DrawCore(drawingContext, drawingAttributes);
         }
     }
     class HandWritingAutomationPeer : FrameworkElementAutomationPeer, IValueProvider

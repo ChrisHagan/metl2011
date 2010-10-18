@@ -668,7 +668,6 @@ namespace MeTLLib.DataTypes
                     stroke.tag(new StrokeTag(
                         GetTag(authorTag), GetTag(privacyTag), 
                         GetTag(startingSumTag) == null ? stroke.sum().checksum : Double.Parse(GetTag(startingSumTag)), 
-                        GetTag(startingColorTag) == null ? stringToColor(GetTag(colorTag)).ToString() : GetTag(startingColorTag), 
                         Boolean.Parse(GetTag(highlighterTag))));
                     var targettedStroke = new TargettedStroke(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), stroke);
                     return targettedStroke;
@@ -694,7 +693,6 @@ namespace MeTLLib.DataTypes
                     this.SetTag(targetTag, value.target);
                     this.SetTag(privacyTag, value.privacy);
                     this.SetTag(slideTag, value.slide);
-                    this.SetTag(startingColorTag, value.startingColor );
                 }
             }
             public static string strokeToPoints(Stroke s)

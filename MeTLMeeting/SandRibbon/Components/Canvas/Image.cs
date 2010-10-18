@@ -1063,7 +1063,10 @@ namespace SandRibbon.Components.Canvas
         {
             if (me != "projector")
             {
-                foreach (System.Windows.Controls.Image image in GetSelectedElements().ToList().Where(i =>
+                List<UIElement> selectedElements = new List<UIElement>();
+                Dispatcher.adopt(() => selectedElements = GetSelectedElements().ToList());
+
+                foreach (System.Windows.Controls.Image image in selectedElements.Where(i =>
                     i is System.Windows.Controls.Image
                     && ((System.Windows.Controls.Image)i).tag().privacy != newPrivacy))
                 {
@@ -1075,7 +1078,7 @@ namespace SandRibbon.Components.Canvas
                     Commands.SendImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedImage
                     (currentSlide, Globals.me, target, newPrivacy, (System.Windows.Controls.Image)image));
                 }
-                foreach (MeTLLib.DataTypes.Video video in GetSelectedElements().ToList().Where(i =>
+                foreach (MeTLLib.DataTypes.Video video in selectedElements.Where(i =>
                     i is MeTLLib.DataTypes.Video
                     && ((MeTLLib.DataTypes.Video)i).tag().privacy != newPrivacy))
                 {
