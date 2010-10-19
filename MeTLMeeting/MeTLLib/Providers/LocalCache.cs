@@ -42,11 +42,11 @@ namespace MeTLLib.Providers
         private Dictionary<string, Uri> ReadDictFromFile()
         {
             var newDict = new Dictionary<string, Uri>();
-            using (XmlReader reader = XmlReader.Create(cacheXMLfile))
+            if (!System.IO.Directory.Exists(cacheName))
+                System.IO.Directory.CreateDirectory(cacheName);
+            if (System.IO.File.Exists(cacheXMLfile))
             {
-                if (!System.IO.Directory.Exists(cacheName))
-                    System.IO.Directory.CreateDirectory(cacheName);
-                if (System.IO.File.Exists(cacheXMLfile))
+                using (XmlReader reader = XmlReader.Create(cacheXMLfile))
                 {
                     var XDoc = XElement.Load(reader);
                     foreach (XElement name in XDoc.Elements("CachedUri"))
