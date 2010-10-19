@@ -108,11 +108,15 @@ namespace SandRibbon.Utils.Connection
             foreach (var slide in conversation.Slides.Where(s=>s.type==MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
             {
                 var room = slide.id;
+                MessageBox.Show( "Client no longer has access to the historyprovider, this needs to be fixed at some point");
+                /*
                 HistoryProviderFactory.provider.Retrieve<PrintParser>(
                                 App.dontDoAnything,
                                 App.dontDoAnything,
                                 (parser)=> ReceiveParser(parser, printDocument),
                                 room.ToString());
+            
+                 */
             }
         }
         public void PrintPrivate(string title, string user)
@@ -130,6 +134,9 @@ namespace SandRibbon.Utils.Connection
             {
                 var room = slide.id;
                 var parsers = new List<PrintParser>();
+                
+                MessageBox.Show( "Client no longer has access to the historyprovider, this needs to be fixed at some point");
+                /*
                 HistoryProviderFactory.provider.Retrieve<PrintParser>(
                                 App.dontDoAnything,
                                 App.dontDoAnything,
@@ -150,6 +157,7 @@ namespace SandRibbon.Utils.Connection
                                 },
                                 user,
                                 room.ToString());
+                 * */
             }
         }
         private void ReceiveParser(PrintParser parser, Action<IEnumerable<PrintParser>> ShowPrintDialog)

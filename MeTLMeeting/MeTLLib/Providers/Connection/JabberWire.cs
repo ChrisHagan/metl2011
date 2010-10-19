@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Security.Authentication;
-using System.Threading;
-using System.Windows;
 using agsXMPP;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.x.muc;

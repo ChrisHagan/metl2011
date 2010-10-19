@@ -108,11 +108,6 @@ namespace SandRibbon.Components
             setProjectionLayers();
             try
             {
-                HistoryProviderFactory.provider.Retrieve<MeTLLib.Providers.Connection.PreParser>(
-                    App.dontDoAnything,
-                    App.dontDoAnything,
-                    PreParserAvailable,
-                    Globals.slide.ToString());
             }
             catch (Exception e)
             {
@@ -125,23 +120,23 @@ namespace SandRibbon.Components
         private void setProjectionLayers()
         {
             Dispatcher.adoptAsync(delegate
-                                                     {
-                                                         var projectorImages = stack.images;
-                                                         var projectorText = stack.text;
-                                                         var projectorHandwriting = stack.handwriting;
-                                                         stack.canvasStack.Children.Clear();
-                                                         stack.canvasStack.Children.Add(projectorImages);
-                                                         stack.canvasStack.Children.Add(projectorText);
-                                                         stack.canvasStack.Children.Add(projectorHandwriting);
-                                                         foreach (
-                                                             var canvas in
-                                                                 new List<InkCanvas>
-                                                                     {stack.handwriting, stack.images, stack.text})
-                                                         {
-                                                             canvas.EditingMode = InkCanvasEditingMode.None;
-                                                             canvas.Opacity = 1;
-                                                         }
-                                                     });
+                                 {
+                                     var projectorImages = stack.images;
+                                     var projectorText = stack.text;
+                                     var projectorHandwriting = stack.handwriting;
+                                     stack.canvasStack.Children.Clear();
+                                     stack.canvasStack.Children.Add(projectorImages);
+                                     stack.canvasStack.Children.Add(projectorText);
+                                     stack.canvasStack.Children.Add(projectorHandwriting);
+                                     foreach (
+                                         var canvas in
+                                             new List<InkCanvas>
+                                                 {stack.handwriting, stack.images, stack.text})
+                                     {
+                                         canvas.EditingMode = InkCanvasEditingMode.None;
+                                         canvas.Opacity = 1;
+                                     }
+                                 });
         }
         private static Stroke strokeInProgress;
         private static Projector instance;
