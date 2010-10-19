@@ -742,6 +742,17 @@ namespace MeTLLib.Providers.Connection
         {
             receiveEvents.receiveDirtyLiveWindow(element);
         }
+        public void SneakIntoAndDo(string room, Action<PreParser> action)
+        {
+            var muc = new MucManager(conn);
+            joinRoom(new Jid(room + "@" + metlServerAddress.muc));
+
+            historyProvider.Retrieve<PreParser>(
+                onStart,
+                onProgress,
+                action,
+                room);
+        }
         public void SneakInto(string room)
         {
             var muc = new MucManager(conn);

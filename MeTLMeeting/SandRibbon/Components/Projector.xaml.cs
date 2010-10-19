@@ -7,6 +7,7 @@ using System.Windows.Data;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
+using MeTLLib.Providers.Connection;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
@@ -56,6 +57,17 @@ namespace SandRibbon.Components
                         acc.Union(VisualTreeHelper.GetDescendantBounds(item));
                         return acc;
                     });
+        }
+        public class RoomAndAction
+        {
+            public string room;
+            public Action<PreParser> action;
+            public RoomAndAction(string theRoom, Action<PreParser> theAction)
+            {
+                room = theRoom;
+                action = theAction;
+            }
+
         }
         public Projector()
         {
@@ -108,6 +120,7 @@ namespace SandRibbon.Components
             setProjectionLayers();
             try
             {
+                Commands.SneakIntoAndDo.ExecuteAsync(new RoomAndAction(Globals.location.currentSlide.ToString(), PreParserAvailable));
             }
             catch (Exception e)
             {

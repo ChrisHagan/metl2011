@@ -351,6 +351,14 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
+        public void SneakIntoAndDo(string room, Action<PreParser> doAction)
+        {
+            Action work = delegate
+            {
+                wire.SneakIntoAndDo(room, doAction);
+            };
+            tryIfConnected(work);
+        }
         public void SneakInto(string room)
         {
             Action work = delegate

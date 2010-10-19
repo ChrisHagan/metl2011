@@ -211,6 +211,7 @@ namespace SandRibbon
         public static CompositeCommand MoveTo = new CompositeCommand();
         public static CompositeCommand InternalMoveTo = new CompositeCommand();
         public static CompositeCommand SneakInto = new CompositeCommand();
+        public static CompositeCommand SneakIntoAndDo = new CompositeCommand();
         public static CompositeCommand SneakOutOf = new CompositeCommand();
         public static CompositeCommand PreParserAvailable = new CompositeCommand();
         public static CompositeCommand ConversationPreParserAvailable = new CompositeCommand();
