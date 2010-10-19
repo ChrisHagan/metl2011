@@ -105,17 +105,25 @@ namespace MeTLLib.DataTypes
         //Image and TextTags are identical, reusing imagetag
         public static TextTag tag(this TextBox box )
         {
-            var textInfo = JsonConvert.DeserializeObject<ImageTag>(box.Tag.ToString());
-            return new TextTag 
+            var texttag = new TextTag();
+            box.Dispatcher.adopt(delegate
             {
-                author = textInfo.author,
-                id = textInfo.id,
-                privacy = textInfo.privacy
-            };
+                var textInfo = JsonConvert.DeserializeObject<ImageTag>(box.Tag.ToString());
+                texttag = new TextTag
+                {
+                    author = textInfo.author,
+                    id = textInfo.id,
+                    privacy = textInfo.privacy
+                };
+            });
+            return texttag;
         }
         public static TextTag tag(this TextBox box, TextTag tag)
         {
-            box.Tag = JsonConvert.SerializeObject(tag);  
+            box.Dispatcher.adopt(delegate
+            {
+                box.Tag = JsonConvert.SerializeObject(tag);
+            });
             return tag;
         }
     }
@@ -123,19 +131,27 @@ namespace MeTLLib.DataTypes
     { 
         public static ImageTag tag(this MeTLLib.DataTypes.Video image )
         {
-            var imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
-            return new ImageTag 
+            var imagetag = new ImageTag();
+            image.Dispatcher.adopt(delegate
             {
-                author = imageInfo.author,
-                id = imageInfo.id,
-                privacy = imageInfo.privacy,
-                isBackground = imageInfo.isBackground,
-                zIndex = imageInfo.zIndex
-            };
+                var imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
+                imagetag = new ImageTag
+                {
+                    author = imageInfo.author,
+                    id = imageInfo.id,
+                    privacy = imageInfo.privacy,
+                    isBackground = imageInfo.isBackground,
+                    zIndex = imageInfo.zIndex
+                };
+            });
+            return imagetag;
         }
         public static ImageTag tag(this MeTLLib.DataTypes.Video image, ImageTag tag)
         {
-            image.Tag = JsonConvert.SerializeObject(tag);  
+            image.Dispatcher.adopt(delegate
+            {
+                image.Tag = JsonConvert.SerializeObject(tag);
+            });
             return tag;
         }
     }
@@ -143,19 +159,27 @@ namespace MeTLLib.DataTypes
     {
         public static ImageTag tag(this Image image )
         {
-            var imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
-            return new ImageTag 
+            ImageTag imagetag = new ImageTag();
+            image.Dispatcher.adopt(delegate
             {
-                author = imageInfo.author,
-                id = imageInfo.id,
-                privacy = imageInfo.privacy,
-                isBackground = imageInfo.isBackground,
-                zIndex = imageInfo.zIndex
-            };
+                var imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
+                imagetag = new ImageTag
+                {
+                    author = imageInfo.author,
+                    id = imageInfo.id,
+                    privacy = imageInfo.privacy,
+                    isBackground = imageInfo.isBackground,
+                    zIndex = imageInfo.zIndex
+                };
+            });
+            return imagetag;
         }
         public static ImageTag tag(this Image image, ImageTag tag)
         {
-            image.Tag = JsonConvert.SerializeObject(tag);  
+            image.Dispatcher.adopt(delegate
+            {
+                image.Tag = JsonConvert.SerializeObject(tag);
+            });
             return tag;
         }
     }
@@ -169,12 +193,14 @@ namespace MeTLLib.DataTypes
         private static readonly string NONPERSISTENT_STROKE = "nonPersistent";
         public static StrokeTag tag(this Stroke stroke)
         {
-            return new StrokeTag
+            var stroketag = new StrokeTag();
+            stroketag = new StrokeTag
                        {
                            author = (string) stroke.GetPropertyData(STROKE_TAG_GUID),
                            privacy = (string) stroke.GetPropertyData(STROKE_PRIVACY_GUID),
                            isHighlighter = (bool) stroke.GetPropertyData(IS_HIGHLIGHTER)
                        };
+            return stroketag;
         }
         public static StrokeTag tag(this Stroke stroke, StrokeTag tag)
         {

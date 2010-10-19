@@ -474,7 +474,9 @@ namespace SandRibbon.Components.Canvas
         }
         public void FlushStrokes()
         {
-            Dispatcher.adoptAsync(delegate { Strokes.Clear(); });
+            Dispatcher.adoptAsync(delegate { 
+                Strokes.Clear(); 
+            });
             strokes = new List<MeTLLib.DataTypes.StrokeChecksum>();
         }
         public void Disable()
