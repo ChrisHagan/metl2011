@@ -111,7 +111,11 @@ namespace MeTLLib.Providers
                                      try
                                      {
                                          var zipData = resourceProvider.secureGetData(new System.Uri(zipUri));
-                                         if (zipData.Count() == 0) return;
+                                         if (zipData.Count() == 0)
+                                         {
+                                             Trace.TraceInformation("Empty zip for {0}", zipUri);
+                                             return;
+                                         }
                                          var zip = ZipFile.Read(zipData);
                                          var days = (from e in zip.Entries where e.FileName.EndsWith(".xml") orderby e.FileName select e).ToArray();
                                          for (int i = 0; i < days.Count(); i++)
@@ -121,6 +125,10 @@ namespace MeTLLib.Providers
                                                  days[i].Extract(stream);
                                                  var historicalDay = Encoding.UTF8.GetString(stream.ToArray());
                                                  parseHistoryItem(historicalDay, accumulatingParser);
+                                                 Trace.TraceInformation("Parser contains {0} {1} {2}",
+                                                     accumulatingParser.ink.Count,
+                                                     accumulatingParser.text.Count,
+                                                     accumulatingParser.images.Count);
                                              }
                                              if (retrievalProceeding != null) retrievalProceeding(i, days.Count());
                                          }

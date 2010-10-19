@@ -74,9 +74,6 @@ namespace MeTLLib
         void SneakInto(string room);
         void SneakOutOf(string room);
         void AsyncRetrieveHistoryOf(int room);
-//        List<ConversationDetails> AvailableConversations;
-//        List<ConversationDetails> CurrentConversations;
-
     }
     public class ClientConnection : IClientBehaviour
     {
@@ -347,7 +344,6 @@ namespace MeTLLib
             {
                 var cd = conversationDetailsProvider.DetailsOf(conversation);
                 events.receiveConversationDetails(cd);
-                //wire.MoveTo(cd.Slides[0].id);
             };
             tryIfConnected(work);
         }
