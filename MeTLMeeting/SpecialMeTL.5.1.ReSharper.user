@@ -34,13 +34,13 @@
       <Item value="strokes" priority="7" />
       <Item value="listX" priority="0" />
       <Item value="child" priority="3" />
-      <Item value="new" priority="100" />
+      <Item value="new" priority="102" />
       <Item value="InkCanvas" priority="6" />
       <Item value="children" priority="0" />
       <Item value="bounds" priority="0" />
       <Item value="thoughtView" priority="2" />
       <Item value="public" priority="112" />
-      <Item value="private" priority="40" />
+      <Item value="private" priority="41" />
       <Item value="bool" priority="14" />
       <Item value="operator" priority="0" />
       <Item value="false" priority="11" />
@@ -82,18 +82,18 @@
       <Item value="adorner" priority="5" />
       <Item value="ThoughtBubble" priority="8" />
       <Item value="typeof" priority="13" />
-      <Item value="this" priority="18" />
+      <Item value="this" priority="20" />
       <Item value="Slide" priority="1" />
       <Item value="ThoughtBubbleSpace_MouseDown" priority="4" />
       <Item value="Ionic" priority="0" />
       <Item value="return" priority="70" />
       <Item value="UIAdorner" priority="2" />
       <Item value="FrameworkElement" priority="2" />
-      <Item value="Dispatcher" priority="14" />
+      <Item value="Dispatcher" priority="21" />
       <Item value="Thread" priority="11" />
       <Item value="Action" priority="0" />
       <Item value="images" priority="2" />
-      <Item value="List" priority="28" />
+      <Item value="List" priority="31" />
       <Item value="text" priority="2" />
       <Item value="elements" priority="4" />
       <Item value="Windows" priority="5" />
@@ -131,7 +131,7 @@
       <Item value="AbstractCanvas" priority="0" />
       <Item value="newSlide" priority="0" />
       <Item value="SneakOutOf" priority="0" />
-      <Item value="stroke" priority="71" />
+      <Item value="stroke" priority="72" />
       <Item value="Colors" priority="2" />
       <Item value="class" priority="8" />
       <Item value="IEnumerable" priority="9" />
@@ -175,7 +175,7 @@
       <Item value="global" priority="3" />
       <Item value="DoConstructor" priority="0" />
       <Item value="author" priority="14" />
-      <Item value="e" priority="9" />
+      <Item value="e" priority="10" />
       <Item value="TargettedDirtyElement" priority="0" />
       <Item value="element" priority="5" />
       <Item value="dirtyStroke" priority="1" />
@@ -538,7 +538,7 @@
       <Item value="ReceiveTextBox" priority="1" />
       <Item value="IDisposable" priority="0" />
       <Item value="Dock`0" priority="0" />
-      <Item value="WrapPanel`0" priority="1" />
+      <Item value="WrapPanel`0" priority="2" />
       <Item value="level" priority="0" />
       <Item value="Commands`0" priority="4" />
       <Item value="CompositeCommand`0" priority="0" />
@@ -557,9 +557,9 @@
       <Item value="username" priority="1" />
       <Item value="DivideByZeroException`0" priority="0" />
       <Item value="Globals`0" priority="0" />
-      <Item value="selectedElements" priority="5" />
-      <Item value="UIElement`0" priority="0" />
-      <Item value="List&lt;UIElement&gt;" priority="0" />
+      <Item value="selectedElements" priority="8" />
+      <Item value="UIElement`0" priority="3" />
+      <Item value="List&lt;UIElement&gt;" priority="3" />
       <Item value="GetTag`0" priority="2" />
       <Item value="startingColorTag" priority="2" />
       <Item value="slideTag" priority="0" />
@@ -568,7 +568,7 @@
       <Item value="Color`0" priority="0" />
       <Item value="colorTag" priority="0" />
       <Item value="readonly" priority="0" />
-      <Item value="Stroke`0" priority="4" />
+      <Item value="Stroke`0" priority="5" />
       <Item value="NONPERSISTENT_STROKE" priority="2" />
       <Item value="StrokeTag`0" priority="0" />
       <Item value="oldTag" priority="2" />
@@ -576,12 +576,17 @@
       <Item value="Matrix" priority="0" />
       <Item value="PrivateAwareStroke`0" priority="1" />
       <Item value="isPrivate" priority="1" />
-      <Item value="drawingContext" priority="0" />
+      <Item value="drawingContext" priority="2" />
       <Item value="Brush`0" priority="0" />
       <Item value="Pen" priority="0" />
       <Item value="Colors`0" priority="1" />
       <Item value="point" priority="0" />
-      <Item value="privateAwareStroke" priority="2" />
+      <Item value="privateAwareStroke" priority="3" />
+      <Item value="GetSelectedElements`0" priority="1" />
+      <Item value="selectedStrokes" priority="1" />
+      <Item value="GetSelectedStrokes`0" priority="0" />
+      <Item value="EllipseGeometry`0" priority="0" />
+      <Item value="Drawing`0" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.FrameworkElement">
       <Item value="BeginAnimation" priority="0" />
@@ -629,6 +634,7 @@
       <Item value="GetBounds" priority="2" />
       <Item value="Count" priority="0" />
       <Item value="Remove`0" priority="0" />
+      <Item value="ToList`1" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.Controls.InkCanvas">
       <Item value="AddHandler" priority="0" />
@@ -838,8 +844,8 @@
       <Item value="BeginInvoke" priority="4" />
       <Item value="Invoke" priority="1" />
       <Item value="adoptAsync" priority="6" />
-      <Item value="adoptAsync`0" priority="2" />
-      <Item value="adopt`0" priority="0" />
+      <Item value="adoptAsync`0" priority="4" />
+      <Item value="adopt`0" priority="5" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Threading.Thread">
       <Item value="CurrentThread" priority="0" />
@@ -954,7 +960,7 @@
       <Item value="GetPropertyData" priority="2" />
       <Item value="startingId" priority="2" />
       <Item value="startingSum" priority="1" />
-      <Item value="tag`0" priority="16" />
+      <Item value="tag`0" priority="17" />
       <Item value="shouldPersist`0" priority="0" />
       <Item value="doNotPersist`0" priority="0" />
       <Item value="GetGeometry`0" priority="0" />
@@ -994,6 +1000,7 @@
       <Item value="isAuthor" priority="1" />
       <Item value="slides" priority="1" />
       <Item value="MeTLType" priority="0" />
+      <Item value="privacy" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:SandRibbon.Utils.Connection.JabberWire+Credentials">
       <Item value="name" priority="0" />
@@ -1092,6 +1099,7 @@
     <ItemStatistics item="Qualified:System.Windows.Media.DrawingContext">
       <Item value="DrawText" priority="2" />
       <Item value="DrawEllipse`0" priority="0" />
+      <Item value="DrawDrawing`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.Media.FormattedText">
       <Item value="Text" priority="0" />
@@ -1364,7 +1372,7 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Collections.ObjectModel.ReadOnlyCollection`1">
       <Item value="Count" priority="0" />
-      <Item value="ToList`1" priority="0" />
+      <Item value="ToList`1" priority="2" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:MeTLLib.DataTypes.StrokeTag">
       <Item value="startingColor" priority="2" />
@@ -1386,11 +1394,11 @@
       <Item value="ToPoint`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.Controls.InkCanvasStrokeCollectedEventArgs">
-      <Item value="Stroke" priority="1" />
+      <Item value="Stroke" priority="3" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:SandRibbon.Components.Canvas.PrivateAwareStroke">
       <Item value="stroke" priority="0" />
-      <Item value="tag`0" priority="0" />
+      <Item value="tag`0" priority="1" />
     </ItemStatistics>
   </CompletionStatisticsManager>
   <RecentFiles>
@@ -1410,50 +1418,50 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="2746" fromTop="15" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:Globals.cs" caret="297" fromTop="6" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:AbstractCanvas.cs" caret="4760" fromTop="36" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="5139" fromTop="19" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ToolBar.xaml.cs" caret="913" fromTop="21" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="4527" fromTop="88" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="1398" fromTop="14" />
-      <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="14906" fromTop="13" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="24570" fromTop="8" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="9274" fromTop="10" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="30200" fromTop="17" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="6412" fromTop="7" />
+      <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="14999" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="33091" fromTop="8" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:UserCanvasStack.xaml" caret="727" fromTop="7" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:Extensions.cs" caret="6057" fromTop="2" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="3671" fromTop="42" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="28403" fromTop="6" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:Extensions.cs" caret="2637" fromTop="19" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2918" fromTop="14" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="53518" fromTop="32" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="35141" fromTop="23" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="26346" fromTop="18" />
     </RecentFiles>
     <RecentEdits>
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="27612" fromTop="14" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="28364" fromTop="25" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="4553" fromTop="20" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="24572" fromTop="9" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="28697" fromTop="24" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="30176" fromTop="16" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="21932" fromTop="24" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:Extensions.cs" caret="5975" fromTop="25" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:Extensions.cs" caret="7265" fromTop="28" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:Extensions.cs" caret="7374" fromTop="32" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="27616" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="22126" fromTop="3" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="28202" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="28446" fromTop="19" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="27360" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="27360" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="27432" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="27362" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="756" fromTop="11" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:UserCanvasStack.xaml" caret="714" fromTop="7" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="34247" fromTop="15" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="31540" fromTop="23" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="31514" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="30792" fromTop="17" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="31514" fromTop="31" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="16757" fromTop="21" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="16666" fromTop="24" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:Extensions.cs" caret="6321" fromTop="20" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="31071" fromTop="10" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="31239" fromTop="14" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="22567" fromTop="9" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="24898" fromTop="5" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="51636" fromTop="18" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="52652" fromTop="31" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="25042" fromTop="20" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="25382" fromTop="27" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="6302" fromTop="24" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="13472" fromTop="10" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2560" fromTop="16" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2308" fromTop="3" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2572" fromTop="9" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2918" fromTop="14" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="26566" fromTop="21" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="16212" fromTop="20" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="53519" fromTop="32" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="34583" fromTop="12" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="35142" fromTop="23" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="25904" fromTop="14" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="24906" fromTop="10" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="20992" fromTop="18" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="18137" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="18333" fromTop="20" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="17950" fromTop="8" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="24824" fromTop="18" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="14530" fromTop="16" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="9569" fromTop="18" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="8378" fromTop="18" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="27007" fromTop="27" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="26906" fromTop="24" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="26379" fromTop="13" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>

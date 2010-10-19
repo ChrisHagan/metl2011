@@ -58,7 +58,6 @@
                     <ColumnDefinition x:Name="RHSDrawerDefinition" Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" x:Name="leftDrawer" Visibility="Visible">
-                    <components:Friends x:Name="friends" />
                 </Grid>
                 <GridSplitter x:Name="chatGridsplitter" Grid.Column="1" Visibility="Collapsed" 
                               HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />

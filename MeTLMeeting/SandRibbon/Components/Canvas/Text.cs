@@ -80,51 +80,7 @@ namespace SandRibbon.Components.Canvas
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
-            Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
-            Commands.UserVisibility.RegisterCommand(new DelegateCommand<VisibilityInformation>(setUserVisibility));
-        }
-        private void updateVisibility(VisibilityInformation info)
-        {
-            switch (info.user)
-            {
-                case "toggleTeacher":
-                    {
-                        userVisibility["Teacher"] = info.visible;
-                        break;
-                    }
-                case "toggleMe":
-                    {
-                        userVisibility[Globals.me] = info.visible;
-                        break;
-                    }
-                case "toggleStudents":
-                    {
-                        var keys = userVisibility.Keys.Where(k => k != "Teacher" && k != Globals.me).ToList();
-                        foreach (var key in keys)
-                            userVisibility[key] = info.visible;
-                        break;
-                    }
-                default:
-                    {
-                        userVisibility[info.user] = info.visible;
-                        break;
-                    }
-            }
-
-        }
-        private void setUserVisibility(VisibilityInformation info)
-        {
-            Dispatcher.adoptAsync(() =>
-                                  {
-                                      Children.Clear();
-                                      updateVisibility(info);
-                                      var visibleUsers =
-                                          userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
-                                      var allVisibleText = new List<MeTLLib.DataTypes.TargettedTextBox>();
-                                      foreach (var user in visibleUsers.Where(u => userText.ContainsKey(u)))
-                                          allVisibleText.AddRange(userText[user]);
-                                      ReceiveTextBoxes(allVisibleText);
-                                  });
+            Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
         }
 
         private void textMoved(object sender, EventArgs e)
@@ -719,12 +675,6 @@ namespace SandRibbon.Components.Canvas
                                       {
                                           var author = targettedBox.author == Globals.conversationDetails.Author ? "Teacher" : targettedBox.author;
                                           Commands.ReceiveAuthor.ExecuteAsync(author);
-                                          if (!userVisibility.ContainsKey(author))
-                                              userVisibility.Add(author, true);
-                                          if (!userText.ContainsKey(author))
-                                              userText.Add(author, new List<MeTLLib.DataTypes.TargettedTextBox>());
-                                          if (!userText[author].Contains(targettedBox))
-                                              userText[author].Add(targettedBox);
                                           if (targettedBox.target != target) return;
                                           //if (targettedBox.author == Globals.me &&
                                           //  alreadyHaveThisTextBox(targettedBox.box))
@@ -807,7 +757,9 @@ namespace SandRibbon.Components.Canvas
         {
             if (me != "projector")
             {
-                foreach (System.Windows.Controls.TextBox textBox in GetSelectedElements().ToList().Where(i =>
+                List<UIElement> selectedElements = new List<UIElement>();
+                Dispatcher.adopt(()=>selectedElements = GetSelectedElements().ToList());
+                foreach (System.Windows.Controls.TextBox textBox in selectedElements.Where(i =>
                     i is System.Windows.Controls.TextBox
                     && ((System.Windows.Controls.TextBox)i).tag().privacy != newPrivacy))
                 {
@@ -818,7 +770,7 @@ namespace SandRibbon.Components.Canvas
                     sendText(textBox, newPrivacy);
                 }
             }
-            Select(new List<UIElement>());
+            Dispatcher.adoptAsync(() => Select(new List<UIElement>()));
 
         }
     }

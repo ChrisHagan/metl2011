@@ -987,6 +987,10 @@ namespace MeTLLib.DataTypes
             public int slide;
             public string target;
             public string uploadTime;
+
+            public LocalFileInformation()
+            {
+            }
         }
         public class LocalImageInformation
         {
@@ -1007,6 +1011,10 @@ namespace MeTLLib.DataTypes
             public string privacy;
             public int slide;
             public string target;
+
+            public LocalImageInformation()
+            {
+            }
         }
         public class LocalSubmissionInformation
         {
@@ -1043,6 +1051,10 @@ namespace MeTLLib.DataTypes
             public string privacy;
             public int slide;
             public string target;
+
+            public LocalVideoInformation()
+            {
+            }
         }
 
         public class ScreenshotSubmission : Element
