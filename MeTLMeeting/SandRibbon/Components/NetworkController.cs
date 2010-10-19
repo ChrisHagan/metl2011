@@ -9,11 +9,23 @@ using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
+    public class ProductionServerAddress : MeTLServerAddress
+    {
+        public ProductionServerAddress()
+        {
+            var server = System.Xml.Linq.XElement.Parse(new System.Net.WebClient().DownloadString("http://metl.adm.monash.edu.au/server.xml")).Value;
+            uri = new Uri("http://"+server, UriKind.Absolute);
+        }
+    }
     public class NetworkController
     {
-        private ClientConnection client = MeTLLib.ClientFactory.Connection();
+        private ClientConnection client;
         public NetworkController()
         {
+            if (App.isStaging)
+                client = MeTLLib.ClientFactory.Connection();
+            else
+                client = MeTLLib.ClientFactory.Connection(new ProductionServerAddress());
             registerCommands();
             attachToClient();
             Commands.UpdateConversationDetails.ExecuteAsync(new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), ""));

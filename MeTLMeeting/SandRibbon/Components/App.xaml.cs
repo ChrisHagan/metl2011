@@ -21,6 +21,8 @@ namespace SandRibbon
         private bool loggingOut = false;
         public NetworkController controller;
 
+        public static bool isStaging = false;
+
         public static void LookupServer()
         {
             if (Constants.JabberWire.SERVER == null)
@@ -68,6 +70,11 @@ namespace SandRibbon
         
         protected override void OnStartup(StartupEventArgs e)
         {
+#if DEBUG
+            isStaging = true;
+#else
+            isStaging = false;
+#endif
             base.OnStartup(e);
             controller = new NetworkController();
             new Worm();

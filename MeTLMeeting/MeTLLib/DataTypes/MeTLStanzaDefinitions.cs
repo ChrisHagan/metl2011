@@ -367,15 +367,8 @@ namespace MeTLLib.DataTypes
             get
             {
                 if (boxSpecification == null) boxSpecification = new MeTLStanzas.TextBox(this);
-                System.Windows.Controls.TextBox reified = null;
-                Thread sta = new Thread(new ParameterizedThreadStart(delegate
-                {
-                    reified = boxSpecification.forceEvaluation();
-                    identity = reified.tag().id;
-                }));
-                sta.SetApartmentState(ApartmentState.STA);
-                sta.Start();
-                sta.Join();
+                System.Windows.Controls.TextBox reified = boxSpecification.forceEvaluation();
+                identity = reified.tag().id;
                 return reified;
             }
             set
@@ -770,29 +763,22 @@ namespace MeTLLib.DataTypes
             }
             public System.Windows.Controls.TextBox forceEvaluation()
             {
-                System.Windows.Controls.TextBox textBox = null;
-                Thread sta = new Thread(new ParameterizedThreadStart(delegate
+                System.Windows.Controls.TextBox textBox = new System.Windows.Controls.TextBox
                 {
-                    textBox = new System.Windows.Controls.TextBox
-                    {
-                        FontWeight = weight,
-                        FontFamily = family,
-                        FontSize = size,
-                        FontStyle = style,
-                        Foreground = color,
-                        TextDecorations = decoration,
-                        Tag = tag,
-                        Text = text,
-                        Height = height,
-                        Width = width
-                    };
+                    FontWeight = weight,
+                    FontFamily = family,
+                    FontSize = size,
+                    FontStyle = style,
+                    Foreground = color,
+                    TextDecorations = decoration,
+                    Tag = tag,
+                    Text = text,
+                    Height = height,
+                    Width = width
+                };
 
-                    InkCanvas.SetLeft(textBox, x);
-                    InkCanvas.SetTop(textBox, y);
-                }));
-                sta.SetApartmentState(ApartmentState.STA);
-                sta.Start();
-                sta.Join();
+                InkCanvas.SetLeft(textBox, x);
+                InkCanvas.SetTop(textBox, y);
                 return textBox;
             }
             public TargettedTextBox Box
@@ -1304,27 +1290,20 @@ namespace MeTLLib.DataTypes
             }
             public MeTLLib.DataTypes.Video forceEvaluation()
             {
-                MeTLLib.DataTypes.Video srVideo = null;
-                Thread sta = new Thread(new ParameterizedThreadStart(delegate
+                var video = new MediaElement
                 {
-                    var video = new MediaElement
-                    {
-                        Tag = this.tag,
-                        LoadedBehavior = MediaState.Manual,
-                        Source = source
-                    };
-                    srVideo = new MeTLLib.DataTypes.Video
-                    {
-                        MediaElement = video,
-                        Tag = this.tag,
-                        VideoSource = video.Source,
-                        VideoHeight = video.NaturalVideoHeight,
-                        VideoWidth = video.NaturalVideoWidth
-                    };
-                }));
-                sta.SetApartmentState(ApartmentState.STA);
-                sta.Start();
-                sta.Join();
+                    Tag = this.tag,
+                    LoadedBehavior = MediaState.Manual,
+                    Source = source
+                };
+                MeTLLib.DataTypes.Video srVideo = new MeTLLib.DataTypes.Video
+                {
+                    MediaElement = video,
+                    Tag = this.tag,
+                    VideoSource = video.Source,
+                    VideoHeight = video.NaturalVideoHeight,
+                    VideoWidth = video.NaturalVideoWidth
+                };
                 return srVideo;
             }
             public TargettedVideo Vid
@@ -1416,9 +1395,7 @@ namespace MeTLLib.DataTypes
             }
             public System.Windows.Controls.Image forceEvaluation()
             {
-                System.Windows.Controls.Image image = null;
-                Thread sta = new Thread(new ParameterizedThreadStart(delegate{
-                    image = new System.Windows.Controls.Image
+                System.Windows.Controls.Image image = new System.Windows.Controls.Image
                     {
                         Tag = this.tag,
                         Source = this.source,
@@ -1427,10 +1404,6 @@ namespace MeTLLib.DataTypes
                     };
                     InkCanvas.SetLeft(image, this.x);
                     InkCanvas.SetTop(image, this.y);
-                }));
-                sta.SetApartmentState(ApartmentState.STA);
-                sta.Start();
-                sta.Join();
                 return image;
             }
             public string GetCachedImage(string url)
