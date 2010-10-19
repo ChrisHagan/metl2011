@@ -47,7 +47,7 @@ namespace SandRibbon.Utils
         }
         private static bool CanUndo(object _param) 
         { 
-            return undoQueue.ContainsKey(currentSlide) && undoQueue[currentSlide].Count() > 0; 
+            return undoQueue.Keys.ToList().Contains(currentSlide) && undoQueue[currentSlide].Count() > 0; 
         }
         private static void Undo(object param)
         {

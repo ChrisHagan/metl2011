@@ -68,35 +68,17 @@ namespace SandRibbon
         
         protected override void OnStartup(StartupEventArgs e)
         {
-            //This is to ensure that all the static constructors are called.
             base.OnStartup(e);
             controller = new NetworkController();
             new Worm();
             new Printer();
             new CommandParameterProvider();
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(LogOut));
-            App.Now("Finished static constructor");
-            try
-            {
-                new Worm();
-                new Printer();
-                new CommandParameterProvider();
-                Console.WriteLine("End ", SandRibbonObjects.DateTimeFactory.Now().ToString());
-                Console.WriteLine(@"End ");
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Instantiation error in metlstanzas");
-            }
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             Logger.Log(e.Exception.Message);
-            //This next line is only here until we can work out why it's happening - it's a non-breaking error on x64 windows 7, with no apparent failure of functionality.
-            //if (e.Exception.InnerException != null && e.Exception.InnerException.Message == "Attempted to read or write protected memory. This is often an indication that other memory is corrupt.") return;
-            
             MessageBox.Show(string.Format("MeTL has encountered an unexpected error and has to close:{0}\n{1} ",
                 e.Exception.Message,
                 e.Exception.InnerException == null? 

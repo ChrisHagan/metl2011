@@ -90,7 +90,6 @@ namespace SandRibbon.Components.Canvas
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedImages));
             Commands.MirrorVideo.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation>(mirrorVideo));
             Commands.VideoMirrorRefreshRectangle.RegisterCommand(new DelegateCommand<string>(mirrorVideoRefresh));
-            Commands.UserVisibility.RegisterCommand(new DelegateCommand<VisibilityInformation>(setUserVisibility));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(clearVisibilityDictionary));
         }
 
@@ -99,58 +98,6 @@ namespace SandRibbon.Components.Canvas
             userImages.Clear();
             userVideo.Clear();
         }
-        private void updateVisibility(VisibilityInformation info)
-        {
-            switch (info.user)
-            {
-                case "toggleTeacher":
-                    {
-                        userVisibility["Teacher"] = info.visible;
-                        break;
-                    }
-                case "toggleMe":
-                    {
-                        userVisibility[Globals.me] = info.visible;
-                        break;
-                    }
-                case "toggleStudents":
-                    {
-                        var keys = userVisibility.Keys.Where(k => k != "Teacher" && k != Globals.me).ToList();
-                        foreach (var key in keys)
-                            userVisibility[key] = info.visible;
-                        break;
-                    }
-                default:
-                    {
-                        userVisibility[info.user] = info.visible;
-                        break;
-                    }
-            }
-
-        }
-        private void setUserVisibility(VisibilityInformation info)
-        {
-            Dispatcher.adoptAsync(() =>
-                          {
-
-                              Children.Clear();
-                              updateVisibility(info);
-                              var visibleUsers =
-                                  userVisibility.Keys.Where(u => userVisibility[u] == true).ToList();
-                              var allVisibleImages = new List<MeTLLib.DataTypes.TargettedImage>();
-                              var allVisibleVideos = new List<MeTLLib.DataTypes.TargettedVideo>();
-                              foreach (var user in visibleUsers)
-                              {
-                                  if (userImages.ContainsKey(user))
-                                      allVisibleImages.AddRange(userImages[user]);
-                                  if (userVideo.ContainsKey(user))
-                                      allVisibleVideos.AddRange(userVideo[user]);
-                              }
-                              ReceiveImages(allVisibleImages);
-                              ReceiveVideos(allVisibleVideos);
-                          });
-        }
-
         private void deleteSelectedImages(object obj)
         {
             deleteImages();
@@ -1091,7 +1038,7 @@ namespace SandRibbon.Components.Canvas
                     (currentSlide, Globals.me, target, newPrivacy, (MeTLLib.DataTypes.Video)video));
                 }
             }
-            Select(new List<UIElement>());
+            Dispatcher.adoptAsync(() => Select(new List<UIElement>()));
         }
     }
     class ImageAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
