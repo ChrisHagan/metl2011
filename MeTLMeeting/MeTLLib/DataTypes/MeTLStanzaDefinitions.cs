@@ -367,15 +367,8 @@ namespace MeTLLib.DataTypes
             get
             {
                 if (boxSpecification == null) boxSpecification = new MeTLStanzas.TextBox(this);
-                System.Windows.Controls.TextBox reified = null;
-                Thread sta = new Thread(new ParameterizedThreadStart(delegate
-                {
-                    reified = boxSpecification.forceEvaluation();
-                    identity = reified.tag().id;
-                }));
-                sta.SetApartmentState(ApartmentState.STA);
-                sta.Start();
-                sta.Join();
+                System.Windows.Controls.TextBox reified = boxSpecification.forceEvaluation();
+                identity = reified.tag().id;
                 return reified;
             }
             set
@@ -770,10 +763,7 @@ namespace MeTLLib.DataTypes
             }
             public System.Windows.Controls.TextBox forceEvaluation()
             {
-                System.Windows.Controls.TextBox textBox = null;
-                Thread sta = new Thread(new ParameterizedThreadStart(delegate
-                {
-                    textBox = new System.Windows.Controls.TextBox
+                System.Windows.Controls.TextBox textBox = new System.Windows.Controls.TextBox
                     {
                         FontWeight = weight,
                         FontFamily = family,
@@ -786,13 +776,8 @@ namespace MeTLLib.DataTypes
                         Height = height,
                         Width = width
                     };
-
-                    InkCanvas.SetLeft(textBox, x);
-                    InkCanvas.SetTop(textBox, y);
-                }));
-                sta.SetApartmentState(ApartmentState.STA);
-                sta.Start();
-                sta.Join();
+                InkCanvas.SetLeft(textBox, x);
+                InkCanvas.SetTop(textBox, y);
                 return textBox;
             }
             public TargettedTextBox Box
@@ -804,9 +789,6 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-                    var Dispatcher = value.boxProperty.Dispatcher;
-                    Dispatcher.adopt(() =>
-                    {
                         this.height = value.boxProperty.Height;
                         this.width = value.boxProperty.Width;
                         this.caret = value.boxProperty.CaretIndex;
@@ -825,7 +807,6 @@ namespace MeTLLib.DataTypes
                         this.SetTag(privacyTag, value.privacy);
                         this.SetTag(slideTag, value.slide);
                         this.color = value.boxProperty.Foreground;
-                    });
                 }
             }
             public static readonly string widthTag = "width";
@@ -1304,27 +1285,20 @@ namespace MeTLLib.DataTypes
             }
             public MeTLLib.DataTypes.Video forceEvaluation()
             {
-                MeTLLib.DataTypes.Video srVideo = null;
-                Thread sta = new Thread(new ParameterizedThreadStart(delegate
+                var video = new MediaElement
                 {
-                    var video = new MediaElement
-                    {
-                        Tag = this.tag,
-                        LoadedBehavior = MediaState.Manual,
-                        Source = source
-                    };
-                    srVideo = new MeTLLib.DataTypes.Video
-                    {
-                        MediaElement = video,
-                        Tag = this.tag,
-                        VideoSource = video.Source,
-                        VideoHeight = video.NaturalVideoHeight,
-                        VideoWidth = video.NaturalVideoWidth
-                    };
-                }));
-                sta.SetApartmentState(ApartmentState.STA);
-                sta.Start();
-                sta.Join();
+                    Tag = this.tag,
+                    LoadedBehavior = MediaState.Manual,
+                    Source = source
+                };
+                var srVideo = new MeTLLib.DataTypes.Video
+                {
+                    MediaElement = video,
+                    Tag = this.tag,
+                    VideoSource = video.Source,
+                    VideoHeight = video.NaturalVideoHeight,
+                    VideoWidth = video.NaturalVideoWidth
+                };
                 return srVideo;
             }
             public TargettedVideo Vid
@@ -1339,9 +1313,6 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-                    var Dispatcher = value.videoProperty.Dispatcher;
-                    Dispatcher.adopt(() =>
-                    {
                         var absolutePath = value.videoProperty.VideoSource != null ? value.videoProperty.VideoSource.ToString() : value.videoProperty.MediaElement.Source.ToString();
                         SetTag(tagTag, value.videoProperty.Tag.ToString());
                         SetTag(sourceTag, absolutePath);
@@ -1354,7 +1325,6 @@ namespace MeTLLib.DataTypes
                         SetTag(privacyTag, value.privacy);
                         SetTag(slideTag, value.slide);
                         SetTag(identityTag, value.id);
-                    });
                 }
             }
             private static readonly string widthTag = "width";
@@ -1416,21 +1386,15 @@ namespace MeTLLib.DataTypes
             }
             public System.Windows.Controls.Image forceEvaluation()
             {
-                System.Windows.Controls.Image image = null;
-                Thread sta = new Thread(new ParameterizedThreadStart(delegate{
-                    image = new System.Windows.Controls.Image
-                    {
-                        Tag = this.tag,
-                        Source = this.source,
-                        Height = this.height,
-                        Width = this.width
-                    };
-                    InkCanvas.SetLeft(image, this.x);
-                    InkCanvas.SetTop(image, this.y);
-                }));
-                sta.SetApartmentState(ApartmentState.STA);
-                sta.Start();
-                sta.Join();
+                var image = new System.Windows.Controls.Image
+                {
+                    Tag = this.tag,
+                    Source = this.source,
+                    Height = this.height,
+                    Width = this.width
+                };
+                InkCanvas.SetLeft(image, this.x);
+                InkCanvas.SetTop(image, this.y);
                 return image;
             }
             public string GetCachedImage(string url)
@@ -1455,9 +1419,6 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-                    var Dispatcher = value.imageProperty.Dispatcher;
-                    Dispatcher.adopt(() =>
-                        {
                             var absolutePath = value.imageProperty.Source.ToString();
                             var uri = new Uri(absolutePath, UriKind.RelativeOrAbsolute);
                             string relativePath;
@@ -1476,7 +1437,6 @@ namespace MeTLLib.DataTypes
                             SetTag(privacyTag, value.privacy);
                             SetTag(slideTag, value.slide);
                             SetTag(identityTag, value.id);
-                        });
                 }
             }
             private static readonly string sourceTag = "source";
