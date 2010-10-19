@@ -281,7 +281,6 @@ namespace SandRibbon
             {
                 if (!(attributes.Equals(Commands.UpdateCursorWithAttributes.lastValue())))
                 {
-                    App.Now(String.Format("generating cursor {0},{1},{2}", attributes.Width, attributes.Color, attributes.IsHighlighter));
                     Commands.UpdateCursor.ExecuteAsync(CursorExtensions.generateCursor(attributes));
                 }
             }

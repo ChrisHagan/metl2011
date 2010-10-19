@@ -303,15 +303,7 @@ namespace LibTester
                     Canvas.SetLeft(internalImage, 100);
                     Canvas.SetTop(internalImage, 100);
                     client.UploadAndSendImage(new MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation
-                    {
-                        privacy = "public",
-                        author = client.username,
-                        slide = client.location.currentSlide,
-                        target = "presentationSpace",
-                        overwrite = false,
-                        file = ofdg.FileName,
-                        image = internalImage,
-                    });
+                    (client.location.currentSlide,client.username,"presentationSpace","public",internalImage,ofdg.FileName,false));
                 }
             }
         }
@@ -333,15 +325,7 @@ namespace LibTester
                     Canvas.SetLeft(internalVideo, 100);
                     Canvas.SetTop(internalVideo, 100);
                     client.UploadAndSendVideo(new MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation
-                    {
-                        privacy = "public",
-                        author = client.username,
-                        slide = client.location.currentSlide,
-                        target = "presentationSpace",
-                        overwrite = false,
-                        file = ofdg.FileName,
-                        video = internalVideo,
-                    });
+                    (client.location.currentSlide,client.username,"presentationSpace","public",internalVideo,ofdg.FileName,false));
                 }
             }
         }
@@ -358,17 +342,7 @@ namespace LibTester
                     var directoryInfo = new System.IO.DirectoryInfo(directoryPath);
                     var fileLength = directoryInfo.GetFiles(ofdg.SafeFileName).ElementAt(0).Length;
                     client.UploadAndSendFile(new MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation
-                    {
-                        privacy = "public",
-                        author = client.username,
-                        slide = client.location.currentSlide,
-                        target = "presentationSpace",
-                        overwrite = false,
-                        file = ofdg.FileName,
-                        name = ofdg.SafeFileName,
-                        size = fileLength,
-                        uploadTime = DateTime.Now.ToString()
-                    });
+                    (client.location.currentSlide,client.username,"presentationSpace","public",ofdg.FileName,ofdg.SafeFileName,false,fileLength,DateTime.Now.ToString()));
                 }
             }
         }

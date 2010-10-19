@@ -634,7 +634,6 @@ namespace MeTLLib.Providers.Connection
             {
                 Console.WriteLine(e.Message);
             }
-            if (Application.Current == null) return;
             ActOnUntypedMessage(message);
         }
         public void ActOnUntypedMessage(Element message)

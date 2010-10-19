@@ -368,11 +368,14 @@ namespace MeTLLib.DataTypes
             {
                 if (boxSpecification == null) boxSpecification = new MeTLStanzas.TextBox(this);
                 System.Windows.Controls.TextBox reified = null;
-                Application.Current.Dispatcher.adopt(() =>
+                Thread sta = new Thread(new ParameterizedThreadStart(delegate
                 {
                     reified = boxSpecification.forceEvaluation();
                     identity = reified.tag().id;
-                });
+                }));
+                sta.SetApartmentState(ApartmentState.STA);
+                sta.Start();
+                sta.Join();
                 return reified;
             }
             set
@@ -666,8 +669,8 @@ namespace MeTLLib.DataTypes
                         if (HasTag(sumTag))
                             stroke.AddPropertyData(stroke.startingId(), Double.Parse(GetTag(sumTag)));
                     stroke.tag(new StrokeTag(
-                        GetTag(authorTag), GetTag(privacyTag), 
-                        GetTag(startingSumTag) == null ? stroke.sum().checksum : Double.Parse(GetTag(startingSumTag)), 
+                        GetTag(authorTag), GetTag(privacyTag),
+                        GetTag(startingSumTag) == null ? stroke.sum().checksum : Double.Parse(GetTag(startingSumTag)),
                         Boolean.Parse(GetTag(highlighterTag))));
                     var targettedStroke = new TargettedStroke(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag), stroke);
                     return targettedStroke;
@@ -768,7 +771,7 @@ namespace MeTLLib.DataTypes
             public System.Windows.Controls.TextBox forceEvaluation()
             {
                 System.Windows.Controls.TextBox textBox = null;
-                Application.Current.Dispatcher.adopt(() =>
+                Thread sta = new Thread(new ParameterizedThreadStart(delegate
                 {
                     textBox = new System.Windows.Controls.TextBox
                     {
@@ -786,7 +789,10 @@ namespace MeTLLib.DataTypes
 
                     InkCanvas.SetLeft(textBox, x);
                     InkCanvas.SetTop(textBox, y);
-                });
+                }));
+                sta.SetApartmentState(ApartmentState.STA);
+                sta.Start();
+                sta.Join();
                 return textBox;
             }
             public TargettedTextBox Box
@@ -1287,7 +1293,7 @@ namespace MeTLLib.DataTypes
             public MeTLLib.DataTypes.Video forceEvaluation()
             {
                 MeTLLib.DataTypes.Video srVideo = null;
-                Application.Current.Dispatcher.adopt(() =>
+                Thread sta = new Thread(new ParameterizedThreadStart(delegate
                 {
                     var video = new MediaElement
                     {
@@ -1303,7 +1309,10 @@ namespace MeTLLib.DataTypes
                         VideoHeight = video.NaturalVideoHeight,
                         VideoWidth = video.NaturalVideoWidth
                     };
-                });
+                }));
+                sta.SetApartmentState(ApartmentState.STA);
+                sta.Start();
+                sta.Join();
                 return srVideo;
             }
             public TargettedVideo Vid
@@ -1396,8 +1405,7 @@ namespace MeTLLib.DataTypes
             public System.Windows.Controls.Image forceEvaluation()
             {
                 System.Windows.Controls.Image image = null;
-                Application.Current.Dispatcher.adopt(() =>
-                {
+                Thread sta = new Thread(new ParameterizedThreadStart(delegate{
                     image = new System.Windows.Controls.Image
                     {
                         Tag = this.tag,
@@ -1407,7 +1415,10 @@ namespace MeTLLib.DataTypes
                     };
                     InkCanvas.SetLeft(image, this.x);
                     InkCanvas.SetTop(image, this.y);
-                });
+                }));
+                sta.SetApartmentState(ApartmentState.STA);
+                sta.Start();
+                sta.Join();
                 return image;
             }
             public string GetCachedImage(string url)
