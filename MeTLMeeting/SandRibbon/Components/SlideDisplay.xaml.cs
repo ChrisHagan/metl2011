@@ -120,6 +120,7 @@ namespace SandRibbon.Components
                                          {
                                              if (thumbnailList.Where(t => t.slideId == where).Count() == 1)
                                                  Commands.MoveTo.ExecuteAsync(where);
+                                                 Commands.InternalMoveTo.ExecuteAsync(where);
                                          }));
             GlobalTimers.SetSyncTimer(action);
         }
@@ -204,6 +205,7 @@ namespace SandRibbon.Components
               var source = (ListBox) sender;
               if (source.SelectedItem != null)
               {
+                  Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                   var proposedIndex = source.SelectedIndex;
                   var proposedId =
                       ((ThumbnailInformation) source.SelectedItem).slideId;

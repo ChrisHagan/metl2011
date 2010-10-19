@@ -793,7 +793,6 @@
     <Compile Include="Quizzing\Worm.xaml.cs">
       <DependentUpon>Worm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\Connection\Jabber\JabberWire.cs" />
     <Compile Include="Utils\Connection\PreParser.cs" />
     <Compile Include="Utils\Connection\Printer.cs" />
     <Compile Include="Utils\CursorExtensions.cs" />

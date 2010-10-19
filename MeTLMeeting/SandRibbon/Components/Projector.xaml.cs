@@ -69,10 +69,11 @@ namespace SandRibbon.Components
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(setLayer));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
+            Commands.InternalMoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
             stack.handwriting.EditingModeChanged += modeChanged;
             stack.images.EditingModeChanged += modeChanged;
             stack.text.EditingModeChanged += modeChanged;
+            startProjector(null);
         }
 
         private void moveTo(object obj)
@@ -113,8 +114,9 @@ namespace SandRibbon.Components
                     PreParserAvailable,
                     Globals.slide.ToString());
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                var a = 1;
             }
             stack.handwriting.me = "projector";
             stack.images.me = "projector";
@@ -150,7 +152,7 @@ namespace SandRibbon.Components
         private static string privacy;
         public void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            if (!isPrivate(parser) && IsParserNotEmpty(parser))
+            if (!isPrivate(parser))
             {
                 stack.handwriting.ReceiveStrokes(parser.ink);
                 stack.images.ReceiveImages(parser.images.Values);
