@@ -63,6 +63,9 @@ namespace MeTLLib
         void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii);
         void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation lvi);
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
+        void AsyncRetrieveHistoryOf(int room);
+        PreParser RetrieveHistoryOfMUC(string muc);
+        List<PreParser> RetrieveHistoryOfRoom(int room);
         void MoveTo(int slide);
         void JoinConversation(string conversation);
         ConversationDetails AppendSlide(string Jid);
@@ -73,10 +76,8 @@ namespace MeTLLib
         ConversationDetails DetailsOf(String jid);
         void SneakInto(string room);
         void SneakOutOf(string room);
-        void AsyncRetrieveHistoryOf(int room);
         //        List<ConversationDetails> AvailableConversations;
         //        List<ConversationDetails> CurrentConversations;
-
     }
     public class ClientConnection : IClientBehaviour
     {
@@ -389,14 +390,56 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public PreParser RetrieveHistoryOf(string room)
+        public PreParser RetrieveHistoryOfMUC(string muc)
         {
-            //This doesn't work yet.  The completion of the action never fires.  There may be a deadlock somewhere preventing this.
-            PreParser finishedParser = jabberWireFactory.preParser(PreParser.ParentRoom(room));
+            var parserList = new List<PreParser>();
+            tryIfConnected(() =>
+            {
+                if (String.IsNullOrEmpty(muc)) return;
+                Thread thread = new Thread(new ParameterizedThreadStart(delegate
+                {
+                    Thread parserAggregator = new Thread(new ParameterizedThreadStart(delegate
+                    {
+                        while (parserList.Count == 0)
+                        {
+                        }
+                    }));
+                    parserAggregator.Start();
+                    historyProvider.Retrieve<PreParser>(
+                () =>
+                {
+                    Trace.TraceInformation("MUC History started (" + muc + ")");
+                },
+                (current, total) => Trace.TraceInformation("MUC History progress (" + muc + "): " + current + "/" + total),
+                preParser =>
+                {
+                    Trace.TraceInformation("MUC History completed (" + muc + ")");
+                    parserList.Add(preParser);
+                },
+                muc);
+                parserAggregator.Join();
+                }));
+                thread.Start();
+                thread.Join();
+            });
+            return parserList[0];
+        }
+        public List<PreParser> RetrieveHistoryOfRoom(int room)
+        {
+            var parserList = new List<PreParser>();
             tryIfConnected(() =>
             {
                 if (room == null) return;
-                historyProvider.Retrieve<PreParser>(
+                Thread thread = new Thread(new ParameterizedThreadStart(delegate
+                {
+                    Thread parserAggregator = new Thread(new ParameterizedThreadStart(delegate
+                    {
+                        while (parserList.Count < 3)
+                        {
+                        }
+                    }));
+                    parserAggregator.Start();
+                    historyProvider.Retrieve<PreParser>(
                 () =>
                 {
                     Trace.TraceInformation("History started (" + room + ")");
@@ -405,11 +448,25 @@ namespace MeTLLib
                 preParser =>
                 {
                     Trace.TraceInformation("History completed (" + room + ")");
-                    finishedParser = preParser;
+                    parserList.Add(preParser);
                 },
-                room);
+                room.ToString());
+                    historyProvider.RetrievePrivateContent<PreParser>(
+                    () => Trace.TraceInformation("Private History started (" + room + ")"),
+                    (current, total) => Trace.TraceInformation("Private History progress (" + room + "): " + current + "/" + total),
+                    preParser =>
+                    {
+                        Trace.TraceInformation("Private History completed (" + room + ")");
+                        parserList.Add(preParser);
+                    },
+                    username,
+                    room.ToString());
+                    parserAggregator.Join();
+                }));
+                thread.Start();
+                thread.Join();
             });
-            return finishedParser;
+            return parserList;
         }
         public ConversationDetails UpdateConversationDetails(ConversationDetails details)
         {

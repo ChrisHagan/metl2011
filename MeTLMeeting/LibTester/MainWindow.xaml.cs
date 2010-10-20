@@ -241,8 +241,9 @@ namespace LibTester
         private void getHistory(object sender, RoutedEventArgs e)
         {
             if (client == null) return;
-            var parser = client.RetrieveHistoryOf(location.Text);
-            MessageBox.Show(describeParser(parser));
+            var parser = client.RetrieveHistoryOfMUC(location.Text);
+            //foreach (PreParser parser in parsers)
+                MessageBox.Show(describeParser(parser));
         }
         private void getDisco(object sender, RoutedEventArgs e)
         {
@@ -273,7 +274,7 @@ namespace LibTester
             if (client != null)
             {
                 var internalStroke = e.Stroke;
-                var newStroke = new TargettedStroke(client.location.currentSlide,client.username,"presentationSpace","public",internalStroke);
+                var newStroke = new TargettedStroke(client.location.currentSlide, client.username, "presentationSpace", "public", internalStroke);
                 client.SendStroke(newStroke);
             }
         }
@@ -285,7 +286,7 @@ namespace LibTester
                 internalTextBox.Text = "this is a new textbox from MeTLLib";
                 Canvas.SetLeft(internalTextBox, 100);
                 Canvas.SetTop(internalTextBox, 100);
-                var newTargettedTextBox = new TargettedTextBox(client.location.currentSlide,client.username,"presentationSpace","public",internalTextBox);
+                var newTargettedTextBox = new TargettedTextBox(client.location.currentSlide, client.username, "presentationSpace", "public", internalTextBox);
                 client.SendTextBox(newTargettedTextBox);
             }
         }
@@ -303,7 +304,7 @@ namespace LibTester
                     Canvas.SetLeft(internalImage, 100);
                     Canvas.SetTop(internalImage, 100);
                     client.UploadAndSendImage(new MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation
-                    (client.location.currentSlide,client.username,"presentationSpace","public",internalImage,ofdg.FileName,false));
+                    (client.location.currentSlide, client.username, "presentationSpace", "public", internalImage, ofdg.FileName, false));
                 }
             }
         }
@@ -325,7 +326,7 @@ namespace LibTester
                     Canvas.SetLeft(internalVideo, 100);
                     Canvas.SetTop(internalVideo, 100);
                     client.UploadAndSendVideo(new MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation
-                    (client.location.currentSlide,client.username,"presentationSpace","public",internalVideo,ofdg.FileName,false));
+                    (client.location.currentSlide, client.username, "presentationSpace", "public", internalVideo, ofdg.FileName, false));
                 }
             }
         }
@@ -342,7 +343,7 @@ namespace LibTester
                     var directoryInfo = new System.IO.DirectoryInfo(directoryPath);
                     var fileLength = directoryInfo.GetFiles(ofdg.SafeFileName).ElementAt(0).Length;
                     client.UploadAndSendFile(new MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation
-                    (client.location.currentSlide,client.username,"presentationSpace","public",ofdg.FileName,ofdg.SafeFileName,false,fileLength,DateTime.Now.ToString()));
+                    (client.location.currentSlide, client.username, "presentationSpace", "public", ofdg.FileName, ofdg.SafeFileName, false, fileLength, DateTime.Now.ToString()));
                 }
             }
         }
