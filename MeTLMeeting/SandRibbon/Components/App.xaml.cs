@@ -12,6 +12,8 @@ using SandRibbon.Utils.Connection;
 using SandRibbon.Quizzing;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
+using System.Security;
+
 
 [assembly:UIPermission(SecurityAction.RequestMinimum)]
 //[assembly:UIPermission(SecurityAction.Assert)]
@@ -89,7 +91,16 @@ namespace SandRibbon
         }
         static App() {
             Now("Static App start");
+            setDotNetPermissionState();
         }
+        private static void setDotNetPermissionState()
+        {
+            Now("Creating permissionState to allow all actions");
+            PermissionSet set = new PermissionSet(PermissionState.Unrestricted);
+            Now("Asserting new permission set to all referenced assemblies");
+            set.Assert();
+        }
+        
         private void LogOut(object _Unused)
         {
             //loggingOut = true;
