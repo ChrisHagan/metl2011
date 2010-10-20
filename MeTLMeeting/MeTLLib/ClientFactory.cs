@@ -9,23 +9,18 @@ namespace MeTLLib
     public class ClientFactory
     {
         public static StandardKernel kernel = new StandardKernel(new BaseModule(), new ProductionModule());
-        public static MeTLServerAddress server;
-        public static ClientConnection Connection(MeTLServerAddress serverAddress)
+        public static MeTLServerAddress.serverMode mode;  
+        public static ClientConnection Connection(MeTLServerAddress.serverMode serverMode)
         {
-            server = serverAddress;
-            var typeofServer = server.GetType();
-            kernel.Bind(typeof(MeTLServerAddress)).To(typeofServer).InSingletonScope();
+            if (mode == MeTLServerAddress.serverMode.NOTSET) mode = serverMode;
+            else throw new InvalidOperationException("serverMode has already been set");
+            kernel.Get<MeTLServerAddress>().setMode(mode);
             return kernel.Get<ClientConnection>();
         }
         public static ClientConnection Connection()
         {
-            if (server == null)
-            {
-                server = new MadamServerAddress();
-                var typeofServer = server.GetType();
-                kernel.Bind(typeof(MeTLServerAddress)).To(typeofServer).InSingletonScope();
-            }
-            //kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
+            if (mode == MeTLServerAddress.serverMode.NOTSET) throw new NotSetException("serverMode has not been configured");
+            kernel.Get<MeTLServerAddress>().setMode(mode);
             return kernel.Get<ClientConnection>();
         }
     }

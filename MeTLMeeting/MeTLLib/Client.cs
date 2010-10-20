@@ -19,7 +19,22 @@ namespace MeTLLib
 {
     public abstract class MeTLServerAddress
     {
-        public Uri uri { get; set; }
+        public Uri productionUri { get; set; }
+        public Uri stagingUri { get; set; }
+        public enum serverMode{NOTSET,STAGING,PRODUCTION};
+        private serverMode mode;
+        public void setMode(serverMode mode){
+        this.mode = mode;
+            }
+        public Uri uri
+        {
+            get
+            {
+                if (mode == null) throw new NotSetException("MeTLServer address has not been configured correctly.  SetMode has not been called");
+                return mode == serverMode.PRODUCTION ? productionUri : stagingUri;
+            }
+        }
+
         public Uri secureUri { get { return new Uri("https://" + host); } }
         public string host { get { return uri.Host; } }
         public string muc
@@ -41,7 +56,8 @@ namespace MeTLLib
     {
         public MadamServerAddress()
         {
-            uri = new Uri("http://madam.adm.monash.edu.au", UriKind.Absolute);
+            stagingUri = new Uri("http://madam.adm.monash.edu.au", UriKind.Absolute);
+            productionUri = new Uri("http://madam.adm.monash.edu.au", UriKind.Absolute);
         }
     }
     public interface IClientBehaviour

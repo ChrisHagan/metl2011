@@ -306,10 +306,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Quizzing\ViewQuizResults.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Tabs\Attachments.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -669,9 +665,6 @@
     </Compile>
     <Compile Include="Quizzing\QuizButton.xaml.cs">
       <DependentUpon>QuizButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\ViewQuizResults.xaml.cs">
-      <DependentUpon>ViewQuizResults.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Attachments.xaml.cs">
       <DependentUpon>Attachments.xaml</DependentUpon>
