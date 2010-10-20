@@ -14,17 +14,13 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using System.Security;
 
-
 [assembly:UIPermission(SecurityAction.RequestMinimum)]
-//[assembly:UIPermission(SecurityAction.Assert)]
 
 namespace SandRibbon
 {
     public partial class App : Application
     {
-        private bool loggingOut = false;
         public static NetworkController controller;
-
         public static bool isStaging = false;
 
         public static void Login(String username, String password)
@@ -55,7 +51,7 @@ namespace SandRibbon
             MeTLLib.ClientFactory.Connection().Connect(username, password);
         }
 
-        public static void LookupServer()
+        /*public static void LookupServer()
         {
             if (Constants.JabberWire.SERVER == null)
                 try
@@ -73,6 +69,7 @@ namespace SandRibbon
                     Logger.Log(string.Format("Logged into MeTL server {0}", Constants.JabberWire.SERVER));
                 }
         }
+        */
 
         public static void dontDoAnything()
         {
@@ -97,8 +94,8 @@ namespace SandRibbon
         {
             //Creating permissionState to allow all actions
             PermissionSet set = new PermissionSet(PermissionState.None);
-            set.SetPermission(new UIPermission(UIPermissionWindow.AllWindows, UIPermissionClipboard.AllClipboard));
             //set.SetPermission(new SecurityPermission(SecurityPermissionFlag.AllFlags));
+            set.SetPermission(new UIPermission(UIPermissionWindow.AllWindows, UIPermissionClipboard.AllClipboard));
             //set.SetPermission(new RegistryPermission(PermissionState.None));
             //set.SetPermission(new PrincipalPermission(PermissionState.None));
             //set.SetPermission(new MediaPermission(MediaPermissionAudio.AllAudio, MediaPermissionVideo.AllVideo, MediaPermissionImage.AllImage));
@@ -120,7 +117,6 @@ namespace SandRibbon
         
         private void LogOut(object _Unused)
         {
-            //loggingOut = true;
             WorkspaceStateProvider.ClearSettings();
             ThumbnailProvider.ClearThumbnails();
             Application.Current.Shutdown();
@@ -134,7 +130,6 @@ namespace SandRibbon
             isStaging = false;
 #endif
             base.OnStartup(e);
-            //controller = new NetworkController();
             new Worm();
             new Printer();
             new CommandParameterProvider();

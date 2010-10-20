@@ -18,6 +18,7 @@ namespace SandRibbon.Components
                 client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
             else
                 client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
+            Constants.JabberWire.SERVER = client.server.host;
             registerCommands();
             attachToClient();
             Commands.UpdateConversationDetails.ExecuteAsync(new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), ""));

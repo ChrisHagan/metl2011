@@ -57,10 +57,10 @@ namespace SandRibbon
             App.Now("Window 1 Constructor start");
             //This following healthcheck is providing a slowdown that allows the window to instantiate correctly.
             //We should fine out why it needs it at some point.  SimpleConversationSelector results in a XAML parse exception if it's not in.
-            ProviderMonitor.HealthCheck(() =>
-            {
+            //ProviderMonitor.HealthCheck(() =>
+            //{
                 DoConstructor();
-            });
+            //});
             Commands.AllStaticCommandsAreRegistered();
         }
         private void DoConstructor()

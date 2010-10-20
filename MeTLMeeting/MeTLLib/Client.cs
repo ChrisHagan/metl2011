@@ -111,7 +111,7 @@ namespace MeTLLib
         public ResourceCache cache { private get; set; }
         [Inject]
         public JabberWireFactory jabberWireFactory { private get; set; }
-        private MeTLServerAddress server;
+        public MeTLServerAddress server{ private set; get; }
         public ClientConnection(MeTLServerAddress address)
         {
             server = address;
