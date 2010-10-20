@@ -59,7 +59,7 @@ namespace SandRibbon
             //We should fine out why it needs it at some point.  SimpleConversationSelector results in a XAML parse exception if it's not in.
             //ProviderMonitor.HealthCheck(() =>
             //{
-                DoConstructor();
+            DoConstructor();
             //});
             Commands.AllStaticCommandsAreRegistered();
         }
