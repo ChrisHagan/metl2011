@@ -29,7 +29,7 @@ namespace SandRibbon.Utils
                 if (width < 1) width = 1;
                 if (height < 1) height = 1;
 
-                var bitmapSource = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+                var bitmapSource = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Default);
                 bitmapSource.Render(fe);
 
                 var pixels = new int[width * height];
