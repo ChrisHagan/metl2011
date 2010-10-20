@@ -140,8 +140,15 @@ namespace SandRibbon.Components
         private void SendScreenShot(ScreenshotDetails details)
         {
             string filename = generateScreenshot(details);
-            Commands.ScreenshotGenerated.ExecuteAsync(filename);
+            DelegateCommand<string> fileUploaded = null;
+            fileUploaded = new DelegateCommand<string>(hostedFilename =>
+                                                           {
+                                                               Commands.InternalUploadedUrlNotification.UnregisterCommand(fileUploaded);
+                                                               Commands.ScreenshotGenerated.ExecuteAsync(hostedFilename);
+                                                           });
 
+            Commands.InternalUploadedUrlNotification.RegisterCommand(fileUploaded);
+            Commands.UploadFileReturningUrl.Execute(filename);
         }
 
         private string generateScreenshot(ScreenshotDetails details)
@@ -171,7 +178,7 @@ namespace SandRibbon.Components
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
+                file = string.Format("{1}{2}submission.png", Directory.GetCurrentDirectory(),DateTime.Now.Ticks, Globals.me);
                 using (Stream stream = File.Create(file))
                 {
                     encoder.Save(stream);

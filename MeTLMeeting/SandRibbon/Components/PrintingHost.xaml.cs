@@ -17,7 +17,7 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Commands.ThumbnailGenerated.RegisterCommandToDispatcher<UnscaledThumbnailData>(new DelegateCommand<UnscaledThumbnailData>(ThumbnailGenerated));
-            Commands.QuizResultsAvailableForSnapshot.RegisterCommand(new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated));
+            Commands.QuizResultsAvailableForSnapshot.RegisterCommandToDispatcher(new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated));
         }
         private void ThumbnailGenerated(UnscaledThumbnailData thumbData)
         {

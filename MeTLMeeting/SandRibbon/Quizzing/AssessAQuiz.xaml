@@ -12,7 +12,6 @@
             <Border DockPanel.Dock="Bottom" Background="{StaticResource BackgroundBlueGradient}" Padding="20 20 20 20">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="Display results" Click="SnapshotButton_Click" Padding="0 10 0 0 "/>
-                    <dict:Button Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"/>
                 </StackPanel>
             </Border>
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">

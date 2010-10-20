@@ -484,6 +484,10 @@ namespace MeTLLib
             });
             return parserList;
         }
+        public string UploadFileAndReturnUrl(string file)
+        {
+            return resourceUploader.uploadResource(string.Format("/Resource/"), file);
+        }
         public ConversationDetails UpdateConversationDetails(ConversationDetails details)
         {
             ConversationDetails cd = null;
