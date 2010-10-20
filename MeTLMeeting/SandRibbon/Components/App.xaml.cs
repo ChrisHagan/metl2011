@@ -97,6 +97,7 @@ namespace SandRibbon
         {
             Now("Creating permissionState to allow all actions");
             PermissionSet set = new PermissionSet(PermissionState.Unrestricted);
+            set.SetPermission(new UIPermission(UIPermissionWindow.AllWindows));
             Now("Asserting new permission set to all referenced assemblies");
             set.Assert();
         }
