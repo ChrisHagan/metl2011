@@ -96,8 +96,24 @@ namespace SandRibbon
         private static void setDotNetPermissionState()
         {
             //Creating permissionState to allow all actions
-            PermissionSet set = new PermissionSet(PermissionState.Unrestricted);
+            PermissionSet set = new PermissionSet(PermissionState.None);
             set.SetPermission(new UIPermission(UIPermissionWindow.AllWindows, UIPermissionClipboard.AllClipboard));
+            //set.SetPermission(new SecurityPermission(SecurityPermissionFlag.AllFlags));
+            //set.SetPermission(new RegistryPermission(PermissionState.None));
+            //set.SetPermission(new PrincipalPermission(PermissionState.None));
+            //set.SetPermission(new MediaPermission(MediaPermissionAudio.AllAudio, MediaPermissionVideo.AllVideo, MediaPermissionImage.AllImage));
+            //set.SetPermission(new EnvironmentPermission(EnvironmentPermissionAccess.Read,"{pathsToEnvironmentVariablesSeparatedBySemiColons}"));
+            //set.SetPermission(new PublisherIdentityPermission(new System.Security.Cryptography.X509Certificates.X509Certificate("{pathToCertificate}"));
+            //set.SetPermission(new FileDialogPermission(FileDialogPermissionAccess.OpenSave));
+            //set.SetPermission(new UrlIdentityPermission(PermissionState.Unrestricted));
+            //set.SetPermission(new SiteIdentityPermission(PermissionState.Unrestricted));
+            //set.SetPermission(new ReflectionPermission(ReflectionPermissionFlag.NoFlags));
+            //set.SetPermission(new StrongNameIdentityPermission(PermissionState.Unrestricted));
+            //set.SetPermission(new GacIdentityPermission(PermissionState.Unrestricted));
+            //set.SetPermission(new FileIOPermission(PermissionState.Unrestricted));
+            //set.SetPermission(new IsolatedStorageFilePermission(PermissionState.Unrestricted));
+            //set.SetPermission(new WebBrowserPermission(WebBrowserPermissionLevel.None));
+            //set.SetPermission(new ZoneIdentityPermission(PermissionState.Unrestricted));
             //Asserting new permission set to all referenced assemblies
             set.Assert();
         }
