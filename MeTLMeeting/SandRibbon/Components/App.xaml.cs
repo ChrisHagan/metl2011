@@ -50,27 +50,7 @@ namespace SandRibbon
             controller = new NetworkController();
             MeTLLib.ClientFactory.Connection().Connect(username, password);
         }
-
-        /*public static void LookupServer()
-        {
-            if (Constants.JabberWire.SERVER == null)
-                try
-                {
-                    Constants.JabberWire.SERVER = ConfigurationProvider.instance.SERVER;
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("MeTL cannot find the server and so cannot start.  Please check your internet connection and try again.");
-                    if (Application.Current != null)
-                        Application.Current.Shutdown();
-                }
-                finally
-                {
-                    Logger.Log(string.Format("Logged into MeTL server {0}", Constants.JabberWire.SERVER));
-                }
-        }
-        */
-
+        
         public static void dontDoAnything()
         {
         }
