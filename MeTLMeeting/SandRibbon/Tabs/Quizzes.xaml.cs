@@ -134,10 +134,8 @@ namespace SandRibbon.Tabs
         private void quiz_Click(object sender, RoutedEventArgs e)
         {
             var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
-            if (thisQuiz.author == Globals.me)
-                new AssessAQuiz(answers[thisQuiz.id], thisQuiz).Show();
-            else
-                new AnswerAQuiz(thisQuiz).Show();
+            new AnswerAQuiz(thisQuiz).Show();
+           //     new AssessAQuiz(answers[thisQuiz.id], thisQuiz).Show();
         }
 
         private void importQuizSnapshot(string filename)
@@ -150,6 +148,12 @@ namespace SandRibbon.Tabs
             });
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
             Commands.AddSlide.ExecuteAsync(null);
+        }
+
+        private void openQuizResults(object sender, RoutedEventArgs e)
+        {
+            if(activeQuizes.Count > 0)
+                new ViewQuizResults(answers, activeQuizes).Show();
         }
     }
 }

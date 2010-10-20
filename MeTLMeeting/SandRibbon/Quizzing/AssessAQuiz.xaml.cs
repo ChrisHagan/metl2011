@@ -18,20 +18,11 @@ using SandRibbon.Providers;
 
 namespace SandRibbon.Quizzing
 {
-    public partial class AssessAQuiz : Window
+    public partial class AssessAQuiz : UserControl 
     {
         public AssessAQuiz()
         {
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
-            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
-            Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(closeMe));
-        }
-
-        private void closeMe(object obj)
-        {
-            Close();
         }
         public AssessAQuiz(ObservableCollection<MeTLLib.DataTypes.QuizAnswer> answers, MeTLLib.DataTypes.QuizQuestion question)
             : this()
@@ -74,13 +65,7 @@ namespace SandRibbon.Quizzing
                 context.DrawRectangle(new VisualBrush(SnapshotHost), null, dimensions);
             bitmap.Render(dv);
             TimestampLabel.Text = "";
-            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData { id = Globals.slide, data = bitmap });
-            this.Close();
-        }
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
+            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
         }
     }
     public class DisplayableResultSet

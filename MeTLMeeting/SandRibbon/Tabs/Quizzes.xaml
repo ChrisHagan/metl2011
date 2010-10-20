@@ -33,6 +33,7 @@ xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
             <sr:GroupVariant Variant="Medium" Priority="1"/>
             <sr:GroupVariant Variant="Collapsed" Priority="3"/>
         </sr:RibbonGroup.Variants>
+        <Button Click="openQuizResults" Content="Results"/>
         <Label VerticalAlignment="Center" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                FontWeight="Bold"
                FontSize="12px"
