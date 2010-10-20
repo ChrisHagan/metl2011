@@ -74,8 +74,8 @@ namespace MeTLLib
         void SneakInto(string room);
         void SneakOutOf(string room);
         void AsyncRetrieveHistoryOf(int room);
-//        List<ConversationDetails> AvailableConversations;
-//        List<ConversationDetails> CurrentConversations;
+        //        List<ConversationDetails> AvailableConversations;
+        //        List<ConversationDetails> CurrentConversations;
 
     }
     public class ClientConnection : IClientBehaviour
@@ -107,7 +107,7 @@ namespace MeTLLib
             get
             {
                 if (wire != null && wire.location != null) return wire.location;
-                else return new Location("0", 1, new List<int>{1});
+                else return new Location("0", 1, new List<int> { 1 });
             }
         }
         public string username
@@ -135,7 +135,7 @@ namespace MeTLLib
             var credentials = authorisationProvider.attemptAuthentication(username, password);
             jabberWireFactory.credentials = credentials;
             wire = jabberWireFactory.wire();
-            wire.Login(new Location("100",101,new List<int>{101,102,103,104,105,106}));
+            wire.Login(new Location("100", 101, new List<int> { 101, 102, 103, 104, 105, 106 }));
             Trace.TraceInformation("set up jabberwire");
             Commands.AllStaticCommandsAreRegistered();
             Trace.TraceInformation("Connection state: " + isConnected.ToString());
@@ -182,7 +182,7 @@ namespace MeTLLib
                 image.imageProperty.Dispatcher.adoptAsync(() =>
                 {
                     var newImage = image.imageProperty;
-                    Uri localSource = new System.Uri(((System.Windows.Controls.Image)newImage).Source.ToString(),UriKind.RelativeOrAbsolute);
+                    Uri localSource = new System.Uri(((System.Windows.Controls.Image)newImage).Source.ToString(), UriKind.RelativeOrAbsolute);
                     Uri remoteSource = cache.RemoteSource(localSource);
                     newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(remoteSource);
                     image.image = newImage;
@@ -251,7 +251,7 @@ namespace MeTLLib
                 Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
                 var newPath = resourceUploader.uploadResource("/Resource/" + lii.slide, lii.file, false);
                 Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
-                wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide,lii.author,lii.target,lii.privacy,newPath,DateTimeFactory.Now().Ticks));
+                wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, newPath, DateTimeFactory.Now().Ticks));
                 if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
             };
             tryIfConnected(work);
@@ -297,11 +297,11 @@ namespace MeTLLib
             Action work = delegate
             {
                 Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
-                var newPath = resourceUploader.uploadResource(lii.slide.ToString(),lii.file, false);
+                var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
                 Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
                 Image newImage = lii.image;
                 newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
-                wire.SendImage(new TargettedImage(lii.slide,lii.author,lii.target,lii.privacy,newImage));
+                wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newImage));
             };
             tryIfConnected(work);
         }
@@ -310,7 +310,7 @@ namespace MeTLLib
             Action work = delegate
             {
                 var newPath = resourceUploader.uploadResource(lfi.slide.ToString(), lfi.file, lfi.overwrite);
-                wire.sendFileResource(new TargettedFile(lfi.slide,lfi.author,lfi.target,lfi.privacy,newPath,lfi.uploadTime,lfi.size,lfi.name));
+                wire.sendFileResource(new TargettedFile(lfi.slide, lfi.author, lfi.target, lfi.privacy, newPath, lfi.uploadTime, lfi.size, lfi.name));
             };
             tryIfConnected(work);
         }
@@ -318,12 +318,12 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                var newPath = new Uri(resourceUploader.uploadResource(lvi.slide.ToString(), lvi.file, false),UriKind.Absolute);
+                var newPath = new Uri(resourceUploader.uploadResource(lvi.slide.ToString(), lvi.file, false), UriKind.Absolute);
                 MeTLLib.DataTypes.Video newVideo = lvi.video;
                 newVideo.VideoSource = newPath;
                 newVideo.MediaElement = new MediaElement();
                 newVideo.MediaElement.Source = newPath;
-                wire.SendVideo(new TargettedVideo(lvi.slide,lvi.author,lvi.target,lvi.privacy,newVideo));
+                wire.SendVideo(new TargettedVideo(lvi.slide, lvi.author, lvi.target, lvi.privacy, newVideo));
             };
             tryIfConnected(work);
         }
@@ -333,11 +333,12 @@ namespace MeTLLib
         {
             Action work = delegate
             {
+                if (slide == null) return;
                 wire.MoveTo(slide);
                 Trace.TraceInformation(String.Format("Location: (conv:{0}),(slide:{1}),(slides:{2})",
                     Globals.conversationDetails.Title + " : " + Globals.conversationDetails.Jid,
                     Globals.slide,
-                    Globals.slides.Select(s=>s.id.ToString()).Aggregate((total,item)=>total += " "+item+"")));
+                    Globals.slides.Select(s => s.id.ToString()).Aggregate((total, item) => total += " " + item + "")));
             };
             tryIfConnected(work);
         }
@@ -345,6 +346,7 @@ namespace MeTLLib
         {
             Action work = delegate
             {
+                if (String.IsNullOrEmpty(conversation)) return;
                 var cd = conversationDetailsProvider.DetailsOf(conversation);
                 events.receiveConversationDetails(cd);
                 //wire.MoveTo(cd.Slides[0].id);
@@ -355,6 +357,7 @@ namespace MeTLLib
         {
             Action work = delegate
             {
+                if (String.IsNullOrEmpty(room)) return;
                 wire.SneakIntoAndDo(room, doAction);
             };
             tryIfConnected(work);
@@ -363,6 +366,7 @@ namespace MeTLLib
         {
             Action work = delegate
             {
+                if (String.IsNullOrEmpty(room)) return;
                 wire.SneakInto(room);
             };
             tryIfConnected(work);
@@ -371,6 +375,7 @@ namespace MeTLLib
         {
             Action work = delegate
             {
+                if (String.IsNullOrEmpty(room)) return;
                 wire.SneakOutOf(room);
             };
             tryIfConnected(work);
@@ -379,6 +384,7 @@ namespace MeTLLib
         {
             Action work = delegate
             {
+                if (room == null) return;
                 wire.GetHistory(room);
             };
             tryIfConnected(work);
@@ -389,18 +395,19 @@ namespace MeTLLib
             PreParser finishedParser = jabberWireFactory.preParser(PreParser.ParentRoom(room));
             tryIfConnected(() =>
             {
+                if (room == null) return;
                 historyProvider.Retrieve<PreParser>(
-                    () =>
-                    {
-                        Trace.TraceInformation("History started (" + room + ")");
-                    },
-                    (current, total) => Trace.TraceInformation("History progress (" + room + "): " + current + "/" + total),
-                    preParser =>
-                    {
-                        Trace.TraceInformation("History completed (" + room + ")");
-                        finishedParser = preParser;
-                    },
-                    room);
+                () =>
+                {
+                    Trace.TraceInformation("History started (" + room + ")");
+                },
+                (current, total) => Trace.TraceInformation("History progress (" + room + "): " + current + "/" + total),
+                preParser =>
+                {
+                    Trace.TraceInformation("History completed (" + room + ")");
+                    finishedParser = preParser;
+                },
+                room);
             });
             return finishedParser;
         }
@@ -453,7 +460,7 @@ namespace MeTLLib
             ConversationDetails details = new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), "");
             Action work = delegate
             {
-               details = conversationDetailsProvider.AppendSlide(Jid);
+                details = conversationDetailsProvider.AppendSlide(Jid);
             };
             tryIfConnected(work);
             return details;
@@ -463,17 +470,17 @@ namespace MeTLLib
             ConversationDetails details = new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), "");
             Action work = delegate
             {
-               details = conversationDetailsProvider.AppendSlideAfter(slide, Jid);
+                details = conversationDetailsProvider.AppendSlideAfter(slide, Jid);
             };
             tryIfConnected(work);
             return details;
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid, Slide.TYPE type)
         {
-            ConversationDetails details = new ConversationDetails("","","",new List<Slide>(),new Permissions("",false,false,false),"");
+            ConversationDetails details = new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), "");
             Action work = delegate
             {
-                details = conversationDetailsProvider.AppendSlideAfter(slide, Jid,type);
+                details = conversationDetailsProvider.AppendSlideAfter(slide, Jid, type);
             };
             tryIfConnected(work);
             return details;

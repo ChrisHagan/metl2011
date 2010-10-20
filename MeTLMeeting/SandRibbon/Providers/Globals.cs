@@ -59,8 +59,8 @@ namespace SandRibbon.Providers
             {
                 try
                 {
-                    var loc = MeTLLib.ClientFactory.Connection().location;
-                    if (loc != null) return loc;
+                    //var loc = MeTLLib.ClientFactory.Connection().location;
+                    //if (loc != null) return loc;
                     var conversationDetails = Globals.conversationDetails;
                     return new Location(conversationDetails.Jid, slide, conversationDetails.Slides.Select(s => s.id).ToList());
                 }
@@ -100,8 +100,8 @@ namespace SandRibbon.Providers
                 catch (NotSetException e)
                 {
                     //this needs to be fixed.  I think the MeTLLib can solve this by caching the current conversationDetails.
-                    var client = MeTLLib.ClientFactory.Connection();
-                    cd = client.DetailsOf(client.location.activeConversation);
+                    //var client = MeTLLib.ClientFactory.Connection();
+                    //cd = client.DetailsOf(client.location.activeConversation);
                 }
                 if (cd == null) return new ConversationDetails("", "", "", "", new List<Slide>(), new Permissions("", false, false, false), "");
                 return cd;
@@ -158,7 +158,7 @@ namespace SandRibbon.Providers
                 {
                     return (int)Commands.MoveTo.lastValue();
                 }
-                catch (NotSetException e) { return location.currentSlide; }
+                catch (NotSetException e) { return 0; }
             }
         }
         public static string me

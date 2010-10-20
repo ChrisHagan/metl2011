@@ -12,15 +12,13 @@ namespace MeTLLib
         public static MeTLServerAddress server;
         public static ClientConnection Connection(MeTLServerAddress serverAddress)
         {
-            if (server == null)
-            {
-                server = serverAddress;
-                var typeofServer = server.GetType();
-                kernel.Bind(typeof(MeTLServerAddress)).To(typeofServer).InSingletonScope();
-            }
+            server = serverAddress;
+            var typeofServer = server.GetType();
+            kernel.Bind(typeof(MeTLServerAddress)).To(typeofServer).InSingletonScope();
             return kernel.Get<ClientConnection>();
         }
-        public static ClientConnection Connection() {
+        public static ClientConnection Connection()
+        {
             if (server == null)
             {
                 server = new MadamServerAddress();

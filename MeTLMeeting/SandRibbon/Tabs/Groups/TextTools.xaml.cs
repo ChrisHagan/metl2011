@@ -69,7 +69,10 @@ namespace SandRibbon.Tabs.Groups
         {
             try
             {
-                var currentSlide = Globals.slides.Where(s => s.id == Globals.slide).First();
+                MeTLLib.DataTypes.Slide currentSlide;
+                if (Globals.slides.Count > 0)
+                    currentSlide = Globals.slides.Where(s => s.id == Globals.slide).First();
+                else currentSlide = new MeTLLib.DataTypes.Slide(0, "", MeTLLib.DataTypes.Slide.TYPE.SLIDE, 0, 720, 540);
                 var multiply = (currentSlide.defaultWidth / defaultWidth) > 0
                                      ? (int)(currentSlide.defaultWidth / defaultWidth) : 1;
                 return defaultFontSize * multiply;

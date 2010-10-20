@@ -14,14 +14,44 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 
 [assembly:UIPermission(SecurityAction.RequestMinimum)]
+//[assembly:UIPermission(SecurityAction.Assert)]
+
 namespace SandRibbon
 {
     public partial class App : Application
     {
         private bool loggingOut = false;
-        public NetworkController controller;
+        public static NetworkController controller;
 
         public static bool isStaging = false;
+
+        public static void Login(String username, String password)
+        {
+            string finalUsername = username;
+            if (username.Contains("_"))
+            {
+                var parts = username.Split('_');
+                finalUsername = parts[0];
+                parts[0] = "";
+                foreach (String part in parts)
+                {
+                    switch (part)
+                    {
+                        case "prod":
+                            isStaging = false;
+                            break;
+                        case "production":
+                            isStaging = false;
+                            break;
+                        case "staging":
+                            isStaging = true;
+                            break;
+                    }
+                }
+            }
+            controller = new NetworkController();
+            MeTLLib.ClientFactory.Connection().Connect(username, password);
+        }
 
         public static void LookupServer()
         {
@@ -76,7 +106,7 @@ namespace SandRibbon
             isStaging = false;
 #endif
             base.OnStartup(e);
-            controller = new NetworkController();
+            //controller = new NetworkController();
             new Worm();
             new Printer();
             new CommandParameterProvider();

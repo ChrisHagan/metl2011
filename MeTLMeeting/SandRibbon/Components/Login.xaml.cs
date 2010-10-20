@@ -86,8 +86,7 @@ namespace SandRibbon.Components
         }
         private void doAttemptAuthentication(string username, string password)
         {
-            var connection = ClientFactory.Connection();
-            connection.Connect(username, password);
+            App.Login(username, password);
         }
         private void SetIdentity(object _args)
         {
