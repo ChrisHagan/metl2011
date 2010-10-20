@@ -43,23 +43,25 @@ namespace SandRibbon.Quizzing
 
         private void joinConversation(object obj)
         {
+            Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(joinConversation));
             Close();
         }
 
         private void Close(object sender, RoutedEventArgs e)
         {
+            Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(joinConversation));
             this.Close();
         }
         private void canCreateQuizQuestion(object sender, CanExecuteRoutedEventArgs e)
         {
-            if(quizTitle == null) return;
-            var quizTitleIsntDefault = quizTitle.Text != PROMPT_TEXT ;
+            if (quizTitle == null) return;
+            var quizTitleIsntDefault = quizTitle.Text != PROMPT_TEXT;
             var activeOptions = options.Where(o => o.optionText.Length > 0).ToList();
             e.CanExecute = (quizTitle != null && quizTitleIsntDefault) && activeOptions.Count >= 2;
         }
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
-            var quiz = new QuizQuestion(SandRibbonObjects.DateTimeFactory.Now().Ticks,quizTitle.Text, Globals.me,question.Text,new List<Option>());
+            var quiz = new QuizQuestion(SandRibbonObjects.DateTimeFactory.Now().Ticks, quizTitle.Text, Globals.me, question.Text, new List<Option>());
             foreach (object obj in quizQuestions.Items)
             {
                 var answer = (Option)obj;
@@ -91,8 +93,18 @@ namespace SandRibbon.Quizzing
                 var co = ((Option)currentOption);
                 if (string.IsNullOrEmpty(co.optionText))
                 {
-                    co.optionText = co.name;
+                    co.optionText = " ";
                 }
+                AddNewEmptyOption();
+            }
+        }
+        private void updateOptionText(object sender, TextChangedEventArgs e)
+        {
+            var text = ((TextBox)sender).Text;
+            var option = (Option)((FrameworkElement)sender).DataContext;
+            if (!String.IsNullOrEmpty(text) || option.optionText != text)
+            {
+                option.optionText = text;
                 AddNewEmptyOption();
             }
         }
@@ -108,27 +120,31 @@ namespace SandRibbon.Quizzing
         {
             if (!shouldAddNewEmptyOption()) return;
             foreach (var option in options)
-                ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(option)).Opacity = 1;
+            {
+                var container = ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(option)); 
+                if (container != null) container.Opacity = 1;
+            }
             var newName = "A";
             var newIndex = 1;
             if (options.Count > 0)
             {
                 var temp = new String(new[] { (char)(options.Last().name.ToCharArray()[options.Last().name.Length - 1] + 1) }).ToUpper();
-                if(temp.ToCharArray()[0] <= 90)
+                if (temp.ToCharArray()[0] <= 90)
                     newName = temp;
 
-                if(options.Count >= alphabetLength)
+                if (options.Count >= alphabetLength)
                 {
-                    var prefix = new string(new char[] {(char) ("A".ToCharArray()[0] + ((options.Count/alphabetLength)-1))}).ToUpper();
+                    var prefix = new string(new char[] { (char)("A".ToCharArray()[0] + ((options.Count / alphabetLength) - 1)) }).ToUpper();
                     newName = string.Format("{0}{1}", prefix, newName);
                 }
                 newIndex = AllColors.all.IndexOf(options.Last().color) + 1;
             }
-            var newOption = new Option(newName," ",false,AllColors.all.ElementAt(newIndex));
+            var newOption = new Option(newName, "", false, AllColors.all.ElementAt(newIndex));
             if (shouldAddNewEmptyOption())
             {
                 options.Add(newOption);
-                ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption)).Opacity = 0.5;
+                var container = ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption));
+                if (container != null) container.Opacity = 0.5;
             }
             Commands.RequerySuggested();
         }
@@ -138,35 +154,35 @@ namespace SandRibbon.Quizzing
             options.Remove((Option)owner);
             var size = options.Count;
             var newList = new List<Option>();
-            foreach(var obj in options)
+            foreach (var obj in options)
                 newList.Add(obj);
             options.Clear();
-            
+
             var name = "A";
-            foreach(var option in newList)
+            foreach (var option in newList)
             {
-                if(option.name == option.optionText)
+                if (option.name == option.optionText)
                     option.optionText = name;
                 option.name = name;
                 var temp = new String(new[] { (char)(name.ToCharArray()[name.Length - 1] + 1) }).ToUpper();
-                if(temp.ToCharArray()[0] <= 90)
+                if (temp.ToCharArray()[0] <= 90)
                     name = temp;
                 else
                     name = "A";
 
-                if(options.Count  + 1 >= alphabetLength)
+                if (options.Count + 1 >= alphabetLength)
                 {
-                    var offset = (options.Count/alphabetLength)-1;
-                    if(offset < 0)
+                    var offset = (options.Count / alphabetLength) - 1;
+                    if (offset < 0)
                         offset = 0;
-                    var prefix = new string(new char[] {(char) ("A".ToCharArray()[0] + offset)}).ToUpper();
+                    var prefix = new string(new char[] { (char)("A".ToCharArray()[0] + offset) }).ToUpper();
                     name = string.Format("{0}{1}", prefix, name);
                 }
                 options.Add(option);
             }
             AddNewEmptyOption();
-            foreach(var obj in options)
-                if(!(obj.optionText.Length > 0))
+            foreach (var obj in options)
+                if (!(obj.optionText.Length > 0))
                     ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(obj)).Opacity = 0.5;
             CommandManager.InvalidateRequerySuggested();
         }
@@ -199,8 +215,8 @@ namespace SandRibbon.Quizzing
 
         private void selectAll(object sender, RoutedEventArgs e)
         {
-            quizTitle.SelectAll();
-
+            var origin = ((TextBox)sender);
+            origin.SelectAll();
         }
         private void refreshCollection()
         {

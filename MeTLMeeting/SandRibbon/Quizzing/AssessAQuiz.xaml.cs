@@ -34,33 +34,37 @@ namespace SandRibbon.Quizzing
             Close();
         }
         public AssessAQuiz(ObservableCollection<MeTLLib.DataTypes.QuizAnswer> answers, MeTLLib.DataTypes.QuizQuestion question)
-            : this() 
+            : this()
         {
             DataContext = question;
             represent(answers, question);
-            answers.CollectionChanged += 
-                (sender,args)=>
+            answers.CollectionChanged +=
+                (sender, args) =>
                     represent(answers, question);
         }
         private void represent(IEnumerable<MeTLLib.DataTypes.QuizAnswer> answers, MeTLLib.DataTypes.QuizQuestion question)
         {
-            responseCount.Content = string.Format("({0} responses)",answers.Count());
-            resultDisplay.ItemsSource = question.options.Select(o =>{
-                var relevant = answers.Where(a=>a.answer==o.name);
-                return new DisplayableResultSet
+            Dispatcher.adoptAsync(delegate
+            {
+                responseCount.Content = string.Format("({0} responses)", answers.Count());
+                resultDisplay.ItemsSource = question.options.Select(o =>
                 {
-                    color = o.color,
-                    count = relevant.Count(),
-                    proportion = answers.Count() == 0 ? 0 :
-                        (double)relevant.Count() / answers.Count(),
-                    tooltip = o.optionText,
-                    name=o.name
-                };
+                    var relevant = answers.Where(a => a.answer == o.name);
+                    return new DisplayableResultSet
+                    {
+                        color = o.color,
+                        count = relevant.Count(),
+                        proportion = answers.Count() == 0 ? 0 :
+                            (double)relevant.Count() / answers.Count(),
+                        tooltip = o.optionText,
+                        name = o.name
+                    };
+                });
             });
         }
         private void SnapshotButton_Click(object sender, RoutedEventArgs e)
         {
-            TimestampLabel.Text = "Results collected at:\r\n"+SandRibbonObjects.DateTimeFactory.Now().ToLocalTime().ToString();
+            TimestampLabel.Text = "Results collected at:\r\n" + SandRibbonObjects.DateTimeFactory.Now().ToLocalTime().ToString();
             SnapshotHost.UpdateLayout();
             var dpi = 96;
             var dimensions = new Rect(0, 0, ActualWidth, ActualHeight);
@@ -70,7 +74,7 @@ namespace SandRibbon.Quizzing
                 context.DrawRectangle(new VisualBrush(SnapshotHost), null, dimensions);
             bitmap.Render(dv);
             TimestampLabel.Text = "";
-            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData { id = Globals.slide, data = bitmap });
             this.Close();
         }
 
@@ -79,15 +83,19 @@ namespace SandRibbon.Quizzing
             Close();
         }
     }
-    public class DisplayableResultSet 
+    public class DisplayableResultSet
     {
         public Color color { get; set; }
         public int count { get; set; }
         public double proportion { get; set; }
         public string tooltip { get; set; }
         public string name { get; set; }
-        public string percentage { get {
-            return string.Format("{0:0.00}%", proportion * 100);
-        } }
+        public string percentage
+        {
+            get
+            {
+                return string.Format("{0:0.00}%", proportion * 100);
+            }
+        }
     }
 }

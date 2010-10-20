@@ -21,6 +21,7 @@ namespace SandRibbon
 {
     public class Converters
     {
+        public static OptionTextFromQuizOption quizOptionsFromQuizQuestionConverter = new OptionTextFromQuizOption();
         public static privacyToBoolConverter privacyToBoolConverter = new privacyToBoolConverter();
         public static availablePenTitleConverter availablePenTitleConverter = new availablePenTitleConverter();
         public static availablePenDropDownConverter availablePenDropDownConverter = new availablePenDropDownConverter();
@@ -89,6 +90,21 @@ namespace SandRibbon
             return false;
         }
     }
+    public class OptionTextFromQuizOption : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Option)
+                return ((Option)value).optionText;
+            return "";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class conversationDetailsToDescription : IValueConverter { 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
