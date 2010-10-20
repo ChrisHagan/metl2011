@@ -6,7 +6,6 @@ using System.Windows;
 namespace MeTLLib.DataTypes
 {
     public class Option 
-        //: DependencyObject
     {
         public Option(String Name, String OptionText, bool IsCorrect, Color Color)
             : base()
@@ -17,22 +16,6 @@ namespace MeTLLib.DataTypes
             color = Color;
         }
         public String optionText;
-        /*public String optionText
-        {
-            get
-            {
-                return (String)GetValue(optionTextProperty);
-            }
-            set
-            {
-                SetValue(optionTextProperty, value);
-            }
-        }
-
-        // Using a DependencyProperty as the backing store for optionText.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty optionTextProperty =
-             DependencyProperty.Register("optionText", typeof(String), typeof(Option), new UIPropertyMetadata(""));
-        */
         public String name { get; set; }
         public bool correct { get; set; }
         public Color color { get; set; }
