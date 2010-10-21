@@ -205,14 +205,15 @@ namespace SandRibbon.Components
         {
             if (MessageBox.Show("Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                var details = (MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext;
+                var details = (MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext;
                 details.Subject = "Deleted";
                 MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                //ConversationDetailsProviderFactory.Provider.Update(details);
             }
         }
         private void editConversation(object sender, RoutedEventArgs e)
         {
-            Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext).Jid);
+            Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext).Jid);
         }
     }
     public class ConversationComparator : System.Collections.IComparer

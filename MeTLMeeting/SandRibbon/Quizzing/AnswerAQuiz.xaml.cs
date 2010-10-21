@@ -24,7 +24,6 @@ namespace SandRibbon.Quizzing
             InitializeComponent();
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
-            Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(closeMe));
         }
 

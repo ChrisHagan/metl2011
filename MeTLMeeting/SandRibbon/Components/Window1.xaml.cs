@@ -88,7 +88,6 @@ namespace SandRibbon
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerPoint, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            Commands.PreCreateConversation.RegisterCommand(new DelegateCommand<object>(CreateConversation));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
@@ -983,7 +982,7 @@ namespace SandRibbon
                             tabs.Add(new Tabs.Quizzes());
                             tabs.Add(new Tabs.Submissions());
                             tabs.Add(new Tabs.Attachments());
-                            homeGroups.Add(new PrivacyToolsHost());
+                            //homeGroups.Add(new PrivacyToolsHost());
                             homeGroups.Add(new EditingModes());
                             //homeGroups.Add(new ToolBox());
                             //homeGroups.Add(new TextTools());
