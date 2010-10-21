@@ -118,7 +118,10 @@ namespace SandRibbon.Components
             try
             {
                 if (Globals.conversationDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
-                    Commands.SetPrivacy.ExecuteAsync(stack.handwriting.actualPrivacy);
+                    Commands.SetPrivacy.ExecuteAsync("public");
+
+
+                    //Commands.SetPrivacy.ExecuteAsync(stack.handwriting.actualPrivacy);
                 else
                     Commands.SetPrivacy.ExecuteAsync("private");
             }

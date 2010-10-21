@@ -20,7 +20,9 @@
             </Style>
         </Grid.Resources>
             <StackPanel VerticalAlignment="Top">
-                <dict:Button Text="Return to conversation" Foreground="{StaticResource ResourceKey=foreground}" Command="{x:Static api:Commands.HideConversationSearchBox}"/>
+                <dict:Button Text="Create New" Foreground="{StaticResource ResourceKey=foreground}" x:Name="new" Command="{x:Static api:Commands.CreateConversationDialog}"/>
+                <dict:Button Text="Import PowerPoint" Foreground="{StaticResource ResourceKey=foreground}" x:Name="import" Command="{x:Static api:Commands.ImportPowerpoint}"/>
+                <Line Stroke="White" StrokeThickness="1" Width="auto" ></Line>
                 <dict:RadioButton Text="Search" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="find" Checked="mode_Checked" IsChecked="True"/>
                 <dict:RadioButton Text="My conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="mine" Checked="mode_Checked"/>
                 <dict:RadioButton Text="All conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="all"  Checked="mode_Checked"/>

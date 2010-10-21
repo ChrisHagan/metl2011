@@ -19,7 +19,8 @@
             <components:SimpleConversationSelector x:Name="recentDocuments" />
         </StackPanel>
     </sr:ApplicationPopup.RecentDocumentsControl>
-    <sr:MenuItem Text="Create new" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.PreCreateConversation}"/>
+    <sr:MenuItem Text="Create new" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.CreateConversationDialog}"/>
+    <sr:MenuItem Text="Import new" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
     <sr:MenuItem Text="Open" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
     <sr:MenuItem Text="Manage Conversations" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
     <sr:MenuItem Text="Print" ToolTip="{StaticResource PrintConversationToolTip}">

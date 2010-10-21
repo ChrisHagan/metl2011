@@ -226,7 +226,7 @@ namespace SandRibbon
         public static CompositeCommand ReceiveDirtyConversationDetails = new CompositeCommand();
         public static CompositeCommand SetSync = new CompositeCommand();
         public static CompositeCommand AddSlide = new CompositeCommand();
-        public static CompositeCommand PreCreateConversation = new CompositeCommand();
+        //public static CompositeCommand PreCreateConversation = new CompositeCommand();
         public static CompositeCommand CreateConversationDialog = new CompositeCommand();
         public static CompositeCommand ShowEditSlidesDialog = new CompositeCommand();
         public static CompositeCommand CreateConversation = new CompositeCommand();
