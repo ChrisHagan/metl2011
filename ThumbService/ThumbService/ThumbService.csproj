@@ -62,6 +62,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="metl.html" />
     <Content Include="superman.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

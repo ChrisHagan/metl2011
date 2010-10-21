@@ -17,6 +17,7 @@ using System.Diagnostics;
 using MeTLLib.Providers.Connection;
 using System.Windows;
 using System.Windows.Threading;
+using MindTouch.Xml;
 
 namespace ThumbService
 {
@@ -32,7 +33,20 @@ namespace ThumbService
     {
         private static Dictionary<RequestInfo, byte[]> cache = new Dictionary<RequestInfo, byte[]>();
         private static ClientConnection client = ClientFactory.Connection();
-        static ServiceRoot(){
+        Plug _fs;
+        protected override Yield Start(XDoc config, Result result) {
+            Result res;
+            yield return res = Coroutine.Invoke(base.Start, config, new Result());
+            res.Confirm();
+            var fs = new Result<Plug>();
+            CreateService("mount", "http://services.mindtouch.com/dream/draft/2006/11/mount", 
+                new XDoc("config").Start("mount").Attr("to", "files").Value("%DreamHost%").End(), fs);
+            joinMeTL();
+            _fs = fs.Value;
+            result.Return();
+        }
+        private void joinMeTL()
+        {
             client.events.StatusChanged += (sender, args) => Console.WriteLine("Status changed: {0}", args.isConnected);
             client.Connect("eecrole", "m0nash2008");
             Trace.Listeners.Add(new ConsoleTraceListener());
@@ -51,6 +65,10 @@ namespace ThumbService
                 cache[requestInfo] : createImage(requestInfo);
             response.Return(DreamMessage.Ok(MimeType.JPEG, image));
             yield break;
+        }
+        [DreamFeature("GET:/home", "Provides a minimal view")]
+        public Yield home(DreamContext context) {
+            yield return context.Relay(_fs.At("metl.html"), "GET:", null, null);
         }
         private byte[] createImage(RequestInfo info){
             byte[] result = new byte[0];
