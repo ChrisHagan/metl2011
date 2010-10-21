@@ -12,7 +12,7 @@ namespace MeTLLib
         public static MeTLServerAddress.serverMode mode;  
         public static ClientConnection Connection(MeTLServerAddress.serverMode serverMode)
         {
-            if (mode == MeTLServerAddress.serverMode.NOTSET) mode = serverMode;
+            if (mode == MeTLServerAddress.serverMode.NOTSET || mode == serverMode) mode = serverMode;
             else throw new InvalidOperationException("serverMode has already been set");
             kernel.Get<MeTLServerAddress>().setMode(mode);
             return kernel.Get<ClientConnection>();
@@ -22,6 +22,11 @@ namespace MeTLLib
             if (mode == MeTLServerAddress.serverMode.NOTSET) throw new NotSetException("serverMode has not been configured");
             kernel.Get<MeTLServerAddress>().setMode(mode);
             return kernel.Get<ClientConnection>();
+        }
+        public static void Reset()
+        {
+            kernel = new StandardKernel(new BaseModule(), new ProductionModule());
+            mode = MeTLServerAddress.serverMode.NOTSET;
         }
     }
 }

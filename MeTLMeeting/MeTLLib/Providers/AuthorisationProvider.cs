@@ -93,36 +93,20 @@ namespace MeTLLib.Providers
         {
             if (String.IsNullOrEmpty(username)) throw new ArgumentNullException("username", "Argument cannot be null");
             if (String.IsNullOrEmpty(password)) throw new ArgumentNullException("password", "Argument cannot be null");
-            string AuthcateUsername = "";
-            if (username.Contains("_"))
-            {
-                var Parameters = username.Split('_');
-                if (Parameters.ToList().Contains<string>("prod"))
-                {
-                    //JabberWire.SwitchServer("prod");
-                }
-                if (Parameters.ToList().Contains<string>("staging"))
-                {
-                    //JabberWire.SwitchServer("staging");
-                }
-                AuthcateUsername = username.Remove(username.IndexOf("_"));
-            }
-            else
-                AuthcateUsername = username;
-
+            string AuthcateUsername = username;
             string AuthcatePassword = password;
 
             if (authenticateAgainstFailoverSystem(AuthcateUsername, AuthcatePassword) || isBackdoorUser(AuthcateUsername))
             {
                 var eligibleGroups = getEligibleGroups(AuthcateUsername, AuthcatePassword);
-                var credentials = new Credentials(AuthcateUsername,AuthcatePassword,eligibleGroups);
+                var credentials = new Credentials(AuthcateUsername, AuthcatePassword, eligibleGroups);
                 Globals.credentials = credentials;
                 return credentials;
             }
             else
             {
                 Trace.TraceError("Failed to Login.");
-                return new Credentials(username,"",new List<AuthorizedGroup>());
+                return new Credentials(username, "", new List<AuthorizedGroup>());
             }
         }
         public bool isBackdoorUser(string user)
@@ -131,8 +115,6 @@ namespace MeTLLib.Providers
         }
         public bool authenticateAgainstFailoverSystem(string username, string password)
         {
-            //gotta remember to remove this!
-            return true;
             if (isAuthenticatedAgainstLDAP(username, password))
                 return true;
             else if (isAuthenticatedAgainstWebProxy(username, password))

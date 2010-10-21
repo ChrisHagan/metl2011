@@ -48,7 +48,7 @@ namespace SandRibbon
                 }
             }
             controller = new NetworkController();
-            MeTLLib.ClientFactory.Connection().Connect(username, password);
+            MeTLLib.ClientFactory.Connection().Connect(finalUsername, password);
         }
         
         public static void dontDoAnything()

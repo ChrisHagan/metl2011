@@ -21,11 +21,12 @@ namespace MeTLLib
     {
         public Uri productionUri { get; set; }
         public Uri stagingUri { get; set; }
-        public enum serverMode{NOTSET,STAGING,PRODUCTION};
+        public enum serverMode { NOTSET, STAGING, PRODUCTION };
         private serverMode mode;
-        public void setMode(serverMode mode){
-        this.mode = mode;
-            }
+        public void setMode(serverMode mode)
+        {
+            this.mode = mode;
+        }
         public Uri uri
         {
             get
@@ -111,7 +112,7 @@ namespace MeTLLib
         public ResourceCache cache { private get; set; }
         [Inject]
         public JabberWireFactory jabberWireFactory { private get; set; }
-        public MeTLServerAddress server{ private set; get; }
+        public MeTLServerAddress server { private set; get; }
         public ClientConnection(MeTLServerAddress address)
         {
             server = address;
@@ -150,12 +151,17 @@ namespace MeTLLib
         {
             Trace.TraceInformation("Attempting authentication with username:" + username);
             var credentials = authorisationProvider.attemptAuthentication(username, password);
+            if (credentials.password == "" && credentials.authorizedGroups.Count == 0)
+                events.statusChanged(false, credentials);
+            else
+            {
             jabberWireFactory.credentials = credentials;
             wire = jabberWireFactory.wire();
             wire.Login(new Location("100", 101, new List<int> { 101, 102, 103, 104, 105, 106 }));
             Trace.TraceInformation("set up jabberwire");
             Commands.AllStaticCommandsAreRegistered();
             Trace.TraceInformation("Connection state: " + isConnected.ToString());
+            }
             return credentials;
         }
         public bool Disconnect()
@@ -433,7 +439,7 @@ namespace MeTLLib
                     parserList.Add(preParser);
                 },
                 muc);
-                parserAggregator.Join();
+                    parserAggregator.Join();
                 }));
                 thread.Start();
                 thread.Join();

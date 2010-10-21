@@ -52,7 +52,6 @@ namespace SandRibbon.Components
             App.Now(string.Format("The Version of MeTL is -> {0}", Version));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
             Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
-            Commands.ConnectWithUnauthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithUnauthenticatedCredentials));
             if (WorkspaceStateProvider.savedStateExists())
             {
                 rememberMe.IsChecked = true;
@@ -76,17 +75,9 @@ namespace SandRibbon.Components
         {
             e.CanExecute = username != null && username.Text.Length > 0 && password != null && password.Password.Length > 0;
         }
-        private void ConnectWithUnauthenticatedCredentials(MeTLLib.DataTypes.Credentials credentials)
-        {
-            doAttemptAuthentication(credentials.name, credentials.password);
-        }
         private void attemptAuthentication(object sender, ExecutedRoutedEventArgs e)
         {
-            doAttemptAuthentication(username.Text, password.Password);
-        }
-        private void doAttemptAuthentication(string username, string password)
-        {
-            App.Login(username, password);
+            App.Login(username.Text, password.Password);
         }
         private void SetIdentity(object _args)
         {

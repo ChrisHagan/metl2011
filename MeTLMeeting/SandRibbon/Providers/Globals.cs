@@ -113,7 +113,7 @@ namespace SandRibbon.Providers
             {
                 try
                 {
-                    var credentials = Commands.ConnectWithAuthenticatedCredentials.lastValue();
+                    var credentials = Commands.SetIdentity.lastValue();
                     return (MeTLLib.DataTypes.Credentials)credentials;
                 }
                 catch (NotSetException e)

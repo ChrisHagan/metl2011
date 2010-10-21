@@ -14,6 +14,7 @@ namespace SandRibbon.Components
         private ClientConnection client;
         public NetworkController()
         {
+            MeTLLib.ClientFactory.Reset(); 
             if (App.isStaging)
                 client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
             else
@@ -21,7 +22,6 @@ namespace SandRibbon.Components
             Constants.JabberWire.SERVER = client.server.host;
             registerCommands();
             attachToClient();
-            Commands.UpdateConversationDetails.ExecuteAsync(new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), ""));
         }
         #region commands
         private void registerCommands()
@@ -237,11 +237,13 @@ namespace SandRibbon.Components
             if (e.isConnected)
             {
                 Commands.AllStaticCommandsAreRegistered();
-                Commands.ConnectWithAuthenticatedCredentials.ExecuteAsync(e.credentials);
                 Commands.SetIdentity.ExecuteAsync(e.credentials);
             }
             else
+            {
+                System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
                 App.Now("MeTLLib has indicated that it is disconnected");
+            }
         }
         private void strokeAvailable(object sender, StrokeAvailableEventArgs e)
         {

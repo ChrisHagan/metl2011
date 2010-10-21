@@ -71,8 +71,9 @@ namespace SandRibbon.Providers
                     break;
                     case "SetIdentity":
                         var values = (Crypto.decrypt(param.Attribute("authentication").Value)).Split(':');
-                        Commands.ConnectWithUnauthenticatedCredentials.ExecuteAsync(
-                            new MeTLLib.DataTypes.Credentials(values[0],values[1],new List<MeTLLib.DataTypes.AuthorizedGroup>()));
+                        App.Login(values[0], values[1]);
+                        //Commands.ConnectWithUnauthenticatedCredentials.ExecuteAsync(
+                            //new MeTLLib.DataTypes.Credentials(values[0],values[1],new List<MeTLLib.DataTypes.AuthorizedGroup>()));
                     break;
                 }
             }
