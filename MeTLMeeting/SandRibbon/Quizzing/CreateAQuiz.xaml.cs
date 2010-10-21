@@ -62,6 +62,7 @@ namespace SandRibbon.Quizzing
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
             var quiz = new QuizQuestion(SandRibbonObjects.DateTimeFactory.Now().Ticks, quizTitle.Text, Globals.me, question.Text, new List<Option>());
+            quiz.url = url;
             foreach (object obj in quizQuestions.Items)
             {
                 var answer = (Option)obj;
@@ -191,19 +192,23 @@ namespace SandRibbon.Quizzing
             DelegateCommand<string> gotScreenshot = null;
             gotScreenshot = new DelegateCommand<string>(hostedFilename =>
                             {
-                                Commands.ScreenshotGenerated.UnregisterCommand(gotScreenshot);
-                                url = hostedFilename;
-                                var image = new Image();
-                                BitmapImage source = new BitmapImage();
-                                source.BeginInit();
-                                source.UriSource = new Uri(hostedFilename);
-                                source.EndInit();
-                                image.Source = source;
-                                image.Width = 300;
-                                image.Height = 300;
-                                questionSnapshotContainer.Children.Add(image);
-                                var slide = Globals.slides.Where(s => s.id == Globals.slide).First();
-                                quizTitle.Text = string.Format("Quiz referencing slide {0}", slide.index + 1);
+                                Dispatcher.adopt(() =>
+                                {
+                                    Commands.ScreenshotGenerated.UnregisterCommand(gotScreenshot);
+                                    url = hostedFilename;
+                                    var image = new Image();
+                                    BitmapImage source = new BitmapImage();
+                                    source.BeginInit();
+                                    source.UriSource = new Uri(hostedFilename);
+                                    source.EndInit();
+                                    image.Source = source;
+                                    image.Width = 300;
+                                    image.Height = 300;
+                                    questionSnapshotContainer.Children.Add(image);
+                                    var slide = Globals.slides.Where(s => s.id == Globals.slide).First();
+                                    quizTitle.Text = string.Format("Quiz referencing slide {0}", slide.index + 1);
+                                });
+
                             });
             Commands.ScreenshotGenerated.RegisterCommand(gotScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails

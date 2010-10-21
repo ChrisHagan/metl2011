@@ -32,6 +32,7 @@ namespace SandRibbon.Quizzing
             answers.CollectionChanged +=
                 (sender, args) =>
                     represent(answers, question);
+            Commands.DisplayQuizResults.RegisterCommand(new DelegateCommand<object>(DisplayQuizResults));
         }
         private void represent(IEnumerable<MeTLLib.DataTypes.QuizAnswer> answers, MeTLLib.DataTypes.QuizQuestion question)
         {
@@ -53,7 +54,7 @@ namespace SandRibbon.Quizzing
                 });
             });
         }
-        private void SnapshotButton_Click(object sender, RoutedEventArgs e)
+        private void DisplayQuizResults(object _obj)
         {
             TimestampLabel.Text = "Results collected at:\r\n" + SandRibbonObjects.DateTimeFactory.Now().ToLocalTime().ToString();
             SnapshotHost.UpdateLayout();
