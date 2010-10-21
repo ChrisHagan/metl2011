@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="PowerpointProgressDialog.ImportProgress"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:my="clr-namespace:PowerpointProgressDialog"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    x:Name="importProgress"
+    Width="800" Height="600">
+    <UserControl.Resources>
+        <core:Double x:Key="slideHeight">50.0</core:Double>
+        <core:Double x:Key="slideWidth">100.0</core:Double>
+        <core:Double x:Key="cornerOffset">100.0</core:Double>
+        <core:Double x:Key="endpointSize">250.0</core:Double>
+        <core:Double x:Key="lowX">50.0</core:Double>
+        <core:Double x:Key="lowY">450.0</core:Double>
+        <core:Double x:Key="highX">450.0</core:Double>
+        <core:Double x:Key="highY">50.0</core:Double>
+        <DataTemplate x:Key="slideTemplate">
+            <Rectangle Width="{StaticResource slideWidth}" Height="{StaticResource slideHeight}" Fill="Red" 
+                       Canvas.Left="{Binding Path=index, Converter={x:Static my:ImportProgress.SlideDisplacement}}" />
+        </DataTemplate>
+        <ItemsPanelTemplate x:Key="panelTemplate">
+            <StackPanel />
+        </ItemsPanelTemplate>
+        <Storyboard x:Key="transition">
+            <DoubleAnimation 
+                Duration="0:0:2"
+                Storyboard.TargetName="transit"
+                Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)"
+                From="{StaticResource lowX}"
+                To="{StaticResource highX}"
+                RepeatBehavior="Forever"/>
+            <DoubleAnimation 
+                Duration="0:0:2"
+                Storyboard.TargetName="transit"
+                Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
+                From="{StaticResource lowY}"
+                To="{StaticResource highY}"
+                RepeatBehavior="Forever"/>
+        </Storyboard>
+    </UserControl.Resources>
+    <Canvas Background="Transparent">
+        <Ellipse Fill="Red" Width="400" Height="400" x:Name="outline"/>
+        <Image Source="computer.png" x:Name="transit" Width="150" Height="150">
+            <Image.RenderTransform>
+                <TranslateTransform X="0" Y="0" />
+            </Image.RenderTransform>
+        </Image>
+        <ItemsControl x:Name="to" Canvas.Top="{StaticResource cornerOffset}" Canvas.Right="{StaticResource cornerOffset}"
+                      ItemTemplate="{StaticResource slideTemplate}"
+                      ItemsPanel="{StaticResource panelTemplate}" />
+        <ItemsControl x:Name="from" Canvas.Bottom="0" Canvas.Left="0" 
+                      ItemTemplate="{StaticResource slideTemplate}"
+                      ItemsPanel="{StaticResource panelTemplate}" />
+    </Canvas>
+</UserControl>

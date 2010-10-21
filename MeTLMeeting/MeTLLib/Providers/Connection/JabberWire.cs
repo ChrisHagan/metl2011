@@ -207,7 +207,6 @@ namespace MeTLLib.Providers.Connection
         {
             this.LoggedIn = true;
             receiveEvents.statusChanged(this.LoggedIn, this.credentials);
-            joinRooms();
         }
         private void OnMessage(object sender, Message message)
         {
@@ -430,13 +429,13 @@ namespace MeTLLib.Providers.Connection
                 onStart,
                 onProgress,
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
-                location.currentSlide.ToString());
+                where.ToString());
             historyProvider.RetrievePrivateContent<PreParser>(
                 onStart,
                 onProgress,
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
                 credentials.name,
-                location.currentSlide.ToString());
+                where.ToString());
         }
         public void MoveTo(int where)
         {
@@ -616,7 +615,7 @@ namespace MeTLLib.Providers.Connection
             var message = (Element)obj;
             if (message.GetAttribute("type") == "error")
             {
-                Trace.TraceError(message.ToString());
+                Trace.TraceError("Wire received error message: {0}", message);
                 return;
             }
             if (message.SelectSingleElement("body") != null)
@@ -630,7 +629,7 @@ namespace MeTLLib.Providers.Connection
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Trace.TraceError("Exception in JabberWire.ReceivedMessage: {0}", e.Message);
             }
             ActOnUntypedMessage(message);
         }

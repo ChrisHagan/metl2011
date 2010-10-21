@@ -33,7 +33,7 @@ namespace MeTLLib
             {
                 return mode == serverMode.PRODUCTION ? productionUri : stagingUri;
             }
-        }
+        public Uri uri { get; set; }
 
         public Uri secureUri { get { return new Uri("https://" + host); } }
         public string host { get { return uri.Host; } }
@@ -150,17 +150,12 @@ namespace MeTLLib
         {
             Trace.TraceInformation("Attempting authentication with username:" + username);
             var credentials = authorisationProvider.attemptAuthentication(username, password);
-            if (credentials.password == "" && credentials.authorizedGroups.Count == 0)
-                events.statusChanged(false, credentials);
-            else
-            {
-                jabberWireFactory.credentials = credentials;
-                wire = jabberWireFactory.wire();
-                wire.Login(new Location("100", 101, new List<int> { 101, 102, 103, 104, 105, 106 }));
-                Trace.TraceInformation("set up jabberwire");
-                Commands.AllStaticCommandsAreRegistered();
-                Trace.TraceInformation("Connection state: " + isConnected.ToString());
-            }
+            jabberWireFactory.credentials = credentials;
+            wire = jabberWireFactory.wire();
+            wire.Login(new Location("100",101,new List<int>{101,102,103,104,105,106}));
+            Trace.TraceInformation("set up jabberwire");
+            Commands.AllStaticCommandsAreRegistered();
+            Trace.TraceInformation("Connection state: " + isConnected.ToString());
             return credentials;
         }
         public bool Disconnect()

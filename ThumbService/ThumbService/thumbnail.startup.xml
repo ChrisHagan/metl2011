@@ -1,0 +1,12 @@
+﻿<script>
+  <!-- register the blueprint for our 8-ball service -->
+  <action verb="POST" path="/host/load?name=thumbservice" />
+
+  <!-- instantiate it -->
+  <action verb="POST" path="/host/services">
+    <config>
+      <path>thumbnails</path>
+      <sid>http://services.mindtouch.com/dream/tutorial/2007/03/8ball</sid>
+    </config>
+  </action>
+</script>

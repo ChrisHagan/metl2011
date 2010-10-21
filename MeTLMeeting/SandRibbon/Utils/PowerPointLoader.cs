@@ -193,7 +193,6 @@ namespace SandRibbon.Utils
             slide.Export(slideThumbnailPath, "PNG", Convert.ToInt32(slide.Master.Width), Convert.ToInt32(slide.Master.Height));
             SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(slideThumbnailPath, conversationSlideNumber + "/thumbs", "slideThumb.png");
         }
-
         public void LoadPowerpoint(string file, ConversationDetails details)
         {
             var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);

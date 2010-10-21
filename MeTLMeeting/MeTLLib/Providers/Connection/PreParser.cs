@@ -46,6 +46,20 @@ namespace MeTLLib.Providers.Connection
                 canvas.Strokes.Add(stroke.stroke);
             return canvas;
         }
+        public InkCanvas Populate(InkCanvas canvas)
+        {
+            foreach (var shape in autoshapes)
+                canvas.Children.Add(shape.Value.autoshape);
+            foreach (var video in videos)
+                canvas.Children.Add(video.Value.video);
+            foreach (var image in images)
+                canvas.Children.Add(image.Value.image);
+            foreach (var textbox in text)
+                canvas.Children.Add(textbox.Value.box);
+            foreach (var stroke in ink)
+                canvas.Strokes.Add(stroke.stroke);
+            return canvas;
+        }
         public T merge<T>(T otherParser) where T : PreParser
         {
             var returnParser = (T)Activator.CreateInstance(typeof(T), location.currentSlide);
