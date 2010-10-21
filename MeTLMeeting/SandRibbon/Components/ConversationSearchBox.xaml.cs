@@ -43,9 +43,12 @@ namespace SandRibbon.Components
         }
         private void BackstageModeChanged(string mode)
         {
-            Dispatcher.adoptAsync(()=>
-            GetListCollectionView().Refresh());
-            string searchButtonText;
+            Dispatcher.adoptAsync(() =>
+            {
+                updateLiveButton(mode);
+                GetListCollectionView().Refresh();
+            });
+                string searchButtonText;
             switch (mode)
             {
                 case "mine": searchButtonText = "Filter my Conversations"; break;
@@ -53,7 +56,18 @@ namespace SandRibbon.Components
                 default: searchButtonText = "Search all Conversations"; break;
             }
             Dispatcher.adoptAsync(()=>
-            searchConversations.Content = searchButtonText);
+            {
+                if (searchConversations == null) return;
+                searchConversations.Content = searchButtonText;
+            });
+        }
+
+        private void updateLiveButton(string mode)
+        {
+            var elements = new[] {mine, all, find};
+            foreach (var button in elements)
+                if (button.Name == mode)
+                    button.IsChecked = true;
         }
         private void SetIdentity(object _arg){
             var availableConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
@@ -118,12 +132,9 @@ namespace SandRibbon.Components
         {
                 if (searchResults.Where(c => c.Jid == details.Jid).Count() == 1)
                     Dispatcher.adoptAsync(()=>searchResults.Remove(searchResults.Where(c => c.Jid == details.Jid).First()));
-                //if (!details.Subject.Contains("Deleted"))
                        Dispatcher.adopt(()=>searchResults.Add(details));
-                //else //conversation deleted
                 {
                     Commands.RequerySuggested();
-                    //if (Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
                     if (Globals.conversationDetails.Jid == details.Jid && this.Visibility == Visibility.Collapsed)
                     {
                           Dispatcher.adopt(()=>this.Visibility = Visibility.Visible);
@@ -214,6 +225,12 @@ namespace SandRibbon.Components
         private void editConversation(object sender, RoutedEventArgs e)
         {
             Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext).Jid);
+        }
+
+        private void mode_Checked(object sender, RoutedEventArgs e)
+        {
+            var mode = ((FrameworkElement)sender).Name;
+            backstageNav.currentMode = mode;
         }
     }
     public class ConversationComparator : System.Collections.IComparer

@@ -50,12 +50,18 @@
             </Grid>
         </Border>
         <components:BackStageNav DockPanel.Dock="Left" x:Name="backstageNav"/>
+        <StackPanel  DockPanel.Dock="Top" HorizontalAlignment="Center" Orientation="Horizontal">
+                <dict:RadioButton Text="Search" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True"/>
+                <dict:RadioButton Text="My conversations" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked"/>
+                <dict:RadioButton Text="All conversations" GroupName="SearchOptions" x:Name="all"  Checked="mode_Checked"/>
+        </StackPanel>
         <ScrollViewer
                   VerticalAlignment="Stretch" Height="Auto"
                   HorizontalAlignment="Stretch"
                   VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Auto">
             <StackPanel x:Name="searchBoxTotalWidth" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 20 0 0">
+                
                 <StackPanel>
                     <TextBox x:Name="SearchInput" AcceptsReturn="False" AcceptsTab="False"
                                              MinWidth="600"
