@@ -14,14 +14,17 @@ namespace SandRibbon.Components
         private ClientConnection client;
         public NetworkController()
         {
-            MeTLLib.ClientFactory.Reset(); 
+            switchServer();
+            registerCommands();
+            attachToClient();
+        }
+        public void switchServer()
+        {
             if (App.isStaging)
                 client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
             else
                 client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
             Constants.JabberWire.SERVER = client.server.host;
-            registerCommands();
-            attachToClient();
         }
         #region commands
         private void registerCommands()
@@ -216,7 +219,7 @@ namespace SandRibbon.Components
         }
         private void imageAvailable(object sender, ImageAvailableEventArgs e)
         {
-            Commands.ReceiveImage.ExecuteAsync(new []{e.image});
+            Commands.ReceiveImage.ExecuteAsync(new[] { e.image });
         }
         private void liveWindowAvailable(object sender, LiveWindowAvailableEventArgs e)
         {

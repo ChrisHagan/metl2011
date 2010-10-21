@@ -14,7 +14,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using System.Security;
 
-[assembly:UIPermission(SecurityAction.RequestMinimum)]
+[assembly: UIPermission(SecurityAction.RequestMinimum)]
 
 namespace SandRibbon
 {
@@ -47,10 +47,13 @@ namespace SandRibbon
                     }
                 }
             }
-            controller = new NetworkController();
+            if (controller == null)
+                controller = new NetworkController();
+            else 
+                controller.switchServer();
             MeTLLib.ClientFactory.Connection().Connect(finalUsername, password);
         }
-        
+
         public static void dontDoAnything()
         {
         }
@@ -59,14 +62,16 @@ namespace SandRibbon
         {
         }
 
-        public static string Now(string title){
+        public static string Now(string title)
+        {
             var now = SandRibbonObjects.DateTimeFactory.Now();
             var s = string.Format("{2} {0}:{1}", now, now.Millisecond, title);
             Logger.Log(s);
             Console.WriteLine(s);
             return s;
         }
-        static App() {
+        static App()
+        {
             Now("Static App start");
             setDotNetPermissionState();
         }
@@ -94,14 +99,14 @@ namespace SandRibbon
             //Asserting new permission set to all referenced assemblies
             set.Assert();
         }
-        
+
         private void LogOut(object _Unused)
         {
             WorkspaceStateProvider.ClearSettings();
             ThumbnailProvider.ClearThumbnails();
             Application.Current.Shutdown();
         }
-        
+
         protected override void OnStartup(StartupEventArgs e)
         {
 #if DEBUG
@@ -121,20 +126,20 @@ namespace SandRibbon
             Logger.Log(e.Exception.Message);
             MessageBox.Show(string.Format("MeTL has encountered an unexpected error and has to close:{0}\n{1} ",
                 e.Exception.Message,
-                e.Exception.InnerException == null? 
-                    "No inner exception": e.Exception.InnerException.Message));
+                e.Exception.InnerException == null ?
+                    "No inner exception" : e.Exception.InnerException.Message));
             this.Shutdown();
         }
         private void AncilliaryButton_Click(object sender, RoutedEventArgs e)
         {
-            var AncilliaryButton = (Button) sender;
+            var AncilliaryButton = (Button)sender;
             var CurrentGrid = (StackPanel)AncilliaryButton.Parent;
             var CurrentPopup = new System.Windows.Controls.Primitives.Popup();
             foreach (FrameworkElement f in CurrentGrid.Children)
                 if (f.GetType().ToString() == "System.Windows.Controls.Primitives.Popup")
                     CurrentPopup = (System.Windows.Controls.Primitives.Popup)f;
             if (CurrentPopup.IsOpen == false)
-            CurrentPopup.IsOpen = true;
+                CurrentPopup.IsOpen = true;
             else CurrentPopup.IsOpen = false;
         }
         private NameValueCollection GetQueryStringParameters()
@@ -143,7 +148,7 @@ namespace SandRibbon
             if (ApplicationDeployment.IsNetworkDeployed)
             {
                 string queryString = ApplicationDeployment.CurrentDeployment.ActivationUri.Query;
-                if(queryString != null)
+                if (queryString != null)
                     nameValueTable = HttpUtility.ParseQueryString(queryString);
             }
             return (nameValueTable);
