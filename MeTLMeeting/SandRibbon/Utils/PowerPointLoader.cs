@@ -78,7 +78,10 @@ namespace SandRibbon.Utils
         }
         private void ShowCreateConversationDialog(object o)
         {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.CREATE).ShowDialog();
+            var now = DateTimeFactory.Now();
+            var details = new ConversationDetails(Globals.me + " " + now.ToString(), "", Globals.me, new List<MeTLLib.DataTypes.Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted");
+            Commands.CreateConversation.ExecuteAsync(details);
+            //new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.CREATE).ShowDialog();
         }
         private void ImportPowerpoint(object o)
         {

@@ -56,7 +56,7 @@ namespace SandRibbon.Components
             searchConversations.Content = searchButtonText);
         }
         private void SetIdentity(object _arg){
-            var availableConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
+            var availableConversations = MeTLLib.ClientFactory.Connection().AvailableConversations.Where(s=>s.Subject != "Deleted").ToList();
             Dispatcher.adoptAsync(()=>{
             foreach(var conversation in availableConversations)
                 searchResults.Add(conversation);
@@ -201,15 +201,14 @@ namespace SandRibbon.Components
         {
             if (MessageBox.Show("Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                var details = (MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext;
+                var details = (MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext;
                 details.Subject = "Deleted";
                 MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
-                //ConversationDetailsProviderFactory.Provider.Update(details);
             }
         }
         private void editConversation(object sender, RoutedEventArgs e)
         {
-            Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext).Jid);
+            Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext).Jid);
         }
     }
     public class ConversationComparator : System.Collections.IComparer

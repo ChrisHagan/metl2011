@@ -49,7 +49,7 @@ namespace SandRibbon
             }
             if (controller == null)
                 controller = new NetworkController();
-            else 
+            else
                 controller.switchServer();
             MeTLLib.ClientFactory.Connection().Connect(finalUsername, password);
         }
@@ -99,14 +99,12 @@ namespace SandRibbon
             //Asserting new permission set to all referenced assemblies
             set.Assert();
         }
-
         private void LogOut(object _Unused)
         {
             WorkspaceStateProvider.ClearSettings();
             ThumbnailProvider.ClearThumbnails();
             Application.Current.Shutdown();
         }
-
         protected override void OnStartup(StartupEventArgs e)
         {
 #if DEBUG
@@ -159,7 +157,16 @@ namespace SandRibbon
             {
                 var parameters = GetQueryStringParameters();
                 foreach (var key in parameters.Keys)
+                {
+                    App.Now("Added uri query parameter(" + key + "): " + parameters.Get((String)key));
                     Application.Current.Properties.Add(key, parameters.Get((string)key));
+                }
+                /*int cmdLineArg = 0;
+                foreach (string arg in Environment.GetCommandLineArgs())
+                {
+                    Application.Current.Properties.Add("commandLineArgument" + cmdLineArg++, arg);
+                    App.Now("Added commandline argument(" + cmdLineArg + "): " + arg);
+                }*/
             }
             catch (Exception ex)
             {

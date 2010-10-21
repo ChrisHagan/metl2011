@@ -59,8 +59,6 @@ namespace SandRibbon.Providers
             {
                 try
                 {
-                    //var loc = MeTLLib.ClientFactory.Connection().location;
-                    //if (loc != null) return loc;
                     var conversationDetails = Globals.conversationDetails;
                     return new Location(conversationDetails.Jid, slide, conversationDetails.Slides.Select(s => s.id).ToList());
                 }

@@ -355,7 +355,7 @@ namespace SandRibbon
         }
         private void CreateConversation(object _unused)
         {
-            ShowPowerpointBlocker("Creating Conversation Dialog Open");
+            //ShowPowerpointBlocker("Creating Conversation Dialog Open");
             Commands.CreateConversationDialog.ExecuteAsync(null);
         }
         private void EditConversation(object _unused)

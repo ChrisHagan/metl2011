@@ -11,7 +11,7 @@ namespace MeTLLib
         public static StandardKernel kernel = new StandardKernel(new BaseModule(), new ProductionModule());
         public static ClientConnection Connection(MeTLServerAddress serverAddress)
         {
-            if (serverAddress.uri == null) throw new ArgumentNullException("uri", "Argument cannot be null");
+            if (serverAddress.productionUri == null || serverAddress.stagingUri == null) throw new ArgumentNullException("uri", "Neither productionUri nor stagingUri may be null.");
             kernel.Unbind<MeTLServerAddress>();
             kernel.Bind<MeTLServerAddress>().To(serverAddress.GetType()).InSingletonScope();
             return kernel.Get<ClientConnection>();

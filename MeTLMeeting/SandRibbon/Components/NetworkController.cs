@@ -189,7 +189,10 @@ namespace SandRibbon.Components
         }
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
-            Commands.UpdateConversationDetails.ExecuteAsync(e.conversationDetails);
+            if (e.conversationDetails.Jid == ClientFactory.Connection().location.activeConversation)
+                Commands.UpdateConversationDetails.ExecuteAsync(e.conversationDetails);
+            else 
+                Commands.UpdateForeignConversationDetails.ExecuteAsync(e.conversationDetails);
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {

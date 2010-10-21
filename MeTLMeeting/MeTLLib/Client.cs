@@ -21,7 +21,7 @@ namespace MeTLLib
     {
         public Uri productionUri { get; set; }
         public Uri stagingUri { get; set; }
-        public enum serverMode { PRODUCTION, STAGING};
+        public enum serverMode { PRODUCTION, STAGING };
         private serverMode mode;
         public void setMode(serverMode mode)
         {
@@ -154,12 +154,12 @@ namespace MeTLLib
                 events.statusChanged(false, credentials);
             else
             {
-            jabberWireFactory.credentials = credentials;
-            wire = jabberWireFactory.wire();
-            wire.Login(new Location("100", 101, new List<int> { 101, 102, 103, 104, 105, 106 }));
-            Trace.TraceInformation("set up jabberwire");
-            Commands.AllStaticCommandsAreRegistered();
-            Trace.TraceInformation("Connection state: " + isConnected.ToString());
+                jabberWireFactory.credentials = credentials;
+                wire = jabberWireFactory.wire();
+                wire.Login(new Location("100", 101, new List<int> { 101, 102, 103, 104, 105, 106 }));
+                Trace.TraceInformation("set up jabberwire");
+                Commands.AllStaticCommandsAreRegistered();
+                Trace.TraceInformation("Connection state: " + isConnected.ToString());
             }
             return credentials;
         }
@@ -370,6 +370,9 @@ namespace MeTLLib
             {
                 if (String.IsNullOrEmpty(conversation)) return;
                 var cd = conversationDetailsProvider.DetailsOf(conversation);
+                location.activeConversation = cd.Jid;
+                location.availableSlides = cd.Slides.Select(s => s.id).ToList();
+                location.currentSlide = location.availableSlides[0];
                 events.receiveConversationDetails(cd);
                 //wire.MoveTo(cd.Slides[0].id);
             };

@@ -803,8 +803,7 @@ namespace MeTLLib.Providers.Connection
             var jid = parts[1];
             conversationDetailsProvider.ReceiveDirtyConversationDetails(jid);
             var newDetails = conversationDetailsProvider.DetailsOf(jid);
-            if (isCurrentConversation(jid))
-                receiveEvents.receiveConversationDetails(newDetails);
+            receiveEvents.receiveConversationDetails(newDetails);
         }
         private bool isCurrentConversation(string jid)
         {
