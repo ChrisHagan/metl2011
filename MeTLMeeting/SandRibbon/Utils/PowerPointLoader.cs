@@ -49,7 +49,7 @@ namespace SandRibbon.Utils
         public PowerPointLoader()
         {
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(EditConversation));
-            Commands.CreateConversationDialog.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowCreateConversationDialog));
+            Commands.CreateConversationDialog.RegisterCommandToDispatcher(new DelegateCommand<object>(createBlankConversation));
             Commands.ImportPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<object>(ImportPowerpoint));
             Commands.UploadPowerpoint.RegisterCommand(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
         }
@@ -76,12 +76,12 @@ namespace SandRibbon.Utils
         {
             new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.EDIT, conversation).ShowDialog();
         }
-        private void ShowCreateConversationDialog(object o)
+        private void createBlankConversation(object o)
         {
             var now = DateTimeFactory.Now();
             var details = new ConversationDetails(Globals.me + " " + now.ToString(), "", Globals.me, new List<MeTLLib.DataTypes.Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted");
+            Commands.HideConversationSearchBox.Execute(null);
             Commands.CreateConversation.ExecuteAsync(details);
-            //new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.CREATE).ShowDialog();
         }
         private void ImportPowerpoint(object o)
         {
