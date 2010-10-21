@@ -152,8 +152,8 @@ namespace SandRibbon.Tabs
 
         private void openQuizResults(object sender, RoutedEventArgs e)
         {
-            //if(activeQuizes.Count > 0)
-              //  new ViewQuizResults(answers, activeQuizes).Show();
+            if(activeQuizes.Count > 0)
+                new ViewQuizResults(answers, activeQuizes).Show();
         }
     }
 }

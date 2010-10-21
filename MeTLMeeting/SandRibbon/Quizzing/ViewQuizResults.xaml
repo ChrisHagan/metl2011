@@ -8,27 +8,33 @@
     SizeToContent="WidthAndHeight">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
-            <Grid MaxHeight="450">
+            <Grid MaxHeight="645">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="325"/>
+                    <ColumnDefinition MaxWidth="125"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <ListBox x:Name="quizzes" SelectionMode="Single" Background ="Transparent"  
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionChanged="QuizChanged">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel IsItemsHost="True" />
+                            <StackPanel/>
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=title}"/>
+                            <StackPanel>
+                                <Image Source="/Resources/Ribbon-Quiz.png" Height="100" Width="100"/>
+                                <TextBlock Text="{Binding Path=title, Converter={x:Static SandRibbon:Converters.stringTruncator}}"/>
+                            </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <Grid Grid.Column="1">
                     <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top">Preview</Label>
                     <StackPanel x:Name="QuizResults"/>
+                    <Border VerticalAlignment="Bottom" Background="{StaticResource BackgroundBlueGradient}" Padding="20 20 20 20">
+                        <Button Content="Display results" Command="{x:Static api:Commands.DisplayQuizResults}" Padding="0 10 0 0 "/>
+                    </Border>
                 </Grid>
             </Grid>
         </DockPanel>

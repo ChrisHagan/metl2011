@@ -28,9 +28,11 @@ namespace SandRibbon.Quizzing
     {
         private Dictionary<long, ObservableCollection<QuizAnswer>> answers = new Dictionary<long, ObservableCollection<QuizAnswer>>();
         private ObservableCollection<QuizQuestion> activeQuizes = new ObservableCollection<QuizQuestion>();
+
         public ViewQuizResults()
         {
             InitializeComponent();
+            Commands.DisplayQuizResults.RegisterCommand(new DelegateCommand<object>(CloseQuizResults));
         }
         public ViewQuizResults(Dictionary<long, ObservableCollection<QuizAnswer>> answers, ObservableCollection<QuizQuestion> Quizes): this()
         {
@@ -38,6 +40,10 @@ namespace SandRibbon.Quizzing
             foreach(var quiz in Quizes)
                 activeQuizes.Add(quiz);
             quizzes.ItemsSource = activeQuizes;
+        }
+        private void CloseQuizResults(object _obj)
+        {
+            this.Close();
         }
         private void QuizChanged(object sender, SelectionChangedEventArgs e)
         {

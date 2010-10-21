@@ -85,6 +85,7 @@ namespace SandRibbon.Components
                     ViewboxUnits = BrushMappingMode.Absolute,
                     Viewbox = view
                 },
+                
                 Tag = setup.snapshotAtTimeOfCreation
             };
             Commands.ThoughtLiveWindow.ExecuteAsync(new ThoughtBubbleLiveWindow

@@ -9,11 +9,6 @@
     >
     <Border x:Name="allResults" >
         <DockPanel>
-            <Border DockPanel.Dock="Bottom" Background="{StaticResource BackgroundBlueGradient}" Padding="20 20 20 20">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Display results" Click="SnapshotButton_Click" Padding="0 10 0 0 "/>
-                </StackPanel>
-            </Border>
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
             <StackPanel x:Name="SnapshotHost" Background="{StaticResource BackgroundBlueGradient}" >
                 <Grid Margin="10 10 10 30">

@@ -108,6 +108,7 @@ namespace SandRibbon
         public static CompositeCommand SendQuizAnswer = new CompositeCommand();
         public static CompositeCommand ReceiveQuiz = new CompositeCommand();
         public static CompositeCommand ReceiveQuizAnswer = new CompositeCommand();
+        public static CompositeCommand DisplayQuizResults = new CompositeCommand();
         public static CompositeCommand QuizResultsAvailableForSnapshot = new CompositeCommand();
         public static CompositeCommand QuizResultsSnapshotAvailable = new CompositeCommand();
         public static CompositeCommand PlaceQuizSnapshot = new CompositeCommand();

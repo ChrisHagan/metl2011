@@ -69,6 +69,26 @@ namespace SandRibbon
         public static colourToNameConverter ColourToNameConverter = new colourToNameConverter();
         public static conversationDetailsToDescription ConversationDetailsToDescription = new conversationDetailsToDescription();
         public static IsMeConverter isMe = new IsMeConverter();
+        public static StringTruncatorConverter stringTruncator = new StringTruncatorConverter();
+    }
+    public class StringTruncatorConverter : IValueConverter
+    {
+
+        #region IValueConverter Members
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if(value.ToString().Length > 10)
+                return string.Format("{0}...", ((string)value).Substring(0, 10));
+            return value.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
     public class IsMeConverter : IValueConverter
     {
