@@ -374,7 +374,6 @@ namespace MeTLLib
                 location.availableSlides = cd.Slides.Select(s => s.id).ToList();
                 location.currentSlide = location.availableSlides[0];
                 events.receiveConversationDetails(cd);
-                //wire.MoveTo(cd.Slides[0].id);
             };
             tryIfConnected(work);
         }

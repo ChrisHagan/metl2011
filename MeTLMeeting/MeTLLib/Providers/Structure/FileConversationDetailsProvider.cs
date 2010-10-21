@@ -19,10 +19,13 @@ namespace MeTLLib.Providers.Structure
 {
     class FileConversationDetailsProvider : HttpResourceProvider, IConversationDetailsProvider
     {
-        [Inject] public IProviderMonitor providerMonitor { private get;set;}
-        [Inject] public MeTLServerAddress server { private get; set; }
+        [Inject]
+        public IProviderMonitor providerMonitor { private get; set; }
+        [Inject]
+        public MeTLServerAddress server { private get; set; }
         private IResourceUploader resourceUploader;
-        public FileConversationDetailsProvider(IWebClientFactory factory, IResourceUploader uploader) : base(factory)
+        public FileConversationDetailsProvider(IWebClientFactory factory, IResourceUploader uploader)
+            : base(factory)
         {
             resourceUploader = uploader;
             ListConversations();
@@ -41,6 +44,12 @@ namespace MeTLLib.Providers.Structure
         }
         private readonly string DETAILS = "details.xml";
         private readonly string SUMMARY = "summary.xml";
+        public bool isAccessibleToMe(string jid)
+        {
+            var myGroups = Globals.authorizedGroups.Select(g => g.groupKey);
+            var details = DetailsOf(jid);
+            return myGroups.Contains(details.Subject);
+        }
         public ConversationDetails DetailsOf(string conversationJid)
         {
             //So, from a design perspective, conversationJid must be a string, which must be non-empty, non-null.  But it might be a string that isn't currently a conversation Jid.
@@ -79,15 +88,15 @@ namespace MeTLLib.Providers.Structure
                 var slideId = details.Slides.Select(s => s.id).Max() + 1;
                 var position = getPosition(currentSlide, details.Slides);
                 if (position == -1) return details;
-                var slide = new Slide(slideId,details.Author,type,position+1,720,540);
-                                /*{
-                                    author = details.Author,
-                                    id = slideId,
-                                    index = position + 1,
-                                    type = type,
-                                    defaultHeight = 540,
-                                    defaultWidth = 720
-                                };*/
+                var slide = new Slide(slideId, details.Author, type, position + 1, 720, 540);
+                /*{
+                    author = details.Author,
+                    id = slideId,
+                    index = position + 1,
+                    type = type,
+                    defaultHeight = 540,
+                    defaultWidth = 720
+                };*/
                 foreach (var existingSlide in details.Slides)
                     if (existingSlide.index >= slide.index)
                         existingSlide.index++;
@@ -114,7 +123,7 @@ namespace MeTLLib.Providers.Structure
             {
                 var details = DetailsOf(title);
                 var slideId = details.Slides.Select(s => s.id).Max() + 1;
-                details.Slides.Add(new Slide(slideId,details.Author,Slide.TYPE.SLIDE,details.Slides.Count,720,540));
+                details.Slides.Add(new Slide(slideId, details.Author, Slide.TYPE.SLIDE, details.Slides.Count, 720, 540));
                 /*{
                     author = details.Author,
                     id = slideId,
@@ -211,13 +220,14 @@ namespace MeTLLib.Providers.Structure
                     return conversationsCache;
                 }
             }
-            catch(NotSetException e)
+            catch (NotSetException e)
             {
-                return new List<ConversationDetails>(); 
+                return new List<ConversationDetails>();
             }
         }
         private List<ConversationDetails> RestrictToAccessible(IEnumerable<ConversationDetails> summary, IEnumerable<string> myGroups)
         {
+            return summary.ToList();
             return summary
                 .Where(c => !String.IsNullOrEmpty(c.Subject))
                 .Where(c => myGroups.Contains(c.Subject))
@@ -229,7 +239,7 @@ namespace MeTLLib.Providers.Structure
             {
                 var id = GetApplicationLevelInformation().currentId;
                 details.Jid = id.ToString();
-                details.Slides.Add(new Slide(id+1,details.Author,Slide.TYPE.SLIDE,0,720,540));
+                details.Slides.Add(new Slide(id + 1, details.Author, Slide.TYPE.SLIDE, 0, 720, 540));
                 /*
                 {
                     author = details.Author,

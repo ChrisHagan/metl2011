@@ -56,7 +56,7 @@ namespace SandRibbon.Components
             searchConversations.Content = searchButtonText);
         }
         private void SetIdentity(object _arg){
-            var availableConversations = MeTLLib.ClientFactory.Connection().AvailableConversations.Where(s=>s.Subject != "Deleted").ToList();
+            var availableConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
             Dispatcher.adoptAsync(()=>{
             foreach(var conversation in availableConversations)
                 searchResults.Add(conversation);
@@ -118,9 +118,9 @@ namespace SandRibbon.Components
         {
                 if (searchResults.Where(c => c.Jid == details.Jid).Count() == 1)
                     Dispatcher.adoptAsync(()=>searchResults.Remove(searchResults.Where(c => c.Jid == details.Jid).First()));
-                if (!details.Subject.Contains("Deleted"))
+                //if (!details.Subject.Contains("Deleted"))
                        Dispatcher.adopt(()=>searchResults.Add(details));
-                else //conversation deleted
+                //else //conversation deleted
                 {
                     Commands.RequerySuggested();
                     //if (Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
@@ -138,6 +138,10 @@ namespace SandRibbon.Components
         private bool isWhatWeWereLookingFor(object o)
         {
             var conversation = (MeTLLib.DataTypes.ConversationDetails)o;
+            if (!(Globals.credentials.authorizedGroups.Select(g=>g.groupKey).Contains(conversation.Subject)) 
+                && conversation.Subject != "Unrestricted" 
+                && !(String.IsNullOrEmpty(conversation.Subject))
+                && !(Globals.credentials.authorizedGroups.Select(su=>su.groupKey).Any(k=>k=="Superuser"))) return false;
             var author = conversation.Author.ToLower();
             var title = conversation.Title.ToLower();
             var searchField = new[] { author, title };
