@@ -33,8 +33,7 @@ namespace MeTLLib
             {
                 return mode == serverMode.PRODUCTION ? productionUri : stagingUri;
             }
-        public Uri uri { get; set; }
-
+        }
         public Uri secureUri { get { return new Uri("https://" + host); } }
         public string host { get { return uri.Host; } }
         public string muc
