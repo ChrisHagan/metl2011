@@ -24,6 +24,7 @@ using SandRibbon.Components;
 using System.Collections.ObjectModel;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
+using MeTLLib;
 
 namespace SandRibbon.Utils
 {
@@ -39,7 +40,7 @@ namespace SandRibbon.Utils
         static MsoTriState FALSE = MsoTriState.msoFalse;
         static MsoTriState TRUE = MsoTriState.msoTrue;
         static int resource = 1;
-        public MeTLLib.Providers.Connection.JabberWire wire;
+        public MeTLLib.ClientConnection wire;
         public enum PowerpointImportType
         {
             HighDefImage,
@@ -51,7 +52,11 @@ namespace SandRibbon.Utils
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(EditConversation));
             Commands.CreateConversationDialog.RegisterCommandToDispatcher(new DelegateCommand<object>(createBlankConversation));
             Commands.ImportPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<object>(ImportPowerpoint));
-            Commands.UploadPowerpoint.RegisterCommand(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
+            Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
+            if (App.isStaging)
+                wire = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
+            else
+                wire = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
         }
         private void UploadPowerpoint(PowerpointSpec spec)
         {
@@ -178,7 +183,7 @@ namespace SandRibbon.Utils
             }
             catch (Exception ex)
             {
-                //MessageBox.Show("LoadPowerpointAsFlatSlides error: " + ex.Message);
+                MessageBox.Show("LoadPowerpointAsFlatSlides error: " + ex.Message);
             }
             finally
             {
@@ -269,7 +274,7 @@ namespace SandRibbon.Utils
                         id = textBoxIdentity,
                         privacy = privacy
                     });
-                wire.SendTextbox(new TargettedTextBox(id,Globals.me,"presentationSpace",privacy,newText));
+                wire.SendTextBox(new TargettedTextBox(id,Globals.me,"presentationSpace",privacy,newText));
             }
             wire.SneakOutOf(id.ToString());
         }
@@ -327,7 +332,7 @@ namespace SandRibbon.Utils
                             id = string.Format("{0}:{1}{2}", me, DateTimeFactory.Now(), shapeCount++)
                         });
                 ;
-                wire.SendTextbox(new TargettedTextBox
+                wire.SendTextBox(new TargettedTextBox
                 (id,me,"notepad","private",newText));
             }
             wire.SneakOutOf(privateRoom);

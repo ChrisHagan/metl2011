@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using SandRibbon.Utils;
 using SandRibbon.Components.Pedagogicometry;
 using MeTLLib.DataTypes;
+using System.IO;
 
 namespace SandRibbon.Components
 {
@@ -123,6 +124,8 @@ namespace SandRibbon.Components
             {
                 importFile = fileBrowser.FileName;
                 importFileTextBox.Text = importFile;
+                var file = new FileInfo(fileBrowser.FileName);
+                conversationNameTextBox.Text = file.Name.Split('.').First(); 
             }
         }
         private void UpdateConversationDetails(ConversationDetails details)

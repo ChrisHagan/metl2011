@@ -240,7 +240,7 @@ namespace SandRibbon.Components
         {
             if (MessageBox.Show("Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                var details = (MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext;
+                var details = (MeTLLib.DataTypes.ConversationDetails)((ResourceDictionaries.Button)sender).DataContext;
                 details.Subject = "Deleted";
                 MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
                 //ConversationDetailsProviderFactory.Provider.Update(details);
