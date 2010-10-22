@@ -34,8 +34,8 @@ namespace SandRibbon
         public static CompositeCommand receiveCurrentClasses = new CompositeCommand();
         #endregion
 
-        //public static CompositeCommand ConnectWithAuthenticatedCredentials = new CompositeCommand();
         public static CompositeCommand BackstageModeChanged = new CompositeCommand();
+        public static CompositeCommand UpdatePowerpointProgress = new CompositeCommand();
 
         public static CompositeCommand AddPrivacyToggleButton = new CompositeCommand();
         public static CompositeCommand RemovePrivacyAdorners = new CompositeCommand();

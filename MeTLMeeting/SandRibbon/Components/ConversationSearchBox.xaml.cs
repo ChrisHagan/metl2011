@@ -151,11 +151,6 @@ namespace SandRibbon.Components
                 //if (Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
                 if (Globals.conversationDetails.Jid == details.Jid && this.Visibility == Visibility.Collapsed)
                 {
-                    Commands.RequerySuggested();
-                    if (Globals.conversationDetails.Jid == details.Jid && Globals.authorizedGroups.Where(agsXMPP => agsXMPP.groupKey == details.Subject).ToList().Count == 0 && this.Visibility == Visibility.Collapsed )
-                    {
-                          Dispatcher.adopt(()=>this.Visibility = Visibility.Visible);
-                    }
                     Dispatcher.adopt(() => this.Visibility = Visibility.Visible);
                 }
             }*/
@@ -240,7 +235,7 @@ namespace SandRibbon.Components
         {
             if (MessageBox.Show("Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                var details = (MeTLLib.DataTypes.ConversationDetails)((ResourceDictionaries.Button)sender).DataContext;
+                var details = (MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext;
                 details.Subject = "Deleted";
                 MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
                 //ConversationDetailsProviderFactory.Provider.Update(details);
@@ -248,7 +243,7 @@ namespace SandRibbon.Components
         }
         private void editConversation(object sender, RoutedEventArgs e)
         {
-            Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((ResourceDictionaries.Button)sender).DataContext).Jid);
+            Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext).Jid);
         }
 
         private void mode_Checked(object sender, RoutedEventArgs e)

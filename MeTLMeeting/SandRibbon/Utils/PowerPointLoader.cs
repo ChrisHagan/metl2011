@@ -35,6 +35,29 @@ namespace SandRibbon.Utils
         public PowerPointLoader.PowerpointImportType Type;
         public int Magnification;
     }
+    public class PowerpointImportProgress
+    {
+        public PowerpointImportProgress(importStage Stage, int CurrentSlide)
+        {
+            stage = Stage;
+            slideId = CurrentSlide;
+        }
+        public PowerpointImportProgress(importStage Stage, int CurrentSlide, int TotalSlides)
+            :this(Stage,CurrentSlide)
+        {
+            totalSlides = TotalSlides;
+        }
+        public PowerpointImportProgress(importStage Stage, int CurrentSlide, string thumbnail)
+            :this(Stage,CurrentSlide)
+        {
+            slideThumbnailSource = thumbnail;
+        }
+        public int slideId;
+        public int totalSlides;
+        public enum importStage { ANALYSED, EXTRACTED_IMAGES, UPLOADED_XML, UPLOADED_RESOURCES };
+        public importStage stage;
+        public string slideThumbnailSource;
+    }
     public class PowerPointLoader
     {
         static MsoTriState FALSE = MsoTriState.msoFalse;
@@ -53,10 +76,19 @@ namespace SandRibbon.Utils
             Commands.CreateConversationDialog.RegisterCommandToDispatcher(new DelegateCommand<object>(createBlankConversation));
             Commands.ImportPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<object>(ImportPowerpoint));
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
+            Commands.UpdatePowerpointProgress.RegisterCommand(new DelegateCommand<PowerpointImportProgress>(ReportPowerpointProgress));
             if (App.isStaging)
                 wire = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
             else
                 wire = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
+        }
+        private void ReportPowerpointProgress(PowerpointImportProgress progress)
+        {
+            Console.WriteLine(String.Format("pptStage({0}),slideId({1}/{2}){3}",
+                progress.stage.ToString(),
+                progress.slideId,
+                progress.totalSlides == null ? "?" : progress.totalSlides.ToString(),
+                String.IsNullOrEmpty(progress.slideThumbnailSource) ? "" : ", (uri:" + progress.slideThumbnailSource + ")"));
         }
         private void UploadPowerpoint(PowerpointSpec spec)
         {
@@ -110,8 +142,10 @@ namespace SandRibbon.Utils
                 var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
                 var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
                 var thumbnailStartId = conversation.Slides.First().id;
+                progress(PowerpointImportProgress.importStage.ANALYSED,0,ppt.Slides.Count);
                 foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
                 {
+                    int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
                     var slidePath = Directory.GetCurrentDirectory() + "\\" + new PrintingHost().ThumbnailPath(thumbnailStartId++);
                     foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                     {
@@ -128,7 +162,6 @@ namespace SandRibbon.Utils
                         else shape.Visible = MsoTriState.msoTrue;
                     }
                     createThumbnail(details, slide);
-
                     slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
                     var xSlide = new XElement("slide");
                     xSlide.Add(new XAttribute("index", slide.SlideIndex));
@@ -161,20 +194,24 @@ namespace SandRibbon.Utils
                     {
                         ExportShape(shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
                     }
+                    progress(PowerpointImportProgress.importStage.EXTRACTED_IMAGES, conversationSlideNumber);
                 }
                 var startingId = conversation.Slides.First().id;
                 var index = 0;
                 conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
                 provider.UpdateConversationDetails(conversation);
                 var xmlSlides = xml.Descendants("slide");
-                for (int i = 0; i < xmlSlides.Count(); i++)
+                int xmlSlidesCount = xmlSlides.Count();
+                for (int i = 0; i < xmlSlidesCount; i++)
                 {
                     var slideXml = xmlSlides.ElementAt(i);
                     var slideId = conversation.Slides[i].id;
                     var powerpointThread = new Thread(() =>
                     {
                         uploadXmlUrls(slideId, slideXml);
+                        progress(PowerpointImportProgress.importStage.UPLOADED_XML, slideId, xmlSlidesCount);
                         sendSlide(slideId, slideXml);
+                        progress(PowerpointImportProgress.importStage.UPLOADED_RESOURCES, slideId, xmlSlidesCount);
                     });
                     powerpointThread.SetApartmentState(ApartmentState.STA);
                     powerpointThread.Start();
@@ -191,11 +228,24 @@ namespace SandRibbon.Utils
                 Commands.PowerpointFinished.ExecuteAsync(null);
             }
         }
+        private static void progress(PowerpointImportProgress.importStage action, int currentSlideId)
+        {
+            Commands.UpdatePowerpointProgress.ExecuteAsync(new PowerpointImportProgress(action, currentSlideId));
+        }
+        private static void progress(PowerpointImportProgress.importStage action, int currentSlideId, string imageSource)
+        {
+            Commands.UpdatePowerpointProgress.ExecuteAsync(new PowerpointImportProgress(action, currentSlideId, imageSource));
+        }
+        private static void progress(PowerpointImportProgress.importStage action, int currentSlideId, int totalNumberOfSlides) 
+        {
+            Commands.UpdatePowerpointProgress.ExecuteAsync(new PowerpointImportProgress(action, currentSlideId, totalNumberOfSlides));
+        }
         private static void createThumbnail(ConversationDetails details, Microsoft.Office.Interop.PowerPoint.Slide slide)
         {
             int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
             var slideThumbnailPath = Directory.GetCurrentDirectory() + "\\thumbs\\" + conversationSlideNumber + ".png";
             slide.Export(slideThumbnailPath, "PNG", Convert.ToInt32(slide.Master.Width), Convert.ToInt32(slide.Master.Height));
+            progress(PowerpointImportProgress.importStage.ANALYSED,conversationSlideNumber,slideThumbnailPath);
             SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(slideThumbnailPath, conversationSlideNumber + "/thumbs", "slideThumb.png");
         }
         public void LoadPowerpoint(string file, ConversationDetails details)
@@ -210,6 +260,7 @@ namespace SandRibbon.Utils
                     details.Tag = "unTagged";
                 var conversation = provider.CreateConversation(details);
                 conversation.Author = Globals.me;
+                progress(PowerpointImportProgress.importStage.ANALYSED, 0, ppt.Slides.Count);
                 foreach (var slide in ppt.Slides)
                 {
                     importSlide(details, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
@@ -227,7 +278,9 @@ namespace SandRibbon.Utils
                     var powerpointThread = new Thread(() =>
                     {
                         uploadXmlUrls(slideId, slideXml);
+                        progress(PowerpointImportProgress.importStage.UPLOADED_XML, slideId);
                         sendSlide(slideId, slideXml);
+                        progress(PowerpointImportProgress.importStage.UPLOADED_RESOURCES, slideId);
                     });
                     powerpointThread.SetApartmentState(ApartmentState.STA);
                     powerpointThread.Start();
@@ -360,6 +413,7 @@ namespace SandRibbon.Utils
         private static void importSlide(ConversationDetails details, XElement xml, Microsoft.Office.Interop.PowerPoint.Slide slide)
         {
 
+            int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
             var xSlide = new XElement("slide");
             xSlide.Add(new XAttribute("index", slide.SlideIndex));
             var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
@@ -409,6 +463,7 @@ namespace SandRibbon.Utils
                 I have no idea why it has to be this way, it just looks right when it is.*/
                 ExportShape(shapeObj, xSlide, currentWorkingDirectory, exportFormat, exportMode, backgroundWidth, backgroundHeight, Magnification);
             }
+            progress(PowerpointImportProgress.importStage.EXTRACTED_IMAGES, conversationSlideNumber);
             foreach (var notes in slide.NotesPage.Shapes)
             {
                 var shape = (Microsoft.Office.Interop.PowerPoint.Shape)notes;
