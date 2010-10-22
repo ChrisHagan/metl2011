@@ -45,19 +45,33 @@ namespace SandRibbon.Components
         private void BackstageModeChanged(string mode)
         {
             Dispatcher.adoptAsync(() =>
-            GetListCollectionView().Refresh());
-            string searchButtonText;
+            {
+                updateLiveButton(mode);
+                GetListCollectionView().Refresh();
+            });
+                string searchButtonText;
             switch (mode)
             {
                 case "mine": searchButtonText = "Filter my Conversations"; break;
                 case "all": searchButtonText = "Filter all Conversations"; break;
                 default: searchButtonText = "Search all Conversations"; break;
             }
+            Dispatcher.adoptAsync(()=>
             Dispatcher.adoptAsync(() =>
-            searchConversations.Content = searchButtonText);
+            {
+                if (searchConversations == null) return;
+                searchConversations.Content = searchButtonText;
+            });
         }
-        private void SetIdentity(object _arg)
+
+        private void updateLiveButton(string mode)
         {
+            var elements = new[] {mine, all, find};
+            foreach (var button in elements)
+                if (button.Name == mode)
+                    button.IsChecked = true;
+        }
+        private void SetIdentity(object _arg){
             var availableConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
             Dispatcher.adoptAsync(() =>
             {
@@ -231,6 +245,12 @@ namespace SandRibbon.Components
         private void editConversation(object sender, RoutedEventArgs e)
         {
             Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext).Jid);
+        }
+
+        private void mode_Checked(object sender, RoutedEventArgs e)
+        {
+            var mode = ((FrameworkElement)sender).Name;
+            backstageNav.currentMode = mode;
         }
     }
     public class ConversationComparator : System.Collections.IComparer

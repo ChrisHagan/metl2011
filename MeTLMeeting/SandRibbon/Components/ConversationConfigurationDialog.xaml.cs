@@ -48,18 +48,23 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.dialogMode = mode;
-            conversationSubjectListBox.ItemsSource = Globals.authorizedGroups.Select(ag => ag.groupKey);
+            //conversationSubjectListBox.ItemsSource = Globals.authorizedGroups.Select(ag => ag.groupKey);
             extantConversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
-                //ConversationDetailsProviderFactory.Provider.ListConversations();
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             this.CommandBindings.Add(new CommandBinding(CompleteConversationDialog, Create, CanCompleteDialog));
+            Loaded += new RoutedEventHandler(ConversationConfigurationDialog_Loaded);
+        }
+
+        void ConversationConfigurationDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            LowQualityPowerpointListBoxItem.IsChecked = true;
         }
         private void PopulateFields()
         {
             if (details == null) return;
             conversationNameTextBox.Text = details.Title;
-            if (conversationSubjectListBox.Items.Count > 0)
-                conversationSubjectListBox.SelectedItem = conversationSubjectListBox.Items[conversationSubjectListBox.Items.IndexOf(details.Subject.ToString())];
+            //if (conversationSubjectListBox.Items.Count > 0)
+              //  conversationSubjectListBox.SelectedItem = conversationSubjectListBox.Items[conversationSubjectListBox.Items.IndexOf(details.Subject.ToString())];
         }
         private bool isFirstRun = true;
         private void UpdateDialogBoxAppearance()
@@ -67,7 +72,6 @@ namespace SandRibbon.Components
             switch (dialogMode)
             {
                 case ConversationConfigurationMode.CREATE:
-                    deleteMessage.Visibility = Visibility.Collapsed;
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Create";
@@ -76,7 +80,6 @@ namespace SandRibbon.Components
                         ("Please enter a title here","",Globals.me,new List<Slide>(),Permissions.LECTURE_PERMISSIONS,"Unrestricted",SandRibbonObjects.DateTimeFactory.Now(),SandRibbonObjects.DateTimeFactory.Now());
                     break;
                 case ConversationConfigurationMode.EDIT:
-                    deleteMessage.Visibility = Visibility.Collapsed;
                     createGroup.Visibility = Visibility.Collapsed;
                     importGroup.Visibility = Visibility.Collapsed;
                     CommitButton.Content = "Update";
@@ -89,7 +92,6 @@ namespace SandRibbon.Components
                     }
                     break;
                 case ConversationConfigurationMode.IMPORT:
-                    deleteMessage.Visibility = Visibility.Collapsed;
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Visible;
                     CommitButton.Content = "Create";
@@ -277,7 +279,7 @@ namespace SandRibbon.Components
         }
         private void AttachHandlers()
         {
-            conversationSubjectListBox.SelectionChanged += conversationSubjectListBox_SelectionChanged;
+            //conversationSubjectListBox.SelectionChanged += conversationSubjectListBox_SelectionChanged;
             //startingContentSelector.SelectionChanged += startingContentListBox_SelectionChanged;
             CommitButton.Command = CompleteConversationDialog;
         }

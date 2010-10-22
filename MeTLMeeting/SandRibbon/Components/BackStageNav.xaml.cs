@@ -56,6 +56,15 @@ namespace SandRibbon.Components
                                                                          return acc;
                                                                      }).Name;
             }
+            set
+            {
+                var elements = new[] {help, mine, all, find};
+                foreach (var button in elements)
+                    if (button.Name == value)
+                        button.IsChecked = true;
+               
+
+            }
         }
         private void mode_Checked(object sender, RoutedEventArgs e)
         {
