@@ -54,7 +54,7 @@ namespace SandRibbon.Utils
         }
         public int slideId;
         public int totalSlides;
-        public enum importStage { ANALYSED, EXTRACTED_IMAGES, UPLOADED_XML, UPLOADED_RESOURCES };
+        public enum importStage { DESCRIBED, ANALYSED, EXTRACTED_IMAGES, UPLOADED_XML, UPLOADED_RESOURCES, FINISHED };
         public importStage stage;
         public string slideThumbnailSource;
     }
@@ -142,7 +142,7 @@ namespace SandRibbon.Utils
                 var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
                 var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
                 var thumbnailStartId = conversation.Slides.First().id;
-                progress(PowerpointImportProgress.importStage.ANALYSED,0,ppt.Slides.Count);
+                progress(PowerpointImportProgress.importStage.DESCRIBED,0,ppt.Slides.Count);
                 foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
                 {
                     int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
@@ -226,6 +226,7 @@ namespace SandRibbon.Utils
             {
                 ppt.Close();
                 Commands.PowerpointFinished.ExecuteAsync(null);
+                progress(PowerpointImportProgress.importStage.FINISHED, 0);
             }
         }
         private static void progress(PowerpointImportProgress.importStage action, int currentSlideId)
@@ -260,7 +261,7 @@ namespace SandRibbon.Utils
                     details.Tag = "unTagged";
                 var conversation = provider.CreateConversation(details);
                 conversation.Author = Globals.me;
-                progress(PowerpointImportProgress.importStage.ANALYSED, 0, ppt.Slides.Count);
+                progress(PowerpointImportProgress.importStage.DESCRIBED, 0, ppt.Slides.Count);
                 foreach (var slide in ppt.Slides)
                 {
                     importSlide(details, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
@@ -292,6 +293,7 @@ namespace SandRibbon.Utils
               * We don't.  But the content comes in live.*/
                 ppt.Close();
                 Commands.PowerpointFinished.ExecuteAsync(null);
+                progress(PowerpointImportProgress.importStage.FINISHED, 0);
             }
         }
         private void sendSlide(int id, XElement slide)
