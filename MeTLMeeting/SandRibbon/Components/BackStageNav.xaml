@@ -22,7 +22,7 @@
             <StackPanel VerticalAlignment="Top">
                 <dict:Button Text="Create New" Foreground="{StaticResource ResourceKey=foreground}" x:Name="new" Command="{x:Static api:Commands.CreateConversationDialog}"/>
                 <dict:Button Text="Import PowerPoint" Foreground="{StaticResource ResourceKey=foreground}" x:Name="import" Command="{x:Static api:Commands.ImportPowerpoint}"/>
-                <Line Stroke="White" StrokeThickness="1" Width="auto" ></Line>
+                <Rectangle Fill="White" Width="auto" Height="2" Margin="-20 5 -20 5"/>
                 <dict:RadioButton Text="Search" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="find" Checked="mode_Checked" IsChecked="True"/>
                 <dict:RadioButton Text="My conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="mine" Checked="mode_Checked"/>
                 <dict:RadioButton Text="All conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="all"  Checked="mode_Checked"/>

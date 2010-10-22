@@ -135,7 +135,7 @@ namespace SandRibbon.Components
                        Dispatcher.adopt(()=>searchResults.Add(details));
                 {
                     Commands.RequerySuggested();
-                    if (Globals.conversationDetails.Jid == details.Jid && this.Visibility == Visibility.Collapsed)
+                    if (Globals.conversationDetails.Jid == details.Jid && Globals.authorizedGroups.Where(agsXMPP => agsXMPP.groupKey == details.Subject).ToList().Count == 0 && this.Visibility == Visibility.Collapsed )
                     {
                           Dispatcher.adopt(()=>this.Visibility = Visibility.Visible);
                     }
@@ -224,7 +224,7 @@ namespace SandRibbon.Components
         }
         private void editConversation(object sender, RoutedEventArgs e)
         {
-            Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((SandRibbonInterop.Button)sender).DataContext).Jid);
+            Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((ResourceDictionaries.Button)sender).DataContext).Jid);
         }
 
         private void mode_Checked(object sender, RoutedEventArgs e)

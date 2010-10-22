@@ -7,15 +7,12 @@
 xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:my="clr-namespace:SandRibbon"
     Width="480"
-    Height="425"
+    MaxHeight="425"
     x:Name="createConversation"
     Loaded="Window_Loaded" ShowInTaskbar="True" WindowStartupLocation="CenterScreen"
     Title="Configure new MeTL Conversation" Closing="createConversation_Closing">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
-            <!--<Button Command="api:Commands.ShowEditSlidesDialog" DockPanel.Dock="Bottom">
-                <TextBlock Text="Edit slides" />
-            </Button>-->
             <Border DockPanel.Dock="Bottom" Padding="10" Background="{StaticResource BackgroundBlueGradient}" >
                 <Grid>
                     <Label x:Name="errorText" Foreground="Red" FontWeight="Bold" FontFamily="Verdana" FontSize="12" HorizontalAlignment="Left"/>

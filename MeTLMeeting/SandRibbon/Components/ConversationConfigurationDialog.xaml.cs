@@ -52,13 +52,8 @@ namespace SandRibbon.Components
             extantConversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             this.CommandBindings.Add(new CommandBinding(CompleteConversationDialog, Create, CanCompleteDialog));
-            Loaded += new RoutedEventHandler(ConversationConfigurationDialog_Loaded);
         }
 
-        void ConversationConfigurationDialog_Loaded(object sender, RoutedEventArgs e)
-        {
-            LowQualityPowerpointListBoxItem.IsChecked = true;
-        }
         private void PopulateFields()
         {
             if (details == null) return;
@@ -94,6 +89,7 @@ namespace SandRibbon.Components
                 case ConversationConfigurationMode.IMPORT:
                     createGroup.Visibility = Visibility.Visible;
                     importGroup.Visibility = Visibility.Visible;
+                    LowQualityPowerpointListBoxItem.IsChecked = true;
                     CommitButton.Content = "Create";
                     details = new ConversationDetails
                     ("Please enter a title here", "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
