@@ -33,7 +33,7 @@ namespace SandRibbon.Components
             Dispatcher.adopt(delegate
             {
                 nav.Visibility = Visibility.Visible;
-                if (details.Author == Globals.me)
+                if (details != null && details.Author == Globals.me)
                 {
                     Commands.SetSync.Execute(true);
                     addSlideButton.Visibility = Visibility.Visible;

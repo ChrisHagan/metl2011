@@ -306,7 +306,7 @@ namespace MeTLLib.Providers.Connection
                 Reset("Reset exception handling (recursive)");
             }
         }
-        private void leaveRooms()
+        public void leaveRooms()
         {
             var rooms = new[]{
                 metlServerAddress.global,

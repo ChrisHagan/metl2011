@@ -30,6 +30,7 @@ namespace SandRibbon.Components
         private void registerCommands()
         {
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoshape));
             Commands.SendChatMessage.RegisterCommand(new DelegateCommand<object>(SendChatMessage));
@@ -53,6 +54,10 @@ namespace SandRibbon.Components
             Commands.SneakIntoAndDo.RegisterCommand(new DelegateCommand<Projector.RoomAndAction>(SneakIntoAndDo));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.UploadFileReturningUrl.RegisterCommand(new DelegateCommand<string>(UploadFile));
+        }
+        private void LeaveConversation(string Jid)
+        {
+            client.LeaveConversation(Jid);
         }
         private void JoinConversation(object Jid)
         {
@@ -189,7 +194,7 @@ namespace SandRibbon.Components
         }
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
-            if (e.conversationDetails.Jid == ClientFactory.Connection().location.activeConversation)
+            if (e.conversationDetails != null && e.conversationDetails.Jid == ClientFactory.Connection().location.activeConversation)
                 Commands.UpdateConversationDetails.ExecuteAsync(e.conversationDetails);
             else 
                 Commands.UpdateForeignConversationDetails.ExecuteAsync(e.conversationDetails);

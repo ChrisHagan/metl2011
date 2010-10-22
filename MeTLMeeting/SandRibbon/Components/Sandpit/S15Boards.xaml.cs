@@ -64,7 +64,7 @@ namespace SandRibbon.Components.Sandpit
             Commands.CloseBoardManager.RegisterCommand(new DelegateCommand<object>(
                 _obj => Commands.ToggleFriendsVisibility.ExecuteAsync(null)
             ));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(details => Display()));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(details => { if (details != null) Display(); }));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
         }
         private void SendMoveBoardToSlide(BoardMove where) 

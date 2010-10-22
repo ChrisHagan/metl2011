@@ -358,6 +358,20 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
+        public void LeaveConversation(string conversation)
+        {
+            Action work = delegate
+            {
+                if (String.IsNullOrEmpty(conversation)) return;
+                var cd = conversationDetailsProvider.DetailsOf(conversation);
+                wire.leaveRooms();
+                location.activeConversation = null;
+                location.availableSlides = null;
+                location.currentSlide = 0;
+                events.receiveConversationDetails(null);
+            };
+            tryIfConnected(work);
+        }
         public void JoinConversation(string conversation)
         {
             Action work = delegate
