@@ -33,6 +33,7 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
             Commands.BackstageModeChanged.RegisterCommand(new DelegateCommand<string>(BackstageModeChanged));
@@ -43,7 +44,7 @@ namespace SandRibbon.Components
         }
         private void BackstageModeChanged(string mode)
         {
-            Dispatcher.adoptAsync(()=>
+            Dispatcher.adoptAsync(() =>
             GetListCollectionView().Refresh());
             string searchButtonText;
             switch (mode)
@@ -52,14 +53,16 @@ namespace SandRibbon.Components
                 case "all": searchButtonText = "Filter all Conversations"; break;
                 default: searchButtonText = "Search all Conversations"; break;
             }
-            Dispatcher.adoptAsync(()=>
+            Dispatcher.adoptAsync(() =>
             searchConversations.Content = searchButtonText);
         }
-        private void SetIdentity(object _arg){
+        private void SetIdentity(object _arg)
+        {
             var availableConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
-            Dispatcher.adoptAsync(()=>{
-            foreach(var conversation in availableConversations)
-                searchResults.Add(conversation);
+            Dispatcher.adoptAsync(() =>
+            {
+                foreach (var conversation in availableConversations)
+                    searchResults.Add(conversation);
             });
         }
         private void clearState()
@@ -114,22 +117,39 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(delegate { this.Visibility = Visibility.Collapsed; });
             Commands.RequerySuggested();
         }
+        private void LeaveConversation(string jid)
+        {
+            Commands.RequerySuggested();
+            if (jid == Globals.conversationDetails.Jid)
+                Dispatcher.adopt(() => this.Visibility = Visibility.Visible);
+        }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
-                if (searchResults.Where(c => c.Jid == details.Jid).Count() == 1)
-                    Dispatcher.adoptAsync(()=>searchResults.Remove(searchResults.Where(c => c.Jid == details.Jid).First()));
-                //if (!details.Subject.Contains("Deleted"))
-                       Dispatcher.adopt(()=>searchResults.Add(details));
-                //else //conversation deleted
+            if (details == null) return;
+            if (searchResults.Where(c => c.Jid == details.Jid).Count() == 1)
+                Dispatcher.adoptAsync(() => searchResults.Remove(searchResults.Where(c => c.Jid == details.Jid).First()));
+            //if (!details.Subject.Contains("Deleted"))
+            Dispatcher.adopt(() => searchResults.Add(details));
+            if (!(shouldShowConversation(details)))
+                Commands.LeaveConversation.ExecuteAsync(details.Jid);
+            //else //conversation deleted
+            /*{
+                Commands.RequerySuggested();
+                //if (Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
+                if (Globals.conversationDetails.Jid == details.Jid && this.Visibility == Visibility.Collapsed)
                 {
-                    Commands.RequerySuggested();
-                    //if (Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
-                    if (Globals.conversationDetails.Jid == details.Jid && this.Visibility == Visibility.Collapsed)
-                    {
-                          Dispatcher.adopt(()=>this.Visibility = Visibility.Visible);
-                    }
+                    Dispatcher.adopt(() => this.Visibility = Visibility.Visible);
                 }
-            Dispatcher.adoptAsync(()=>GetListCollectionView().Refresh());
+            }*/
+            Dispatcher.adoptAsync(() => GetListCollectionView().Refresh());
+        }
+        private bool shouldShowConversation(ConversationDetails conversation)
+        {
+            if (!(Globals.credentials.authorizedGroups.Select(g => g.groupKey).Contains(conversation.Subject))
+                && conversation.Subject != "Unrestricted"
+                && !(String.IsNullOrEmpty(conversation.Subject))
+                && !(Globals.credentials.authorizedGroups.Select(su => su.groupKey).Any(k => k == "Superuser"))) return false;
+            return true;
         }
         private ListCollectionView GetListCollectionView()
         {
@@ -138,10 +158,7 @@ namespace SandRibbon.Components
         private bool isWhatWeWereLookingFor(object o)
         {
             var conversation = (MeTLLib.DataTypes.ConversationDetails)o;
-            if (!(Globals.credentials.authorizedGroups.Select(g=>g.groupKey).Contains(conversation.Subject)) 
-                && conversation.Subject != "Unrestricted" 
-                && !(String.IsNullOrEmpty(conversation.Subject))
-                && !(Globals.credentials.authorizedGroups.Select(su=>su.groupKey).Any(k=>k=="Superuser"))) return false;
+            if (!shouldShowConversation(conversation)) return false;
             var author = conversation.Author.ToLower();
             var title = conversation.Title.ToLower();
             var searchField = new[] { author, title };

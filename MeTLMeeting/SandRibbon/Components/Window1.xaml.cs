@@ -555,7 +555,7 @@ namespace SandRibbon
         {
             try
             {
-                if (Globals.location.activeConversation != null && Globals.conversationDetails.Subject != "Deleted")
+                if (Globals.location.activeConversation != null && Globals.conversationDetails.Subject != "Deleted" && Globals.conversationDetails.Jid != "")
                     return true;
                 return false;
 
@@ -578,21 +578,11 @@ namespace SandRibbon
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            /*try
-            {
-                if (String.IsNullOrEmpty(details.Jid) || details.Jid != Globals.conversationDetails.Jid) return;
-            }
-            catch (NotSetException)
-            {
-            }*/
             Dispatcher.adoptAsync(delegate
             {
-                //Globals.userInformation.location.availableSlides = details.Slides.Select(s => s.id).ToList();
-                HideTutorial();
+                if (details != null)
+                    HideTutorial();
                 UpdateTitle();
-                //var isAuthor = (details.Author != null) && details.Author == Globals.userInformation.credentials.name;
-                //Globals.userInformation.policy.isAuthor = isAuthor;
-                //Commands.RequerySuggested();
             });
         }
         private void UpdateTitle()
@@ -601,7 +591,9 @@ namespace SandRibbon
             {
                 Title = messageFor(Globals.conversationDetails);
             }
-            catch (NotSetException) { }
+            catch (NotSetException) {
+                Title = new ConfigurationProvider().getMeTLType();
+            }
         }
         private DelegateCommand<object> canOpenFriendsOverride;
         private void applyPermissions(Permissions permissions)

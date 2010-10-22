@@ -151,6 +151,14 @@ namespace SandRibbon.Components
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
+            if (details == null || details.Jid == "" || !(Globals.credentials.authorizedGroups.Select(s=>s.groupKey).Contains(details.Subject)))
+            {
+                Dispatcher.adoptAsync(() =>
+                {
+                    thumbnailList.Clear();
+                });
+                return;
+            }
             Commands.SneakInto.ExecuteAsync(details.Jid);
             Dispatcher.adoptAsync((Action)delegate
             {

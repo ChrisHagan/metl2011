@@ -83,7 +83,10 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return ((ConversationDetails)Commands.UpdateConversationDetails.lastValue()).Slides;
+                var value = ((ConversationDetails)Commands.UpdateConversationDetails.lastValue()); 
+                if (value != null)
+                    return value.Slides;
+                else throw new NotSetException("Slides not set");
             }
         }
         public static ConversationDetails conversationDetails

@@ -49,7 +49,9 @@ namespace SandRibbon.Chrome
                                              {
                                                  try
                                                  {
-                                                     StatusLabel.Text =
+                                                     if (details == null)
+                                                         StatusLabel.Text = "not in a conversation";
+                                                     else
                                                          string.Format(
                                                              "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
                                                              Globals.privacy,

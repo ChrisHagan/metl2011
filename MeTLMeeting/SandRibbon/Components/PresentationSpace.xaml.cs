@@ -85,7 +85,7 @@ namespace SandRibbon.Components
                     ViewboxUnits = BrushMappingMode.Absolute,
                     Viewbox = view
                 },
-                
+
                 Tag = setup.snapshotAtTimeOfCreation
             };
             Commands.ThoughtLiveWindow.ExecuteAsync(new ThoughtBubbleLiveWindow
@@ -114,14 +114,27 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
+            if (details == null || details.Jid == "" || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject)))
+            {
+                Dispatcher.adoptAsync(delegate
+                {
+                    foreach (FrameworkElement child in stack.canvasStack.Children)
+                    {
+                        if (child is AbstractCanvas)
+                        {
+                            ((AbstractCanvas)child).Strokes.Clear();
+                            ((AbstractCanvas)child).Children.Clear();
+                        }
+                    }
+                });
+                return;
+            }
             joiningConversation = false;
             try
             {
                 if (Globals.conversationDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
                     Commands.SetPrivacy.ExecuteAsync("public");
-
-
-                    //Commands.SetPrivacy.ExecuteAsync(stack.handwriting.actualPrivacy);
+                //Commands.SetPrivacy.ExecuteAsync(stack.handwriting.actualPrivacy);
                 else
                     Commands.SetPrivacy.ExecuteAsync("private");
             }
@@ -182,7 +195,7 @@ namespace SandRibbon.Components
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                file = string.Format("{1}{2}submission.png", Directory.GetCurrentDirectory(),DateTime.Now.Ticks, Globals.me);
+                file = string.Format("{1}{2}submission.png", Directory.GetCurrentDirectory(), DateTime.Now.Ticks, Globals.me);
                 using (Stream stream = File.Create(file))
                 {
                     encoder.Save(stream);

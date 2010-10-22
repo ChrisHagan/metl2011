@@ -100,6 +100,7 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(MeTLLib.DataTypes.ConversationDetails details)
         {
+            if (details == null) return;
             Dispatcher.adoptAsync(delegate
             {
                 var editingMode = isAuthor(details) || canStudentPublish(details);
