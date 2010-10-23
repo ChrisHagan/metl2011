@@ -86,7 +86,7 @@ namespace SandRibbon.Utils
         }
         private void ReportPowerpointProgress(PowerpointImportProgress progress)
         {
-            Console.WriteLine(String.Format("pptStage({0}),slideId({1}/{2}){3}",
+            App.Now(String.Format("pptStage({0}),slideId({1}/{2}){3}",
                 progress.stage.ToString(),
                 progress.slideId,
                 progress.totalSlides,

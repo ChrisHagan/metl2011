@@ -235,7 +235,14 @@ namespace MeTLLib.DataTypes
         }
         public static double startingSum(this Stroke stroke)
         {
-            return (double) stroke.GetPropertyData(STARTINGCHECKSUM);
+            try
+            {
+                return (double)stroke.GetPropertyData(STARTINGCHECKSUM);
+            }
+            catch (Exception)
+            {
+                return stroke.sum().checksum;
+            }
         }
         public static double startingSum(this Stroke stroke, double startingSum)
         {
