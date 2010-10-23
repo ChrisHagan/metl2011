@@ -391,7 +391,7 @@ namespace SandRibbon.Tabs.Groups
         private void updatePreviousDrawingAttributes(DrawingAttributes attributes)
         {
             int nextAvailableSpot = 0;
-            if (previouslySelectedDrawingAttributes.Select(c => c.Attributes).Contains(attributes)) return;
+            if (previouslySelectedDrawingAttributes.Select(c => c.Attributes).ToList().Contains(attributes)) return;
             previouslySelectedDrawingAttributes.Insert(nextAvailableSpot,
                 new PenColors.DrawingAttributesEntry()
                 {
