@@ -14,7 +14,6 @@ using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbonInterop;
-//using SandRibbonObjects;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers.Structure;
 using Divelements.SandRibbon;
@@ -35,7 +34,6 @@ namespace SandRibbon.Components
         public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
         public bool isAuthor = false;
         private bool moveTo;
-        private int realLocation;
         public SlideDisplay()
         {
             InitializeComponent();
@@ -95,20 +93,18 @@ namespace SandRibbon.Components
         }
         private void MoveTo(int slide)
         {
-            Dispatcher.adoptAsync(delegate
+            Dispatcher.adoptAsync(delegate{
+                                      if (isSlideInSlideDisplay(slide))
                                       {
-
-                                          if (isSlideInSlideDisplay(slide))
+                                          var currentSlide = (ThumbnailInformation)slides.SelectedItem;
+                                          if (currentSlide == null || currentSlide.slideId != slide)
                                           {
-                                              var currentSlide = (ThumbnailInformation)slides.SelectedItem;
-                                              if (currentSlide == null || currentSlide.slideId != slide)
-                                              {
-                                                  slides.SelectedIndex =
-                                                      thumbnailList.Select(s => s.slideId).ToList().IndexOf(slide);
-                                                  slides.ScrollIntoView(slides.SelectedItem);
-                                              }
+                                              slides.SelectedIndex =
+                                                  thumbnailList.Select(s => s.slideId).ToList().IndexOf(slide);
+                                              slides.ScrollIntoView(slides.SelectedItem);
                                           }
-                                      });
+                                      }
+                                  });
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
         }
@@ -167,7 +163,6 @@ namespace SandRibbon.Components
                 else
                     isAuthor = false;
                 thumbnailList.Clear();
-                //App.Now("beginning creation of slideDisplay");
                 foreach (var slide in details.Slides)
                 {
                     if (slide.type == Slide.TYPE.SLIDE)
@@ -178,10 +173,8 @@ namespace SandRibbon.Components
                                     slideId = slide.id,
                                     slideNumber = details.Slides.Where(s => s.type == Slide.TYPE.SLIDE).ToList().IndexOf(slide) + 1,
                                     Exposed = slide.exposed
-                                    //ThumbnailBrush = ThumbnailProvider.get(slide.id)
                                 });
                         ThumbnailAvailable(slide);
-                        //App.Now("slideDisplay item created: " + slide.id);
                     }
                 }
                 if (moveTo)

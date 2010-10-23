@@ -60,17 +60,9 @@
                                             <RowDefinition Height="25"/>
                                         </Grid.RowDefinitions>
                                         <Label Content="username (eg fgsmi3)" FontWeight="bold" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
-                                        <TextBox x:Name="username" Grid.Row="0" Grid.Column="1">
-                                            <TextBox.InputBindings>
-                                                <KeyBinding Key="Enter" Command="{x:Static components:Login.CheckAuthentication}"/>
-                                            </TextBox.InputBindings>
-                                        </TextBox>
+                                        <TextBox x:Name="username" Grid.Row="0" Grid.Column="1" />
                                         <Label Content="password" FontWeight="bold" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"/>
-                                        <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" >
-                                            <PasswordBox.InputBindings>
-                                                <KeyBinding Key="Enter" Command="{x:Static components:Login.CheckAuthentication}"/>
-                                            </PasswordBox.InputBindings>
-                                        </PasswordBox>
+                                        <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" />
                                     </Grid>
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
                                         <CheckBox VerticalAlignment="Center" x:Name="rememberMe">Stay signed in</CheckBox>

@@ -29,6 +29,7 @@ namespace SandRibbon.Components
 {
     public partial class ConversationConfigurationDialog : Window
     {
+        private static readonly string DEFAULT_POWERPOINT_PREFIX = "Presentation";
         public static IEnumerable<ConversationDetails> extantConversations = new List<ConversationDetails>();
         private ConversationDetails details;
         private ConversationConfigurationMode dialogMode;
@@ -49,22 +50,26 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.dialogMode = mode;
-            //conversationSubjectListBox.ItemsSource = Globals.authorizedGroups.Select(ag => ag.groupKey);
             extantConversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             this.CommandBindings.Add(new CommandBinding(CompleteConversationDialog, Create, CanCompleteDialog));
+            if (mode == ConversationConfigurationMode.IMPORT)
+            {
+                conversationNameTextBox.Text = ConversationDetails.DefaultName(Globals.me);
+                doBrowseFiles();
+            }
         }
-
         private void PopulateFields()
         {
             if (details == null) return;
-            conversationNameTextBox.Text = details.Title;
-            //if (conversationSubjectListBox.Items.Count > 0)
-              //  conversationSubjectListBox.SelectedItem = conversationSubjectListBox.Items[conversationSubjectListBox.Items.IndexOf(details.Subject.ToString())];
+            if (String.IsNullOrEmpty(conversationNameTextBox.Text))
+                conversationNameTextBox.Text = details.Title;
+            else
+                doUpdateConversationTitle();
         }
-        private bool isFirstRun = true;
         private void UpdateDialogBoxAppearance()
         {
+            var suggestedName = ConversationDetails.DefaultName(Globals.me);
             switch (dialogMode)
             {
                 case ConversationConfigurationMode.CREATE:
@@ -73,7 +78,7 @@ namespace SandRibbon.Components
                     CommitButton.Content = "Create";
                     if (details == null)
                         details = new ConversationDetails
-                        ("Please enter a title here","",Globals.me,new List<Slide>(),Permissions.LECTURE_PERMISSIONS,"Unrestricted",SandRibbonObjects.DateTimeFactory.Now(),SandRibbonObjects.DateTimeFactory.Now());
+                        (suggestedName,"",Globals.me,new List<Slide>(),Permissions.LECTURE_PERMISSIONS,"Unrestricted",SandRibbonObjects.DateTimeFactory.Now(),SandRibbonObjects.DateTimeFactory.Now());
                     break;
                 case ConversationConfigurationMode.EDIT:
                     createGroup.Visibility = Visibility.Collapsed;
@@ -93,24 +98,29 @@ namespace SandRibbon.Components
                     LowQualityPowerpointListBoxItem.IsChecked = true;
                     CommitButton.Content = "Create";
                     details = new ConversationDetails
-                    ("Please enter a title here", "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
+                    (suggestedName, "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
                     break;
             }
-            isFirstRun = false;
         }
         private void BrowseFiles(object sender, RoutedEventArgs e)
         {
-
-            string initialDirectory = "c:\\";
-            foreach (var path in new[] { Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })
-                try
-                {
-                    initialDirectory = Environment.GetFolderPath(path);
-                    break;
-                }
-                catch (Exception)
-                {
-                }
+            doBrowseFiles();
+        }
+        private void doBrowseFiles(){
+            string initialDirectory = "\\";
+            try
+            {
+                initialDirectory = (string)Commands.RegisterPowerpointSourceDirectoryPreference.lastValue();
+            }
+            catch (NotSetException) {//These variables may or may not be available in any given OS
+                foreach (var path in new[] { Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })
+                    try
+                    {
+                        initialDirectory = Environment.GetFolderPath(path);
+                        break;
+                    }
+                    catch (Exception) {}
+            }
             var fileBrowser = new OpenFileDialog
             {
                 InitialDirectory = initialDirectory,
@@ -125,7 +135,11 @@ namespace SandRibbon.Components
                 importFile = fileBrowser.FileName;
                 importFileTextBox.Text = importFile;
                 var file = new FileInfo(fileBrowser.FileName);
-                conversationNameTextBox.Text = file.Name.Split('.').First(); 
+                if (Globals.rememberMe)
+                {
+                    Commands.RegisterPowerpointSourceDirectoryPreference.Execute(System.IO.Path.GetDirectoryName(fileBrowser.FileName));
+                    WorkspaceStateProvider.SaveCurrentSettings();
+                }
             }
         }
         private void UpdateConversationDetails(ConversationDetails details)
@@ -135,21 +149,22 @@ namespace SandRibbon.Components
         }
         private void UpdateImportFile(object sender, TextChangedEventArgs e)
         {
-            importFile = ((TextBox)sender).Text;
-            string importFileName = importFile.Split(new char[] { '\\' }).LastOrDefault();
-            if (conversationNameTextBox != null && conversationNameTextBox.Text == "Please enter title here")
-            {
-                if (importFileName.EndsWith(".ppt"))
-                    importFileName = importFileName.Substring(0, importFileName.Length - 4);
-                else if (importFileName.EndsWith(".pptx"))
-                    importFileName = importFileName.Substring(0, importFileName.Length - 5);
-                conversationNameTextBox.Text = importFileName;
-            }
+            includePresentationTitle();
+        }
+        private void includePresentationTitle(){
+            importFile = importFileTextBox.Text;
+            var currentTitle = conversationNameTextBox.Text;
+            string importFileName = System.IO.Path.GetFileNameWithoutExtension(importFile);
+            if (!importFileName.StartsWith(DEFAULT_POWERPOINT_PREFIX))
+                conversationNameTextBox.Text = string.Format("({0}) {1}", importFileName, currentTitle);
         }
         private void UpdateConversationTitle(object sender, TextChangedEventArgs e)
         {
+            doUpdateConversationTitle();
+        }
+        private void doUpdateConversationTitle(){
             if (details != null)
-                details.Title = ((TextBox)sender).Text;
+                details.Title = conversationNameTextBox.Text;
         }
         private bool checkConversation(ConversationDetails proposedDetails)
         {
@@ -249,7 +264,6 @@ namespace SandRibbon.Components
                 this.Close();
             }
         }
-
         private void Close(object sender, RoutedEventArgs e)
         {
             Commands.PowerpointFinished.ExecuteAsync(null);
@@ -278,9 +292,8 @@ namespace SandRibbon.Components
         }
         private void AttachHandlers()
         {
-            //conversationSubjectListBox.SelectionChanged += conversationSubjectListBox_SelectionChanged;
-            //startingContentSelector.SelectionChanged += startingContentListBox_SelectionChanged;
             CommitButton.Command = CompleteConversationDialog;
+            InputBindings.Add(new KeyBinding(CompleteConversationDialog, System.Windows.Input.Key.Enter,ModifierKeys.None));
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -317,12 +330,10 @@ namespace SandRibbon.Components
             }
             e.CanExecute = canExecute;
         }
-
         private void createConversation_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Commands.PowerpointFinished.ExecuteAsync(null);
         }
-
         private void selectAll(object sender, RoutedEventArgs e)
         {
             conversationNameTextBox.SelectAll();

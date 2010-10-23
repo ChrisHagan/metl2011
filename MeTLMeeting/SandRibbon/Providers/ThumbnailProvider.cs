@@ -22,13 +22,7 @@ namespace SandRibbon.Providers
             var serverFile = string.Format(@"{0}/{1}.png", serverPath, slide.id);
             ImageSource thumbnailSource;
             if (File.Exists(path))
-            {
                 thumbnailSource = loadedCachedImage(path);
-                /*
-                if (Globals.slides.Any(s=>s.author == Globals.me && s.id == slide.id))
-                    SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(path, slide.id.ToString() + "/thumbs", "slideThumb.png");
-                 */
-            }
             else
             {
                 if (HttpResourceProvider.exists(serverFile))
@@ -56,7 +50,6 @@ namespace SandRibbon.Providers
             }
             return bi;
         }
-
         public static void ClearThumbnails()
         {
             //foreach(var file in Directory.GetFiles(string.Format(@"{0}\thumbs", Directory.GetCurrentDirectory())))

@@ -132,7 +132,6 @@ namespace SandRibbon
         public static CompositeCommand SendStroke = new CompositeCommand();
         public static CompositeCommand ReceiveStroke = new CompositeCommand();
         public static CompositeCommand ReceiveStrokes = new CompositeCommand();
-        public static CompositeCommand ReceiveAuthor = new CompositeCommand();
         public static CompositeCommand SendDirtyStroke = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyStrokes = new CompositeCommand();
         public static CompositeCommand SetPrivacy = new CompositeCommand();
@@ -191,6 +190,7 @@ namespace SandRibbon
         public static CompositeCommand FitToPageWidth= new CompositeCommand();
         #endregion
         #region AppLevel
+        public static CompositeCommand RegisterPowerpointSourceDirectoryPreference = new CompositeCommand();
         public static CompositeCommand MeTLType = new CompositeCommand();
         public static CompositeCommand LogOut = new CompositeCommand();
         public static CompositeCommand SetIdentity = new CompositeCommand();
@@ -202,6 +202,7 @@ namespace SandRibbon
         public static CompositeCommand ThumbnailGenerated = new CompositeCommand();
         public static CompositeCommand ThumbnailAvailable = new CompositeCommand();
         public static CompositeCommand UpdateForeignConversationDetails = new CompositeCommand();
+        public static CompositeCommand RememberMe = new CompositeCommand();
         #endregion
         public static CompositeCommand Undo = new CompositeCommand();
         public static CompositeCommand Redo = new CompositeCommand();
@@ -227,13 +228,11 @@ namespace SandRibbon
         public static CompositeCommand ReceiveDirtyConversationDetails = new CompositeCommand();
         public static CompositeCommand SetSync = new CompositeCommand();
         public static CompositeCommand AddSlide = new CompositeCommand();
-        //public static CompositeCommand PreCreateConversation = new CompositeCommand();
-        public static CompositeCommand CreateConversationDialog = new CompositeCommand();
+        public static CompositeCommand CreateBlankConversation = new CompositeCommand();
         public static CompositeCommand ShowEditSlidesDialog = new CompositeCommand();
         public static CompositeCommand CreateConversation = new CompositeCommand();
         public static CompositeCommand PreEditConversation = new CompositeCommand();
         public static CompositeCommand EditConversation = new CompositeCommand();
-        public static CompositeCommand AllContentSent = new CompositeCommand();
         public static CompositeCommand BlockInput = new CompositeCommand();
         public static CompositeCommand UnblockInput = new CompositeCommand();
         public static CompositeCommand CanEdit = new CompositeCommand();

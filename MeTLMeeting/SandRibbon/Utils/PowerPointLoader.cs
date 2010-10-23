@@ -25,6 +25,8 @@ using System.Collections.ObjectModel;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 using MeTLLib;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace SandRibbon.Utils
 {
@@ -37,26 +39,26 @@ namespace SandRibbon.Utils
     }
     public class PowerpointImportProgress
     {
-        public PowerpointImportProgress(importStage Stage, int CurrentSlide)
+        public PowerpointImportProgress(IMPORT_STAGE Stage, int CurrentSlide)
         {
             stage = Stage;
             slideId = CurrentSlide;
         }
-        public PowerpointImportProgress(importStage Stage, int CurrentSlide, int TotalSlides)
+        public PowerpointImportProgress(IMPORT_STAGE Stage, int CurrentSlide, int TotalSlides)
             :this(Stage,CurrentSlide)
         {
             totalSlides = TotalSlides;
         }
-        public PowerpointImportProgress(importStage Stage, int CurrentSlide, string thumbnail)
+        public PowerpointImportProgress(IMPORT_STAGE Stage, int CurrentSlide, string thumbnail)
             :this(Stage,CurrentSlide)
         {
             slideThumbnailSource = thumbnail;
         }
         public int slideId;
         public int totalSlides;
-        public enum importStage { DESCRIBED, ANALYSED, EXTRACTED_IMAGES, UPLOADED_XML, UPLOADED_RESOURCES, FINISHED };
-        public importStage stage;
-        public string slideThumbnailSource;
+        public enum IMPORT_STAGE { DESCRIBED, ANALYSED, EXTRACTED_IMAGES, UPLOADED_XML, UPLOADED_RESOURCES, FINISHED };
+        public IMPORT_STAGE stage;
+        public string slideThumbnailSource{get;set;}
     }
     public class PowerPointLoader
     {
@@ -73,7 +75,7 @@ namespace SandRibbon.Utils
         public PowerPointLoader()
         {
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(EditConversation));
-            Commands.CreateConversationDialog.RegisterCommandToDispatcher(new DelegateCommand<object>(createBlankConversation));
+            Commands.CreateBlankConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(CreateBlankConversation));
             Commands.ImportPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<object>(ImportPowerpoint));
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
             Commands.UpdatePowerpointProgress.RegisterCommand(new DelegateCommand<PowerpointImportProgress>(ReportPowerpointProgress));
@@ -87,23 +89,29 @@ namespace SandRibbon.Utils
             Console.WriteLine(String.Format("pptStage({0}),slideId({1}/{2}){3}",
                 progress.stage.ToString(),
                 progress.slideId,
-                progress.totalSlides == null ? "?" : progress.totalSlides.ToString(),
+                progress.totalSlides,
                 String.IsNullOrEmpty(progress.slideThumbnailSource) ? "" : ", (uri:" + progress.slideThumbnailSource + ")"));
         }
         private void UploadPowerpoint(PowerpointSpec spec)
         {
-            switch (spec.Type)
-            {
-                case PowerpointImportType.HighDefImage:
-                    LoadPowerpointAsFlatSlides(spec.File, spec.Details, spec.Magnification);
-                    break;
-                case PowerpointImportType.Image:
-                    LoadPowerpointAsFlatSlides(spec.File, spec.Details, spec.Magnification);
-                    break;
-                case PowerpointImportType.Shapes:
-                    LoadPowerpoint(spec.File, spec.Details);
-                    break;
-            }
+            var worker = new Thread(new ParameterizedThreadStart(
+                delegate
+                {
+                    switch (spec.Type)
+                    {
+                        case PowerpointImportType.HighDefImage:
+                            LoadPowerpointAsFlatSlides(spec.File, spec.Details, spec.Magnification);
+                            break;
+                        case PowerpointImportType.Image:
+                            LoadPowerpointAsFlatSlides(spec.File, spec.Details, spec.Magnification);
+                            break;
+                        case PowerpointImportType.Shapes:
+                            LoadPowerpoint(spec.File, spec.Details);
+                            break;
+                    }
+                }));
+            worker.SetApartmentState(ApartmentState.STA);
+            worker.Start();
         }
         private void DeleteConversation(object o)
         {
@@ -113,10 +121,9 @@ namespace SandRibbon.Utils
         {
             new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.EDIT, conversation).ShowDialog();
         }
-        private void createBlankConversation(object o)
+        private void CreateBlankConversation(object o)
         {
-            var now = DateTimeFactory.Now();
-            var details = new ConversationDetails(Globals.me + " " + now.ToString(), "", Globals.me, new List<MeTLLib.DataTypes.Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted");
+            var details = new ConversationDetails(ConversationDetails.DefaultName(Globals.me), "", Globals.me, new List<MeTLLib.DataTypes.Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted");
             Commands.HideConversationSearchBox.Execute(null);
             Commands.CreateConversation.ExecuteAsync(details);
         }
@@ -127,117 +134,107 @@ namespace SandRibbon.Utils
         public void LoadPowerpointAsFlatSlides(string file, ConversationDetails details, int MagnificationRating)
         {
             var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
-            try
+            progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED,0,ppt.Slides.Count);
+            var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
+            if (!Directory.Exists(currentWorkingDirectory))
+                Directory.CreateDirectory(currentWorkingDirectory);
+            var provider = MeTLLib.ClientFactory.Connection();
+            var xml = new XElement("presentation");
+            xml.Add(new XAttribute("name", details.Title));
+            if (details.Tag == null)
+                details.Tag = "unTagged";
+            var conversation = provider.CreateConversation(details);
+            conversation.Author = Globals.me;
+            var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
+            var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
+            var thumbnailStartId = conversation.Slides.First().id;
+            foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
             {
-                var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
-                if (!Directory.Exists(currentWorkingDirectory))
-                    Directory.CreateDirectory(currentWorkingDirectory);
-                var provider = MeTLLib.ClientFactory.Connection();
-                var xml = new XElement("presentation");
-                xml.Add(new XAttribute("name", details.Title));
-                if (details.Tag == null)
-                    details.Tag = "unTagged";
-                var conversation = provider.CreateConversation(details);
-                conversation.Author = Globals.me;
-                var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
-                var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
-                var thumbnailStartId = conversation.Slides.First().id;
-                progress(PowerpointImportProgress.importStage.DESCRIBED,0,ppt.Slides.Count);
-                foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
+                int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
+                var slidePath = Directory.GetCurrentDirectory() + "\\" + new PrintingHost().ThumbnailPath(thumbnailStartId++);
+                foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                 {
-                    int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
-                    var slidePath = Directory.GetCurrentDirectory() + "\\" + new PrintingHost().ThumbnailPath(thumbnailStartId++);
-                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
+                    shape.Visible = MsoTriState.msoFalse;
+                }
+                var privateShapes = new List<Microsoft.Office.Interop.PowerPoint.Shape>();
+                foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
+                {
+                    if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
                     {
                         shape.Visible = MsoTriState.msoFalse;
+                        privateShapes.Add(shape);
                     }
-                    var privateShapes = new List<Microsoft.Office.Interop.PowerPoint.Shape>();
-                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
-                    {
-                        if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
-                        {
-                            shape.Visible = MsoTriState.msoFalse;
-                            privateShapes.Add(shape);
-                        }
-                        else shape.Visible = MsoTriState.msoTrue;
-                    }
-                    createThumbnail(details, slide);
-                    slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
-                    var xSlide = new XElement("slide");
-                    xSlide.Add(new XAttribute("index", slide.SlideIndex));
-                    xSlide.Add(new XAttribute("defaultHeight", backgroundHeight));
-                    xSlide.Add(new XAttribute("defaultWidth", backgroundWidth));
-                    xSlide.Add(new XElement("shape",
-                    new XAttribute("x", 0),
-                    new XAttribute("y", 0),
-                    new XAttribute("height", backgroundHeight),
-                    new XAttribute("width", backgroundWidth),
-                    new XAttribute("privacy", "public"),
-                    new XAttribute("snapshot", slidePath)));
-                    xml.Add(xSlide);
-                    var exportFormat = PpShapeFormat.ppShapeFormatPNG;
-                    var exportMode = PpExportMode.ppRelativeToSlide;
-                    var actualBackgroundHeight = 540;
-                    var actualBackgroundWidth = 720;
-                    double Magnification = (double)MagnificationRating;
-                    try
-                    {
-                        if (actualBackgroundHeight != Convert.ToInt32(slide.Master.Height))
-                            actualBackgroundHeight = Convert.ToInt32(slide.Master.Height);
-                        if (actualBackgroundWidth != Convert.ToInt32(slide.Master.Width))
-                            actualBackgroundWidth = Convert.ToInt32(slide.Master.Width);
-                    }
-                    catch (Exception)
-                    {
-                    }
-                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in (from p in privateShapes orderby (p.ZOrderPosition) select p))
-                    {
-                        ExportShape(shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
-                    }
-                    progress(PowerpointImportProgress.importStage.EXTRACTED_IMAGES, conversationSlideNumber);
+                    else shape.Visible = MsoTriState.msoTrue;
                 }
-                var startingId = conversation.Slides.First().id;
-                var index = 0;
-                conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
-                provider.UpdateConversationDetails(conversation);
-                var xmlSlides = xml.Descendants("slide");
-                int xmlSlidesCount = xmlSlides.Count();
-                for (int i = 0; i < xmlSlidesCount; i++)
+                createThumbnail(details, slide);
+                slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
+                var xSlide = new XElement("slide");
+                xSlide.Add(new XAttribute("index", slide.SlideIndex));
+                xSlide.Add(new XAttribute("defaultHeight", backgroundHeight));
+                xSlide.Add(new XAttribute("defaultWidth", backgroundWidth));
+                xSlide.Add(new XElement("shape",
+                new XAttribute("x", 0),
+                new XAttribute("y", 0),
+                new XAttribute("height", backgroundHeight),
+                new XAttribute("width", backgroundWidth),
+                new XAttribute("privacy", "public"),
+                new XAttribute("snapshot", slidePath)));
+                xml.Add(xSlide);
+                var exportFormat = PpShapeFormat.ppShapeFormatPNG;
+                var exportMode = PpExportMode.ppRelativeToSlide;
+                var actualBackgroundHeight = 540;
+                var actualBackgroundWidth = 720;
+                double Magnification = (double)MagnificationRating;
+                try
                 {
-                    var slideXml = xmlSlides.ElementAt(i);
-                    var slideId = conversation.Slides[i].id;
-                    var powerpointThread = new Thread(() =>
-                    {
-                        uploadXmlUrls(slideId, slideXml);
-                        progress(PowerpointImportProgress.importStage.UPLOADED_XML, slideId, xmlSlidesCount);
-                        sendSlide(slideId, slideXml);
-                        progress(PowerpointImportProgress.importStage.UPLOADED_RESOURCES, slideId, xmlSlidesCount);
-                    });
-                    powerpointThread.SetApartmentState(ApartmentState.STA);
-                    powerpointThread.Start();
+                    if (actualBackgroundHeight != Convert.ToInt32(slide.Master.Height))
+                        actualBackgroundHeight = Convert.ToInt32(slide.Master.Height);
+                    if (actualBackgroundWidth != Convert.ToInt32(slide.Master.Width))
+                        actualBackgroundWidth = Convert.ToInt32(slide.Master.Width);
                 }
-                Commands.JoinConversation.ExecuteAsync(conversation.Jid);
+                catch (Exception)
+                {
+                }
+                foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in (from p in privateShapes orderby (p.ZOrderPosition) select p))
+                {
+                    ExportShape(shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
+                }
+                progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, conversationSlideNumber);
             }
-            catch (Exception ex)
+            var startingId = conversation.Slides.First().id;
+            var index = 0;
+            conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
+            provider.UpdateConversationDetails(conversation);
+            var xmlSlides = xml.Descendants("slide");
+            int xmlSlidesCount = xmlSlides.Count();
+            for (int i = 0; i < xmlSlidesCount; i++)
             {
-                MessageBox.Show("LoadPowerpointAsFlatSlides error: " + ex.Message);
+                var slideXml = xmlSlides.ElementAt(i);
+                var slideId = conversation.Slides[i].id;
+                var powerpointThread = new Thread(() =>
+                {
+                    uploadXmlUrls(slideId, slideXml);
+                    progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML, slideId, xmlSlidesCount);
+                    sendSlide(slideId, slideXml);
+                    progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES, slideId, xmlSlidesCount);
+                });
+                powerpointThread.SetApartmentState(ApartmentState.STA);
+                powerpointThread.Start();
             }
-            finally
-            {
-                ppt.Close();
-                Commands.PowerpointFinished.ExecuteAsync(null);
-                progress(PowerpointImportProgress.importStage.FINISHED, 0);
-            }
-        }
-        private static void progress(PowerpointImportProgress.importStage action, int currentSlideId)
+            ppt.Close();
+            Commands.PowerpointFinished.ExecuteAsync(null);
+            progress(PowerpointImportProgress.IMPORT_STAGE.FINISHED, 0);
+            Commands.JoinConversation.ExecuteAsync(conversation.Jid);
+    }
+        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId)
         {
             Commands.UpdatePowerpointProgress.ExecuteAsync(new PowerpointImportProgress(action, currentSlideId));
         }
-        private static void progress(PowerpointImportProgress.importStage action, int currentSlideId, string imageSource)
+        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, string imageSource)
         {
             Commands.UpdatePowerpointProgress.ExecuteAsync(new PowerpointImportProgress(action, currentSlideId, imageSource));
         }
-        private static void progress(PowerpointImportProgress.importStage action, int currentSlideId, int totalNumberOfSlides) 
+        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalNumberOfSlides) 
         {
             Commands.UpdatePowerpointProgress.ExecuteAsync(new PowerpointImportProgress(action, currentSlideId, totalNumberOfSlides));
         }
@@ -246,7 +243,7 @@ namespace SandRibbon.Utils
             int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
             var slideThumbnailPath = Directory.GetCurrentDirectory() + "\\thumbs\\" + conversationSlideNumber + ".png";
             slide.Export(slideThumbnailPath, "PNG", Convert.ToInt32(slide.Master.Width), Convert.ToInt32(slide.Master.Height));
-            progress(PowerpointImportProgress.importStage.ANALYSED,conversationSlideNumber,slideThumbnailPath);
+            progress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED,conversationSlideNumber,slideThumbnailPath);
             SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(slideThumbnailPath, conversationSlideNumber + "/thumbs", "slideThumb.png");
         }
         public void LoadPowerpoint(string file, ConversationDetails details)
@@ -261,7 +258,7 @@ namespace SandRibbon.Utils
                     details.Tag = "unTagged";
                 var conversation = provider.CreateConversation(details);
                 conversation.Author = Globals.me;
-                progress(PowerpointImportProgress.importStage.DESCRIBED, 0, ppt.Slides.Count);
+                progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, ppt.Slides.Count);
                 foreach (var slide in ppt.Slides)
                 {
                     importSlide(details, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
@@ -279,9 +276,9 @@ namespace SandRibbon.Utils
                     var powerpointThread = new Thread(() =>
                     {
                         uploadXmlUrls(slideId, slideXml);
-                        progress(PowerpointImportProgress.importStage.UPLOADED_XML, slideId);
+                        progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML, slideId);
                         sendSlide(slideId, slideXml);
-                        progress(PowerpointImportProgress.importStage.UPLOADED_RESOURCES, slideId);
+                        progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES, slideId);
                     });
                     powerpointThread.SetApartmentState(ApartmentState.STA);
                     powerpointThread.Start();
@@ -293,7 +290,7 @@ namespace SandRibbon.Utils
               * We don't.  But the content comes in live.*/
                 ppt.Close();
                 Commands.PowerpointFinished.ExecuteAsync(null);
-                progress(PowerpointImportProgress.importStage.FINISHED, 0);
+                progress(PowerpointImportProgress.IMPORT_STAGE.FINISHED, 0);
             }
         }
         private void sendSlide(int id, XElement slide)
@@ -355,7 +352,6 @@ namespace SandRibbon.Utils
                                         id = string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now(), shapeCount++),
                                         author = me,
                                         privacy = shape.Attribute("privacy").Value,
-                                        //isBackground = shapeCount == 1
                                         isBackground = false
                                     });
                 wire.SendImage(new TargettedImage(id,me,"presentationSpace",shape.Attribute("privacy").Value,hostedImage));
@@ -414,7 +410,6 @@ namespace SandRibbon.Utils
         }
         private static void importSlide(ConversationDetails details, XElement xml, Microsoft.Office.Interop.PowerPoint.Slide slide)
         {
-
             int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
             var xSlide = new XElement("slide");
             xSlide.Add(new XAttribute("index", slide.SlideIndex));
@@ -455,7 +450,7 @@ namespace SandRibbon.Utils
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception: " + ex);
+                Trace.TraceError("Exception: " + ex);
             }
             var SortedShapes = new List<Microsoft.Office.Interop.PowerPoint.Shape>();
             foreach (var shapeObj in slide.Shapes)
@@ -465,7 +460,7 @@ namespace SandRibbon.Utils
                 I have no idea why it has to be this way, it just looks right when it is.*/
                 ExportShape(shapeObj, xSlide, currentWorkingDirectory, exportFormat, exportMode, backgroundWidth, backgroundHeight, Magnification);
             }
-            progress(PowerpointImportProgress.importStage.EXTRACTED_IMAGES, conversationSlideNumber);
+            progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, conversationSlideNumber);
             foreach (var notes in slide.NotesPage.Shapes)
             {
                 var shape = (Microsoft.Office.Interop.PowerPoint.Shape)notes;

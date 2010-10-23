@@ -13,6 +13,10 @@ namespace MeTLLib.DataTypes
 {
     public class ConversationDetails : INotifyPropertyChanged
     {
+        public static string DefaultName(string author){
+            var now = DateTimeFactory.Now();
+            return string.Format("{0} at {1}", author, now);
+        }
         public ConversationDetails(String title, String jid, String author, List<Slide> slides, Permissions permissions, String subject)
             : base()
         {

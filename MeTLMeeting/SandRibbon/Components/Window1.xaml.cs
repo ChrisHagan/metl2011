@@ -77,7 +77,7 @@ namespace SandRibbon
             Globals.userInformation.policy = new Policy(false, false);
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             //Commands.ConnectWithAuthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithAuthenticatedCredentials));
-            Commands.PowerpointFinished.RegisterCommand(new DelegateCommand<object>(UnblockInput));
+            //Commands.PowerpointFinished.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
@@ -86,7 +86,6 @@ namespace SandRibbon
             Commands.ShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
-            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerPoint, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
@@ -100,7 +99,7 @@ namespace SandRibbon
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
-            Commands.SetTutorialVisibility.RegisterCommand(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
+            Commands.SetTutorialVisibility.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(ProxyMirrorPresentationSpace));
@@ -114,7 +113,7 @@ namespace SandRibbon
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
             Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(OriginalView));
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
-            Commands.SetZoomRect.RegisterCommand(new DelegateCommand<Rectangle>(SetZoomRect));
+            Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rectangle>(SetZoomRect));
             Commands.ChangePenSize.RegisterCommand(new DelegateCommand<object>(AdjustPenSizeAccordingToZoom));
             Commands.UpdateCursorWithAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(UpdateCursorWithAttributes));
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustDrawingAttributesAccordingToZoom));
@@ -123,7 +122,7 @@ namespace SandRibbon
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
             Commands.ShowEditSlidesDialog.RegisterCommand(new DelegateCommand<object>(ShowEditSlidesDialog, mustBeInConversation));
             Commands.SetLayer.ExecuteAsync("Sketch");
-            Commands.MoveCanvasByDelta.RegisterCommand(new DelegateCommand<Point>(GrabMove));
+            Commands.MoveCanvasByDelta.RegisterCommandToDispatcher(new DelegateCommand<Point>(GrabMove));
             Commands.BlockInput.RegisterCommand(new DelegateCommand<string>(BlockInput));
             Commands.UnblockInput.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
@@ -256,10 +255,6 @@ namespace SandRibbon
                 if (((RibbonTab)tab).Text == which)
                     ribbon.SelectedTab = (RibbonTab)tab;
         }
-        private void ImportPowerPoint(object unused)
-        {
-            ShowPowerpointBlocker("Starting PowerPoint Import");
-        }
         private void ActualReportDrawingAttributes(object attributes)
         {
             var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
@@ -354,8 +349,7 @@ namespace SandRibbon
         }
         private void CreateConversation(object _unused)
         {
-            //ShowPowerpointBlocker("Creating Conversation Dialog Open");
-            Commands.CreateConversationDialog.ExecuteAsync(null);
+            Commands.CreateBlankConversation.ExecuteAsync(null);
         }
         private void EditConversation(object _unused)
         {
@@ -372,7 +366,6 @@ namespace SandRibbon
         }
         private void ConnectWithAuthenticatedCredentials(MeTLLib.DataTypes.Credentials credentials)
         {
-            //connect(credentials.name, credentials.password, 0, null);
             Commands.AllStaticCommandsAreRegistered();
             Commands.RequerySuggested();
             Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);

@@ -346,8 +346,8 @@ namespace SandRibbon.Tabs.Groups
             Commands.ReportStrokeAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((DrawingAttributes) => updatePreviousDrawingAttributes(DrawingAttributes)));
             Commands.ReportDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((drawingAttributes => receiveDrawingAttributesChanged(drawingAttributes))));
             SetupPreviousColoursWithDefaults();
-            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(changeInkCanvasMode));
-            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
+            Commands.SetInkCanvasMode.RegisterCommandToDispatcher(new DelegateCommand<string>(SetInkCanvasMode));
+            Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<string>(SetLayer));
             Commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
             Commands.SetDrawingAttributes.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SetDrawingAttributes));
             InvokeAlteredPreset(2);
@@ -374,7 +374,7 @@ namespace SandRibbon.Tabs.Groups
                 return false;
             }
         }
-        private void changeInkCanvasMode(string mode)
+        private void SetInkCanvasMode(string mode)
         {
             if (mode != "Ink")
             {

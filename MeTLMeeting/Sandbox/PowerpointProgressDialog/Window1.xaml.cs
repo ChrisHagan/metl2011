@@ -24,7 +24,7 @@ namespace PowerpointProgressDialog
         }
         void Window1_Loaded(object sender, RoutedEventArgs e)
         {
-            loader.goingToWorkOn += intention => progress.setItemsToTransfer(Enumerable.Range(0,intention.count).Select(i=>new SlideProgress()));
+            loader.goingToWorkOn += intention => progress.setItemsToTransfer(intention.slides);
             loader.workingOn += progressReport => progress.setItemInProgress(progressReport);
             loader.workComplete += nothing => progress.finished();
             loader.Load();

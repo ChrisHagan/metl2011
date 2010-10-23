@@ -13,6 +13,7 @@ using SandRibbon.Quizzing;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using System.Security;
+using System.Diagnostics;
 
 [assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -66,8 +67,7 @@ namespace SandRibbon
         {
             var now = SandRibbonObjects.DateTimeFactory.Now();
             var s = string.Format("{2} {0}:{1}", now, now.Millisecond, title);
-            Logger.Log(s);
-            Console.WriteLine(s);
+            Trace.TraceInformation(s);
             return s;
         }
         static App()

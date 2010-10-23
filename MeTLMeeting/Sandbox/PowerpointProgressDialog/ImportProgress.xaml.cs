@@ -16,18 +16,28 @@ using System.Windows.Media.Animation;
 
 namespace PowerpointProgressDialog
 {
-    public partial class ImportProgress : UserControl
+    public partial class ProgressDialog : UserControl
     {
         public static SubtractionConverter subtract = new SubtractionConverter();
         public static SlideDisplacementConverter SlideDisplacement = new SlideDisplacementConverter();
         public ObservableCollection<SlideProgress> fromStack = new ObservableCollection<SlideProgress>();
         public ObservableCollection<SlideProgress> toStack = new ObservableCollection<SlideProgress>();
-        public ImportProgress()
+        private Storyboard animation;
+        public string Label
+        {
+            get { return (string)GetValue(labelProperty); }
+            set { SetValue(labelProperty, value); }
+        }
+        public static readonly DependencyProperty labelProperty =
+            DependencyProperty.Register("Label", typeof(string), typeof(ProgressDialog), new UIPropertyMetadata("Please Wait"));
+
+        public ProgressDialog()
         {
             InitializeComponent();
+            animation = (Storyboard) FindResource("transition");
             from.ItemsSource = fromStack;
             to.ItemsSource = toStack;
-            setItemsToTransfer(Enumerable.Range(1, 5).Select(i => new SlideProgress { index = i }));
+            goldLabel.DataContext = Label;
         }
         public void setItemsToTransfer(IEnumerable<SlideProgress> items) {
             Dispatcher.Invoke((Action)delegate
@@ -41,22 +51,24 @@ namespace PowerpointProgressDialog
         public void setItemInProgress(PowerpointProgressEventArgs progressReport)
         {
             Dispatcher.Invoke((Action)delegate{
-                ((Storyboard)FindResource("transition")).Begin();
                 var inProgress = fromStack.Last();
+                transit.Visibility = Visibility.Visible;
+                animation.Begin();
                 fromStack.Remove(inProgress);
-                toStack.Add(inProgress);
-                transit.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(progressReport.filename);
+                toStack.Insert(0, inProgress);
+                transit.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(progressReport.progress.uri);
             });
         }
         public void finished() {
             Dispatcher.Invoke((Action)delegate
             {
-                Visibility = Visibility.Collapsed;
+                transit.Visibility = Visibility.Collapsed ;
+                animation.Stop();
             });
         }
     }
     public class SlideProgress {
-        public int index { get; set; }
+        public string uri { get; set; }
     }
     public class SubtractionConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

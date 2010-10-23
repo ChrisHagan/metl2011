@@ -91,8 +91,6 @@ namespace MeTLLib
         ConversationDetails DetailsOf(String jid);
         void SneakInto(string room);
         void SneakOutOf(string room);
-        //        List<ConversationDetails> AvailableConversations;
-        //        List<ConversationDetails> CurrentConversations;
     }
     public class ClientConnection : IClientBehaviour
     {

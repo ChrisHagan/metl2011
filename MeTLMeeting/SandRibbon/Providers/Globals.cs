@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using SandRibbonObjects;
 using MeTLLib.DataTypes;
 using System.Windows.Ink;
 using SandRibbon.Components.Sandpit;
@@ -183,6 +182,20 @@ namespace SandRibbon.Providers
         public static UserInformation userInformation
         {
             get { return new UserInformation(credentials, location, policy); }
+        }
+        public static bool rememberMe {
+            get
+            {
+                try
+                {
+                    return (bool)Commands.RememberMe.lastValue();
+                }
+                catch (NotSetException)
+                {
+                    return false;
+
+                }
+            }
         }
     }
 }

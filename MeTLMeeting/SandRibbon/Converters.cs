@@ -70,6 +70,7 @@ namespace SandRibbon
         public static conversationDetailsToDescription ConversationDetailsToDescription = new conversationDetailsToDescription();
         public static IsMeConverter isMe = new IsMeConverter();
         public static StringTruncatorConverter stringTruncator = new StringTruncatorConverter();
+        public static NoCachedImageReplicator nonCachedImage = new NoCachedImageReplicator();
     }
     public class StringTruncatorConverter : IValueConverter
     {
@@ -154,7 +155,24 @@ namespace SandRibbon
             return "private";
         }
     }
-
+    public class NoCachedImageReplicator : IValueConverter {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var uri = (string)value;
+            if (String.IsNullOrEmpty(uri)) return null;
+            BitmapImage bi = new BitmapImage();
+            bi.BeginInit();
+            bi.UriSource = new Uri(uri);
+            bi.CacheOption = BitmapCacheOption.OnLoad;
+            bi.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            bi.EndInit();
+            return bi;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
     public class ImageSourceExtractor : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -167,7 +185,6 @@ namespace SandRibbon
             return value;
         }
     }
-
     public class colourToNameConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

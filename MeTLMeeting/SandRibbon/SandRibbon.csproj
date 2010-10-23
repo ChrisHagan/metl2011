@@ -182,6 +182,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Chrome\ImportProgress.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Chrome\StatusBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -574,6 +578,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Chrome\ImportProgress.xaml.cs">
+      <DependentUpon>ImportProgress.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -1029,6 +1036,9 @@
     <Resource Include="Resources\Quizzes.png" />
     <Resource Include="Resources\Print_w-out_notes.png" />
     <Resource Include="Resources\Print_w_notes.png" />
+    <Resource Include="Resources\progressBackground.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="Resources\Ribbon-Palette.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

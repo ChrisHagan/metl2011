@@ -14,18 +14,18 @@
                 </LinearGradientBrush>
             </Grid.Background>
             <Grid.Resources>
-            <SolidColorBrush x:Key="foreground" Color="White" />
-            <Style TargetType="StackPanel">
+                <SolidColorBrush x:Key="foreground" Color="White" />
+                <Style TargetType="StackPanel">
                     <Setter Property="Margin" Value="20 20" />
-            </Style>
-        </Grid.Resources>
+                </Style>
+            </Grid.Resources>
             <StackPanel VerticalAlignment="Top">
-                <dict:Button Text="Create New" Foreground="{StaticResource ResourceKey=foreground}" x:Name="new" Command="{x:Static api:Commands.CreateConversationDialog}"/>
-                <dict:Button Text="Import PowerPoint" Foreground="{StaticResource ResourceKey=foreground}" x:Name="import" Command="{x:Static api:Commands.ImportPowerpoint}"/>
-                <Rectangle Fill="White" Width="auto" Height="2" Margin="-20 5 -20 5"/>
-                <dict:RadioButton Text="Search" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="find" Checked="mode_Checked" IsChecked="True"/>
-                <dict:RadioButton Text="My conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="mine" Checked="mode_Checked"/>
-                <dict:RadioButton Text="All conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="all"  Checked="mode_Checked"/>
+                <dict:Button HorizontalAlignment="Left" Text="Create New" Foreground="{StaticResource ResourceKey=foreground}" x:Name="new" Command="{x:Static api:Commands.CreateBlankConversation}"/>
+                <dict:Button HorizontalAlignment="Left" Text="Import PowerPoint" Foreground="{StaticResource ResourceKey=foreground}" x:Name="import" Command="{x:Static api:Commands.ImportPowerpoint}"/>
+                <Rectangle Fill="White" Width="Auto" Height="2" Margin="-20 5 -20 5"/>
+                <dict:RadioButton HorizontalAlignment="Left" Text="Search" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="find" Checked="mode_Checked" IsChecked="True"/>
+                <dict:RadioButton HorizontalAlignment="Left" Text="My conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="mine" Checked="mode_Checked"/>
+                <dict:RadioButton HorizontalAlignment="Left" Text="All conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="all"  Checked="mode_Checked"/>
             </StackPanel>
             <StackPanel VerticalAlignment="Bottom">
                 <dict:RadioButton Text="Help" Icon="\Resources\Help.png" GroupName="options"  Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" x:Name="help" Checked="mode_Checked"/>

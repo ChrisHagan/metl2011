@@ -30,8 +30,8 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
-            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
+            Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
@@ -132,36 +132,27 @@ namespace SandRibbon.Components
         }
         private void LeaveConversation(string jid)
         {
-            Commands.RequerySuggested();
-            if (jid == Globals.conversationDetails.Jid)
-                Dispatcher.adopt(() => this.Visibility = Visibility.Visible);
         }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
             if (details == null) return;
-            if (searchResults.Where(c => c.Jid == details.Jid).Count() == 1)
-                Dispatcher.adoptAsync(() => searchResults.Remove(searchResults.Where(c => c.Jid == details.Jid).First()));
-            //if (!details.Subject.Contains("Deleted"))
-            Dispatcher.adopt(() => searchResults.Add(details));
-            if (!(shouldShowConversation(details)))
+            foreach (var result in searchResults.Where(c => c.Jid == details.Jid).ToList())
+                searchResults.Remove(result);
+            searchResults.Add(details);
+            if (!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid)
+            {
                 Commands.LeaveConversation.ExecuteAsync(details.Jid);
-            //else //conversation deleted
-            /*{
                 Commands.RequerySuggested();
-                //if (Globals.location.activeConversation == details.Jid && this.Visibility == Visibility.Collapsed)
-                if (Globals.conversationDetails.Jid == details.Jid && this.Visibility == Visibility.Collapsed)
-                {
-                    Dispatcher.adopt(() => this.Visibility = Visibility.Visible);
-                }
-            }*/
-            Dispatcher.adoptAsync(() => GetListCollectionView().Refresh());
+                this.Visibility = Visibility.Visible;
+            }
+            GetListCollectionView().Refresh();
         }
         private bool shouldShowConversation(ConversationDetails conversation)
         {
             if (!(Globals.credentials.authorizedGroups.Select(g => g.groupKey).Contains(conversation.Subject))
                 && conversation.Subject != "Unrestricted"
                 && !(String.IsNullOrEmpty(conversation.Subject))
-                && !(Globals.credentials.authorizedGroups.Select(su => su.groupKey).Any(k => k == "Superuser"))) return false;
+                && !(Globals.credentials.authorizedGroups.Select(su => su.groupKey).Contains("Superuser"))) return false;
             return true;
         }
         private ListCollectionView GetListCollectionView()

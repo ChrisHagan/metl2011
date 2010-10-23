@@ -138,8 +138,11 @@ namespace SandRibbon.Components.Canvas
         }
         private void deleteSelectedItems(object obj)
         {
-            deleteSelectedStrokes(null, null);
-            ClearAdorners();
+            Dispatcher.adopt(delegate
+            {
+                deleteSelectedStrokes(null, null);
+                ClearAdorners();
+            });
         }
         private void HandWriting_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -230,14 +233,6 @@ namespace SandRibbon.Components.Canvas
                         .Where(s => !(this.strokes.Contains(s.sum()))));
                     Strokes.Add(newStrokes);
                     this.strokes.AddRange(newStrokes.Select(s => s.sum()));
-                    foreach (var stroke in receivedStrokes)
-                    {
-                        if (stroke.target == target)
-                        {
-                            var author= stroke.author==Globals.conversationDetails.Author? "Teacher" : stroke.author;
-                            Commands.ReceiveAuthor.ExecuteAsync(author);
-                        }
-                    }
                     var duration = DateTimeFactory.Now() - start;
                     strokeReceiptDurations.Add(duration);
                 });

@@ -22,17 +22,18 @@ namespace SandRibbon.Providers
         private static readonly string WORKSPACE_PREFERENCE_ELEMENT = "preference";
         public static readonly string WORKSPACE_COMMAND_ATTRIBUTE = "command";
         public static readonly string WORKSPACE_PARAMETER_ELEMENT = "parameter";
-        private static readonly IEnumerable<ICommand> workspaceCommands = new ICommand[]{
+        private static readonly IEnumerable<CompositeCommand> workspaceCommands = new CompositeCommand[]{
             Commands.SetPedagogyLevel,
-            Commands.SetIdentity
+            Commands.SetIdentity,
+            Commands.RegisterPowerpointSourceDirectoryPreference
         };
         public static bool savedStateExists()
         {
             if (!Directory.Exists(WORKSPACE_DIRECTORY) || !File.Exists(WORKSPACE_SAVE_FILE)) return false;
             var xml = XElement.Load(WORKSPACE_SAVE_FILE);
-            return new[]{"SetIdentity", "SetPedagogyLevel"}.All(p=>xml.Descendants(WORKSPACE_PREFERENCE_ELEMENT).Where(node=>{
+            return workspaceCommands.Take(2).All(c=>xml.Descendants(WORKSPACE_PREFERENCE_ELEMENT).Where(node=>{
                 var preference = node.Attribute(WORKSPACE_COMMAND_ATTRIBUTE);
-                return preference != null && preference.Value == p;
+                return preference != null && preference.Value == Commands.which(c);
             }).Count() > 0);
         }
         public static void ensureWorkspaceDirectoryExists() { 
@@ -72,22 +73,24 @@ namespace SandRibbon.Providers
                     case "SetIdentity":
                         var values = (Crypto.decrypt(param.Attribute("authentication").Value)).Split(':');
                         App.Login(values[0], values[1]);
-                        //Commands.ConnectWithUnauthenticatedCredentials.ExecuteAsync(
-                            //new MeTLLib.DataTypes.Credentials(values[0],values[1],new List<MeTLLib.DataTypes.AuthorizedGroup>()));
+                    break;
+                    case "RegisterPowerpointSourceDirectoryPreference":
+                        Commands.RegisterPowerpointSourceDirectoryPreference.Execute(param.Value);
                     break;
                 }
             }
             App.Now("Finished restoring settings");
         }
-        public static void SaveCurrentSettings() { 
+        public static void SaveCurrentSettings() {
+            if (!Globals.rememberMe) return;
             ensureWorkspaceDirectoryExists();
             var doc = XElement.Load(WORKSPACE_SAVE_FILE);
             foreach (var command in workspaceCommands)
             {
                 XElement commandState = null;
                 var commandName = Commands.which(command);
-                    var currentState = doc.Descendants(WORKSPACE_PREFERENCE_ELEMENT).Where(e => 
-                        e.Attribute(WORKSPACE_COMMAND_ATTRIBUTE).Value == commandName);
+                var currentState = doc.Descendants(WORKSPACE_PREFERENCE_ELEMENT).Where(e => 
+                    e.Attribute(WORKSPACE_COMMAND_ATTRIBUTE).Value == commandName);
                 if(currentState.Count() == 1)
                     commandState = currentState.Single();
                 else
@@ -108,9 +111,13 @@ namespace SandRibbon.Providers
                             commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT,
                                 new XAttribute("authentication", Crypto.encrypt(string.Format(@"{0}:{1}", Globals.credentials.name, Globals.credentials.password)))));
                             break;
+                        case "RegisterPowerpointSourceDirectoryPreference":
+                            if(Globals.rememberMe)
+                                commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT, Commands.RegisterPowerpointSourceDirectoryPreference.lastValue()));
+                            break;
                     }
                 }
-                catch (NotSetException) {
+                catch (NotSetException){
                     commandState.Remove();
                 }
             }

@@ -202,7 +202,6 @@ namespace SandRibbon.Components.Canvas
                 }
             }
         }
-
         protected override void CanEditChanged()
         {
             canEdit = base.canEdit;
@@ -241,7 +240,6 @@ namespace SandRibbon.Components.Canvas
                 if (image.target == target)
                 {
                     var author = image.author == Globals.conversationDetails.Author ? "Teacher" : image.author;
-                    Commands.ReceiveAuthor.ExecuteAsync(author);
                     if (!userVisibility.ContainsKey(author))
                         userVisibility.Add(author, true);
                     if (!userImages.ContainsKey(author))
@@ -261,7 +259,6 @@ namespace SandRibbon.Components.Canvas
                 if (video.target == target)
                 {
                     var author = video.author == Globals.conversationDetails.Author ? "Teacher" : video.author;
-                    Commands.ReceiveAuthor.ExecuteAsync(author);
                     if (!userVisibility.ContainsKey(author))
                         userVisibility.Add(author, true);
                     if (!userVideo.ContainsKey(author))

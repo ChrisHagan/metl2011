@@ -74,7 +74,7 @@ namespace SandRibbon.Components.Canvas
             reset = new DelegateCommand<object>(resetTextbox, canUseTextCommands);
             Commands.RestoreTextDefaults.RegisterCommand(reset);
             Commands.EstablishPrivileges.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
-            Commands.ReceiveTextBox.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedTextBox>(ReceiveTextBox));
+            Commands.ReceiveTextBox.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.TargettedTextBox>(ReceiveTextBox));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
             Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(receiveDirtyText));
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
@@ -147,17 +147,20 @@ namespace SandRibbon.Components.Canvas
             if (!Globals.isAuthor || Globals.conversationDetails.Permissions == MeTLLib.DataTypes.Permissions.LECTURE_PERMISSIONS) return;
             if (element.GetType() != typeof(TextBox)) return;
             var box = (TextBox)element;
-            updateSelectionAdorners();
-            if (privacy == "private")
-                element.Effect = new DropShadowEffect
-                {
-                    BlurRadius = 50,
-                    Color = Colors.Black,
-                    ShadowDepth = 0,
-                    Opacity = 1
-                };
-            else
-                RemovePrivacyStylingFromElement(element);
+            Dispatcher.adopt(delegate
+            {
+                updateSelectionAdorners();
+                if (privacy == "private")
+                    element.Effect = new DropShadowEffect
+                    {
+                        BlurRadius = 50,
+                        Color = Colors.Black,
+                        ShadowDepth = 0,
+                        Opacity = 1
+                    };
+                else
+                    RemovePrivacyStylingFromElement(element);
+            });
         }
         private void dirtyTextBoxWithoutHistory(TextBox box)
         {
@@ -611,26 +614,14 @@ namespace SandRibbon.Components.Canvas
             {
                 var box = textBoxFromId(targettedBox.identity);
                 if (box != null)
-                    Dispatcher.adoptAsync(()=>
-                    ApplyPrivacyStylingToElement(box, box.tag().privacy));
+                    ApplyPrivacyStylingToElement(box, box.tag().privacy);
                 return;
             }//I never want my live text to collide with me.
             if (targettedBox.slide == currentSlide && (targettedBox.privacy == "private" || me == "projector"))
-            {
-                Dispatcher.adoptAsync(delegate
-                                               {
-                                                   removeDoomedTextBoxes(targettedBox);
-                                               });
-            }
+                removeDoomedTextBoxes(targettedBox);
             if (targettedBox.slide == currentSlide && (targettedBox.privacy == "public" || (targettedBox.author == Globals.me && me != "projector")))
-            {
-                Dispatcher.adoptAsync(delegate
-                {
                     doText(targettedBox);
-                });
-            }
         }
-
         private void removeDoomedTextBoxes(MeTLLib.DataTypes.TargettedTextBox targettedBox)
         {
             var box = targettedBox.box;
@@ -674,7 +665,6 @@ namespace SandRibbon.Components.Canvas
             Dispatcher.adoptAsync(delegate
                                       {
                                           var author = targettedBox.author == Globals.conversationDetails.Author ? "Teacher" : targettedBox.author;
-                                          Commands.ReceiveAuthor.ExecuteAsync(author);
                                           if (targettedBox.target != target) return;
                                           //if (targettedBox.author == Globals.me &&
                                           //  alreadyHaveThisTextBox(targettedBox.box))
@@ -757,21 +747,22 @@ namespace SandRibbon.Components.Canvas
         {
             if (me != "projector")
             {
-                List<UIElement> selectedElements = new List<UIElement>();
-                Dispatcher.adopt(()=>selectedElements = GetSelectedElements().ToList());
-                foreach (System.Windows.Controls.TextBox textBox in selectedElements.Where(i =>
-                    i is System.Windows.Controls.TextBox
-                    && ((System.Windows.Controls.TextBox)i).tag().privacy != newPrivacy))
-                {
-                    var oldTag = ((TextBox)textBox).tag();
-                    oldTag.privacy = newPrivacy;
-                    dirtyTextBoxWithoutHistory(textBox);
-                    ((TextBox)textBox).tag(oldTag);
-                    sendText(textBox, newPrivacy);
-                }
+                Dispatcher.adopt(delegate{
+                    List<UIElement> selectedElements = new List<UIElement>();
+                    selectedElements = GetSelectedElements().ToList();
+                    foreach (System.Windows.Controls.TextBox textBox in selectedElements.Where(i =>
+                        i is System.Windows.Controls.TextBox
+                        && ((System.Windows.Controls.TextBox)i).tag().privacy != newPrivacy))
+                    {
+                        var oldTag = ((TextBox)textBox).tag();
+                        oldTag.privacy = newPrivacy;
+                        dirtyTextBoxWithoutHistory(textBox);
+                        ((TextBox)textBox).tag(oldTag);
+                        sendText(textBox, newPrivacy);
+                    }
+                    Select(new List<UIElement>());
+                });
             }
-            Dispatcher.adoptAsync(() => Select(new List<UIElement>()));
-
         }
     }
     public static class TextBoxExtensions

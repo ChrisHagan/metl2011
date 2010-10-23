@@ -84,12 +84,15 @@ namespace SandRibbon.Components
             Commands.RemoveWindowEffect.ExecuteAsync(null);
             Commands.ShowConversationSearchBox.ExecuteAsync(null);
             Dispatcher.adoptAsync(() =>
+            {
+                if (rememberMe.IsChecked == true)
                 {
-                    Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);
-                    if (rememberMe.IsChecked == true)
-                        WorkspaceStateProvider.SaveCurrentSettings();
-                    this.Visibility = Visibility.Collapsed;
-                });
+                    Commands.RememberMe.Execute(true);
+                    WorkspaceStateProvider.SaveCurrentSettings();
+                }
+                Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);
+                this.Visibility = Visibility.Collapsed;
+            });
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

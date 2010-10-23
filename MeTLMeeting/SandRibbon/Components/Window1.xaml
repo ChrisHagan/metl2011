@@ -86,14 +86,14 @@
                         <components:SlideDisplay x:Name="slides" />
                     </Grid>
                 </Grid>
-                <Grid x:Name="TutorialLayer" Visibility="Collapsed" IsHitTestVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-90,0,0" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" >
+            <Grid x:Name="TutorialLayer" Visibility="Collapsed" IsHitTestVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-90,0,0" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" >
                     <components:Tutorial />
                 </Grid>
             </Grid>
             <Grid x:Name="loginParent">
                 <components:ConversationSearchBox x:Name="currentConversationSearchBox" Visibility="Collapsed"/>
+                <my:ProgressDialog Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" />
                 <components:Login x:Name="login"/>
-                <TextBlock x:Name="autoLoginMessage" Visibility="Collapsed">Logging you in automatically for your convience </TextBlock>
             </Grid>
         </Grid>
 </sr:RibbonWindow>

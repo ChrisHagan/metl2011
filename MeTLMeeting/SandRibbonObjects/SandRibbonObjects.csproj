@@ -71,7 +71,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CanvasState.cs" />
-    <Compile Include="ConversationDetails.cs" />
     <Compile Include="Friend.cs" />
     <Compile Include="GlobalCultureCompatibility.cs" />
     <Compile Include="JabberWire.cs" />
