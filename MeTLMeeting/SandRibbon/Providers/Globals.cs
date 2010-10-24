@@ -129,6 +129,11 @@ namespace SandRibbon.Providers
                 return credentials.authorizedGroups;
             }
         }
+        public static List<string> authorizedGroupNames {
+            get {// God damn.  I hate the stupidity of this redundant property in Authorized Group.
+                return authorizedGroups.Select(g => g.groupKey).ToList();
+            }
+        }
         public static bool synched
         {
             get

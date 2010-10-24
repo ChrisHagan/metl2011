@@ -130,6 +130,8 @@ namespace SandRibbon
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var details = (MeTLLib.DataTypes.ConversationDetails)value;
+            if (details == null) 
+                return "Undefined";
             var slides = string.Format("{0} Slide", details.Slides.Count);
             if(details.Slides.Count > 1)
                 slides = string.Format("{0}s", slides);

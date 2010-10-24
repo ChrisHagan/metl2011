@@ -229,18 +229,45 @@ namespace SandRibbon.Components
                 var details = (MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext;
                 details.Subject = "Deleted";
                 MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
-                //ConversationDetailsProviderFactory.Provider.Update(details);
             }
         }
-        private void editConversation(object sender, RoutedEventArgs e)
-        {
-            Commands.EditConversation.ExecuteAsync(((MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext).Jid);
-        }
-
         private void mode_Checked(object sender, RoutedEventArgs e)
         {
             var mode = ((FrameworkElement)sender).Name;
             backstageNav.currentMode = mode;
+        }
+        private ContentPresenter view(object backedByConversation) { 
+            var conversation = (ConversationDetails)((FrameworkElement)backedByConversation).DataContext;
+            var item = SearchResults.ItemContainerGenerator.ContainerFromItem(conversation);
+            var presenter = (ContentPresenter)item;
+            return presenter;
+        }
+        private ConversationDetails context(object sender) {
+            return (ConversationDetails)((FrameworkElement)sender).DataContext;
+        }
+        private void assignTemplate(string dataTemplateResourceKey, object sender){
+            var sentContext = context(sender);
+            var presenter = view(sender);
+            presenter.Content = sentContext;
+            presenter.ContentTemplate = (DataTemplate)FindResource(dataTemplateResourceKey);
+        }
+        private void renameConversation(object sender, RoutedEventArgs e)
+        {
+            assignTemplate("rename", sender);
+        }
+        private void shareConversation(object sender, RoutedEventArgs e)
+        {
+            assignTemplate("share", sender);
+        }
+        private void cancelEdit(object sender, RoutedEventArgs e)
+        {
+            assignTemplate("viewing", sender);
+        }
+        private void saveEdit(object sender, RoutedEventArgs e)
+        {
+            var details = (MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext;
+            MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+            assignTemplate("viewing", sender);
         }
     }
     public class ConversationComparator : System.Collections.IComparer

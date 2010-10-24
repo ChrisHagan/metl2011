@@ -22,12 +22,10 @@ namespace SandRibbon.Components
             InitializeComponent();
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(showConversationSearchBox));
         }
-
         private void showConversationSearchBox(object mode)
         {
             openCorrectTab((string)mode);
         }
-
         private void openMyConversations()
         {
             mine.IsChecked = true;
