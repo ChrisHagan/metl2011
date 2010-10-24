@@ -26,10 +26,18 @@
                 <dict:Button Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Click="deleteConversation"/>
             </StackPanel>
         </DataTemplate>
+        <Style TargetType="Border" x:Key="thinBlack">
+            <Setter Property="BorderBrush" Value="Black" /> 
+            <Setter Property="BorderThickness" Value="1" /> 
+        </Style>
         <DataTemplate x:Key="doneEditing">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <dict:Button Text="Save" InternalButtonSize="Medium"  Click="saveEdit"/>
-                <dict:Button Text="Cancel" InternalButtonSize="Medium"  Click="cancelEdit"/>
+                <Border Style="{StaticResource thinBlack}">
+                    <dict:Button Text="Apply" InternalButtonSize="Medium"  Click="saveEdit"/>
+                </Border> 
+                <Border Style="{StaticResource thinBlack}">
+                    <dict:Button Text="Cancel" InternalButtonSize="Medium"  Click="cancelEdit"/>
+                </Border> 
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="rename">
@@ -37,7 +45,7 @@
                 <Grid>
                     <Button HorizontalContentAlignment="Left" Click="Button_Click"  Tag="{Binding Path=Jid}">
                         <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
-                            <TextBox FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"  FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" Text="{Binding Path=Title}" />
+                            <TextBox FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"  FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" Text="{Binding Path=Title}" Background="Gold"/>
                             <Label HorizontalAlignment="Left" Foreground="#FF606060" FontWeight="Regular" FontFamily="Verdana" FontSize="14" Margin="20,0,0,0" 
                                    Content="{Binding Converter={x:Static sr:Converters.ConversationDetailsToDescription}}" />
                         </StackPanel>
@@ -121,9 +129,9 @@
         <components:BackStageNav DockPanel.Dock="Left" x:Name="backstageNav"/>
         <Border DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="{DynamicResource backgroundColor}">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <dict:RadioButton Text="Search" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True"/>
-                <dict:RadioButton Text="My conversations" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked"/>
-                <dict:RadioButton Text="All conversations" GroupName="SearchOptions" x:Name="all"  Checked="mode_Checked"/>
+                <dict:RadioButton Text="Search" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True" Foreground="White" Margin="20 0"/>
+                <dict:RadioButton Text="My conversations" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked" Foreground="White" Margin="20 0"/>
+                <dict:RadioButton Text="All conversations" GroupName="SearchOptions" x:Name="all"  Checked="mode_Checked" Foreground="White" Margin="20 0"/>
             </StackPanel>
         </Border>
         <ScrollViewer

@@ -19,9 +19,6 @@ using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {
-    /// <summary>
-    /// Interaction logic for PrivacyToggleButton.xaml
-    /// </summary>
     public partial class PrivacyToggleButton : UserControl
     {
         public PrivacyToggleButton(string mode, Rect bounds)
@@ -59,7 +56,6 @@ namespace SandRibbon.Components
         {
             Commands.SetPrivacyOfItems.ExecuteAsync("private");
         }
-
         private void deleteContent(object sender, RoutedEventArgs e)
         {
             Commands.DeleteSelectedItems.ExecuteAsync(null);
@@ -74,7 +70,6 @@ namespace SandRibbon.Components
                 ElementBounds = bounds;
             }
         }
-
         private void bubbleContent(object sender, RoutedEventArgs e)
         {
             var slide = Globals.slide;

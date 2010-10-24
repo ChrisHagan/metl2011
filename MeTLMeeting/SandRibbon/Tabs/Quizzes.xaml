@@ -27,7 +27,7 @@ xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
                                       x:Name="createQuiz" Icon="\Resources\NewQuiz.png" Text="New"/>
         </StackPanel>
     </sr:RibbonGroup>
-    <sr:RibbonGroup Header="Results" x:Name="quizResultsRibbonGroup" ShowDialogLauncher="False" Image="\Resources\QuizResults.png">
+    <sr:RibbonGroup Header="Results" x:Name="quizResultsRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Results.png">
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Small" Priority="2"/>
             <sr:GroupVariant Variant="Medium" Priority="1"/>

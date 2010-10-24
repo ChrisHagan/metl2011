@@ -990,7 +990,9 @@
     <Resource Include="Resources\MeTLLogo-bronze.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\NewQuiz.png" />
+    <Resource Include="Resources\NewQuiz.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\mimetype_readme.png" />
     <Resource Include="Resources\MeTLPenOverlay.png" />
     <Resource Include="Resources\MeTLHighlighterOverlay.png" />
@@ -1032,13 +1034,20 @@
     </Content>
     <Resource Include="Resources\PenIn.png" />
     <Resource Include="Resources\PenOut.png" />
-    <Resource Include="Resources\QuizResults.png" />
-    <Resource Include="Resources\Quizzes.png" />
+    <Resource Include="Resources\QuizResults.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Quizzes.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Print_w-out_notes.png" />
     <Resource Include="Resources\Print_w_notes.png" />
     <Resource Include="Resources\progressBackground.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Content Include="Resources\Results.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Ribbon-Palette.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
