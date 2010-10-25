@@ -157,7 +157,9 @@ namespace SandRibbon.Components
         private void SendScreenShot(ScreenshotDetails details)
         {
             string filename = generateScreenshot(details);
-            DelegateCommand<string> fileUploaded = null;
+            var hostedUri = MeTLLib.ClientFactory.Connection().NoAuthUploadResource(new System.Uri(filename,UriKind.RelativeOrAbsolute), Globals.slide);
+            Commands.ScreenshotGenerated.ExecuteAsync(hostedUri.ToString());
+            /*DelegateCommand<string> fileUploaded = null;
             fileUploaded = new DelegateCommand<string>(hostedFilename =>
                                                            {
                                                                Commands.InternalUploadedUrlNotification.UnregisterCommand(fileUploaded);
@@ -165,7 +167,7 @@ namespace SandRibbon.Components
                                                            });
 
             Commands.InternalUploadedUrlNotification.RegisterCommand(fileUploaded);
-            Commands.UploadFileReturningUrl.Execute(filename);
+            Commands.UploadFileReturningUrl.Execute(filename);*/
         }
 
         private string generateScreenshot(ScreenshotDetails details)

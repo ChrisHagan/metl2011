@@ -91,6 +91,9 @@ namespace MeTLLib
         ConversationDetails DetailsOf(String jid);
         void SneakInto(string room);
         void SneakOutOf(string room);
+        Uri NoAuthUploadResource(Uri file, int Room);
+        Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload);
+        Uri NoAuthUploadResource(byte[] data, string filename, int Room);
     }
     public class ClientConnection : IClientBehaviour
     {
@@ -337,7 +340,8 @@ namespace MeTLLib
         }
         #endregion
         #region conversationCommands
-        public HttpHistoryProvider getHistoryProvider() {
+        public HttpHistoryProvider getHistoryProvider()
+        {
             //This is a quick and lazy hack to test the thumbnailing service being more lightweight
             return historyProvider;
         }
@@ -451,6 +455,18 @@ namespace MeTLLib
             });
             return parserList[0];
         }
+        public void NoAuthAsyncRetrieveHistoryOfRoom(int room)
+        {
+            string muc = room.ToString();
+            historyProvider.Retrieve<PreParser>(
+                () => { },
+                (current, total) => { },
+                preParser =>
+                    {
+                        events.receivePreParser(preParser);
+                    },
+                muc);
+        }
         public List<PreParser> RetrieveHistoryOfRoom(int room)
         {
             var parserList = new List<PreParser>();
@@ -495,10 +511,17 @@ namespace MeTLLib
             });
             return parserList;
         }
+        /*
         public string UploadFileAndReturnUrl(string file)
         {
-            return resourceUploader.uploadResource(string.Format("/Resource/"), file);
-        }
+            string result = "";
+            Action work = delegate
+            {
+                result = resourceUploader.uploadResource(string.Format("/Resource/"), file);
+            };
+            tryIfConnected(work);
+            return result;
+        }*/
         public ConversationDetails UpdateConversationDetails(ConversationDetails details)
         {
             ConversationDetails cd = null;
@@ -528,20 +551,6 @@ namespace MeTLLib
             };
             tryIfConnected(work);
             return cd;
-        }
-        public List<ConversationDetails> AvailableConversations
-        {
-            get
-            {
-                var list = new List<ConversationDetails>();
-                if (wire.IsConnected() == false) return list;
-                Action work = delegate
-                {
-                    list = conversationDetailsProvider.ListConversations().ToList();
-                };
-                tryIfConnected(work);
-                return list;
-            }
         }
         public ConversationDetails AppendSlide(string Jid)
         {
@@ -607,6 +616,35 @@ namespace MeTLLib
         private string decodeUri(Uri uri)
         {
             return uri.Host;
+        }
+        #endregion
+        #region noAuth
+        public Uri NoAuthUploadResource(Uri file, int Room)
+        {
+            return new System.Uri(resourceUploader.uploadResource(Room.ToString(),file.ToString(),false));
+        }
+        public Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload)
+        {
+            return new System.Uri(resourceUploader.uploadResourceToPath(fileToUpload, pathToUploadTo, nameToUpload),UriKind.Absolute);
+        }
+        public Uri NoAuthUploadResource(byte[] data, string filename, int Room)
+        {
+            return new System.Uri(resourceUploader.uploadResourceToPath(data,Room.ToString(),filename,false));
+        }
+        public List<ConversationDetails> AvailableConversations
+        {
+            get
+            {
+                return conversationDetailsProvider.ListConversations().ToList();
+                /*var list = new List<ConversationDetails>();
+                if (wire.IsConnected() == false) return list;
+                Action work = delegate
+                {
+                    list = conversationDetailsProvider.ListConversations().ToList();
+                };
+                tryIfConnected(work);
+                return list;*/
+            }
         }
         #endregion
     }

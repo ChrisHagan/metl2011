@@ -244,7 +244,8 @@ namespace SandRibbon.Utils
             var slideThumbnailPath = Directory.GetCurrentDirectory() + "\\thumbs\\" + conversationSlideNumber + ".png";
             slide.Export(slideThumbnailPath, "PNG", Convert.ToInt32(slide.Master.Width), Convert.ToInt32(slide.Master.Height));
             progress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED,conversationSlideNumber,slideThumbnailPath);
-            SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(slideThumbnailPath, conversationSlideNumber + "/thumbs", "slideThumb.png");
+            MeTLLib.ClientFactory.Connection().NoAuthUploadResourceToPath(slideThumbnailPath, conversationSlideNumber + "/thumbs", "slideThumb.png");
+            //SandRibbon.Utils.Connection.ResourceUploader.uploadResourceToPath(slideThumbnailPath, conversationSlideNumber + "/thumbs", "slideThumb.png");
         }
         public void LoadPowerpoint(string file, ConversationDetails details)
         {
@@ -395,8 +396,10 @@ namespace SandRibbon.Utils
             {
                 var shape = doc.Descendants("shape").ElementAt(i);
                 var file = shape.Attribute("snapshot").Value;
-                var hostedFileName = ResourceUploader.uploadResource(slide.ToString(), file);
-                var uri = new Uri(hostedFileName, UriKind.RelativeOrAbsolute);
+                var hostedFileUri = MeTLLib.ClientFactory.Connection().NoAuthUploadResource(new Uri(file, UriKind.RelativeOrAbsolute), slide);
+                //var hostedFileName = ResourceUploader.uploadResource(slide.ToString(), file);
+                var uri = hostedFileUri;
+                //new Uri(hostedFileName, UriKind.RelativeOrAbsolute);
                 if (shape.Attribute("uri") == null)
                     shape.Add(new XAttribute("uri", uri));
                 else
