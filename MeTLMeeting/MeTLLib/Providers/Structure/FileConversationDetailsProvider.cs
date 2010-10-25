@@ -89,14 +89,6 @@ namespace MeTLLib.Providers.Structure
                 var position = getPosition(currentSlide, details.Slides);
                 if (position == -1) return details;
                 var slide = new Slide(slideId, details.Author, type, position + 1, 720, 540);
-                /*{
-                    author = details.Author,
-                    id = slideId,
-                    index = position + 1,
-                    type = type,
-                    defaultHeight = 540,
-                    defaultWidth = 720
-                };*/
                 foreach (var existingSlide in details.Slides)
                     if (existingSlide.index >= slide.index)
                         existingSlide.index++;
@@ -124,13 +116,6 @@ namespace MeTLLib.Providers.Structure
                 var details = DetailsOf(title);
                 var slideId = details.Slides.Select(s => s.id).Max() + 1;
                 details.Slides.Add(new Slide(slideId, details.Author, Slide.TYPE.SLIDE, details.Slides.Count, 720, 540));
-                /*{
-                    author = details.Author,
-                    id = slideId,
-                    index = details.Slides.Count,
-                    defaultHeight = 540,
-                    defaultWidth = 720
-                });*/
                 Update(details);
                 return details;
             }
@@ -241,10 +226,11 @@ namespace MeTLLib.Providers.Structure
         private List<ConversationDetails> RestrictToAccessible(IEnumerable<ConversationDetails> summary, IEnumerable<string> myGroups)
         {
             return summary.ToList();
-            return summary
+            /*return summary
                 .Where(c => !String.IsNullOrEmpty(c.Subject))
                 .Where(c => myGroups.Contains(c.Subject))
                 .Distinct(new UniqueConversationComparator()).ToList();
+        */
         }
         public ConversationDetails Create(ConversationDetails details)
         {
@@ -255,8 +241,8 @@ namespace MeTLLib.Providers.Structure
                 details.Slides.Add(new Slide(id + 1, details.Author, Slide.TYPE.SLIDE, 0, 720, 540));
             }
             details.Created = DateTimeFactory.Parse(DateTimeFactory.Now().ToString());
-            resourceUploader.uploadResourceToPath(Encoding.UTF8.GetBytes(details.WriteXml().ToString(SaveOptions.DisableFormatting)),
-                string.Format("Structure/{0}", details.Jid), DETAILS);
+            //resourceUploader.uploadResourceToPath(Encoding.UTF8.GetBytes(details.WriteXml().ToString(SaveOptions.DisableFormatting)),
+            //    string.Format("Structure/{0}", details.Jid), DETAILS);
             Update(details);
             return details;
         }

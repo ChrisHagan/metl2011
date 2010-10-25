@@ -103,7 +103,7 @@ namespace SandRibbon.Providers
                     //var client = MeTLLib.ClientFactory.Connection();
                     //cd = client.DetailsOf(client.location.activeConversation);
                 }
-                if (cd == null) return new ConversationDetails("", "", "", "", new List<Slide>(), new Permissions("", false, false, false), "");
+                if (cd == null) return ConversationDetails.Empty;
                 return cd;
             }
         }

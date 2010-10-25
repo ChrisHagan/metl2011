@@ -179,6 +179,12 @@
                             <Setter TargetName="Main" Property="HorizontalAlignment" Value="Stretch"/>
                             <Setter TargetName="Main" Property="VerticalAlignment" Value="Stretch"/>
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type dict:PenColorsListBox}}, Path=IsEnabled}" Value="False">
+                            <Setter TargetName="Main" Property="Opacity" Value="0.2"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type dict:PenColorsListBox}}, Path=IsEnabled}" Value="True">
+                            <Setter TargetName="Main" Property="Opacity" Value="1"/>
+                        </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
             </dict:PenColorsListBox.ItemTemplate>

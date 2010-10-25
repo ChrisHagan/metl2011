@@ -547,7 +547,7 @@ namespace MeTLLib
         }
         public ConversationDetails AppendSlide(string Jid)
         {
-            ConversationDetails details = new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), "");
+            ConversationDetails details = ConversationDetails.Empty;
             Action work = delegate
             {
                 details = conversationDetailsProvider.AppendSlide(Jid);
@@ -557,7 +557,7 @@ namespace MeTLLib
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid)
         {
-            ConversationDetails details = new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), "");
+            ConversationDetails details = ConversationDetails.Empty; 
             Action work = delegate
             {
                 details = conversationDetailsProvider.AppendSlideAfter(slide, Jid);
@@ -567,7 +567,7 @@ namespace MeTLLib
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid, Slide.TYPE type)
         {
-            ConversationDetails details = new ConversationDetails("", "", "", new List<Slide>(), new Permissions("", false, false, false), "");
+            ConversationDetails details = ConversationDetails.Empty;
             Action work = delegate
             {
                 details = conversationDetailsProvider.AppendSlideAfter(slide, Jid, type);

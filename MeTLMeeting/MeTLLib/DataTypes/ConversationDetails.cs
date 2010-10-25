@@ -13,7 +13,8 @@ namespace MeTLLib.DataTypes
 {
     public class ConversationDetails : INotifyPropertyChanged
     {
-        public static string DefaultName(string author){
+        public static string DefaultName(string author)
+        {
             var now = DateTimeFactory.Now();
             return string.Format("{0} at {1}", author, now);
         }
@@ -28,13 +29,13 @@ namespace MeTLLib.DataTypes
             this.Subject = subject;
         }
         public ConversationDetails(String title, String jid, String author, List<Slide> slides, Permissions permissions, String subject, DateTime created, DateTime lastAccessed)
-            : this(title,jid,author,slides,permissions,subject)
+            : this(title, jid, author, slides, permissions, subject)
         {
             this.Created = created;
             this.LastAccessed = lastAccessed;
         }
         public ConversationDetails(String title, String jid, String author, String tag, List<Slide> slides, Permissions permissions, String subject, DateTime created, DateTime lastAccessed)
-            : this(title,jid,author,slides,permissions,subject,created,lastAccessed)
+            : this(title, jid, author, slides, permissions, subject, created, lastAccessed)
         {
             this.Tag = tag;
         }
@@ -95,6 +96,13 @@ namespace MeTLLib.DataTypes
                 && (foreignConversationDetails.Tag == Tag)
                 && (foreignConversationDetails.Title == Title));
         }
+        public static ConversationDetails Empty
+        {
+            get
+            {
+                return new ConversationDetails("", "", "", new List<Slide>(), Permissions.Empty, "", new DateTime(), new DateTime());
+            }
+        }
         public override int GetHashCode()
         {
             if (Jid == null) return 0;
@@ -138,7 +146,7 @@ namespace MeTLLib.DataTypes
                 d.Element(DEFAULT_HEIGHT) != null ? float.Parse(d.Element(DEFAULT_HEIGHT).Value) : 540,
                 d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true
             )).ToList();
-            return new ConversationDetails(Title,Jid,Author,Tag,Slides,internalPermissions,Subject, Created, LastAccessed);
+            return new ConversationDetails(Title, Jid, Author, Tag, Slides, internalPermissions, Subject, Created, LastAccessed);
         }
         public XElement WriteXml()
         {
@@ -211,6 +219,7 @@ namespace MeTLLib.DataTypes
         public static Permissions LABORATORY_PERMISSIONS = new Permissions("laboratory", false, true, false);
         public static Permissions TUTORIAL_PERMISSIONS = new Permissions("tutorial", true, true, false);
         public static Permissions MEETING_PERMISSIONS = new Permissions("meeting", true, true, true);
+        public static Permissions Empty { get { return new Permissions("", false, false, false); } }
         private static readonly Permissions[] OPTIONS = new[]{
             LECTURE_PERMISSIONS,
             LABORATORY_PERMISSIONS,
@@ -231,7 +240,7 @@ namespace MeTLLib.DataTypes
             var studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).Value);
             var studentCanOpenFriends = Boolean.Parse(doc.Element(CANFRIEND).Value);
             var usersAreCompulsorilySynced = Boolean.Parse(doc.Element(ALLSYNC).Value);
-            return new Permissions(null,studentCanOpenFriends,studentCanPublish,usersAreCompulsorilySynced);
+            return new Permissions(null, studentCanOpenFriends, studentCanPublish, usersAreCompulsorilySynced);
         }
         public XElement WriteXml()
         {
@@ -278,6 +287,13 @@ namespace MeTLLib.DataTypes
             defaultWidth = newDefaultWidth;
             defaultHeight = newDefaultHeight;
             exposed = newExposed;
+        }
+        public static Slide Empty
+        {
+            get
+            {
+                return new Slide(0, "", TYPE.SLIDE, 0, 0f, 0f);
+            }
         }
         public static int conversationFor(int id)
         {
