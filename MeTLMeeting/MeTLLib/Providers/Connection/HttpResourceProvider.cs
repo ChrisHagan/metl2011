@@ -18,9 +18,11 @@ namespace MeTLLib.Providers.Connection
             return request;
         }
     }
-    public class MeTLWebClient : IWebClient{
+    public class MeTLWebClient : IWebClient
+    {
         WebClientWithTimeout client;
-        public MeTLWebClient(ICredentials credentials) {
+        public MeTLWebClient(ICredentials credentials)
+        {
             this.client = new WebClientWithTimeout();
             this.client.Credentials = credentials;
         }
@@ -56,20 +58,46 @@ namespace MeTLLib.Providers.Connection
                 return false;
             }
         }
-        public void downloadStringAsync(Uri resource) {
+        public void downloadStringAsync(Uri resource)
+        {
             client.DownloadStringAsync(resource);
+        }
+        private void retryUpToXTimes(Action action, int attempts)
+        {
+            while (attempts > 0)
+            {
+                try
+                {
+                    action();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceInformation("retrying (up to {0} times): {1}, exception:  on {2}", attempts, action.Method.ToString(), ex.Message.ToString());
+                    attempts--;
+                    if (attempts > 0)
+                        retryUpToXTimes(action, attempts);
+                    else throw new Exception("retry failed on method ("+action.Method.ToString()+")", ex);
+                }
+            }
         }
         public string downloadString(Uri resource)
         {
-            return client.DownloadString(resource);
+            string result = "";
+            retryUpToXTimes(delegate { result = client.DownloadString(resource); }, 5);
+            return result;
         }
         public byte[] downloadData(Uri resource)
         {
-            return client.DownloadData(resource);
+            byte[] result = new byte[0];
+            retryUpToXTimes(delegate{ result = client.DownloadData(resource); },5);
+            return result;
         }
         public String uploadData(Uri resource, byte[] data)
         {
-            return decode(client.UploadData(resource.ToString(), data));
+            string result = "";
+            retryUpToXTimes(delegate{ result = decode(client.UploadData(resource.ToString(), data)); },5);
+            return result;
         }
         public void uploadDataAsync(Uri resource, byte[] data)
         {
@@ -81,23 +109,27 @@ namespace MeTLLib.Providers.Connection
         }
         byte[] IWebClient.uploadFile(Uri resource, string filename)
         {
-            var response = client.UploadFile(resource.ToString(), filename);
-            return response;
+            byte[] result = new byte[0];
+            retryUpToXTimes(delegate { result = client.UploadFile(resource.ToString(), filename); }, 5);
+            return result;
         }
         private string decode(byte[] bytes)
         {
             return System.Text.Encoding.UTF8.GetString(bytes);
         }
     }
-    public class MeTLCredentials : NetworkCredential {
+    public class MeTLCredentials : NetworkCredential
+    {
         private readonly static String USERNAME = "exampleUsername";
         private readonly static String PASSWORD = "examplePassword";
         public MeTLCredentials() : base(USERNAME, PASSWORD) { }
     }
-    public class HttpFileUploadResultArgs {
+    public class HttpFileUploadResultArgs
+    {
         public byte[] Result { get; set; }
     }
-    public interface IWebClient {
+    public interface IWebClient
+    {
         long getSize(Uri resource);
         bool exists(Uri resource);
         void downloadStringAsync(Uri resource);
@@ -108,10 +140,12 @@ namespace MeTLLib.Providers.Connection
         byte[] uploadFile(Uri resource, string filename);
         void uploadFileAsync(Uri resource, string filename);
     }
-    public interface IWebClientFactory {
+    public interface IWebClientFactory
+    {
         IWebClient client();
     }
-    public class WebClientFactory : IWebClientFactory {
+    public class WebClientFactory : IWebClientFactory
+    {
         private static readonly string StagingMeTLCertificateSubject = "E=nobody@nowhere.gondwanaland, CN=localhost, OU=Janitorial section, O=Hyber Inc., L=Yawstown, S=Gondwanaland, C=se";
         private static readonly string StagingMeTLCertificateIssuer = "E=nobody@nowhere.gondwanaland, CN=localhost, OU=Janitorial section, O=Hyber Inc., L=Yawstown, S=Gondwanaland, C=se";
         private static readonly string DeifiedMeTLCertificateSubject = "E=root@deified.adm, CN=localhost, OU=deified, O=adm";
@@ -123,7 +157,8 @@ namespace MeTLLib.Providers.Connection
         private static readonly string MonashCertificateIssuer = "E=premium-server@thawte.com, CN=Thawte Premium Server CA, OU=Certification Services Division, O=Thawte Consulting cc, L=Cape Town, S=Western Cape, C=ZA";
         private static readonly string MonashExternalCertificateIssuer = "CN=Thawte SSL CA, O=\"Thawte, Inc.\", C=US";
         private ICredentials credentials;
-        public WebClientFactory(ICredentials credentials) {
+        public WebClientFactory(ICredentials credentials)
+        {
             ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(bypassAllCertificateStuff);
             ServicePointManager.DefaultConnectionLimit = Int32.MaxValue;
             this.credentials = credentials;
@@ -146,7 +181,7 @@ namespace MeTLLib.Providers.Connection
     }
     public class HttpResourceProvider
     {
-        IWebClientFactory _clientFactory; 
+        IWebClientFactory _clientFactory;
         public HttpResourceProvider(IWebClientFactory factory)
         {
             _clientFactory = factory;
