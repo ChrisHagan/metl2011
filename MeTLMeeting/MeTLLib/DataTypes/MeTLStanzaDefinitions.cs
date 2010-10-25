@@ -18,7 +18,7 @@ using MeTLLib.Providers;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Ninject;
 using System.Threading;
-using System.Windows.Threading;
+
 
 namespace MeTLLib.DataTypes
 {
@@ -228,12 +228,8 @@ namespace MeTLLib.DataTypes
             {
                 if (server != null && cache != null) imageSpecification.adoptCache(cache, server);
                 if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
-                Image reified = null;
-                Dispatcher.CurrentDispatcher.adopt(() =>
-                {
-                    reified = imageSpecification.forceEvaluation();
-                    id = reified.tag().id;
-                });
+                var reified = imageSpecification.forceEvaluation();
+                id = reified.tag().id;
                 return reified;
             }
             set
@@ -373,11 +369,13 @@ namespace MeTLLib.DataTypes
             {
                 if (boxSpecification == null) boxSpecification = new MeTLStanzas.TextBox(this);
                 System.Windows.Controls.TextBox reified = null;
-                Dispatcher.CurrentDispatcher.adopt(() =>
-                {
-                    reified = boxSpecification.forceEvaluation();
-                    identity = reified.tag().id;
-                });
+                reified = boxSpecification.forceEvaluation();
+                identity = reified.tag().id;
+
+
+
+
+
                 return reified;
             }
             set
