@@ -35,7 +35,7 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
-            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(HideConversationSearchBox));
+            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
             Commands.BackstageModeChanged.RegisterCommand(new DelegateCommand<string>(BackstageModeChanged));
             SearchResults.ItemsSource = searchResults;
             var view = GetListCollectionView();
@@ -119,7 +119,8 @@ namespace SandRibbon.Components
         }
         private void HideConversationSearchBox(object o)
         {
-            CloseConversationSearchBox();
+            this.Visibility = Visibility.Collapsed;
+            Commands.RequerySuggested();
         }
         private void JoinConversation(object o)
         {
@@ -127,8 +128,7 @@ namespace SandRibbon.Components
         }
         private void CloseConversationSearchBox()
         {
-            Dispatcher.adoptAsync(delegate { this.Visibility = Visibility.Collapsed; });
-            Commands.RequerySuggested();
+            Commands.HideConversationSearchBox.Execute(null);
         }
         private void LeaveConversation(string jid)
         {

@@ -21,7 +21,8 @@
     </sr:ApplicationPopup.RecentDocumentsControl>
     <sr:MenuItem Text="Create new" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.CreateBlankConversation}"/>
     <sr:MenuItem Text="Import PowerPoint" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
-    <sr:MenuItem Text="Open" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
+    <sr:MenuItem Text="Search" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
+    <sr:MenuItem Text="My Conversations" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
     <sr:MenuItem Text="Print" ToolTip="{StaticResource PrintConversationToolTip}">
         <sr:RibbonPopup>
             <Grid>
@@ -52,7 +53,6 @@
             </Grid>
         </sr:RibbonPopup>
     </sr:MenuItem>
-    <sr:MenuItem Text="My Conversations" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
     <sr:MenuItem Text="Help" ToolTip="{StaticResource HelpToolTip}" >
         <sr:RibbonPopup>
             <MenuItem ToolTip="{StaticResource ReportBugToolTip}" FontSize="12" Width="Auto" Height="Auto" Header="Report a Bug" Click="OpenReportBugBrowser" />
