@@ -267,6 +267,7 @@ namespace MeTLLib.Providers.Connection
             conn.OnWriteXml += WriteXml;
 #endif
             openConnection(jid.User);
+            joinRoom(metlServerAddress.global);
         }
         private object resetLock = new object();
         private IConversationDetailsProvider conversationDetailsProvider;

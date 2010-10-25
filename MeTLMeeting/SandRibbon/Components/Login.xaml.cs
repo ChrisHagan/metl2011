@@ -77,6 +77,7 @@ namespace SandRibbon.Components
         }
         private void attemptAuthentication(object sender, ExecutedRoutedEventArgs e)
         {
+
             App.Login(username.Text, password.Password);
         }
         private void SetIdentity(object _args)

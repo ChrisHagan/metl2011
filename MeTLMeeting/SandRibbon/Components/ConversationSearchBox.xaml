@@ -11,13 +11,13 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     FocusManager.FocusedElement="{Binding ElementName=SearchInput}">
     <UserControl.Resources>
+        <LinearGradientBrush StartPoint="0.3,0.5" EndPoint="0.8,0.5" x:Key="backgroundColorReversed">
+                <GradientStop Color="#666a7f" Offset="0" />
+                <GradientStop Color="#535368" Offset="1" />
+            </LinearGradientBrush>
         <LinearGradientBrush StartPoint="0.3,0.5" EndPoint="0.8,0.5" x:Key="backgroundColor">
-            <GradientStop Color="#666a7f" Offset="0" />
-            <GradientStop Color="#535368" Offset="1" />
-        </LinearGradientBrush>
-        <LinearGradientBrush StartPoint="0.3,0.5" EndPoint="0.8,0.5" x:Key="reversedBackgroundColor">
-            <GradientStop Color="#666a7f" Offset="1" />
-            <GradientStop Color="#535368" Offset="0" />
+                <GradientStop Color="#535368" Offset="0" />
+                <GradientStop Color="#666a7f" Offset="1" />
         </LinearGradientBrush>
         <core:Double x:Key="browsePane">0.25</core:Double>
         <core:Double x:Key="searchPane">0.60</core:Double>
@@ -129,7 +129,7 @@
             </Grid>
         </Border>
         <components:BackStageNav DockPanel.Dock="Left" x:Name="backstageNav"/>
-        <Border DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="{DynamicResource backgroundColor}">
+        <Border DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="{DynamicResource backgroundColorReversed}" Margin="-5 0 0 0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <dict:RadioButton Text="Search" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True" Foreground="White" Margin="20 0"/>
                 <dict:RadioButton Text="My conversations" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked" Foreground="White" Margin="20 0"/>

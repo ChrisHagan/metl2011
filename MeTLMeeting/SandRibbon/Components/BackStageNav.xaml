@@ -12,7 +12,7 @@
                 <Setter Property="Margin" Value="20 20" />
             </Style>
     </UserControl.Resources>
-    <Grid Background="{DynamicResource reversedBackgroundColor}">
+    <Grid Background="{DynamicResource backgroundColor}">
         <StackPanel VerticalAlignment="Top" Margin="15 30 0 0">
             <dict:Button HorizontalAlignment="Left" Text="Create new" Foreground="{StaticResource ResourceKey=foreground}" x:Name="new" Command="{x:Static api:Commands.CreateBlankConversation}"/>
             <dict:Button HorizontalAlignment="Left" Text="Import PowerPoint" Foreground="{StaticResource ResourceKey=foreground}" x:Name="import" Command="{x:Static api:Commands.ImportPowerpoint}"/>
