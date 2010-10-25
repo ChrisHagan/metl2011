@@ -48,9 +48,7 @@
             <Border BorderBrush="Gray" CornerRadius="3" BorderThickness="1" MinWidth="600" Padding="3" Margin="0 10 0 0">
                 <Grid>
                     <Button HorizontalContentAlignment="Left" Click="Button_Click"  Tag="{Binding Path=Jid}">
-                        <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
-                            <TextBox Width="Auto" HorizontalAlignment="Stretch" FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"  FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" Text="{Binding Path=Title}" Background="Gold"/>
-                        </StackPanel>
+                        <TextBox MinWidth="400" FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"  FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" Text="{Binding Path=Title}" Background="Gold"/>
                     </Button>
                     <ContentPresenter x:Name="content" ContentTemplate="{StaticResource doneEditing}" VerticalAlignment="Bottom"/>
                 </Grid>
@@ -131,10 +129,10 @@
         <components:BackStageNav DockPanel.Dock="Left" x:Name="backstageNav"/>
         <Border DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="{DynamicResource backgroundColorReversed}" Margin="-5 0 0 0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <dict:RadioButton Text="Search" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True" Foreground="White" Margin="20 0"/>
-                <dict:RadioButton Text="My conversations" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked" Foreground="White" Margin="20 0"/>
-                <dict:RadioButton Text="All conversations" GroupName="SearchOptions" x:Name="all"  Checked="mode_Checked" Foreground="White" Margin="20 0"/>
-                <dict:RadioButton Text="Now teaching" GroupName="SearchOptions" x:Name="nowTeaching"  Checked="mode_Checked" Foreground="White" Margin="20 0"/>
+                <dict:RadioButton Width="150" Text="Search" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True" Foreground="White" />
+                <dict:RadioButton Width="150" Text="My conversations" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked" Foreground="White" />
+                <dict:RadioButton Width="150" Text="All conversations" GroupName="SearchOptions" x:Name="all"  Checked="mode_Checked" Foreground="White" />
+                <dict:RadioButton Width="150" Text="Now teaching" GroupName="SearchOptions" x:Name="nowTeaching"  Checked="mode_Checked" Foreground="White" />
             </StackPanel>
         </Border>
         <ScrollViewer
