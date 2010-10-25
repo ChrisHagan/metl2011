@@ -130,7 +130,12 @@ namespace MeTLLib.Providers
                 }
                 catch (WebException ex)
                 {
-                    Trace.TraceInformation("WebException during LocalCache.localSource: " + ex.Message);
+                    Trace.TraceInformation("WebException during LocalCache.localSource(RemoteUri:"+remoteUri.ToString()+",LocalUri:"+localUriString.ToString()+"): " + ex.Message);
+                    return failUri;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceInformation("Exception during LocalCache.localSource(RemoteUri:" + remoteUri.ToString() + ",LocalUri:" + localUriString.ToString() + "): " + ex.Message);
                     return failUri;
                 }
                 var localUri = new Uri(localUriString, UriKind.Relative);
