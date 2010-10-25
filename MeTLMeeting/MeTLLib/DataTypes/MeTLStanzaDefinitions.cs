@@ -368,11 +368,8 @@ namespace MeTLLib.DataTypes
             {
                 if (boxSpecification == null) boxSpecification = new MeTLStanzas.TextBox(this);
                 System.Windows.Controls.TextBox reified = null; 
-                this.boxSpecification.Box.boxProperty.Dispatcher.adopt(() =>
-                {
-                    reified = boxSpecification.forceEvaluation();
-                    identity = reified.tag().id;
-                });
+                reified = boxSpecification.forceEvaluation();
+                identity = reified.tag().id;
                 return reified;
                 
             }

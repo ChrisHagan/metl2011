@@ -73,7 +73,7 @@ namespace MeTLLib.Providers.Structure
             catch (WebException e)
             {
                 providerMonitor.HealthCheck(() => { });
-                return null;
+                return ConversationDetails.Empty;
             }
         }
         public ConversationDetails AppendSlideAfter(int currentSlide, string title)
