@@ -10,6 +10,7 @@ using System.Security.Cryptography.X509Certificates;
 using MeTLLib.Providers.Connection;
 using Ninject;
 using System.Xml;
+using System.Diagnostics;
 
 namespace MeTLLib.Providers
 {
@@ -23,6 +24,7 @@ namespace MeTLLib.Providers
         public MeTLServerAddress server { private get; set; }
         public static readonly string cacheName = "resourceCache";
         private string cacheXMLfile = cacheName + "\\" + cacheName + ".xml";
+        private readonly System.Uri failUri = new Uri("Resources\\Slide_Not_Loaded.png", UriKind.RelativeOrAbsolute);
         private Dictionary<string, System.Uri> ActualDict = null;
         private Dictionary<string, System.Uri> CacheDict
         {
@@ -122,7 +124,15 @@ namespace MeTLLib.Providers
                 if (!Directory.Exists(cacheName + "\\" + splitString.ElementAt(1)))
                     Directory.CreateDirectory(cacheName + "\\" + splitString.ElementAt(1));
                 var localUriString = cacheName + "\\" + splitString.ElementAt(1) + "\\" + splitString.ElementAt(0);
-                File.WriteAllBytes(localUriString, resourceProvider.secureGetData(remoteUri));
+                try
+                {
+                    File.WriteAllBytes(localUriString, resourceProvider.secureGetData(remoteUri));
+                }
+                catch (WebException ex)
+                {
+                    Trace.TraceInformation("WebException during LocalCache.localSource: " + ex.Message);
+                    return failUri;
+                }
                 var localUri = new Uri(localUriString, UriKind.Relative);
                 Add(remoteUri.ToString(), localUri);
             }
@@ -130,7 +140,8 @@ namespace MeTLLib.Providers
         }
         public Uri RemoteSource(Uri media)
         {
-
+            //not sure about this next line yet.
+            if (media.Equals(failUri)) return media;
             if (media.ToString().StartsWith("Resource\\") || media.ToString().StartsWith("https://"))
                 return media;
             if (!CacheDict.Values.Contains(media))

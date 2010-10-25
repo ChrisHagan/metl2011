@@ -24,6 +24,7 @@ namespace SandRibbon.Providers
                 .Select(f=>f.GetValue(null))
                 .Select(o=>(CompositeCommand)o)
                 .Where(hcc=>!ignoreCommands.Contains(hcc)).ToList();
+            //This has been known to throw an "index out of bounds" error.
             foreach(var command in applicationCommands)
             {
                 var thisCommand = command;

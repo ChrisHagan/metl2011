@@ -470,6 +470,7 @@ namespace SandRibbon.Tabs.Groups
         {
             var newBrush = new SolidColorBrush();
             var AttributeNumber = Int32.Parse(((System.Windows.Controls.Button)sender).Tag.ToString());
+            InvokeAlteredPreset(AttributeNumber);
             ColourSettingPopup.Tag = AttributeNumber.ToString();
             var Attributes = ((DrawingAttributes)defaultDrawingAttributes[AttributeNumber]);
             var PopupAttributes = defaultColours.Items[AttributeNumber];
