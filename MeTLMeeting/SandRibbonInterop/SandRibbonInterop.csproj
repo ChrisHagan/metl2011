@@ -98,7 +98,6 @@
     <Compile Include="Interfaces\IPenTools.cs" />
     <Compile Include="Interfaces\ISlideDisplay.cs" />
     <Compile Include="Interfaces\ITextTools.cs" />
-    <Compile Include="LocalCache.cs" />
     <Compile Include="MeTLStanzaDefinitions.cs" />
     <Compile Include="PollParameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

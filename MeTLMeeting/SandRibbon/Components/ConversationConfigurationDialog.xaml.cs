@@ -149,14 +149,14 @@ namespace SandRibbon.Components
         }
         private void UpdateImportFile(object sender, TextChangedEventArgs e)
         {
-            includePresentationTitle();
         }
-        private void includePresentationTitle(){
-            importFile = importFileTextBox.Text;
-            var currentTitle = conversationNameTextBox.Text;
-            string importFileName = System.IO.Path.GetFileNameWithoutExtension(importFile);
-            if (!importFileName.StartsWith(DEFAULT_POWERPOINT_PREFIX))
-                conversationNameTextBox.Text = string.Format("({0}) {1}", importFileName, currentTitle);
+        private string generatePresentationTitle(string currentTitle, string file)
+        {
+            string importFileName = System.IO.Path.GetFileNameWithoutExtension(file);
+            
+            if(!System.Text.RegularExpressions.Regex.IsMatch(importFile, string.Format("/^{0}\\d+/", DEFAULT_POWERPOINT_PREFIX)))
+                return string.Format("({0}) {1}", importFileName, currentTitle);
+            return currentTitle;
         }
         private void UpdateConversationTitle(object sender, TextChangedEventArgs e)
         {
@@ -337,6 +337,19 @@ namespace SandRibbon.Components
         private void selectAll(object sender, RoutedEventArgs e)
         {
             conversationNameTextBox.SelectAll();
+        }
+
+        internal void Import()
+        {
+
+             dialogMode = ConversationConfigurationMode.IMPORT;
+             importType = PowerPointLoader.PowerpointImportType.Image;
+             var suggestedName = generatePresentationTitle(ConversationDetails.DefaultName(Globals.me), importFile );
+
+             details = new ConversationDetails
+                    (suggestedName, "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
+            if (checkConversation(details))
+                handleConversationDialogueCompletion();
         }
     }
 }

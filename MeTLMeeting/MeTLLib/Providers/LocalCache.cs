@@ -46,19 +46,25 @@ namespace MeTLLib.Providers
                 System.IO.Directory.CreateDirectory(cacheName);
             if (System.IO.File.Exists(cacheXMLfile))
             {
-                using (XmlReader reader = XmlReader.Create(cacheXMLfile))
+                try
                 {
-                    var XDoc = XElement.Load(reader);
-                    foreach (XElement name in XDoc.Elements("CachedUri"))
+                    using (XmlReader reader = XmlReader.Create(cacheXMLfile))
                     {
-                        newDict.Add(name.Attribute("remote").Value.ToString(),
-                            new Uri(name.Attribute("local").Value.ToString(), UriKind.Relative));
+                        var XDoc = XElement.Load(reader);
+                        foreach (XElement name in XDoc.Elements("CachedUri"))
+                        {
+                            newDict.Add(name.Attribute("remote").Value.ToString(),
+                                new Uri(name.Attribute("local").Value.ToString(), UriKind.Relative));
+                        }
                     }
+                }
+                catch(Exception e)
+                {
+                    File.Delete(cacheXMLfile);
                 }
             }
             return newDict;
         }
-        //we keep 7 days worth of cached images, 
         public void CleanUpCache()
         {
             if (!System.IO.Directory.Exists(cacheName))

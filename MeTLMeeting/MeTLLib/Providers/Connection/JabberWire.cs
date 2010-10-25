@@ -207,6 +207,7 @@ namespace MeTLLib.Providers.Connection
         {
             this.LoggedIn = true;
             receiveEvents.statusChanged(this.LoggedIn, this.credentials);
+            joinRoom(metlServerAddress.global);
         }
         private void OnMessage(object sender, Message message)
         {
@@ -267,7 +268,6 @@ namespace MeTLLib.Providers.Connection
             conn.OnWriteXml += WriteXml;
 #endif
             openConnection(jid.User);
-            joinRoom(metlServerAddress.global);
         }
         private object resetLock = new object();
         private IConversationDetailsProvider conversationDetailsProvider;

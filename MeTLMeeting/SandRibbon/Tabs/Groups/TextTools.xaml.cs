@@ -61,7 +61,6 @@ namespace SandRibbon.Tabs.Groups
         private void setUpTools(object sender, RoutedEventArgs e)
         {
             fontFamily.SelectedItem = "Arial";
-            fontSize.SelectedItem = generateDefaultFontSize();
         }
         private const double defaultWidth = 720;
         private const double defaultFontSize = 24.0;
