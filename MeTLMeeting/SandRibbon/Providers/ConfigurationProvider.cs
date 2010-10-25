@@ -46,7 +46,7 @@ namespace SandRibbon.Providers
             switch (type)
             {
                 case Globals.METL:
-                    level = 3;
+                    level = 2;
                     break;
                 case Globals.METLPRESENTER:
                     level = 2;
@@ -58,7 +58,7 @@ namespace SandRibbon.Providers
                     level = 3;
                     break;
                 default:
-                    level = 3;
+                    level = 2;
                     break;
             }
             Commands.MeTLType.ExecuteAsync(type);

@@ -55,12 +55,7 @@ namespace SandRibbon
         public Window1()
         {
             App.Now("Window 1 Constructor start");
-            //This following healthcheck is providing a slowdown that allows the window to instantiate correctly.
-            //We should fine out why it needs it at some point.  SimpleConversationSelector results in a XAML parse exception if it's not in.
-            //ProviderMonitor.HealthCheck(() =>
-            //{
             DoConstructor();
-            //});
             Commands.AllStaticCommandsAreRegistered();
         }
         private void DoConstructor()
@@ -82,7 +77,7 @@ namespace SandRibbon
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
+            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
             Commands.ShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
@@ -130,7 +125,7 @@ namespace SandRibbon
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
+            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox, mustBeInConversation));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
@@ -148,9 +143,20 @@ namespace SandRibbon
             WorkspaceStateProvider.RestorePreviousSettings();
             App.Now("Started MeTL");
         }
-
+        void ribbon_Loaded(object sender, RoutedEventArgs e)
+        {
+            ribbon.ToggleMinimize();
+        }
         private void noop(object unused)
         {
+        }
+        private void ShowConversationSearchBox(object _arg){
+            if (!ribbon.IsMinimized)
+                ribbon.ToggleMinimize();
+        }
+        private void HideConversationSearchBox(object _arg){
+            if (ribbon.IsMinimized)
+                ribbon.ToggleMinimize();
         }
         private void ToggleFriendsVisibility(object unused)
         {
@@ -1001,6 +1007,8 @@ namespace SandRibbon
                 foreach (var tab in tabs)
                     ribbon.Tabs.Add((RibbonTab)tab);
                 ribbon.SelectedTab = home;
+                if(!ribbon.IsMinimized)
+                    ribbon.ToggleMinimize();
             });
             CommandManager.InvalidateRequerySuggested();
             Commands.RequerySuggested();

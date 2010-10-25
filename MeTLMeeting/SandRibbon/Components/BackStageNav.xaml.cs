@@ -20,9 +20,9 @@ namespace SandRibbon.Components
         public BackStageNav()
         {
             InitializeComponent();
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(showConversationSearchBox));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
         }
-        private void showConversationSearchBox(object mode)
+        private void ShowConversationSearchBox(object mode)
         {
             openCorrectTab((string)mode);
         }

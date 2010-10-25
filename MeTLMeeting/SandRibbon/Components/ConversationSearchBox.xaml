@@ -12,9 +12,13 @@
     FocusManager.FocusedElement="{Binding ElementName=SearchInput}">
     <UserControl.Resources>
         <LinearGradientBrush StartPoint="0.3,0.5" EndPoint="0.8,0.5" x:Key="backgroundColor">
-                <GradientStop Color="#666a7f" Offset="0" />
-                <GradientStop Color="#535368" Offset="1" />
-            </LinearGradientBrush>
+            <GradientStop Color="#666a7f" Offset="0" />
+            <GradientStop Color="#535368" Offset="1" />
+        </LinearGradientBrush>
+        <LinearGradientBrush StartPoint="0.3,0.5" EndPoint="0.8,0.5" x:Key="reversedBackgroundColor">
+            <GradientStop Color="#666a7f" Offset="1" />
+            <GradientStop Color="#535368" Offset="0" />
+        </LinearGradientBrush>
         <core:Double x:Key="browsePane">0.25</core:Double>
         <core:Double x:Key="searchPane">0.60</core:Double>
         <core:Double x:Key="searchBoxMargin">0.05</core:Double>
@@ -45,9 +49,7 @@
                 <Grid>
                     <Button HorizontalContentAlignment="Left" Click="Button_Click"  Tag="{Binding Path=Jid}">
                         <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
-                            <TextBox FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"  FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" Text="{Binding Path=Title}" Background="Gold"/>
-                            <Label HorizontalAlignment="Left" Foreground="#FF606060" FontWeight="Regular" FontFamily="Verdana" FontSize="14" Margin="20,0,0,0" 
-                                   Content="{Binding Converter={x:Static sr:Converters.ConversationDetailsToDescription}}" />
+                            <TextBox Width="Auto" HorizontalAlignment="Stretch" FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"  FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" Text="{Binding Path=Title}" Background="Gold"/>
                         </StackPanel>
                     </Button>
                     <ContentPresenter x:Name="content" ContentTemplate="{StaticResource doneEditing}" VerticalAlignment="Bottom"/>
@@ -132,6 +134,7 @@
                 <dict:RadioButton Text="Search" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True" Foreground="White" Margin="20 0"/>
                 <dict:RadioButton Text="My conversations" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked" Foreground="White" Margin="20 0"/>
                 <dict:RadioButton Text="All conversations" GroupName="SearchOptions" x:Name="all"  Checked="mode_Checked" Foreground="White" Margin="20 0"/>
+                <dict:RadioButton Text="Now teaching" GroupName="SearchOptions" x:Name="nowTeaching"  Checked="mode_Checked" Foreground="White" Margin="20 0"/>
             </StackPanel>
         </Border>
         <ScrollViewer
