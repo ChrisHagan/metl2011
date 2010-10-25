@@ -71,10 +71,10 @@ namespace SandRibbon
         public static IsMeConverter isMe = new IsMeConverter();
         public static StringTruncatorConverter stringTruncator = new StringTruncatorConverter();
         public static NoCachedImageReplicator nonCachedImage = new NoCachedImageReplicator();
+        public static HideIfNotCurrentConversation hideIfNotCurrentConversation = new HideIfNotCurrentConversation();
     }
     public class StringTruncatorConverter : IValueConverter
     {
-
         #region IValueConverter Members
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -90,6 +90,16 @@ namespace SandRibbon
         }
 
         #endregion
+    }
+    public class HideIfNotCurrentConversation : IValueConverter {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Globals.location.activeConversation == ((MeTLLib.DataTypes.ConversationDetails)value).Jid ? Visibility.Visible : Visibility.Collapsed;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return false;
+        }
     }
     public class IsMeConverter : IValueConverter
     {

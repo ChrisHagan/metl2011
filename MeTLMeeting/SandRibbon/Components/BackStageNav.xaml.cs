@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
@@ -20,10 +21,21 @@ namespace SandRibbon.Components
         public BackStageNav()
         {
             InitializeComponent();
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
+            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
         }
         private void ShowConversationSearchBox(object mode)
         {
+            if (String.IsNullOrEmpty(Globals.location.activeConversation))
+            {
+                current.Visibility = Visibility.Collapsed;
+                currentConversation.Visibility = Visibility.Collapsed;
+                separator2.Visibility = Visibility.Collapsed;
+            }
+            else { 
+                current.Visibility = Visibility.Visible;
+                currentConversation.Visibility = Visibility.Visible;
+                separator2.Visibility = Visibility.Visible;
+            }
             openCorrectTab((string)mode);
         }
         private void openMyConversations()
@@ -47,7 +59,7 @@ namespace SandRibbon.Components
         }
         public string currentMode { 
             get{
-                return new[]{help,mine,all, find, nowTeaching, current}.Aggregate(all, (acc, item) =>
+                return new[]{help,mine,all, find, currentConversation}.Aggregate(all, (acc, item) =>
                                                                      {
                                                                          if (true == item.IsChecked)
                                                                              return item;
@@ -56,7 +68,7 @@ namespace SandRibbon.Components
             }
             set
             {
-                var elements = new[] {help, mine, all, find, nowTeaching, current};
+                var elements = new[] {help, mine, all, find, currentConversation};
                 foreach (var button in elements)
                     if (button.Name == value)
                         button.IsChecked = true;
@@ -64,10 +76,12 @@ namespace SandRibbon.Components
 
             }
         }
-        private void mode_Checked(object sender, RoutedEventArgs e)
-        {
+        private void mode_Checked(object sender, RoutedEventArgs e) {
             var mode = ((FrameworkElement)sender).Name;
             Commands.BackstageModeChanged.ExecuteAsync(mode);
+        }
+        private void current_Click(object sender, RoutedEventArgs e){
+            Commands.HideConversationSearchBox.Execute(null);
         }
     }
 }

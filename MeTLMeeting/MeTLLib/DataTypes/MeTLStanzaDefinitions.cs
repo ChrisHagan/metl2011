@@ -371,11 +371,6 @@ namespace MeTLLib.DataTypes
                 System.Windows.Controls.TextBox reified = null;
                 reified = boxSpecification.forceEvaluation();
                 identity = reified.tag().id;
-
-
-
-
-
                 return reified;
             }
             set

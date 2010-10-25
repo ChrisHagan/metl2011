@@ -9,6 +9,7 @@ using System.Windows;
 using System.Xml.Linq;
 using System.ComponentModel;
 using System.Windows.Threading;
+using System.Threading;
 
 namespace SandRibbon
 {
@@ -308,7 +309,10 @@ namespace SandRibbon
         }
         public static void RequerySuggested()
         {
-            RequerySuggested(all.ToArray());
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+                RequerySuggested(all.ToArray());
+            });
         }
         public static void RequerySuggested(params CompositeCommand[] commands)
         {

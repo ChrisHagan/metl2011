@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Yield = System.Collections.Generic.IEnumerator<MindTouch.Tasking.IYield>;
-using MindTouch.Dream;
-using MindTouch.Tasking;
 using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -17,7 +14,9 @@ using System.Diagnostics;
 using MeTLLib.Providers.Connection;
 using System.Windows;
 using System.Windows.Threading;
-using MindTouch.Xml;
+using Kayak;
+using Kayak.Framework;
+using System.Net;
 
 namespace ThumbService
 {
@@ -26,36 +25,28 @@ namespace ThumbService
         public int width;
         public int height;
     }
-    [DreamService("Dream Tutorial 8-Ball", "Copyright (c) 2006, 2007 MindTouch, Inc.",
-        Info = "http://doc.opengarden.org/Dream/Samples /8-Ball",
-        SID = new string[] { "http://services.mindtouch.com/dream/tutorial/2007/03/8ball" })]
-    public class ServiceRoot : DreamService
+    public class ServiceRoot : KayakService
     {
         private static Dictionary<RequestInfo, byte[]> cache = new Dictionary<RequestInfo, byte[]>();
-        private static ClientConnection client = ClientFactory.Connection();
-        Plug _fs;
-        protected override Yield Start(XDoc config, Result result) {
-            Result res;
-            yield return res = Coroutine.Invoke(base.Start, config, new Result());
-            res.Confirm();
-            var fs = new Result<Plug>();
-            CreateService("mount", "http://services.mindtouch.com/dream/draft/2006/11/mount", 
-                new XDoc("config").Start("mount").Attr("to", "files").Value("%DreamHost%").End(), fs);
-            joinMeTL();
-            _fs = fs.Value;
-            result.Return();
-        }
-        private void joinMeTL()
+        private static ClientConnection client = ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
+        public static void Main(string[] _args)
         {
-            client.events.StatusChanged += (sender, args) => Console.WriteLine("Status changed: {0}", args.isConnected);
-            client.Connect("eecrole", "m0nash2008");
             Trace.Listeners.Add(new ConsoleTraceListener());
+            var server = new KayakServer();
+            server.UseFramework();
+            server.Start(); 
+            client.events.StatusChanged += (sender, args) => Trace.TraceInformation("Status changed: {0}", args.isConnected);
+            client.Connect("eecrole", "m0nash2008");
+            Trace.TraceInformation("Don't press anything or I'll die.  I'm serious.  I'll just die."); 
+            Console.ReadLine();
+            Trace.TraceInformation("Oh god why");
+            server.Stop(); 
         }
-        [DreamFeature("GET:", "Returns a thumbnail")]
-        public Yield thumb(DreamContext context, DreamMessage request, Result<DreamMessage> response) {
-            var slide = context.GetParam<int>("slide");
-            var width = context.GetParam<int>("width");
-            var height = context.GetParam<int>("height");
+        [Path("/thumb/{slide}")]
+        public void Thumb(int slide){
+            Trace.TraceInformation("Request for slide {0}", slide);
+            var width = 320;
+            var height = 240;
             var requestInfo = new RequestInfo { 
                 slide=slide,
                 width=width,
@@ -63,14 +54,11 @@ namespace ThumbService
             };
             var image = cache.ContainsKey(requestInfo) ?
                 cache[requestInfo] : createImage(requestInfo);
-            response.Return(DreamMessage.Ok(MimeType.JPEG, image));
-            yield break;
-        }
-        [DreamFeature("GET:/home", "Provides a minimal view")]
-        public Yield home(DreamContext context) {
-            yield return context.Relay(_fs.At("metl.html"), "GET:", null, null);
+            Response.Headers.Add("mime-type", "image/png");
+            Response.OutputStream.Write(image, 0, image.Count());
         }
         private byte[] createImage(RequestInfo info){
+            Trace.TraceInformation(info.ToString());
             byte[] result = new byte[0];
             var synchrony = new Thread(new ParameterizedThreadStart(delegate{
                 List<PreParser> parserList = new List<PreParser>();
@@ -79,8 +67,7 @@ namespace ThumbService
                 };
                 client.events.PreParserAvailable += parserReceiver;
                 var staThread = new Thread(new ParameterizedThreadStart(delegate{
-                    while (parserList.Count() < 3)
-                    { }
+                    while (parserList.Count() < 3) { }
                     var canvas = new InkCanvas();
                     foreach (var preParser in parserList.ToList())
                         preParser.Populate(canvas);

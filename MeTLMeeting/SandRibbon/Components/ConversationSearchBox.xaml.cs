@@ -34,7 +34,7 @@ namespace SandRibbon.Components
             Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(ShowConversationSearchBox));
+            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
             Commands.BackstageModeChanged.RegisterCommand(new DelegateCommand<string>(BackstageModeChanged));
             SearchResults.ItemsSource = searchResults;
@@ -65,7 +65,7 @@ namespace SandRibbon.Components
 
         private void updateLiveButton(string mode)
         {
-            var elements = new[] {mine, all, find, nowTeaching};
+            var elements = new[] {mine, all, find, currentConversation};
             foreach (var button in elements)
                 if (button.Name == mode)
                     button.IsChecked = true;
@@ -78,10 +78,8 @@ namespace SandRibbon.Components
                     searchResults.Add(conversation);
             });
         }
-        private void clearState()
-        {
-            Dispatcher.adoptAsync(() =>
-            {
+        private void clearState(){
+            Dispatcher.adoptAsync(() => {
                 SearchInput.Text = "";
                 GetListCollectionView().Refresh();
                 SearchInput.Focus();
@@ -89,9 +87,13 @@ namespace SandRibbon.Components
         }
         private void ShowConversationSearchBox(object o)
         {
+            if (String.IsNullOrEmpty(Globals.location.activeConversation))
+                currentConversation.Visibility = Visibility.Collapsed;
+            else {
+                currentConversation.Visibility = Visibility.Visible;
+            }
             clearState();
-            Dispatcher.adoptAsync(() =>
-            this.Visibility = Visibility.Visible);
+            this.Visibility = Visibility.Visible;
             Commands.RequerySuggested();
             slideOut();
         }
@@ -162,7 +164,10 @@ namespace SandRibbon.Components
         private bool isWhatWeWereLookingFor(object o)
         {
             var conversation = (MeTLLib.DataTypes.ConversationDetails)o;
-            if (!shouldShowConversation(conversation)) return false;
+            if (!shouldShowConversation(conversation)) 
+                return false;
+            if (backstageNav.currentMode == "currentConversation" && conversation.Jid != Globals.location.activeConversation) 
+                return false;
             var author = conversation.Author.ToLower();
             var title = conversation.Title.ToLower();
             var searchField = new[] { author, title };
@@ -272,9 +277,10 @@ namespace SandRibbon.Components
     }
     public class ConversationComparator : System.Collections.IComparer
     {
-        public int Compare(object x, object y)
-        {
-            return -1 * ((MeTLLib.DataTypes.ConversationDetails)x).Created.CompareTo(((MeTLLib.DataTypes.ConversationDetails)y).Created);
+        public int Compare(object x, object y) {
+            var dis = (MeTLLib.DataTypes.ConversationDetails)x;
+            var dat = (MeTLLib.DataTypes.ConversationDetails)y;
+            return -1 * dis.Created.CompareTo(dat.Created);
         }
     }
 }
