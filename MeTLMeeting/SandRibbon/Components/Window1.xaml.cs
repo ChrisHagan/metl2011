@@ -122,7 +122,6 @@ namespace SandRibbon
             Commands.UnblockInput.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
-            Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox, mustBeInConversation));

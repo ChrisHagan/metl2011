@@ -65,7 +65,7 @@ namespace SandRibbon.Components
 
         private void updateLiveButton(string mode)
         {
-            var elements = new[] {mine, all, find};
+            var elements = new[] {mine, all, find, nowTeaching};
             foreach (var button in elements)
                 if (button.Name == mode)
                     button.IsChecked = true;

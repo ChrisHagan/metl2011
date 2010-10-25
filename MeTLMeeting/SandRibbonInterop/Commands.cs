@@ -29,10 +29,6 @@ namespace SandRibbon
     }
     public class Commands
     {
-        #region currentClasses
-        public static CompositeCommand getCurrentClasses = new CompositeCommand();
-        public static CompositeCommand receiveCurrentClasses = new CompositeCommand();
-        #endregion
 
         public static CompositeCommand BackstageModeChanged = new CompositeCommand();
         public static CompositeCommand UpdatePowerpointProgress = new CompositeCommand();

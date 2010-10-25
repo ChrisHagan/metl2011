@@ -47,7 +47,7 @@ namespace SandRibbon.Components
         }
         public string currentMode { 
             get{
-                return new[]{help,mine,all, find}.Aggregate(all, (acc, item) =>
+                return new[]{help,mine,all, find, nowTeaching, current}.Aggregate(all, (acc, item) =>
                                                                      {
                                                                          if (true == item.IsChecked)
                                                                              return item;
@@ -56,7 +56,7 @@ namespace SandRibbon.Components
             }
             set
             {
-                var elements = new[] {help, mine, all, find};
+                var elements = new[] {help, mine, all, find, nowTeaching, current};
                 foreach (var button in elements)
                     if (button.Name == value)
                         button.IsChecked = true;

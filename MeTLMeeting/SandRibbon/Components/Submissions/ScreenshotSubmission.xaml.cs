@@ -28,6 +28,7 @@ namespace SandRibbon.Components.Submissions
     }
     public partial class ScreenshotSubmission : UserControl
     {
+        public static RoutedCommand ViewSubmissions = new RoutedCommand();
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
         public ScreenshotSubmission()
         {
@@ -39,6 +40,15 @@ namespace SandRibbon.Components.Submissions
             conversationChanged(null);
         }
 
+
+        private void viewSubmissions(object sender, ExecutedRoutedEventArgs e)
+        { 
+            new ViewSubmissions(submissionList).Show();
+        }
+        private void canViewSubmissions(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = submissionList.Count > 0;
+        }
         private void PreParserAvailable(PreParser parser)
         {
             foreach(var submission in parser.submissions)
@@ -125,9 +135,8 @@ namespace SandRibbon.Components.Submissions
                                                     });
         }
 
-        private void viewSubmissions(object sender, RoutedEventArgs e)
+        private void viewSubmissionsxx(object sender, RoutedEventArgs e)
         {
-            new ViewSubmissions(submissionList).Show();
         }
     }
 }
