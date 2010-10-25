@@ -367,11 +367,10 @@ namespace MeTLLib.DataTypes
             get
             {
                 if (boxSpecification == null) boxSpecification = new MeTLStanzas.TextBox(this);
-                System.Windows.Controls.TextBox reified = null; 
+                System.Windows.Controls.TextBox reified = null;
                 reified = boxSpecification.forceEvaluation();
                 identity = reified.tag().id;
                 return reified;
-                
             }
             set
             {
@@ -792,28 +791,24 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-                    var Dispatcher = value.boxProperty.Dispatcher;
-                    Dispatcher.adopt(() =>
-                    {
-                        this.height = value.boxProperty.Height;
-                        this.width = value.boxProperty.Width;
-                        this.caret = value.boxProperty.CaretIndex;
-                        this.x = InkCanvas.GetLeft(value.boxProperty);
-                        this.y = InkCanvas.GetTop(value.boxProperty);
-                        this.text = value.boxProperty.Text;
-                        this.tag = (string)value.boxProperty.Tag;
-                        this.style = value.boxProperty.FontStyle;
-                        this.family = value.boxProperty.FontFamily;
-                        this.weight = value.boxProperty.FontWeight;
-                        this.size = value.boxProperty.FontSize;
-                        this.decoration = value.boxProperty.TextDecorations;
-                        this.SetTag(authorTag, value.author);
-                        this.SetTag(identityTag, value.boxProperty.tag().id);
-                        this.SetTag(targetTag, value.target);
-                        this.SetTag(privacyTag, value.privacy);
-                        this.SetTag(slideTag, value.slide);
-                        this.color = value.boxProperty.Foreground;
-                    });
+                    this.height = value.boxProperty.Height;
+                    this.width = value.boxProperty.Width;
+                    this.caret = value.boxProperty.CaretIndex;
+                    this.x = InkCanvas.GetLeft(value.boxProperty);
+                    this.y = InkCanvas.GetTop(value.boxProperty);
+                    this.text = value.boxProperty.Text;
+                    this.tag = (string)value.boxProperty.Tag;
+                    this.style = value.boxProperty.FontStyle;
+                    this.family = value.boxProperty.FontFamily;
+                    this.weight = value.boxProperty.FontWeight;
+                    this.size = value.boxProperty.FontSize;
+                    this.decoration = value.boxProperty.TextDecorations;
+                    this.SetTag(authorTag, value.author);
+                    this.SetTag(identityTag, value.boxProperty.tag().id);
+                    this.SetTag(targetTag, value.target);
+                    this.SetTag(privacyTag, value.privacy);
+                    this.SetTag(slideTag, value.slide);
+                    this.color = value.boxProperty.Foreground;
                 }
             }
             public static readonly string widthTag = "width";
@@ -1320,22 +1315,18 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-                    var Dispatcher = value.videoProperty.Dispatcher;
-                    Dispatcher.adopt(() =>
-                    {
-                        var absolutePath = value.videoProperty.VideoSource != null ? value.videoProperty.VideoSource.ToString() : value.videoProperty.MediaElement.Source.ToString();
-                        SetTag(tagTag, value.videoProperty.Tag.ToString());
-                        SetTag(sourceTag, absolutePath);
-                        SetTag(xTag, value.X.ToString());
-                        SetTag(yTag, value.Y.ToString());
-                        SetTag(heightTag, (value.videoProperty.Height).ToString());
-                        SetTag(widthTag, (value.videoProperty.Width).ToString());
-                        SetTag(authorTag, value.author);
-                        SetTag(targetTag, value.target);
-                        SetTag(privacyTag, value.privacy);
-                        SetTag(slideTag, value.slide);
-                        SetTag(identityTag, value.id);
-                    });
+                    var absolutePath = value.videoProperty.VideoSource != null ? value.videoProperty.VideoSource.ToString() : value.videoProperty.MediaElement.Source.ToString();
+                    SetTag(tagTag, value.videoProperty.Tag.ToString());
+                    SetTag(sourceTag, absolutePath);
+                    SetTag(xTag, value.X.ToString());
+                    SetTag(yTag, value.Y.ToString());
+                    SetTag(heightTag, (value.videoProperty.Height).ToString());
+                    SetTag(widthTag, (value.videoProperty.Width).ToString());
+                    SetTag(authorTag, value.author);
+                    SetTag(targetTag, value.target);
+                    SetTag(privacyTag, value.privacy);
+                    SetTag(slideTag, value.slide);
+                    SetTag(identityTag, value.id);
                 }
             }
             private static readonly string widthTag = "width";
@@ -1404,8 +1395,8 @@ namespace MeTLLib.DataTypes
                         Height = this.height,
                         Width = this.width
                     };
-                    InkCanvas.SetLeft(image, this.x);
-                    InkCanvas.SetTop(image, this.y);
+                InkCanvas.SetLeft(image, this.x);
+                InkCanvas.SetTop(image, this.y);
                 return image;
             }
             public string GetCachedImage(string url)
@@ -1430,28 +1421,24 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
-                    var Dispatcher = value.imageProperty.Dispatcher;
-                    Dispatcher.adopt(() =>
-                        {
-                            var absolutePath = value.imageProperty.Source.ToString();
-                            var uri = new Uri(absolutePath, UriKind.RelativeOrAbsolute);
-                            string relativePath;
-                            if (uri.IsAbsoluteUri)
-                                relativePath = uri.LocalPath;
-                            else
-                                relativePath = uri.ToString();
-                            SetTag(tagTag, value.imageProperty.Tag.ToString());
-                            SetTag(sourceTag, relativePath);
-                            SetTag(widthTag, value.imageProperty.Width.ToString());
-                            SetTag(heightTag, value.imageProperty.Height.ToString());
-                            SetTag(xTag, InkCanvas.GetLeft(value.imageProperty).ToString());
-                            SetTag(yTag, InkCanvas.GetTop(value.imageProperty).ToString());
-                            SetTag(authorTag, value.author);
-                            SetTag(targetTag, value.target);
-                            SetTag(privacyTag, value.privacy);
-                            SetTag(slideTag, value.slide);
-                            SetTag(identityTag, value.id);
-                        });
+                    var absolutePath = value.imageProperty.Source.ToString();
+                    var uri = new Uri(absolutePath, UriKind.RelativeOrAbsolute);
+                    string relativePath;
+                    if (uri.IsAbsoluteUri)
+                        relativePath = uri.LocalPath;
+                    else
+                        relativePath = uri.ToString();
+                    SetTag(tagTag, value.imageProperty.Tag.ToString());
+                    SetTag(sourceTag, relativePath);
+                    SetTag(widthTag, value.imageProperty.Width.ToString());
+                    SetTag(heightTag, value.imageProperty.Height.ToString());
+                    SetTag(xTag, InkCanvas.GetLeft(value.imageProperty).ToString());
+                    SetTag(yTag, InkCanvas.GetTop(value.imageProperty).ToString());
+                    SetTag(authorTag, value.author);
+                    SetTag(targetTag, value.target);
+                    SetTag(privacyTag, value.privacy);
+                    SetTag(slideTag, value.slide);
+                    SetTag(identityTag, value.id);
                 }
             }
             private static readonly string sourceTag = "source";

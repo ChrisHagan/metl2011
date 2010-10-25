@@ -149,7 +149,7 @@ namespace MeTLLib
             var credentials = authorisationProvider.attemptAuthentication(username, password);
             jabberWireFactory.credentials = credentials;
             wire = jabberWireFactory.wire();
-            wire.Login(new Location("100",101,new List<int>{101,102,103,104,105,106}));
+            wire.Login(new Location("100", 101, new List<int> { 101, 102, 103, 104, 105, 106 }));
             Trace.TraceInformation("set up jabberwire");
             Commands.AllStaticCommandsAreRegistered();
             Trace.TraceInformation("Connection state: " + isConnected.ToString());
@@ -193,15 +193,12 @@ namespace MeTLLib
             Action work = delegate
             {
                 image.adoptCache(cache, server);
-                image.imageProperty.Dispatcher.adoptAsync(() =>
-                {
-                    var newImage = image.imageProperty;
-                    Uri localSource = new System.Uri(((System.Windows.Controls.Image)newImage).Source.ToString(), UriKind.RelativeOrAbsolute);
-                    Uri remoteSource = cache.RemoteSource(localSource);
-                    newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(remoteSource);
-                    image.image = newImage;
-                    wire.SendImage(image);
-                });
+                var newImage = image.imageProperty;
+                Uri localSource = new System.Uri(((System.Windows.Controls.Image)newImage).Source.ToString(), UriKind.RelativeOrAbsolute);
+                Uri remoteSource = cache.RemoteSource(localSource);
+                newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(remoteSource);
+                image.image = newImage;
+                wire.SendImage(image);
             };
             tryIfConnected(work);
         }
@@ -211,14 +208,11 @@ namespace MeTLLib
             Action work = delegate
             {
                 video.adoptCache(cache, server);
-                video.videoProperty.Dispatcher.adoptAsync(() =>
-                {
-                    var selectedImage = video.video;
-                    selectedImage.VideoSource = cache.RemoteSource(selectedImage.VideoSource);
-                    video.video = selectedImage;
+                var selectedImage = video.video;
+                selectedImage.VideoSource = cache.RemoteSource(selectedImage.VideoSource);
+                video.video = selectedImage;
 
-                    wire.SendVideo(video);
-                });
+                wire.SendVideo(video);
             };
             tryIfConnected(work);
         }
@@ -557,7 +551,7 @@ namespace MeTLLib
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid)
         {
-            ConversationDetails details = ConversationDetails.Empty; 
+            ConversationDetails details = ConversationDetails.Empty;
             Action work = delegate
             {
                 details = conversationDetailsProvider.AppendSlideAfter(slide, Jid);

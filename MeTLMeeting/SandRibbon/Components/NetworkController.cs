@@ -102,7 +102,10 @@ namespace SandRibbon.Components
         }
         private void SendImage(TargettedImage ti)
         {
-            client.SendImage(ti);
+            App.Current.Dispatcher.adoptAsync(delegate
+            {
+                client.SendImage(ti);
+            });
         }
         private void SendLiveWindow(LiveWindowSetup lws)
         {
@@ -128,11 +131,17 @@ namespace SandRibbon.Components
         }
         private void SendTextBox(TargettedTextBox ttb)
         {
-            client.SendTextBox(ttb);
+            App.Current.Dispatcher.adoptAsync(delegate
+            {
+                client.SendTextBox(ttb);
+            });
         }
         private void SendVideo(TargettedVideo tv)
         {
-            client.SendVideo(tv);
+            App.Current.Dispatcher.adoptAsync(delegate
+            {
+                client.SendVideo(tv);
+            });
         }
         private void SneakIntoAndDo(Projector.RoomAndAction roomAndAction)
         {
