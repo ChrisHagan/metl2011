@@ -39,8 +39,6 @@ namespace SandRibbon.Components.Submissions
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             conversationChanged(null);
         }
-
-
         private void viewSubmissions(object sender, ExecutedRoutedEventArgs e)
         { 
             new ViewSubmissions(submissionList).Show();
@@ -54,8 +52,6 @@ namespace SandRibbon.Components.Submissions
             foreach(var submission in parser.submissions)
                 receiveSubmission(submission);
         }
-
-
         private void detailsChanged(object obj)
         {
             Dispatcher.adoptAsync( delegate
