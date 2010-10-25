@@ -152,6 +152,16 @@ namespace MeTLLib.Providers.Structure
                 conversationsCache = RestrictToAccessible(conversationsCache.Where(c => c.Jid != jid).Union(new[] { newDetails }), Globals.authorizedGroups.Select(g => g.groupKey)).ToList();
             }
         }
+        private bool DetailsAreAccurate(ConversationDetails details)
+        {
+            var url = string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, details.Jid, DETAILS);
+            var currentServerString = secureGetString(new System.Uri(url));
+            var currentServerCD = ConversationDetails.ReadXml(XElement.Parse(currentServerString));
+            if (details.ValueEquals(currentServerCD))
+                return true;
+            else
+                return false;
+        }
         public ConversationDetails Update(ConversationDetails details)
         {
             try
@@ -159,7 +169,10 @@ namespace MeTLLib.Providers.Structure
                 var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}&filename={4}", ROOT_ADDRESS, UPLOAD, STRUCTURE, details.Jid, DETAILS);
                 securePutData(new System.Uri(url), details.GetBytes());
                 Commands.SendDirtyConversationDetails.Execute(details.Jid);
-                return details;
+                if (DetailsAreAccurate(details))
+                    return details;
+                else
+                    throw new Exception("ConversationDetails not successfully uploaded");
             }
             catch (WebException e)
             {
@@ -240,16 +253,8 @@ namespace MeTLLib.Providers.Structure
                 var id = GetApplicationLevelInformation().currentId;
                 details.Jid = id.ToString();
                 details.Slides.Add(new Slide(id + 1, details.Author, Slide.TYPE.SLIDE, 0, 720, 540));
-                /*
-                {
-                    author = details.Author,
-                    id = id + 1,
-                    type = Slide.TYPE.SLIDE,
-                    defaultHeight = 540,
-                    defaultWidth = 720
-                });*/
             }
-            details.Created = DateTimeFactory.Now();
+            details.Created = DateTimeFactory.Parse(DateTimeFactory.Now().ToString());
             resourceUploader.uploadResourceToPath(Encoding.UTF8.GetBytes(details.WriteXml().ToString(SaveOptions.DisableFormatting)),
                 string.Format("Structure/{0}", details.Jid), DETAILS);
             Update(details);
