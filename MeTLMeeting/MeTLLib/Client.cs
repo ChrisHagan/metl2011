@@ -337,6 +337,10 @@ namespace MeTLLib
         }
         #endregion
         #region conversationCommands
+        public HttpHistoryProvider getHistoryProvider() {
+            //This is a quick and lazy hack to test the thumbnailing service being more lightweight
+            return historyProvider;
+        }
         public void MoveTo(int slide)
         {
             Action work = delegate

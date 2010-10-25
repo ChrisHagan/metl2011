@@ -43,10 +43,7 @@ namespace ThumbService
             server.Stop(); 
         }
         [Path("/thumb/{slide}")]
-        public void Thumb(int slide){
-            Trace.TraceInformation("Request for slide {0}", slide);
-            var width = 320;
-            var height = 240;
+        public void Thumb(int slide, int width, int height){
             var requestInfo = new RequestInfo { 
                 slide=slide,
                 width=width,
@@ -57,20 +54,12 @@ namespace ThumbService
             Response.Headers.Add("mime-type", "image/png");
             Response.OutputStream.Write(image, 0, image.Count());
         }
-        private byte[] createImage(RequestInfo info){
-            Trace.TraceInformation(info.ToString());
-            byte[] result = new byte[0];
-            var synchrony = new Thread(new ParameterizedThreadStart(delegate{
-                List<PreParser> parserList = new List<PreParser>();
-                MeTLLib.MeTLLibEventHandlers.PreParserAvailableEventHandler parserReceiver = (sender, parserAvailableArgs)=>{
-                    parserList.Add(parserAvailableArgs.parser);
-                };
-                client.events.PreParserAvailable += parserReceiver;
-                var staThread = new Thread(new ParameterizedThreadStart(delegate{
-                    while (parserList.Count() < 3) { }
+        private byte[] parserToInkCanvas(PreParser parser, RequestInfo info) { 
+            ManualResetEvent waitHandler = new ManualResetEvent(false);
+            byte[] result = null;
+            var staThread = new Thread(new ParameterizedThreadStart(delegate{
                     var canvas = new InkCanvas();
-                    foreach (var preParser in parserList.ToList())
-                        preParser.Populate(canvas);
+                    parser.Populate(canvas);
                     var viewBox = new Viewbox();
                     viewBox.Stretch = Stretch.Uniform;
                     viewBox.Child = canvas;
@@ -80,7 +69,6 @@ namespace ThumbService
                     viewBox.Measure(size);
                     viewBox.Arrange(new Rect(size));
                     viewBox.UpdateLayout();
-                    viewBox.Dispatcher.Invoke(DispatcherPriority.Background,new ThreadStart(delegate { }));
                     RenderTargetBitmap targetBitmap =
                        new RenderTargetBitmap(info.width, info.height, 96d, 96d, PixelFormats.Pbgra32);
                     targetBitmap.Render(viewBox);
@@ -90,16 +78,30 @@ namespace ThumbService
                     {
                         encoder.Save(stream);
                         result = stream.ToArray();
+                        waitHandler.Set();
                     }
-                    client.events.PreParserAvailable -= parserReceiver;
                 }));
-                staThread.SetApartmentState(ApartmentState.STA);
-                staThread.Start();
-                client.AsyncRetrieveHistoryOf(info.slide);
-                staThread.Join();
+            staThread.SetApartmentState(ApartmentState.STA);
+            staThread.Start();
+            waitHandler.WaitOne();
+            return result;
+        }
+        private byte[] createImage(RequestInfo info){
+            Trace.TraceInformation(info.ToString());
+            ManualResetEvent waitHandler = new ManualResetEvent(false);
+            byte[] result = new byte[0];
+            var synchrony = new Thread(new ThreadStart(delegate{
+                client.getHistoryProvider().Retrieve<PreParser>(
+                    null, null,
+                    parser =>
+                    {
+                        result = parserToInkCanvas(parser, info);
+                        waitHandler.Set();
+                    }
+                    , info.slide.ToString());
             }));
             synchrony.Start();
-            synchrony.Join();
+            waitHandler.WaitOne();
             cache[info] = result;
             return result;
         }
