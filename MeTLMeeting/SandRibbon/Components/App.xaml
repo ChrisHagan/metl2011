@@ -6,7 +6,6 @@
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     Startup="Application_Startup"
-    Exit="Application_Exit"
     StartupUri="Window1.xaml">
     <Application.Resources>
         <ResourceDictionary>

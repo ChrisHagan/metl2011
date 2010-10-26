@@ -84,6 +84,15 @@ namespace SandRibbon.Utils
             });
             return cursor;
         }
+        public static Cursor generateCursor(FrameworkElement fe, Point hotspot)
+        {
+            Cursor cursor = null;
+            App.Current.Dispatcher.adopt(() =>
+                {
+                    cursor = CursorExtensions.ConvertToCursor(fe, hotspot);
+                });
+            return cursor;
+        }
         public static Cursor generateCursor(InkCanvasEditingMode mode)
         {
             FrameworkElement poly;

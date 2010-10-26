@@ -6,7 +6,8 @@
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
-    OptionsText="Resume" ExitText="Quit MeTL">
+    OptionsText="Resume" ExitText="Quit MeTL"
+    >
     <sr:ApplicationPopup.Resources>
         <core:Double x:Key="imageSide">100</core:Double>
     </sr:ApplicationPopup.Resources>

@@ -23,7 +23,7 @@ namespace SandRibbon
     {
         public static NetworkController controller;
         public static bool isStaging = false;
-
+        public static DateTime AccidentallyClosing = DateTime.Now;
         public static void Login(String username, String password)
         {
             string finalUsername = username;
@@ -172,9 +172,6 @@ namespace SandRibbon
             {
                 Logger.Log(ex.Message);
             }
-        }
-        private void Application_Exit(object sender, ExitEventArgs e)
-        {
         }
     }
 }

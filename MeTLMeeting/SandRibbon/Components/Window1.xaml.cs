@@ -1047,6 +1047,17 @@ namespace SandRibbon
             UpdatePrivacyAdorners();
             updateCurrentPenAfterZoomChanged();
         }
-    }
 
+        private void ribbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (App.AccidentallyClosing.AddMilliseconds(250) > DateTime.Now)
+            {
+                e.Cancel = true;
+            }
+        }
+        private void ApplicationPopup_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            App.AccidentallyClosing = DateTime.Now;
+        }
+    }
 }
