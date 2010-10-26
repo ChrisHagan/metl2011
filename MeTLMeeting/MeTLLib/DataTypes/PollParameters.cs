@@ -15,7 +15,7 @@ namespace MeTLLib.DataTypes
             correct = IsCorrect;
             color = Color;
         }
-        public String optionText;
+        public String optionText { get; set; }
         public String name { get; set; }
         public bool correct { get; set; }
         public Color color { get; set; }

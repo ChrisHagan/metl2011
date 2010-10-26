@@ -34,7 +34,7 @@ namespace SandRibbon.Quizzing
         public AnswerAQuiz(MeTLLib.DataTypes.QuizQuestion thisQuiz)
             : this()
         {
-            DataContext = thisQuiz; 
+            DataContext = thisQuiz;
         }
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
