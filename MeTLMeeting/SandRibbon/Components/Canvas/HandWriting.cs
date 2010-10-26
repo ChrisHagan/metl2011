@@ -17,7 +17,6 @@ using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbonInterop;
-//using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using System.Windows;
 using MeTLLib.DataTypes;

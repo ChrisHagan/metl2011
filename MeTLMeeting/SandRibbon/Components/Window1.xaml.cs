@@ -17,7 +17,6 @@ using SandRibbon.Quizzing;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
-//using SandRibbonObjects;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 using System.Windows.Shapes;
@@ -38,13 +37,9 @@ namespace SandRibbon
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
         #endregion
-        //public JabberWire.UserInformation userInformation = new JabberWire.UserInformation();
-        private DelegateCommand<string> powerpointProgress;
-        private DelegateCommand<string> powerPointFinished;
         private PowerPointLoader loader = new PowerPointLoader();
         private UndoHistory history = new UndoHistory();
         public ConversationDetails details = null;
-        private MeTLLib.Providers.Connection.JabberWire wire;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
         public static ScrollViewer MAIN_SCROLL;
@@ -96,7 +91,6 @@ namespace SandRibbon
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(ProxyMirrorPresentationSpace));
-            Commands.ReceiveWormMove.RegisterCommand(new DelegateCommand<string>(ReceiveWormMove));
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
             Commands.AddWindowEffect.RegisterCommand(new DelegateCommand<object>(AddWindowEffect));
             Commands.RemoveWindowEffect.RegisterCommand(new DelegateCommand<object>(RemoveWindowEffect));
@@ -122,7 +116,7 @@ namespace SandRibbon
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox, mustBeInConversation));
+            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
@@ -131,7 +125,6 @@ namespace SandRibbon
             Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
-
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -401,35 +394,9 @@ namespace SandRibbon
             Dispatcher.adoptAsync(() =>
             CanvasBlocker.Visibility = Visibility.Collapsed);
         }
-        private void ReceiveWormMove(string _move)
-        {
-            if (!reconnecting) return;
-            lock (reconnectionLock)
-            {
-                Logger.Log("Window1.ReceiveWormMove: Window 1 initiating move in reconnect");
-                Dispatcher.adopt((Action)delegate
-                {
-                    try
-                    {
-                        if (InputBlocker.Visibility == Visibility.Visible)
-                        {
-                            InputBlocker.Visibility = Visibility.Collapsed;
-                            reconnecting = false;
-                            wire.JoinConversation(Globals.userInformation.location.activeConversation);
-                            Commands.MoveTo.ExecuteAsync(Globals.userInformation.location.currentSlide);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Log(string.Format("Receive worm move problem in Window1: {0}", e.Message));
-                    }
-                });
-            }
-        }
         private void ExecuteMoveTo(int slide)
         {
             MoveTo(slide);
-            // ProviderMonitor.HealthCheck(() => MoveTo(slide));
         }
         private bool CanExecuteMoveTo(int slide)
         {
