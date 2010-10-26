@@ -21,9 +21,6 @@ using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Quizzing
 {
-    /// <summary>
-    /// Interaction logic for ViewQuizResults.xaml
-    /// </summary>
     public partial class ViewQuizResults : Window
     {
         private Dictionary<long, ObservableCollection<QuizAnswer>> answers = new Dictionary<long, ObservableCollection<QuizAnswer>>();
@@ -40,6 +37,7 @@ namespace SandRibbon.Quizzing
             foreach(var quiz in Quizes)
                 activeQuizes.Add(quiz);
             quizzes.ItemsSource = activeQuizes;
+            quizzes.SelectedIndex = 0;
         }
         private void CloseQuizResults(object _obj)
         {

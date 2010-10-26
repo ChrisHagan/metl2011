@@ -153,9 +153,7 @@ namespace SandRibbon.Components
         }
         private void SendScreenShot(ScreenshotDetails details)
         {
-            string filename = generateScreenshot(details);
-            var hostedUri = MeTLLib.ClientFactory.Connection().NoAuthUploadResource(new System.Uri(filename,UriKind.RelativeOrAbsolute), Globals.slide);
-            Commands.ScreenshotGenerated.ExecuteAsync(hostedUri.ToString());
+            Commands.ScreenshotGenerated.ExecuteAsync(generateScreenshot(details));
         }
 
         private string generateScreenshot(ScreenshotDetails details)

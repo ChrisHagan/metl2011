@@ -49,6 +49,7 @@ namespace SandRibbon.Components.Submissions
             foreach (var list in userSubmissions)
                 submissionList.Add(list);
             submissions.ItemsSource= submissionList;
+            submissions.SelectedIndex = 0;
             
         }
         private void recieveSubmission(TargettedSubmission submission)

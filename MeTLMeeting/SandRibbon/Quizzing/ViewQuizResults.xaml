@@ -8,7 +8,7 @@
     SizeToContent="WidthAndHeight">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
-            <Grid MaxHeight="645">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition MaxWidth="125"/>
                     <ColumnDefinition/>
@@ -31,8 +31,8 @@
                 </ListBox>
                 <Grid Grid.Column="1">
                     <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top">Preview</Label>
-                    <StackPanel x:Name="QuizResults"/>
-                    <Border VerticalAlignment="Bottom" Background="{StaticResource BackgroundBlueGradient}" Padding="20 20 20 20">
+                    <StackPanel x:Name="QuizResults" MaxHeight="600"/>
+                    <Border VerticalAlignment="Bottom" Background="{StaticResource BackgroundBlueGradient}" >
                         <Button Content="Display results" Command="{x:Static api:Commands.DisplayQuizResults}" Padding="0 10 0 0 "/>
                     </Border>
                 </Grid>

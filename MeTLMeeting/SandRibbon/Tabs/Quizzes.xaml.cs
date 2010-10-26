@@ -55,16 +55,18 @@ namespace SandRibbon.Tabs
                                           {
                                               if (Globals.isAuthor)
                                               {
-                                                  quizResultsRibbonGroup.Header = "View results";
+                                                  quizResultsRibbonGroup.Header = "Quizzes";
                                                   quizRibbonGroup.Visibility = Visibility.Visible;
                                                   createQuiz.Visibility = Visibility.Visible;
                                                   createQuiz.IsEnabled = true;
+                                                  results.Visibility = Visibility.Visible;
                                               }
                                               else
                                               {
                                                   quizResultsRibbonGroup.Header = "Respond";
                                                   quizRibbonGroup.Visibility = Visibility.Collapsed;
                                                   createQuiz.Visibility = Visibility.Collapsed;
+                                                  results.Visibility = Visibility.Collapsed;
                                               }
                                           }
                                           catch (NotSetException)

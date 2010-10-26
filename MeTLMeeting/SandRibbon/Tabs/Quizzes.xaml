@@ -31,21 +31,24 @@
                                       x:Name="createQuiz" Icon="\Resources\NewQuiz.png" Text="New"/>
         </StackPanel>
     </sr:RibbonGroup>
-    <sr:RibbonGroup Header="Results" x:Name="quizResultsRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Results.png">
+    <sr:RibbonGroup Header="Results" x:Name="results">
+        <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
+            <Button Command="{x:Static tabs:Quizzes.openQuizResults}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Resources/Results.png" Height="15" Width="15"/>
+                    <Label Content="Results"/>
+                </StackPanel>
+            </Button>
+        </Border>
+    </sr:RibbonGroup>
+    <sr:RibbonGroup Header="Quizzes" x:Name="quizResultsRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Results.png">
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Small" Priority="2"/>
             <sr:GroupVariant Variant="Medium" Priority="1"/>
             <sr:GroupVariant Variant="Collapsed" Priority="3"/>
         </sr:RibbonGroup.Variants>
         
-        <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
-            <Button Command="{x:Static tabs:Quizzes.openQuizResults}">
-                <StackPanel>
-                    <Image Source="/Resources/Results.png" Height="15" Width="15"/>
-                    <Label Content="Quiz Results"/>
-                </StackPanel>
-            </Button>
-        </Border>
+        
         <Label VerticalAlignment="Center" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                FontWeight="Bold"
                FontSize="12px"
@@ -66,7 +69,7 @@
                         <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
                             <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
                                 <Button.ToolTip>
-                                    <dict:MeTLImageToolTip TitleText="View quiz results" ImageSource="\Resources\Ribbon-Quiz.png"
+                                    <dict:MeTLImageToolTip TitleText="View quiz" ImageSource="\Resources\Ribbon-Quiz.png"
                                                                             ContentText="{Binding Path=title}"/>
                                 </Button.ToolTip>
                                 <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">

@@ -491,6 +491,7 @@ namespace SandRibbon.Components.Canvas
         private Stroke stroke;
         private Pen pen = new Pen();
         private bool isPrivate;
+        private bool shouldShowPrivacy;
         private StreamGeometry geometry;
         private Stroke whiteStroke;
         private StrokeTag tag
@@ -516,13 +517,15 @@ namespace SandRibbon.Components.Canvas
             
             this.tag(stroke.tag());
             isPrivate = this.tag().privacy == "private";
+            shouldShowPrivacy = this.tag().author == Globals.conversationDetails.Author;
+            
             if (!isPrivate) return;
 
             pen.Freeze();
         }
         protected override void DrawCore(DrawingContext drawingContext, DrawingAttributes drawingAttributes)
         {
-            if (isPrivate)
+            if (isPrivate && shouldShowPrivacy)
             {
             
                 if (!stroke.DrawingAttributes.IsHighlighter)
