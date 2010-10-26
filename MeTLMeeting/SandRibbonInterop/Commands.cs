@@ -30,7 +30,6 @@ namespace SandRibbon
     }
     public class Commands
     {
-
         public static CompositeCommand BackstageModeChanged = new CompositeCommand();
         public static CompositeCommand UpdatePowerpointProgress = new CompositeCommand();
 
@@ -329,12 +328,9 @@ namespace SandRibbon
     public static class CommandExtensions
     {
         private static Dispatcher dispatcher = Application.Current.Dispatcher; 
-        public static void ExecuteAsync(this CompositeCommand command, object arg) { 
-            var worker =  new BackgroundWorker();
-            worker.DoWork += delegate {
+        public static void ExecuteAsync(this CompositeCommand command, object arg) {
+            if(command.CanExecute(arg))
                 command.Execute(arg);
-            };
-            worker.RunWorkerAsync();
         }
         public static void RegisterCommandToDispatcher<T>(this CompositeCommand command, DelegateCommand<T> handler) {
             command.RegisterCommand(new DelegateCommand<T>(arg=>

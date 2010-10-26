@@ -125,10 +125,11 @@ namespace MeTLLib.Providers
                                                  days[i].Extract(stream);
                                                  var historicalDay = Encoding.UTF8.GetString(stream.ToArray());
                                                  parseHistoryItem(historicalDay, accumulatingParser);
-                                                 Trace.TraceInformation("Parser contains {0} {1} {2}",
+                                                 Trace.TraceInformation("Parser {3} contains {0} {1} {2}",
                                                      accumulatingParser.ink.Count,
                                                      accumulatingParser.text.Count,
-                                                     accumulatingParser.images.Count);
+                                                     accumulatingParser.images.Count,
+                                                     accumulatingParser.location.currentSlide);
                                              }
                                              if (retrievalProceeding != null) retrievalProceeding(i, days.Count());
                                          }

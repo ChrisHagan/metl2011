@@ -29,7 +29,7 @@ namespace SandRibbon.Components
         #region commands
         private void registerCommands()
         {
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SendAutoShape.RegisterCommand(new DelegateCommand<TargettedAutoShape>(SendAutoshape));
@@ -58,10 +58,9 @@ namespace SandRibbon.Components
         {
             client.LeaveConversation(Jid);
         }
-        private void JoinConversation(object Jid)
+        private void JoinConversation(string jid)
         {
-            if (Jid is string)
-                client.JoinConversation((string)Jid);
+            client.JoinConversation(jid);
         }
         private void MoveTo(int slide)
         {
