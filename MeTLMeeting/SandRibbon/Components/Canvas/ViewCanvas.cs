@@ -44,12 +44,6 @@ namespace SandRibbon.Components.Canvas
                 UseCustomCursor = true;
                 Cursor = Cursors.Hand;
             }
-            else
-                try
-                {
-                    Commands.UpdateCursor.ExecuteAsync(Commands.UpdateCursor.lastValue());
-                }
-                catch (Exception) { UseCustomCursor = false; }
         }
         private void setInkCanvasMode(object _unused)
         {
