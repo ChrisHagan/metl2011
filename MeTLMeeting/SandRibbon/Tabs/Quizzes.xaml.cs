@@ -28,6 +28,7 @@ namespace SandRibbon.Tabs
      */
     public partial class Quizzes : Divelements.SandRibbon.RibbonTab
     {
+        public static RoutedCommand openQuizResults = new RoutedCommand();
         public ObservableCollection<MeTLLib.DataTypes.QuizQuestion> activeQuizes = new ObservableCollection<MeTLLib.DataTypes.QuizQuestion>();
         public Dictionary<long, ObservableCollection<MeTLLib.DataTypes.QuizAnswer>> answers = new Dictionary<long, ObservableCollection<MeTLLib.DataTypes.QuizAnswer>>();
         public Quizzes()
@@ -150,10 +151,14 @@ namespace SandRibbon.Tabs
             Commands.AddSlide.ExecuteAsync(null);
         }
 
-        private void openQuizResults(object sender, RoutedEventArgs e)
+        private void canOpenResults(object sender, CanExecuteRoutedEventArgs e)
         {
-            if(activeQuizes.Count > 0)
-                new ViewQuizResults(answers, activeQuizes).Show();
+            e.CanExecute = activeQuizes.Count > 0;
+        }
+
+        private void OpenResults(object sender, ExecutedRoutedEventArgs e)
+        {
+            new ViewQuizResults(answers, activeQuizes).Show();
         }
     }
 }

@@ -3,9 +3,10 @@
     x:Name="feedback"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:metl="clr-namespace:SandRibbon"
+    xmlns:tabs="clr-namespace:SandRibbon.Tabs"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:submissions="clr-namespace:SandRibbon.Components.Submissions"
@@ -14,6 +15,9 @@ xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">5</core:String>
     </sr:RibbonTab.Resources>
+    <sr:RibbonTab.CommandBindings>
+        <CommandBinding Command="{x:Static tabs:Quizzes.openQuizResults}" CanExecute="canOpenResults" Executed="OpenResults"/>
+    </sr:RibbonTab.CommandBindings>
     <sr:RibbonGroup Header="Create" x:Name="quizRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Quizzes.png">
         <sr:RibbonGroup.Variants>
             <sr:GroupVariant Variant="Small" Priority="5"/>
@@ -33,7 +37,15 @@ xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
             <sr:GroupVariant Variant="Medium" Priority="1"/>
             <sr:GroupVariant Variant="Collapsed" Priority="3"/>
         </sr:RibbonGroup.Variants>
-        <Button Click="openQuizResults" Content="Results"/>
+        
+        <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
+            <Button Command="{x:Static tabs:Quizzes.openQuizResults}">
+                <StackPanel>
+                    <Image Source="/Resources/Results.png" Height="15" Width="15"/>
+                    <Label Content="Quiz Results"/>
+                </StackPanel>
+            </Button>
+        </Border>
         <Label VerticalAlignment="Center" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                FontWeight="Bold"
                FontSize="12px"
