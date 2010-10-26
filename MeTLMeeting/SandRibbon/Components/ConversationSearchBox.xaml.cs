@@ -19,13 +19,41 @@ using SandRibbon.Providers.Structure;
 using SandRibbon.Utils;
 using MeTLLib.DataTypes;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace SandRibbon.Components
 {
+
     public partial class ConversationSearchBox : UserControl
     {
-        private ObservableCollection<MeTLLib.DataTypes.ConversationDetails> searchResults = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
+        public class HideIfNotCurrentConversation : IValueConverter {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return activeConversation == ((MeTLLib.DataTypes.ConversationDetails)value).Jid ? Visibility.Visible : Visibility.Collapsed;
+            }
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return false;
+            }
+        }
 
+        public class IsMeConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                bool result = false;
+                return (me == ((MeTLLib.DataTypes.ConversationDetails)value).Author).ToString();
+            }
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return false;
+            }
+        }
+        public static IsMeConverter isMe = new IsMeConverter();
+        public static HideIfNotCurrentConversation hideIfNotCurrentConversation = new HideIfNotCurrentConversation();
+        private ObservableCollection<MeTLLib.DataTypes.ConversationDetails> searchResults = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
+        protected static string activeConversation;
+        protected static string me;
         public ConversationSearchBox()
         {
             InitializeComponent();
@@ -38,6 +66,8 @@ namespace SandRibbon.Components
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
             Commands.BackstageModeChanged.RegisterCommand(new DelegateCommand<string>(BackstageModeChanged));
             SearchResults.ItemsSource = searchResults;
+            activeConversation = Globals.location.activeConversation;
+            me = Globals.me;
             var view = GetListCollectionView();
             view.Filter = isWhatWeWereLookingFor;
             view.CustomSort = new ConversationComparator();
@@ -75,7 +105,8 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(() =>
             {
                 foreach (var conversation in availableConversations)
-                    searchResults.Add(conversation);
+                    if(conversation.Subject.ToLower() != "deleted")
+                        searchResults.Add(conversation);
             });
         }
         private void clearState(){
@@ -87,7 +118,10 @@ namespace SandRibbon.Components
         }
         private void ShowConversationSearchBox(object o)
         {
-            if (String.IsNullOrEmpty(Globals.location.activeConversation))
+            activeConversation = Globals.location.activeConversation;
+            me = Globals.me;
+            if (String.IsNullOrEmpty(activeConversation))
+
                 currentConversation.Visibility = Visibility.Collapsed;
             else {
                 currentConversation.Visibility = Visibility.Visible;
@@ -140,7 +174,9 @@ namespace SandRibbon.Components
             if (details == null) return;
             foreach (var result in searchResults.Where(c => c.Jid == details.Jid).ToList())
                 searchResults.Remove(result);
-            searchResults.Add(details);
+            if(details.Subject.ToLower() != "deleted")
+                searchResults.Add(details);
+
             if (!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid)
             {
                 Commands.LeaveConversation.ExecuteAsync(details.Jid);
@@ -166,8 +202,9 @@ namespace SandRibbon.Components
             var conversation = (MeTLLib.DataTypes.ConversationDetails)o;
             if (!shouldShowConversation(conversation)) 
                 return false;
-            if (backstageNav.currentMode == "currentConversation" && conversation.Jid != Globals.location.activeConversation) 
-                return false;
+            if (backstageNav.currentMode == "currentConversation")
+                if(conversation.Jid != activeConversation) 
+                    return false;
             var author = conversation.Author.ToLower();
             var title = conversation.Title.ToLower();
             var searchField = new[] { author, title };

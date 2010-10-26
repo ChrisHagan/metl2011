@@ -43,7 +43,7 @@ namespace SandRibbon
         private DelegateCommand<string> powerPointFinished;
         private PowerPointLoader loader = new PowerPointLoader();
         private UndoHistory history = new UndoHistory();
-        public ConversationDetails details;
+        public ConversationDetails details = null;
         private MeTLLib.Providers.Connection.JabberWire wire;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
@@ -71,8 +71,6 @@ namespace SandRibbon
             catch (Exception) { }
             Globals.userInformation.policy = new Policy(false, false);
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
-            //Commands.ConnectWithAuthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithAuthenticatedCredentials));
-            //Commands.PowerpointFinished.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
@@ -551,17 +549,21 @@ namespace SandRibbon
 
         private bool mustBeInConversation(object _arg)
         {
+            /*
+            ConversationDetails details;
             try
             {
-                if (Globals.location.activeConversation != null && Globals.conversationDetails.Subject != "Deleted" && Globals.conversationDetails.Jid != "")
-                    return true;
-                return false;
-
+                details = Globals.conversationDetails;
             }
             catch (NotSetException)
             {
                 return false;
             }
+             * */
+            if (details == null) return false;
+            if(details.Subject != "Deleted" && details.Jid != "")
+                    return true;
+            return false;
         }
         private bool mustBeAuthor(object _arg)
         {
@@ -578,9 +580,11 @@ namespace SandRibbon
         {
             Dispatcher.adoptAsync(delegate
             {
+
                 if (details != null)
                     HideTutorial();
                 UpdateTitle();
+                this.details = details;
             });
         }
         private void UpdateTitle()

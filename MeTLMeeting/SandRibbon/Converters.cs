@@ -68,10 +68,8 @@ namespace SandRibbon
         public static availablePenDropDownContentConverter AvailablePenDropDownContentConverter = new availablePenDropDownContentConverter();
         public static colourToNameConverter ColourToNameConverter = new colourToNameConverter();
         public static conversationDetailsToDescription ConversationDetailsToDescription = new conversationDetailsToDescription();
-        public static IsMeConverter isMe = new IsMeConverter();
         public static StringTruncatorConverter stringTruncator = new StringTruncatorConverter();
         public static NoCachedImageReplicator nonCachedImage = new NoCachedImageReplicator();
-        public static HideIfNotCurrentConversation hideIfNotCurrentConversation = new HideIfNotCurrentConversation();
     }
     public class StringTruncatorConverter : IValueConverter
     {
@@ -91,36 +89,7 @@ namespace SandRibbon
 
         #endregion
     }
-    public class HideIfNotCurrentConversation : IValueConverter {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Globals.location.activeConversation == ((MeTLLib.DataTypes.ConversationDetails)value).Jid ? Visibility.Visible : Visibility.Collapsed;
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return false;
-        }
-    }
-    public class IsMeConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            bool result = false;
-            try
-            {
-                result = Globals.me == ((MeTLLib.DataTypes.ConversationDetails)value).Author;
-            }
-            catch (NotSetException)
-            {
-                result = false;
-            }
-            return result.ToString();
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return false;
-        }
-    }
+
     public class OptionTextFromQuizOption : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

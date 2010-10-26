@@ -41,6 +41,7 @@ namespace SandRibbon.Components
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(Display));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
@@ -54,6 +55,10 @@ namespace SandRibbon.Components
             {
                 //YAAAAAY
             }
+        }
+        private void JoinConversation(object _obj)
+        {
+            currentSlideIndex = 0;
         }
         private void ThumbnailAvailable(int slideId) {
             foreach (var slide in Globals.slides.Where(s => s.id == slideId))

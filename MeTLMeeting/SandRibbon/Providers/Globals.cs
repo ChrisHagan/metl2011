@@ -93,6 +93,7 @@ namespace SandRibbon.Providers
             get
             {
                 ConversationDetails cd = null;
+
                 try
                 {
                     cd = (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
