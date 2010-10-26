@@ -149,11 +149,13 @@ namespace SandRibbon
         private void noop(object unused)
         {
         }
-        private void ShowConversationSearchBox(object _arg){
+        private void ShowConversationSearchBox(object _arg)
+        {
             if (!ribbon.IsMinimized)
                 ribbon.ToggleMinimize();
         }
-        private void HideConversationSearchBox(object _arg){
+        private void HideConversationSearchBox(object _arg)
+        {
             if (ribbon.IsMinimized)
                 ribbon.ToggleMinimize();
         }
@@ -274,18 +276,13 @@ namespace SandRibbon
             Commands.UpdateCursorWithAttributes.ExecuteAsync(zoomIndependentAttributes);
             Commands.ReportDrawingAttributes.ExecuteAsync(zoomIndependentAttributes);
         }
+//        private DrawingAttributes previousAttributes;
         private void UpdateCursorWithAttributes(DrawingAttributes attributes)
         {
-            try
-            {
-                if (!(attributes.Equals(Commands.UpdateCursorWithAttributes.lastValue())))
-                {
-                    Commands.UpdateCursor.ExecuteAsync(CursorExtensions.generateCursor(attributes));
-                }
-            }
-            catch (NotSetException e)
-            { }
-
+//            if (previousAttributes != null && attributes.Equals(previousAttributes))
+//                return;
+//            previousAttributes = attributes;
+            Commands.UpdateCursor.ExecuteAsync(CursorExtensions.generateCursor(attributes));
         }
         private void AdjustReportedStrokeAttributesAccordingToZoom(object attributes)
         {
@@ -589,7 +586,8 @@ namespace SandRibbon
             {
                 Title = messageFor(Globals.conversationDetails);
             }
-            catch (NotSetException) {
+            catch (NotSetException)
+            {
                 Title = new ConfigurationProvider().getMeTLType();
             }
         }
@@ -1006,7 +1004,7 @@ namespace SandRibbon
                 foreach (var tab in tabs)
                     ribbon.Tabs.Add((RibbonTab)tab);
                 ribbon.SelectedTab = home;
-                if(!ribbon.IsMinimized)
+                if (!ribbon.IsMinimized)
                     ribbon.ToggleMinimize();
             });
             CommandManager.InvalidateRequerySuggested();

@@ -344,7 +344,7 @@ namespace SandRibbon.Tabs.Groups
             this.DataContext = currentColourValues;
             Commands.TogglePens.RegisterCommand(new DelegateCommand<bool>(SetPens, delegate { return mustBeInConversation(null); }));
             Commands.ReportStrokeAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((DrawingAttributes) => updatePreviousDrawingAttributes(DrawingAttributes)));
-            Commands.ReportDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((drawingAttributes => receiveDrawingAttributesChanged(drawingAttributes))));
+            //Commands.ReportDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>((drawingAttributes => receiveDrawingAttributesChanged(drawingAttributes))));
             SetupPreviousColoursWithDefaults();
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<string>(SetLayer));
@@ -427,11 +427,11 @@ namespace SandRibbon.Tabs.Groups
             }
             currentColourValues.currentDrawingAttributes = defaultDrawingAttributes[0];
         }
-        private void receiveDrawingAttributesChanged(DrawingAttributes arrivingDrawingAttributes)
+        /*private void receiveDrawingAttributesChanged(DrawingAttributes arrivingDrawingAttributes)
         {
             if (currentColourValues.currentDrawingAttributes != arrivingDrawingAttributes)
                 currentColourValues.currentDrawingAttributes = arrivingDrawingAttributes;
-        }
+        }*/
         public void SetPens(bool enabled)
         {
             if (enabled)

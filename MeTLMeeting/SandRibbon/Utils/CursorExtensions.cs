@@ -17,55 +17,84 @@ namespace SandRibbon.Utils
     {
         public static Cursor ConvertToCursor(FrameworkElement fe, Point hotSpot)
         {
-            try {
-            var resultStream = new MemoryStream();
-            App.Current.Dispatcher.adopt(() =>
+            try
             {
-                int width = (int)fe.Width;
-                int height = (int)fe.Height;
-                fe.Measure(new Size(fe.Width, fe.Height));
-                fe.Arrange(new Rect(0, 0, fe.Width, fe.Height));
-                fe.UpdateLayout();
-                if (width < 1) width = 1;
-                if (height < 1) height = 1;
+                var resultStream = new MemoryStream();
+                App.Current.Dispatcher.adopt(() =>
+                {
+                    int width = (int)fe.Width;
+                    int height = (int)fe.Height;
+                    fe.Measure(new Size(fe.Width, fe.Height));
+                    fe.Arrange(new Rect(0, 0, fe.Width, fe.Height));
+                    fe.UpdateLayout();
+                    if (width < 1) width = 1;
+                    if (height < 1) height = 1;
 
-                var bitmapSource = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Default);
-                bitmapSource.Render(fe);
+                    var bitmapSource = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Default);
+                    bitmapSource.Render(fe);
 
-                var pixels = new int[width * height];
-                bitmapSource.CopyPixels(pixels, width * 4, 0);
-                var bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-                for (int y = 0; y < height; y++)
-                    for (int x = 0; x < width; x++)
-                        bitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(pixels[y * width + x]));
+                    var pixels = new int[width * height];
+                    bitmapSource.CopyPixels(pixels, width * 4, 0);
+                    var bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                    for (int y = 0; y < height; y++)
+                        for (int x = 0; x < width; x++)
+                            bitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(pixels[y * width + x]));
 
-                var stream = new System.IO.MemoryStream();
+                    var stream = new System.IO.MemoryStream();
 
-                var handle = bitmap.GetHicon();
-                System.Drawing.Icon.FromHandle(handle).Save(stream);
+                    var handle = bitmap.GetHicon();
+                    System.Drawing.Icon.FromHandle(handle).Save(stream);
 
-                var streamBuff = stream.ToArray();
-                System.Drawing.Icon.FromHandle(handle).Save(resultStream);
-                var hsY = (byte)(int)(hotSpot.Y * height);
-                var hsX = (byte)(int)(hotSpot.X * width);
-                resultStream.Seek(2, SeekOrigin.Begin);
-                resultStream.Write(streamBuff, 2, 1);
-                resultStream.Seek(8, SeekOrigin.Begin);
-                resultStream.WriteByte(0);
-                resultStream.Seek(10, SeekOrigin.Begin);
-                resultStream.Seek(10, System.IO.SeekOrigin.Begin);
-                resultStream.WriteByte(hsX);
-                resultStream.Seek(12, System.IO.SeekOrigin.Begin);
-                resultStream.WriteByte(hsY);
-                resultStream.Seek(0, SeekOrigin.Begin);
-            });
+                    var streamBuff = stream.ToArray();
+                    System.Drawing.Icon.FromHandle(handle).Save(resultStream);
+                    var hsY = (byte)(int)(hotSpot.Y * height);
+                    var hsX = (byte)(int)(hotSpot.X * width);
+                    resultStream.Seek(2, SeekOrigin.Begin);
+                    resultStream.Write(streamBuff, 2, 1);
+                    resultStream.Seek(8, SeekOrigin.Begin);
+                    resultStream.WriteByte(0);
+                    resultStream.Seek(10, SeekOrigin.Begin);
+                    resultStream.Seek(10, System.IO.SeekOrigin.Begin);
+                    resultStream.WriteByte(hsX);
+                    resultStream.Seek(12, System.IO.SeekOrigin.Begin);
+                    resultStream.WriteByte(hsY);
+                    resultStream.Seek(0, SeekOrigin.Begin);
+                });
                 var cursor = new System.Windows.Input.Cursor(resultStream);
                 return cursor;
             }
-            catch (System.Runtime.InteropServices.ExternalException) {
+            catch (System.Runtime.InteropServices.ExternalException)
+            {
                 App.Now("cursor generation exception");
                 return Cursors.Cross;
             }
+        }
+        private static Cursor internalGenerateCursor(FrameworkElement fe, Point hotspot)
+        {
+            Cursor cursor = null;
+            App.Current.Dispatcher.adopt(() =>
+            {
+                var grid = new System.Windows.Controls.Grid
+                {
+                    Height = 128,
+                    Width = 128,
+                    Background = Brushes.Transparent
+                };
+                var innerGrid = new System.Windows.Controls.Grid
+                {
+                    Height = fe.Height,
+                    Width = fe.Width,
+                    Background = Brushes.Transparent,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                innerGrid.Children.Add(fe);
+                grid.Children.Add(innerGrid);
+                double UpdatedY = (((grid.Height - innerGrid.Height) / 2) + (hotspot.X * innerGrid.Width)) / grid.Width;
+                double UpdatedX = (((grid.Width - innerGrid.Width) / 2) + (hotspot.Y * innerGrid.Height))/ grid.Height;
+                cursor = CursorExtensions.ConvertToCursor(grid, new Point(UpdatedX,UpdatedY));
+            });
+            return cursor;
         }
         public static Cursor generateCursor(DrawingAttributes pen)
         {
@@ -78,9 +107,11 @@ namespace SandRibbon.Utils
                     Height = pen.Height,
                     Width = pen.Width,
                     Fill = colour,
-                    Stroke = colour
+                    Stroke = colour,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
                 };
-                cursor = CursorExtensions.ConvertToCursor(poly, new System.Windows.Point(0.5, 0.5));
+                cursor = internalGenerateCursor(poly, new Point(0.5, 0.5));
             });
             return cursor;
         }
@@ -89,9 +120,35 @@ namespace SandRibbon.Utils
             Cursor cursor = null;
             App.Current.Dispatcher.adopt(() =>
                 {
-                    cursor = CursorExtensions.ConvertToCursor(fe, hotspot);
+                    cursor = internalGenerateCursor(fe, hotspot);
                 });
             return cursor;
+        }
+        private static Cursor _selectCursor;
+        private static Cursor selectCursor
+        {
+            get
+            {
+                if (_selectCursor == null)
+                {
+                    var surround = new Border { Background = Brushes.Orange, Height = 8, Width = 8, CornerRadius = new CornerRadius(4), BorderBrush = Brushes.Red, BorderThickness = new Thickness(1) };
+                    _selectCursor = generateCursor(surround, new Point(0.5, 0.5));
+                }
+                return _selectCursor;
+            }
+        }
+        private static Cursor _eraseCursor;
+        private static Cursor eraseCursor
+        {
+            get
+            {
+                if (_eraseCursor == null)
+                {
+                    var surround = new Border { Background = Brushes.White, Height = 10, Width = 10, CornerRadius = new CornerRadius(1), BorderBrush = Brushes.DarkGray, BorderThickness = new Thickness(1) };
+                    _eraseCursor = generateCursor(surround, new Point(0.5, 0.5));
+                }
+                return _eraseCursor;
+            }
         }
         public static Cursor generateCursor(InkCanvasEditingMode mode)
         {
@@ -100,7 +157,10 @@ namespace SandRibbon.Utils
             switch (mode.ToString())
             {
                 case "Select":
-                    return Cursors.Arrow;
+                    return selectCursor;
+                    break;
+                case "EraseByStroke":
+                    return eraseCursor;
                     break;
                 case "None":
                     poly = new Grid { Height = 10, Width = 10 };
@@ -113,7 +173,7 @@ namespace SandRibbon.Utils
                     hotspot = new System.Windows.Point(0.5, 0.5);
                     break;
             }
-            return CursorExtensions.ConvertToCursor(poly, hotspot);
+            return generateCursor(poly, hotspot);
         }
     }
 }
