@@ -513,7 +513,6 @@ namespace SandRibbon
 
         private bool mustBeInConversation(object _arg)
         {
-            /*
             ConversationDetails details;
             try
             {
@@ -523,7 +522,6 @@ namespace SandRibbon
             {
                 return false;
             }
-             * */
             if (details == null) return false;
             if(details.Subject != "Deleted" && details.Jid != "")
                     return true;

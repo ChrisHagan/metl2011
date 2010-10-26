@@ -373,7 +373,6 @@ namespace SandRibbon.Components.Canvas
             }
             doDirtyVideo(element.identifier);
         }
-
         private void doDirtyImage(string imageId)
         {
             Dispatcher.adoptAsync(delegate

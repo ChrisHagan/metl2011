@@ -33,24 +33,38 @@ namespace SandRibbon.Utils
                     var bitmapSource = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Default);
                     bitmapSource.Render(fe);
 
-                    var pixels = new int[width * height];
+                    var pixels = new UInt32[width * height];
+                    bitmapSource.Freeze();
                     bitmapSource.CopyPixels(pixels, width * 4, 0);
-                    var bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                    var bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb); 
+                    var converter = new System.Drawing.ColorConverter();
                     for (int y = 0; y < height; y++)
                         for (int x = 0; x < width; x++)
-                            bitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(pixels[y * width + x]));
-
-                    var stream = new System.IO.MemoryStream();
-
+                        {
+                            //Tell me please that there's a faster way of doing this!
+                            var Color = System.Drawing.Color.FromArgb((int)pixels[(y * width) + x]);
+                            if (Color.A == 0)
+                            {
+                                bitmap.SetPixel(x, y, Color);
+                            }
+                            else
+                            {
+                                double PreMult = Color.A / 255;
+                                var Red = ((byte)(Color.R * PreMult));
+                                var Green = ((byte)(Color.G * PreMult));
+                                var Blue = ((byte)(Color.B * PreMult));
+                                var colorString = new Color { A = (byte)Color.A, R = (byte)Red, G = (byte)Green, B = (byte)Blue }.ToString();
+                                var newColor = (System.Drawing.Color)converter.ConvertFromString(colorString);
+                                bitmap.SetPixel(x, y, newColor);
+                            }
+                        }       
                     var handle = bitmap.GetHicon();
-                    System.Drawing.Icon.FromHandle(handle).Save(stream);
-
-                    var streamBuff = stream.ToArray();
+                    var icon = System.Drawing.Icon.FromHandle(handle);
                     System.Drawing.Icon.FromHandle(handle).Save(resultStream);
                     var hsY = (byte)(int)(hotSpot.Y * height);
                     var hsX = (byte)(int)(hotSpot.X * width);
                     resultStream.Seek(2, SeekOrigin.Begin);
-                    resultStream.Write(streamBuff, 2, 1);
+                    resultStream.Write(resultStream.ToArray(), 2, 1);
                     resultStream.Seek(8, SeekOrigin.Begin);
                     resultStream.WriteByte(0);
                     resultStream.Seek(10, SeekOrigin.Begin);
@@ -108,6 +122,8 @@ namespace SandRibbon.Utils
                     Width = pen.Width,
                     Fill = colour,
                     Stroke = colour,
+                    StrokeThickness = 1,
+                    StrokeLineJoin = PenLineJoin.Round,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };

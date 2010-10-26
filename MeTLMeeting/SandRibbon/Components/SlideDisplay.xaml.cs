@@ -120,8 +120,8 @@ namespace SandRibbon.Components
             var action = (Action)(() => Dispatcher.adoptAsync((Action)delegate
                                          {
                                              if (thumbnailList.Where(t => t.slideId == where).Count() == 1)
-                                                 Commands.MoveTo.ExecuteAsync(where);
                                                  Commands.InternalMoveTo.ExecuteAsync(where);
+                                                 Commands.MoveTo.ExecuteAsync(where);
                                          }));
             GlobalTimers.SetSyncTimer(action);
         }
@@ -160,8 +160,7 @@ namespace SandRibbon.Components
                 });
                 return;
             }
-            Commands.SneakInto.ExecuteAsync(details.Jid);
-            Dispatcher.adoptAsync((Action)delegate
+            Dispatcher.adopt((Action)delegate
             {
                 if (Globals.me == details.Author)
                     isAuthor = true;
