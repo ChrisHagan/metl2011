@@ -340,7 +340,10 @@ namespace SandRibbon
         }
         public static void RegisterCommandToDispatcher<T>(this CompositeCommand command, DelegateCommand<T> handler) {
             command.RegisterCommand(new DelegateCommand<T>(arg=>
-                dispatcher.BeginInvoke((Action)delegate { handler.Execute(arg); }), handler.CanExecute));
+                dispatcher.BeginInvoke((Action)delegate { 
+                    if (handler.CanExecute(arg))
+                        handler.Execute(arg); 
+                }), handler.CanExecute));
         } 
     }
 }
