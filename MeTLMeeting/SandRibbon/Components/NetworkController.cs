@@ -53,7 +53,6 @@ namespace SandRibbon.Components
             Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
             Commands.SneakIntoAndDo.RegisterCommand(new DelegateCommand<Projector.RoomAndAction>(SneakIntoAndDo));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
-            /*Commands.UploadFileReturningUrl.RegisterCommand(new DelegateCommand<string>(UploadFile));*/
         }
         private void LeaveConversation(string Jid)
         {
@@ -151,10 +150,6 @@ namespace SandRibbon.Components
         {
             client.SneakInto(room);
         }
-        /*private void UploadFile(string file)
-        {
-            Commands.InternalUploadedUrlNotification.Execute(client.UploadFileAndReturnUrl(file));
-        }*/
         private void SneakOutOf(string room)
         {
             client.SneakOutOf(room);

@@ -338,6 +338,14 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
+        public Uri UploadResource(Uri file, string muc)
+        {
+            return new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, false));
+        }
+        public Uri UploadResourceToPath(byte[] data,string file, string name, bool overwrite)
+        {
+            return new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
+        }
         #endregion
         #region conversationCommands
         public HttpHistoryProvider getHistoryProvider()
@@ -511,17 +519,6 @@ namespace MeTLLib
             });
             return parserList;
         }
-        /*
-        public string UploadFileAndReturnUrl(string file)
-        {
-            string result = "";
-            Action work = delegate
-            {
-                result = resourceUploader.uploadResource(string.Format("/Resource/"), file);
-            };
-            tryIfConnected(work);
-            return result;
-        }*/
         public ConversationDetails UpdateConversationDetails(ConversationDetails details)
         {
             ConversationDetails cd = null;

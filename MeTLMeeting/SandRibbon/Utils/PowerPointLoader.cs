@@ -396,7 +396,7 @@ namespace SandRibbon.Utils
             {
                 var shape = doc.Descendants("shape").ElementAt(i);
                 var file = shape.Attribute("snapshot").Value;
-                var hostedFileUri = MeTLLib.ClientFactory.Connection().NoAuthUploadResource(new Uri(file, UriKind.RelativeOrAbsolute), slide);
+                var hostedFileUri = MeTLLib.ClientFactory.Connection().UploadResource(new Uri(file, UriKind.RelativeOrAbsolute), slide.ToString());
                 //var hostedFileName = ResourceUploader.uploadResource(slide.ToString(), file);
                 var uri = hostedFileUri;
                 //new Uri(hostedFileName, UriKind.RelativeOrAbsolute);

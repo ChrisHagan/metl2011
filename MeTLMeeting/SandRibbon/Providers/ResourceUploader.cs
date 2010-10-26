@@ -8,7 +8,7 @@ namespace SandRibbon.Utils.Connection
 {
     public class ResourceUploader
     {
-        private static readonly string RESOURCE_SERVER_UPLOAD = string.Format("https://{0}:1188/upload_nested.yaws", Constants.JabberWire.SERVER);
+    /*    private static readonly string RESOURCE_SERVER_UPLOAD = string.Format("https://{0}:1188/upload_nested.yaws", Constants.JabberWire.SERVER);
         public static string uploadResource(string path, string file)
         {
             return uploadResource(path, file, false);

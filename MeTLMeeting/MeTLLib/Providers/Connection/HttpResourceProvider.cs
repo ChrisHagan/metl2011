@@ -110,7 +110,9 @@ namespace MeTLLib.Providers.Connection
         byte[] IWebClient.uploadFile(Uri resource, string filename)
         {
             byte[] result = new byte[0];
-            retryUpToXTimes(delegate { result = client.UploadFile(resource.ToString(), filename); }, 5);
+            retryUpToXTimes(delegate { 
+                result = client.UploadFile(resource.ToString(), filename); 
+            }, 5);
             return result;
         }
         private string decode(byte[] bytes)

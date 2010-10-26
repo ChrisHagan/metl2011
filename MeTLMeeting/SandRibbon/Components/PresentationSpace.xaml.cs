@@ -18,7 +18,6 @@ using SandRibbon.Components.Utility;
 using SandRibbon.Quizzing;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
-//using SandRibbonObjects;
 using SandRibbon.Utils;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
@@ -63,12 +62,11 @@ namespace SandRibbon.Components
             var setup = new LiveWindowSetup(Globals.location.currentSlide, Globals.me,
                     stack,
                 marquee, origin, new Point(0, 0),
-
-                ResourceUploader.uploadResourceToPath(
+                MeTLLib.ClientFactory.Connection().UploadResourceToPath(
                         toByteArray(this, marquee, origin),
                         "Resource/" + Globals.location.currentSlide.ToString(),
                         "quizSnapshot.png",
-                        false));
+                        false).ToString());
 
             var view = new Rect(setup.origin, new Size(setup.frame.Width, setup.frame.Height));
             var liveWindow = new Rectangle
@@ -134,7 +132,6 @@ namespace SandRibbon.Components
             {
                 if (Globals.conversationDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
                     Commands.SetPrivacy.ExecuteAsync("public");
-                //Commands.SetPrivacy.ExecuteAsync(stack.handwriting.actualPrivacy);
                 else
                     Commands.SetPrivacy.ExecuteAsync("private");
             }
@@ -159,15 +156,6 @@ namespace SandRibbon.Components
             string filename = generateScreenshot(details);
             var hostedUri = MeTLLib.ClientFactory.Connection().NoAuthUploadResource(new System.Uri(filename,UriKind.RelativeOrAbsolute), Globals.slide);
             Commands.ScreenshotGenerated.ExecuteAsync(hostedUri.ToString());
-            /*DelegateCommand<string> fileUploaded = null;
-            fileUploaded = new DelegateCommand<string>(hostedFilename =>
-                                                           {
-                                                               Commands.InternalUploadedUrlNotification.UnregisterCommand(fileUploaded);
-                                                               Commands.ScreenshotGenerated.ExecuteAsync(hostedFilename);
-                                                           });
-
-            Commands.InternalUploadedUrlNotification.RegisterCommand(fileUploaded);
-            Commands.UploadFileReturningUrl.Execute(filename);*/
         }
 
         private string generateScreenshot(ScreenshotDetails details)
@@ -449,11 +437,12 @@ namespace SandRibbon.Components
                 System.Windows.Controls.Canvas.GetLeft(marquee),
                 System.Windows.Controls.Canvas.GetTop(marquee));
             Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
-            (Globals.slide, Globals.me, marquee, origin, new Point(0, 0), ResourceUploader.uploadResourceToPath(
+            (Globals.slide, Globals.me, marquee, origin, new Point(0, 0), 
+            MeTLLib.ClientFactory.Connection().UploadResourceToPath(
                                             toByteArray(this, marquee, origin),
                                             "Resource/" + Globals.slide.ToString(),
                                             "quizSnapshot.png",
-                                            false)));
+                                            false).ToString()));
         }
         private static byte[] toByteArray(Visual adornee, FrameworkElement marquee, Point origin)
         {
@@ -570,7 +559,8 @@ namespace SandRibbon.Components
                 height,
                 width,
                 height);
-            var hostedFileName = ResourceUploader.uploadResource(Globals.me, path);
+            var hostedFileName = MeTLLib.ClientFactory.Connection().UploadResource(new Uri(path,UriKind.RelativeOrAbsolute), Globals.me).ToString();
+            //var hostedFileName = ResourceUploader.uploadResource(Globals.me, path);
             var location = Globals.location;
 
         }
