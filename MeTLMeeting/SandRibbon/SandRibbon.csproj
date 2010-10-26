@@ -926,6 +926,10 @@
     <Resource Include="Resources\Exit button mine.png" />
     <Resource Include="Resources\Help.png" />
     <Resource Include="Resources\logoutAndExit.png" />
+    <Resource Include="Resources\Attachment.png" />
+    <Resource Include="Resources\Back_arrow_black.png" />
+    <Resource Include="Resources\Edit.png" />
+    <Resource Include="Resources\Logout.png" />
     <Content Include="Resources\MeTL.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1058,6 +1062,7 @@
     <Resource Include="Resources\Show.png" />
     <Resource Include="Resources\SendSubmission.png" />
     <Resource Include="Resources\sexyDelete.png" />
+    <Resource Include="Resources\Share.png" />
     <Content Include="Resources\Slide_Not_Loaded.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

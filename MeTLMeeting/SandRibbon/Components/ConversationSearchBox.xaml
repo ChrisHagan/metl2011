@@ -25,8 +25,8 @@
         <DataTemplate x:Key="nonAuthorOptions" />
         <DataTemplate x:Key="authorOptions">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <dict:Button Icon="\Resources\Slide_Not_Loaded.png" Text="Rename" InternalButtonSize="Medium" Click="renameConversation" />
-                <dict:Button Icon="\Resources\Slide_Not_Loaded.png" Text="Share" InternalButtonSize="Medium" Click="shareConversation" />
+                <dict:Button Icon="\Resources\Edit.png" Text="Rename" InternalButtonSize="Medium" Click="renameConversation" />
+                <dict:Button Icon="\Resources\Share.png" Text="Share" InternalButtonSize="Medium" Click="shareConversation" />
                 <dict:Button Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Click="deleteConversation"/>
             </StackPanel>
         </DataTemplate>

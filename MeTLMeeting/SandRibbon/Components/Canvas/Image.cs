@@ -737,7 +737,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void uploadFile(object _obj)
         {
-            addResourceFromDisk((files) =>
+            addResourceFromDisk("All files (*.*)|*.*", (files) =>
                                     {
                                         foreach (var file in files)
                                         {
@@ -751,6 +751,11 @@ namespace SandRibbon.Components.Canvas
                 handleDrop(filename, new Point(200, 100), 1);
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
+        {
+            var filter = "Image files(*.jpeg;*.gif;*.bmp;*.jpg;*.png)|*.jpeg;*.gif;*.bmp;*.jpg;*.png|All files (*.*)|*.*";
+            addResourceFromDisk(filter, withResources);
+        }
+        private void addResourceFromDisk(string filter ,Action<IEnumerable<string>> withResources)
         {
             if (target == "presentationSpace" && canEdit && me != "projector")
             {
@@ -767,7 +772,7 @@ namespace SandRibbon.Components.Canvas
                 var fileBrowser = new OpenFileDialog
                                              {
                                                  InitialDirectory = initialDirectory,
-                                                 Filter = "Image files(*.jpeg;*.gif;*.bmp;*.jpg;*.png)|*.jpeg;*.gif;*.bmp;*.jpg;*.png|All files (*.*)|*.*",
+                                                 Filter =filter ,
                                                  FilterIndex = 1,
                                                  RestoreDirectory = true
                                              };
