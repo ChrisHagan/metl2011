@@ -43,17 +43,18 @@ namespace SandRibbon.Utils
                         {
                             //Tell me please that there's a faster way of doing this!
                             var Color = System.Drawing.Color.FromArgb((int)pixels[(y * width) + x]);
-                            if (Color.A == 0)
+                            if (Color.A == 0 || Color.A == 255)
                             {
                                 bitmap.SetPixel(x, y, Color);
                             }
                             else
                             {
+                                var Alpha = Color.A;
                                 double PreMult = Color.A / 255;
                                 var Red = ((byte)(Color.R * PreMult));
                                 var Green = ((byte)(Color.G * PreMult));
                                 var Blue = ((byte)(Color.B * PreMult));
-                                var colorString = new Color { A = (byte)Color.A, R = (byte)Red, G = (byte)Green, B = (byte)Blue }.ToString();
+                                var colorString = new Color { A = (byte)Alpha, R = (byte)Red, G = (byte)Green, B = (byte)Blue }.ToString();
                                 var newColor = (System.Drawing.Color)converter.ConvertFromString(colorString);
                                 bitmap.SetPixel(x, y, newColor);
                             }
@@ -88,6 +89,8 @@ namespace SandRibbon.Utils
             Cursor cursor = null;
             App.Current.Dispatcher.adopt(() =>
             {
+                if (fe.Height < 1) fe.Height = 1;
+                if (fe.Width < 1) fe.Width = 1;
                 var grid = new System.Windows.Controls.Grid
                 {
                     Height = 128,
@@ -122,7 +125,7 @@ namespace SandRibbon.Utils
                     Width = pen.Width,
                     Fill = colour,
                     Stroke = colour,
-                    StrokeThickness = 1,
+                    StrokeThickness = 2,
                     StrokeLineJoin = PenLineJoin.Round,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
