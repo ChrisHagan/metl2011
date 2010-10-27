@@ -757,7 +757,7 @@ namespace MeTLLib.Providers.Connection
         {
             var muc = new MucManager(conn);
             joinRoom(new Jid(room + "@" + metlServerAddress.muc));
-
+/*
             historyProvider.Retrieve<PreParser>(
                 onStart,
                 onProgress,
@@ -773,6 +773,7 @@ namespace MeTLLib.Providers.Connection
                 finishedParser => receiveEvents.receivePreParser(finishedParser),
                 credentials.name,
                 room);
+ */
         }
         public void SneakOutOf(string room)
         {

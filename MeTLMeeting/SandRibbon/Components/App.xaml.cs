@@ -54,15 +54,12 @@ namespace SandRibbon
                 controller.switchServer();
             MeTLLib.ClientFactory.Connection().Connect(finalUsername, password);
         }
-
-        public static void dontDoAnything()
+        public static void noop(object _arg)
         {
         }
-
-        public static void dontDoAnything(int _obj, int _obj2)
+        public static void noop(params object[] args)
         {
         }
-
         public static string Now(string title)
         {
             var now = SandRibbonObjects.DateTimeFactory.Now();

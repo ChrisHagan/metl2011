@@ -30,17 +30,16 @@ namespace SandRibbon.Components
 {
     public partial class PresentationSpace
     {
-        private bool synced = false;
-        private bool joiningConversation;
         public PresentationSpace()
         {
             privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
+            privacyOverlay.Freeze();
             InitializeComponent();
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
             Commands.InternalMoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
+            Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.CreateThumbnail.RegisterCommand(new DelegateCommand<int>(CreateThumbnail));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
@@ -127,7 +126,6 @@ namespace SandRibbon.Components
                 });
                 return;
             }
-            joiningConversation = false;
             try
             {
                 if (Globals.conversationDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
@@ -226,64 +224,24 @@ namespace SandRibbon.Components
         }
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
-            Dispatcher.adoptAsync(() =>
+            stack.handwriting.ReceiveStrokes(parser.ink);
+            stack.images.ReceiveImages(parser.images.Values);
+            foreach (var text in parser.text.Values)
+                stack.text.doText(text);
+            foreach (var video in parser.videos)
             {
-                stack.handwriting.ReceiveStrokes(parser.ink);
-                stack.images.ReceiveImages(parser.images.Values);
-                foreach (var text in parser.text.Values)
-                    stack.text.doText(text);
-                foreach (var video in parser.videos)
-                {
-                    var srVideo = ((MeTLLib.DataTypes.TargettedVideo)video.Value).video;
-                    srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
-                    srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
-                    srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
-                    srVideo.MediaElement.ScrubbingEnabled = true;
-                    stack.images.AddVideo(srVideo);
-                } foreach (var bubble in parser.bubbleList)
-                    stack.ReceiveNewBubble(bubble);
-            });
-            /*
-            Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
-            try
-            {
-                if (parser.location.currentSlide == Globals.location.currentSlide)
-                    if (snapshotTimer == null)
-                        snapshotTimer = new Timer(delegate
-                                                      {
-                                                          Dispatcher.adoptAsync(delegate { snapshot(); });
-                                                      }, null, 600, Timeout.Infinite);
-                    else snapshotTimer.Change(900, Timeout.Infinite);
-            }
-            catch (NotSetException e)
-            {
-            }
-             */
+                var srVideo = ((MeTLLib.DataTypes.TargettedVideo)video.Value).video;
+                srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
+                srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
+                srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
+                srVideo.MediaElement.ScrubbingEnabled = true;
+                stack.images.AddVideo(srVideo);
+            } foreach (var bubble in parser.bubbleList)
+                stack.ReceiveNewBubble(bubble);
+            var size = new Size(ActualWidth, ActualHeight);
+            Measure(size);
+            Arrange(new Rect(size));
         }
-        /*
-        private Timer snapshotTimer;
-        private void snapshot()
-        {
-            foreach (AbstractCanvas ac in stack.canvasStack.Children)
-            {
-                ac.hidePrivateContent();
-            }
-            DelegateCommand<object> thumbnailGenerated = null;
-            thumbnailGenerated = new DelegateCommand<object>(obj =>
-                                 {
-                                     Commands.ThumbnailAvailable.UnregisterCommand(thumbnailGenerated);
-                                     Dispatcher.adoptAsync(() =>
-                                     {
-                                         foreach (AbstractCanvas ac in stack.canvasStack.Children)
-                                         {
-                                             ac.showPrivateContent();
-                                         }
-                                     });
-                                 });
-            Commands.ThumbnailAvailable.RegisterCommand(thumbnailGenerated);
-            Commands.CreateThumbnail.ExecuteAsync(Globals.slide);
-        }
-         */
         private void MirrorPresentationSpace(Window1 parent)
         {
             Dispatcher.adoptAsync(() =>
