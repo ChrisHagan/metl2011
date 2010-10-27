@@ -70,6 +70,9 @@ namespace SandRibbon
             Trace.TraceInformation(s);
             return s;
         }
+        public static string Now(string format, params object[] args) { 
+            return Now(String.Format(format,args));
+        }
         static App()
         {
             Now("Static App start");

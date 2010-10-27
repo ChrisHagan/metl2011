@@ -30,14 +30,9 @@ namespace SandRibbon.Utils
                     if (width < 1) width = 1;
                     if (height < 1) height = 1;
 
-                    var ms = new MemoryStream();
                     var bitmapSource = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Default);
                     bitmapSource.Render(fe);
-                    var encoder = new PngBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-                    encoder.Save(ms);
-                    var bitmap = new System.Drawing.Bitmap(ms);
-/*
+                    
                     var pixels = new UInt32[width * height];
                     bitmapSource.Freeze();
                     bitmapSource.CopyPixels(pixels, width * 4, 0);
@@ -64,7 +59,6 @@ namespace SandRibbon.Utils
                                 bitmap.SetPixel(x, y, newColor);
                             }
                         }       
-  */
                     var handle = bitmap.GetHicon();
                     var icon = System.Drawing.Icon.FromHandle(handle);
                     System.Drawing.Icon.FromHandle(handle).Save(resultStream);

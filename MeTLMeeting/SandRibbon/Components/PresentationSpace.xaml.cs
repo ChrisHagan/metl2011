@@ -243,6 +243,7 @@ namespace SandRibbon.Components
                 } foreach (var bubble in parser.bubbleList)
                     stack.ReceiveNewBubble(bubble);
             });
+            /*
             Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
             try
             {
@@ -257,7 +258,9 @@ namespace SandRibbon.Components
             catch (NotSetException e)
             {
             }
+             */
         }
+        /*
         private Timer snapshotTimer;
         private void snapshot()
         {
@@ -265,7 +268,6 @@ namespace SandRibbon.Components
             {
                 ac.hidePrivateContent();
             }
-            //stack.UpdateLayout();
             DelegateCommand<object> thumbnailGenerated = null;
             thumbnailGenerated = new DelegateCommand<object>(obj =>
                                  {
@@ -281,6 +283,7 @@ namespace SandRibbon.Components
             Commands.ThumbnailAvailable.RegisterCommand(thumbnailGenerated);
             Commands.CreateThumbnail.ExecuteAsync(Globals.slide);
         }
+         */
         private void MirrorPresentationSpace(Window1 parent)
         {
             Dispatcher.adoptAsync(() =>

@@ -6,7 +6,6 @@ using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using SandRibbon.Utils;
-//using SandRibbonObjects;
 using MeTLLib.DataTypes;
 
 namespace SandRibbon.Providers
@@ -15,6 +14,7 @@ namespace SandRibbon.Providers
     {
         public static ImageBrush get(Slide slide)
         {
+            /*
             var directory = Directory.GetCurrentDirectory();
             var unknownSlidePath = directory + "\\Resources\\slide_Not_Loaded.png";
             var path = string.Format(@"{0}\thumbs\{1}\{2}.png", directory, Globals.me, slide.id);
@@ -32,6 +32,11 @@ namespace SandRibbon.Providers
             }
             var imageBrush = new ImageBrush(thumbnailSource);
             return imageBrush;
+             */
+            App.Now("Loading thumbnail for {0}", slide.id);
+            return new ImageBrush(new BitmapImage(new Uri(
+                string.Format("http://spacecaps.adm.monash.edu.au:8080/thumb/{0}?width={1}&height={2}",
+                slide.id, 720, 540))));
         }
         private static BitmapImage loadedCachedImage(string uri)
         {
@@ -52,8 +57,6 @@ namespace SandRibbon.Providers
         }
         public static void ClearThumbnails()
         {
-            //foreach(var file in Directory.GetFiles(string.Format(@"{0}\thumbs", Directory.GetCurrentDirectory())))
-            //    File.Delete(file);
         }
     }
 }
