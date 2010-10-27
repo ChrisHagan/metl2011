@@ -31,15 +31,15 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Button Click="saveFile">
-                        <Button.ToolTip>
-                            <SandRibbonInterop:MeTLImageToolTip ImageSource="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" 
-                                                                TitleText="{Binding Path=filename}"
-                                                                ContentText="{Binding Path=tooltip}"/>
-                        </Button.ToolTip>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" />
-                            <Label Content="{Binding Path=filename}"/>
-                        </StackPanel>
+                            <Button.ToolTip>
+                                <SandRibbonInterop:MeTLImageToolTip ImageSource="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" 
+                                                                    TitleText="{Binding Path=filename}"
+                                                                    ContentText="{Binding Path=tooltip}"/>
+                            </Button.ToolTip>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" />
+                                <Label Content="{Binding Path=filename}"/>
+                            </StackPanel>
                         </Button>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

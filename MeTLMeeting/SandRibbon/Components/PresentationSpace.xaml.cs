@@ -164,12 +164,12 @@ namespace SandRibbon.Components
             string file = "";
             Dispatcher.adopt(() =>
             {
-                var bitmap = new RenderTargetBitmap(size, size, dpi, dpi, PixelFormats.Default);
+                var bitmap = new RenderTargetBitmap((int)this.ActualWidth, (int)this.ActualHeight, dpi, dpi, PixelFormats.Default);
                 var dv = new DrawingVisual();
                 using (var context = dv.RenderOpen())
                 {
                     context.DrawRectangle(new VisualBrush(stack), null,
-                                          new Rect(new Point(), new Size(size, size)));
+                                          new Rect(new Point(), new Size(ActualWidth, ActualHeight)));
                     context.DrawText(new FormattedText(
                                          details.message,
                                          CultureInfo.GetCultureInfo("en-us"),

@@ -404,7 +404,10 @@ namespace SandRibbon
         }
         private void JoinConversation(string title)
         {
+            if(ribbon.SelectedTab!=null)
+                ribbon.SelectedTab = ribbon.Tabs[0];
             var details = Globals.conversationDetails;
+            MeTLLib.ClientFactory.Connection().AsyncRetrieveHistoryOf(Int32.Parse(title));
             RecentConversationProvider.addRecentConversation(details, Globals.me);
             if (details.Author == Globals.me)
                 Commands.SetPrivacy.ExecuteAsync("public");
@@ -546,6 +549,7 @@ namespace SandRibbon
                 if (details != null)
                     HideTutorial();
                 UpdateTitle();
+                
                 this.details = details;
             });
         }

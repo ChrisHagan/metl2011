@@ -195,16 +195,18 @@ namespace SandRibbon.Quizzing
                                 Dispatcher.adopt(() =>
                                 {
                                     Commands.ScreenshotGenerated.UnregisterCommand(gotScreenshot);
-                                    url = hostedFilename;
+                                    
+                                    url = MeTLLib.ClientFactory.Connection().NoAuthUploadResource(new Uri(hostedFilename, UriKind.RelativeOrAbsolute), Int32.Parse(Globals.conversationDetails.Jid)).ToString();
                                     var image = new Image();
                                     BitmapImage source = new BitmapImage();
                                     source.BeginInit();
-                                    source.UriSource = new Uri(hostedFilename);
+                                    source.UriSource = new Uri(url);
                                     source.EndInit();
                                     image.Source = source;
                                     image.Width = 300;
                                     image.Height = 300;
                                     questionSnapshotContainer.Children.Add(image);
+                                    screenshot.Visibility = Visibility.Collapsed;
                                     var slide = Globals.slides.Where(s => s.id == Globals.slide).First();
                                     quizTitle.Text = string.Format("Quiz referencing slide {0}", slide.index + 1);
                                 });

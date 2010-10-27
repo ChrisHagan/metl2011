@@ -46,7 +46,7 @@ namespace SandRibbon.Tabs
             attachments.ItemsSource = files;
             Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.JoinConversation.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(JoinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
         }
 
         private void JoinConversation(object obj)
@@ -72,7 +72,7 @@ namespace SandRibbon.Tabs
                                                          fileImage = getFileImage(unMangledFileUri),
                                                          uploadTime =fileInfo.uploadTime, 
                                                          size = fileInfo.size,
-                                                         tooltip = string.Format("Type: {0}\nAuthor: {1}\nUpload Time:{2}\nSize {3:0.00}mb", getFileType(unMangledFileUri), fileInfo.author, fileInfo.uploadTime, fileInfo.size / 1048576.0) 
+                                                         tooltip = string.Format("Type: {0}\nAuthor: {1}\nUpload Time:{2}\nSize {3:0.00}mb", getFileType(unMangledFileUri), fileInfo.author, new DateTime(long.Parse(fileInfo.uploadTime)), fileInfo.size / 1048576.0) 
                                                      }));
         }
 
@@ -187,6 +187,8 @@ namespace SandRibbon.Tabs
                 case "Excel":
                     return "\\resources\\mimeTypes\\spreadsheet.png";
                 case "PNG":
+                    return "\\resources\\mimeTypes\\image.png";
+                case "JPG":
                     return "\\resources\\mimeTypes\\image.png";
                 case "GIF":
                     return "\\resources\\mimeTypes\\image.png";
