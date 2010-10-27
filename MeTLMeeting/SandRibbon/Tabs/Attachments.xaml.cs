@@ -46,7 +46,7 @@ namespace SandRibbon.Tabs
             attachments.ItemsSource = files;
             Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
         }
 
         private void JoinConversation(object obj)

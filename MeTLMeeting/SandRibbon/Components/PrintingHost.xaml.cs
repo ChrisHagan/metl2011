@@ -16,20 +16,7 @@ namespace SandRibbon.Components
         public PrintingHost()
         {
             InitializeComponent();
-            Commands.ThumbnailGenerated.RegisterCommandToDispatcher<UnscaledThumbnailData>(new DelegateCommand<UnscaledThumbnailData>(ThumbnailGenerated));
             Commands.QuizResultsAvailableForSnapshot.RegisterCommandToDispatcher(new DelegateCommand<UnscaledThumbnailData>(QuizResultsGenerated));
-        }
-        private void ThumbnailGenerated(UnscaledThumbnailData thumbData)
-        {
-            var bitmap = BitmapFrame.Create(thumbData.data);
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(bitmap);
-            var stream = new MemoryStream();
-            encoder.Save(stream);
-            var frombitmap = new Bitmap(stream);
-            stream.Close();
-            saveUnscaledBitmapToDisk(ThumbnailPath(thumbData.id), frombitmap);
-            Commands.ThumbnailAvailable.ExecuteAsync(thumbData.id);
         }
         private void QuizResultsGenerated(UnscaledThumbnailData quizData)
         {

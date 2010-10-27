@@ -40,7 +40,6 @@ namespace SandRibbon.Components
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
-            Commands.CreateThumbnail.RegisterCommand(new DelegateCommand<int>(CreateThumbnail));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
@@ -188,18 +187,6 @@ namespace SandRibbon.Components
                 }
             });
             return file;
-        }
-        private void CreateThumbnail(int id)
-        {
-            try
-            {
-                var bitmap = generateCapture(512);
-                Commands.ThumbnailGenerated.ExecuteAsync(new UnscaledThumbnailData { id = Globals.location.currentSlide, data = bitmap });
-            }
-            catch (OverflowException)
-            {
-                //The image is too large to thumbnail.  Just leave it be.
-            }
         }
         private Rect measureToAspect(double width, double height, double max)
         {

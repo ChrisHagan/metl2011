@@ -338,14 +338,12 @@ namespace SandRibbon.Components
         {
             conversationNameTextBox.SelectAll();
         }
-
         internal void Import()
         {
-
+            if (importFile == null) return;
              dialogMode = ConversationConfigurationMode.IMPORT;
              importType = PowerPointLoader.PowerpointImportType.Image;
              var suggestedName = generatePresentationTitle(ConversationDetails.DefaultName(Globals.me), importFile );
-
              details = new ConversationDetails
                     (suggestedName, "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
             if (checkConversation(details))

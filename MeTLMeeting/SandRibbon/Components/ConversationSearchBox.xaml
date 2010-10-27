@@ -69,9 +69,8 @@
         </DataTemplate>
         <DataTemplate x:Key="viewing">
             <StackPanel Orientation="Horizontal">
-                
-                <Button Command="{x:Static api:Commands.HideConversationSearchBox}" Margin="-58 0 0 0" Width="58" MaxHeight="58">
-                    <Image HorizontalAlignment="Left" VerticalAlignment="Bottom" Source="/Resources/Back_arrow_black.png" Visibility="{Binding Converter={x:Static components:ConversationSearchBox.hideIfNotCurrentConversation}}"/>
+                <Button Command="{x:Static api:Commands.HideConversationSearchBox}" Margin="-58 0 0 0" Width="58" MaxHeight="58" Visibility="{Binding Converter={x:Static components:ConversationSearchBox.hideIfNotCurrentConversation}}">
+                    <Image HorizontalAlignment="Left" VerticalAlignment="Bottom" Source="/Resources/Back_arrow_black.png" />
                 </Button> 
                 <Border BorderBrush="Gray" CornerRadius="3" BorderThickness="1" MinWidth="600" Padding="3" Margin="0 10 0 0">
                     <Grid> 

@@ -192,8 +192,6 @@ namespace SandRibbon
         public static RoutedCommand CloseApplication = new RoutedCommand();
         public static CompositeCommand SetLayer = new CompositeCommand();
         public static CompositeCommand SetTutorialVisibility = new CompositeCommand();
-        public static CompositeCommand CreateThumbnail = new CompositeCommand();
-        public static CompositeCommand ThumbnailGenerated = new CompositeCommand();
         public static CompositeCommand ThumbnailAvailable = new CompositeCommand();
         public static CompositeCommand UpdateForeignConversationDetails = new CompositeCommand();
         public static CompositeCommand RememberMe = new CompositeCommand();

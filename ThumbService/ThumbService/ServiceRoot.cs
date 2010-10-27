@@ -17,6 +17,7 @@ using System.Windows.Threading;
 using Kayak;
 using Kayak.Framework;
 using System.Net;
+using System.ServiceProcess;
 
 namespace ThumbService
 {
@@ -25,29 +26,28 @@ namespace ThumbService
         public int width;
         public int height;
     }
-    public class ServiceRoot : KayakService
+    public class ThumbService : KayakService
     {
+        public static KayakServer server;
         private static Dictionary<RequestInfo, byte[]> cache = new Dictionary<RequestInfo, byte[]>();
         private static ClientConnection client = ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
         public static void Main(string[] _args)
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
-            var server = new KayakServer();
+            server = new KayakServer();
             server.UseFramework();
             server.Start(); 
             client.events.StatusChanged += (sender, args) => Trace.TraceInformation("Status changed: {0}", args.isConnected);
             client.Connect("eecrole", "m0nash2008");
-            Trace.TraceInformation("Don't press anything or I'll die.  I'm serious.  I'll just die."); 
             Console.ReadLine();
-            Trace.TraceInformation("Oh god why");
-            server.Stop(); 
         }
         [Path("/thumb/{slide}")]
         public void Thumb(int slide, int width, int height){
-            var requestInfo = new RequestInfo { 
-                slide=slide,
-                width=width,
-                height=height
+            var requestInfo = new RequestInfo
+            {
+                slide = slide,
+                width = width,
+                height = height
             };
             var image = cache.ContainsKey(requestInfo) ?
                 cache[requestInfo] : createImage(requestInfo);
@@ -56,8 +56,11 @@ namespace ThumbService
         }
         private byte[] parserToInkCanvas(PreParser parser, RequestInfo info) { 
             ManualResetEvent waitHandler = new ManualResetEvent(false);
-            byte[] result = null;
-            var staThread = new Thread(new ParameterizedThreadStart(delegate{
+            byte[] result = new byte[0];
+            var staThread = new Thread(new ParameterizedThreadStart(delegate
+            {
+                try
+                {
                     var canvas = new InkCanvas();
                     parser.Populate(canvas);
                     var viewBox = new Viewbox();
@@ -78,9 +81,13 @@ namespace ThumbService
                     {
                         encoder.Save(stream);
                         result = stream.ToArray();
-                        waitHandler.Set();
                     }
-                }));
+                }
+                catch (Exception) {}
+                finally { 
+                    waitHandler.Set();
+                }
+            }));
             staThread.SetApartmentState(ApartmentState.STA);
             staThread.Start();
             waitHandler.WaitOne();

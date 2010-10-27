@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThumbService", "ThumbServic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLib", "..\MeTLMeeting\MeTLLib\MeTLLib.csproj", "{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupThumbService", "SetupThumbService\SetupThumbService.vdproj", "{962F280E-2453-42A6-AAF9-47336B036BA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,8 @@ Global
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{962F280E-2453-42A6-AAF9-47336B036BA0}.Debug|Any CPU.ActiveCfg = Debug
+		{962F280E-2453-42A6-AAF9-47336B036BA0}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

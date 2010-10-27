@@ -102,7 +102,6 @@ namespace SandRibbon
         private void LogOut(object _Unused)
         {
             WorkspaceStateProvider.ClearSettings();
-            ThumbnailProvider.ClearThumbnails();
             Application.Current.Shutdown();
         }
         protected override void OnStartup(StartupEventArgs e)
