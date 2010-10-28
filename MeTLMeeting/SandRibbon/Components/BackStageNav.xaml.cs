@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {
@@ -22,12 +23,25 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
+            Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(updateDetails));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(updateDetails));
         }
+        private void updateDetails(ConversationDetails details)
+        {
+            if (details.Subject.ToLower() == "deleted" && details.Jid == Globals.location.activeConversation)
+            {
+                current.Visibility = Visibility.Collapsed;
+                currentConversation.Visibility = Visibility.Collapsed;
+                separator2.Visibility = Visibility.Collapsed;
+                all.IsChecked = true;
+            }
+        }
+        
         private void ShowConversationSearchBox(object mode)
         {
             if (String.IsNullOrEmpty(Globals.location.activeConversation))
             {
-                current.Visibility = Visibility.Collapsed;
+               current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
             }

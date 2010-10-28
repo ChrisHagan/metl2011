@@ -26,12 +26,17 @@ namespace SandRibbon.Components
             this.conversations.ItemsSource = new List<ConversationDetails>();
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>((_details) => {}, doesConversationAlreadyExist));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(RedrawList));
-            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(
-                (_arg) => 
-                    List(MeTLLib.ClientFactory.Connection().AvailableConversations),
-                details=>
-                    rawConversationList.Where(c=>c.Title == details.Title || string.IsNullOrEmpty(details.Title)).Count() == 0));
+            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateForeignConversationDetails, canUpdateForeignConversationDetails));
             RedrawList(null);
+        }
+        private void updateForeignConversationDetails(ConversationDetails _obj)
+        {
+            List(MeTLLib.ClientFactory.Connection().AvailableConversations);
+        }
+
+        private bool canUpdateForeignConversationDetails(ConversationDetails details)
+        {
+            return rawConversationList.Where(c=>c.Title == details.Title || string.IsNullOrEmpty(details.Title)).Count() == 0;
         }
         private bool doesConversationAlreadyExist(object obj)
         {
