@@ -82,7 +82,7 @@ namespace SandRibbon
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(OriginalView, conversationSearchMustBeClosed));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
@@ -98,7 +98,6 @@ namespace SandRibbon
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
-            Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(OriginalView));
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rectangle>(SetZoomRect));
             Commands.ChangePenSize.RegisterCommand(new DelegateCommand<object>(AdjustPenSizeAccordingToZoom));
@@ -404,6 +403,10 @@ namespace SandRibbon
             if(ribbon.SelectedTab!=null)
                 ribbon.SelectedTab = ribbon.Tabs[0];
             var details = Globals.conversationDetails;
+            scroll.Width = Double.NaN;
+            scroll.Height = Double.NaN;
+            canvas.Width = Double.NaN;
+            canvas.Height = Double.NaN;
             MeTLLib.ClientFactory.Connection().AsyncRetrieveHistoryOf(Int32.Parse(title));
             RecentConversationProvider.addRecentConversation(details, Globals.me);
             if (details.Author == Globals.me)
@@ -414,8 +417,6 @@ namespace SandRibbon
             Logger.Log("Joined conversation " + title);
             Commands.RequerySuggested(Commands.SetConversationPermissions);
             Commands.SetLayer.ExecuteAsync("Sketch");
-            if (automatedTest(details.Title))
-                ribbon.SelectedTab = ribbon.Tabs[1];
         }
 
         private bool automatedTest(string conversationName)
@@ -693,7 +694,7 @@ namespace SandRibbon
             var scrollRatio = scroll.ActualWidth / scroll.ActualHeight;
             if (oldSize.Height == newSize.Height)
             {
-                if (scroll.ActualHeight * cvRatio > scroll.ExtentWidth)
+                if (scroll.ActualHeight * cvRatio > scroll.ExtentWidth && !Double.IsNaN(scroll.Width))
                 {
                     scroll.Width = scroll.ExtentWidth;
                     return;
@@ -701,7 +702,7 @@ namespace SandRibbon
                 scroll.Width = scroll.ActualHeight * cvRatio;
                 return;
             }
-            if (oldSize.Width == newSize.Width)
+            if (oldSize.Width == newSize.Width && !Double.IsNaN(scroll.Height))
             {
                 if (scroll.ActualWidth / cvRatio > scroll.ExtentHeight)
                 {
@@ -711,13 +712,13 @@ namespace SandRibbon
                 scroll.Height = scroll.ActualWidth / cvRatio;
                 return;
             }
-            if (scrollRatio > cvRatio)
+            if (scrollRatio > cvRatio && !Double.IsNaN(scroll.Width))
             {
                 var newWidth = scroll.ActualHeight * cvRatio;
                 scroll.Width = newWidth;
                 return;
             }
-            if (scrollRatio < cvRatio)
+            if (scrollRatio < cvRatio && !Double.IsNaN(scroll.Height))
             {
                 var newHeight = scroll.Width / cvRatio;
                 scroll.Height = newHeight;

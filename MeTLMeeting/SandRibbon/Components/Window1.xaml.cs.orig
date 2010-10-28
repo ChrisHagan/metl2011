@@ -17,7 +17,6 @@ using SandRibbon.Quizzing;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
-//using SandRibbonObjects;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 using System.Windows.Shapes;
@@ -38,13 +37,9 @@ namespace SandRibbon
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
         #endregion
-        //public JabberWire.UserInformation userInformation = new JabberWire.UserInformation();
-        private DelegateCommand<string> powerpointProgress;
-        private DelegateCommand<string> powerPointFinished;
         private PowerPointLoader loader = new PowerPointLoader();
         private UndoHistory history = new UndoHistory();
-        public ConversationDetails details;
-        private MeTLLib.Providers.Connection.JabberWire wire;
+        public ConversationDetails details = null;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
         public static ScrollViewer MAIN_SCROLL;
@@ -71,8 +66,6 @@ namespace SandRibbon
             catch (Exception) { }
             Globals.userInformation.policy = new Policy(false, false);
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
-            //Commands.ConnectWithAuthenticatedCredentials.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(ConnectWithAuthenticatedCredentials));
-            //Commands.PowerpointFinished.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
@@ -87,12 +80,9 @@ namespace SandRibbon
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
             Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
-            Commands.TogglePens.RegisterCommandToDispatcher(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.TogglePens.RegisterCommandToDispatcher(new DelegateCommand<object>(noop, mustBeInConversation));
-            Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<object>(noop, mustBeInConversation));
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(OriginalView, conversationSearchMustBeClosed));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
@@ -101,7 +91,6 @@ namespace SandRibbon
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(ProxyMirrorPresentationSpace));
-            Commands.ReceiveWormMove.RegisterCommand(new DelegateCommand<string>(ReceiveWormMove));
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
             Commands.AddWindowEffect.RegisterCommand(new DelegateCommand<object>(AddWindowEffect));
             Commands.RemoveWindowEffect.RegisterCommand(new DelegateCommand<object>(RemoveWindowEffect));
@@ -109,13 +98,12 @@ namespace SandRibbon
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
-            Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(OriginalView));
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rectangle>(SetZoomRect));
             Commands.ChangePenSize.RegisterCommand(new DelegateCommand<object>(AdjustPenSizeAccordingToZoom));
             Commands.UpdateCursorWithAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(UpdateCursorWithAttributes));
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustDrawingAttributesAccordingToZoom));
-            Commands.ActualReportDrawingAttributes.RegisterCommand(new DelegateCommand<object>(ActualReportDrawingAttributes, mustBeInConversation));
+            Commands.ActualReportDrawingAttributes.RegisterCommand(new DelegateCommand<object>(ActualReportDrawingAttributes));
             Commands.ActualReportStrokeAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedStrokeAttributesAccordingToZoom));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
             Commands.ShowEditSlidesDialog.RegisterCommand(new DelegateCommand<object>(ShowEditSlidesDialog, mustBeInConversation));
@@ -127,7 +115,7 @@ namespace SandRibbon
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox, mustBeInConversation));
+            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
@@ -136,7 +124,6 @@ namespace SandRibbon
             Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
-
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -265,39 +252,8 @@ namespace SandRibbon
                 if (((RibbonTab)tab).Text == which)
                     ribbon.SelectedTab = (RibbonTab)tab;
         }
-        private double lastScrollHeight = 0.0;
-        private double lastScrollWidth = 0.0;
-        private double lastCanvasViewBoxHeight = 0.0;
-        private double lastCanvasViewBoxWidth = 0.0;
-        private bool shouldRecalculateZoomBox
-        {
-            get
-            {
-                if (lastScrollHeight == scroll.ActualHeight &&
-                    lastScrollWidth == scroll.ActualWidth &&
-                    lastCanvasViewBoxHeight == canvasViewBox.ActualHeight &&
-                    lastCanvasViewBoxWidth == canvasViewBox.ActualWidth) return false;
-                lastScrollHeight = scroll.ActualHeight;
-                lastScrollWidth = scroll.ActualWidth;
-                lastCanvasViewBoxHeight = canvasViewBox.ActualHeight;
-                lastCanvasViewBoxWidth = canvasViewBox.ActualWidth;
-                return true;
-            }
-        }
-        private DrawingAttributes lastAttributes;
-        private bool shouldRecalculateAttributes(DrawingAttributes attributes)
-        {
-            if (lastAttributes != null &&
-                lastAttributes.Color.ToString() == attributes.Color.ToString() &&
-                lastAttributes.Width.ToString() == attributes.Width.ToString() &&
-                lastAttributes.Height.ToString() == attributes.Height.ToString() &&
-                lastAttributes.IsHighlighter.ToString() == attributes.IsHighlighter.ToString()) return false;
-            lastAttributes = attributes.Clone();
-            return true;
-        }
         private void ActualReportDrawingAttributes(object attributes)
         {
-            if (!shouldRecalculateZoomBox && !shouldRecalculateAttributes((DrawingAttributes)attributes)) return;
             var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
             if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN)
                 return;
@@ -307,25 +263,15 @@ namespace SandRibbon
             var desiredZoom = zoomIndependentAttributes.Height / currentZoom;
             zoomIndependentAttributes.Height = correctZoom(desiredZoom);
             zoomIndependentAttributes.Width = correctZoom(desiredZoom);
-            try
-            {
-                if (!(zoomIndependentAttributes.Equals(Commands.UpdateCursorWithAttributes.lastValue())))
-                    Commands.UpdateCursorWithAttributes.ExecuteAsync(zoomIndependentAttributes);
-            }
-            catch (NotSetException e) {
-                Commands.UpdateCursorWithAttributes.ExecuteAsync(zoomIndependentAttributes);
-            }
-            try
-            {
-                if (!(zoomIndependentAttributes.Equals(Commands.ReportDrawingAttributes.lastValue())))
-                    Commands.ReportDrawingAttributes.ExecuteAsync(zoomIndependentAttributes);
-            }
-            catch (NotSetException e) {
-                Commands.ReportDrawingAttributes.ExecuteAsync(zoomIndependentAttributes);
-            }
+            Commands.UpdateCursorWithAttributes.ExecuteAsync(zoomIndependentAttributes);
+            Commands.ReportDrawingAttributes.ExecuteAsync(zoomIndependentAttributes);
         }
+//        private DrawingAttributes previousAttributes;
         private void UpdateCursorWithAttributes(DrawingAttributes attributes)
         {
+//            if (previousAttributes != null && attributes.Equals(previousAttributes))
+//                return;
+//            previousAttributes = attributes;
             Commands.UpdateCursor.ExecuteAsync(CursorExtensions.generateCursor(attributes));
         }
         private void AdjustReportedStrokeAttributesAccordingToZoom(object attributes)
@@ -370,7 +316,6 @@ namespace SandRibbon
         }
         private void AdjustDrawingAttributesAccordingToZoom(object attributes)
         {
-            if (!shouldRecalculateZoomBox && !shouldRecalculateAttributes((DrawingAttributes)attributes)) return;
             var zoomCorrectAttributes = ((DrawingAttributes)attributes).Clone();
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
             var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
@@ -448,35 +393,9 @@ namespace SandRibbon
             Dispatcher.adoptAsync(() =>
             CanvasBlocker.Visibility = Visibility.Collapsed);
         }
-        private void ReceiveWormMove(string _move)
-        {
-            if (!reconnecting) return;
-            lock (reconnectionLock)
-            {
-                Logger.Log("Window1.ReceiveWormMove: Window 1 initiating move in reconnect");
-                Dispatcher.adopt((Action)delegate
-                {
-                    try
-                    {
-                        if (InputBlocker.Visibility == Visibility.Visible)
-                        {
-                            InputBlocker.Visibility = Visibility.Collapsed;
-                            reconnecting = false;
-                            wire.JoinConversation(Globals.userInformation.location.activeConversation);
-                            Commands.MoveTo.ExecuteAsync(Globals.userInformation.location.currentSlide);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Log(string.Format("Receive worm move problem in Window1: {0}", e.Message));
-                    }
-                });
-            }
-        }
         private void ExecuteMoveTo(int slide)
         {
             MoveTo(slide);
-            // ProviderMonitor.HealthCheck(() => MoveTo(slide));
         }
         private bool CanExecuteMoveTo(int slide)
         {
@@ -484,7 +403,14 @@ namespace SandRibbon
         }
         private void JoinConversation(string title)
         {
+            if(ribbon.SelectedTab!=null)
+                ribbon.SelectedTab = ribbon.Tabs[0];
             var details = Globals.conversationDetails;
+            scroll.Width = Double.NaN;
+            scroll.Height = Double.NaN;
+            canvas.Width = Double.NaN;
+            canvas.Height = Double.NaN;
+            MeTLLib.ClientFactory.Connection().AsyncRetrieveHistoryOf(Int32.Parse(title));
             RecentConversationProvider.addRecentConversation(details, Globals.me);
             if (details.Author == Globals.me)
                 Commands.SetPrivacy.ExecuteAsync("public");
@@ -494,8 +420,6 @@ namespace SandRibbon
             Logger.Log("Joined conversation " + title);
             Commands.RequerySuggested(Commands.SetConversationPermissions);
             Commands.SetLayer.ExecuteAsync("Sketch");
-            if (automatedTest(details.Title))
-                ribbon.SelectedTab = ribbon.Tabs[1];
         }
 
         private bool automatedTest(string conversationName)
@@ -593,17 +517,19 @@ namespace SandRibbon
 
         private bool mustBeInConversation(object _arg)
         {
+            ConversationDetails details;
             try
             {
-                if (Globals.location.activeConversation != null && Globals.conversationDetails.Subject != "Deleted" && Globals.conversationDetails.Jid != "")
-                    return true;
-                return false;
-
+                details = Globals.conversationDetails;
             }
             catch (NotSetException)
             {
                 return false;
             }
+            if (details == null) return false;
+            if(details.Subject != "Deleted" && details.Jid != "")
+                    return true;
+            return false;
         }
         private bool mustBeAuthor(object _arg)
         {
@@ -620,9 +546,12 @@ namespace SandRibbon
         {
             Dispatcher.adoptAsync(delegate
             {
+
                 if (details != null)
                     HideTutorial();
                 UpdateTitle();
+                
+                this.details = details;
             });
         }
         private void UpdateTitle()
@@ -766,6 +695,7 @@ namespace SandRibbon
             var cvWidth = adornerGrid.ActualWidth;
             var cvRatio = cvWidth / cvHeight;
             var scrollRatio = scroll.ActualWidth / scroll.ActualHeight;
+            if (Double.IsNaN(scroll.Height) || Double.IsNaN(scroll.Width)) return;
             if (oldSize.Height == newSize.Height)
             {
                 if (scroll.ActualHeight * cvRatio > scroll.ExtentWidth)
