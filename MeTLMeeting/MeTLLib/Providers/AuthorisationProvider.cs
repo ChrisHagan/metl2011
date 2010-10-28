@@ -8,6 +8,8 @@ using System.DirectoryServices;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 using Ninject;
+using System.Text;
+using System.Xml.Linq;
 
 namespace MeTLLib.Providers
 {
@@ -21,8 +23,6 @@ namespace MeTLLib.Providers
         }
         public List<AuthorizedGroup> getEligibleGroups(string AuthcateName, string AuthcatePassword)
         {
-            //if (AuthcateName.StartsWith(BackDoor.USERNAME_PREFIX)) 
-            //    return new List<JabberWire.AuthorizedGroup> { new JabberWire.AuthorizedGroup("Artificial person", ""),new JabberWire.AuthorizedGroup("Unrestricted", ""), new JabberWire.AuthorizedGroup(AuthcateName, "")  };
             var groups = new List<AuthorizedGroup>();
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
             string sXML = insecureGetString(new System.Uri(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, server.host)));
@@ -79,9 +79,19 @@ namespace MeTLLib.Providers
         {
             try
             {
-                var resource = String.Format("https://my.monash.edu.au/login?username={0}&password={1}", username, password);
-                String test = insecureGetString(new System.Uri(resource));
-                return !test.Contains("error-text");
+                var resource = "https://my.monash.edu.au/login";
+                var queryParams = new System.Collections.Specialized.NameValueCollection();
+                queryParams.Add("username", username);
+                queryParams.Add("password", password);
+                queryParams.Add("access", "authcate");
+                String test = Encoding.UTF8.GetString(new System.Net.WebClient().UploadValues(new Uri(resource), queryParams));
+                var xml = XElement.Parse(test);
+                XNamespace ns = "http://www.w3.org/1999/xhtml";
+                var predicate = ns + "title";
+                foreach (var descendant in xml.Descendants(predicate))
+                    if (descendant.Value == "Logged in")
+                        return true;
+                return false;
             }
             catch (Exception e)
             {

@@ -684,7 +684,7 @@ namespace SandRibbon
         }
         private void adornerGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            FixCanvasAspectAfterWindowSizeChanges(e.PreviousSize, e.NewSize);
+            //FixCanvasAspectAfterWindowSizeChanges(e.PreviousSize, e.NewSize);
         }
         private void FixCanvasAspectAfterWindowSizeChanges(System.Windows.Size oldSize, System.Windows.Size newSize)
         {

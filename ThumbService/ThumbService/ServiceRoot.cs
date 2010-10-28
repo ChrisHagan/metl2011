@@ -41,6 +41,12 @@ namespace ThumbService
             client.Connect("eecrole", "m0nash2008");
             Console.ReadLine();
         }
+        [Path("/forget/{slide}")]
+        public void Forget(int slide) {
+            var memoKeys = cache.Keys.Where(k => k.slide == slide);
+            foreach (var key in memoKeys)
+                cache.Remove(key);
+        }
         [Path("/thumb/{slide}")]
         public void Thumb(int slide, int width, int height){
             var requestInfo = new RequestInfo
