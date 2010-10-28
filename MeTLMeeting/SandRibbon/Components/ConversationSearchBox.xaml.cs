@@ -129,7 +129,7 @@ namespace SandRibbon.Components
             clearState();
             this.Visibility = Visibility.Visible;
             Commands.RequerySuggested();
-            slideOut();
+            //slideOut();
         }
         private void slideOut()
         {
@@ -139,8 +139,8 @@ namespace SandRibbon.Components
                 {
                     VerticalAlignment = VerticalAlignment.Top;
                     HorizontalAlignment = HorizontalAlignment.Left;
-                    slidePropertyOut(FrameworkElement.WidthProperty, this.ActualWidth);
-                    slidePropertyOut(FrameworkElement.HeightProperty, this.ActualHeight);
+                    slidePropertyOut(FrameworkElement.WidthProperty, Application.Current.Windows[0].ActualWidth);
+                    slidePropertyOut(FrameworkElement.HeightProperty, Application.Current.Windows[0].ActualHeight - 80);
                 }
             });
         }
