@@ -253,7 +253,7 @@ namespace SandRibbon.Components
         { Commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }
         private void statusChanged(object sender, StatusChangedEventArgs e)
         {
-            if (e.isConnected)
+            if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
             {
                 Commands.AllStaticCommandsAreRegistered();
                 Commands.SetIdentity.ExecuteAsync(e.credentials);

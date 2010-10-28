@@ -105,7 +105,6 @@ namespace MeTLLib.Providers
             if (String.IsNullOrEmpty(password)) throw new ArgumentNullException("password", "Argument cannot be null");
             string AuthcateUsername = username;
             string AuthcatePassword = password;
-
             if (authenticateAgainstFailoverSystem(AuthcateUsername, AuthcatePassword) || isBackdoorUser(AuthcateUsername))
             {
                 var eligibleGroups = getEligibleGroups(AuthcateUsername, AuthcatePassword);

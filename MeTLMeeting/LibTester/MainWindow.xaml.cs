@@ -189,7 +189,7 @@ namespace LibTester
         }
         private void attemptToAuthenticate(object sender, RoutedEventArgs e)
         {
-            client.Connect(username.Text, password.Password);
+            var succeeded = client.Connect(username.Text, password.Password).authorizedGroups.Count() > 0;
         }
         private void setup()
         {

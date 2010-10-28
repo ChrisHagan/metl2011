@@ -14,6 +14,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using System.Security;
 using System.Diagnostics;
+using MeTLLib.DataTypes;
 
 [assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -24,7 +25,7 @@ namespace SandRibbon
         public static NetworkController controller;
         public static bool isStaging = false;
         public static DateTime AccidentallyClosing = DateTime.Now;
-        public static void Login(String username, String password)
+        public static Credentials Login(String username, String password)
         {
             string finalUsername = username;
             if (username.Contains("_"))
@@ -52,7 +53,7 @@ namespace SandRibbon
                 controller = new NetworkController();
             else
                 controller.switchServer();
-            MeTLLib.ClientFactory.Connection().Connect(finalUsername, password);
+            return MeTLLib.ClientFactory.Connection().Connect(finalUsername, password);
         }
         public static void noop(object _arg)
         {

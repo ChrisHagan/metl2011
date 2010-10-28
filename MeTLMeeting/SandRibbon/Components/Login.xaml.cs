@@ -50,7 +50,7 @@ namespace SandRibbon.Components
             Commands.AddWindowEffect.ExecuteAsync(null);
             Version = ConfigurationProvider.instance.getMetlVersion();
             App.Now(string.Format("The Version of MeTL is -> {0}", Version));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
             if (WorkspaceStateProvider.savedStateExists())
             {
@@ -77,10 +77,9 @@ namespace SandRibbon.Components
         }
         private void attemptAuthentication(object sender, ExecutedRoutedEventArgs e)
         {
-
             App.Login(username.Text, password.Password);
         }
-        private void SetIdentity(object _args)
+        private void SetIdentity(Credentials identity)
         {
             Commands.RemoveWindowEffect.ExecuteAsync(null);
             Commands.ShowConversationSearchBox.ExecuteAsync(null);
