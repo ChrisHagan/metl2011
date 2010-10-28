@@ -129,20 +129,6 @@ namespace SandRibbon.Components
             clearState();
             this.Visibility = Visibility.Visible;
             Commands.RequerySuggested();
-            //slideOut();
-        }
-        private void slideOut()
-        {
-            Dispatcher.adoptAsync(() =>
-            {
-                if (this.ActualWidth > 0)
-                {
-                    VerticalAlignment = VerticalAlignment.Top;
-                    HorizontalAlignment = HorizontalAlignment.Left;
-                    slidePropertyOut(FrameworkElement.WidthProperty, Application.Current.Windows[0].ActualWidth);
-                    slidePropertyOut(FrameworkElement.HeightProperty, Application.Current.Windows[0].ActualHeight - 80);
-                }
-            });
         }
         private void slidePropertyOut(DependencyProperty property, double limit)
         {
