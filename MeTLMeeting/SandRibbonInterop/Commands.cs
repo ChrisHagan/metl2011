@@ -325,17 +325,23 @@ namespace SandRibbon
     }
     public static class CommandExtensions
     {
-        private static Dispatcher dispatcher = Application.Current.Dispatcher; 
         public static void ExecuteAsync(this CompositeCommand command, object arg) {
             if(command.CanExecute(arg))
                 command.Execute(arg);
         }
         public static void RegisterCommandToDispatcher<T>(this CompositeCommand command, DelegateCommand<T> handler) {
-            command.RegisterCommand(new DelegateCommand<T>(arg=>
-                dispatcher.BeginInvoke((Action)delegate { 
+            var dispatcher = Application.Current.Dispatcher; 
+            command.RegisterCommand(new DelegateCommand<T>(arg=>{
+                if (!dispatcher.CheckAccess())
+                    dispatcher.Invoke((Action)delegate
+                    {
+                        if (handler.CanExecute(arg))
+                            handler.Execute(arg);
+                    });
+                else
                     if (handler.CanExecute(arg))
-                        handler.Execute(arg); 
-                }), handler.CanExecute));
+                        handler.Execute(arg);
+                }, handler.CanExecute));
         } 
     }
 }
