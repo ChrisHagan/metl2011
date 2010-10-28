@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Diagnostics;
 
 namespace SandRibbon.Utils
 {
@@ -12,26 +13,12 @@ namespace SandRibbon.Utils
         {/*Interesting quirk about the formatting: \n is the windows line ending but ruby assumes
           *nix endings, which are \r.  Safest to use both, I guess.*/
             var now = SandRibbonObjects.DateTimeFactory.Now();
-            lock(Logger.logLock)
-                log = string.Format("{0}{1}.{2}: {3}\r\n", log, now, now.Millisecond, appendThis); 
+            Trace.TraceInformation("{0}{1}.{2}: {3}\r\n", log, now, now.Millisecond, appendThis); 
         }
         public static void Log(string format, params object[] args)
         {
             var s = string.Format(format, args);
             Log(s);
-        }
-        public static void Dump()
-        {
-            try
-            {
-                using (var stream = new FileStream(logDump, FileMode.Append, FileAccess.Write))
-                using (var writer = new StreamWriter(stream))
-                    writer.Write(log);
-            }
-            catch (Exception)
-            {
-                //Mm.
-            }
         }
     }
 }
