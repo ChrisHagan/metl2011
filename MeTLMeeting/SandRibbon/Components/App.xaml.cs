@@ -118,10 +118,15 @@ namespace SandRibbon
             new CommandParameterProvider();
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(LogOut));
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
+            Application.Current.Exit += new ExitEventHandler(Current_Exit);
         }
-        void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        void Current_Exit(object sender, ExitEventArgs e)
         {
+            Commands.LeaveAllRooms.Execute(null);
+        }
+        void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e){
             Logger.Log(e.Exception.Message);
+            Commands.LeaveAllRooms.Execute(null);
             MessageBox.Show(string.Format("MeTL has encountered an unexpected error and has to close:{0}\n{1} ",
                 e.Exception.Message,
                 e.Exception.InnerException == null ?

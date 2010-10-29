@@ -56,7 +56,7 @@
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                 VerticalAlignment="Bottom" 
                                                 BorderThickness="1">
-                                            <Label Content="{Binding Path=slideNumber}"/>
+                                            <Label Content="{Binding Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
                                         </Border>
                                     </Grid>
                                 </Border>

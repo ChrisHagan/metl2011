@@ -22,9 +22,22 @@ using System.Collections.Generic;
 using System.Windows.Ink;
 using System.Drawing;
 using MeTLLib.Providers.Connection;
+using System.Windows.Data;
 
 namespace SandRibbon.Components
 {
+    public class SlideIndexConverter : IValueConverter {
+        private ObservableCollection<Slide> collection;
+        public SlideIndexConverter(ObservableCollection<Slide> collection) {
+            this.collection = collection;
+        }
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
+            return collection.IndexOf((Slide)value)+1;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
+            return value;
+        }
+    }
     public partial class SlideDisplay : UserControl, ISlideDisplay
     {
         public int currentSlideIndex = -1;
@@ -32,10 +45,12 @@ namespace SandRibbon.Components
         public ObservableCollection<Slide> thumbnailList = new ObservableCollection<Slide>();
         public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
         public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
+        public static SlideIndexConverter SlideIndex;
         public bool isAuthor = false;
         private bool moveTo;
         public SlideDisplay()
         {
+            SlideIndex = new SlideIndexConverter(thumbnailList); 
             InitializeComponent();
             slides.ItemsSource = thumbnailList;
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher));
