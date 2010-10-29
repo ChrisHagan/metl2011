@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SandRibbon.Providers.Structure;
 using MeTLLib.DataTypes;
+using Microsoft.Practices.Composite.Presentation.Commands;
 //using SandRibbonObjects;
 
 namespace SandRibbon.Providers
@@ -14,6 +15,7 @@ namespace SandRibbon.Providers
     {
         public static MeTLLib.ClientConnection ConversationProvider = MeTLLib.ClientFactory.Connection();
         public static readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
+        
         public static IEnumerable<ConversationDetails> loadRecentConversations()
         {
             if (File.Exists(RECENT_DOCUMENTS))
@@ -27,8 +29,12 @@ namespace SandRibbon.Providers
                     conversation => new ConversationDetails(conversation.Attribute("title").Value,conversation.Attribute("jid").Value,conversation.Attribute("author").Value,new List<Slide>(),new Permissions("",false,false,false),"",new DateTime(),SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value)))
                     .ToList();
                 var allConversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
-                    //ConversationDetailsProviderFactory.Provider.ListConversations();
-                return allConversations.Where(ac => recentConversations.Select(c => c.Jid).Contains(ac.Jid)).ToList();
+                var sortedConversations = allConversations
+                    .Where(ac => ac.Subject != "Deleted" && recentConversations.Select(c => c.Jid).Contains(ac.Jid))
+                    .OrderBy(conversation=>conversation.LastAccessed)
+                    .Reverse()
+                    .ToList();
+                return sortedConversations;
             }
             return new List<ConversationDetails>();
         }
@@ -62,7 +68,6 @@ namespace SandRibbon.Providers
             }
             catch (IOException e)
             {
-                //MessageBox.Show("Yep, punked the recent conversations");
             }
         }
         public static string DisplayNameFor(ConversationDetails conversation)

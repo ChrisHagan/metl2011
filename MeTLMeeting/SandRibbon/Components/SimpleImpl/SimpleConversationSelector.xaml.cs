@@ -27,13 +27,17 @@ namespace SandRibbon.Components
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>((_details) => {}, doesConversationAlreadyExist));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(RedrawList));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateForeignConversationDetails, canUpdateForeignConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             RedrawList(null);
         }
+        private void UpdateConversationDetails(ConversationDetails details) { 
+            if(details.Subject == "Deleted")
+                RedrawList(null);
+        } 
         private void updateForeignConversationDetails(ConversationDetails _obj)
         {
-            List(MeTLLib.ClientFactory.Connection().AvailableConversations);
+            RedrawList(null);
         }
-
         private bool canUpdateForeignConversationDetails(ConversationDetails details)
         {
             return rawConversationList.Where(c=>c.Title == details.Title || string.IsNullOrEmpty(details.Title)).Count() == 0;
@@ -53,22 +57,12 @@ namespace SandRibbon.Components
             Logger.Log(string.Format("[{0}] already exists: {1}", details.Title, conversationExists));
             return !conversationExists;
         }
-        public void ListStartupConversations()
-        {
-            var allConversation = MeTLLib.ClientFactory.Connection().AvailableConversations;
-                //ConversationDetailsProviderFactory.Provider.ListConversations();
-            List(allConversation);
-        }
         private void RedrawList(object _unused)
         {
-            Dispatcher.adoptAsync((Action) delegate
-                {
-                    this.conversations.ItemsSource =
-                        RecentConversationProvider.loadRecentConversations()
-                        .Where(c => c.IsValid)
-                        .Reverse()
-                        .Take(6);
-                });
+            this.conversations.ItemsSource =
+                RecentConversationProvider.loadRecentConversations()
+                .Where(c => c.IsValid && c.Subject != "Deleted")
+                .Take(6);
         }
         public void List(IEnumerable<ConversationDetails> conversations)
         {
