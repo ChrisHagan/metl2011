@@ -245,7 +245,9 @@ namespace SandRibbon.Components.Canvas
         {
             ClearAdorners();
             var selectedStrokes = GetSelectedStrokes();
-            if (selectedStrokes.Count() == 0) return;
+            if (selectedStrokes.Count() == 0){
+                Commands.SelectionWasEmptyOnCurrentCanvas.Execute(this);
+            }
             var publicStrokes = selectedStrokes.Where(s => s.tag().privacy.ToLower() == "public").ToList();
             string privacyChoice;
             if (publicStrokes.Count == 0)
@@ -254,9 +256,8 @@ namespace SandRibbon.Components.Canvas
                 privacyChoice = "hide";
             else
                 privacyChoice = "both";
-            Commands.AddPrivacyToggleButton.ExecuteAsync(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
+            Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
         }
-
         public StrokeCollection GetSelectedStrokes()
         {
             return filter(base.GetSelectedStrokes(), Globals.me);

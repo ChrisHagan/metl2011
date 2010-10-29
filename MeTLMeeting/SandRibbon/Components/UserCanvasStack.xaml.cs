@@ -16,6 +16,7 @@ using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using System.Windows.Controls;
 using MeTLLib.DataTypes;
+using SandRibbon.Components.Canvas;
 
 namespace SandRibbon.Components
 {
@@ -32,6 +33,10 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
             Commands.SetLayer.ExecuteAsync("Sketch");
             Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedBubbleContext>(ReceiveNewBubble));
+            Commands.SelectionWasEmptyOnCurrentCanvas.RegisterCommandToDispatcher(new DelegateCommand<AbstractCanvas>(SelectionWasEmptyOnCurrentCanvas));
+        }
+        private void SelectionWasEmptyOnCurrentCanvas(AbstractCanvas canvas) { 
+            //var possibleCanvasses = new AbstractCanvas[]{handwriting,images,text}.Except(new[]{canvas}).Where(c=>c.
         }
         public void ReceiveNewBubble(MeTLLib.DataTypes.TargettedBubbleContext context)
         {

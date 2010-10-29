@@ -161,7 +161,6 @@ namespace SandRibbon.Components.Canvas
         }
         protected void AbstractCanvas_SelectionChanged(object sender, EventArgs e)
         {
-
         }
         public abstract void showPrivateContent();
         public abstract void hidePrivateContent();

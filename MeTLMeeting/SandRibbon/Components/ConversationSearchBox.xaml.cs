@@ -21,10 +21,10 @@ using MeTLLib.DataTypes;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
+using System.Windows.Threading;
 
 namespace SandRibbon.Components
 {
-
     public partial class ConversationSearchBox : UserControl
     {
         public class HideIfNotCurrentConversation : IValueConverter {
@@ -115,11 +115,9 @@ namespace SandRibbon.Components
             });
         }
         private void clearState(){
-            Dispatcher.adoptAsync(() => {
-                SearchInput.Text = "";
-                GetListCollectionView().Refresh();
-                SearchInput.Focus();
-            });
+            SearchInput.Text = "";
+            GetListCollectionView().Refresh();
+            SearchInput.SelectionStart = 0;
         }
         private void ShowConversationSearchBox(object o)
         {
@@ -130,9 +128,10 @@ namespace SandRibbon.Components
             else {
                 currentConversation.Visibility = Visibility.Visible;
             }
-            clearState();
-            this.Visibility = Visibility.Visible;
             Commands.RequerySuggested();
+            this.Visibility = Visibility.Visible;
+            clearState();
+            Dispatcher.queueFocus(SearchInput);
         }
         private void slidePropertyOut(DependencyProperty property, double limit)
         {

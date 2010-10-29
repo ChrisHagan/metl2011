@@ -162,7 +162,6 @@ namespace MeTLLib.DataTypes
             };
         }
     }
-
     public class Video : System.Windows.Controls.Primitives.Thumb
     {
         public Duration Duration

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Threading;
 using System.Threading;
+using System.Windows;
 
 namespace SandRibbon
 {
@@ -21,6 +22,9 @@ namespace SandRibbon
                 del();
             else
                 dispatcher.BeginInvoke(del);
+        }
+        public static void queueFocus(this Dispatcher dispatcher, FrameworkElement el) {
+            dispatcher.Invoke(DispatcherPriority.Background, (Action)delegate { el.Focus(); });
         }
     }
 }
