@@ -4,9 +4,6 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace SandRibbon.Components
 {
-    /// <summary>
-    /// Interaction logic for ScrollBar.xaml
-    /// </summary>
     public partial class ScrollBar : UserControl
     {
         public ScrollViewer scroll;
@@ -17,7 +14,6 @@ namespace SandRibbon.Components
             scroll.SizeChanged += scrollChanged;
             scroll.ScrollChanged += scroll_ScrollChanged;
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(ExtendBoth));
-            
         }
         public void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
@@ -58,7 +54,6 @@ namespace SandRibbon.Components
             if (scroll.HorizontalOffset != HScroll.Value)
                 scroll.ScrollToHorizontalOffset(HScroll.Value);
         }
-
         public void adjustScrollers()
         {
             if (scroll.VerticalOffset != VScroll.Value)

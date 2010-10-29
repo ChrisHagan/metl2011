@@ -42,7 +42,6 @@ namespace SandRibbon
         public ConversationDetails details = null;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
-        public static ScrollViewer MAIN_SCROLL;
         public string log
         {
             get { return Logger.log; }
@@ -92,7 +91,7 @@ namespace SandRibbon
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(ProxyMirrorPresentationSpace));
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
             Commands.AddWindowEffect.RegisterCommand(new DelegateCommand<object>(AddWindowEffect));
-            Commands.RemoveWindowEffect.RegisterCommand(new DelegateCommand<object>(RemoveWindowEffect));
+            Commands.RemoveWindowEffect.RegisterCommandToDispatcher(new DelegateCommand<object>(RemoveWindowEffect));
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
@@ -382,12 +381,10 @@ namespace SandRibbon
         private void AddWindowEffect(object _o)
         {
             CanvasBlocker.Visibility = Visibility.Visible;
-
         }
         private void RemoveWindowEffect(object _o)
         {
-            Dispatcher.adoptAsync(() =>
-            CanvasBlocker.Visibility = Visibility.Collapsed);
+            CanvasBlocker.Visibility = Visibility.Collapsed;
         }
         private void ExecuteMoveTo(int slide)
         {
@@ -402,10 +399,6 @@ namespace SandRibbon
             if(ribbon.SelectedTab!=null)
                 ribbon.SelectedTab = ribbon.Tabs[0];
             var details = Globals.conversationDetails;
-            scroll.Width = Double.NaN;
-            scroll.Height = Double.NaN;
-            canvas.Width = Double.NaN;
-            canvas.Height = Double.NaN;
             MeTLLib.ClientFactory.Connection().AsyncRetrieveHistoryOf(Int32.Parse(title));
             RecentConversationProvider.addRecentConversation(details, Globals.me);
             if (details.Author == Globals.me)
@@ -417,7 +410,6 @@ namespace SandRibbon
             Commands.RequerySuggested(Commands.SetConversationPermissions);
             Commands.SetLayer.ExecuteAsync("Sketch");
         }
-
         private bool automatedTest(string conversationName)
         {
             if (Globals.me.Contains("Admirable") && conversationName.ToLower().Contains("automated")) return true;
@@ -443,8 +435,6 @@ namespace SandRibbon
                                      });
             CommandManager.InvalidateRequerySuggested();
         }
-
-
         private void showReconnectingDialog()
         {
             if (InputBlocker.Visibility == Visibility.Visible) return;
@@ -616,8 +606,8 @@ namespace SandRibbon
         }
         private void OriginalView(object _unused)
         {
-            var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).First();
-            if (currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
+            var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).FirstOrDefault();
+            if (currentSlide == null || currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
             scroll.Width = currentSlide.defaultWidth;
             scroll.Height = currentSlide.defaultHeight;
             scroll.ScrollToLeftEnd();
@@ -625,13 +615,10 @@ namespace SandRibbon
         }
         private void FitToView(object _unused)
         {
-            if (scroll != null && scroll.Height > 0 && scroll.Width > 0)
-            {
-                scroll.Height = scroll.ExtentHeight;
-                scroll.Width = scroll.ExtentWidth;
-                scroll.Height = double.NaN;
-                scroll.Width = double.NaN;
-            }
+            scroll.Height = double.NaN;
+            scroll.Width = double.NaN;
+            canvas.Height = double.NaN;
+            canvas.Width = double.NaN;
         }
         private void FitToPageWidth(object _unused)
         {
@@ -846,7 +833,6 @@ namespace SandRibbon
                 if (s.Label == style)
                     details.Permissions = s;
             MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
-            //ConversationDetailsProviderFactory.Provider.Update(details);
             try
             {
                 details = Globals.conversationDetails;
@@ -926,7 +912,7 @@ namespace SandRibbon
         }
         public void SetupUI(PedagogyLevel level)
         {
-            Dispatcher.adoptAsync(() =>
+            Dispatcher.adopt(() =>
             {
                 List<FrameworkElement> homeGroups = new List<FrameworkElement>();
                 List<FrameworkElement> tabs = new List<FrameworkElement>();
@@ -1018,7 +1004,6 @@ namespace SandRibbon
             UpdatePrivacyAdorners();
             updateCurrentPenAfterZoomChanged();
         }
-
         private void ribbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (App.AccidentallyClosing.AddMilliseconds(250) > DateTime.Now)

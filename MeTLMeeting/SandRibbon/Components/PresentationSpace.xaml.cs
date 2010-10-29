@@ -225,9 +225,7 @@ namespace SandRibbon.Components
                 stack.images.AddVideo(srVideo);
             } foreach (var bubble in parser.bubbleList)
                 stack.ReceiveNewBubble(bubble);
-            var size = new Size(ActualWidth, ActualHeight);
-            Measure(size);
-            Arrange(new Rect(size));
+            Commands.AllContentRendered.Execute(null);
         }
         private void MirrorPresentationSpace(Window1 parent)
         {

@@ -123,8 +123,7 @@ namespace MeTLLib.Providers
                                              using(var stream = new MemoryStream())
                                              {
                                                  days[i].Extract(stream);
-                                                 var historicalDay = Encoding.UTF8.GetString(stream.ToArray());
-                                                 parseHistoryItem(historicalDay, accumulatingParser);
+                                                 parseHistoryItem(stream.ToArray(), accumulatingParser);
                                                  Trace.TraceInformation("Parser {3} contains {0} {1} {2}",
                                                      accumulatingParser.ink.Count,
                                                      accumulatingParser.text.Count,
@@ -154,15 +153,16 @@ namespace MeTLLib.Providers
                     };
             worker.RunWorkerAsync(null);
         }
-        protected virtual void parseHistoryItem(string item, JabberWire wire)
+        private readonly byte[] closeTag = Encoding.UTF8.GetBytes("</logCollection>");
+        protected virtual void parseHistoryItem(byte[] item, JabberWire wire)
         {//This takes all the time
-            var history = item + "</logCollection>";
             var parser = new StreamParser();
             parser.OnStreamElement += ((_sender, node) =>
                                            {
                                                wire.ReceivedMessage(node);
                                            });
-            parser.Push(Encoding.UTF8.GetBytes(history), 0, history.Length);
+            parser.Push(item, 0, item.Length);
+            parser.Push(closeTag, 0, closeTag.Length);
         }
     }
 }
