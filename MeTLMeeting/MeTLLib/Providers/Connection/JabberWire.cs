@@ -201,7 +201,7 @@ namespace MeTLLib.Providers.Connection
         }
         protected virtual void openConnection(string username)
         {
-            var resource =DateTimeFactory.Now().Ticks.ToString();
+            var resource = DateTimeFactory.Now().Ticks.ToString();
             jid.Resource = resource;
             conn.Open(username, "examplePassword", resource, 1);
         }

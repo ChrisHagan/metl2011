@@ -20,6 +20,7 @@ using SandRibbon.Utils;
 using MeTLLib.DataTypes;
 using System.ComponentModel;
 using System.Globalization;
+using System.Threading;
 
 namespace SandRibbon.Components
 {
@@ -36,7 +37,6 @@ namespace SandRibbon.Components
                 return false;
             }
         }
-
         public class IsMeConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -53,6 +53,7 @@ namespace SandRibbon.Components
         private ObservableCollection<MeTLLib.DataTypes.ConversationDetails> searchResults = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
         protected static string activeConversation;
         protected static string me;
+        private System.Threading.Timer refreshTimer;
         public ConversationSearchBox()
         {
             InitializeComponent();
@@ -70,6 +71,12 @@ namespace SandRibbon.Components
             var view = GetListCollectionView();
             view.Filter = isWhatWeWereLookingFor;
             view.CustomSort = new ConversationComparator();
+            refreshTimer = new Timer(delegate {
+                Dispatcher.Invoke((Action)delegate
+                {
+                    GetListCollectionView().Refresh();
+                });
+            });
         }
         private void BackstageModeChanged(string mode)
         {
@@ -119,7 +126,6 @@ namespace SandRibbon.Components
             activeConversation = Globals.location.activeConversation;
             me = Globals.me;
             if (String.IsNullOrEmpty(activeConversation))
-
                 currentConversation.Visibility = Visibility.Collapsed;
             else {
                 currentConversation.Visibility = Visibility.Visible;
@@ -160,7 +166,6 @@ namespace SandRibbon.Components
                 searchResults.Remove(result);
             if(details.Subject.ToLower() != "deleted")
                 searchResults.Add(details);
-
             if (!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid)
             {
                 Commands.LeaveConversation.ExecuteAsync(details.Jid);
@@ -241,8 +246,7 @@ namespace SandRibbon.Components
         }
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (((TextBox)sender).Text.Count() > 2)
-                GetListCollectionView().Refresh();
+            refreshTimer.Change(250, Timeout.Infinite);
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
