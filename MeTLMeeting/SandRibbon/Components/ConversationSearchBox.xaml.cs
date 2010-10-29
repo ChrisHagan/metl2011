@@ -163,7 +163,6 @@ namespace SandRibbon.Components
 
             if (!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid)
             {
-                Commands.LeaveConversation.ExecuteAsync(details.Jid);
                 Commands.RequerySuggested();
                 this.Visibility = Visibility.Visible;
             }

@@ -30,6 +30,7 @@ namespace SandRibbon
     }
     public class Commands
     {
+        public static CompositeCommand LeaveAllRooms = new CompositeCommand();
         public static CompositeCommand BackstageModeChanged = new CompositeCommand();
         public static CompositeCommand UpdatePowerpointProgress = new CompositeCommand();
 

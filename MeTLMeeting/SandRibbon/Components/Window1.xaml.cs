@@ -59,6 +59,7 @@ namespace SandRibbon
             var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(level);
             Title = Globals.MeTLType;
+            Closed += new EventHandler(Window1_Closed);
             try
             {
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
@@ -131,6 +132,12 @@ namespace SandRibbon
             App.Now("Restoring settings");
             WorkspaceStateProvider.RestorePreviousSettings();
             App.Now("Started MeTL");
+        }
+
+        void Window1_Closed(object sender, EventArgs e)
+        {
+            if (Globals.conversationDetails != null)
+                Commands.LeaveAllRooms.Execute(null);
         }
         void ribbon_Loaded(object sender, RoutedEventArgs e)
         {
@@ -543,19 +550,22 @@ namespace SandRibbon
         {
             Dispatcher.adoptAsync(delegate
             {
-
                 if (details != null)
                     HideTutorial();
-                UpdateTitle();
+                if(details.Jid == Globals.location.activeConversation)
+                    UpdateTitle(details);
                 
                 this.details = details;
             });
         }
-        private void UpdateTitle()
+        private void UpdateTitle(ConversationDetails details)
         {
             try
             {
-                Title = messageFor(Globals.conversationDetails);
+                if(details.Subject.ToLower() != "deleted")
+                    Title = messageFor(Globals.conversationDetails);
+                else
+                    Title = new ConfigurationProvider().getMeTLType();
             }
             catch (NotSetException)
             {

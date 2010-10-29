@@ -840,6 +840,11 @@ namespace SandRibbon.Components.Canvas
         private void uploadFileForUse(string unMangledFilename)
         {
             string filename = unMangledFilename + ".MeTLFileUpload";
+            if (filename.Length > 260)
+            {
+                MessageBox.Show("Sorry, your filename is too long, must be less than 260 characters");
+                return;
+            }
             File.Copy(unMangledFilename, filename);
             MeTLLib.ClientFactory.Connection().UploadAndSendFile(new MeTLStanzas.LocalFileInformation(currentSlide, Globals.me, target, "public", filename, Path.GetFileNameWithoutExtension(filename), false, new System.IO.FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString()));
             File.Delete(filename);

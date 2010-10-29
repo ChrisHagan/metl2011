@@ -366,6 +366,14 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
+        public void LeaveAllRooms()
+        {
+            Action work = delegate
+            {
+                wire.leaveRooms();
+            };
+            tryIfConnected(work);
+        }
         public void LeaveConversation(string conversation)
         {
             Action work = delegate

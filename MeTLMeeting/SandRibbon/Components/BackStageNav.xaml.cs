@@ -33,7 +33,8 @@ namespace SandRibbon.Components
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
-                all.IsChecked = true;
+                if(currentConversation.IsChecked == true)
+                    all.IsChecked = true;
             }
         }
         

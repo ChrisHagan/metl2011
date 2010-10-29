@@ -53,6 +53,11 @@ namespace SandRibbon.Components
             Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
             Commands.SneakIntoAndDo.RegisterCommand(new DelegateCommand<Projector.RoomAndAction>(SneakIntoAndDo));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
+            Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
+        }
+        private void leaveAllRooms(object _obj)
+        {
+            client.LeaveAllRooms();
         }
         private void LeaveConversation(string Jid)
         {
