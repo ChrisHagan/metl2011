@@ -201,7 +201,9 @@ namespace MeTLLib.Providers.Connection
         }
         protected virtual void openConnection(string username)
         {
-            conn.Open(username, "examplePassword", DateTimeFactory.Now().Ticks.ToString(), 1);
+            var resource =DateTimeFactory.Now().Ticks.ToString();
+            jid.Resource = resource;
+            conn.Open(username, "examplePassword", resource, 1);
         }
         private void OnLogin(object o)
         {
@@ -211,7 +213,8 @@ namespace MeTLLib.Providers.Connection
         }
         private void OnMessage(object sender, Message message)
         {
-            ReceivedMessage(message);
+            if(message.To.Resource == jid.Resource)
+                ReceivedMessage(message);
         }
         private void HandlerError(object sender, Exception ex)
         {

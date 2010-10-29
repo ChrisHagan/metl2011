@@ -41,7 +41,6 @@ namespace SandRibbon.Components
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                bool result = false;
                 return (me == ((MeTLLib.DataTypes.ConversationDetails)value).Author).ToString();
             }
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -92,7 +91,6 @@ namespace SandRibbon.Components
                 searchConversations.Content = searchButtonText;
             });
         }
-
         private void updateLiveButton(string mode)
         {
             var elements = new[] {mine, all, find, currentConversation};
