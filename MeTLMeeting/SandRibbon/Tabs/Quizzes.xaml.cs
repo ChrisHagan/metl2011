@@ -22,30 +22,25 @@ using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Tabs
 {
-    /*
-     * The slide display should be on the right.  This is one of the features of CP3.
-     * Color dialog to highlight current selection
-     */
     public partial class Quizzes : Divelements.SandRibbon.RibbonTab
     {
         public static RoutedCommand openQuizResults = new RoutedCommand();
-        public ObservableCollection<MeTLLib.DataTypes.QuizQuestion> activeQuizes = new ObservableCollection<MeTLLib.DataTypes.QuizQuestion>();
+        public ObservableCollection<MeTLLib.DataTypes.QuizQuestion> activeQuizzes = new ObservableCollection<MeTLLib.DataTypes.QuizQuestion>();
         public Dictionary<long, ObservableCollection<MeTLLib.DataTypes.QuizAnswer>> answers = new Dictionary<long, ObservableCollection<MeTLLib.DataTypes.QuizAnswer>>();
         public Quizzes()
         {
             InitializeComponent();
             Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz));
             Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer));
-            Commands.MoveTo.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(MoveTo));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(updateConversationDetails));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
-            quizzes.ItemsSource = activeQuizes;
+            quizzes.ItemsSource = activeQuizzes;
         }
-        private void joinConversation(string jid)
+        private void JoinConversation(object _jid)
         {
-            activeQuizes = new ObservableCollection<MeTLLib.DataTypes.QuizQuestion>();
+            activeQuizzes.Clear();
         }
         private void updateConversationDetails(object obj)
         {
@@ -84,10 +79,6 @@ namespace SandRibbon.Tabs
             foreach (var answer in preParser.quizAnswers)
                 ReceiveQuizAnswer(answer);
         }
-        private void MoveTo(object obj)
-        {
-            quizzes.ItemsSource = activeQuizes;
-        }
         private void ReceiveQuizAnswer(MeTLLib.DataTypes.QuizAnswer answer)
         {
             Dispatcher.adoptAsync(() =>
@@ -113,13 +104,13 @@ namespace SandRibbon.Tabs
         {
             Dispatcher.adoptAsync(() =>
             {
-                if (activeQuizes.Any(q => q.id == quiz.id)) return;
+                if (activeQuizzes.Any(q => q.id == quiz.id)) return;
                 if (!answers.ContainsKey(quiz.id))
                     Dispatcher.adoptAsync(() =>
                          answers[quiz.id] = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>());
                 Dispatcher.adoptAsync(() =>
                 {
-                    activeQuizes.Add(quiz);
+                    activeQuizzes.Add(quiz);
                     quizzes.ScrollToEnd();
                 });
             });
@@ -129,7 +120,7 @@ namespace SandRibbon.Tabs
             Commands.BlockInput.ExecuteAsync("Create a quiz dialog open.");
             Dispatcher.adoptAsync(() =>
             {
-                var quizDialog = new CreateAQuiz(activeQuizes.Count);
+                var quizDialog = new CreateAQuiz(activeQuizzes.Count);
                 quizDialog.Owner = Window.GetWindow(this);
                 quizDialog.ShowDialog();
             });
@@ -138,9 +129,7 @@ namespace SandRibbon.Tabs
         {
             var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
             new AnswerAQuiz(thisQuiz).Show();
-           //     new AssessAQuiz(answers[thisQuiz.id], thisQuiz).Show();
         }
-
         private void importQuizSnapshot(string filename)
         {
             DelegateCommand<PreParser> onPreparserAvailable = null;
@@ -152,15 +141,13 @@ namespace SandRibbon.Tabs
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
             Commands.AddSlide.ExecuteAsync(null);
         }
-
         private void canOpenResults(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = activeQuizes.Count > 0;
+            e.CanExecute = activeQuizzes.Count > 0;
         }
-
         private void OpenResults(object sender, ExecutedRoutedEventArgs e)
         {
-            new ViewQuizResults(answers, activeQuizes).Show();
+            new ViewQuizResults(answers, activeQuizzes).Show();
         }
     }
 }

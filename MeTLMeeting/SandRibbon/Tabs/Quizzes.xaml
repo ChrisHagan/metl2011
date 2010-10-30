@@ -47,82 +47,100 @@
             <sr:GroupVariant Variant="Medium" Priority="1"/>
             <sr:GroupVariant Variant="Collapsed" Priority="3"/>
         </sr:RibbonGroup.Variants>
-        
-        
-        <Label VerticalAlignment="Center" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
-               FontWeight="Bold"
-               FontSize="12px"
-               FontFamily="Verdana"
-               Visibility="{Binding ElementName=quizzes, Path=ItemsSource.Count, Converter={x:Static metl:Converters.reverseQuizzesToVisibilityConverter}}"
-               Content="There are currently no quizzes for this conversation"/>
         <dict:QuizContainer x:Name="quizzes" 
                 ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
                 IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}">
+            <dict:QuizContainer.Style>
+                <Style TargetType="{x:Type dict:QuizContainer}">
+                    <Style.Setters>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Border BorderBrush="DarkGray" BorderThickness="1" Padding="1">
+                                        <ScrollViewer Name="Scroller" Background="White" Foreground="DarkGray" >
+                                            <StackPanel Name="slideStack" Orientation="Horizontal" IsItemsHost="True"/>
+                                        </ScrollViewer>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="dict:QuizContainer.ParentActiveVariant" Value="Small">
+                                            <Setter TargetName="Scroller" Property="Width" Value="100"/>
+                                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
+                                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible"/>
+                                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+                                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Vertical"/>
+                                        </Trigger>
+                                        <Trigger Property="dict:QuizContainer.ParentActiveVariant" Value="Medium">
+                                            <Setter TargetName="Scroller" Property="Width" Value="300"/>
+                                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
+                                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+                                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
+                                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
+                                        </Trigger>
+                                        <Trigger Property="dict:QuizContainer.ParentActiveVariant" Value="Large">
+                                            <Setter TargetName="Scroller" Property="Width" Value="600"/>
+                                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
+                                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+                                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
+                                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="ItemTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
+                                            <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
+                                                <Button.ToolTip>
+                                                    <dict:MeTLImageToolTip TitleText="View quiz" ImageSource="\Resources\Ribbon-Quiz.png"
+                                                                                            ContentText="{Binding Path=title}"/>
+                                                </Button.ToolTip>
+                                                <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Image Source="/Resources/Ribbon-Quiz.png" Height="15" Width="15"/>
+                                                        <Label FontSize="10" Background="Transparent">
+                                                            <Label.Content>
+                                                                <MultiBinding Converter="{x:Static metl:Converters.quizPositionConverter}" >
+                                                                    <Binding ElementName="quiz" Path="DataContext"/>
+                                                                    <Binding ElementName="quizzes" Path="ItemsSource"/>
+                                                                </MultiBinding>
+                                                            </Label.Content>
+                                                        </Label>
+                                                    </StackPanel>
+                                                    <TextBlock FontSize="8" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style.Setters>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Items.Count}" Value="0">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Label VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           FontSize="12px"
+                                           FontFamily="Verdana"
+                                           Visibility="{Binding ElementName=quizzes, Path=ItemsSource.Count, Converter={x:Static metl:Converters.reverseQuizzesToVisibilityConverter}}"
+                                           Content="There are currently no quizzes for this conversation"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </dict:QuizContainer.Style>
             <dict:QuizContainer.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
                 </ItemsPanelTemplate>
             </dict:QuizContainer.ItemsPanel>
-            <dict:QuizContainer.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
-                            <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
-                                <Button.ToolTip>
-                                    <dict:MeTLImageToolTip TitleText="View quiz" ImageSource="\Resources\Ribbon-Quiz.png"
-                                                                            ContentText="{Binding Path=title}"/>
-                                </Button.ToolTip>
-                                <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="/Resources/Ribbon-Quiz.png" Height="15" Width="15"/>
-                                        <Label FontSize="10" Background="Transparent">
-                                            <Label.Content>
-                                                <MultiBinding Converter="{x:Static metl:Converters.quizPositionConverter}" >
-                                                    <Binding ElementName="quiz" Path="DataContext"/>
-                                                    <Binding ElementName="quizzes" Path="ItemsSource"/>
-                                                </MultiBinding>
-                                            </Label.Content>
-                                        </Label>
-                                    </StackPanel>
-                                    <TextBlock FontSize="8" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
-                                </StackPanel>
-                            </Button>
-                        </Border>
-                    </Grid>
-                </DataTemplate>
-            </dict:QuizContainer.ItemTemplate>
-            <dict:QuizContainer.Template>
-                <ControlTemplate>
-                    <Border BorderBrush="DarkGray" BorderThickness="1" Padding="1">
-                        <ScrollViewer Name="Scroller" Background="White" Foreground="DarkGray" >
-                            <StackPanel Name="slideStack" Orientation="Horizontal" IsItemsHost="True"/>
-                        </ScrollViewer>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="dict:QuizContainer.ParentActiveVariant" Value="Small">
-                            <Setter TargetName="Scroller" Property="Width" Value="100"/>
-                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible"/>
-                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Vertical"/>
-                        </Trigger>
-                        <Trigger Property="dict:QuizContainer.ParentActiveVariant" Value="Medium">
-                            <Setter TargetName="Scroller" Property="Width" Value="300"/>
-                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
-                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
-                        </Trigger>
-                        <Trigger Property="dict:QuizContainer.ParentActiveVariant" Value="Large">
-                            <Setter TargetName="Scroller" Property="Width" Value="600"/>
-                            <Setter TargetName="Scroller" Property="Height" Value="62"/>
-                            <Setter TargetName="Scroller" Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-                            <Setter TargetName="Scroller" Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"/>
-                            <Setter TargetName="slideStack" Property="StackPanel.Orientation" Value="Horizontal"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </dict:QuizContainer.Template>
         </dict:QuizContainer>
     </sr:RibbonGroup>
 </sr:RibbonTab>
