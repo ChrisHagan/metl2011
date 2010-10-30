@@ -219,7 +219,6 @@ namespace SandRibbon.Quizzing
                                                         message = ""
                                                     });
         }
-
         private void selectAll(object sender, RoutedEventArgs e)
         {
             var origin = ((TextBox)sender);

@@ -152,7 +152,6 @@ namespace SandRibbon.Components
         {
             Commands.ScreenshotGenerated.ExecuteAsync(generateScreenshot(details));
         }
-
         private string generateScreenshot(ScreenshotDetails details)
         {
             var dpi = 96;
@@ -165,7 +164,7 @@ namespace SandRibbon.Components
                 var dv = new DrawingVisual();
                 using (var context = dv.RenderOpen())
                 {
-                    context.DrawRectangle(new VisualBrush(stack), null,
+                    context.DrawRectangle(new VisualBrush(clonePublicOnly()), null,
                                           new Rect(new Point(), new Size(ActualWidth, ActualHeight)));
                     context.DrawText(new FormattedText(
                                          details.message,
@@ -497,16 +496,39 @@ namespace SandRibbon.Components
             var width = (int)ActualWidth;
             var height = (int)ActualHeight;
             new PrintingHost().saveCanvasToDisk(
-                this,
+                this.clonePublicOnly(),
                 path,
                 width,
                 height,
                 width,
                 height);
-            var hostedFileName = MeTLLib.ClientFactory.Connection().UploadResource(new Uri(path,UriKind.RelativeOrAbsolute), Globals.me).ToString();
-            //var hostedFileName = ResourceUploader.uploadResource(Globals.me, path);
-            var location = Globals.location;
-
+            MeTLLib.ClientFactory.Connection().UploadResource(new Uri(path,UriKind.RelativeOrAbsolute), Globals.me).ToString();
+        }
+        private FrameworkElement clonePublicOnly(){
+            var clone = new InkCanvas();
+            foreach(var stroke in stack.handwriting.Strokes.Where(s=>s.tag().privacy == "public"))
+                clone.Strokes.Add(stroke.Clone());
+            foreach(var canvas in new AbstractCanvas[]{stack.images, stack.text})
+                foreach (var child in canvas.Children)
+                {
+                    var fe = (FrameworkElement)child;
+                    if (fe.privacy() == "public")
+                        clone.Children.Add(viewFor(fe));
+                }
+            var size = new Size(ActualWidth,ActualHeight);
+            clone.Measure(size);
+            clone.Arrange(new Rect(size));
+            return clone;
+        }
+        private FrameworkElement viewFor(FrameworkElement element) {
+            var rect = new Rectangle { 
+                Width = element.ActualWidth,
+                Height=element.ActualHeight,
+                Fill=new VisualBrush(element)
+            };
+            InkCanvas.SetTop(rect, InkCanvas.GetTop(element));
+            InkCanvas.SetLeft(rect, InkCanvas.GetLeft(element));
+            return rect;
         }
         protected override AutomationPeer OnCreateAutomationPeer()
         {

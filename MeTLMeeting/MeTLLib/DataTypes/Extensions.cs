@@ -155,6 +155,14 @@ namespace MeTLLib.DataTypes
             return tag;
         }
     }
+    public static class FrameworkElementExtensions {
+        public static string privacy(this FrameworkElement element) {
+            if (element is Video) return (element as Video).tag().privacy;
+            if (element is Image) return (element as Image).tag().privacy;
+            if (element is TextBox) return (element as TextBox).tag().privacy;
+            throw new Exception(string.Format("Target type {0} does not support MeTL tagging", element.GetType()));
+        }
+    }
     public static class ImageExtensions
     {
         public static ImageTag tag(this Image image )
