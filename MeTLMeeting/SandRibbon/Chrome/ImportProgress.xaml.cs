@@ -32,7 +32,6 @@ namespace SandRibbon
             to.ItemsSource = toStack;
             Commands.UpdatePowerpointProgress.RegisterCommandToDispatcher<PowerpointImportProgress>(new DelegateCommand<PowerpointImportProgress>(UpdatePowerpointProgress));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
-            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(MoveTo));
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>(PreParserAvailable));
             Commands.CreateBlankConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
         }
