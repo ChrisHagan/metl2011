@@ -154,7 +154,6 @@ namespace MeTLLib
             wire = jabberWireFactory.wire();
             wire.Login(new Location("100", 101, new List<int> { 101, 102, 103, 104, 105, 106 }));
             Trace.TraceInformation("set up jabberwire");
-            Commands.AllStaticCommandsAreRegistered();
             Trace.TraceInformation("Connection state: " + isConnected.ToString());
             return credentials;
         }
@@ -615,7 +614,6 @@ namespace MeTLLib
                 Trace.TraceWarning("Wire is disconnected at tryIfConnected");
                 return;
             }
-            Commands.UnregisterAllCommands();
             action();
         }
         private string decodeUri(Uri uri)

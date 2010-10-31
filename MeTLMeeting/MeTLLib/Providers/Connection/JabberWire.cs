@@ -12,6 +12,7 @@ using MeTLLib.DataTypes;
 using MeTLLib.Providers.Structure;
 using System.Diagnostics;
 using Ninject;
+using System.Threading;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -239,7 +240,27 @@ namespace MeTLLib.Providers.Connection
         private void OnClose(object sender)
         {
             unregisterHandlers();
-            Trace.TraceWarning("Closed manually, unregistered handlers");
+            Trace.TraceWarning("Disconnected, unregistered handlers");
+            AttemptReloginAfter(1000);
+        }
+        System.Threading.Timer timer;//So it doesn't get garbage collected before it can fire on long intervals
+        private void AttemptReloginAfter(int intervalInMilis)
+        {
+            Trace.TraceWarning("Attempting relogin in {0}", intervalInMilis);
+            receiveEvents.statusChanged(false, this.credentials);
+            timer = new System.Threading.Timer(_state =>
+            {
+                if (IsConnected())
+                {
+                    receiveEvents.statusChanged(true, this.credentials);
+                    timer = null;
+                }
+                else
+                {
+                    Login(location);
+                    AttemptReloginAfter(Math.Min(32000, intervalInMilis * 2));
+                }
+            }, null, intervalInMilis, Timeout.Infinite);
         }
         private void OnPresence(object sender, Element element)
         {
@@ -262,6 +283,7 @@ namespace MeTLLib.Providers.Connection
             conn.OnMessage += OnMessage;
             conn.OnSocketError += HandlerError;
             conn.OnError += HandlerError;
+            conn.OnXmppConnectionStateChanged += conn_OnXmppConnectionStateChanged;
             conn.OnRegisterError += ElementError;
             conn.OnStreamError += ElementError;
             conn.OnPresence += OnPresence;
@@ -271,6 +293,10 @@ namespace MeTLLib.Providers.Connection
             conn.OnWriteXml += WriteXml;
 #endif
             openConnection(jid.User);
+            Trace.TraceInformation("Logged in");
+        }
+        void conn_OnXmppConnectionStateChanged(object sender, XmppConnectionState state)
+        {
         }
         private object resetLock = new object();
         private IConversationDetailsProvider conversationDetailsProvider;

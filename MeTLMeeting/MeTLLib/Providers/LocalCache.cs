@@ -146,12 +146,13 @@ namespace MeTLLib.Providers
         public Uri RemoteSource(Uri media)
         {
             //not sure about this next line yet.
-            if (media.Equals(failUri)) return media;
+            if (media.Equals(failUri)) 
+                return media;
             if (media.ToString().StartsWith("Resource\\") || media.ToString().StartsWith("https://"))
                 return media;
             if (!CacheDict.Values.Contains(media))
                 CacheDict = ReadDictFromFile();
-            var uri = CacheDict.Where(kv => kv.Value == media).FirstOrDefault().Key;
+            var uri = CacheDict.Where(kv => kv.Value == media).First().Key;
             return new Uri(uri, UriKind.RelativeOrAbsolute);
         }
     }

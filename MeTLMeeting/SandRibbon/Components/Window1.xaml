@@ -73,9 +73,6 @@
                         <Grid x:Name="dynamicContent" />
                         <Grid x:Name="CanvasBlocker" Visibility="Visible" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" Background="{StaticResource BackgroundGrayGradient}">
                         </Grid>
-                        <Canvas Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">
-                            <StackPanel x:Name="ProgressDisplay" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Canvas>
                     </Grid>
                     <components:ScrollBar x:Name="adornerScroll"/>
                     <AdornerDecorator>
@@ -96,5 +93,8 @@
                 <my:ProgressDialog Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" />
                 <components:Login x:Name="login"/>
             </Grid>
+            <Canvas Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">
+                <StackPanel x:Name="ProgressDisplay" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Canvas>
         </Grid>
 </sr:RibbonWindow>

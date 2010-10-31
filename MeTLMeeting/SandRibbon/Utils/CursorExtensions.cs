@@ -87,10 +87,11 @@ namespace SandRibbon.Utils
         private static Cursor internalGenerateCursor(FrameworkElement fe, Point hotspot)
         {
             Cursor cursor = null;
+            int MINIMUM_DIMENSION = 5;
             App.Current.Dispatcher.adopt(() =>
             {
-                if (fe.Height < 1) fe.Height = 1;
-                if (fe.Width < 1) fe.Width = 1;
+                if (fe.Height < MINIMUM_DIMENSION) fe.Height = MINIMUM_DIMENSION;
+                if (fe.Width < MINIMUM_DIMENSION) fe.Width = MINIMUM_DIMENSION;
                 var grid = new System.Windows.Controls.Grid
                 {
                     Height = 128,

@@ -235,7 +235,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void ReceiveImage(MeTLLib.DataTypes.TargettedImage image)
         {
-            Dispatcher.adoptAsync(delegate
+            Dispatcher.adopt(delegate
             {
                 if (image.target == target)
                 {
@@ -556,7 +556,6 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             addAdorner();
         }
-
         private void addAdorner()
         {
             var selectedElements = GetSelectedElements();
@@ -586,10 +585,10 @@ namespace SandRibbon.Components.Canvas
                 {
                     var newImage = (System.Windows.Controls.Image)selectedImage;
                     newImage.UpdateLayout();
-                    Commands.SendImage.ExecuteAsync(new TargettedImage(currentSlide, Globals.me, target, newImage.tag().privacy, newImage));
+                    Commands.SendImage.Execute(new TargettedImage(currentSlide, Globals.me, target, newImage.tag().privacy, newImage));
                 }
                 else if (selectedImage is MeTLLib.DataTypes.AutoShape)
-                    Commands.SendAutoShape.ExecuteAsync(new MeTLLib.DataTypes.TargettedAutoShape(currentSlide, Globals.me, target, privacy, (MeTLLib.DataTypes.AutoShape)selectedImage));
+                    Commands.SendAutoShape.Execute(new MeTLLib.DataTypes.TargettedAutoShape(currentSlide, Globals.me, target, privacy, (MeTLLib.DataTypes.AutoShape)selectedImage));
                 else if (selectedImage is MeTLLib.DataTypes.RenderedLiveWindow)
                 {
                     var container = (MeTLLib.DataTypes.RenderedLiveWindow)selectedImage;
@@ -597,7 +596,7 @@ namespace SandRibbon.Components.Canvas
                     var box = ((VisualBrush)window.Fill).Viewbox;
                     window.Height = container.Height;
                     window.Width = container.Width;
-                    Commands.SendLiveWindow.ExecuteAsync(new MeTLLib.DataTypes.LiveWindowSetup(currentSlide, Globals.me, window, box.TopLeft, new Point(InkCanvas.GetLeft(container), InkCanvas.GetTop(container)), window.Tag.ToString()));
+                    Commands.SendLiveWindow.Execute(new MeTLLib.DataTypes.LiveWindowSetup(currentSlide, Globals.me, window, box.TopLeft, new Point(InkCanvas.GetLeft(container), InkCanvas.GetTop(container)), window.Tag.ToString()));
                 }
                 else if (selectedImage is MeTLLib.DataTypes.Video)
                 {
@@ -605,7 +604,7 @@ namespace SandRibbon.Components.Canvas
                     srVideo.UpdateLayout();
                     srVideo.X = InkCanvas.GetLeft(srVideo);
                     srVideo.Y = InkCanvas.GetTop(srVideo);
-                    Commands.SendVideo.ExecuteAsync(new TargettedVideo(currentSlide, Globals.me, target, srVideo.tag().privacy, srVideo));
+                    Commands.SendVideo.Execute(new TargettedVideo(currentSlide, Globals.me, target, srVideo.tag().privacy, srVideo));
                 }
             }
         }
@@ -836,7 +835,6 @@ namespace SandRibbon.Components.Canvas
                     break;
             }
         }
-
         private void uploadFileForUse(string unMangledFilename)
         {
             string filename = unMangledFilename + ".MeTLFileUpload";
@@ -877,7 +875,6 @@ namespace SandRibbon.Components.Canvas
                                              RepeatBehavior = RepeatBehavior.Forever
                                          };
                 image.BeginAnimation(OpacityProperty, animationPulse);
-                string hostedFileName;
                 if (!fileName.StartsWith("http"))
                 {
                     MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, target, privacy, image, fileName, false));

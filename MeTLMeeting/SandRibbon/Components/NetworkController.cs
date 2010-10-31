@@ -258,16 +258,16 @@ namespace SandRibbon.Components
         { Commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }
         private void statusChanged(object sender, StatusChangedEventArgs e)
         {
-            if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
-            {
-                Commands.AllStaticCommandsAreRegistered();
-                Commands.SetIdentity.ExecuteAsync(e.credentials);
-            }
-            else
-            {
-                System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
-                App.Now("MeTLLib has indicated that it is disconnected");
-            }
+            if (String.IsNullOrEmpty(Globals.me))//Connecting for the first time
+                if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
+                {
+                    Commands.AllStaticCommandsAreRegistered();
+                    Commands.SetIdentity.ExecuteAsync(e.credentials);
+                }
+                else
+                    System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
+            else//Reconnecting
+                Commands.Reconnecting.Execute(e.isConnected);
         }
         private void strokeAvailable(object sender, StrokeAvailableEventArgs e)
         {

@@ -59,8 +59,8 @@ namespace MeTLLib.Providers.Connection
             catch (WebException e)
             {
                 Trace.TraceError("Cannot upload resource: " + e.Message);
+                throw e;
             }
-            return "failed";
         }
         public string uploadResourceToPath(byte[] resourceData, string path, string name)
         {

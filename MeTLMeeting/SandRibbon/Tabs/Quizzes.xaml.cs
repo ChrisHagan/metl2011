@@ -33,8 +33,8 @@ namespace SandRibbon.Tabs
             Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz));
             Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(updateConversationDetails));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<object>(updateConversationDetails));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
             quizzes.ItemsSource = activeQuizzes;
         }
@@ -44,31 +44,27 @@ namespace SandRibbon.Tabs
         }
         private void updateConversationDetails(object obj)
         {
-            Dispatcher.adoptAsync(delegate
-                                      {
-                                          try
-                                          {
-                                              if (Globals.isAuthor)
-                                              {
-                                                  quizResultsRibbonGroup.Header = "Quizzes";
-                                                  quizRibbonGroup.Visibility = Visibility.Visible;
-                                                  createQuiz.Visibility = Visibility.Visible;
-                                                  createQuiz.IsEnabled = true;
-                                                  results.Visibility = Visibility.Visible;
-                                              }
-                                              else
-                                              {
-                                                  quizResultsRibbonGroup.Header = "Respond";
-                                                  quizRibbonGroup.Visibility = Visibility.Collapsed;
-                                                  createQuiz.Visibility = Visibility.Collapsed;
-                                                  results.Visibility = Visibility.Collapsed;
-                                              }
-                                          }
-                                          catch (NotSetException)
-                                          {
-                                          }
-                                      });
-
+          try
+          {
+              if (Globals.isAuthor)
+              {
+                  quizResultsRibbonGroup.Header = "Quizzes";
+                  quizRibbonGroup.Visibility = Visibility.Visible;
+                  createQuiz.Visibility = Visibility.Visible;
+                  createQuiz.IsEnabled = true;
+                  results.Visibility = Visibility.Visible;
+              }
+              else
+              {
+                  quizResultsRibbonGroup.Header = "Respond";
+                  quizRibbonGroup.Visibility = Visibility.Collapsed;
+                  createQuiz.Visibility = Visibility.Collapsed;
+                  results.Visibility = Visibility.Collapsed;
+              }
+          }
+          catch (NotSetException)
+          {
+          }
         }
         private void preparserAvailable(PreParser preParser)
         {

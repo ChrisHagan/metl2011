@@ -122,6 +122,7 @@ namespace SandRibbon
             Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
+            Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -143,6 +144,12 @@ namespace SandRibbon
         {
             if (ribbon.IsMinimized)
                 ribbon.ToggleMinimize();
+        }
+        private void Reconnecting(bool success) {
+            if (success)
+                hideReconnectingDialog();
+            else
+                showReconnectingDialog();
         }
         private void ToggleFriendsVisibility(object unused)
         {
@@ -435,9 +442,12 @@ namespace SandRibbon
                                      });
             CommandManager.InvalidateRequerySuggested();
         }
+        private void hideReconnectingDialog() { 
+            ProgressDisplay.Children.Clear();
+            InputBlocker.Visibility = Visibility.Collapsed;
+        }
         private void showReconnectingDialog()
         {
-            if (InputBlocker.Visibility == Visibility.Visible) return;
             ProgressDisplay.Children.Clear();
             var sp = new StackPanel();
             var majorHeading = new TextBlock
@@ -464,21 +474,15 @@ namespace SandRibbon
         private void moveToQuiz(MeTLLib.DataTypes.QuizQuestion quiz)
         {
         }
-
         private void ShowTutorial()
         {
-            Dispatcher.adoptAsync(() =>
-            TutorialLayer.Visibility = Visibility.Visible);
+            TutorialLayer.Visibility = Visibility.Visible;
         }
         private void HideTutorial()
         {
             if (Globals.userInformation.location != null && !String.IsNullOrEmpty(Globals.userInformation.location.activeConversation))
-                Dispatcher.adoptAsync(() =>
-                {
-                    TutorialLayer.Visibility = Visibility.Collapsed;
-                });
+                TutorialLayer.Visibility = Visibility.Collapsed;
         }
-
         private bool mustBeLoggedIn(object _arg)
         {
             try
