@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using SandRibbon.Utils;
 using MeTLLib.DataTypes;
 using System.Windows.Data;
+using MeTLLib;
 
 namespace SandRibbon.Providers
 {
@@ -29,8 +30,8 @@ namespace SandRibbon.Providers
         {
             App.Now("Loading thumbnail for {0}", slide.id);
             return new ImageBrush(new BitmapImage(new Uri(
-                string.Format("http://spacecaps.adm.monash.edu.au:8080/thumb/{0}?width={1}&height={2}",
-                slide.id, 720, 540))));
+                string.Format("http://spacecaps.adm.monash.edu.au:8080/?slide={0}&width={1}&height={2}&server={3}",
+                slide.id, 720, 540, ClientFactory.Connection().server.host.Split('.').First()))));
         }
     }
 }

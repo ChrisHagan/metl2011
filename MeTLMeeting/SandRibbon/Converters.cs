@@ -98,13 +98,11 @@ namespace SandRibbon
                 return ((Option)value).optionText;
             return "";
         }
-
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
     }
-
     public class conversationDetailsToDescription : IValueConverter { 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
