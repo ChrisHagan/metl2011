@@ -59,10 +59,13 @@ namespace SandRibbon.Components
         }
         private void RedrawList(object _unused)
         {
-            this.conversations.ItemsSource =
-                RecentConversationProvider.loadRecentConversations()
-                .Where(c => c.IsValid && c.Subject != "Deleted")
-                .Take(6);
+            Dispatcher.adopt(() =>
+            {
+                this.conversations.ItemsSource =
+                    RecentConversationProvider.loadRecentConversations()
+                    .Where(c => c.IsValid && c.Subject != "Deleted")
+                    .Take(6);
+            });
         }
         public void List(IEnumerable<ConversationDetails> conversations)
         {
