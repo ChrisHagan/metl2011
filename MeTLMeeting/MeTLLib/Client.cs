@@ -194,12 +194,7 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Image send: " + image.id);
             Action work = delegate
             {
-                image.adoptCache(cache, server);
-                var newImage = image.imageProperty;
-                Uri localSource = new System.Uri(((System.Windows.Controls.Image)newImage).Source.ToString(), UriKind.RelativeOrAbsolute);
-                Uri remoteSource = cache.RemoteSource(localSource);
-                newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(remoteSource);
-                image.image = newImage;
+                image.injectDependancies(server);
                 wire.SendImage(image);
             };
             tryIfConnected(work);
@@ -209,11 +204,7 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Video send: " + video.id);
             Action work = delegate
             {
-                video.adoptCache(cache, server);
-                var selectedImage = video.video;
-                selectedImage.VideoSource = cache.RemoteSource(selectedImage.VideoSource);
-                video.video = selectedImage;
-
+                video.injectDependancies(server);
                 wire.SendVideo(video);
             };
             tryIfConnected(work);

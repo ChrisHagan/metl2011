@@ -212,21 +212,19 @@ namespace MeTLLib.DataTypes
         }
         public System.Windows.Controls.Image imageProperty;
         public MeTLStanzas.Image imageSpecification;
-        public ResourceCache cache;
         public MeTLServerAddress server;
         public string id;
-        public void adoptCache(ResourceCache cache, MeTLServerAddress server)
+        public void injectDependancies(MeTLServerAddress server)
         {
             if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
-            this.cache = cache;
             this.server = server;
-            imageSpecification.adoptCache(cache, server);
+            imageSpecification.injectDependancies(server);
         }
         public System.Windows.Controls.Image image
         {
             get
             {
-                if (server != null && cache != null) imageSpecification.adoptCache(cache, server);
+                if (server != null) imageSpecification.injectDependancies(server);
                 if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
                 var reified = imageSpecification.forceEvaluation();
                 id = reified.tag().id;
@@ -267,10 +265,8 @@ namespace MeTLLib.DataTypes
             Y = VideoY;
             Width = VideoWidth;
             Height = VideoHeight;
-            if (cache == null && VideoSpecification.resourceCache != null) cache = VideoSpecification.resourceCache;
             if (server == null && VideoSpecification.server != null) server = VideoSpecification.server;
         }
-        public ResourceCache cache;
         public MeTLServerAddress server;
         public bool ValueEquals(object obj)
         {
@@ -290,10 +286,10 @@ namespace MeTLLib.DataTypes
         public MeTLLib.DataTypes.Video videoProperty;
         public MeTLStanzas.Video videoSpecification;
         public string id;
-        public void adoptCache(ResourceCache cache, MeTLServerAddress server)
+        public void injectDependancies(MeTLServerAddress server)
         {
             if (videoSpecification == null) videoSpecification = new MeTLStanzas.Video(this);
-            videoSpecification.adoptCache(cache, server);
+            videoSpecification.injectDependancies(server);
         }
         public MeTLLib.DataTypes.Video video
         {
@@ -301,7 +297,7 @@ namespace MeTLLib.DataTypes
             {
                 if (videoSpecification == null) videoSpecification = new MeTLStanzas.Video(this);
                 Video reified = null;
-                if (server != null && cache != null) videoSpecification.adoptCache(cache, server);
+                if (server != null) videoSpecification.injectDependancies(server);
                 reified = videoSpecification.forceEvaluation();
                 id = reified.tag().id;
                 reified.Height = Height;
@@ -1263,7 +1259,6 @@ namespace MeTLLib.DataTypes
         }
         public class Video : Element
         {
-            public ResourceCache resourceCache;
             public MeTLServerAddress server;
             static Video()
             {
@@ -1280,9 +1275,8 @@ namespace MeTLLib.DataTypes
             {
                 this.Vid = video;
             }
-            public Video adoptCache(ResourceCache cache, MeTLServerAddress server)
+            public Video injectDependancies(MeTLServerAddress server)
             {
-                this.resourceCache = cache;
                 this.server = server;
                 return this;
             }
@@ -1311,7 +1305,7 @@ namespace MeTLLib.DataTypes
                     var targettedVideo =
                         new TargettedVideo(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag),
                         this, GetTag(identityTag), Double.Parse(GetTag(xTag)), Double.Parse(GetTag(yTag)), Double.Parse(GetTag(widthTag)), Double.Parse(GetTag(heightTag)));
-                    if (resourceCache != null && server != null) targettedVideo.adoptCache(resourceCache, server);
+                    if (server != null) targettedVideo.injectDependancies(server);
                     return targettedVideo;
                 }
                 set
@@ -1348,16 +1342,11 @@ namespace MeTLLib.DataTypes
                 get { return GetTag(tagTag); }
                 set { SetTag(tagTag, value); }
             }
-            private Uri getCachedVideo(string url)
-            {
-                //how do I ensure that there's a resourceCache here?  How did I end up here without one?
-                return resourceCache.LocalSource(url);
-            }
             public Uri source
             {
                 get
                 {
-                    return getCachedVideo(GetTag(sourceTag));
+                    return new Uri(GetTag(sourceTag), UriKind.RelativeOrAbsolute);
                 }
                 set { SetTag(sourceTag, value.ToString()); }
             }
@@ -1365,7 +1354,6 @@ namespace MeTLLib.DataTypes
         public class Image : Element
         {
             private MeTLServerAddress server;
-            private ResourceCache cache;
             static Image()
             {
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Image));
@@ -1381,9 +1369,8 @@ namespace MeTLLib.DataTypes
             {
                 this.Img = image;
             }
-            public Image adoptCache(ResourceCache cache, MeTLServerAddress server)
+            public Image injectDependancies(MeTLServerAddress server)
             {
-                this.cache = cache;
                 this.server = server;
                 return this;
             }
@@ -1400,19 +1387,6 @@ namespace MeTLLib.DataTypes
                 InkCanvas.SetTop(image, this.y);
                 return image;
             }
-            public string GetCachedImage(string url)
-            {
-
-                try
-                {
-                    return cache.LocalSource(url).ToString();
-                }
-                catch (Exception e)
-                {
-                    return "resources/slide_not_loaded.png";
-                }
-            }
-
             public TargettedImage Img
             {
                 get
@@ -1454,15 +1428,8 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    try
-                    {
-                        var path = string.Format("https://{0}:1188{1}", server.host, GetTag(sourceTag));
-                        return (ImageSource)new ImageSourceConverter().ConvertFromString(GetCachedImage(path));
-                    }
-                    catch (Exception e)
-                    {
-                        return BitmapSource.Create(1, 1, 96, 96, PixelFormats.BlackWhite, BitmapPalettes.BlackAndWhite, new byte[96 * 96], 1);
-                    }
+                    var path = string.Format("https://{0}:1188{1}", server.host, GetTag(sourceTag));
+                    return (ImageSource)new ImageSourceConverter().ConvertFromString(path);
                 }
                 set { SetTag(sourceTag, new ImageSourceConverter().ConvertToString(value)); }
             }

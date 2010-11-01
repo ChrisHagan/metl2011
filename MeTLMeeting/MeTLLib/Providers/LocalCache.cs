@@ -16,6 +16,7 @@ namespace MeTLLib.Providers
 {
     public class ResourceCache
     {
+        /*
         [Inject]
         public HttpResourceProvider resourceProvider { private get; set; }
         [Inject]
@@ -155,5 +156,5 @@ namespace MeTLLib.Providers
             var uri = CacheDict.Where(kv => kv.Value == media).First().Key;
             return new Uri(uri, UriKind.RelativeOrAbsolute);
         }
-    }
+    */}
 }
