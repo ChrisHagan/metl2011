@@ -226,25 +226,13 @@ namespace MeTLLib.DataTypes
             {
                 if (server != null) imageSpecification.injectDependancies(server);
                 if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
-                var reified = imageSpecification.forceEvaluation();
-                id = reified.tag().id;
-                return reified;
+                return imageSpecification.forceEvaluation();
             }
             set
             {
-                string internalIdentity;
-                try
-                {
-                    internalIdentity = value.tag().id;
-                }
-                catch (Exception ex)
-                {
-                    if (String.IsNullOrEmpty(id))
-                        id = string.Format("{0}:{1}", author, DateTimeFactory.Now());
-                    value.tag(new ImageTag { author = author, id = id, privacy = privacy });
-                    internalIdentity = value.tag().id;
-                }
-                id = internalIdentity;
+                if (String.IsNullOrEmpty(id))
+                    id = string.Format("{0}:{1}", author, DateTimeFactory.Now());
+                value.tag(new ImageTag { author = author, id = id, privacy = privacy });
                 imageProperty = value;
             }
         }
@@ -282,7 +270,6 @@ namespace MeTLLib.DataTypes
                 && foreign.videoProperty.Equals(videoProperty)
                 && foreign.video.Equals(video));
         }
-
         public MeTLLib.DataTypes.Video videoProperty;
         public MeTLStanzas.Video videoSpecification;
         public string id;
@@ -308,19 +295,9 @@ namespace MeTLLib.DataTypes
             }
             set
             {
-                string internalIdentity;
-                try
-                {
-                    internalIdentity = value.tag().id;
-                }
-                catch (Exception ex)
-                {
-                    if (String.IsNullOrEmpty(id))
-                        id = string.Format("{0}:{1}", author, DateTimeFactory.Now());
-                    value.tag(new ImageTag { author = author, id = id, privacy = privacy });
-                    internalIdentity = value.tag().id;
-                }
-                id = internalIdentity;
+                if (String.IsNullOrEmpty(id))
+                    id = string.Format("{0}:{1}", author, DateTimeFactory.Now());
+                value.tag(new ImageTag { author = author, id = id, privacy = privacy });
                 X = value.X;
                 Y = value.Y;
                 Height = value.ActualHeight;

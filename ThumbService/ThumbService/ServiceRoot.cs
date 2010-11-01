@@ -51,6 +51,8 @@ namespace ThumbService
             {
                 if (q(context, "invalidate") == "true")
                     Forget(context);//Takes write lock
+                if (q(context, "store") == "true")
+                    Store(context);//Takes write lock
                 Thumb(context);//May take write lock
             }
             catch (Exception e)
@@ -82,6 +84,29 @@ namespace ThumbService
         private string q(HttpListenerContext context, string key){
             return context.Request.QueryString[key];
         }
+        private RequestInfo info(HttpListenerContext context) { 
+            return new RequestInfo
+            {
+                slide = Int32.Parse(q(context, "slide")),
+                width = Int32.Parse(q(context, "width")),
+                height = Int32.Parse(q(context, "height")),
+                server = q(context, "server")
+            };
+        }
+        public void Store(HttpListenerContext context) {
+            locker.EnterWriteLock();
+            var output = new MemoryStream();
+            var input = context.Request.InputStream;
+            byte[] buffer = new byte[32768];
+            while (true)
+            {
+                int read = input.Read (buffer, 0, buffer.Length);
+                if (read <= 0)
+                    break;
+                output.Write (buffer, 0, read);
+            }
+            cache[info(context)] = output.ToArray();
+        }
         public void Forget(HttpListenerContext context)
         {
             locker.EnterWriteLock();
@@ -91,13 +116,7 @@ namespace ThumbService
                 cache.Remove(key);
         }
         public void Thumb(HttpListenerContext context){
-            var requestInfo = new RequestInfo
-            {
-                slide = Int32.Parse(q(context, "slide")),
-                width = Int32.Parse(q(context, "width")),
-                height = Int32.Parse(q(context, "height")),
-                server = q(context, "server")
-            };
+            var requestInfo = info(context); 
             byte[] image;
             if (cache.ContainsKey(requestInfo))
             {

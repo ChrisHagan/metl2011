@@ -31,7 +31,7 @@ namespace SandRibbon.Providers
             App.Now("Loading thumbnail for {0}", slide.id);
             return new ImageBrush(new BitmapImage(new Uri(
                 string.Format("http://spacecaps.adm.monash.edu.au:8080/?slide={0}&width={1}&height={2}&server={3}",
-                slide.id, 720, 540, ClientFactory.Connection().server.host.Split('.').First()))));
+                slide.id, 180, 135, ClientFactory.Connection().server.host.Split('.').First()))));
         }
     }
 }

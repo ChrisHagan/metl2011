@@ -20,7 +20,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
-        <components:ThumbListBox
+        <ListBox
              Grid.Row="1"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
              ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -73,6 +73,6 @@
                     </Setter>
                 </Style>
             </ListBox.ItemContainerStyle>
-        </components:ThumbListBox>
+        </ListBox>
     </Grid>
 </UserControl>
