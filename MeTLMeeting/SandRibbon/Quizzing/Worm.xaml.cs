@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbonInterop.MeTLStanzas;
 using SandRibbon.Utils.Connection;
 using SandRibbon.Components;
 using SandRibbon.Providers;

@@ -290,7 +290,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (!videoExistsOnCanvas(element) && element.tag().privacy == "public")
             {
-                var videoClone = new SandRibbonInterop.VideoMirror();
+                var videoClone = new MeTLLib.DataTypes.VideoMirror();
                 videoClone.id = element.tag().id;
                 if (videoClone.Rectangle == null)
                     videoClone.RequestNewRectangle();

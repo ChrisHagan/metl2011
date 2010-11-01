@@ -18,7 +18,6 @@ using Divelements.SandRibbon;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Submissions;
 using SandRibbon.Utils.Connection;
-using SandRibbonInterop.MeTLStanzas;
 using Button=System.Windows.Controls.Button;
 using MeTLLib.Providers.Connection;
 

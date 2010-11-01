@@ -2,14 +2,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
-                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components">
-    <SandRibbonInterop:RibbonPanel>
+    <dict:RibbonPanel>
         <dict:RadioButton Visibility="Collapsed" x:Name="View" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\MagnifyingGlassShiny.png" Text="View" Command="api:Commands.SetLayer" CommandParameter="View" />
         <dict:RadioButton x:Name="Pen" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\RedPenShiny.png" Text="Ink" Command="api:Commands.SetLayer" CommandParameter="Sketch" IsChecked="True"/>
         <dict:RadioButton x:Name="Text" ToolTip="{StaticResource TextModeToolTip}" Icon="\Resources\TextMode.png" Text="Text" Command="api:Commands.SetLayer" CommandParameter="Text" />
         <dict:RadioButton x:Name="Image" ToolTip="{StaticResource ImageModeToolTip}" Icon="\Resources\ImageMode.png" Text="Image" Command="api:Commands.SetLayer" CommandParameter="Insert" />
-    </SandRibbonInterop:RibbonPanel>
+    </dict:RibbonPanel>
 </UserControl>

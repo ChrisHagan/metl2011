@@ -13,7 +13,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
-using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using MeTLLib.DataTypes;
 

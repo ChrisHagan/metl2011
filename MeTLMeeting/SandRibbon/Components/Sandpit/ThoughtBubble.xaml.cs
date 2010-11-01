@@ -17,7 +17,6 @@ using SandRibbon.Components.Canvas;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
-using SandRibbonInterop.MeTLStanzas;
 using System.Windows.Ink;
 using SandRibbonObjects;
 using SandRibbon.Quizzing;

@@ -20,7 +20,6 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Win32;
 using SandRibbon;
 using SandRibbon.Components.Interfaces;
-using SandRibbonInterop.MeTLStanzas;
 using System.ComponentModel;
 using Divelements.SandRibbon;
 using SandRibbon.Providers;

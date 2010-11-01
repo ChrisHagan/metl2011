@@ -18,7 +18,6 @@ using SandRibbon.Quizzing;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
 using SandRibbon.Providers;
-using SandRibbonInterop.MeTLStanzas;
 
 namespace SandRibbon.Tabs
 {

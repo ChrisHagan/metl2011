@@ -87,10 +87,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Button.cs" />
     <Compile Include="CommandParameterProvider.cs" />
     <Compile Include="Commands.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="Interfaces\IConversationListing.cs" />
     <Compile Include="Interfaces\IConversationSelector.cs" />
     <Compile Include="Interfaces\IFriendsDisplay.cs" />
@@ -98,8 +96,6 @@
     <Compile Include="Interfaces\IPenTools.cs" />
     <Compile Include="Interfaces\ISlideDisplay.cs" />
     <Compile Include="Interfaces\ITextTools.cs" />
-    <Compile Include="MeTLStanzaDefinitions.cs" />
-    <Compile Include="PollParameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

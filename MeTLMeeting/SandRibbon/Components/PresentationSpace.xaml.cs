@@ -21,7 +21,6 @@ using SandRibbonInterop;
 using SandRibbon.Utils;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
-using SandRibbonInterop.MeTLStanzas;
 using SandRibbon.Providers;
 using SandRibbon.Components.Canvas;
 using MeTLLib.DataTypes;

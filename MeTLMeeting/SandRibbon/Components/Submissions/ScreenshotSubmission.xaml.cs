@@ -14,7 +14,6 @@ using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbon.Utils.Connection;
-using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;

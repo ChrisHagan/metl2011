@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using SandRibbonInterop;
-using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using MeTLLib.DataTypes;
 

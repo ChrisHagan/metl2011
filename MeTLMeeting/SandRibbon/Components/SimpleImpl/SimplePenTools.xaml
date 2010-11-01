@@ -5,8 +5,9 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:groups="clr-namespace:SandRibbon.Tabs.Groups"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop" >
-    <SandRibbonInterop:RibbonPanel Tag="inkModes">
+    <dict:RibbonPanel Tag="inkModes">
         <groups:PenColors />
-    </SandRibbonInterop:RibbonPanel>
+    </dict:RibbonPanel>
 </UserControl>

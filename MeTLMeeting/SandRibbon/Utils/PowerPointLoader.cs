@@ -15,7 +15,6 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
-using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using MessageBox = System.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;

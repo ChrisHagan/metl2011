@@ -223,7 +223,7 @@
                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                         Width="Auto" Height="Auto" Background="Transparent">
                                     <Grid.ToolTip>
-                                        <SandRibbonInterop:MeTLImageToolTip TitleText="Change the colour of this tool" ContentText="{Binding Converter={x:Static my:Converters.ColourToNameConverter}}"/>
+                                        <dict:MeTLImageToolTip TitleText="Change the colour of this tool" ContentText="{Binding Converter={x:Static my:Converters.ColourToNameConverter}}"/>
                                     </Grid.ToolTip>
                                     <Rectangle Fill="{Binding}" Margin="3" IsHitTestVisible="False"/>
                                 </Grid>

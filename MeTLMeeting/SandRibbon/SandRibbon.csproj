@@ -408,12 +408,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\Sandpit\S15Boards.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\Sandpit\ThoughtBubble.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -716,9 +710,6 @@
     <Compile Include="Components\Sandpit\BoardManager.cs" />
     <Compile Include="Components\Sandpit\BoardManagerLauncher.xaml.cs">
       <DependentUpon>BoardManagerLauncher.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Sandpit\S15Boards.xaml.cs">
-      <DependentUpon>S15Boards.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Sandpit\ThoughtBubble.xaml.cs">
       <DependentUpon>ThoughtBubble.xaml</DependentUpon>

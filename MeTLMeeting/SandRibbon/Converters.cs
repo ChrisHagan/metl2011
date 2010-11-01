@@ -9,7 +9,6 @@ using SandRibbon.Components.Submissions;
 using SandRibbon.Providers;
 using SandRibbon.Tabs;
 using SandRibbonInterop;
-using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using System.Collections.Generic;
 using System.Linq;

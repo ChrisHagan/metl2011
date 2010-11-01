@@ -23,7 +23,7 @@ namespace SandRibbon.Components
         public SlidesEditingDialog()
         {
             InitializeComponent();
-            var slides = Globals.slides.Select(s=>new ThumbnailInformation{ 
+            var slides = Globals.slides.Select(s=>new MeTLLib.DataTypes.ThumbnailInformation{ 
                 Exposed=s.exposed,
                 slideId=s.id,
                 slideNumber=s.index+1

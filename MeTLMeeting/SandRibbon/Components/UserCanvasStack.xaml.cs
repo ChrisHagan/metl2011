@@ -12,7 +12,6 @@ using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbonInterop;
-using SandRibbonInterop.MeTLStanzas;
 using SandRibbonObjects;
 using System.Windows.Controls;
 using MeTLLib.DataTypes;
