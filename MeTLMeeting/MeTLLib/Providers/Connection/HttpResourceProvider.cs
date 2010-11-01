@@ -64,6 +64,8 @@ namespace MeTLLib.Providers.Connection
         }
         private void retryUpToXTimes(Action action, int attempts)
         {
+            action();
+            /*
             while (attempts > 0)
             {
                 try
@@ -80,6 +82,7 @@ namespace MeTLLib.Providers.Connection
                     else throw new Exception("retry failed on method ("+action.Method.ToString()+")", ex);
                 }
             }
+             */
         }
         public string downloadString(Uri resource)
         {
