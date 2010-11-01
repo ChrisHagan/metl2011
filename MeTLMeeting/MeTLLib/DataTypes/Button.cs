@@ -8,6 +8,33 @@ using System.Windows.Shapes;
 
 namespace MeTLLib.DataTypes
 {
+    public class ThumbnailInformation : DependencyObject
+    {
+        public Slide.TYPE type { get; set; }
+        public int slideId { get; set; }
+        public int slideNumber { get; set; }
+        public ImageBrush ThumbnailBrush
+        {
+            get { return (ImageBrush)GetValue(ThumbnailBrushProperty); }
+            set { SetValue(ThumbnailBrushProperty, value); }
+        }
+        public static readonly DependencyProperty ThumbnailBrushProperty =
+            DependencyProperty.Register("ThumbnailBrush", typeof(ImageBrush), typeof(ThumbnailInformation), new UIPropertyMetadata(null));
+        public Visual Canvas
+        {
+            get { return (Visual)GetValue(CanvasProperty); }
+            set { SetValue(CanvasProperty, value); }
+        }
+        public static readonly DependencyProperty CanvasProperty =
+            DependencyProperty.Register("Canvas", typeof(Visual), typeof(ThumbnailInformation), new UIPropertyMetadata(null));
+        public bool Exposed
+        {
+            get { return (bool)GetValue(ExposedProperty); }
+            set { SetValue(ExposedProperty, value); }
+        }
+        public static readonly DependencyProperty ExposedProperty =
+            DependencyProperty.Register("Exposed", typeof(bool), typeof(ThumbnailInformation), new UIPropertyMetadata(false));
+    }
     public class AutoShape : System.Windows.Controls.Primitives.Thumb
     {
         public PathGeometry PathData
