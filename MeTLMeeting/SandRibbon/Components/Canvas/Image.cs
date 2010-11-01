@@ -486,8 +486,6 @@ namespace SandRibbon.Components.Canvas
                 }
                 if (File.Exists(tmpFile))
                 {
-//                    var hostedFileName = ResourceUploader.uploadResource(currentSlide.ToString(), tmpFile);
-//                    var uri = new Uri(hostedFileName, UriKind.RelativeOrAbsolute);
                     var uri = MeTLLib.ClientFactory.Connection().NoAuthUploadResource(new System.Uri(tmpFile, UriKind.RelativeOrAbsolute), currentSlide);
                     var image = new System.Windows.Controls.Image
                     {

@@ -74,7 +74,6 @@
     <Compile Include="Friend.cs" />
     <Compile Include="GlobalCultureCompatibility.cs" />
     <Compile Include="JabberWire.cs" />
-    <Compile Include="LiveWindowSetup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
