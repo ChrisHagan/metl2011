@@ -18,6 +18,7 @@ using MeTLLib.Providers;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Ninject;
 using System.Threading;
+using MeTLLib.Providers.Connection;
 
 
 namespace MeTLLib.DataTypes
@@ -64,7 +65,6 @@ namespace MeTLLib.DataTypes
             return ((foreignWormMove.conversation == conversation) && (foreignWormMove.direction == direction));
         }
     }
-
     public class TargettedElement
     {
         public TargettedElement(int Slide, string Author, string Target, string Privacy)
@@ -116,7 +116,6 @@ namespace MeTLLib.DataTypes
         }
         public string url { get; set; }
         public long time { get; set; }
-
     }
     public class TargettedStroke : TargettedElement
     {
@@ -213,18 +212,20 @@ namespace MeTLLib.DataTypes
         public System.Windows.Controls.Image imageProperty;
         public MeTLStanzas.Image imageSpecification;
         public MeTLServerAddress server;
+        private IWebClient downloader;
         public string id;
-        public void injectDependancies(MeTLServerAddress server)
+        public void injectDependencies(MeTLServerAddress server, IWebClient downloader)
         {
             if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
             this.server = server;
-            imageSpecification.injectDependancies(server);
+            this.downloader = downloader;
+            imageSpecification.injectDependencies(server, downloader);
         }
         public System.Windows.Controls.Image image
         {
             get
             {
-                if (server != null) imageSpecification.injectDependancies(server);
+                if (server != null) imageSpecification.injectDependencies(server, downloader);
                 if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
                 return imageSpecification.forceEvaluation();
             }
@@ -276,7 +277,7 @@ namespace MeTLLib.DataTypes
         public void injectDependancies(MeTLServerAddress server)
         {
             if (videoSpecification == null) videoSpecification = new MeTLStanzas.Video(this);
-            videoSpecification.injectDependancies(server);
+            videoSpecification.injectDependencies(server);
         }
         public MeTLLib.DataTypes.Video video
         {
@@ -284,7 +285,7 @@ namespace MeTLLib.DataTypes
             {
                 if (videoSpecification == null) videoSpecification = new MeTLStanzas.Video(this);
                 Video reified = null;
-                if (server != null) videoSpecification.injectDependancies(server);
+                if (server != null) videoSpecification.injectDependencies(server);
                 reified = videoSpecification.forceEvaluation();
                 id = reified.tag().id;
                 reified.Height = Height;
@@ -880,7 +881,6 @@ namespace MeTLLib.DataTypes
                 }
             }
         }
-
         public class FileResource : Element
         {
 
@@ -1019,7 +1019,6 @@ namespace MeTLLib.DataTypes
             {
             }
         }
-
         public class ScreenshotSubmission : Element
         {
             static ScreenshotSubmission()
@@ -1057,9 +1056,7 @@ namespace MeTLLib.DataTypes
                     SetTag(TIME, value.time.ToString());
                 }
             }
-
         }
-
         public class QuizOption : Element
         {
             static QuizOption()
@@ -1252,7 +1249,7 @@ namespace MeTLLib.DataTypes
             {
                 this.Vid = video;
             }
-            public Video injectDependancies(MeTLServerAddress server)
+            public Video injectDependencies(MeTLServerAddress server)
             {
                 this.server = server;
                 return this;
@@ -1330,6 +1327,7 @@ namespace MeTLLib.DataTypes
         }
         public class Image : Element
         {
+            private IWebClient downloader;
             private MeTLServerAddress server;
             static Image()
             {
@@ -1346,9 +1344,10 @@ namespace MeTLLib.DataTypes
             {
                 this.Img = image;
             }
-            public Image injectDependancies(MeTLServerAddress server)
+            public Image injectDependencies(MeTLServerAddress server, IWebClient downloader)
             {
                 this.server = server;
+                this.downloader = downloader;
                 return this;
             }
             public System.Windows.Controls.Image forceEvaluation()
@@ -1356,9 +1355,9 @@ namespace MeTLLib.DataTypes
                 System.Windows.Controls.Image image = new System.Windows.Controls.Image
                     {
                         Tag = this.tag,
-                        Source = this.source,
                         Height = this.height,
-                        Width = this.width
+                        Width = this.width,
+                        Source = this.source
                     };
                 InkCanvas.SetLeft(image, this.x);
                 InkCanvas.SetTop(image, this.y);
@@ -1406,7 +1405,12 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var path = string.Format("https://{0}:1188{1}", server.host, GetTag(sourceTag));
-                    return (ImageSource)new ImageSourceConverter().ConvertFromString(path);
+                    var downloadData = downloader.downloadData(new Uri(path));
+                    var image = new BitmapImage();
+                    image.BeginInit();
+                    image.StreamSource = new MemoryStream(downloadData);
+                    image.EndInit();
+                    return image;
                 }
                 set { SetTag(sourceTag, new ImageSourceConverter().ConvertToString(value)); }
             }

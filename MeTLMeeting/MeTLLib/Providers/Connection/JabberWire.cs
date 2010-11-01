@@ -33,6 +33,8 @@ namespace MeTLLib.Providers.Connection
         public ResourceCache cache { private get; set; }
         [Inject]
         public IReceiveEvents receiveEvents { private get; set; }
+        [Inject]
+        public IWebClientFactory clientFactory { private get; set; }
         public JabberWire wire()
         {
             if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a wire");
@@ -42,7 +44,9 @@ namespace MeTLLib.Providers.Connection
                 historyProvider,
                 cachedHistoryProvider,
                 metlServerAddress,
-                cache, receiveEvents);
+                cache, 
+                receiveEvents,
+                clientFactory);
         }
         public PreParser preParser(int room)
         {
@@ -54,7 +58,7 @@ namespace MeTLLib.Providers.Connection
                 historyProvider,
                 cachedHistoryProvider,
                 metlServerAddress,
-                cache, receiveEvents);
+                cache, receiveEvents, clientFactory);
         }
         public PreParser create<T>(int room) where T : PreParser
         {
@@ -75,6 +79,7 @@ namespace MeTLLib.Providers.Connection
         public Credentials credentials;
         public Location location;
         private IReceiveEvents receiveEvents;
+        private IWebClientFactory webClientFactory;
         private static string privacy = "PUBLIC";
         protected XmppClientConnection conn;
         private Jid jid;
@@ -91,7 +96,7 @@ namespace MeTLLib.Providers.Connection
             Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
         }
         public ResourceCache cache;
-        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents events)
+        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory)
         {
             this.credentials = credentials;
             this.conversationDetailsProvider = conversationDetailsProvider;
@@ -100,6 +105,7 @@ namespace MeTLLib.Providers.Connection
             this.metlServerAddress = metlServerAddress;
             this.cache = cache;
             this.receiveEvents = events;
+            this.webClientFactory = webClientFactory;
         }
         internal List<ConversationDetails> CurrentClasses
         {
@@ -672,7 +678,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
                 actOnTextReceived(box.Box);
             foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
-                actOnImageReceived(image.injectDependancies(metlServerAddress).Img);
+                actOnImageReceived(image.injectDependencies(metlServerAddress, webClientFactory.client()).Img);
             foreach (var autoshape in message.SelectElements<MeTLStanzas.AutoShape>(true))
                 actOnAutoShapeReceived(autoshape.autoshape);
             foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
@@ -694,7 +700,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
                 actOnBubbleReceived(bubble.context);
             foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
-                actOnVideoReceived(video.injectDependancies(metlServerAddress).Vid);
+                actOnVideoReceived(video.injectDependencies(metlServerAddress).Vid);
             foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
                 actOnDirtyVideoReceived(dirtyVideo);
             foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))

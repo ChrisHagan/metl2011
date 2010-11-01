@@ -19,8 +19,7 @@ namespace MeTLLib
             stagingUri = new Uri("http://" + stagingServer, UriKind.Absolute);
         }
     }
-
-    class ProductionModule : NinjectModule
+    public class ProductionModule : NinjectModule
     {
         public override void Load()
         {

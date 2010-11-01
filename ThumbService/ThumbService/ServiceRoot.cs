@@ -17,6 +17,10 @@ using System.Windows.Threading;
 using System.Net;
 using System.ServiceProcess;
 using System.Net.Mime;
+using MeTLLib.Providers;
+using Ninject;
+using Ninject.Modules;
+using MeTLLib.DataTypes;
 
 namespace ThumbService
 {
@@ -26,20 +30,47 @@ namespace ThumbService
         public int height;
         public string server;
     }
-    public class ThumbService : ServiceBase
+    class MadamModule : ProductionModule{
+        public override void Load()
+        {
+            base.Load();
+            Unbind<MeTLServerAddress>();
+            Bind<MeTLServerAddress>().To<MadamServerAddress>();
+        }
+    }
+    public class ThumbService// : ServiceBase
     {
         private Dictionary<RequestInfo, byte[]> cache = new Dictionary<RequestInfo, byte[]>();
-        private ClientConnection client = ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
+        private HttpHistoryProvider prod = getProd();
+        private HttpHistoryProvider staging = getStaging();
         private ReaderWriterLockSlim locker = new ReaderWriterLockSlim();
         private HttpListener listener;
+        /*
         public static void Main(string[] _args)
         {
-            Trace.Listeners.Add(new ConsoleTraceListener());
             ServiceBase.Run(new ServiceBase[]{new ThumbService()});
         }
-        protected override void OnStart(string[] _args){
-            client.events.StatusChanged += (sender, args) => Trace.TraceInformation("Status changed: {0}", args.isConnected);
-            client.Connect("eecrole", "m0nash2008");
+         */
+        private static HttpHistoryProvider getStaging(){
+            var kernel = new StandardKernel(new BaseModule(), new MadamModule());
+            kernel.Get<JabberWireFactory>().credentials = new MeTLLib.DataTypes.Credentials("foo","bar", new List<AuthorizedGroup>());
+            return kernel.Get<HttpHistoryProvider>();
+        }
+        private static HttpHistoryProvider getProd(){
+            var kernel = new StandardKernel(new BaseModule(), new ProductionModule());
+            kernel.Get<JabberWireFactory>().credentials = new MeTLLib.DataTypes.Credentials("foo","bar", new List<AuthorizedGroup>());
+            return kernel.Get<HttpHistoryProvider>();
+        }
+        public static void Main(string[] args) {
+            Trace.Listeners.Add(new ConsoleTraceListener());
+            ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true;
+            new MeTLStanzasConstructor();
+            var server = new ThumbService();
+            server.OnStart(args);
+            Console.ReadLine();
+        }
+        //protected override void OnStart(string[] _args){
+        protected void OnStart(string[] _args){
             listener = new HttpListener();
             listener.Prefixes.Add("http://*:8080/");
             listener.Start();
@@ -153,6 +184,7 @@ namespace ThumbService
                     viewBox.Measure(size);
                     viewBox.Arrange(new Rect(size));
                     viewBox.UpdateLayout();
+                    var img = (Image)canvas.Children[0];
                     RenderTargetBitmap targetBitmap =
                        new RenderTargetBitmap(info.width, info.height, 96d, 96d, PixelFormats.Pbgra32);
                     targetBitmap.Render(viewBox);
@@ -165,6 +197,7 @@ namespace ThumbService
                     }
                 }
                 catch (Exception e) {
+                    Trace.TraceInformation("{0}\n{1}", e.Message, e.StackTrace);
                 }
                 finally { 
                     waitHandler.Set();
@@ -176,11 +209,11 @@ namespace ThumbService
             return result;
         }
         private byte[] createImage(RequestInfo info){
-            Trace.TraceInformation(info.ToString());
+            var provider = info.server == "madam" ? staging : prod;
             ManualResetEvent waitHandler = new ManualResetEvent(false);
             byte[] result = new byte[0];
             var synchrony = new Thread(new ThreadStart(delegate{
-                client.getHistoryProvider().Retrieve<PreParser>(
+                provider.Retrieve<PreParser>(
                     null, null,
                     parser =>
                     {

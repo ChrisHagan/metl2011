@@ -111,6 +111,8 @@ namespace MeTLLib
         public ResourceCache cache { private get; set; }
         [Inject]
         public JabberWireFactory jabberWireFactory { private get; set; }
+        [Inject]
+        public IWebClient downloader { private get; set; }
         public MeTLServerAddress server { private set; get; }
         public ClientConnection(MeTLServerAddress address)
         {
@@ -145,6 +147,9 @@ namespace MeTLLib
             }
         }
         #endregion
+        public HttpHistoryProvider getHistoryProvider() {
+            return historyProvider;
+        }
         #region connection
         public Credentials Connect(string username, string password)
         {
@@ -194,7 +199,7 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Image send: " + image.id);
             Action work = delegate
             {
-                image.injectDependancies(server);
+                image.injectDependencies(server, downloader);
                 wire.SendImage(image);
             };
             tryIfConnected(work);
@@ -338,11 +343,6 @@ namespace MeTLLib
         }
         #endregion
         #region conversationCommands
-        public HttpHistoryProvider getHistoryProvider()
-        {
-            //This is a quick and lazy hack to test the thumbnailing service being more lightweight
-            return historyProvider;
-        }
         public void MoveTo(int slide)
         {
             Action work = delegate
