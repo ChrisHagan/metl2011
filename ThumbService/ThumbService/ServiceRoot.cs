@@ -184,7 +184,6 @@ namespace ThumbService
                     viewBox.Measure(size);
                     viewBox.Arrange(new Rect(size));
                     viewBox.UpdateLayout();
-                    var img = (Image)canvas.Children[0];
                     RenderTargetBitmap targetBitmap =
                        new RenderTargetBitmap(info.width, info.height, 96d, 96d, PixelFormats.Pbgra32);
                     targetBitmap.Render(viewBox);
