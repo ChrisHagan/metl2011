@@ -38,19 +38,19 @@ namespace ThumbService
             Bind<MeTLServerAddress>().To<MadamServerAddress>();
         }
     }
-    public class ThumbService// : ServiceBase
+    public class ThumbService : ServiceBase
     {
         private Dictionary<RequestInfo, byte[]> cache = new Dictionary<RequestInfo, byte[]>();
         private HttpHistoryProvider prod = getProd();
         private HttpHistoryProvider staging = getStaging();
         private ReaderWriterLockSlim locker = new ReaderWriterLockSlim();
         private HttpListener listener;
-        /*
         public static void Main(string[] _args)
         {
+            Trace.Listeners.Add(new ConsoleTraceListener());
+            new MeTLStanzasConstructor();
             ServiceBase.Run(new ServiceBase[]{new ThumbService()});
         }
-         */
         private static HttpHistoryProvider getStaging(){
             var kernel = new StandardKernel(new BaseModule(), new MadamModule());
             kernel.Get<JabberWireFactory>().credentials = new MeTLLib.DataTypes.Credentials("foo","bar", new List<AuthorizedGroup>());
@@ -61,16 +61,7 @@ namespace ThumbService
             kernel.Get<JabberWireFactory>().credentials = new MeTLLib.DataTypes.Credentials("foo","bar", new List<AuthorizedGroup>());
             return kernel.Get<HttpHistoryProvider>();
         }
-        public static void Main(string[] args) {
-            Trace.Listeners.Add(new ConsoleTraceListener());
-            ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true;
-            new MeTLStanzasConstructor();
-            var server = new ThumbService();
-            server.OnStart(args);
-            Console.ReadLine();
-        }
-        //protected override void OnStart(string[] _args){
-        protected void OnStart(string[] _args){
+        protected override void OnStart(string[] _args){
             listener = new HttpListener();
             listener.Prefixes.Add("http://*:8080/");
             listener.Start();

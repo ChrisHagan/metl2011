@@ -63,7 +63,7 @@ namespace MeTLLib.Providers.Connection
             client.DownloadStringAsync(resource);
         }
         private void retryUpToXTimes(Action action, int attempts)
-        {
+        {//This is being removed as it seems too much like ignoring the problem and hoping it will go away
             action();
             /*
             while (attempts > 0)

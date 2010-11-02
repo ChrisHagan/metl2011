@@ -112,7 +112,7 @@ namespace MeTLLib
         [Inject]
         public JabberWireFactory jabberWireFactory { private get; set; }
         [Inject]
-        public IWebClient downloader { private get; set; }
+        public IWebClientFactory downloaderFactory{ private get; set; }
         public MeTLServerAddress server { private set; get; }
         public ClientConnection(MeTLServerAddress address)
         {
@@ -199,7 +199,7 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Image send: " + image.id);
             Action work = delegate
             {
-                image.injectDependencies(server, downloader);
+                image.injectDependencies(server, downloaderFactory.client());
                 wire.SendImage(image);
             };
             tryIfConnected(work);
