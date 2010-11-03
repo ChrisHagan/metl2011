@@ -103,14 +103,12 @@ namespace SandRibbon.Components.Submissions
             if(!IHaveThisSubmission(submission))
                 submissionList.Add(submission);
         }
-
         private bool IHaveThisSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
             if (submissionList.Where(s => s.time == submission.time && s.author == submission.author && s.url == submission.url).ToList().Count > 0)
                 return true;
             return false;
         }
-
         private void generateScreenshot(object sender, RoutedEventArgs e)
         {
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
@@ -129,7 +127,6 @@ namespace SandRibbon.Components.Submissions
                                                         message = string.Format("{0}'s submission at {1}", Globals.me, new DateTime(time)),
                                                     });
         }
-
         private void viewSubmissionsxx(object sender, RoutedEventArgs e)
         {
         }

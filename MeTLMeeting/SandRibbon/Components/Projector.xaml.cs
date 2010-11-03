@@ -15,6 +15,7 @@ using SandRibbon.Utils.Connection;
 using System.Collections.Generic;
 using SandRibbonInterop;
 using SandRibbon.Components.Canvas;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {
@@ -87,7 +88,6 @@ namespace SandRibbon.Components
             stack.text.EditingModeChanged += modeChanged;
             startProjector(null);
         }
-
         private void moveTo(object obj)
         {
             stack.Flush();
@@ -129,6 +129,7 @@ namespace SandRibbon.Components
             stack.handwriting.me = "projector";
             stack.images.me = "projector";
             stack.text.me = "projector";
+            conversationLabel.Text = Globals.conversationDetails.Title;
         }
         private void setProjectionLayers()
         {

@@ -30,26 +30,22 @@ namespace SandRibbon.Components.Submissions
             Commands.PreEditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
         }
-
         private void closeMe(object obj)
         {
             Close();
         }
-
         private void joinConversation(string obj)
         {
             this.Close();
             submissionList = new ObservableCollection<TargettedSubmission>();
             UpdateLayout();
         }
-
         public ViewSubmissions(List<TargettedSubmission> userSubmissions):this()
         {
             foreach (var list in userSubmissions)
                 submissionList.Add(list);
             submissions.ItemsSource= submissionList;
             submissions.SelectedIndex = 0;
-            
         }
         private void recieveSubmission(TargettedSubmission submission)
         {
