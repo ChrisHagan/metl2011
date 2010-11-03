@@ -1408,7 +1408,8 @@ namespace MeTLLib.DataTypes
                     var downloadData = downloader.downloadData(new Uri(path));
                     var image = new BitmapImage();
                     image.BeginInit();
-                    image.StreamSource = new MemoryStream(downloadData);
+                    image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
+                    //image.StreamSource = new MemoryStream(downloadData);
                     image.EndInit();
                     return image;
                 }
