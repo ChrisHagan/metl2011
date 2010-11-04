@@ -34,8 +34,8 @@ namespace SandRibbon.Components.Canvas
             SelectionChanging += selectingStrokes;
             SelectionChanged += selectionChanged;
             StrokeErasing += erasingStrokes;
-            SelectionMoving += dirtySelectedRegions;
-            SelectionMoved += transmitSelectionAltered;
+            SelectionMoving += selectionMoving;
+            SelectionMoved += selectionMoved;
             SelectionResizing += dirtySelectedRegions;
             SelectionResized += transmitSelectionAltered;
             DefaultDrawingAttributesReplaced += announceDrawingAttributesChanged;
@@ -331,14 +331,127 @@ namespace SandRibbon.Components.Canvas
             foreach (var stroke in GetSelectedStrokes())
                 doMyStrokeAdded(stroke, stroke.tag().privacy);
         }
-        private void deleteSelectedStrokes(object _sender, ExecutedRoutedEventArgs _handler)
+
+        List<Stroke> strokesAtTheStart = new List<Stroke>();
+        private void selectionMoving (object _sender, InkCanvasSelectionEditingEventArgs _e)
         {
-            dirtySelectedRegions(null, null);
+            strokesAtTheStart.Clear();
+            foreach (var stroke in GetSelectedStrokes())
+            {
+                strokesAtTheStart.Add(stroke.Clone());
+            }
+        }
+        private void selectionMoved(object sender, EventArgs e)
+        {
+            List<Stroke> selectedStrokes = new List<Stroke>();
+            foreach (var stroke in GetSelectedStrokes())
+                selectedStrokes.Add(stroke.Clone());
+            List<Stroke> undoStrokes = new List<Stroke>();
+            foreach (var stroke in strokesAtTheStart)
+                undoStrokes.Add(stroke.Clone());
+            Action redo = () =>
+                {
+                    var newSelection = new StrokeCollection();
+                    Select(newSelection);
+                    foreach (var stroke in undoStrokes)
+                    {
+                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                        {
+                            Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
+                            doMyStrokeRemovedExceptHistory(stroke);
+                        }
+                    }
+                    foreach (var stroke in selectedStrokes)
+                    {
+                        newSelection.Add(stroke);
+                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
+                        {
+                            Strokes.Add(stroke);
+                            doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                        }
+                    }
+                    Select(newSelection);
+                    addAdorners();
+                };
+            Action undo = () =>
+                {
+                   
+                    var newSelection = new StrokeCollection();
+                    foreach (var stroke in selectedStrokes)
+                    {
+                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                        {
+                            Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
+                            doMyStrokeRemovedExceptHistory(stroke);
+                        }
+                    }
+                    foreach (var stroke in undoStrokes)
+                    {
+                        newSelection.Add(stroke);
+                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
+                        {
+                            Strokes.Add(stroke);
+                            doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                        }
+                    }
+                    Select(newSelection);
+                    addAdorners();
+                };
+            foreach (var stroke in undoStrokes)
+            {
+                if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                {
+                    Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
+                    doMyStrokeRemovedExceptHistory(stroke);
+                }
+            }
+            foreach (var stroke in selectedStrokes)
+            {
+                if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
+                {
+                    Strokes.Add(stroke);
+                    doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                }
+            }
+            addAdorners();
+            UndoHistory.Queue(undo, redo);
+        
         }
         private void dirtySelectedRegions(object _sender, InkCanvasSelectionEditingEventArgs _e)
         {
-            foreach (var stroke in GetSelectedStrokes())
-                doMyStrokeRemoved(stroke);
+            var selectedStrokes = GetSelectedStrokes();
+            Action redo = () =>
+                {
+                    foreach (var stroke in selectedStrokes)
+                    {
+                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                        {
+                            Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
+                            doMyStrokeRemovedExceptHistory(stroke);
+                        }
+                    }
+                };
+            Action undo = () =>
+                {
+                    var newSelection = new StrokeCollection();
+                    foreach (var stroke in selectedStrokes)
+                    {
+                        newSelection.Add(stroke);
+                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
+                        {
+                            Strokes.Add(stroke);
+                            doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+                        }
+                    }
+                    Select(newSelection);
+                    addAdorners();
+                };
+            redo();
+            UndoHistory.Queue(undo, redo);
+        }
+        private void deleteSelectedStrokes(object _sender, ExecutedRoutedEventArgs _handler)
+        {
+            dirtySelectedRegions(null, null);
         }
         #endregion
         #region CommandMethods
