@@ -30,12 +30,26 @@ namespace PowerpointJabber
         {
             return FindWindowByCaption(IntPtr.Zero, lpWindowName);
         }
-
+        public static bool presenterActive
+        {
+            get
+            {
+                if ((int)presenterWindow > 0)
+                    return true;
+                else return false;
+            }
+        }
+        public static IntPtr presenterWindow
+        {
+            get
+            {
+                return FindWindowByCaption("PowerPoint Presenter View - [" + ThisAddIn.instance.Application.ActivePresentation.Windows[1].Caption + "]");
+            }
+        }
         public static void BringAppropriateViewToFront()
         {
-            var PresenterWindow = FindWindowByCaption("PowerPoint Presenter View - ["+ThisAddIn.instance.Application.ActivePresentation.Windows[1].Caption+"]");
-            if ((int)PresenterWindow > 0)
-                BringWindowToFront(PresenterWindow);
+            if (presenterActive)
+                BringWindowToFront(presenterWindow);
             else
                 BringWindowToFront((IntPtr)ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.HWND);
         }
