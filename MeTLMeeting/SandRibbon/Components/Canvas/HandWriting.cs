@@ -29,7 +29,7 @@ namespace SandRibbon.Components.Canvas
 
         public HandWriting()
         {
-            Loaded += new System.Windows.RoutedEventHandler(HandWriting_Loaded);
+            Loaded += HandWriting_Loaded;
             StrokeCollected += singleStrokeCollected;
             SelectionChanging += selectingStrokes;
             SelectionChanged += selectionChanged;
@@ -84,11 +84,8 @@ namespace SandRibbon.Components.Canvas
                 newAttributes.Height = defaultHeight;
                 DefaultDrawingAttributes = newAttributes;
             }));
-            Commands.ActualSetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(attributes =>
-             {
-                 Dispatcher.adoptAsync(()=>
-                 DefaultDrawingAttributes = attributes);
-             }));
+            Commands.ActualSetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(attributes => Dispatcher.adoptAsync(()=>
+                                                                                                                                           DefaultDrawingAttributes = attributes)));
             Commands.ToggleHighlighterMode.RegisterCommand(new DelegateCommand<object>(_obj =>
             {
                 var newAttributes = DefaultDrawingAttributes.Clone();
@@ -216,7 +213,7 @@ namespace SandRibbon.Components.Canvas
         {
             return strokeReceiptDurations.Aggregate(0.0, (acc, item) => acc + item.TotalMilliseconds) / strokeReceiptDurations.Count();
         }
-        public void ReceiveStrokes(IEnumerable<MeTLLib.DataTypes.TargettedStroke> receivedStrokes)
+        public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
         {
             if (receivedStrokes.Count() == 0) return;
             if (receivedStrokes.First().slide != currentSlide) return;
@@ -224,7 +221,7 @@ namespace SandRibbon.Components.Canvas
             Dispatcher.adopt(
                 delegate
                 {
-                    var start = SandRibbonObjects.DateTimeFactory.Now();
+                    var start = DateTimeFactory.Now();
                     var newStrokes = new StrokeCollection(
                         receivedStrokes.Where(ts => ts.target == strokeTarget)
                         .Where(s => s.privacy == "public" || (s.author == Globals.me && me != "projector"))
@@ -235,6 +232,23 @@ namespace SandRibbon.Components.Canvas
                     var duration = DateTimeFactory.Now() - start;
                     strokeReceiptDurations.Add(duration);
                 });
+        }
+        public void ReceiveDirtyStrokes(IEnumerable<MeTLLib.DataTypes.TargettedDirtyElement> targettedDirtyStrokes)
+        {
+            if (targettedDirtyStrokes.Count() == 0) return;
+            if (!(targettedDirtyStrokes.First().target.Equals(target)) || targettedDirtyStrokes.First().slide != currentSlide) return;
+            Dispatcher.adopt(delegate
+            {
+                var dirtyChecksums = targettedDirtyStrokes.Select(t => t.identifier);
+                var presentDirtyStrokes = Strokes.Where(s => dirtyChecksums.Contains(s.sum().checksum.ToString())).ToList();
+                for (int i = 0; i < presentDirtyStrokes.Count(); i++)
+                {
+                    var stroke = presentDirtyStrokes[i];
+                    strokes.Remove(stroke.sum());
+                    Strokes.Remove(stroke);
+
+                }
+            });
         }
         #region eventHandlers
         private void selectionChanged(object sender, EventArgs e)
@@ -271,7 +285,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
-            e.Stroke.tag(new MeTLLib.DataTypes.StrokeTag { author = Globals.me, privacy = Globals.privacy, isHighlighter = e.Stroke.DrawingAttributes.IsHighlighter });
+            e.Stroke.tag(new StrokeTag { author = Globals.me, privacy = Globals.privacy, isHighlighter = e.Stroke.DrawingAttributes.IsHighlighter });
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke);
             Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(privateAwareStroke.sum().checksum);
@@ -295,6 +309,47 @@ namespace SandRibbon.Components.Canvas
                 //Tag can be malformed if app state isn't fully logged in
             }
         }
+        public void doMyStrokeAdded(Stroke stroke)
+        {
+            doMyStrokeAdded(stroke, privacy);
+        }
+        public void doMyStrokeAdded(Stroke stroke, string intendedPrivacy)
+        {
+            doMyStrokeAddedExceptHistory(stroke, intendedPrivacy);
+            var thisStroke = stroke.Clone();
+            UndoHistory.Queue(
+                () =>
+                {
+                    var existingStroke = Strokes.Where(s => s.sum().checksum == thisStroke.sum().checksum).FirstOrDefault();
+                    if (existingStroke != null)
+                    {
+                        Strokes.Remove(existingStroke);
+                        doMyStrokeRemovedExceptHistory(existingStroke);
+                    }
+                    addAdorners();
+                },
+                () =>
+                {
+                    if (Strokes.Where(s => s.sum().checksum == thisStroke.sum().checksum).Count() == 0)
+                    {
+                        Strokes.Add(thisStroke);
+                        doMyStrokeAddedExceptHistory(thisStroke, thisStroke.tag().privacy);
+                    }
+                });
+        }
+        private void doMyStrokeAddedExceptHistory(Stroke stroke, string thisPrivacy)
+        {
+            if (!strokes.Contains(stroke.sum()))
+                strokes.Add(stroke.sum());
+            stroke.tag(new StrokeTag { author = Globals.me, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
+            SendTargettedStroke(stroke, thisPrivacy);
+        }
+        public void SendTargettedStroke(Stroke stroke, string thisPrivacy)
+        {
+            if (!stroke.shouldPersist()) return;
+            Commands.ActualReportStrokeAttributes.ExecuteAsync(stroke.DrawingAttributes);
+            Commands.SendStroke.Execute(new TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke, stroke.tag().startingSum));
+        }
         private void doMyStrokeRemoved(Stroke stroke)
         {
             ClearAdorners();
@@ -312,30 +367,16 @@ namespace SandRibbon.Components.Canvas
                 {
                     if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
                     {
-                        Strokes.Remove(stroke);
+                        Strokes.Remove(Strokes.Where(s=> s.sum().checksum == stroke.sum().checksum).First());
                         strokes.Remove(stroke.sum());
-                        doMyStrokeRemoved(stroke);
+                        doMyStrokeRemovedExceptHistory(stroke);
                     }
                 });
         }
-
         private void doMyStrokeRemovedExceptHistory(Stroke stroke)
         {
             var sum = stroke.sum().checksum.ToString();
-            var bounds = stroke.GetBounds();
             Commands.SendDirtyStroke.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,stroke.tag().privacy,sum));
-        }
-        private void transmitSelectionAltered(object sender, EventArgs e)
-        {
-            addAdorners();
-            foreach (var stroke in GetSelectedStrokes())
-                doMyStrokeAdded(stroke, stroke.tag().privacy);
-        }
-
-        private void selectionResizing(object _sender, InkCanvasSelectionEditingEventArgs _e)
-        {
-            foreach (var stroke in GetSelectedStrokes())
-                doMyStrokeRemoved(stroke);
         }
         List<Stroke> strokesAtTheStart = new List<Stroke>();
         private void selectionMoving (object _sender, InkCanvasSelectionEditingEventArgs _e)
@@ -348,12 +389,8 @@ namespace SandRibbon.Components.Canvas
         }
         private void selectionMoved(object sender, EventArgs e)
         {
-            List<Stroke> selectedStrokes = new List<Stroke>();
-            foreach (var stroke in GetSelectedStrokes())
-                selectedStrokes.Add(stroke.Clone());
-            List<Stroke> undoStrokes = new List<Stroke>();
-            foreach (var stroke in strokesAtTheStart)
-                undoStrokes.Add(stroke.Clone());
+            var selectedStrokes = GetSelectedStrokes().Select(stroke => stroke.Clone()).ToList();
+            var undoStrokes = strokesAtTheStart.Select(stroke => stroke.Clone()).ToList();
             Action redo = () =>
                 {
                     var newSelection = new StrokeCollection();
@@ -363,6 +400,7 @@ namespace SandRibbon.Components.Canvas
                         if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
                         {
                             Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
+                            strokes.Remove(stroke.sum());
                             doMyStrokeRemovedExceptHistory(stroke);
                         }
                     }
@@ -454,7 +492,6 @@ namespace SandRibbon.Components.Canvas
             redo();
             UndoHistory.Queue(undo, redo);
         }
-
         private void changeSelectedItemsPrivacy(string newPrivacy)
         {
             if (me == "projector") return;
@@ -506,7 +543,6 @@ namespace SandRibbon.Components.Canvas
             redo();
             UndoHistory.Queue(undo, redo);
         }
-
         private void deleteSelectedStrokes(object _sender, ExecutedRoutedEventArgs _handler)
         {
             dirtySelectedRegions(null, null);
@@ -524,48 +560,11 @@ namespace SandRibbon.Components.Canvas
             if (inMeeting()) return new StrokeCollection(from);
             return new StrokeCollection(from.Where(s => s.tag().author == author));
         }
-        public void doMyStrokeAdded(Stroke stroke)
-        {
-            doMyStrokeAdded(stroke, privacy);
-        }
-        public void doMyStrokeAdded(Stroke stroke, string intendedPrivacy)
-        {
-            doMyStrokeAddedExceptHistory(stroke, intendedPrivacy);
-            UndoHistory.Queue(
-                () =>
-                {
-                    var existingStroke = Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).FirstOrDefault();
-                    if (existingStroke != null)
-                        doMyStrokeRemovedExceptHistory(existingStroke);
-                },
-                () =>
-                {
-                    if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
-                    {
-                        Strokes.Add(stroke);
-                        doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
-                    }
-                });
-        }
-        private void doMyStrokeAddedExceptHistory(Stroke stroke, string thisPrivacy)
-        {
-            if (!strokes.Contains(stroke.sum()))
-                strokes.Add(stroke.sum());
-            stroke.tag(new MeTLLib.DataTypes.StrokeTag { author = Globals.me, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
-            SendTargettedStroke(stroke, thisPrivacy);
-        }
-        public void SendTargettedStroke(Stroke stroke, string thisPrivacy)
-        {
-            if (!stroke.shouldPersist()) return;
-            Commands.ActualReportStrokeAttributes.ExecuteAsync(stroke.DrawingAttributes);
-            Commands.SendStroke.Execute(new MeTLLib.DataTypes.TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke, stroke.tag().startingSum));
-        }
+        
         public void FlushStrokes()
         {
-            Dispatcher.adoptAsync(delegate { 
-                Strokes.Clear(); 
-            });
-            strokes = new List<MeTLLib.DataTypes.StrokeChecksum>();
+            Dispatcher.adoptAsync(() =>Strokes.Clear());
+            strokes = new List<StrokeChecksum>();
         }
         public void Disable()
         {
@@ -613,23 +612,7 @@ namespace SandRibbon.Components.Canvas
             foreach (var element in listToCut)
                 Commands.SendDirtyStroke.Execute(element);
         }
-        public void ReceiveDirtyStrokes(IEnumerable<MeTLLib.DataTypes.TargettedDirtyElement> targettedDirtyStrokes)
-        {
-            if (targettedDirtyStrokes.Count() == 0) return;
-            if (!(targettedDirtyStrokes.First().target.Equals(target)) || targettedDirtyStrokes.First().slide != currentSlide) return;
-            Dispatcher.adopt(delegate
-            {
-                var dirtyChecksums = targettedDirtyStrokes.Select(t => t.identifier);
-                var presentDirtyStrokes = Strokes.Where(s => dirtyChecksums.Contains(s.sum().checksum.ToString())).ToList();
-                for (int i = 0; i < presentDirtyStrokes.Count(); i++)
-                {
-                    var stroke = presentDirtyStrokes[i];
-                    strokes.Remove(stroke.sum());
-                    Strokes.Remove(stroke);
-
-                }
-            });
-        }
+        
         public override void showPrivateContent()
         {
         }
