@@ -124,6 +124,8 @@ namespace SandRibbon
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
+            Commands.CreateBlankConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(CreateBlankConversation));
+            Commands.ImportPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<object>(ImportPowerpoint));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding));
             adornerScroll.scroll = scroll;
@@ -133,6 +135,16 @@ namespace SandRibbon
             WorkspaceStateProvider.RestorePreviousSettings();
             CommandManager.InvalidateRequerySuggested();
             App.Now("Started MeTL");
+        }
+
+        private void ImportPowerpoint(object obj)
+        {
+            new PowerPointLoader().ImportPowerpoint();   
+        }
+
+        private void CreateBlankConversation(object obj)
+        {
+            new PowerPointLoader().CreateBlankConversation(); 
         }
         private void PrintBinding(object sender, EventArgs e) {
             PrintConversation(null);
