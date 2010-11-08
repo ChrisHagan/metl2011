@@ -127,7 +127,7 @@ namespace MeTLLib.DataTypes
             return tag;
         }
     }
-    public static class VideoExtensions 
+    public static partial class VideoExtensions 
     { 
         public static ImageTag tag(this MeTLLib.DataTypes.Video image )
         {
@@ -165,6 +165,16 @@ namespace MeTLLib.DataTypes
     }
     public static class ImageExtensions
     {
+        public static Image clone(this Image image)
+        {
+            var newImage = new Image();
+            newImage.Height = image.Height;
+            newImage.Width = image.Width;
+            newImage.tag(image.tag());
+            newImage.Source = image.Source;
+
+            return newImage;
+        }
         public static ImageTag tag(this Image image )
         {
             ImageTag imagetag = new ImageTag();

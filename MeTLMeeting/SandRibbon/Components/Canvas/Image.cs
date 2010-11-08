@@ -56,19 +56,16 @@ namespace SandRibbon.Components.Canvas
             EditingMode = InkCanvasEditingMode.Select;
             Background = Brushes.Transparent;
             PreviewKeyDown += keyPressed;
-            SelectionMoved += transmitImageAltered;
-            SelectionMoving += dirtyImage;
+            SelectionMoved += elementsMovedOrResized;
+            SelectionMoving += elementsMovingOrResizing;
             SelectionChanging += selectingImages;
             SelectionChanged += selectionChanged;
-            SelectionResizing += dirtyImage;
-            SelectionResized += transmitImageAltered;
+            SelectionResizing += elementsMovingOrResizing;
+            SelectionResized += elementsMovedOrResized;
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<IEnumerable<MeTLLib.DataTypes.TargettedImage>>(ReceiveImages));
             Commands.ReceiveVideo.RegisterCommandToDispatcher<TargettedVideo>(new DelegateCommand<MeTLLib.DataTypes.TargettedVideo>(ReceiveVideo));
-            Commands.ReceiveAutoShape.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedAutoShape>(ReceiveAutoShape));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(ReceiveDirtyImage));
             Commands.ReceiveDirtyVideo.RegisterCommandToDispatcher<TargettedDirtyElement>(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(ReceiveDirtyVideo));
-            Commands.ReceiveDirtyAutoShape.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(ReceiveDirtyAutoShape));
-            Commands.AddAutoShape.RegisterCommand(new DelegateCommand<object>(createNewAutoShape));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(addImageFromDisk));
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(uploadFile));
             Commands.PlaceQuizSnapshot.RegisterCommand(new DelegateCommand<string>(addImageFromQuizSnapshot));
@@ -156,58 +153,43 @@ namespace SandRibbon.Components.Canvas
         }
         private void deleteImages()
         {
-            List<UIElement> selectedElements = new List<UIElement>();
+            var selectedElements = new List<UIElement>();
             Dispatcher.adopt(() =>
                                  {
-                                    selectedElements = GetSelectedElements().ToList();
+                                     selectedElements = GetSelectedClonedElements();
                                  });
-            for (var i = 0; i < selectedElements.Count; i++)
-            {
-                if ((selectedElements.ElementAt(i)).GetType().ToString() == "System.Windows.Controls.Image")
-                {
-                    var image = (System.Windows.Controls.Image)selectedElements.ElementAt(i);
-                    ApplyPrivacyStylingToElement(image, image.tag().privacy);
-                    UndoHistory.Queue(
-                        () =>
-                        {
-                            AddImage(image);
-                            Commands.SendImage.ExecuteAsync(new TargettedImage
-                            (currentSlide, image.tag().author, target, privacy, image));
-                        },
-                        () =>
-                        {
-                            Children.Remove(image);
-                            Commands.SendDirtyImage.ExecuteAsync(new TargettedDirtyElement
-                            (currentSlide, image.tag().author, target, image.tag().privacy, image.tag().id));
-                        });
 
-                    Commands.SendDirtyImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, image.tag().privacy, image.tag().id));
-                }
-                if ((selectedElements.ElementAt(i)) is MeTLLib.DataTypes.AutoShape)
-                {
-                    var autoshape = (MeTLLib.DataTypes.AutoShape)selectedElements.ElementAt(i);
-                    Commands.SendDirtyAutoShape.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, privacy, autoshape.Tag.ToString()));
-                }
-                if ((selectedElements.ElementAt(i)) is MeTLLib.DataTypes.Video)
-                {
-                    var video = (MeTLLib.DataTypes.Video)selectedElements.ElementAt(i);
-                    Commands.SendDirtyVideo.ExecuteAsync(new TargettedDirtyElement(currentSlide, Globals.me, target, privacy, video.Tag.ToString()));
-                    Commands.MirrorVideo.ExecuteAsync(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(video.tag().id, null));
-                }
-                if ((selectedElements.ElementAt(i)) is MeTLLib.DataTypes.RenderedLiveWindow)
-                {
-                    var liveWindow = (MeTLLib.DataTypes.RenderedLiveWindow)selectedElements.ElementAt(i);
-                    Commands.SendDirtyLiveWindow.ExecuteAsync(new TargettedDirtyElement
-                    (currentSlide, Globals.me, target, privacy, ((Rectangle)((MeTLLib.DataTypes.RenderedLiveWindow)liveWindow).Rectangle).Tag.ToString()));
-                }
-            }
+            Action undo = () =>
+                              {
+                                  ClearAdorners();
+                                  foreach (var element in selectedElements)
+                                  {
+                                      if (!Children.Contains(element))
+                                          Children.Add(element);
+                                      sendThisElement(element);
+                                  }
+                                  Select(selectedElements);
+                                  addAdorners();
+                              };
+            Action redo = () =>
+                             {
+                                 ClearAdorners();
+                                 foreach (var element in selectedElements)
+                                 {
+                                    if(Children.Contains(element))
+                                        Children.Remove(element);
+                                    dirtyThisElement(element); 
+                                 }
+                             };
+            redo();
+            UndoHistory.Queue(undo, redo);
         }
         protected override void CanEditChanged()
         {
             canEdit = base.canEdit;
             if (privacy == "private") canEdit = true;
         }
-        public void ReceiveImages(IEnumerable<MeTLLib.DataTypes.TargettedImage> images)
+        public void ReceiveImages(IEnumerable<TargettedImage> images)
         {
             var safeImages = images.Where(shouldDisplay).ToList();
             foreach (var image in safeImages)
@@ -449,19 +431,6 @@ namespace SandRibbon.Components.Canvas
                 MessageBox.Show("Sorry, your image could not be imported");
             }
         }
-        public void ReceiveAutoShape(MeTLLib.DataTypes.TargettedAutoShape autoshape)
-        {
-            return;
-        }
-        public void ReceiveDirtyAutoShape(MeTLLib.DataTypes.TargettedDirtyElement autoshape)
-        {
-            return;
-        }
-        public void AddAutoShape(MeTLLib.DataTypes.TargettedAutoShape autoshape)
-        {
-            if (!autoshapeExistsOnCanvas(autoshape.autoshape))
-                Children.Add(autoshape.autoshape);
-        }
         public void FlushImages()
         {
             Dispatcher.adoptAsync(delegate
@@ -469,7 +438,6 @@ namespace SandRibbon.Components.Canvas
                 Background = Brushes.Transparent;
                 Children.Clear();
             });
-
         }
         protected override void HandlePaste()
         {
@@ -552,9 +520,9 @@ namespace SandRibbon.Components.Canvas
         private void selectionChanged(object sender, EventArgs e)
         {
             ClearAdorners();
-            addAdorner();
+            addAdorners();
         }
-        private void addAdorner()
+        private void addAdorners()
         {
             var selectedElements = GetSelectedElements();
             if (selectedElements.Count == 0)
@@ -575,80 +543,115 @@ namespace SandRibbon.Components.Canvas
             AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
         */
         }
-        private void transmitImageAltered(object sender, EventArgs e)
+        List<UIElement> elementsAtStartOfTheMove = new List<UIElement>();
+        private void elementsMovingOrResizing(object sender, InkCanvasSelectionEditingEventArgs e)
         {
-            foreach (UIElement selectedImage in GetSelectedElements())
+            elementsAtStartOfTheMove.Clear();
+            elementsAtStartOfTheMove = GetSelectedClonedElements();
+        }
+
+        private List<UIElement> GetSelectedClonedElements()
+        {
+            var selectedElements = new List<UIElement>();
+            foreach (var element in GetSelectedElements())
             {
-                if (selectedImage is System.Windows.Controls.Image)
-                {
-                    var newImage = (System.Windows.Controls.Image)selectedImage;
-                    newImage.UpdateLayout();
-                    Commands.SendImage.Execute(new TargettedImage(currentSlide, Globals.me, target, newImage.tag().privacy, newImage));
-                }
-                else if (selectedImage is MeTLLib.DataTypes.AutoShape)
-                    Commands.SendAutoShape.Execute(new MeTLLib.DataTypes.TargettedAutoShape(currentSlide, Globals.me, target, privacy, (MeTLLib.DataTypes.AutoShape)selectedImage));
-                else if (selectedImage is MeTLLib.DataTypes.RenderedLiveWindow)
-                {
-                    var container = (MeTLLib.DataTypes.RenderedLiveWindow)selectedImage;
-                    var window = (Rectangle)(container.Rectangle);
-                    var box = ((VisualBrush)window.Fill).Viewbox;
-                    window.Height = container.Height;
-                    window.Width = container.Width;
-                    Commands.SendLiveWindow.Execute(new MeTLLib.DataTypes.LiveWindowSetup(currentSlide, Globals.me, window, box.TopLeft, new Point(InkCanvas.GetLeft(container), InkCanvas.GetTop(container)), window.Tag.ToString()));
-                }
-                else if (selectedImage is MeTLLib.DataTypes.Video)
-                {
-                    var srVideo = (MeTLLib.DataTypes.Video)selectedImage;
-                    srVideo.UpdateLayout();
-                    srVideo.X = InkCanvas.GetLeft(srVideo);
-                    srVideo.Y = InkCanvas.GetTop(srVideo);
-                    Commands.SendVideo.Execute(new TargettedVideo(currentSlide, Globals.me, target, srVideo.tag().privacy, srVideo));
-                }
+                if(element is System.Windows.Controls.Image)
+                    selectedElements.Add(((System.Windows.Controls.Image)element).clone());
+                else if(element is Video)
+                    selectedElements.Add(((Video)element).clone());
             }
+            return selectedElements;
         }
-        private void dirtyImage(object sender, InkCanvasSelectionEditingEventArgs e)
-        {
-            doDirtySelection();
-        }
-        private void deleteSelectedImage(object sender, ExecutedRoutedEventArgs e)
-        {
-            doDirtySelection();
-        }
-        private void doDirtySelection()
+
+        private void elementsMovedOrResized(object sender, EventArgs e)
         {
             ClearAdorners();
-            foreach (UIElement selectedImage in GetSelectedElements())
-            {
-                var imageTag = ((FrameworkElement)selectedImage).Tag;
-                var selectedElementPrivacy = imageTag == null ?
-                    "public" :
-                    JsonConvert.DeserializeObject<ImageInformation>(imageTag.ToString())
-                        .isPrivate ? "private" : "public";
-                if (selectedImage is System.Windows.Controls.Image)
-                {
-                    var image = (System.Windows.Controls.Image)selectedImage;
+            var selectedElements = GetSelectedElements().ToList();
+            Action undo = () =>
+              {
+                  ClearAdorners();
+                  foreach (var element in elementsAtStartOfTheMove)
+                  {
+                      if (!Children.Contains(element))
+                          Children.Add(element);
+                      sendThisElement(element);
+                  }
+                  foreach (var element in selectedElements)
+                  {
+                      if (Children.Contains(element))
+                          Children.Remove(element);
+                      dirtyThisElement(element);
+                  }
+                  Select(elementsAtStartOfTheMove);
+                  addAdorners();
+              };
+            Action redo = () =>
+              {
+                  ClearAdorners();
+                  foreach (var element in elementsAtStartOfTheMove)
+                  {
+                      if (Children.Contains(element))
+                          Children.Remove(element);
+                      dirtyThisElement(element);
+                  }
+                  foreach (var element in selectedElements)
+                  {
+                      if (!Children.Contains(element))
+                          Children.Add(element);
+                      sendThisElement(element);
 
-                    ApplyPrivacyStylingToElement(image, image.tag().privacy);
-                    Commands.SendDirtyImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, ((System.Windows.Controls.Image)selectedImage).tag().privacy, ((System.Windows.Controls.Image)selectedImage).tag().id));
-                }
-                else if (selectedImage is MeTLLib.DataTypes.RenderedLiveWindow)
-                {
-                    if (((Rectangle)(((MeTLLib.DataTypes.RenderedLiveWindow)selectedImage).Rectangle)).Tag != null)
-                    {
-                        var rect = ((MeTLLib.DataTypes.RenderedLiveWindow)selectedImage).Rectangle;
-                        Commands.SendDirtyLiveWindow.ExecuteAsync(
-                            new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, "private", (string)((Rectangle)rect).Tag));
-                    }
-                }
-                else if (selectedImage is MeTLLib.DataTypes.AutoShape)
-                    Commands.SendDirtyAutoShape.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, selectedElementPrivacy, ((MeTLLib.DataTypes.AutoShape)selectedImage).Tag.ToString()));
-                else if (selectedImage is MeTLLib.DataTypes.Video)
-                {
-                    Commands.MirrorVideo.ExecuteAsync(new MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation(((MeTLLib.DataTypes.Video)selectedImage).tag().id, null));
-                    Commands.SendDirtyVideo.ExecuteAsync(
-                        new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, selectedElementPrivacy, ((MeTLLib.DataTypes.Video)selectedImage).MediaElement.Tag.ToString()));
-                }
+                  }
+                  Select(selectedElements);
+                  addAdorners();
+              };
+            UndoHistory.Queue(undo, redo);
+            foreach (var element in elementsAtStartOfTheMove)
+                dirtyThisElement(element);
+            foreach (var element in selectedElements)
+                sendThisElement(element);
+            Select(selectedElements);
+            addAdorners();
+        }
+        private void sendThisElement(UIElement element)
+        {
+            
+            switch (element.GetType().ToString())
+            {
+                case "System.Windows.Controls.Image":
+                    var newImage = (System.Windows.Controls.Image)element;
+                    newImage.UpdateLayout();
+                    Commands.SendImage.Execute(new TargettedImage(currentSlide, Globals.me, target, newImage.tag().privacy, newImage));
+                    break;
+                case "MeTLLib.DataTypes.Video":
+                    var srVideo = (Video)element;
+                    srVideo.UpdateLayout();
+                    srVideo.X = GetLeft(srVideo);
+                    srVideo.Y = GetTop(srVideo);
+                    Commands.SendVideo.Execute(new TargettedVideo(currentSlide, Globals.me, target, srVideo.tag().privacy, srVideo));
+                break;
             }
+        }
+
+        private void dirtyThisElement(UIElement element)
+        {
+            var elementTag = ((FrameworkElement)element).Tag;
+            var elementPrivacy =   elementTag == null ? "public" 
+                                    : JsonConvert.DeserializeObject<ImageInformation>(elementTag.ToString()).isPrivate 
+                                    ? "private" : "public";
+            var dirtyElement = new TargettedDirtyElement(currentSlide, Globals.me, target, elementPrivacy, JsonConvert.DeserializeObject<ImageInformation>(elementTag.ToString()).Id);
+            switch (element.GetType().ToString())
+            {
+                case "System.Windows.Controls.Image":
+                    var image = (System.Windows.Controls.Image)element;
+                    ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                    Commands.SendDirtyImage.Execute(dirtyElement);
+                    break;
+                case "MeTLLib.DataTypes.Video":
+                    Commands.MirrorVideo.ExecuteAsync(new VideoMirror.VideoMirrorInformation(dirtyElement.identifier, null));
+                    Commands.SendDirtyVideo.ExecuteAsync(dirtyElement);
+                break;
+            }
+
         }
         private void DugPublicSpace(MeTLLib.DataTypes.LiveWindowSetup setup)
         {

@@ -189,8 +189,20 @@ namespace MeTLLib.DataTypes
             };
         }
     }
+    public partial class VideoExtensions
+    {
+        public static Video clone(this Video video)
+        {
+            var newVideo = new Video();
+            newVideo.MediaElement = video.MediaElement;
+            video.tag(video.tag());
+            newVideo.VideoSource = video.VideoSource;
+            return newVideo;
+        }
+    }
     public class Video : System.Windows.Controls.Primitives.Thumb
     {
+        
         public Duration Duration
         {
             get { return (Duration)GetValue(DurationProperty); }
