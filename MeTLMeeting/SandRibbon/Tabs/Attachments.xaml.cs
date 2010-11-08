@@ -90,6 +90,7 @@ namespace SandRibbon.Tabs
                 var sourceBytes =
                     new WebClient {Credentials = new NetworkCredential("exampleUsername", "examplePassword")}.DownloadData(file.url);
                 stream.Write(sourceBytes, 0, sourceBytes.Count());
+                stream.Close();
 
             }
         }

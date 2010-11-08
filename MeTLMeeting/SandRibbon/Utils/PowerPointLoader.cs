@@ -76,8 +76,8 @@ namespace SandRibbon.Utils
         public PowerPointLoader()
         {
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(EditConversation));
-            Commands.CreateBlankConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(CreateBlankConversation));
-            Commands.ImportPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<object>(ImportPowerpoint));
+            //Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(CreateBlankConversation));
+            //Commands.ImportPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<object>(ImportPowerpoint));
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
             Commands.UpdatePowerpointProgress.RegisterCommand(new DelegateCommand<PowerpointImportProgress>(ReportPowerpointProgress));
             if (App.isStaging)
@@ -114,21 +114,17 @@ namespace SandRibbon.Utils
             worker.SetApartmentState(ApartmentState.STA);
             worker.Start();
         }
-        private void DeleteConversation(object o)
-        {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.DELETE).ShowDialog();
-        }
         private void EditConversation(string conversation)
         {
             new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.EDIT, conversation).ShowDialog();
         }
-        private void CreateBlankConversation(object o)
+        public void CreateBlankConversation()
         {
             var details = new ConversationDetails(ConversationDetails.DefaultName(Globals.me), "", Globals.me, new List<MeTLLib.DataTypes.Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted");
             Commands.HideConversationSearchBox.Execute(null);
             Commands.CreateConversation.ExecuteAsync(details);
         }
-        private void ImportPowerpoint(object o)
+        public void ImportPowerpoint()
         {
             new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).Import();
         }

@@ -65,6 +65,8 @@ namespace SandRibbon
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
+            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(importPowerpoint));
+            Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
             Commands.ShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -128,6 +130,14 @@ namespace SandRibbon
             App.Now("Restoring settings");
             WorkspaceStateProvider.RestorePreviousSettings();
             App.Now("Started MeTL");
+        }
+        private void importPowerpoint(object obj)
+        {
+            new PowerPointLoader().ImportPowerpoint();
+        }
+        private void createBlankConversation(object obj)
+        {
+            new PowerPointLoader().CreateBlankConversation();
         }
         private void ShowConversationSearchBox(object _arg)
         {
