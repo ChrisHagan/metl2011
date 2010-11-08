@@ -32,7 +32,6 @@ namespace SandRibbon.Quizzing
             answers.CollectionChanged +=
                 (sender, args) =>
                     represent(answers, question);
-            Commands.DisplayQuizResults.RegisterCommand(new DelegateCommand<object>(DisplayQuizResults));
         }
         private void represent(IEnumerable<MeTLLib.DataTypes.QuizAnswer> answers, MeTLLib.DataTypes.QuizQuestion question)
         {
@@ -53,20 +52,6 @@ namespace SandRibbon.Quizzing
                     };
                 });
             });
-        }
-        private void DisplayQuizResults(object _obj)
-        {
-            TimestampLabel.Text = "Results collected at:\r\n" + SandRibbonObjects.DateTimeFactory.Now().ToLocalTime().ToString();
-            SnapshotHost.UpdateLayout();
-            var dpi = 96;
-            var dimensions = new Rect(0, 0, ActualWidth, ActualHeight);
-            var bitmap = new RenderTargetBitmap((int)ActualWidth, (int)ActualHeight, dpi, dpi, PixelFormats.Default);
-            var dv = new DrawingVisual();
-            using (var context = dv.RenderOpen())
-                context.DrawRectangle(new VisualBrush(SnapshotHost), null, dimensions);
-            bitmap.Render(dv);
-            TimestampLabel.Text = "";
-            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
         }
     }
     public class DisplayableResultSet

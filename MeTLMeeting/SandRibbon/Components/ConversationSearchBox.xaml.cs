@@ -202,34 +202,7 @@ namespace SandRibbon.Components
             {
                 if (acc) return true;
                 if (String.IsNullOrEmpty(token)) return true;
-                var criteria = token.Split(':');
-                bool result = false;
-                if (criteria.Count() == 1)
-                    result = searchField.Any(field => field.Contains(token));
-                else
-                {
-                    var criterion = criteria[0];
-                    var value = criteria[1];
-                    switch (criterion)
-                    {
-                        case "title": result = title.Contains(value); break;
-                        case "author": result = author.Contains(value); break;
-                        case "jid": result = conversation.Jid.Contains(value); break;
-                        case "subject": result = conversation.Subject.Contains(value); break;
-                        case "slides":
-                            try
-                            {
-                                result = conversation.Slides.Count > Int32.Parse(value);
-                            }
-                            catch (FormatException)
-                            {
-                                result = false;
-                            }
-                            break;
-                        default: result = false; break;
-                    }
-                }
-                return result;
+                return searchField.Any(field => field.Contains(token));
             });
             return target;
         }

@@ -64,11 +64,11 @@ namespace SandRibbon.Tabs
             var unMangledFileUri = fileInfo.url.EndsWith(".MeTLFileUpload") ? fileInfo.url.Substring(0, fileInfo.url.Length - 15) : fileInfo.url;
             Dispatcher.adoptAsync(() => files.Add(new FileInfo
                                                      {
-                                                         fileType = getFileType(fileInfo.url),
+                                                         fileType = getFileType(fileInfo.name),
                                                          filename = fileInfo.name,
                                                          url = fileInfo.url,
                                                          author = fileInfo.author,
-                                                         fileImage = getFileImage(unMangledFileUri),
+                                                         fileImage = getFileImage(fileInfo.name),
                                                          uploadTime =fileInfo.uploadTime, 
                                                          size = fileInfo.size,
                                                          tooltip = string.Format("Type: {0}\nAuthor: {1}\nUpload Time:{2}\nSize {3:0.00}mb", getFileType(unMangledFileUri), fileInfo.author, new DateTime(long.Parse(fileInfo.uploadTime)), fileInfo.size / 1048576.0) 
@@ -163,7 +163,7 @@ namespace SandRibbon.Tabs
         }
         public static string getFileImage(string url)
         {
-            switch (getFileType("." + url.Split('.').Last()))
+            switch (getFileType(url))
             {
                 case "HTML":
                     return "\\resources\\mimeTypes\\web.png";

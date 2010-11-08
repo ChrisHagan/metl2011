@@ -33,7 +33,7 @@
                     <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top">Preview</Label>
                     <StackPanel x:Name="QuizResults" MaxHeight="600"/>
                     <Border VerticalAlignment="Bottom" Background="{StaticResource BackgroundBlueGradient}" >
-                        <Button Content="Display results" Command="{x:Static api:Commands.DisplayQuizResults}" Padding="0 10 0 0 "/>
+                        <Button Content="Display results" Click="DisplayResults"  Padding="0 10 0 0 "/>
                     </Border>
                 </Grid>
             </Grid>
