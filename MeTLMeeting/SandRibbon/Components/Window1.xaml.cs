@@ -37,8 +37,6 @@ namespace SandRibbon
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
         #endregion
-        private PowerPointLoader loader = new PowerPointLoader();
-        private UndoHistory history = new UndoHistory();
         public ConversationDetails details = null;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
@@ -130,10 +128,6 @@ namespace SandRibbon
             App.Now("Restoring settings");
             WorkspaceStateProvider.RestorePreviousSettings();
             App.Now("Started MeTL");
-        }
-        void ribbon_Loaded(object sender, RoutedEventArgs e)
-        {
-            ribbon.ToggleMinimize();
         }
         private void ShowConversationSearchBox(object _arg)
         {

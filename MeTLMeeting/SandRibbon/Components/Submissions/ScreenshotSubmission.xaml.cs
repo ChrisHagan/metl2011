@@ -24,6 +24,7 @@ namespace SandRibbon.Components.Submissions
     {
         public string message;
         public long time;
+        public bool showPrivate;
     }
     public partial class ScreenshotSubmission : UserControl
     {
@@ -125,10 +126,9 @@ namespace SandRibbon.Components.Submissions
                                                     {
                                                         time = time,
                                                         message = string.Format("{0}'s submission at {1}", Globals.me, new DateTime(time)),
+                                                        showPrivate = true
                                                     });
         }
-        private void viewSubmissionsxx(object sender, RoutedEventArgs e)
-        {
-        }
+     
     }
 }

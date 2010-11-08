@@ -163,7 +163,8 @@ namespace SandRibbon.Components
                 var dv = new DrawingVisual();
                 using (var context = dv.RenderOpen())
                 {
-                    context.DrawRectangle(new VisualBrush(clonePublicOnly()), null,
+                    var visual = details.showPrivate ? cloneAll() : clonePublicOnly();
+                    context.DrawRectangle(new VisualBrush(visual), null,
                                           new Rect(new Point(), new Size(ActualWidth, ActualHeight)));
                     context.DrawText(new FormattedText(
                                          details.message,
@@ -513,6 +514,21 @@ namespace SandRibbon.Components
                     var fe = (FrameworkElement)child;
                     if (fe.privacy() == "public")
                         clone.Children.Add(viewFor(fe));
+                }
+            var size = new Size(ActualWidth,ActualHeight);
+            clone.Measure(size);
+            clone.Arrange(new Rect(size));
+            return clone;
+        }
+        private FrameworkElement cloneAll(){
+            var clone = new InkCanvas();
+            foreach(var stroke in stack.handwriting.Strokes)
+                clone.Strokes.Add(stroke.Clone());
+            foreach(var canvas in new AbstractCanvas[]{stack.images, stack.text})
+                foreach (var child in canvas.Children)
+                {
+                    var fe = (FrameworkElement)child;
+                    clone.Children.Add(viewFor(fe));
                 }
             var size = new Size(ActualWidth,ActualHeight);
             clone.Measure(size);
