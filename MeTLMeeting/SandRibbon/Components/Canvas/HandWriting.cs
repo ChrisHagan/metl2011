@@ -23,10 +23,8 @@ using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components.Canvas
 {
-
     public class HandWriting : AbstractCanvas
     {
-
         public HandWriting()
         {
             Loaded += HandWriting_Loaded;

@@ -1,0 +1,50 @@
+﻿<Window x:Class="SandRibbon.Components.UserOptionsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:core="clr-namespace:System;assembly=mscorlib"
+        Title="Advanced Options"
+        WindowStartupLocation="CenterScreen"
+        Width="{DynamicResource width}"
+        Height="400"
+        Background="{DynamicResource BackgroundBlueGradient}">
+    <Window.Resources>
+        <Style TargetType="{x:Type StackPanel}" x:Key="option" />
+        <core:Double x:Key="width">600</core:Double>
+    </Window.Resources>
+    <Grid>
+        <StackPanel VerticalAlignment="Top">
+            <TextBlock Text="These settings will apply to you wherever you use MeTL." />
+            <TextBlock Text="Please take care modifying them as they may result in reduced performance." />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel>
+                <TextBlock Text="Collaboration level"/>
+                <ComboBox SelectedValue="{Binding Path=pedagogyLevel}" SelectedValuePath="Tag">
+                    <ComboBoxItem Tag="2">Presentation</ComboBoxItem>                    
+                    <ComboBoxItem Tag="3">Collaboration</ComboBoxItem>                    
+                </ComboBox>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Powerpoint slide import"></TextBlock>
+                <ComboBox SelectedValue="{Binding Path=powerpointImportScale}" SelectedValuePath="Tag">
+                    <ComboBoxItem Tag="1">Low resolution</ComboBoxItem>                    
+                    <ComboBoxItem Tag="2">High resolution</ComboBoxItem>                    
+                </ComboBox>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Logging level"></TextBlock>
+                <ComboBox SelectedValue="{Binding Path=logLevel}" SelectedValuePath="Content">
+                    <ComboBoxItem>FINE</ComboBoxItem>                    
+                    <ComboBoxItem>ERROR</ComboBoxItem>                    
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+        <Grid  VerticalAlignment="Bottom">
+            <Button Click="Reset" HorizontalAlignment="Left">Reset to defaults</Button>
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button Click="Apply">Apply</Button> 
+                <Button Click="Cancel">Cancel</Button> 
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

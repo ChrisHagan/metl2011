@@ -24,7 +24,8 @@ namespace MeTLLib.Providers.Connection
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
         public IReceiveEvents receiveEvents;
-        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory) : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory)
+        public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory) 
+            : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory)
         {
             if (this.location == null)
                 this.location = new Location("0",1,new List<int>{1});
@@ -62,7 +63,16 @@ namespace MeTLLib.Providers.Connection
         }
         public T merge<T>(T otherParser) where T : PreParser
         {
-            var returnParser = (T)Activator.CreateInstance(typeof(T), location.currentSlide);
+            var returnParser = (T)Activator.CreateInstance(typeof(T), 
+                credentials, 
+                location.currentSlide, 
+                conversationDetailsProvider, 
+                historyProvider, 
+                cachedHistoryProvider, 
+                metlServerAddress, 
+                cache, 
+                receiveEvents, 
+                webClientFactory);
             foreach (var parser in new[] { otherParser, this})
             {
                 returnParser.ink.AddRange(parser.ink.Where(s => !returnParser.ink.Contains(s)));

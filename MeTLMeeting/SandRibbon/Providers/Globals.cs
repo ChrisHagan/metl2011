@@ -22,6 +22,18 @@ namespace SandRibbon.Providers
                 return me == conversationDetails.Author;
             }
         }
+        public static UserOptions UserOptions {
+            get {
+                try
+                {
+                    return (UserOptions)SandRibbon.Commands.SetUserOptions.lastValue();
+                }
+                catch (NotSetException)
+                {
+                    return UserOptions.DEFAULT;
+                }
+            }
+        }
         public static string MeTLType
         {
             get

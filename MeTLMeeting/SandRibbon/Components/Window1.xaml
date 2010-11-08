@@ -14,10 +14,9 @@
     Title="MeTL Presenter"
     x:Name="ribbonWindow"
     Closing="ribbonWindow_Closing"
-                 WindowState="Maximized"
-                 MinHeight="240"
-                 MinWidth="320"
-    >
+    WindowState="Maximized"
+    MinHeight="240"
+    MinWidth="320">
     <sr:RibbonWindow.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ZoomIn}" CanExecute="canZoomIn" Executed="doZoomIn" />
         <CommandBinding Command="{x:Static api:Commands.ZoomOut}" CanExecute="canZoomOut" Executed="doZoomOut" />
@@ -39,7 +38,7 @@
     <sr:RibbonWindow.Ribbon>
         <sr:Ribbon x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" 
                    PreviewMouseDoubleClick="ApplicationPopup_PreviewMouseDoubleClick"
-                   ShowHelp="false" ApplicationButtonImage="\Resources\Ribbon-ApplicationButton.png">
+                   ApplicationButtonImage="\Resources\Ribbon-ApplicationButton.png">
             <sr:Ribbon.ToolBar>
                 <chrome:ToolBar />
             </sr:Ribbon.ToolBar>

@@ -37,12 +37,9 @@ namespace SandRibbon
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
         #endregion
-        private PowerPointLoader loader = new PowerPointLoader();
-        private UndoHistory history = new UndoHistory();
         public ConversationDetails details = null;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
-        public static ScrollViewer MAIN_SCROLL;
         public string log
         {
             get { return Logger.log; }
@@ -59,42 +56,43 @@ namespace SandRibbon
             var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(level);
             Title = Globals.MeTLType;
-            try
-            {
+            try {
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
             catch (Exception) { }
             Globals.userInformation.policy = new Policy(false, false);
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
-            Commands.LogOut.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
+            Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
+            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(importPowerpoint));
+            Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
-            Commands.ShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
-            Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
-            Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
+            Commands.ShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
-            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
+            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
-            Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.FitToView.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.ToggleScratchPadVisibility.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.FitToView.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(OriginalView, conversationSearchMustBeClosed));
-            Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
+            Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.SetTutorialVisibility.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
-            Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
-            Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(noop, mustBeInConversation));
+            Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(ProxyMirrorPresentationSpace));
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
             Commands.AddWindowEffect.RegisterCommand(new DelegateCommand<object>(AddWindowEffect));
-            Commands.RemoveWindowEffect.RegisterCommand(new DelegateCommand<object>(RemoveWindowEffect));
-            Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(noop, mustBeLoggedIn));
+            Commands.RemoveWindowEffect.RegisterCommandToDispatcher(new DelegateCommand<object>(RemoveWindowEffect));
+            Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
@@ -113,17 +111,18 @@ namespace SandRibbon
             Commands.UnblockInput.RegisterCommand(new DelegateCommand<object>(UnblockInput));
             Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
-            Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
-            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
+            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
-            Commands.AddImage.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
-            Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(noop, conversationSearchMustBeClosed));
+            Commands.AddImage.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
+            Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
@@ -132,12 +131,13 @@ namespace SandRibbon
             WorkspaceStateProvider.RestorePreviousSettings();
             App.Now("Started MeTL");
         }
-        void ribbon_Loaded(object sender, RoutedEventArgs e)
+        private void importPowerpoint(object obj)
         {
-            ribbon.ToggleMinimize();
+            new PowerPointLoader().ImportPowerpoint();
         }
-        private void noop(object unused)
+        private void createBlankConversation(object obj)
         {
+            new PowerPointLoader().CreateBlankConversation();
         }
         private void ShowConversationSearchBox(object _arg)
         {
@@ -148,6 +148,12 @@ namespace SandRibbon
         {
             if (ribbon.IsMinimized)
                 ribbon.ToggleMinimize();
+        }
+        private void Reconnecting(bool success) {
+            if (success)
+                hideReconnectingDialog();
+            else
+                showReconnectingDialog();
         }
         private void ToggleFriendsVisibility(object unused)
         {
@@ -386,12 +392,10 @@ namespace SandRibbon
         private void AddWindowEffect(object _o)
         {
             CanvasBlocker.Visibility = Visibility.Visible;
-
         }
         private void RemoveWindowEffect(object _o)
         {
-            Dispatcher.adoptAsync(() =>
-            CanvasBlocker.Visibility = Visibility.Collapsed);
+            CanvasBlocker.Visibility = Visibility.Collapsed;
         }
         private void ExecuteMoveTo(int slide)
         {
@@ -406,10 +410,6 @@ namespace SandRibbon
             if(ribbon.SelectedTab!=null)
                 ribbon.SelectedTab = ribbon.Tabs[0];
             var details = Globals.conversationDetails;
-            scroll.Width = Double.NaN;
-            scroll.Height = Double.NaN;
-            canvas.Width = Double.NaN;
-            canvas.Height = Double.NaN;
             MeTLLib.ClientFactory.Connection().AsyncRetrieveHistoryOf(Int32.Parse(title));
             RecentConversationProvider.addRecentConversation(details, Globals.me);
             if (details.Author == Globals.me)
@@ -421,7 +421,6 @@ namespace SandRibbon
             Commands.RequerySuggested(Commands.SetConversationPermissions);
             Commands.SetLayer.ExecuteAsync("Sketch");
         }
-
         private bool automatedTest(string conversationName)
         {
             if (Globals.me.Contains("Admirable") && conversationName.ToLower().Contains("automated")) return true;
@@ -447,11 +446,12 @@ namespace SandRibbon
                                      });
             CommandManager.InvalidateRequerySuggested();
         }
-
-
+        private void hideReconnectingDialog() { 
+            ProgressDisplay.Children.Clear();
+            InputBlocker.Visibility = Visibility.Collapsed;
+        }
         private void showReconnectingDialog()
         {
-            if (InputBlocker.Visibility == Visibility.Visible) return;
             ProgressDisplay.Children.Clear();
             var sp = new StackPanel();
             var majorHeading = new TextBlock
@@ -478,21 +478,15 @@ namespace SandRibbon
         private void moveToQuiz(MeTLLib.DataTypes.QuizQuestion quiz)
         {
         }
-
         private void ShowTutorial()
         {
-            Dispatcher.adoptAsync(() =>
-            TutorialLayer.Visibility = Visibility.Visible);
+            TutorialLayer.Visibility = Visibility.Visible;
         }
         private void HideTutorial()
         {
             if (Globals.userInformation.location != null && !String.IsNullOrEmpty(Globals.userInformation.location.activeConversation))
-                Dispatcher.adoptAsync(() =>
-                {
-                    TutorialLayer.Visibility = Visibility.Collapsed;
-                });
+                TutorialLayer.Visibility = Visibility.Collapsed;
         }
-
         private bool mustBeLoggedIn(object _arg)
         {
             try
@@ -546,19 +540,22 @@ namespace SandRibbon
         {
             Dispatcher.adoptAsync(delegate
             {
-
                 if (details != null)
                     HideTutorial();
-                UpdateTitle();
+                if(details.Jid == Globals.location.activeConversation)
+                    UpdateTitle(details);
                 
                 this.details = details;
             });
         }
-        private void UpdateTitle()
+        private void UpdateTitle(ConversationDetails details)
         {
             try
             {
-                Title = messageFor(Globals.conversationDetails);
+                if(details.Subject.ToLower() != "deleted")
+                    Title = messageFor(Globals.conversationDetails);
+                else
+                    Title = new ConfigurationProvider().getMeTLType();
             }
             catch (NotSetException)
             {
@@ -617,8 +614,8 @@ namespace SandRibbon
         }
         private void OriginalView(object _unused)
         {
-            var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).First();
-            if (currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
+            var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).FirstOrDefault();
+            if (currentSlide == null || currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
             scroll.Width = currentSlide.defaultWidth;
             scroll.Height = currentSlide.defaultHeight;
             scroll.ScrollToLeftEnd();
@@ -626,13 +623,10 @@ namespace SandRibbon
         }
         private void FitToView(object _unused)
         {
-            if (scroll != null && scroll.Height > 0 && scroll.Width > 0)
-            {
-                scroll.Height = scroll.ExtentHeight;
-                scroll.Width = scroll.ExtentWidth;
-                scroll.Height = double.NaN;
-                scroll.Width = double.NaN;
-            }
+            scroll.Height = double.NaN;
+            scroll.Width = double.NaN;
+            canvas.Height = double.NaN;
+            canvas.Width = double.NaN;
         }
         private void FitToPageWidth(object _unused)
         {
@@ -687,7 +681,7 @@ namespace SandRibbon
         }
         private void adornerGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            FixCanvasAspectAfterWindowSizeChanges(e.PreviousSize, e.NewSize);
+            //FixCanvasAspectAfterWindowSizeChanges(e.PreviousSize, e.NewSize);
         }
         private void FixCanvasAspectAfterWindowSizeChanges(System.Windows.Size oldSize, System.Windows.Size newSize)
         {
@@ -695,10 +689,9 @@ namespace SandRibbon
             var cvWidth = adornerGrid.ActualWidth;
             var cvRatio = cvWidth / cvHeight;
             var scrollRatio = scroll.ActualWidth / scroll.ActualHeight;
-            if (Double.IsNaN(scroll.Height) || Double.IsNaN(scroll.Width)) return;
             if (oldSize.Height == newSize.Height)
             {
-                if (scroll.ActualHeight * cvRatio > scroll.ExtentWidth)
+                if (scroll.ActualHeight * cvRatio > scroll.ExtentWidth && !Double.IsNaN(scroll.Width))
                 {
                     scroll.Width = scroll.ExtentWidth;
                     return;
@@ -706,7 +699,7 @@ namespace SandRibbon
                 scroll.Width = scroll.ActualHeight * cvRatio;
                 return;
             }
-            if (oldSize.Width == newSize.Width)
+            if (oldSize.Width == newSize.Width && !Double.IsNaN(scroll.Height))
             {
                 if (scroll.ActualWidth / cvRatio > scroll.ExtentHeight)
                 {
@@ -716,13 +709,13 @@ namespace SandRibbon
                 scroll.Height = scroll.ActualWidth / cvRatio;
                 return;
             }
-            if (scrollRatio > cvRatio)
+            if (scrollRatio > cvRatio && !Double.IsNaN(scroll.Width))
             {
                 var newWidth = scroll.ActualHeight * cvRatio;
                 scroll.Width = newWidth;
                 return;
             }
-            if (scrollRatio < cvRatio)
+            if (scrollRatio < cvRatio && !Double.IsNaN(scroll.Height))
             {
                 var newHeight = scroll.Width / cvRatio;
                 scroll.Height = newHeight;
@@ -848,7 +841,6 @@ namespace SandRibbon
                 if (s.Label == style)
                     details.Permissions = s;
             MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
-            //ConversationDetailsProviderFactory.Provider.Update(details);
             try
             {
                 details = Globals.conversationDetails;
@@ -928,7 +920,7 @@ namespace SandRibbon
         }
         public void SetupUI(PedagogyLevel level)
         {
-            Dispatcher.adoptAsync(() =>
+            Dispatcher.adopt(() =>
             {
                 List<FrameworkElement> homeGroups = new List<FrameworkElement>();
                 List<FrameworkElement> tabs = new List<FrameworkElement>();
@@ -1020,7 +1012,6 @@ namespace SandRibbon
             UpdatePrivacyAdorners();
             updateCurrentPenAfterZoomChanged();
         }
-
         private void ribbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (App.AccidentallyClosing.AddMilliseconds(250) > DateTime.Now)

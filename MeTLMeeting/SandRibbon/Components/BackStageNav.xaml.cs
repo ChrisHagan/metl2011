@@ -33,8 +33,6 @@ namespace SandRibbon.Components
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
-                if(currentConversation.IsChecked == true)
-                    all.IsChecked = true;
             }
         }
         
@@ -57,10 +55,6 @@ namespace SandRibbon.Components
         {
             mine.IsChecked = true;
         }
-        private void openAllConversations()
-        {
-            all.IsChecked = true;
-        }
         private void openFindConversations()
         {
             Dispatcher.adoptAsync(() =>
@@ -74,7 +68,7 @@ namespace SandRibbon.Components
         }
         public string currentMode { 
             get{
-                return new[]{help,mine,all, find, currentConversation}.Aggregate(all, (acc, item) =>
+                return new[]{help,mine,find,currentConversation}.Aggregate(mine, (acc, item) =>
                                                                      {
                                                                          if (true == item.IsChecked)
                                                                              return item;
@@ -83,7 +77,7 @@ namespace SandRibbon.Components
             }
             set
             {
-                var elements = new[] {help, mine, all, find, currentConversation};
+                var elements = new[] {help, mine, find, currentConversation};
                 foreach (var button in elements)
                     if (button.Name == value)
                         button.IsChecked = true;

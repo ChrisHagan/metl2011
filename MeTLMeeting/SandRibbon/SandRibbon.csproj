@@ -278,6 +278,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Components\UserOptionsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Quizzing\AnswerAQuiz.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -355,12 +359,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\PresentationSpace.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\PrintDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -581,6 +579,9 @@
       <DependentUpon>BackStageNav.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\NetworkController.cs" />
+    <Compile Include="Components\UserOptionsDialog.xaml.cs">
+      <DependentUpon>UserOptionsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Window1.xaml.cs">
       <DependentUpon>Window1.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -693,9 +694,6 @@
     </Compile>
     <Compile Include="Components\PresentationSpace.xaml.cs">
       <DependentUpon>PresentationSpace.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\PrintDialog.xaml.cs">
-      <DependentUpon>PrintDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\PrintingHost.xaml.cs">
       <DependentUpon>PrintingHost.xaml</DependentUpon>

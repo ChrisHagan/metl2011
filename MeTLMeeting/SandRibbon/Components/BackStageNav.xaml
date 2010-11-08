@@ -19,7 +19,6 @@
             <Rectangle Fill="White" Width="Auto" Height="2" Margin="-20 5 -20 5"/>
             <dict:RadioButton HorizontalAlignment="Left" Text="Search" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="find" Checked="mode_Checked" IsChecked="True"/>
             <dict:RadioButton HorizontalAlignment="Left" Text="My conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="mine" Checked="mode_Checked"/>
-            <dict:RadioButton HorizontalAlignment="Left" Text="All conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="all"  Checked="mode_Checked"/>
             <dict:RadioButton HorizontalAlignment="Left" Text="Current conversation" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="currentConversation"  Checked="mode_Checked"/>
             <Rectangle Fill="White" Width="Auto" Height="2" Margin="-20 5 -20 5" x:Name="separator2"/>
             <Button HorizontalAlignment="Left" Command="{x:Static api:Commands.HideConversationSearchBox}"  Content="Return to Conversation" Foreground="{StaticResource ResourceKey=foreground}" x:Name="current" />

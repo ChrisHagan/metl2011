@@ -60,9 +60,21 @@ namespace MeTLLib.Providers.Connection
                 metlServerAddress,
                 cache, receiveEvents, clientFactory);
         }
+        public T preParser<T>(int room) where T : PreParser{
+            return (T)Activator.CreateInstance(typeof(T), 
+                credentials, 
+                room, 
+                conversationDetailsProvider, 
+                historyProvider, 
+                cachedHistoryProvider, 
+                metlServerAddress, 
+                cache, 
+                receiveEvents, 
+                clientFactory);
+        }
         public PreParser create<T>(int room) where T : PreParser
         {
-            return preParser(room);
+            return preParser<T>(room);
         }
     }
     public partial class JabberWire
@@ -78,11 +90,11 @@ namespace MeTLLib.Providers.Connection
         protected const string PONG = "/PONG";
         public Credentials credentials;
         public Location location;
-        private IReceiveEvents receiveEvents;
-        private IWebClientFactory webClientFactory;
-        private static string privacy = "PUBLIC";
+        protected IReceiveEvents receiveEvents;
+        protected IWebClientFactory webClientFactory;
+        protected static string privacy = "PUBLIC";
         protected XmppClientConnection conn;
-        private Jid jid;
+        protected Jid jid;
         public bool LoggedIn = false;
 
         private void registerCommands()
@@ -305,10 +317,10 @@ namespace MeTLLib.Providers.Connection
         {
         }
         private object resetLock = new object();
-        private IConversationDetailsProvider conversationDetailsProvider;
-        private HttpHistoryProvider historyProvider;
-        private CachedHistoryProvider cachedHistoryProvider;
-        private MeTLServerAddress metlServerAddress;
+        protected IConversationDetailsProvider conversationDetailsProvider;
+        protected HttpHistoryProvider historyProvider;
+        protected CachedHistoryProvider cachedHistoryProvider;
+        protected MeTLServerAddress metlServerAddress;
         private void unregisterHandlers()
         {
             conn.OnAuthError -= OnAuthError;

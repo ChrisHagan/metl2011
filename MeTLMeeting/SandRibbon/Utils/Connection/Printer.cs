@@ -16,148 +16,137 @@ using SandRibbonObjects;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using PrintDialog=System.Windows.Controls.PrintDialog;
 using MeTLLib.DataTypes;
+using MeTLLib;
+using MeTLLib.Providers;
+using MeTLLib.Providers.Connection;
 
 namespace SandRibbon.Utils.Connection
 {
+    public class PrintParser : MeTLLib.Providers.Connection.PreParser
+    {
+        public List<object> history = new List<object>();
+        public PrintParser(Credentials credentials, int room, MeTLLib.Providers.Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory) 
+            : base(credentials,room,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory){
+        }
+        //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
+        public IEnumerable<UserCanvasStack> ToVisualWithNotes()
+        {
+            return createVisual();
+        }
+        public IEnumerable<UserCanvasStack> ToVisuaWithoutNotes()
+        {
+            var canvases = createVisual();
+            return new [] {canvases.First()};
+        }
+        private IEnumerable<UserCanvasStack> createVisual()
+        {
+            var publicCanvas = new UserCanvasStack();
+            var privateCanvas = new UserCanvasStack();
+            foreach (var stroke in ink)
+            {
+                if((stroke.privacy == "public" || stroke.target=="presentationSpace"))
+                    publicCanvas.handwriting.Strokes.Add(stroke.stroke);
+                else if(stroke.target== "notepad")
+                    privateCanvas.handwriting.Strokes.Add(stroke.stroke);
+            }
+            foreach (var image in images)
+            {
+                var imageToAdd = image.Value.image;
+                imageToAdd.Margin = new Thickness(5,5,5,5);
+                if (image.Value.privacy == "public" || image.Value.target == "presentationSpace")
+                    publicCanvas.images.Children.Add(imageToAdd);
+                else if(image.Value.target== "notepad")
+                    privateCanvas.images.Children.Add(imageToAdd);    
+            }
+            foreach (var box in text)
+            {
+                var textbox = box.Value.box;
+                textbox.BorderThickness = new Thickness(0);
+                textbox.BorderBrush = new SolidColorBrush(Colors.Transparent);
+                textbox.Background = new SolidColorBrush(Colors.Transparent);
+                if (box.Value.privacy == "public" || box.Value.target == "presentationSpace")
+                    publicCanvas.text.Children.Add(textbox);
+                else if(box.Value.target== "notepad")
+                    privateCanvas.text.Children.Add(textbox);    
+            }
+            if (privateCanvas.images.Children.Count == 0 & privateCanvas.text.Children.Count == 0 && privateCanvas.handwriting.Strokes.Count == 0)
+                return new [] {publicCanvas};
+            return new [] {publicCanvas, privateCanvas};
+        }
+        public override void actOnQuizReceived(MeTLLib.DataTypes.QuizQuestion quizDetails)
+        {
+            //Nothing.  Printer doesn't care about quiz
+        }
+    }
     public class Printer
     {
         private static int targetPageCount;
         public PrinterInformation PrinterInfo = new PrinterInformation();
-        static Printer(){
-            Commands.ShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(ShowPrintConversationDialog));
-        }
-        public static void ShowPrintConversationDialog(object o) {
-            var pcDialog = new Components.PrintDialog();
-            pcDialog.ShowDialog(); 
-        }
-        public class PrintParser : MeTLLib.Providers.Connection.PreParser
-        {
-            public List<object> history = new List<object>();
-            public PrintParser(int slide)
-                : base(new Credentials("","",new List<AuthorizedGroup>()),slide,null,null,null,null,null,null, null)
-            {//This int constructor only passes to the superclass
-            }
-            //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
-            public IEnumerable<UserCanvasStack> ToVisualWithNotes()
-            {
-                return createVisual();
-            }
-            public IEnumerable<UserCanvasStack> ToVisuaWithoutNotes()
-            {
-                var canvases = createVisual();
-                return new [] {canvases.First()};
-            }
-            private IEnumerable<UserCanvasStack> createVisual()
-            {
-                var publicCanvas = new UserCanvasStack();
-                var privateCanvas = new UserCanvasStack();
-                foreach (var stroke in ink)
-                {
-                    if((stroke.privacy == "public" || stroke.target=="presentationSpace"))
-                        publicCanvas.handwriting.Strokes.Add(stroke.stroke);
-                    else if(stroke.target== "notepad")
-                        privateCanvas.handwriting.Strokes.Add(stroke.stroke);
-                }
-                foreach (var image in images)
-                {
-                    var imageToAdd = image.Value.image;
-                    imageToAdd.Margin = new Thickness(5,5,5,5);
-                    if (image.Value.privacy == "public" || image.Value.target == "presentationSpace")
-                        publicCanvas.images.Children.Add(imageToAdd);
-                    else if(image.Value.target== "notepad")
-                        privateCanvas.images.Children.Add(imageToAdd);    
-                }
-                foreach (var box in text)
-                {
-                    var textbox = box.Value.box;
-                    textbox.BorderThickness = new Thickness(0);
-                    textbox.BorderBrush = new SolidColorBrush(Colors.Transparent);
-                    textbox.Background = new SolidColorBrush(Colors.Transparent);
-                    if (box.Value.privacy == "public" || box.Value.target == "presentationSpace")
-                        publicCanvas.text.Children.Add(textbox);
-                    else if(box.Value.target== "notepad")
-                        privateCanvas.text.Children.Add(textbox);    
-                }
-                if (privateCanvas.images.Children.Count == 0 & privateCanvas.text.Children.Count == 0 && privateCanvas.handwriting.Strokes.Count == 0)
-                    return new [] {publicCanvas};
-                return new [] {publicCanvas, privateCanvas};
-            }
-
-            public override void actOnQuizReceived(MeTLLib.DataTypes.QuizQuestion quizDetails)
-            {
-                //Nothing.  Printer doesn't care about quiz
-            }
-        }
+        
         public class PrinterInformation
         {
             public List<Slide> slides;
             public string title;
             public Dictionary<string, PrintParser> parsers = new Dictionary<string, PrintParser>();
         }
-        public void PrintHandout(string title, string user)
+        public void PrintHandout(string jid, string user)
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithoutNotes);
-            var conversation =  MeTLLib.ClientFactory.Connection().DetailsOf(title);
+            var conversation =  MeTLLib.ClientFactory.Connection().DetailsOf(jid);
             targetPageCount = conversation.Slides.Where(s=>s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
             PrinterInfo = new PrinterInformation
                               {
                                   parsers = new Dictionary<string, PrintParser>(),
-                                  title = title,
+                                  title = jid,
                                   slides = conversation.Slides
                               };
             foreach (var slide in conversation.Slides.Where(s=>s.type==MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
             {
                 var room = slide.id;
-                MessageBox.Show( "Client no longer has access to the historyprovider, this needs to be fixed at some point");
-                /*
-                HistoryProviderFactory.provider.Retrieve<PrintParser>(
-                                App.dontDoAnything,
-                                App.dontDoAnything,
-                                (parser)=> ReceiveParser(parser, printDocument),
+                ClientFactory.Connection().getHistoryProvider().Retrieve<PrintParser>(
+                                null,
+                                null,
+                                (parser)=>{
+                                    ReceiveParser(parser, printDocument );
+                                },
                                 room.ToString());
-            
-                 */
             }
         }
-        public void PrintPrivate(string title, string user)
+        public void PrintPrivate(string jid, string user)
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithNotes);
-            var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(title);
+            var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(jid);
             targetPageCount = conversation.Slides.Where(s=>s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
             PrinterInfo = new PrinterInformation
                               {
                                   parsers = new Dictionary<string, PrintParser>(),
-                                  title = title,
+                                  title = jid,
                                   slides = conversation.Slides
                               };
             foreach (var slide in conversation.Slides.Where(s=>s.type==MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
             {
                 var room = slide.id;
                 var parsers = new List<PrintParser>();
-                
-                MessageBox.Show( "Client no longer has access to the historyprovider, this needs to be fixed at some point");
-                /*
-                HistoryProviderFactory.provider.Retrieve<PrintParser>(
-                                App.dontDoAnything,
-                                App.dontDoAnything,
+                ClientFactory.Connection().getHistoryProvider().Retrieve<PrintParser>(
+                                null,
+                                null,
                                 (parser)=>{
                                     parsers.Add(parser);
-                                    if (parsers.Count() == 2)
-                                        ReceiveParser(parsers[0].merge<PrintParser>(parsers[1]),printDocument );
+                                    if (parsers.Count() == 3)
+                                        ReceiveParser(parsers[0].merge<PrintParser>(parsers[1]).merge<PrintParser>(parsers[2]),printDocument );
                                 },
                                 room.ToString());
-                HistoryProviderFactory.provider.RetrievePrivateContent<PrintParser>(
-                                App.dontDoAnything,
-                                App.dontDoAnything,
+                ClientFactory.Connection().getHistoryProvider().RetrievePrivateContent<PrintParser>(
+                                null,
+                                null,
                                 (parser) =>
                                 {
                                     parsers.Add(parser);
-                                    if (parsers.Count() == 2)
-                                        ReceiveParser(parsers[0].merge<PrintParser>(parsers[1]), printDocument);
+                                    if (parsers.Count() == 3)
+                                        ReceiveParser(parsers[0].merge<PrintParser>(parsers[1]).merge<PrintParser>(parsers[2]), printDocument);
                                 },
                                 user,
                                 room.ToString());
-                 * */
             }
         }
         private void ReceiveParser(PrintParser parser, Action<IEnumerable<PrintParser>> ShowPrintDialog)
@@ -172,6 +161,8 @@ namespace SandRibbon.Utils.Connection
                             return acc;
                         });
                 ShowPrintDialog(from p in PrinterInfo.parsers orderby indicesByJid[p.Value.location.currentSlide.ToString()] select p.Value);
+            }
+            else if (PrinterInfo.parsers.Count() > targetPageCount) { 
             }
         }
         private void ShowPrintDialogWithNotes(IEnumerable<PrintParser> parsers)
@@ -221,9 +212,9 @@ namespace SandRibbon.Utils.Connection
                       }
                       printer.PrintDocument(myDocument.DocumentPaginator, "A document");
                   }
+                  Commands.HideProgressBlocker.Execute(null);
               });
         }
-
         private class ThumbBox : Viewbox
         {
             public static int THUMBNAIL_WIDTH = 96;

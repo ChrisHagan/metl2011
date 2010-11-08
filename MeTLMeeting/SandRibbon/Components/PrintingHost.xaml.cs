@@ -105,28 +105,5 @@ namespace SandRibbon.Components
             }
             return scaledBitmap;
         }
-        private class ThumbBox : Viewbox
-        {
-            private string filename;
-            public ThumbBox(UIElement child, string filename, int sideSize)
-                : base()
-            {
-                this.Child = child;
-                this.filename = filename;
-                this.Width = sideSize;
-                this.Height = sideSize;
-            }
-            public void Save()
-            {
-                this.UpdateLayout();
-                var bitmap = new RenderTargetBitmap((int)Width, (int)Height, 96, 96, PixelFormats.Pbgra32);
-                bitmap.Render(this);
-                BitmapFrame frame = BitmapFrame.Create(bitmap);
-                var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(frame);
-                using (var stream = File.Create(filename))
-                    encoder.Save(stream);
-            }
-        }
     }
 }
