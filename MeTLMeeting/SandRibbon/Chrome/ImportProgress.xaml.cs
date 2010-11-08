@@ -30,15 +30,26 @@ namespace SandRibbon
             InitializeComponent();
             from.ItemsSource = fromStack;
             to.ItemsSource = toStack;
-            Commands.UpdatePowerpointProgress.RegisterCommandToDispatcher<PowerpointImportProgress>(new DelegateCommand<PowerpointImportProgress>(UpdatePowerpointProgress));
+            Commands.UpdatePowerpointProgress.RegisterCommandToDispatcher(new DelegateCommand<PowerpointImportProgress>(UpdatePowerpointProgress));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            Commands.PrintConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(PrintConversation));
+            Commands.PrintConversationHandout.RegisterCommandToDispatcher(new DelegateCommand<object>(PrintConversation));
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>(PreParserAvailable));
             Commands.CreateBlankConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            Commands.HideProgressBlocker.RegisterCommandToDispatcher(new DelegateCommand<object>(HideProgressBlocker));
+        }
+        private void HideProgressBlocker(object _arg) {
+            Visibility = Visibility.Collapsed;
         }
         private void reset()
         {
             fromStack.Clear();
             toStack.Clear();
+        }
+        private void PrintConversation(object _arg) {
+            reset();
+            Visibility = Visibility.Visible;
+            goldLabel.Content = "Printing";
         }
         private void JoinConversation(object _arg) {
             reset();

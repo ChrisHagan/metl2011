@@ -29,6 +29,7 @@ using System.Windows.Ink;
 using System.Collections.ObjectModel;
 using SandRibbon.Components.Utility;
 using System.Windows.Documents;
+using MeTLLib;
 
 namespace SandRibbon
 {
@@ -37,6 +38,8 @@ namespace SandRibbon
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
         #endregion
+        private PowerPointLoader loader = new PowerPointLoader();
+        private UndoHistory history = new UndoHistory();
         public ConversationDetails details = null;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
@@ -67,9 +70,8 @@ namespace SandRibbon
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
-            Commands.ShowPrintConversationDialog.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
+            Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(PrintConversationHandout, mustBeInConversation));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -121,13 +123,39 @@ namespace SandRibbon
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
+            Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
-            App.Now("Restoring settings");
             WorkspaceStateProvider.RestorePreviousSettings();
+            CommandManager.InvalidateRequerySuggested();
             App.Now("Started MeTL");
+        }
+        private void PrintBinding(object sender, EventArgs e) {
+            PrintConversation(null);
+        }
+        private void HelpBinding(object sender, EventArgs e) {
+            LaunchHelp(null);
+        }
+        private void LaunchHelp(object _arg)
+        {
+            Process.Start("http://penny-arcade.com");
+        }
+        private void PrintConversation(object _arg) {
+            new Printer().PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
+        }
+        private void PrintConversationHandout(object _arg) { 
+            new Printer().PrintHandout(Globals.conversationDetails.Jid, Globals.me);
+        }
+        private void SetUserOptions(UserOptions options) {
+            ClientFactory.Connection().SaveUserOptions(Globals.me, options);
+        }
+        void ribbon_Loaded(object sender, RoutedEventArgs e)
+        {
+            ribbon.ToggleMinimize();
         }
         private void ShowConversationSearchBox(object _arg)
         {

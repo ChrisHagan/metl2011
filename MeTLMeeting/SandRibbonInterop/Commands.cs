@@ -34,6 +34,8 @@ namespace SandRibbon
         public static CompositeCommand LeaveAllRooms = new CompositeCommand();
         public static CompositeCommand BackstageModeChanged = new CompositeCommand();
         public static CompositeCommand UpdatePowerpointProgress = new CompositeCommand();
+        public static CompositeCommand ShowOptionsDialog = new CompositeCommand();
+        public static CompositeCommand SetUserOptions = new CompositeCommand();
 
         public static CompositeCommand SelectionWasEmptyOnCurrentCanvas = new CompositeCommand();
         public static CompositeCommand AddPrivacyToggleButton = new CompositeCommand();
@@ -232,9 +234,9 @@ namespace SandRibbon
         public static CompositeCommand BlockInput = new CompositeCommand();
         public static CompositeCommand UnblockInput = new CompositeCommand();
         public static CompositeCommand CanEdit = new CompositeCommand();
-        public static CompositeCommand ShowPrintConversationDialog = new CompositeCommand();
         public static CompositeCommand PrintConversation = new CompositeCommand();
         public static CompositeCommand PrintConversationHandout = new CompositeCommand();
+        public static CompositeCommand HideProgressBlocker = new CompositeCommand();
         public static CompositeCommand SendChatMessage = new CompositeCommand();
         public static CompositeCommand ReceiveChatMessage = new CompositeCommand();
         #endregion

@@ -89,7 +89,6 @@ namespace SandRibbon.Components
             switch (mode)
             {
                 case "mine": searchButtonText = "Filter my Conversations"; break;
-                case "all": searchButtonText = "Filter all Conversations"; break;
                 default: searchButtonText = "Search all Conversations"; break;
             }
             Dispatcher.adoptAsync(() =>
@@ -100,7 +99,7 @@ namespace SandRibbon.Components
         }
         private void updateLiveButton(string mode)
         {
-            var elements = new[] {mine, all, find, currentConversation};
+            var elements = new[] {mine, find, currentConversation};
             foreach (var button in elements)
                 if (button.Name == mode)
                     button.IsChecked = true;

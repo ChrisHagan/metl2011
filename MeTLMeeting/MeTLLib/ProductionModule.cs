@@ -5,6 +5,7 @@ using System.Text;
 using Ninject.Modules;
 using MeTLLib.Providers.Connection;
 using System.Net;
+using MeTLLib.Providers;
 
 namespace MeTLLib
 {
@@ -33,6 +34,7 @@ namespace MeTLLib
             Bind<IProviderMonitor>().To<ProductionProviderMonitor>().InSingletonScope();
             Bind<ITimerFactory>().To<ProductionTimerFactory>().InSingletonScope();
             Bind<IReceiveEvents>().To<ProductionReceiveEvents>().InSingletonScope();
+            Bind<UserOptionsProvider>().To<UserOptionsProvider>().InSingletonScope();
         }
     }
 }

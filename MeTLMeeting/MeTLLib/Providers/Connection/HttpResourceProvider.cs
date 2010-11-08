@@ -98,9 +98,7 @@ namespace MeTLLib.Providers.Connection
         }
         public String uploadData(Uri resource, byte[] data)
         {
-            string result = "";
-            retryUpToXTimes(delegate{ result = decode(client.UploadData(resource.ToString(), data)); },5);
-            return result;
+            return decode(client.UploadData(resource.ToString(), data));
         }
         public void uploadDataAsync(Uri resource, byte[] data)
         {

@@ -134,8 +134,8 @@ namespace SandRibbon.Utils
         }
         public void LoadPowerpointAsFlatSlides(string file, ConversationDetails details, int MagnificationRating)
         {
+            progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0);
             var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
-            progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED,0,ppt.Slides.Count);
             var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
             if (!Directory.Exists(currentWorkingDirectory))
                 Directory.CreateDirectory(currentWorkingDirectory);

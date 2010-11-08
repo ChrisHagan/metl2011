@@ -15,6 +15,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbonObjects;
 using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
+using SandRibbon.Components;
 
 namespace SandRibbon.Chrome
 {
@@ -52,5 +53,9 @@ namespace SandRibbon.Chrome
             System.Diagnostics.Process.Start("http://www.monash.edu.au/eeducation/myls2010/students/resources/software/metl/");
         }
         #endregion
+        private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
+        {
+            new UserOptionsDialog().Show();
+        }
     }
 }

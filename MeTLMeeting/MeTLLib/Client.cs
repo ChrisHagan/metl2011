@@ -94,6 +94,8 @@ namespace MeTLLib
         Uri NoAuthUploadResource(Uri file, int Room);
         Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload);
         Uri NoAuthUploadResource(byte[] data, string filename, int Room);
+        void SaveUserOptions(string username, UserOptions options);
+        void UserOptionsFor(string username);
     }
     public class ClientConnection : IClientBehaviour
     {
@@ -113,6 +115,8 @@ namespace MeTLLib
         public JabberWireFactory jabberWireFactory { private get; set; }
         [Inject]
         public IWebClientFactory downloaderFactory{ private get; set; }
+        [Inject]
+        public UserOptionsProvider userOptionsProvider { private get; set; }
         public MeTLServerAddress server { private set; get; }
         public ClientConnection(MeTLServerAddress address)
         {
@@ -641,5 +645,13 @@ namespace MeTLLib
             }
         }
         #endregion
+        public void SaveUserOptions(string username, UserOptions options)
+        {
+            userOptionsProvider.Set(username,options);
+        }
+        public void UserOptionsFor(string username)
+        {
+            userOptionsProvider.Get(username);
+        }
     }
 }

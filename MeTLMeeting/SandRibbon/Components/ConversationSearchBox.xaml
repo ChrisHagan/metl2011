@@ -135,7 +135,6 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <dict:RadioButton Width="150" Text="Search" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True" Foreground="White" />
                 <dict:RadioButton Width="150" Text="My conversations" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked" Foreground="White" />
-                <dict:RadioButton Width="150" Text="All conversations" GroupName="SearchOptions" x:Name="all"  Checked="mode_Checked" Foreground="White" />
                 <dict:RadioButton Width="150" Text="Current conversation" GroupName="SearchOptions" x:Name="currentConversation"  Checked="mode_Checked" Foreground="White" />
             </StackPanel>
         </Border>

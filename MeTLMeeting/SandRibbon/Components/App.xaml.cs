@@ -97,7 +97,6 @@ namespace SandRibbon
 #endif
             base.OnStartup(e);
             new Worm();
-            new Printer();
             new CommandParameterProvider();
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(LogOut));
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);

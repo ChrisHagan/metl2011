@@ -226,6 +226,9 @@ namespace MeTLLib.DataTypes
         private static Guid STARTING_COLOR = Guid.NewGuid();
         private static Guid IS_HIGHLIGHTER = Guid.NewGuid();
         private static readonly string NONPERSISTENT_STROKE = "nonPersistent";
+        public static string privacy(this Stroke stroke){
+            return stroke.tag().privacy;
+        }
         public static StrokeTag tag(this Stroke stroke)
         {
             var stroketag = new StrokeTag();
