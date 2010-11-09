@@ -90,7 +90,9 @@ namespace SandRibbon.Components
                     Commands.RememberMe.Execute(true);
                     WorkspaceStateProvider.SaveCurrentSettings();
                 }
-                Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);
+                var options = ClientFactory.Connection().UserOptionsFor(identity.name);
+                Commands.SetUserOptions.Execute(options);
+                Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(options.pedagogyLevel));
                 this.Visibility = Visibility.Collapsed;
             });
         }

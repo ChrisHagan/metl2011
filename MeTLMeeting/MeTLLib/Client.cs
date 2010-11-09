@@ -95,7 +95,7 @@ namespace MeTLLib
         Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload);
         Uri NoAuthUploadResource(byte[] data, string filename, int Room);
         void SaveUserOptions(string username, UserOptions options);
-        void UserOptionsFor(string username);
+        UserOptions UserOptionsFor(string username);
     }
     public class ClientConnection : IClientBehaviour
     {
@@ -650,9 +650,9 @@ namespace MeTLLib
         {
             userOptionsProvider.Set(username,options);
         }
-        public void UserOptionsFor(string username)
+        public UserOptions UserOptionsFor(string username)
         {
-            userOptionsProvider.Get(username);
+            return userOptionsProvider.Get(username);
         }
     }
 }

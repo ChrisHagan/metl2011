@@ -23,10 +23,11 @@ namespace MeTLLib.Providers
         public UserOptions Get(string username) {
             try
             {
-                var options = Encoding.UTF8.GetString(resourceProvider.secureGetData(new Uri(string.Format(OPTIONS_PATH, serverAddress.secureUri, username))));
+                var path = new Uri(string.Format(OPTIONS_PATH, serverAddress.host, username));
+                var options = Encoding.UTF8.GetString(resourceProvider.secureGetData(path));
                 return UserOptions.ReadXml(options);
             }
-            catch (Exception) {
+            catch (Exception e) {
                 return UserOptions.DEFAULT;
             }
         }

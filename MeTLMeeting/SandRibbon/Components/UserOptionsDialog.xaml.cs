@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
+using SandRibbon.Components.Sandpit;
 
 namespace SandRibbon.Components
 {
@@ -26,6 +27,7 @@ namespace SandRibbon.Components
         private void Apply(object sender, RoutedEventArgs e)
         {
             Commands.SetUserOptions.Execute(DataContext);
+            Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(((UserOptions)DataContext).pedagogyLevel));
             Close();
         }
         private void Cancel(object sender, RoutedEventArgs e)
