@@ -76,8 +76,6 @@ namespace SandRibbon.Utils
         public PowerPointLoader()
         {
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(EditConversation));
-            //Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(CreateBlankConversation));
-            //Commands.ImportPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<object>(ImportPowerpoint));
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
             Commands.UpdatePowerpointProgress.RegisterCommand(new DelegateCommand<PowerpointImportProgress>(ReportPowerpointProgress));
             if (App.isStaging)
