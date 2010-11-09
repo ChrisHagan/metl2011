@@ -31,8 +31,8 @@ namespace SandRibbon.Providers
         }
         public static ImageBrush get(Slide slide)
         {
-            var path = string.Format("http://spacecaps.adm.monash.edu.au:8080/?slide={0}&width={1}&height={2}&server={3}&invalidate={4}",
-                slide.id, 180, 135, ClientFactory.Connection().server.host.Split('.').First(), Globals.isAuthor.ToString().ToLower());
+            var path = string.Format("http://spacecaps.adm.monash.edu.au:8080/?slide={0}&width={1}&height={2}&server={3}",
+                slide.id, 180, 135, ClientFactory.Connection().server.host.Split('.').First());
             App.Now("Loading thumbnail for {0} at {1}", slide.id, path);
             return new ImageBrush(new BitmapImage(new Uri(path), bitmapRetrievePolicy));
         }
