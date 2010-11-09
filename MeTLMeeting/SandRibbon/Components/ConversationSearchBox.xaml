@@ -36,7 +36,7 @@
         <DataTemplate x:Key="doneEditing">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Border Style="{StaticResource thinBlack}">
-                    <dict:Button Text="Apply" InternalButtonSize="Medium"  Click="saveEdit"/>
+                    <dict:Button Text="Apply" InternalButtonSize="Medium"   Click="saveEdit"/>
                 </Border> 
                 <Border Style="{StaticResource thinBlack}">
                     <dict:Button Text="Cancel" InternalButtonSize="Medium"  Click="cancelEdit"/>

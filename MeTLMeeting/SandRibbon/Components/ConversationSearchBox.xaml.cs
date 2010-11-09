@@ -226,7 +226,11 @@ namespace SandRibbon.Components
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Commands.JoinConversation.ExecuteAsync(((FrameworkElement)sender).Tag);
+            var jid = ((FrameworkElement)sender).Tag;
+            if(jid.Equals(Globals.location.activeConversation))
+                Commands.HideConversationSearchBox.Execute(null);
+            else
+                Commands.JoinConversation.ExecuteAsync(jid);
         }
         private void deleteConversation(object sender, RoutedEventArgs e)
         {
@@ -292,6 +296,7 @@ namespace SandRibbon.Components
                 MessageBox.Show(ErrorText);
             return ErrorText.Length == 0;
         }
+
     }
     public class ConversationComparator : System.Collections.IComparer
     {
