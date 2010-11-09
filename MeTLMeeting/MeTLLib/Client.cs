@@ -174,6 +174,7 @@ namespace MeTLLib
                 wire.Logout();
             };
             tryIfConnected(work);
+
             wire = null;
             Trace.TraceInformation("Connection state: " + isConnected.ToString());
             return isConnected;

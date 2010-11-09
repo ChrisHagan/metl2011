@@ -16,7 +16,7 @@ namespace SandRibbon.Providers
 {
     public class ThumbnailProvider
     {
-        private static RequestCachePolicy bitmapRetrievePolicy = new RequestCachePolicy(RequestCacheLevel.CacheIfAvailable);
+        private static RequestCachePolicy bitmapRetrievePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
         public static SlideToThumbConverter SlideToThumb = new SlideToThumbConverter();
         public class SlideToThumbConverter : IValueConverter {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -31,10 +31,10 @@ namespace SandRibbon.Providers
         }
         public static ImageBrush get(Slide slide)
         {
-            App.Now("Loading thumbnail for {0}", slide.id);
-            return new ImageBrush(new BitmapImage(new Uri(
-                string.Format("http://spacecaps.adm.monash.edu.au:8080/?slide={0}&width={1}&height={2}&server={3}",
-                slide.id, 180, 135, ClientFactory.Connection().server.host.Split('.').First())), bitmapRetrievePolicy));
+            var path = string.Format("http://spacecaps.adm.monash.edu.au:8080/?slide={0}&width={1}&height={2}&server={3}&invalidate={4}",
+                slide.id, 180, 135, ClientFactory.Connection().server.host.Split('.').First(), Globals.isAuthor.ToString().ToLower());
+            App.Now("Loading thumbnail for {0} at {1}", slide.id, path);
+            return new ImageBrush(new BitmapImage(new Uri(path), bitmapRetrievePolicy));
         }
     }
 }

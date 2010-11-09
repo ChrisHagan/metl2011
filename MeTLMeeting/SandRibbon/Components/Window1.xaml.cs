@@ -65,7 +65,7 @@ namespace SandRibbon
             catch (Exception) { }
             Globals.userInformation.policy = new Policy(false, false);
             //create
-            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(importPowerpoint));
+            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
@@ -153,7 +153,7 @@ namespace SandRibbon
             CommandManager.InvalidateRequerySuggested();
             App.Now("Started MeTL");
         }
-        private void importPowerpoint(object obj)
+        private void ImportPowerpoint(object obj)
         {
             loader.ImportPowerpoint();
         }
