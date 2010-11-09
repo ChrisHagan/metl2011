@@ -53,6 +53,7 @@ namespace SandRibbon.Components
         private ObservableCollection<MeTLLib.DataTypes.ConversationDetails> searchResults = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
         protected static string activeConversation;
         protected static string me;
+        public string Version { get; set; }
         private System.Threading.Timer refreshTimer;
         public ConversationSearchBox()
         {
@@ -65,6 +66,8 @@ namespace SandRibbon.Components
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
             Commands.BackstageModeChanged.RegisterCommand(new DelegateCommand<string>(BackstageModeChanged));
+            Version = ConfigurationProvider.instance.getMetlVersion();
+            versionNumber.DataContext = Version;
             SearchResults.ItemsSource = searchResults;
             activeConversation = Globals.location.activeConversation;
             me = Globals.me;
@@ -282,7 +285,7 @@ namespace SandRibbon.Components
             var thisTitleIsNotTaken = (searchResults.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).ToList());
             string ErrorText = "";
             if (!thisTitleIsASCII)
-                ErrorText += "Conversation title can only contain ASCII characters. "; 
+                ErrorText += "Conversation title can only contain letters, numbers and punctuation marks. "; 
             if (!thisIsAValidTitle) { ErrorText += "Invalid conversation title.  "; }
             if (!(thisTitleIsNotTaken.Count == 1)) { ErrorText += "Conversation title already used.  "; }
             if (ErrorText.Length > 0)

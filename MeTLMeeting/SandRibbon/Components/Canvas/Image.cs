@@ -50,9 +50,6 @@ namespace SandRibbon.Components.Canvas
         private Dictionary<string, bool> userVisibility;
         public Image()
         {
-            userImages = new Dictionary<string, List<MeTLLib.DataTypes.TargettedImage>>();
-            userVideo = new Dictionary<string, List<MeTLLib.DataTypes.TargettedVideo>>();
-            userVisibility = new Dictionary<string, bool>();
             EditingMode = InkCanvasEditingMode.Select;
             Background = Brushes.Transparent;
             PreviewKeyDown += keyPressed;
@@ -62,38 +59,38 @@ namespace SandRibbon.Components.Canvas
             SelectionChanged += selectionChanged;
             SelectionResizing += elementsMovingOrResizing;
             SelectionResized += elementsMovedOrResized;
-            Commands.ReceiveImage.RegisterCommand(new DelegateCommand<IEnumerable<MeTLLib.DataTypes.TargettedImage>>(ReceiveImages));
-            Commands.ReceiveVideo.RegisterCommandToDispatcher<TargettedVideo>(new DelegateCommand<MeTLLib.DataTypes.TargettedVideo>(ReceiveVideo));
-            Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(ReceiveDirtyImage));
-            Commands.ReceiveDirtyVideo.RegisterCommandToDispatcher<TargettedDirtyElement>(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(ReceiveDirtyVideo));
+            Commands.ReceiveImage.RegisterCommand(new DelegateCommand<IEnumerable<TargettedImage>>(ReceiveImages));
+            Commands.ReceiveVideo.RegisterCommandToDispatcher<TargettedVideo>(new DelegateCommand<TargettedVideo>(ReceiveVideo));
+            Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
+            Commands.ReceiveDirtyVideo.RegisterCommandToDispatcher<TargettedDirtyElement>(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyVideo));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(addImageFromDisk));
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(uploadFile));
             Commands.PlaceQuizSnapshot.RegisterCommand(new DelegateCommand<string>(addImageFromQuizSnapshot));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
-            Commands.ImageDropped.RegisterCommand(new DelegateCommand<ImageDrop>((drop) =>
-            {
-                try
-                {
-                    if (drop.target.Equals(target) && me != "projector")
-                        handleDrop(drop.filename, drop.point, drop.position);
-                }
-                catch (NotSetException e)
-                {
-                    //YAY
-                }
-            }));
-            Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedDirtyElement>(ReceiveDirtyLiveWindow));
-            Commands.DugPublicSpace.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.LiveWindowSetup>(DugPublicSpace));
+            Commands.ImageDropped.RegisterCommand(new DelegateCommand<ImageDrop>(imagedDropped));
+            Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyLiveWindow));
+            Commands.DugPublicSpace.RegisterCommand(new DelegateCommand<LiveWindowSetup>(DugPublicSpace));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedImages));
-            Commands.MirrorVideo.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.VideoMirror.VideoMirrorInformation>(mirrorVideo));
+            Commands.MirrorVideo.RegisterCommand(new DelegateCommand<VideoMirror.VideoMirrorInformation>(mirrorVideo));
             Commands.VideoMirrorRefreshRectangle.RegisterCommand(new DelegateCommand<string>(mirrorVideoRefresh));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(clearVisibilityDictionary));
+            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearchBox));
+        }
+        private void imagedDropped(ImageDrop drop)
+        {
+            try
+            {
+                if (drop.target.Equals(target) && me != "projector")
+                    handleDrop(drop.filename, drop.point, drop.position);
+            }
+            catch (NotSetException e)
+            {
+                //YAY
+            }
         }
 
-        private void clearVisibilityDictionary(object obj)
+        private void hideConversationSearchBox(object obj)
         {
-            userImages.Clear();
-            userVideo.Clear();
+            addAdorners();
         }
         private void deleteSelectedImages(object obj)
         {
@@ -238,16 +235,6 @@ namespace SandRibbon.Components.Canvas
             {
                 video.video.MediaElement.LoadedBehavior = MediaState.Manual;
                 video.video.MediaElement.ScrubbingEnabled = true;
-                if (video.target == target)
-                {
-                    var author = video.author == Globals.conversationDetails.Author ? "Teacher" : video.author;
-                    if (!userVisibility.ContainsKey(author))
-                        userVisibility.Add(author, true);
-                    if (!userVideo.ContainsKey(author))
-                        userVideo.Add(author, new List<MeTLLib.DataTypes.TargettedVideo>());
-                    if (!userVideo[author].Contains(video))
-                        userVideo[author].Add(video);
-                }
                 if (me == "projector")
                     AddVideoClone(video.video);
                 else
@@ -422,7 +409,6 @@ namespace SandRibbon.Components.Canvas
                     Background = new VisualBrush(image);
                 else if (!imageExistsOnCanvas(image))
                 {
-                    image.Margin = new Thickness(PADDING, PADDING, PADDING, PADDING);
                     Children.Add(image);
                 }
             }
@@ -522,14 +508,11 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             addAdorners();
         }
-        private void addAdorners()
+
+        internal void addAdorners()
         {
             var selectedElements = GetSelectedElements();
-            if (selectedElements.Count == 0)
-            {
-                ClearAdorners();
-                return;
-            }
+            if(selectedElements.Count == 0 ) return;
             var publicElements = selectedElements.Where(i => (((i is System.Windows.Controls.Image) && ((System.Windows.Controls.Image)i).tag().privacy.ToLower() == "public")) || ((i is Video) && ((Video)i).tag().privacy.ToLower() == "public")).ToList();
             string privacyChoice;
             if (publicElements.Count == 0)
@@ -539,9 +522,6 @@ namespace SandRibbon.Components.Canvas
             else
                 privacyChoice = "both";
             Commands.AddPrivacyToggleButton.ExecuteAsync(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
-            /*var adorner = GetAdorner();
-            AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(privacyChoice, GetSelectionBounds())));
-        */
         }
         List<UIElement> elementsAtStartOfTheMove = new List<UIElement>();
         private void elementsMovingOrResizing(object sender, InkCanvasSelectionEditingEventArgs e)
@@ -780,16 +760,16 @@ namespace SandRibbon.Components.Canvas
                     withResources(fileBrowser.FileNames);
             }
         }
-        public void dropVideoOnCanvas(string fileName, Point pos, int count)
+        public void dropVideoOnCanvas(string filename, Point pos, int count)
         {
-            FileType type = GetFileType(fileName);
+            FileType type = GetFileType(filename);
             if (type == FileType.Video)
             {
                 Dispatcher.adopt(() =>
                 {
                     var placeHolderMe = new MediaElement
                     {
-                        Source = new Uri(fileName, UriKind.Relative),
+                        Source = new Uri(filename, UriKind.Relative),
                         Width = 200,
                         Height = 200,
                         LoadedBehavior = MediaState.Manual
@@ -815,7 +795,7 @@ namespace SandRibbon.Components.Canvas
                                           zIndex = -1
                                       });
                     MeTLLib.ClientFactory.Connection().UploadAndSendVideo(new MeTLStanzas.LocalVideoInformation
-                    (currentSlide, Globals.me, target, privacy, placeHolder, fileName, false));
+                    (currentSlide, Globals.me, target, privacy, placeHolder, filename, false));
                     Children.Remove(placeHolder);
                 });
             }
@@ -829,7 +809,6 @@ namespace SandRibbon.Components.Canvas
                     dropImageOnCanvas(fileName, pos, count);
                     break;
                 case FileType.Video:
-                    dropVideoOnCanvas(fileName, pos, count);
                     break;
                 default:
                     uploadFileForUse(fileName);
@@ -1069,14 +1048,6 @@ namespace SandRibbon.Components.Canvas
         public void SetValue(string value)
         {
             Image.dropImageOnCanvas(value, new Point(0, 0), 1);
-            /*
-            Image.ParseInjectedStream(value, element => Image.Dispatcher.adopt((Action)delegate
-                                        {
-                                            foreach (var image in element.SelectElements<MeTLStanzas.Image>(true))
-                                            {
-                                                //Image.dropImageOnCanvas(image.source.ToString(), new Point { X = image.x, Y = image.y }, 1);
-                                            }
-                                                                                            }));**/
         }
         bool IValueProvider.IsReadOnly
         {

@@ -125,6 +125,13 @@ namespace SandRibbon.Components.Canvas
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(ClearSelectionOnLayerChanged));
             Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<object>(ItemsPrivacyChange));
+
+            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideAdorners));
+        }
+
+        private void hideAdorners(object obj)
+        {
+            ClearAdorners();
         }
 
         private void moveTo(object obj)
@@ -143,7 +150,7 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
         }
 
-        protected void ClearAdorners()
+        protected internal void ClearAdorners()
         {
             Commands.RemovePrivacyAdorners.ExecuteAsync(null);
         }

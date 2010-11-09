@@ -37,7 +37,6 @@ namespace SandRibbon
         public static CompositeCommand ShowOptionsDialog = new CompositeCommand();
         public static CompositeCommand SetUserOptions = new CompositeCommand();
 
-        public static CompositeCommand SelectionWasEmptyOnCurrentCanvas = new CompositeCommand();
         public static CompositeCommand AddPrivacyToggleButton = new CompositeCommand();
         public static CompositeCommand RemovePrivacyAdorners = new CompositeCommand();
         public static CompositeCommand UpdateCursor = new CompositeCommand();

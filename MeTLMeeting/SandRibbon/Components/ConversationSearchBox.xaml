@@ -105,7 +105,13 @@
     <DockPanel Background="White" x:Name="TotalWidth" >
         <Border DockPanel.Dock="Bottom" BorderThickness="1" Padding="2" CornerRadius="4" BorderBrush="DarkGray" x:Name="ConversationSearchFooter" HorizontalAlignment="Stretch" Width="Auto" VerticalAlignment="Bottom">
             <Grid>
-                <Image HorizontalAlignment="Left" Stretch="None" Source="\Resources\MonashLogo.jpg"/>
+                <StackPanel>
+                    <Image HorizontalAlignment="Left" Stretch="None" Source="\Resources\MonashLogo.jpg"/>
+                    <StackPanel Orientation="Horizontal" >
+                        <Label Content="Version" FontWeight="bold"/>
+                        <Label x:Name="versionNumber" Content="{Binding}"/>
+                    </StackPanel>
+                </StackPanel>
                 <StackPanel HorizontalAlignment="Right">
                     <TextBlock FontSize="9" HorizontalAlignment="Right">
                         <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://www.monash.edu/eeducation">Contact us</Hyperlink>

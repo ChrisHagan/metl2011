@@ -49,7 +49,6 @@ namespace SandRibbon.Components
             this.DataContext = this;
             Commands.AddWindowEffect.ExecuteAsync(null);
             Version = ConfigurationProvider.instance.getMetlVersion();
-            App.Now(string.Format("The Version of MeTL is -> {0}", Version));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
             Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
             if (WorkspaceStateProvider.savedStateExists())

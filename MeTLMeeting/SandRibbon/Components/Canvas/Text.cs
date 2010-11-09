@@ -80,6 +80,12 @@ namespace SandRibbon.Components.Canvas
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
+            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearchBox));
+        }
+
+        private void hideConversationSearchBox(object obj)
+        {
+            addAdorners();
         }
 
         private void textMoved(object sender, EventArgs e)
@@ -89,16 +95,15 @@ namespace SandRibbon.Components.Canvas
 
         private void deleteSelectedItems(object obj)
         {
-            foreach (TextBox box in GetSelectedElements())
+            var selectedElements = GetSelectedElements();
+            if (selectedElements.Count == 0) return;
+            for(var i = 0; i <= selectedElements.Count; i++)
             {
-                UndoHistory.Queue(() =>
-                {
-                    sendTextWithoutHistory(box, box.tag().privacy);
-                },
-                () =>
-                {
-                    doDirtyText(box);
-                });
+                var box = (TextBox)selectedElements[i];
+                UndoHistory.Queue(() => sendTextWithoutHistory(box, box.tag().privacy),
+                () => doDirtyText(box));
+                if (Children.Contains(box))
+                    Children.Remove(box);
                 dirtyTextBoxWithoutHistory(box);
             }
             ClearAdorners();
@@ -223,14 +228,11 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             addAdorners();
         }
-        private void addAdorners()
+
+        public void addAdorners()
         {
             var selectedElements = GetSelectedElements();
-            if (selectedElements.Count == 0)
-            {
-                ClearAdorners();
-                return;
-            }
+            if (selectedElements.Count == 0) return;
             var publicElements = selectedElements.Where(t => ((TextBox)t).tag().privacy.ToLower() == "public").ToList();
             string privacyChoice;
             if (publicElements.Count == 0)

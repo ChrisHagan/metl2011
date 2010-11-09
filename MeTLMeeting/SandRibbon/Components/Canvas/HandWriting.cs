@@ -118,7 +118,14 @@ namespace SandRibbon.Components.Canvas
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<MeTLLib.DataTypes.TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
+            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearchBox));
         }
+
+        private void hideConversationSearchBox(object obj)
+        {
+            addAdorners();
+        }
+
         private void UpdateCursor(object obj)
         {
             if (obj is Cursor)
@@ -253,13 +260,11 @@ namespace SandRibbon.Components.Canvas
         {
             Dispatcher.adoptAsync((Action)addAdorners);
         }
-        private void addAdorners()
+
+        protected internal void addAdorners()
         {
-            ClearAdorners();
             var selectedStrokes = GetSelectedStrokes();
-            if (selectedStrokes.Count() == 0){
-                Commands.SelectionWasEmptyOnCurrentCanvas.Execute(this);
-            }
+            if (selectedStrokes.Count == 0) return;
             var publicStrokes = selectedStrokes.Where(s => s.tag().privacy.ToLower() == "public").ToList();
             string privacyChoice;
             if (publicStrokes.Count == 0)

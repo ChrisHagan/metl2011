@@ -76,7 +76,7 @@ namespace MeTLLib
         void SendQuizQuestion(QuizQuestion qq);
         void SendFile(TargettedFile tf);
         void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii);
-        void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation lvi);
+        void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation videoInformation);
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
         void AsyncRetrieveHistoryOf(int room);
         PreParser RetrieveHistoryOfMUC(string muc);
@@ -325,16 +325,15 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation lvi)
+        public void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation videoInformation)
         {
             Action work = delegate
             {
-                var newPath = new Uri(resourceUploader.uploadResource(lvi.slide.ToString(), lvi.file, false), UriKind.Absolute);
-                MeTLLib.DataTypes.Video newVideo = lvi.video;
+                var newPath = new Uri(resourceUploader.uploadResource(videoInformation.slide.ToString(), videoInformation.file, false), UriKind.Absolute);
+                MeTLLib.DataTypes.Video newVideo = videoInformation.video;
                 newVideo.VideoSource = newPath;
-                newVideo.MediaElement = new MediaElement();
-                newVideo.MediaElement.Source = newPath;
-                wire.SendVideo(new TargettedVideo(lvi.slide, lvi.author, lvi.target, lvi.privacy, newVideo));
+                newVideo.MediaElement = new MediaElement {Source = newPath};
+                wire.SendVideo(new TargettedVideo(videoInformation.slide, videoInformation.author, videoInformation.target, videoInformation.privacy, newVideo));
             };
             tryIfConnected(work);
         }
