@@ -155,11 +155,11 @@ namespace SandRibbon
         }
         private void importPowerpoint(object obj)
         {
-            new PowerPointLoader().ImportPowerpoint();
+            loader.ImportPowerpoint();
         }
         private void createBlankConversation(object obj)
         {
-            new PowerPointLoader().CreateBlankConversation();
+            loader.CreateBlankConversation();
         }
         private void PrintBinding(object sender, EventArgs e) {
             PrintConversation(null);
