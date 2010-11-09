@@ -257,6 +257,7 @@ namespace MeTLLib.DataTypes
             if (server == null && VideoSpecification.server != null) server = VideoSpecification.server;
         }
         public MeTLServerAddress server;
+        public HttpResourceProvider resourceProvider;
         public bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedVideo)) return false;
@@ -274,10 +275,11 @@ namespace MeTLLib.DataTypes
         public MeTLLib.DataTypes.Video videoProperty;
         public MeTLStanzas.Video videoSpecification;
         public string id;
-        public void injectDependancies(MeTLServerAddress server)
+        public void injectDependencies(MeTLServerAddress server, HttpResourceProvider provider)
         {
             if (videoSpecification == null) videoSpecification = new MeTLStanzas.Video(this);
-            videoSpecification.injectDependencies(server);
+            this.resourceProvider = provider;
+            videoSpecification.injectDependencies(server, resourceProvider);
         }
         public MeTLLib.DataTypes.Video video
         {
@@ -285,7 +287,7 @@ namespace MeTLLib.DataTypes
             {
                 if (videoSpecification == null) videoSpecification = new MeTLStanzas.Video(this);
                 Video reified = null;
-                if (server != null) videoSpecification.injectDependencies(server);
+                if (server != null) videoSpecification.injectDependencies(server, resourceProvider);
                 reified = videoSpecification.forceEvaluation();
                 id = reified.tag().id;
                 reified.Height = Height;
@@ -1249,18 +1251,22 @@ namespace MeTLLib.DataTypes
             {
                 this.Vid = video;
             }
-            public Video injectDependencies(MeTLServerAddress server)
+            HttpResourceProvider provider;
+            public Video injectDependencies(MeTLServerAddress server, HttpResourceProvider provider)
             {
                 this.server = server;
+                this.provider = provider;
                 return this;
             }
             public MeTLLib.DataTypes.Video forceEvaluation()
             {
+                var path = string.Format("video_{0}", DateTime.Now.Second);
+                File.WriteAllBytes(path, provider.secureGetData(source));
                 var video = new MediaElement
                 {
                     Tag = this.tag,
                     LoadedBehavior = MediaState.Manual,
-                    Source = source
+                    Source = new Uri(path)
                 };
                 MeTLLib.DataTypes.Video srVideo = new MeTLLib.DataTypes.Video
                 {
@@ -1279,7 +1285,7 @@ namespace MeTLLib.DataTypes
                     var targettedVideo =
                         new TargettedVideo(Int32.Parse(GetTag(slideTag)), GetTag(authorTag), GetTag(targetTag), GetTag(privacyTag),
                         this, GetTag(identityTag), Double.Parse(GetTag(xTag)), Double.Parse(GetTag(yTag)), Double.Parse(GetTag(widthTag)), Double.Parse(GetTag(heightTag)));
-                    if (server != null) targettedVideo.injectDependancies(server);
+                    if (server != null) targettedVideo.injectDependencies(server, provider);
                     return targettedVideo;
                 }
                 set
