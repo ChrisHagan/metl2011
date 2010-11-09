@@ -32,6 +32,10 @@
                 </ComboBox>
             </StackPanel>
             <StackPanel>
+                <TextBlock Text="Print private notes"></TextBlock>
+                <CheckBox IsChecked="{Binding Path=includePrivateNotesOnPrint}" />
+            </StackPanel>
+            <StackPanel>
                 <TextBlock Text="Logging level"></TextBlock>
                 <ComboBox SelectedValue="{Binding Path=logLevel}" SelectedValuePath="Content">
                     <ComboBoxItem>FINE</ComboBoxItem>                    

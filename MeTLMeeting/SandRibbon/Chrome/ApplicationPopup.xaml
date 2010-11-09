@@ -24,35 +24,6 @@
     <sr:MenuItem Text="Import PowerPoint" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
     <sr:MenuItem Text="Search" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
     <sr:MenuItem Text="My Conversations" ToolTip="{StaticResource ConversationListingToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
-    <sr:MenuItem Text="Print" ToolTip="{StaticResource PrintConversationToolTip}">
-        <sr:RibbonPopup>
-            <Grid>
-                <Grid Height="40" VerticalAlignment="Top">
-                    <quiz:GoldPlaque/>
-                    <TextBlock Margin="20,4,4,4" FontSize="14" FontFamily="Verdana" FontWeight="Bold" Text="Print conversation" />
-                </Grid>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 60 0 0">
-                    <Button Command="{x:Static api:Commands.PrintConversation}">
-                        <Border CornerRadius="4" BorderBrush="DarkGray" BorderThickness="1">
-                            <StackPanel Width="120">
-                                <Image Source="\Resources\Print_w-out_notes.png" Width="{StaticResource imageSide}" Height="{StaticResource imageSide}"/>
-                                <Label HorizontalAlignment="Center">Print WITH</Label>
-                                <Label HorizontalAlignment="Center">private notes</Label>
-                            </StackPanel>
-                        </Border>
-                    </Button>
-                    <Button Command="{x:Static api:Commands.PrintConversationHandout}">
-                        <Border CornerRadius="4" BorderBrush="Gray" BorderThickness="1">
-                            <StackPanel Width="120">
-                                <Image Source="\Resources\Print_w_notes.png" Width="{StaticResource imageSide}" Height="{StaticResource imageSide}"/>
-                                <Label HorizontalAlignment="Center">Print WITHOUT</Label>
-                                <Label HorizontalAlignment="Center">private notes</Label>
-                            </StackPanel>
-                        </Border>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </sr:RibbonPopup>
-    </sr:MenuItem>
+    <sr:MenuItem Text="Print" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{StaticResource PrintConversationToolTip}" />
     <sr:MenuItem Text="Logout and Exit" Command="{x:Static api:Commands.LogOut}"/>
 </sr:ApplicationPopup>

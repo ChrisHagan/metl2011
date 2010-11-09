@@ -91,12 +91,9 @@ namespace SandRibbon
            
  
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
-            Commands.PrintConversationHandout.RegisterCommand(new DelegateCommand<object>(PrintConversationHandout, mustBeInConversation)); 
             
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
-           
-            
             
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(ProxyMirrorPresentationSpace));
@@ -172,10 +169,10 @@ namespace SandRibbon
             Process.Start("http://penny-arcade.com");
         }
         private void PrintConversation(object _arg) {
-            new Printer().PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
-        }
-        private void PrintConversationHandout(object _arg) { 
-            new Printer().PrintHandout(Globals.conversationDetails.Jid, Globals.me);
+            if(Globals.UserOptions.includePrivateNotesOnPrint)
+                new Printer().PrintPrivate(Globals.conversationDetails.Jid, Globals.me);
+            else
+                new Printer().PrintHandout(Globals.conversationDetails.Jid, Globals.me);
         }
         private void SetUserOptions(UserOptions options) {
             ClientFactory.Connection().SaveUserOptions(Globals.me, options);

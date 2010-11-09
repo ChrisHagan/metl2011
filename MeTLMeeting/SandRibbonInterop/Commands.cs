@@ -235,7 +235,6 @@ namespace SandRibbon
         public static CompositeCommand UnblockInput = new CompositeCommand();
         public static CompositeCommand CanEdit = new CompositeCommand();
         public static CompositeCommand PrintConversation = new CompositeCommand();
-        public static CompositeCommand PrintConversationHandout = new CompositeCommand();
         public static CompositeCommand HideProgressBlocker = new CompositeCommand();
         public static CompositeCommand SendChatMessage = new CompositeCommand();
         public static CompositeCommand ReceiveChatMessage = new CompositeCommand();
