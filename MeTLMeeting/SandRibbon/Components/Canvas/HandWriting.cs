@@ -399,8 +399,8 @@ namespace SandRibbon.Components.Canvas
                         {
                             Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
                             strokes.Remove(stroke.sum());
-                            doMyStrokeRemovedExceptHistory(stroke);
                         }
+                        doMyStrokeRemovedExceptHistory(stroke);
                     }
                     foreach (var stroke in selectedStrokes)
                     {
@@ -408,8 +408,8 @@ namespace SandRibbon.Components.Canvas
                         if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
                         {
                             Strokes.Add(stroke);
-                            doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
                         }
+                        doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
                     }
                     Select(newSelection);
                     addAdorners();
@@ -421,39 +421,20 @@ namespace SandRibbon.Components.Canvas
                     foreach (var stroke in selectedStrokes)
                     {
                         if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
-                        {
                             Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
-                            doMyStrokeRemovedExceptHistory(stroke);
-                        }
+                        doMyStrokeRemovedExceptHistory(stroke);
                     }
                     foreach (var stroke in undoStrokes)
                     {
                         newSelection.Add(stroke);
                         if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
-                        {
                             Strokes.Add(stroke);
-                            doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
-                        }
+                        doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
                     }
                     Select(newSelection);
                     addAdorners();
                 };
-            foreach (var stroke in undoStrokes)
-            {
-                if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
-                {
-                    Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
-                    doMyStrokeRemovedExceptHistory(stroke);
-                }
-            }
-            foreach (var stroke in selectedStrokes)
-            {
-                if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
-                {
-                    Strokes.Add(stroke);
-                    doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
-                }
-            }
+            redo(); 
             addAdorners();
             UndoHistory.Queue(undo, redo);
         
