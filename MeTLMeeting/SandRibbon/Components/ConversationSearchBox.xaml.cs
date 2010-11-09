@@ -269,8 +269,25 @@ namespace SandRibbon.Components
         private void saveEdit(object sender, RoutedEventArgs e)
         {
             var details = (MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext;
+            if (!checkConversation(details)) return; 
             MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
             assignTemplate("viewing", sender);
+        }
+        private bool checkConversation(ConversationDetails proposedDetails)
+        {
+            if (proposedDetails == null) { return false; }
+            proposedDetails.Title = proposedDetails.Title.Trim();
+            var thisTitleIsASCII = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(proposedDetails.Title)).Equals(proposedDetails.Title);
+            var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
+            var thisTitleIsNotTaken = (searchResults.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).ToList());
+            string ErrorText = "";
+            if (!thisTitleIsASCII)
+                ErrorText += "Conversation title can only contain ASCII characters. "; 
+            if (!thisIsAValidTitle) { ErrorText += "Invalid conversation title.  "; }
+            if (!(thisTitleIsNotTaken.Count == 1)) { ErrorText += "Conversation title already used.  "; }
+            if (ErrorText.Length > 0)
+                MessageBox.Show(ErrorText);
+            return ErrorText.Length == 0;
         }
     }
     public class ConversationComparator : System.Collections.IComparer

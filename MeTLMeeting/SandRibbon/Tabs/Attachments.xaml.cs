@@ -15,8 +15,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Divelements.SandRibbon;
+using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Submissions;
+using SandRibbon.Providers;
 using SandRibbon.Utils.Connection;
 using Button=System.Windows.Controls.Button;
 using MeTLLib.Providers.Connection;
@@ -45,10 +47,15 @@ namespace SandRibbon.Tabs
             attachments.ItemsSource = files;
             Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(clearOutAttachments));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateDetails));
         }
-
-        private void JoinConversation(object obj)
+        private void updateDetails(ConversationDetails details)
+        {
+            if(details.Jid == Globals.location.activeConversation && details.Subject.ToLower() == "deleted")
+                clearOutAttachments(null);
+        }
+        private void clearOutAttachments(object obj)
         {
             files = new ObservableCollection<FileInfo>();
             attachments.ItemsSource = files;

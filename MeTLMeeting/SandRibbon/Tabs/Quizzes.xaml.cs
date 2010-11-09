@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Quizzing;
 using SandRibbon.Utils.Connection;
@@ -33,7 +34,7 @@ namespace SandRibbon.Tabs
             Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizQuestion>(ReceiveQuiz));
             Commands.ReceiveQuizAnswer.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.QuizAnswer>(ReceiveQuizAnswer));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<object>(updateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
             quizzes.ItemsSource = activeQuizzes;
@@ -42,7 +43,7 @@ namespace SandRibbon.Tabs
         {
             activeQuizzes.Clear();
         }
-        private void updateConversationDetails(object obj)
+        private void updateConversationDetails(ConversationDetails details)
         {
           try
           {
@@ -64,6 +65,12 @@ namespace SandRibbon.Tabs
           }
           catch (NotSetException)
           {
+          }
+
+          if (details.Jid == Globals.location.activeConversation && details.Subject.ToLower() == "deleted")
+          {
+              answers.Clear();
+              activeQuizzes.Clear();
           }
         }
         private void preparserAvailable(PreParser preParser)
