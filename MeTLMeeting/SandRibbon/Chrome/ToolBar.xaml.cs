@@ -54,7 +54,7 @@ namespace SandRibbon.Chrome
                         add("redo");
                         break;
                     case 3:
-                        add("friends");
+                        //add("friends");
                         //add("notes");
                         add("lectureStyle");
                         add("tutorialStyle");

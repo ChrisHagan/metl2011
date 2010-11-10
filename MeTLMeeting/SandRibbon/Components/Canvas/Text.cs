@@ -80,7 +80,7 @@ namespace SandRibbon.Components.Canvas
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
-            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearchBox));
+            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
         }
 
         private void hideConversationSearchBox(object obj)

@@ -45,9 +45,6 @@ namespace SandRibbon.Components.Canvas
     public class Image : AbstractCanvas
     {
         private static readonly int PADDING = 5;
-        private Dictionary<string, List<MeTLLib.DataTypes.TargettedImage>> userImages;
-        private Dictionary<string, List<MeTLLib.DataTypes.TargettedVideo>> userVideo;
-        private Dictionary<string, bool> userVisibility;
         public Image()
         {
             EditingMode = InkCanvasEditingMode.Select;
@@ -63,17 +60,17 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveVideo.RegisterCommandToDispatcher<TargettedVideo>(new DelegateCommand<TargettedVideo>(ReceiveVideo));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
             Commands.ReceiveDirtyVideo.RegisterCommandToDispatcher<TargettedDirtyElement>(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyVideo));
-            Commands.AddImage.RegisterCommand(new DelegateCommand<object>(addImageFromDisk));
+            Commands.AddImage.RegisterCommandToDispatcher(new DelegateCommand<object>(addImageFromDisk));
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(uploadFile));
             Commands.PlaceQuizSnapshot.RegisterCommand(new DelegateCommand<string>(addImageFromQuizSnapshot));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
-            Commands.ImageDropped.RegisterCommand(new DelegateCommand<ImageDrop>(imagedDropped));
+            Commands.ImageDropped.RegisterCommandToDispatcher(new DelegateCommand<ImageDrop>(imagedDropped));
             Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyLiveWindow));
             Commands.DugPublicSpace.RegisterCommand(new DelegateCommand<LiveWindowSetup>(DugPublicSpace));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedImages));
             Commands.MirrorVideo.RegisterCommand(new DelegateCommand<VideoMirror.VideoMirrorInformation>(mirrorVideo));
             Commands.VideoMirrorRefreshRectangle.RegisterCommand(new DelegateCommand<string>(mirrorVideoRefresh));
-            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearchBox));
+            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
         }
         private void imagedDropped(ImageDrop drop)
         {
@@ -216,16 +213,6 @@ namespace SandRibbon.Components.Canvas
         {
             Dispatcher.adopt(delegate
             {
-                if (image.target == target)
-                {
-                    var author = image.author == Globals.conversationDetails.Author ? "Teacher" : image.author;
-                    if (!userVisibility.ContainsKey(author))
-                        userVisibility.Add(author, true);
-                    if (!userImages.ContainsKey(author))
-                        userImages.Add(author, new List<MeTLLib.DataTypes.TargettedImage>());
-                    if (!userImages[author].Contains(image))
-                        userImages[author].Add(image);
-                }
                 AddImage(image.image);
             });
         }
@@ -316,30 +303,16 @@ namespace SandRibbon.Components.Canvas
                 new Point(x, y + height)
             };
         }
-        public void ReceiveDirtyImage(MeTLLib.DataTypes.TargettedDirtyElement element)
+        public void ReceiveDirtyImage(TargettedDirtyElement element)
         {
             if (!(element.target.Equals(target))) return;
-            if (!(element.slide == currentSlide)) return;
-            var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
-            if (userImages.ContainsKey(author) && element.target == target)
-            {
-                var dirtyImage = userImages[author].Where(i => i.id == element.identifier).FirstOrDefault();
-                if (dirtyImage != null)
-                    userImages[author].Remove(dirtyImage);
-            }
+            if (element.slide != currentSlide) return;
             doDirtyImage(element.identifier);
         }
-        public void ReceiveDirtyVideo(MeTLLib.DataTypes.TargettedDirtyElement element)
+        public void ReceiveDirtyVideo(TargettedDirtyElement element)
         {
             if (!(element.target.Equals(target))) return;
-            if (!(element.slide == currentSlide)) return;
-            var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
-            if (userVideo.ContainsKey(author) && element.target == target)
-            {
-                var dirtyImage = userVideo[author].Where(i => i.id == element.identifier).FirstOrDefault();
-                if (dirtyImage != null)
-                    userVideo[author].Remove(dirtyImage);
-            }
+            if (element.slide != currentSlide) return;
             doDirtyVideo(element.identifier);
         }
         private void doDirtyImage(string imageId)

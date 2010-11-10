@@ -196,13 +196,13 @@ namespace SandRibbon.Components
               var source = (ListBox) sender;
               if (source.SelectedItem != null)
               {
-                  Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                   var proposedIndex = source.SelectedIndex;
                   var proposedId =
                       ((Slide) source.SelectedItem).id;
                   if (proposedId == currentSlideId) return;
                   currentSlideIndex = proposedIndex;
                   currentSlideId = proposedId;
+                  Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                   Commands.MoveTo.ExecuteAsync(currentSlideId);
                   slides.ScrollIntoView(slides.SelectedItem);
               }

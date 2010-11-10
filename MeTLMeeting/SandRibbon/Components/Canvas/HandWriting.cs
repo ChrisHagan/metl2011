@@ -118,7 +118,7 @@ namespace SandRibbon.Components.Canvas
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<MeTLLib.DataTypes.TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
-            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearchBox));
+            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
         }
 
         private void hideConversationSearchBox(object obj)
@@ -640,7 +640,7 @@ namespace SandRibbon.Components.Canvas
             
             this.tag(stroke.tag());
             isPrivate = this.tag().privacy == "private";
-            shouldShowPrivacy = this.tag().author == Globals.conversationDetails.Author;
+            shouldShowPrivacy = (this.tag().author == Globals.conversationDetails.Author || Globals.conversationDetails.Permissions.studentCanPublish);
             
             if (!isPrivate) return;
 
