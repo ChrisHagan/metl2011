@@ -35,6 +35,8 @@ namespace MeTLLib.Providers.Connection
         public IReceiveEvents receiveEvents { private get; set; }
         [Inject]
         public IWebClientFactory clientFactory { private get; set; }
+        [Inject]
+        public HttpResourceProvider resourceProvider{private get;set;}
         public JabberWire wire()
         {
             if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a wire");
@@ -46,7 +48,8 @@ namespace MeTLLib.Providers.Connection
                 metlServerAddress,
                 cache, 
                 receiveEvents,
-                clientFactory);
+                clientFactory,
+                resourceProvider);
         }
         public PreParser preParser(int room)
         {
@@ -58,7 +61,7 @@ namespace MeTLLib.Providers.Connection
                 historyProvider,
                 cachedHistoryProvider,
                 metlServerAddress,
-                cache, receiveEvents, clientFactory);
+                cache, receiveEvents, clientFactory, resourceProvider);
         }
         public T preParser<T>(int room) where T : PreParser{
             return (T)Activator.CreateInstance(typeof(T), 
@@ -70,7 +73,8 @@ namespace MeTLLib.Providers.Connection
                 metlServerAddress, 
                 cache, 
                 receiveEvents, 
-                clientFactory);
+                clientFactory,
+                resourceProvider);
         }
         public PreParser create<T>(int room) where T : PreParser
         {
@@ -92,6 +96,7 @@ namespace MeTLLib.Providers.Connection
         public Location location;
         protected IReceiveEvents receiveEvents;
         protected IWebClientFactory webClientFactory;
+        protected HttpResourceProvider resourceProvider;
         protected static string privacy = "PUBLIC";
         protected XmppClientConnection conn;
         protected Jid jid;
@@ -108,7 +113,7 @@ namespace MeTLLib.Providers.Connection
             Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
         }
         public ResourceCache cache;
-        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory)
+        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider)
         {
             this.credentials = credentials;
             this.conversationDetailsProvider = conversationDetailsProvider;
@@ -118,6 +123,7 @@ namespace MeTLLib.Providers.Connection
             this.cache = cache;
             this.receiveEvents = events;
             this.webClientFactory = webClientFactory;
+            this.resourceProvider = resourceProvider;
         }
         internal List<ConversationDetails> CurrentClasses
         {
@@ -712,7 +718,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
                 actOnBubbleReceived(bubble.context);
             foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
-                actOnVideoReceived(video.injectDependencies(metlServerAddress).Vid);
+                actOnVideoReceived(video.injectDependencies(metlServerAddress, resourceProvider).Vid);
             foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
                 actOnDirtyVideoReceived(dirtyVideo);
             foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))

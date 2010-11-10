@@ -117,6 +117,8 @@ namespace MeTLLib
         public IWebClientFactory downloaderFactory{ private get; set; }
         [Inject]
         public UserOptionsProvider userOptionsProvider { private get; set; }
+        [Inject]
+        public HttpResourceProvider resourceProvider { private get; set; }
         public MeTLServerAddress server { private set; get; }
         public ClientConnection(MeTLServerAddress address)
         {
@@ -214,7 +216,7 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Video send: " + video.id);
             Action work = delegate
             {
-                video.injectDependancies(server);
+                video.injectDependencies(server, resourceProvider);
                 wire.SendVideo(video);
             };
             tryIfConnected(work);
