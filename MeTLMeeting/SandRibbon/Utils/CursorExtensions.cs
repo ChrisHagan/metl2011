@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.IO;
+using System.Windows.Shapes;
 using SandRibbon;
 
 namespace SandRibbon.Utils
@@ -50,7 +51,7 @@ namespace SandRibbon.Utils
                             else
                             {
                                 var Alpha = Color.A;
-                                double PreMult = Color.A / 255;
+                                double PreMult = Color.A / 255.0;
                                 var Red = ((byte)(Color.R * PreMult));
                                 var Green = ((byte)(Color.G * PreMult));
                                 var Blue = ((byte)(Color.B * PreMult));
@@ -60,7 +61,6 @@ namespace SandRibbon.Utils
                             }
                         }       
                     var handle = bitmap.GetHicon();
-                    var icon = System.Drawing.Icon.FromHandle(handle);
                     System.Drawing.Icon.FromHandle(handle).Save(resultStream);
                     var hsY = (byte)(int)(hotSpot.Y * height);
                     var hsX = (byte)(int)(hotSpot.X * width);
@@ -84,14 +84,14 @@ namespace SandRibbon.Utils
                 return Cursors.Cross;
             }
         }
-        private static Cursor internalGenerateCursor(FrameworkElement fe, Point hotspot)
+        private static Cursor internalGenerateCursor(FrameworkElement poly, Point hotspot)
         {
             Cursor cursor = null;
             int MINIMUM_DIMENSION = 5;
             App.Current.Dispatcher.adopt(() =>
             {
-                if (fe.Height < MINIMUM_DIMENSION) fe.Height = MINIMUM_DIMENSION;
-                if (fe.Width < MINIMUM_DIMENSION) fe.Width = MINIMUM_DIMENSION;
+                if (poly.Height < MINIMUM_DIMENSION) poly.Height = MINIMUM_DIMENSION;
+                if (poly.Width < MINIMUM_DIMENSION) poly.Width = MINIMUM_DIMENSION;
                 var grid = new System.Windows.Controls.Grid
                 {
                     Height = 128,
@@ -100,13 +100,13 @@ namespace SandRibbon.Utils
                 };
                 var innerGrid = new System.Windows.Controls.Grid
                 {
-                    Height = fe.Height,
-                    Width = fe.Width,
+                    Height = poly.Height,
+                    Width = poly.Width,
                     Background = Brushes.Transparent,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                innerGrid.Children.Add(fe);
+                innerGrid.Children.Add(poly);
                 grid.Children.Add(innerGrid);
                 double UpdatedY = (((grid.Height - innerGrid.Height) / 2) + (hotspot.X * innerGrid.Width)) / grid.Width;
                 double UpdatedX = (((grid.Width - innerGrid.Width) / 2) + (hotspot.Y * innerGrid.Height))/ grid.Height;
