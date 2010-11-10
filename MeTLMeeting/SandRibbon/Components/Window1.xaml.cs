@@ -146,6 +146,7 @@ namespace SandRibbon
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
             AddWindowEffect(null);
+            ribbon.Loaded += ribbon_Loaded;
             WorkspaceStateProvider.RestorePreviousSettings();
             CommandManager.InvalidateRequerySuggested();
             App.Now("Started MeTL");
@@ -179,7 +180,14 @@ namespace SandRibbon
         }
         void ribbon_Loaded(object sender, RoutedEventArgs e)
         {
-            ribbon.ToggleMinimize();
+            DelegateCommand<object> hideRibbon = null;
+            hideRibbon = new DelegateCommand<object>((_obj) =>{
+            
+                Commands.SetPedagogyLevel.UnregisterCommand(hideRibbon);
+                if (!ribbon.IsMinimized)
+                    ribbon.ToggleMinimize();
+            });
+            Commands.SetPedagogyLevel.RegisterCommand(hideRibbon);
         }
         private void ShowConversationSearchBox(object _arg)
         {
@@ -1013,8 +1021,6 @@ namespace SandRibbon
                 foreach (var tab in tabs)
                     ribbon.Tabs.Add((RibbonTab)tab);
                 ribbon.SelectedTab = home;
-                if (!ribbon.IsMinimized)
-                    ribbon.ToggleMinimize();
             });
             CommandManager.InvalidateRequerySuggested();
             Commands.RequerySuggested();
