@@ -228,7 +228,6 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             addAdorners();
         }
-
         public void addAdorners()
         {
             var selectedElements = GetSelectedElements();
@@ -248,7 +247,6 @@ namespace SandRibbon.Components.Canvas
             }
             Commands.AddPrivacyToggleButton.ExecuteAsync(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
         }
-
         private void selectingText(object sender, InkCanvasSelectionChangingEventArgs e)
         {
             e.SetSelectedElements(filterMyText(e.GetSelectedElements()));
