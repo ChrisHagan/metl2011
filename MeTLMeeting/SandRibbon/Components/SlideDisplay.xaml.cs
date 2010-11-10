@@ -204,6 +204,8 @@ namespace SandRibbon.Components
                   currentSlideId = proposedId;
                   Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                   Commands.MoveTo.ExecuteAsync(currentSlideId);
+                  if (Globals.isAuthor && Globals.synched)
+                    Commands.SendSyncMove.ExecuteAsync(currentSlideId);
                   slides.ScrollIntoView(slides.SelectedItem);
               }
         }

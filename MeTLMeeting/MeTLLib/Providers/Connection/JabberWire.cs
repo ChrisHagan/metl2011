@@ -104,7 +104,6 @@ namespace MeTLLib.Providers.Connection
 
         private void registerCommands()
         {
-            Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(SendSyncMoveTo));
             Commands.SendDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(SendDirtyConversationDetails));
             Commands.SendWormMove.RegisterCommand(new DelegateCommand<WormMove>(SendWormMove));
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
@@ -697,30 +696,20 @@ namespace MeTLLib.Providers.Connection
                 actOnTextReceived(box.Box);
             foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
                 actOnImageReceived(image.injectDependencies(metlServerAddress, webClientFactory.client()).Img);
-            foreach (var autoshape in message.SelectElements<MeTLStanzas.AutoShape>(true))
-                actOnAutoShapeReceived(autoshape.autoshape);
             foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
                 actOnQuizReceived(quiz.parameters);
             foreach (var quizAnswer in message.SelectElements<MeTLStanzas.QuizResponse>(true))
                 actOnQuizAnswerReceived(quizAnswer.parameters);
-            foreach (var liveWindow in message.SelectElements<MeTLStanzas.LiveWindow>(true))
+            /*foreach (var liveWindow in message.SelectElements<MeTLStanzas.LiveWindow>(true))
                 actOnLiveWindowReceived(liveWindow.parameters);
             foreach (var dirtyLiveWindow in message.SelectElements<MeTLStanzas.DirtyLiveWindow>(true))
-                actOnDirtyLiveWindowReceived(dirtyLiveWindow.element);
+                actOnDirtyLiveWindowReceived(dirtyLiveWindow.element);*/
             foreach (var dirtyText in message.SelectElements<MeTLStanzas.DirtyText>(true))
                 actOnDirtyTextReceived(dirtyText);
             foreach (var dirtyInk in message.SelectElements<MeTLStanzas.DirtyInk>(true))
                 actOnDirtyStrokeReceived(dirtyInk);
             foreach (var dirtyImage in message.SelectElements<MeTLStanzas.DirtyImage>(true))
                 actOnDirtyImageReceived(dirtyImage);
-            foreach (var dirtyAutoShape in message.SelectElements<MeTLStanzas.DirtyAutoshape>(true))
-                actOnDirtyAutoshapeReceived(dirtyAutoShape);
-            foreach (var bubble in message.SelectElements<MeTLStanzas.Bubble>(true))
-                actOnBubbleReceived(bubble.context);
-            foreach (var video in message.SelectElements<MeTLStanzas.Video>(true))
-                actOnVideoReceived(video.injectDependencies(metlServerAddress, resourceProvider).Vid);
-            foreach (var dirtyVideo in message.SelectElements<MeTLStanzas.DirtyVideo>(true))
-                actOnDirtyVideoReceived(dirtyVideo);
             foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))
                 actOnFileResource(file);
         }
@@ -849,8 +838,8 @@ namespace MeTLLib.Providers.Connection
         }
         private void handleSyncMoveReceived(string[] parts)
         {
-            var where = parts[1];
-            Commands.SyncedMoveRequested.Execute(Int32.Parse(where));
+            var where = Int32.Parse(parts[1]);
+            receiveEvents.syncMoveRequested(where);
         }
         private void handleConversationDetailsUpdated(string[] parts)
         {

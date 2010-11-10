@@ -349,6 +349,10 @@ namespace MeTLLib
         }
         #endregion
         #region conversationCommands
+        public void SendSyncMove(int slide)
+        {
+            wire.SendSyncMoveTo(slide);
+        }
         public void MoveTo(int slide)
         {
             Action work = delegate
@@ -655,5 +659,7 @@ namespace MeTLLib
         {
             return userOptionsProvider.Get(username);
         }
+
+        
     }
 }

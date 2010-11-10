@@ -29,6 +29,7 @@ namespace MeTLLib
         public delegate void ChatAvailableEventHandler(object sender, ChatAvailableEventArgs e);
         public delegate void ConversationDetailsAvailableEventHandler(object sender, ConversationDetailsAvailableEventArgs e);
         public delegate void CommandAvailableEventHandler(object sender, CommandAvailableEventArgs e);
+        public delegate void SyncMoveRequestedEventHandler(object sender, SyncMoveRequestedEventArgs e);
     }
     #endregion
     #region EventArgs
@@ -50,6 +51,7 @@ namespace MeTLLib
     public class ChatAvailableEventArgs : EventArgs { public TargettedTextBox chat;}
     public class ConversationDetailsAvailableEventArgs : EventArgs { public ConversationDetails conversationDetails;}
     public class CommandAvailableEventArgs : EventArgs { public string command;}
+    public class SyncMoveRequestedEventArgs: EventArgs {public int where;}
     #endregion
     public interface IReceiveEvents
     {
@@ -76,6 +78,7 @@ namespace MeTLLib
         void receiveBubble(TargettedBubbleContext tbc);
         void receiveConversationDetails(ConversationDetails cd);
         void statusChanged(bool isConnected, Credentials credentials);
+        void syncMoveRequested(int where);
         event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
         event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
         event MeTLLibEventHandlers.StatusChangedEventHandler StatusChanged;
@@ -99,6 +102,7 @@ namespace MeTLLib
         event MeTLLibEventHandlers.ChatAvailableEventHandler ChatAvailable;
         event MeTLLibEventHandlers.ConversationDetailsAvailableEventHandler ConversationDetailsAvailable;
         event MeTLLibEventHandlers.CommandAvailableEventHandler CommandAvailable;
+        event MeTLLibEventHandlers.SyncMoveRequestedEventHandler SyncMoveRequested;
     }
 
     class ProductionReceiveEvents : IReceiveEvents
@@ -128,6 +132,7 @@ namespace MeTLLib
             this.SubmissionAvailable+= (sender, args) => { };
             this.TextBoxAvailable+= (sender, args) => { };
             this.VideoAvailable+= (sender, args) => { };
+            this.SyncMoveRequested += (sender, SyncMoveRequestedEventArgs) => { };
         }
         void IReceiveEvents.receiveSubmission(TargettedSubmission ts)
         {
@@ -223,11 +228,17 @@ namespace MeTLLib
         {
             StatusChanged(this, new StatusChangedEventArgs { isConnected = isConnected, credentials = credentials });
         }
+        public void syncMoveRequested(int where)
+        {
+            SyncMoveRequested(this, new SyncMoveRequestedEventArgs{where = where});
+        }
+
 
         #region Events
         public event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
         public event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
         public event MeTLLibEventHandlers.StatusChangedEventHandler StatusChanged;
+        public event MeTLLibEventHandlers.SyncMoveRequestedEventHandler SyncMoveRequested;
         public event MeTLLibEventHandlers.PreParserAvailableEventHandler PreParserAvailable;
         public event MeTLLibEventHandlers.StrokeAvailableEventHandler StrokeAvailable;
         public event MeTLLibEventHandlers.ImageAvailableEventHandler ImageAvailable;

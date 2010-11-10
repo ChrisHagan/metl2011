@@ -54,7 +54,14 @@ namespace SandRibbon.Components
             Commands.SneakIntoAndDo.RegisterCommand(new DelegateCommand<Projector.RoomAndAction>(SneakIntoAndDo));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
+            Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
         }
+
+        private void sendSyncMove(int slide)
+        {
+            client.SendSyncMove(slide);
+        }
+
         private void leaveAllRooms(object _obj)
         {
             client.LeaveAllRooms();
@@ -186,6 +193,11 @@ namespace SandRibbon.Components
             client.events.SubmissionAvailable += submissionAvailable;
             client.events.TextBoxAvailable += textBoxAvailable;
             client.events.VideoAvailable += videoAvailable;
+            client.events.SyncMoveRequested += syncMoveRequested;
+        }
+        private void syncMoveRequested(object sender, SyncMoveRequestedEventArgs e)
+        {
+            Commands.SyncedMoveRequested.Execute(e.where);
         }
         private void autoShapeAvailable(object sender, AutoshapeAvailableEventArgs e)
         {

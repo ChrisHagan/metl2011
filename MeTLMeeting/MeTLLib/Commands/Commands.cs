@@ -48,7 +48,6 @@ namespace MeTLLib
         public static CompositeCommand SendWormMove = new CompositeCommand();
         public static CompositeCommand ReceiveWormMove = new CompositeCommand();
         public static CompositeCommand SyncedMoveRequested = new CompositeCommand();
-        public static CompositeCommand SendSyncMove = new CompositeCommand();
         public static CompositeCommand SendDirtyConversationDetails = new CompositeCommand();
         public static CompositeCommand UpdateConversationDetails = new CompositeCommand();
         public static CompositeCommand AllContentSent = new CompositeCommand();

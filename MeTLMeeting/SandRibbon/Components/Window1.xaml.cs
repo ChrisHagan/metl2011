@@ -483,8 +483,7 @@ namespace SandRibbon
         }
         private void MoveTo(int slide)
         {
-            if ((Globals.userInformation.policy.isAuthor && Globals.userInformation.policy.isSynced) || (Globals.synched && Globals.userInformation.policy.isAuthor))
-                Commands.SendSyncMove.ExecuteAsync(slide);
+            
             Dispatcher.adoptAsync(delegate
                                      {
                                          if (canvas.Visibility == Visibility.Collapsed)

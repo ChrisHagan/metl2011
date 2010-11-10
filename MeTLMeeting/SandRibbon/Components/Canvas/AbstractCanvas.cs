@@ -221,7 +221,7 @@ namespace SandRibbon.Components.Canvas
             foreach (string fileName in fileNames)
             {
                 FileType type = Image.GetFileType(fileName);
-                if (new[] { FileType.Image, FileType.Video }.Contains(type))
+                if (new[] { FileType.Image}.Contains(type))
                     e.Effects = DragDropEffects.Copy;
             }
             e.Handled = true;
