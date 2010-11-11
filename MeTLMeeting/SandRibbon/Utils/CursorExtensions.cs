@@ -25,7 +25,6 @@ namespace SandRibbon.Utils
             Cursor cursor = null;
             App.Current.Dispatcher.adopt(() =>
             {
-                Console.WriteLine("I have been called");
                 var colour = new SolidColorBrush(pen.Color);
                 var poly = new System.Windows.Shapes.Ellipse
                 {

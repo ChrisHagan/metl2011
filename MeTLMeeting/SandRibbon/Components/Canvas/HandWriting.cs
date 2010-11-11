@@ -36,7 +36,6 @@ namespace SandRibbon.Components.Canvas
             SelectionMoved += selectionMoved;
             SelectionResizing += selectionMoving;
             SelectionResized += selectionMoved;
-            DefaultDrawingAttributesReplaced += announceDrawingAttributesChanged;
             Background = Brushes.Transparent;
             defaultWidth = DefaultDrawingAttributes.Width;
             defaultHeight = DefaultDrawingAttributes.Height;
@@ -132,10 +131,6 @@ namespace SandRibbon.Components.Canvas
                                                Height = 1,
                                                IsHighlighter = false
                                            };
-        }
-        private void announceDrawingAttributesChanged(object sender, DrawingAttributesReplacedEventArgs e)
-        {
-           // Commands.ReportDrawingAttributes.ExecuteAsync(this.DefaultDrawingAttributes);
         }
         private static List<TimeSpan> strokeReceiptDurations = new List<TimeSpan>();
         private static double averageStrokeReceiptDuration()
