@@ -65,8 +65,6 @@ namespace SandRibbon
         public static CompositeCommand RemoveHighlight = new CompositeCommand();
 
         #endregion
-        public static CompositeCommand ActualSetDrawingAttributes = new CompositeCommand();
-        public static CompositeCommand ActualChangePenSize= new CompositeCommand();
         public static CompositeCommand ServersDown= new CompositeCommand();
         public static CompositeCommand GenerateScreenshot = new CompositeCommand();
         public static CompositeCommand ScreenshotGenerated = new CompositeCommand();
@@ -115,18 +113,11 @@ namespace SandRibbon
         public static CompositeCommand SetInkCanvasMode = new CompositeCommand();
         public static CompositeCommand SetPrivacyOfItems = new CompositeCommand();
         public static CompositeCommand GotoThread = new CompositeCommand();
-        public static CompositeCommand SetPenColor = new CompositeCommand();
-        public static CompositeCommand SetHighlighterMode = new CompositeCommand();
-        public static CompositeCommand ToggleHighlighterMode = new CompositeCommand();
+
         public static CompositeCommand SetDrawingAttributes = new CompositeCommand();
-        public static CompositeCommand ReportDrawingAttributes = new CompositeCommand();
-        public static CompositeCommand ActualReportDrawingAttributes = new CompositeCommand();
-        public static CompositeCommand ReportStrokeAttributes = new CompositeCommand();
-        public static CompositeCommand ActualReportStrokeAttributes = new CompositeCommand();
-        public static CompositeCommand IncreasePenSize = new CompositeCommand();
-        public static CompositeCommand ChangePenSize = new CompositeCommand();
-        public static CompositeCommand DecreasePenSize = new CompositeCommand();
-        public static CompositeCommand RestorePenSize = new CompositeCommand();
+        //public static CompositeCommand ReportDrawingAttributes = new CompositeCommand();
+        public static CompositeCommand SetZoomAdjustedDrawingAttributes = new CompositeCommand();
+        
         public static CompositeCommand SendStroke = new CompositeCommand();
         public static CompositeCommand ReceiveStroke = new CompositeCommand();
         public static CompositeCommand ReceiveStrokes = new CompositeCommand();

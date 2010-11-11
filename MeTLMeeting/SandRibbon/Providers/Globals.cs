@@ -83,7 +83,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                try { return ((DrawingAttributes)Commands.ReportDrawingAttributes.lastValue()); }
+                try { return ((DrawingAttributes)Commands.UpdateCursorWithAttributes.lastValue()); }
                 catch (NotSetException)
                 {
                 }

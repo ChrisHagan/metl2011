@@ -43,76 +43,8 @@ namespace SandRibbon.Components.Canvas
             modeChangedCommand = new DelegateCommand<string>(setInkCanvasMode, canChangeMode);
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedStrokes));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(modeChangedCommand);
-            Commands.ActualChangePenSize.RegisterCommand(new DelegateCommand<double>(penSize =>
-            {
-                var newAttributes = DefaultDrawingAttributes.Clone();
-                newAttributes.FitToCurve = true;
-                newAttributes.IgnorePressure = false;
-                newAttributes.Width = penSize;
-                newAttributes.Height = penSize;
-                if (newAttributes.Height > DrawingAttributes.MinHeight && newAttributes.Height < DrawingAttributes.MaxHeight
-                    && newAttributes.Width > DrawingAttributes.MinWidth && newAttributes.Width < DrawingAttributes.MaxWidth)
-                    DefaultDrawingAttributes = newAttributes;
-            }));
-            Commands.IncreasePenSize.RegisterCommand(new DelegateCommand<object>(_obj =>
-            {
-                var newAttributes = DefaultDrawingAttributes.Clone();
-                newAttributes.FitToCurve = true;
-                newAttributes.IgnorePressure = false;
-                newAttributes.Width += 5;
-                newAttributes.Height += 5;
-                DefaultDrawingAttributes = newAttributes;
-            }));
-            Commands.DecreasePenSize.RegisterCommand(new DelegateCommand<object>(_obj =>
-             {
-                 if ((DefaultDrawingAttributes.Width - 0.5) <= 0) return;
-                 var newAttributes = DefaultDrawingAttributes.Clone();
-                 newAttributes.FitToCurve = true;
-                 newAttributes.IgnorePressure = false;
-                 newAttributes.Width -= .5;
-                 newAttributes.Height -= .5;
-                 DefaultDrawingAttributes = newAttributes;
-             }));
-            Commands.RestorePenSize.RegisterCommand(new DelegateCommand<object>(_obj =>
-            {
-                var newAttributes = DefaultDrawingAttributes.Clone();
-                newAttributes.FitToCurve = true;
-                newAttributes.IgnorePressure = false;
-                newAttributes.Width = defaultWidth;
-                newAttributes.Height = defaultHeight;
-                DefaultDrawingAttributes = newAttributes;
-            }));
-            Commands.ActualSetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(attributes => Dispatcher.adoptAsync(()=>
-                                                                                                                                           DefaultDrawingAttributes = attributes)));
-            Commands.ToggleHighlighterMode.RegisterCommand(new DelegateCommand<object>(_obj =>
-            {
-                var newAttributes = DefaultDrawingAttributes.Clone();
-                newAttributes.FitToCurve = true;
-                newAttributes.IgnorePressure = false;
-                newAttributes.IsHighlighter = !newAttributes.IsHighlighter;
-                DefaultDrawingAttributes = newAttributes;
-            }));
-            Commands.SetHighlighterMode.RegisterCommand(new DelegateCommand<bool>(newIsHighlighter =>
-            {
-                var newAttributes = DefaultDrawingAttributes.Clone();
-                newAttributes.IsHighlighter = newIsHighlighter;
-                newAttributes.FitToCurve = true;
-                newAttributes.IgnorePressure = false;
-                DefaultDrawingAttributes = newAttributes;
-            }));
-            colorChangedCommand = new DelegateCommand<object>((colorObj) =>
-            {
-                var newAttributes = DefaultDrawingAttributes.Clone();
-                if (colorObj is Color)
-                    newAttributes.Color = (Color)colorObj;
-                else if (colorObj is string)
-                    newAttributes.Color = ColorLookup.ColorOf((string)colorObj);
-                newAttributes.FitToCurve = true;
-                newAttributes.IgnorePressure = false;
-                DefaultDrawingAttributes = newAttributes;
-            });
+            Commands.SetZoomAdjustedDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(attributes => Dispatcher.adoptAsync(()=> DefaultDrawingAttributes = attributes)));
             Commands.UpdateCursor.RegisterCommand(new DelegateCommand<Cursor>(UpdateCursor));
-            Commands.SetPenColor.RegisterCommand(colorChangedCommand);
             Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<IEnumerable<MeTLLib.DataTypes.TargettedStroke>>(ReceiveStrokes));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
@@ -181,14 +113,7 @@ namespace SandRibbon.Components.Canvas
             else
             {
                 EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
-                if (EditingMode == InkCanvasEditingMode.Ink)
-                {
-                    UseCustomCursor = true;
-                }
-                else 
-                {
-                    UseCustomCursor = false;
-                }
+                UseCustomCursor = EditingMode == InkCanvasEditingMode.Ink;
             }
         }
         public void SetEditingMode()
@@ -210,7 +135,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void announceDrawingAttributesChanged(object sender, DrawingAttributesReplacedEventArgs e)
         {
-            Commands.ActualReportDrawingAttributes.ExecuteAsync(this.DefaultDrawingAttributes);
+           // Commands.ReportDrawingAttributes.ExecuteAsync(this.DefaultDrawingAttributes);
         }
         private static List<TimeSpan> strokeReceiptDurations = new List<TimeSpan>();
         private static double averageStrokeReceiptDuration()
@@ -349,7 +274,6 @@ namespace SandRibbon.Components.Canvas
         public void SendTargettedStroke(Stroke stroke, string thisPrivacy)
         {
             if (!stroke.shouldPersist()) return;
-            Commands.ActualReportStrokeAttributes.ExecuteAsync(stroke.DrawingAttributes);
             Commands.SendStroke.Execute(new TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke, stroke.tag().startingSum));
         }
         private void doMyStrokeRemoved(Stroke stroke)

@@ -116,11 +116,9 @@ namespace SandRibbon
             //canvas stuff
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.ChangePenSize.RegisterCommand(new DelegateCommand<object>(AdjustPenSizeAccordingToZoom));
             Commands.UpdateCursorWithAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(UpdateCursorWithAttributes));
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustDrawingAttributesAccordingToZoom));
-            Commands.ActualReportDrawingAttributes.RegisterCommand(new DelegateCommand<object>(ActualReportDrawingAttributes));
-            Commands.ActualReportStrokeAttributes.RegisterCommand(new DelegateCommand<object>(AdjustReportedStrokeAttributesAccordingToZoom));
+            Commands.SetZoomAdjustedDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(reportDrawingAttributes));
             Commands.MoveCanvasByDelta.RegisterCommandToDispatcher(new DelegateCommand<Point>(GrabMove));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
@@ -308,9 +306,9 @@ namespace SandRibbon
                 if (((RibbonTab)tab).Text == which)
                     ribbon.SelectedTab = (RibbonTab)tab;
         }
-        private void ActualReportDrawingAttributes(object attributes)
+        private void reportDrawingAttributes(DrawingAttributes attributes)
         {
-            var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
+            var zoomIndependentAttributes = attributes.Clone();
             if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN)
                 return;
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
@@ -320,28 +318,10 @@ namespace SandRibbon
             zoomIndependentAttributes.Height = correctZoom(desiredZoom);
             zoomIndependentAttributes.Width = correctZoom(desiredZoom);
             Commands.UpdateCursorWithAttributes.ExecuteAsync(zoomIndependentAttributes);
-            Commands.ReportDrawingAttributes.ExecuteAsync(zoomIndependentAttributes);
         }
-//        private DrawingAttributes previousAttributes;
         private void UpdateCursorWithAttributes(DrawingAttributes attributes)
         {
-//            if (previousAttributes != null && attributes.Equals(previousAttributes))
-//                return;
-//            previousAttributes = attributes;
             Commands.UpdateCursor.ExecuteAsync(CursorExtensions.generateCursor(attributes));
-        }
-        private void AdjustReportedStrokeAttributesAccordingToZoom(object attributes)
-        {
-            var zoomIndependentAttributes = ((DrawingAttributes)attributes).Clone();
-            if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN)
-                return;
-            var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
-            var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
-            var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
-            var desiredZoom = zoomIndependentAttributes.Height / currentZoom;
-            zoomIndependentAttributes.Height = correctZoom(desiredZoom);
-            zoomIndependentAttributes.Width = correctZoom(desiredZoom);
-            Commands.ReportStrokeAttributes.ExecuteAsync(zoomIndependentAttributes);
         }
         private double correctZoom(double desiredZoom)
         {
@@ -361,15 +341,6 @@ namespace SandRibbon
                 return Math.Min(finalZoomHeight, finalZoomWidth);
             else return Math.Max(finalZoomHeight, finalZoomWidth);
         }
-        private void AdjustPenSizeAccordingToZoom(object pensize)
-        {
-            var zoomCorrectPenSize = ((double)pensize);
-            var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
-            var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
-            var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
-            var desiredZoom = zoomCorrectPenSize * currentZoom;
-            Commands.ActualChangePenSize.ExecuteAsync(correctZoom(desiredZoom));
-        }
         private void AdjustDrawingAttributesAccordingToZoom(object attributes)
         {
             var zoomCorrectAttributes = ((DrawingAttributes)attributes).Clone();
@@ -380,7 +351,7 @@ namespace SandRibbon
             zoomCorrectAttributes.Width = correctZoom(desiredZoom);
             zoomCorrectAttributes.Height = correctZoom(desiredZoom);
             Commands.UpdateCursorWithAttributes.ExecuteAsync(zoomCorrectAttributes);
-            Commands.ActualSetDrawingAttributes.ExecuteAsync(zoomCorrectAttributes);
+            Commands.SetZoomAdjustedDrawingAttributes.ExecuteAsync(zoomCorrectAttributes);
         }
         private void SetTutorialVisibility(object visibilityObject)
         {

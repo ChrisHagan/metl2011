@@ -448,12 +448,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\SimpleImpl\SimplePencilCaseDisplay.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\SimpleImpl\SimplePenTools.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -729,9 +723,6 @@
     </Compile>
     <Compile Include="Components\SimpleImpl\SimpleModeSwitcher.xaml.cs">
       <DependentUpon>SimpleModeSwitcher.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\SimpleImpl\SimplePencilCaseDisplay.xaml.cs">
-      <DependentUpon>SimplePencilCaseDisplay.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\SimpleImpl\SimplePenTools.xaml.cs">
       <DependentUpon>SimplePenTools.xaml</DependentUpon>

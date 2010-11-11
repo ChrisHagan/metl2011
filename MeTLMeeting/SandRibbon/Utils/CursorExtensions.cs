@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
@@ -10,6 +11,10 @@ using System.Windows.Controls;
 using System.Windows.Ink;
 using System.IO;
 using SandRibbon;
+using Brushes = System.Windows.Media.Brushes;
+using Color = System.Windows.Media.Color;
+using Point = System.Windows.Point;
+using Size = System.Windows.Size;
 
 namespace SandRibbon.Utils
 {
@@ -20,6 +25,7 @@ namespace SandRibbon.Utils
             Cursor cursor = null;
             App.Current.Dispatcher.adopt(() =>
             {
+                Console.WriteLine("I have been called");
                 var colour = new SolidColorBrush(pen.Color);
                 var poly = new System.Windows.Shapes.Ellipse
                 {
