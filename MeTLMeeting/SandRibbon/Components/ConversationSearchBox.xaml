@@ -6,9 +6,9 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
-    xmlns:interop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop">
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    x:Name="root">
     <UserControl.Resources>
         <LinearGradientBrush StartPoint="0.3,0.5" EndPoint="0.8,0.5" x:Key="backgroundColor">
             <GradientStop Color="#666a7f" Offset="0" />
@@ -34,23 +34,28 @@
             <Setter Property="BorderThickness" Value="1" /> 
         </Style>
         <DataTemplate x:Key="doneEditing">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Border Style="{StaticResource thinBlack}">
-                    <dict:Button Text="Apply" InternalButtonSize="Medium"   Click="saveEdit"/>
-                </Border> 
-                <Border Style="{StaticResource thinBlack}">
-                    <dict:Button Text="Cancel" InternalButtonSize="Medium"  Click="cancelEdit"/>
-                </Border> 
-            </StackPanel>
+            <Grid>
+                <TextBlock x:Name="errorText" Foreground="Red" Text="{Binding ElementName=root, Path=Errors}" HorizontalAlignment="Left"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Border Style="{StaticResource thinBlack}">
+                        <dict:Button Text="Apply" InternalButtonSize="Medium" Click="saveEdit" />
+                    </Border> 
+                    <Border Style="{StaticResource thinBlack}">
+                        <dict:Button Text="Cancel" InternalButtonSize="Medium" Click="cancelEdit"/>
+                    </Border> 
+                </StackPanel>
+            </Grid>
         </DataTemplate>
         <DataTemplate x:Key="rename">
             <Border BorderBrush="Gray" CornerRadius="3" BorderThickness="1" MinWidth="600" Padding="3" Margin="0 10 0 0">
-                <Grid>
+                <StackPanel>
                     <Button HorizontalContentAlignment="Left" Click="Button_Click"  Tag="{Binding Path=Jid}">
-                        <TextBox MinWidth="400" FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"  FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" Text="{Binding Path=Title}" Background="Gold"/>
+                        <TextBox MinWidth="400" Loaded="TextBox_Loaded"
+                                 FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" 
+                                 Text="{Binding Path=Title}" TextChanged="EditTitleChanged" PreviewKeyDown="KeyPressedInTitleRename"/>
                     </Button>
                     <ContentPresenter x:Name="content" ContentTemplate="{StaticResource doneEditing}" VerticalAlignment="Bottom"/>
-                </Grid>
+                </StackPanel>
             </Border>
         </DataTemplate>
         <DataTemplate x:Key="share">
@@ -138,11 +143,13 @@
         </Border>
         <components:BackStageNav DockPanel.Dock="Left" x:Name="backstageNav"/>
         <Border DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="{DynamicResource reversedBackgroundColor}" Margin="-5 0 0 0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <dict:RadioButton Width="150" Text="Search" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True" Foreground="White" />
-                <dict:RadioButton Width="150" Text="My conversations" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked" Foreground="White" />
-                <dict:RadioButton Width="150" Text="Current conversation" GroupName="SearchOptions" x:Name="currentConversation"  Checked="mode_Checked" Foreground="White" />
-            </StackPanel>
+            <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <dict:RadioButton Width="150" Text="Search" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True" Foreground="White" />
+                    <dict:RadioButton Width="150" Text="My conversations" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked" Foreground="White" />
+                    <dict:RadioButton Width="150" Text="Current conversation" GroupName="SearchOptions" x:Name="currentConversation"  Checked="mode_Checked" Foreground="White" />
+                </StackPanel>
+            </Grid>
         </Border>
         <ScrollViewer
                   VerticalAlignment="Stretch" Height="Auto"
@@ -158,7 +165,9 @@
                                              Width="Auto" HorizontalAlignment="Stretch" />
                     <Button Content="Search all conversations" x:Name="searchConversations" Click="searchConversations_Click"/>
                 </StackPanel>
-                <ItemsControl Grid.Column="1" Grid.Row="3" x:Name="SearchResults" HorizontalAlignment="Left" ItemTemplate="{StaticResource viewing}" />
+                <ListView IsSynchronizedWithCurrentItem="true" 
+                         Grid.Column="1" Grid.Row="3" x:Name="SearchResults" HorizontalAlignment="Left" 
+                         ItemTemplate="{StaticResource viewing}" />
             </StackPanel>
         </ScrollViewer>
     </DockPanel>

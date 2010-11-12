@@ -37,6 +37,14 @@ namespace SandRibbon.Components
                 return false;
             }
         }
+        public class HideErrorsIfEmptyConverter : IValueConverter { 
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+                return string.IsNullOrEmpty((string)value) ? Visibility.Collapsed : Visibility.Visible;
+            }
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+                return value;
+            }
+        }
         public class IsMeConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -48,11 +56,20 @@ namespace SandRibbon.Components
                 return false;
             }
         }
+        public static HideErrorsIfEmptyConverter HideErrorsIfEmpty = new HideErrorsIfEmptyConverter();
         public static IsMeConverter isMe = new IsMeConverter();
         public static HideIfNotCurrentConversation hideIfNotCurrentConversation = new HideIfNotCurrentConversation();
         private ObservableCollection<MeTLLib.DataTypes.ConversationDetails> searchResults = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
         protected static string activeConversation;
         protected static string me;
+        public string Errors
+        {
+            get { return (string)GetValue(ErrorsProperty); }
+            set { SetValue(ErrorsProperty, value); }
+        }
+        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ErrorsProperty =
+            DependencyProperty.Register("Errors", typeof(string), typeof(ConversationSearchBox), new UIPropertyMetadata(""));
         public string Version { get; set; }
         private System.Threading.Timer refreshTimer;
         public ConversationSearchBox()
@@ -246,20 +263,22 @@ namespace SandRibbon.Components
             var mode = ((FrameworkElement)sender).Name;
             backstageNav.currentMode = mode;
         }
-        private ContentPresenter view(object backedByConversation) { 
+        private ContentControl view(object backedByConversation) { 
             var conversation = (ConversationDetails)((FrameworkElement)backedByConversation).DataContext;
             var item = SearchResults.ItemContainerGenerator.ContainerFromItem(conversation);
-            var presenter = (ContentPresenter)item;
-            return presenter;
+            var view = (ContentControl)item;
+            return view;
         }
         private ConversationDetails context(object sender) {
             return (ConversationDetails)((FrameworkElement)sender).DataContext;
         }
+        ConversationDetails originalContext;
         private void assignTemplate(string dataTemplateResourceKey, object sender){
             var sentContext = context(sender);
             var presenter = view(sender);
             presenter.Content = sentContext;
             presenter.ContentTemplate = (DataTemplate)FindResource(dataTemplateResourceKey);
+            originalContext = sentContext.Clone();
         }
         private void renameConversation(object sender, RoutedEventArgs e)
         {
@@ -271,32 +290,61 @@ namespace SandRibbon.Components
         }
         private void cancelEdit(object sender, RoutedEventArgs e)
         {
+            var source = (FrameworkElement)sender;
+            source.DataContext = originalContext;
             assignTemplate("viewing", sender);
         }
-        private void saveEdit(object sender, RoutedEventArgs e)
+        private string errorsFor(ConversationDetails proposedDetails)
         {
-            var details = (MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext;
-            if (!checkConversation(details)) return; 
-            MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
-            assignTemplate("viewing", sender);
-        }
-        private bool checkConversation(ConversationDetails proposedDetails)
-        {
-            if (proposedDetails == null) { return false; }
             proposedDetails.Title = proposedDetails.Title.Trim();
             var thisTitleIsASCII = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(proposedDetails.Title)).Equals(proposedDetails.Title);
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
-            var thisTitleIsNotTaken = (searchResults.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).ToList());
-            string ErrorText = "";
+            var titleAlreadyUsed = searchResults.Except(new[]{proposedDetails}).Any(c => c.Title.Equals(proposedDetails.Title, StringComparison.InvariantCultureIgnoreCase));
+            var errorText = String.Empty;
             if (!thisTitleIsASCII)
-                ErrorText += "Conversation title can only contain letters, numbers and punctuation marks. "; 
-            if (!thisIsAValidTitle) { ErrorText += "Invalid conversation title.  "; }
-            if (!(thisTitleIsNotTaken.Count == 1)) { ErrorText += "Conversation title already used.  "; }
-            if (ErrorText.Length > 0)
-                MessageBox.Show(ErrorText);
-            return ErrorText.Length == 0;
+                errorText += "Conversation title can only contain letters, numbers and punctuation marks. "; 
+            if (!thisIsAValidTitle) { errorText += "Invalid conversation title.  "; }
+            if (titleAlreadyUsed) { errorText += "Conversation title already used.  "; }
+            return errorText;
         }
-
+        private void focusRenameField(object sender, RoutedEventArgs e){
+            var source = (TextBox)((FrameworkElement)sender).FindName("renameField");
+            source.Focus();
+        }
+        private void saveEdit(object sender, RoutedEventArgs e)
+        {
+            var details = context(sender);
+            var errors = errorsFor(details);
+            if (string.IsNullOrEmpty(errors))
+            {
+                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                assignTemplate("viewing", sender);
+            }
+            else {
+                this.Errors = errors;
+            }
+        }
+        private void TextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.Invoke((Action)delegate {
+                ((TextBox)sender).Focus();
+            }, DispatcherPriority.Background);
+        }
+        private void EditTitleChanged(object sender, TextChangedEventArgs e) {
+            //Be slow to complain and quick to forgive.  Remove the errors output as soon as the user starts editing.
+            this.Errors = String.Empty;
+        }
+        private void KeyPressedInTitleRename(object sender, KeyEventArgs e) {
+            if(e.Key == Key.Enter){
+                var source = (TextBox)sender;
+                var context = (ConversationDetails)source.DataContext;
+                context.Title = source.Text;
+                saveEdit(source, null);
+            }
+            else if (e.Key == Key.Escape) {
+                cancelEdit(sender, null);
+            }
+        }
     }
     public class ConversationComparator : System.Collections.IComparer
     {

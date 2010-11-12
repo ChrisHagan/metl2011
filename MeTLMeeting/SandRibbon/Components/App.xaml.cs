@@ -15,6 +15,7 @@ using SandRibbon.Components;
 using System.Security;
 using System.Diagnostics;
 using MeTLLib.DataTypes;
+using System.Windows.Threading;
 
 [assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -139,8 +140,21 @@ namespace SandRibbon
             }
             return (nameValueTable);
         }
+        private void AnyTextBoxGetsFocus(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke((Action)delegate
+            {
+                var source = (TextBox)sender;
+                source.CaretIndex = source.Text.Length;
+                source.SelectAll();
+            }, DispatcherPriority.Background);
+        }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+
+            EventManager.RegisterClassHandler(typeof(TextBox),
+            TextBox.GotKeyboardFocusEvent,
+            new RoutedEventHandler(AnyTextBoxGetsFocus));
             try
             {
                 var parameters = GetQueryStringParameters();

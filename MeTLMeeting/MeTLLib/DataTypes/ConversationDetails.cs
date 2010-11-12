@@ -48,6 +48,9 @@ namespace MeTLLib.DataTypes
         {
             return Slides.Select(s => s.id).Max() + 1;
         }
+        public ConversationDetails Clone() {
+            return ReadXml(WriteXml());
+        }
         public string Title { get; set; }
         public string Jid { get; set; }/*The jid is a valid Xmpp jid.  If, for instance, you want
                                        * to create a room specific to this conversation so that
