@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-             xmlns:interop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
              xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
     <UserControl.Resources>
@@ -24,7 +23,7 @@
             <Button HorizontalAlignment="Left" Command="{x:Static api:Commands.HideConversationSearchBox}"  Content="Return to Conversation" Foreground="{StaticResource ResourceKey=foreground}" x:Name="current" />
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">
-            <dict:RadioButton Text="Help" Icon="\Resources\Help.png" GroupName="options"  Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" x:Name="help" Checked="mode_Checked"/>
+            <dict:Button Command="Help" Text="Help" Icon="\Resources\Help.png" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" x:Name="help" />
             <dict:Button Text="Exit" Icon="\Resources\Delete.png" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.CloseApplication}"/>
             <dict:Button Text="Logout and exit"  Icon="\Resources\logoutAndExit.png" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.LogOut}"/>
         </StackPanel>
