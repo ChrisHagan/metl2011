@@ -80,6 +80,7 @@ namespace SandRibbon.Components
             Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
+            Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(App.noop, canSetPermissions));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
             Commands.BackstageModeChanged.RegisterCommand(new DelegateCommand<string>(BackstageModeChanged));
@@ -98,6 +99,12 @@ namespace SandRibbon.Components
                 });
             });
         }
+
+        private bool canSetPermissions(object arg)
+        {
+            return this.Visibility == Visibility.Collapsed;
+        }
+
         private void BackstageModeChanged(string mode)
         {
             Dispatcher.adoptAsync(() =>

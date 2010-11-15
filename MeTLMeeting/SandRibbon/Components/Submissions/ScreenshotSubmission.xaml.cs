@@ -101,8 +101,11 @@ namespace SandRibbon.Components.Submissions
         }
         private void receiveSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
-            if(!IHaveThisSubmission(submission))
+            if (!IHaveThisSubmission(submission))
+            {
                 submissionList.Add(submission);
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
         private bool IHaveThisSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
@@ -125,7 +128,7 @@ namespace SandRibbon.Components.Submissions
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails
                                                     {
                                                         time = time,
-                                                        message = string.Format("{0}'s submission at {1}", Globals.me, new DateTime(time)),
+                                                        message = string.Format("Submission at {0}", new DateTime(time)),
                                                         showPrivate = true
                                                     });
         }

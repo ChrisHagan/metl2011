@@ -33,7 +33,11 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <Grid Grid.Column="1">
-                    <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top">Preview</Label>
+                    <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                           Content="{Binding 
+                                        ElementName=submissions, 
+                                        Path=SelectedItem,
+                                        Converter={x:Static SandRibbon:Converters.ExtractSubmissionAuthor}}"/>
                     <Viewbox Margin="0,35,0,0" Stretch="Fill" MaxWidth ="600" VerticalAlignment="Top" HorizontalAlignment="Left" >
                         <Image x:Name="previewImage" Source="{Binding ElementName=submissions, Path=SelectedItem, 
                         Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" Width="300"/>

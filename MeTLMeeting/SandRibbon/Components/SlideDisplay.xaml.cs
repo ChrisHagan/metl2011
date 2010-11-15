@@ -176,6 +176,7 @@ namespace SandRibbon.Components
             slides.SelectedIndex = currentSlideIndex;
             if (slides.SelectedIndex == -1)
                 slides.SelectedIndex = 0;
+            slides.ScrollIntoView(slides.SelectedItem);
         }
         private bool isSlideExposed(Slide slide)
         {

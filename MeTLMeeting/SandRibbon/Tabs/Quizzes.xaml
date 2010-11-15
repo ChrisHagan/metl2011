@@ -8,7 +8,6 @@
     xmlns:metl="clr-namespace:SandRibbon"
     xmlns:tabs="clr-namespace:SandRibbon.Tabs"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:submissions="clr-namespace:SandRibbon.Components.Submissions"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon">

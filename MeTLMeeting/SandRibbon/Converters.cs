@@ -69,6 +69,7 @@ namespace SandRibbon
         public static conversationDetailsToDescription ConversationDetailsToDescription = new conversationDetailsToDescription();
         public static StringTruncatorConverter stringTruncator = new StringTruncatorConverter();
         public static NoCachedImageReplicator nonCachedImage = new NoCachedImageReplicator();
+        public static ExtractSubmissionAuthorAndConvert ExtractSubmissionAuthor = new ExtractSubmissionAuthorAndConvert();
     }
     public class StringTruncatorConverter : IValueConverter
     {
@@ -332,6 +333,19 @@ namespace SandRibbon
         {
             if (value == null) return "";
             return ((FileInfo)value).url;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class ExtractSubmissionAuthorAndConvert : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return "Preview";
+            return string.Format("Preview {0}'s submission ", ((TargettedSubmission)value).author);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
