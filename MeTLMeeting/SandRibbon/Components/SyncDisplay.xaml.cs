@@ -14,9 +14,6 @@ using System.Windows.Shapes;
 
 namespace SandRibbon.Components
 {
-    /// <summary>
-    /// Interaction logic for SyncDisplay.xaml
-    /// </summary>
     public partial class SyncDisplay : UserControl
     {
         public SyncDisplay()

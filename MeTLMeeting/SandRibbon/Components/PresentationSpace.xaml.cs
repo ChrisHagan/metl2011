@@ -104,7 +104,7 @@ namespace SandRibbon.Components
             }
             catch (NotSetException e)
             {
-                //BOOOO
+                //You are listening to the channel but have not yet joined the room
             }
         }
         private void UpdateConversationDetails(ConversationDetails details)

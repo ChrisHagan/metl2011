@@ -263,10 +263,10 @@ namespace SandRibbon.Components
             var mode = ((FrameworkElement)sender).Name;
             backstageNav.currentMode = mode;
         }
-        private ContentControl view(object backedByConversation) { 
+        private ContentPresenter view(object backedByConversation) { 
             var conversation = (ConversationDetails)((FrameworkElement)backedByConversation).DataContext;
             var item = SearchResults.ItemContainerGenerator.ContainerFromItem(conversation);
-            var view = (ContentControl)item;
+            var view = (ContentPresenter)item;
             return view;
         }
         private ConversationDetails context(object sender) {
