@@ -79,7 +79,7 @@ namespace SandRibbon
         }
         private static void setDotNetPermissionState()
         {
-            PermissionSet set = new PermissionSet(PermissionState.None);
+            var set = new PermissionSet(PermissionState.None);
             set.SetPermission(new UIPermission(UIPermissionWindow.AllWindows, UIPermissionClipboard.AllClipboard));
             //Asserting new permission set to all referenced assemblies
             set.Assert();

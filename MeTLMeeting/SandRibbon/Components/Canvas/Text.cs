@@ -44,14 +44,15 @@ namespace SandRibbon.Components.Canvas
             userText = new Dictionary<String, List<MeTLLib.DataTypes.TargettedTextBox>>();
             EditingMode = InkCanvasEditingMode.None;
             Background = Brushes.Transparent;
-            SelectionMoved += SendTextBoxes;
             Loaded += (a, b) =>
             {
                 MouseUp += (c, args) => placeCursor(this, args);
             };
             PreviewKeyDown += keyPressed;
-            SelectionMoving += dirtyText;
-            SelectionMoved += textMoved;
+            //SelectionMoved += SendTextBoxes;
+            //SelectionMoving += dirtyText;
+            SelectionMoved += textMovedorResized;
+            SelectionMoving += textMovingorResizing;
             SelectionChanged += selectionChanged;
             SelectionChanging += selectingText;
             SelectionResizing += dirtyText;
@@ -88,25 +89,36 @@ namespace SandRibbon.Components.Canvas
             addAdorners();
         }
 
-        private void textMoved(object sender, EventArgs e)
-        {
-            addAdorners();
-        }
-
         private void deleteSelectedItems(object obj)
         {
-            var selectedElements = GetSelectedElements();
+            var selectedElements = GetSelectedElements().Select(b => Clone((TextBox)b)).ToList();
             if (selectedElements.Count == 0) return;
-            for(var i = 0; i <= selectedElements.Count; i++)
-            {
-                var box = (TextBox)selectedElements[i];
-                UndoHistory.Queue(() => sendTextWithoutHistory(box, box.tag().privacy),
-                () => doDirtyText(box));
-                if (Children.Contains(box))
-                    Children.Remove(box);
-                dirtyTextBoxWithoutHistory(box);
-            }
-            ClearAdorners();
+            Action undo = () =>
+                              {
+                                  var selection = new List<UIElement>();
+                                  foreach (var box in selectedElements)
+                                  {
+                                      myTextBox = box;
+                                      selection.Add(box);
+                                      if(Children.ToList().Where(c => ((TextBox)c).tag().id == box.tag().id).ToList().Count == 0)
+                                          Children.Add(box);
+                                      box.TextChanged += SendNewText;
+                                      sendTextWithoutHistory(box, box.tag().privacy);
+                                  }
+                                  Select(selection);
+                                  addAdorners();
+                              };
+            Action redo = () =>
+                              {
+                                  foreach(var box in selectedElements)
+                                  {
+                                      myTextBox = null;
+                                      dirtyTextBoxWithoutHistory(box);
+                                  }
+                                  ClearAdorners();
+                              };
+            redo();
+            UndoHistory.Queue(undo, redo);
         }
 
 
@@ -131,20 +143,7 @@ namespace SandRibbon.Components.Canvas
         private void keyPressed(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
-            {
-                foreach (TextBox box in GetSelectedElements())
-                {
-                    UndoHistory.Queue(() =>
-                    {
-                        sendTextWithoutHistory(box, box.tag().privacy);
-                    },
-                    () =>
-                    {
-                        doDirtyText(box);
-                    });
-                    dirtyTextBoxWithoutHistory(box);
-                }
-            }
+                deleteSelectedItems(null);
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
@@ -169,24 +168,19 @@ namespace SandRibbon.Components.Canvas
         private void dirtyTextBoxWithoutHistory(TextBox box)
         {
             RemovePrivacyStylingFromElement(box);
-            Commands.SendDirtyText.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, box.tag().privacy, box.tag().id));
+            if (Children.ToList().Where(c => ((TextBox)c).tag().id == box.tag().id).ToList().Count != 0)
+                Children.Remove(Children.ToList().Where(b => ((TextBox)b).tag().id == box.tag().id).First());
+            Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(currentSlide, Globals.me, target, box.tag().privacy, box.tag().id));
         }
 
-        private void receiveDirtyText(MeTLLib.DataTypes.TargettedDirtyElement element)
+        private void receiveDirtyText(TargettedDirtyElement element)
         {
             if (!(element.target.Equals(target))) return;
             if (!(element.slide == currentSlide)) return;
             Dispatcher.adoptAsync(delegate
             {
                 if (myTextBox != null && element.identifier == myTextBox.tag().id) return;
-                var author = element.author == Globals.conversationDetails.Author ? "Teacher" : element.author;
-                if (userText.ContainsKey(author) && element.target == target)
-                {
-                    var dirtyImage = userText[author].Where(t => t.identity == element.identifier).FirstOrDefault();
-                    if (dirtyImage != null)
-                        userText[author].Remove(dirtyImage);
-                }
-
+                if (element.author == me) return;
                 for (int i = 0; i < Children.Count; i++)
                 {
                     var currentTextbox = (TextBox)Children[i];
@@ -221,11 +215,13 @@ namespace SandRibbon.Components.Canvas
 
         private void selectionChanged(object sender, EventArgs e)
         {
-            updateSelectionAdorners();
+            if(GetSelectedElements().Count == 0)
+                ClearAdorners();
+            else
+                addAdorners();
         }
         private void updateSelectionAdorners()
         {
-            ClearAdorners();
             addAdorners();
         }
         public void addAdorners()
@@ -262,29 +258,84 @@ namespace SandRibbon.Components.Canvas
             }
             return myText;
         }
+        private void SendTextBoxes(object sender, EventArgs e)
+        {
+            ClearAdorners();
+            foreach (TextBox box in GetSelectedElements())
+            {
+                myTextBox = box;
+                sendText(box, box.tag().privacy);
+            }
+            addAdorners();
+        }
         private void dirtyText(object sender, InkCanvasSelectionEditingEventArgs e)
         {
             ClearAdorners();
             foreach (var box in GetSelectedElements())
             {
                 myTextBox = (TextBox)box;
-                doDirtyText((TextBox)box);
             }
         }
-        private void doDirtyText(TextBox box)
+        List<TextBox> boxesAtTheStart = new List<TextBox>();
+        private void textMovingorResizing(object sender, InkCanvasSelectionEditingEventArgs e)
         {
-            UndoHistory.Queue(() =>
-            {
-                dirtyTextBoxWithoutHistory(box);
-                sendText(box);
-                myTextBox = null;
-            },
-            () =>
-            {
-                doDirtyText(box);
-            });
-            dirtyTextBoxWithoutHistory(box);
+            boxesAtTheStart.Clear();
+            boxesAtTheStart = GetSelectedElements().Select(tb => Clone((TextBox)tb)).ToList();
         }
+        private void textMovedorResized(object sender, EventArgs e)
+        {
+            var startingText = boxesAtTheStart.Select(Clone).ToList();
+            var selectedElements =GetSelectedElements().Select(tb => Clone((TextBox)tb)).ToList();
+            Action undo = () =>
+              {
+                  ClearAdorners();
+                  var mySelectedElements = selectedElements.Select(Clone);
+                  foreach (TextBox box in mySelectedElements)
+                  {
+                      myTextBox = box;
+                      dirtyTextBoxWithoutHistory(box);
+                      myTextBox = null;
+                  }
+                  var selection = new List<UIElement>();
+                  foreach (var box in startingText)
+                  {
+                      myTextBox = box;
+                      selection.Add(box);
+                      if(Children.ToList().Where(c => ((TextBox)c).tag().id == box.tag().id).ToList().Count == 0)
+                          Children.Add(box);
+                      box.TextChanged += SendNewText;
+                      sendTextWithoutHistory(box, box.tag().privacy);
+                  }
+                  Select(selection);
+                  addAdorners();
+              };
+            Action redo = () =>
+              {
+                  ClearAdorners();
+                  var mySelectedElements = selectedElements.Select(Clone);
+                  var selection = new List<UIElement>();
+                  foreach (var box in startingText)
+                  {
+                      myTextBox = box;
+                      dirtyTextBoxWithoutHistory(box);
+                      myTextBox = null;
+                  }
+                  foreach (var box in mySelectedElements)
+                  {
+                      selection.Add(box);
+                      myTextBox = box;
+                      if(Children.ToList().Where(c => ((TextBox)c).tag().id == box.tag().id).ToList().Count == 0)
+                          Children.Add(box);
+                      box.TextChanged += SendNewText;
+                      sendTextWithoutHistory(box, box.tag().privacy);
+                  }
+                  Select(selection);
+                  addAdorners();
+              };
+            redo();
+            UndoHistory.Queue(undo, redo);
+        }
+       
         public bool textBoxSelected
         {
             get { return textboxSelectedProperty; }
@@ -482,6 +533,7 @@ namespace SandRibbon.Components.Canvas
         {
             var box = (TextBox)sender;
             var currentTag = box.tag();
+            ClearAdorners();
             if (currentTag.privacy != Globals.privacy)
             {
                 Commands.SendDirtyText.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, currentTag.privacy, currentTag.id));
@@ -560,7 +612,7 @@ namespace SandRibbon.Components.Canvas
             },
             () =>
             {
-                sendText(box);
+                sendTextWithoutHistory(box, intendedPrivacy);
             });
             GlobalTimers.resetSyncTimer();
             sendTextWithoutHistory(box, intendedPrivacy);
@@ -591,21 +643,7 @@ namespace SandRibbon.Components.Canvas
                     Children.Remove(Children[i]);
             }
         }
-        private void SendTextBoxes(object sender, EventArgs e)
-        {
-            ClearAdorners();
-            foreach (TextBox box in GetSelectedElements())
-            {
-                myTextBox = box;
-                sendText(box, box.tag().privacy);
-            }
-            addAdorners();
-        }
-        private void ReceiveTextBoxes(IEnumerable<MeTLLib.DataTypes.TargettedTextBox> boxes)
-        {
-            foreach (var box in boxes)
-                ReceiveTextBox(box);
-        }
+      
         public void ReceiveTextBox(MeTLLib.DataTypes.TargettedTextBox targettedBox)
         {
             if (targettedBox.target != target) return;
@@ -680,6 +718,28 @@ namespace SandRibbon.Components.Canvas
                                               ApplyPrivacyStylingToElement(box, targettedBox.privacy);
                                           }
                                       });
+        }
+        public TextBox Clone(TextBox OldBox)
+        {
+
+
+            var box = new TextBox();
+            box.AcceptsReturn = true;
+            box.TextWrapping = TextWrapping.WrapWithOverflow;
+            box.GotFocus += textboxGotFocus;
+            box.LostFocus += textboxLostFocus;
+            box.BorderThickness = new Thickness(0);
+            box.BorderBrush = new SolidColorBrush(Colors.Transparent);
+            box.Background = new SolidColorBrush(Colors.Transparent);
+            box.Focusable = canEdit;
+            box.tag(OldBox.tag());
+            box.FontFamily = OldBox.FontFamily;
+            box.FontSize = OldBox.FontSize;
+            box.Foreground = OldBox.Foreground;
+            box.Text = OldBox.Text;
+            SetLeft(box, GetLeft(OldBox));
+            SetTop(box, GetTop(OldBox));
+            return box;
         }
         public static IEnumerable<Point> getTextPoints(TextBox text)
         {
@@ -773,6 +833,7 @@ namespace SandRibbon.Components.Canvas
             var result = new Rect(boxOrigin, boxSize).Contains(point);
             return result;
         }
+        
     }
     public class TextAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
     {

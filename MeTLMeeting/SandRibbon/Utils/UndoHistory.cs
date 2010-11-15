@@ -7,7 +7,6 @@ namespace SandRibbon.Utils
 {
     public class UndoHistory
     {
-        private static long millisecondToTicks = 10000; 
         private class HistoricalAction
         {
             public Action undo;
@@ -43,6 +42,7 @@ namespace SandRibbon.Utils
             
             var newAction =(new HistoricalAction(undo,redo, DateTime.Now.Ticks)); 
             undoQueue[currentSlide].Push(newAction);
+            Console.WriteLine("\n\nThere are {0} elements in the undo queue\n\n", undoQueue[currentSlide].Count);
             RaiseQueryHistoryChanged();
         }
         private static void RaiseQueryHistoryChanged()
@@ -59,6 +59,7 @@ namespace SandRibbon.Utils
             {
                 var head = undoQueue[currentSlide].Pop();
                 head.undo.Invoke();
+                Console.WriteLine("\n\nThere are {0} elements in the undo queue\n\n", undoQueue[currentSlide].Count);
                 redoQueue[currentSlide].Push(head);
                 RaiseQueryHistoryChanged();
             }
@@ -74,6 +75,7 @@ namespace SandRibbon.Utils
                 var head = redoQueue[currentSlide].Pop();
                 head.redo.Invoke();
                 undoQueue[currentSlide].Push(head);
+                Console.WriteLine("\n\nThere are {0} elements in the undo queue\n\n", undoQueue[currentSlide].Count);
                 RaiseQueryHistoryChanged();
             }
         }
