@@ -408,8 +408,6 @@ namespace SandRibbon
                     (p.MainWindowTitle.StartsWith("S15") || p.MainWindowTitle.Equals("")));
             }
         }
-        private static object reconnectionLock = new object();
-        private static bool reconnecting = false;
         private void AddWindowEffect(object _o)
         {
             CanvasBlocker.Visibility = Visibility.Visible;

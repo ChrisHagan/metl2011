@@ -32,14 +32,9 @@
         </StackPanel>
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Results" x:Name="results">
-        <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
-            <Button Command="{x:Static tabs:Quizzes.openQuizResults}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/Resources/Results.png" Height="15" Width="15"/>
-                    <Label Content="Results"/>
-                </StackPanel>
-            </Button>
-        </Border>
+        <StackPanel>
+            <dict:Button Command="{x:Static tabs:Quizzes.openQuizResults}" Icon="\Resources\Results.png" Text="Results" ToolTip="{StaticResource ViewQuizResultsToolTip}"/>
+        </StackPanel>
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Quizzes" x:Name="quizResultsRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Results.png">
         <sr:RibbonGroup.Variants>

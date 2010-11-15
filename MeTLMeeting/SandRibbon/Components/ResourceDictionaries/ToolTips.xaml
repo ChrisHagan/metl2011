@@ -79,7 +79,7 @@
                                         ContentText="Add an image to the slide."/>
     <resources:MeTLImageToolTip x:Key="UploadFileToolTip" 
                                         TitleText="Upload File"
-                                        ImageSource="\Resources\AddImage.png" 
+                                        ImageSource="\Resources\Attachment.png" 
                                         ContentText="Upload a file for distribution to all users."/>
     <resources:MeTLImageToolTip x:Key="ImageModeToolTip" 
                                         TitleText="Image Mode"
@@ -133,6 +133,15 @@
                                         TitleText="Monash MeTL Application Menu"
                                         ImageSource="\Resources\homeloo_gear_clock_2.jpg" 
                                         ContentText="Open the application menu to view options for this application, for the conversation, to get help, and to logout."/>
+    <resources:MeTLImageToolTip x:Key="SearchConversationsToolTip" 
+                                        TitleText="Search for Conversations"
+                                        ImageSource="\Resources\MagnifyingGlassShiny.png"
+                                        ContentText="Search for a conversation"/>
+    
+    <resources:MeTLImageToolTip x:Key="SearchMyConversationsToolTip" 
+                                        TitleText="Search My Conversation"
+                                        ImageSource="\Resources\MagnifyingGlassShiny.png" 
+                                        ContentText="Search my conversations"/>
     <resources:MeTLImageToolTip x:Key="ConversationListingToolTip" 
                                         TitleText="Enter Conversation"
                                         ImageSource="\Resources\Slide_Not_Loaded.png" 
@@ -143,8 +152,13 @@
                                         ContentText="Edit the current conversation.  You may only do this if you created the conversation."/>
     <resources:MeTLImageToolTip x:Key="CreateConversationToolTip" 
                                         TitleText="Create Conversation"
-                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
-                                        ContentText="Create a conversation.  Firstly, enter the name of your conversation.  If the name already exists, you will not be able to create the conversation, and the create buttons will be disabled.  Then, select which type of conversation you would like to create.  You can change the settings of your conversation at a later time."/>
+                                        ImageSource="\Resources\Whiteboard.png" 
+                                        ContentText="Creates a blank conversation"/>
+     <resources:MeTLImageToolTip x:Key="CreatePowerpointToolTip" 
+                                        TitleText="Create Conversation"
+                                        ImageSource="\Resources\ExactPowerpoint.png" 
+                                        ContentText="Creates a conversation from a selected PowerPoint"/>
+   
     <resources:MeTLImageToolTip x:Key="ImportConversationToolTip" 
                                         TitleText="Import Conversation"
                                         ImageSource="\Resources\Slide_Not_Loaded.png" 
@@ -193,6 +207,10 @@
                                         TitleText="Redo"
                                         ImageSource="\Resources\RedoShiny.png" 
                                         ContentText="Redo the last change that you undid on this page."/>
+    <resources:MeTLImageToolTip x:Key="ViewQuizResultsToolTip" 
+                                        TitleText="View quiz results"
+                                        ImageSource="\Resources\Results.png" 
+                                        ContentText="View the results for all quizzes."/>
     <resources:MeTLImageToolTip x:Key="CreateQuizToolTip" 
                                         TitleText="Create a new quiz"
                                         ImageSource="\Resources\NewQuiz.png" 
