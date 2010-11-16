@@ -37,8 +37,6 @@ namespace SandRibbon.Components.Canvas
             SelectionResizing += selectionMoving;
             SelectionResized += selectionMoved;
             Background = Brushes.Transparent;
-            defaultWidth = DefaultDrawingAttributes.Width;
-            defaultHeight = DefaultDrawingAttributes.Height;
             modeChangedCommand = new DelegateCommand<string>(setInkCanvasMode, canChangeMode);
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedStrokes));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(modeChangedCommand);
@@ -99,8 +97,6 @@ namespace SandRibbon.Components.Canvas
                 modeChangedCommand.RaiseCanExecuteChanged();
             }
         }
-        private double defaultWidth;
-        private double defaultHeight;
         private bool canChangeMode(string arg)
         {
             return true;
@@ -335,7 +331,6 @@ namespace SandRibbon.Components.Canvas
                         doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
                     }
                     Select(newSelection);
-                    addAdorners();
                 };
             Action undo = () =>
                 {
@@ -355,10 +350,8 @@ namespace SandRibbon.Components.Canvas
                         doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
                     }
                     Select(newSelection);
-                    addAdorners();
                 };
             redo(); 
-            addAdorners();
             UndoHistory.Queue(undo, redo);
         
         }
@@ -494,11 +487,14 @@ namespace SandRibbon.Components.Canvas
             var strokesBeforePaste = Strokes.Select(s => s).ToList();
             Paste();
             var newStrokes = Strokes.Where(s => !strokesBeforePaste.Contains(s)).ToList();
+            var selection = new StrokeCollection();
             ClearAdorners();
             foreach (var stroke in newStrokes)
             {
+                selection.Add(stroke);
                 doMyStrokeAdded(stroke, stroke.tag().privacy);
             }
+            Select(selection);
             addAdorners();
         }
         protected override void HandleCopy()
@@ -511,6 +507,7 @@ namespace SandRibbon.Components.Canvas
             foreach (var stroke in GetSelectedStrokes())
                 listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,stroke.tag().privacy,stroke.sum().checksum.ToString()));
             CutSelection();
+            ClearAdorners();
             foreach (var element in listToCut)
                 Commands.SendDirtyStroke.Execute(element);
         }

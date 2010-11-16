@@ -19,14 +19,25 @@ using MeTLLib.DataTypes;
 using MeTLLib;
 using MeTLLib.Providers;
 using MeTLLib.Providers.Connection;
+using HttpResourceProvider = MeTLLib.Providers.Connection.HttpResourceProvider;
 
 namespace SandRibbon.Utils.Connection
 {
     public class PrintParser : MeTLLib.Providers.Connection.PreParser
     {
         public List<object> history = new List<object>();
-        public PrintParser(Credentials credentials, int room, MeTLLib.Providers.Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory) 
-            : base(credentials,room,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory, null){
+        public PrintParser(
+            Credentials credentials,
+            int room, 
+            MeTLLib.Providers.Structure.IConversationDetailsProvider conversationDetailsProvider, 
+            HttpHistoryProvider historyProvider, 
+            CachedHistoryProvider cachedHistoryProvider, 
+            MeTLServerAddress metlServerAddress, 
+            ResourceCache cache, 
+            IReceiveEvents receiveEvents, 
+            IWebClientFactory webClientFactory,
+            HttpResourceProvider httpResourceProvider) 
+            : base(credentials,room,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider){
         }
         //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
         public IEnumerable<UserCanvasStack> ToVisualWithNotes()

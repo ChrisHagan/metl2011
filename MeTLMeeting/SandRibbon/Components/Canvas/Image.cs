@@ -158,6 +158,7 @@ namespace SandRibbon.Components.Canvas
                                   ClearAdorners();
                                   foreach (var element in selectedElements)
                                   {
+                                      
                                       if (!Children.Contains(element))
                                           Children.Add(element);
                                       sendThisElement(element);
@@ -418,12 +419,13 @@ namespace SandRibbon.Components.Canvas
                     {
                         Source = new BitmapImage(uri)
                     };
-                    image.tag(new MeTLLib.DataTypes.ImageTag(Globals.me, privacy, string.Format("{0}:{1}:{2}", Globals.me, SandRibbonObjects.DateTimeFactory.Now(), 1), false, -1));
-                    InkCanvas.SetLeft(image, 15);
-                    InkCanvas.SetTop(image, 15);
+                    image.tag(new ImageTag(Globals.me, privacy, string.Format("{0}:{1}:{2}", Globals.me, DateTimeFactory.Now(), 1), false, -1));
+                    SetLeft(image, 15);
+                    SetTop(image, 15);
                     Commands.SendImage.ExecuteAsync(new TargettedImage
                     (currentSlide, Globals.me, target, privacy, image));
                 }
+
                 else MessageBox.Show("Sorry, your file could not be pasted.  Try dragging and dropping, or selecting with the add image button.");
             }
         }
@@ -443,6 +445,7 @@ namespace SandRibbon.Components.Canvas
                 Clipboard.SetImage((BitmapSource)image.Source);
                 listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, image.tag().privacy, image.tag().id));
             }
+            ClearAdorners();
             foreach (var element in listToCut)
                 Commands.SendDirtyImage.ExecuteAsync(element);
         }
@@ -512,6 +515,8 @@ namespace SandRibbon.Components.Canvas
                     selectedElements.Add(((System.Windows.Controls.Image)element).clone());
                 else if(element is Video)
                     selectedElements.Add(((Video)element).clone());
+                SetLeft(selectedElements.Last(), GetLeft(element));
+                SetTop(selectedElements.Last(), GetTop(element));
             }
             return selectedElements;
         }

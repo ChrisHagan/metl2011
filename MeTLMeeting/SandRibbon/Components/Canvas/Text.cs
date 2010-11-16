@@ -766,7 +766,8 @@ namespace SandRibbon.Components.Canvas
                 SetLeft(box, 15);
                 SetTop(box, 15);
                 box.Text = Clipboard.GetText();
-
+                Select(new [] {box});
+                addAdorners();
             }
         }
         protected override void HandleCopy()
@@ -783,6 +784,7 @@ namespace SandRibbon.Components.Canvas
                 Clipboard.SetText(box.Text);
                 listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, box.tag().privacy, box.tag().id));
             }
+            ClearAdorners();
             foreach (var element in listToCut)
                 Commands.SendDirtyText.ExecuteAsync(element);
         }
