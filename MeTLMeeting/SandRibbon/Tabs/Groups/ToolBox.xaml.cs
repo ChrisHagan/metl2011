@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.Practices.Composite.Presentation.Commands;
@@ -11,8 +12,16 @@ namespace SandRibbon.Tabs.Groups
         {
             InitializeComponent();
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
             SetLayer((string)Commands.SetLayer.lastValue());
         }
+
+        private void joinConversation(object obj)
+        {
+            type.IsChecked = true;
+            Commands.SetTextCanvasMode.Execute("None");
+        }
+
         private void SetLayer(string layer)
         {
             hideAll();

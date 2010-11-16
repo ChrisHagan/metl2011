@@ -76,6 +76,7 @@ namespace SandRibbon.Utils
       ms.Dispose();     
 
       Cursor cur = InternalCreateCursor(bmp, xHotSpot, yHotSpot);
+        
 
       bmp.Dispose();
 
