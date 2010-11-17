@@ -84,6 +84,7 @@ namespace MeTLLib.DataTypes
         public string target;
         public string privacy;
         public int slide;
+        public long timestamp;
     }
     public class TargettedAutoShape : TargettedElement
     {
@@ -1538,6 +1539,12 @@ namespace MeTLLib.DataTypes
             {
                 this.TagName = TAG;
             }
+        }
+    }
+    public static class TargettedElementExtensions {
+        public static T timestamp<T>(this TargettedElement elem, long timestamp) where T : TargettedElement {
+            elem.timestamp = timestamp;
+            return (T)elem;
         }
     }
 }

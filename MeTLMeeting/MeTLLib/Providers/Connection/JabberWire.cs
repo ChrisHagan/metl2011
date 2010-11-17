@@ -76,7 +76,7 @@ namespace MeTLLib.Providers.Connection
                 clientFactory,
                 resourceProvider);
         }
-        public PreParser create<T>(int room) where T : PreParser
+        public virtual PreParser create<T>(int room) where T : PreParser
         {
             return preParser<T>(room);
         }
@@ -688,22 +688,19 @@ namespace MeTLLib.Providers.Connection
         }
         public void ActOnUntypedMessage(Element message)
         {
+            var timestamp = Int64.Parse(message.Attribute("time"));
             foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
-                actOnStrokeReceived(ink.Stroke);
+                actOnStrokeReceived(ink.Stroke.timestamp<TargettedStroke>(timestamp));
             foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
                 actOnScreenshotSubmission(submission.parameters);
             foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
-                actOnTextReceived(box.Box);
+                actOnTextReceived(box.Box.timestamp<TargettedTextBox>(timestamp));
             foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
-                actOnImageReceived(image.injectDependencies(metlServerAddress, webClientFactory.client()).Img);
+                actOnImageReceived(image.injectDependencies(metlServerAddress, webClientFactory.client()).Img.timestamp<TargettedImage>(timestamp));
             foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
                 actOnQuizReceived(quiz.parameters);
             foreach (var quizAnswer in message.SelectElements<MeTLStanzas.QuizResponse>(true))
                 actOnQuizAnswerReceived(quizAnswer.parameters);
-            /*foreach (var liveWindow in message.SelectElements<MeTLStanzas.LiveWindow>(true))
-                actOnLiveWindowReceived(liveWindow.parameters);
-            foreach (var dirtyLiveWindow in message.SelectElements<MeTLStanzas.DirtyLiveWindow>(true))
-                actOnDirtyLiveWindowReceived(dirtyLiveWindow.element);*/
             foreach (var dirtyText in message.SelectElements<MeTLStanzas.DirtyText>(true))
                 actOnDirtyTextReceived(dirtyText);
             foreach (var dirtyInk in message.SelectElements<MeTLStanzas.DirtyInk>(true))

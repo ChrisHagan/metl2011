@@ -153,7 +153,7 @@ namespace MeTLLib.Providers
                     };
             worker.RunWorkerAsync(null);
         }
-        private readonly byte[] closeTag = Encoding.UTF8.GetBytes("</logCollection>");
+        protected readonly byte[] closeTag = Encoding.UTF8.GetBytes("</logCollection>");
         protected virtual void parseHistoryItem(MemoryStream stream, JabberWire wire)
         {//This takes all the time
             var parser = new StreamParser();
