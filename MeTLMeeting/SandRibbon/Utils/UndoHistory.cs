@@ -42,7 +42,6 @@ namespace SandRibbon.Utils
             
             var newAction =(new HistoricalAction(undo,redo, DateTime.Now.Ticks)); 
             undoQueue[currentSlide].Push(newAction);
-            Console.WriteLine("\n\nThere are {0} elements in the undo queue\n\n", undoQueue[currentSlide].Count);
             RaiseQueryHistoryChanged();
         }
         private static void RaiseQueryHistoryChanged()
