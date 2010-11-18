@@ -109,6 +109,7 @@ namespace SandRibbon.Components
                                           }
                                       }
                                   });
+            App.Now(string.Format("Moving to {0}", slide));
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
         }

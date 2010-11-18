@@ -64,20 +64,25 @@ namespace SandRibbon
         public static void noop(params object[] args)
         {
         }
-        public static string Now(string title)
+        public static string Now(string message)
         {
             var now = SandRibbonObjects.DateTimeFactory.Now();
-            var s = string.Format("{2} {0}:{1}", now, now.Millisecond, title);
-            saveInformationToDatabase(title);
+            var s = string.Format("{2} {0}:{1}", now, now.Millisecond, message);
+            saveInformationToDatabase(message);
+            Logger.Log(message);
             Trace.TraceInformation(s);
             return s;
         }
         private static bool failedLogging = false;
+        private static NpgsqlConnection conn = null;
         private static void saveInformationToDatabase(string message)
         {
             if (failedLogging) return;
-            var conn = createDatabaseConnection();
-            conn.Open();
+            if (conn == null)
+            {
+                conn = createDatabaseConnection();
+                conn.Open();
+            }
             try
             {
                 if (Globals.me.Length == 0) return;

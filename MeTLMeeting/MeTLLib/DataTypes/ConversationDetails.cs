@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Divan;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using MeTLLib.Providers;
 
 namespace MeTLLib.DataTypes
