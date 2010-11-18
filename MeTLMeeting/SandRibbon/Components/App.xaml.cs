@@ -4,6 +4,8 @@ using System.Deployment.Application;
 using System.Web;
 using System.Windows;
 using System.Windows.Controls;
+using MeTLLib;
+using Npgsql;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Utils;
 using System.Security.Permissions;
@@ -66,9 +68,60 @@ namespace SandRibbon
         {
             var now = SandRibbonObjects.DateTimeFactory.Now();
             var s = string.Format("{2} {0}:{1}", now, now.Millisecond, title);
+            saveInformationToDatabase(title);
             Trace.TraceInformation(s);
             return s;
         }
+        private static bool failedLogging = false;
+        private static bool tableExists = false;
+        private static void saveInformationToDatabase(string message)
+        {
+            if (failedLogging) return;
+            var conn = createDatabaseConnection();
+            conn.Open();
+            if (!tableExists)
+            {
+                try
+                {
+                    var creationString =
+                        "CREATE TABLE metl_log (id SERIAL, timestamp TIMESTAMP NOT NULL DEFAULT now(), username VARCHAR(10), message VARCHAR(1000), server VARCHAR(200))";
+                    var createCommand = conn.CreateCommand();
+                    createCommand.CommandText = creationString;
+                    createCommand.ExecuteNonQuery();
+                    tableExists = true;
+                }
+                catch (Exception e)
+                {
+                    if (!e.Message.Contains("exists"))
+                        failedLogging = true;
+                }
+            }
+            try
+            {
+                if (Globals.me.Length == 0) return;
+                var insertionString = string.Format("INSERT INTO metl_log (username, message, server) VALUES('{0}', '{1}', '{2}');COMMIT",
+                                                    Globals.me, message, ClientFactory.Connection().server.host);
+                var insertCommand = conn.CreateCommand();
+                insertCommand.CommandText = insertionString;
+                insertCommand.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                failedLogging = true;
+            }
+        }
+        private static string server = "madam.adm.monash.edu";
+        private static string port = "5432";
+        private static string databaseName = "postgres";
+        private static string databaseUsername = "ejabberd";
+        private static string databasePassword = "";
+        private static NpgsqlConnection createDatabaseConnection()
+        {
+            var connectionString = string.Format("Server={0};Port={1};User Id={2};Database={4}", server, port, databaseUsername, databasePassword, databaseName);
+            var conn = new NpgsqlConnection(connectionString);
+            return conn;
+        }
+
         public static string Now(string format, params object[] args) { 
             return Now(String.Format(format,args));
         }

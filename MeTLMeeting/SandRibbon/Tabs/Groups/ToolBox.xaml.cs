@@ -12,12 +12,13 @@ namespace SandRibbon.Tabs.Groups
         {
             InitializeComponent();
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
             SetLayer((string)Commands.SetLayer.lastValue());
         }
 
         private void joinConversation(object obj)
         {
+
             type.IsChecked = true;
             Commands.SetTextCanvasMode.Execute("None");
         }
