@@ -18,7 +18,7 @@
       <Item value="slides" priority="6" />
       <Item value="foreach" priority="39" />
       <Item value="Slider" priority="1" />
-      <Item value="var" priority="130" />
+      <Item value="var" priority="136" />
       <Item value="in" priority="32" />
       <Item value="slide" priority="5" />
       <Item value="slideList" priority="0" />
@@ -34,16 +34,16 @@
       <Item value="strokes" priority="7" />
       <Item value="listX" priority="0" />
       <Item value="child" priority="3" />
-      <Item value="new" priority="113" />
+      <Item value="new" priority="114" />
       <Item value="InkCanvas" priority="6" />
       <Item value="children" priority="0" />
       <Item value="bounds" priority="0" />
       <Item value="thoughtView" priority="2" />
       <Item value="public" priority="125" />
       <Item value="private" priority="47" />
-      <Item value="bool" priority="14" />
+      <Item value="bool" priority="15" />
       <Item value="operator" priority="1" />
-      <Item value="false" priority="11" />
+      <Item value="false" priority="12" />
       <Item value="int" priority="27" />
       <Item value="parent" priority="14" />
       <Item value="string" priority="87" />
@@ -53,7 +53,7 @@
       <Item value="currentDetails" priority="0" />
       <Item value="room" priority="4" />
       <Item value="Commands" priority="73" />
-      <Item value="static" priority="30" />
+      <Item value="static" priority="31" />
       <Item value="CompositeCommand" priority="12" />
       <Item value="DelegateCommand" priority="46" />
       <Item value="SneakInto" priority="1" />
@@ -63,7 +63,7 @@
       <Item value="currentSlide" priority="7" />
       <Item value="details" priority="11" />
       <Item value="thoughtBubble" priority="6" />
-      <Item value="if" priority="100" />
+      <Item value="if" priority="103" />
       <Item value="opened" priority="3" />
       <Item value="position" priority="5" />
       <Item value="PointCollectionExtension" priority="3" />
@@ -71,7 +71,7 @@
       <Item value="Window" priority="7" />
       <Item value="Parent" priority="2" />
       <Item value="Height" priority="3" />
-      <Item value="else" priority="19" />
+      <Item value="else" priority="20" />
       <Item value="relocate" priority="2" />
       <Item value="void" priority="28" />
       <Item value="adornerLayer" priority="10" />
@@ -86,7 +86,7 @@
       <Item value="Slide" priority="1" />
       <Item value="ThoughtBubbleSpace_MouseDown" priority="4" />
       <Item value="Ionic" priority="0" />
-      <Item value="return" priority="74" />
+      <Item value="return" priority="75" />
       <Item value="UIAdorner" priority="2" />
       <Item value="FrameworkElement" priority="2" />
       <Item value="Dispatcher" priority="23" />
@@ -99,7 +99,7 @@
       <Item value="Windows" priority="5" />
       <Item value="Controls" priority="4" />
       <Item value="thought" priority="13" />
-      <Item value="true" priority="9" />
+      <Item value="true" priority="11" />
       <Item value="SystemParameters" priority="0" />
       <Item value="Point" priority="0" />
       <Item value="Rect" priority="1" />
@@ -168,7 +168,7 @@
       <Item value="SandRibbon" priority="1" />
       <Item value="Providers" priority="0" />
       <Item value="Globals" priority="81" />
-      <Item value="try" priority="25" />
+      <Item value="try" priority="26" />
       <Item value="catch" priority="25" />
       <Item value="NotSetException" priority="23" />
       <Item value="self" priority="4" />
@@ -244,7 +244,7 @@
       <Item value="size" priority="2" />
       <Item value="submit" priority="0" />
       <Item value="view" priority="0" />
-      <Item value="command" priority="1" />
+      <Item value="command" priority="3" />
       <Item value="base" priority="5" />
       <Item value="conversationChanged" priority="1" />
       <Item value="Automation" priority="1" />
@@ -556,7 +556,7 @@
       <Item value="UserVisibility`0" priority="1" />
       <Item value="username" priority="1" />
       <Item value="DivideByZeroException`0" priority="0" />
-      <Item value="Globals`0" priority="7" />
+      <Item value="Globals`0" priority="8" />
       <Item value="selectedElements" priority="15" />
       <Item value="UIElement`0" priority="8" />
       <Item value="List&lt;UIElement&gt;" priority="3" />
@@ -611,7 +611,7 @@
       <Item value="Dispatcher`0" priority="0" />
       <Item value="Quizes" priority="0" />
       <Item value="Window`0" priority="0" />
-      <Item value="ListBox`0" priority="0" />
+      <Item value="ListBox`0" priority="1" />
       <Item value="Directory`0" priority="0" />
       <Item value="wire" priority="1" />
       <Item value="resourceUploader" priority="0" />
@@ -677,6 +677,16 @@
       <Item value="undoQueue" priority="1" />
       <Item value="ArgumentException`0" priority="0" />
       <Item value="startingText" priority="1" />
+      <Item value="Exception`0" priority="0" />
+      <Item value="connectionString" priority="0" />
+      <Item value="NpgsqlCommand`0" priority="0" />
+      <Item value="insertionString" priority="3" />
+      <Item value="conn" priority="2" />
+      <Item value="while" priority="0" />
+      <Item value="failedLogging" priority="0" />
+      <Item value="tableExists" priority="1" />
+      <Item value="getCommand" priority="2" />
+      <Item value="data" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.FrameworkElement">
       <Item value="BeginAnimation" priority="0" />
@@ -1039,9 +1049,9 @@
       <Item value="ToLower" priority="3" />
       <Item value="ToCharArray" priority="2" />
       <Item value="ToUpper" priority="1" />
-      <Item value="Length" priority="1" />
+      <Item value="Length" priority="2" />
       <Item value="Split" priority="0" />
-      <Item value="Contains`0" priority="0" />
+      <Item value="Contains`0" priority="1" />
       <Item value="ElementAt`1" priority="0" />
       <Item value="Substring`0" priority="0" />
       <Item value="ToString`0" priority="0" />
@@ -1109,7 +1119,7 @@
       <Item value="Abs" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@SandRibbon.Providers.Globals">
-      <Item value="me" priority="9" />
+      <Item value="me" priority="10" />
       <Item value="slide" priority="16" />
       <Item value="conversationDetails" priority="46" />
       <Item value="credentials" priority="2" />
@@ -1481,7 +1491,7 @@
       <Item value="IsChecked" priority="2" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Exception">
-      <Item value="Message" priority="0" />
+      <Item value="Message" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:SandRibbon.Components.Canvas.VisibilityInformation">
       <Item value="user" priority="0" />
@@ -1587,12 +1597,23 @@
     <ItemStatistics item="Qualified:MeTLLib.DataTypes.TargettedDirtyElement">
       <Item value="author" priority="0" />
     </ItemStatistics>
+    <ItemStatistics item="Qualified:Npgsql.NpgsqlDataAdapter">
+      <Item value="Update`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Npgsql.NpgsqlCommand">
+      <Item value="ExecuteReader`0" priority="1" />
+      <Item value="ExecuteNonQuery`0" priority="2" />
+      <Item value="CommandText" priority="2" />
+      <Item value="ExecuteScalar`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Npgsql.NpgsqlConnection">
+      <Item value="CreateCommand`0" priority="2" />
+    </ItemStatistics>
   </CompletionStatisticsManager>
   <RecentFiles>
     <RecentFiles>
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:ReceiveEvents.cs" caret="14089" fromTop="14" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="41700" fromTop="8" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:Client.cs" caret="11901" fromTop="4" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="29603" fromTop="28" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Commands/f:Commands.cs" caret="2334" fromTop="23" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/f:Globals.cs" caret="1355" fromTop="11" />
@@ -1609,26 +1630,14 @@
       <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="7223" fromTop="5" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:CursorExtensions.cs" caret="750" fromTop="27" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AnswerAQuiz.xaml" caret="1229" fromTop="11" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="567" fromTop="18" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Login.xaml.cs" caret="2616" fromTop="23" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:UndoHistory.cs" caret="1600" fromTop="12" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="10265" fromTop="27" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="13941" fromTop="28" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="13834" fromTop="23" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:Client.cs" caret="1082" fromTop="10" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:UndoHistory.cs" caret="1600" fromTop="12" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="3240" fromTop="15" />
     </RecentFiles>
     <RecentEdits>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="22723" fromTop="28" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="13919" fromTop="35" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="7844" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="8101" fromTop="24" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="31911" fromTop="29" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="14672" fromTop="25" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="6819" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="12142" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="25895" fromTop="32" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="22168" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="31475" fromTop="31" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="6827" fromTop="19" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="5007" fromTop="34" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="6051" fromTop="36" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="14542" fromTop="30" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="4857" fromTop="12" />
@@ -1640,12 +1649,25 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:UndoHistory.cs" caret="3116" fromTop="30" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="13855" fromTop="22" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="12361" fromTop="13" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="13465" fromTop="28" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="12790" fromTop="6" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="13045" fromTop="19" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="13765" fromTop="18" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="12734" fromTop="4" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="13941" fromTop="28" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="13615" fromTop="18" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2386" fromTop="16" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="3603" fromTop="18" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="3821" fromTop="16" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="3197" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2738" fromTop="10" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2876" fromTop="23" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2738" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2738" fromTop="10" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="3261" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2821" fromTop="11" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="3385" fromTop="23" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2750" fromTop="9" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="2546" fromTop="3" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>

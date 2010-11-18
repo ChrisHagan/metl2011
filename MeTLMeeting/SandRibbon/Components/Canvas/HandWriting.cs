@@ -310,78 +310,63 @@ namespace SandRibbon.Components.Canvas
             var undoStrokes = strokesAtTheStart.Select(stroke => stroke.Clone()).ToList();
             Action redo = () =>
                 {
-                    var newSelection = new StrokeCollection();
-                    Select(newSelection);
-                    foreach (var stroke in undoStrokes)
-                    {
-                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
-                        {
-                            Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
-                            strokes.Remove(stroke.sum());
-                        }
-                        doMyStrokeRemovedExceptHistory(stroke);
-                    }
-                    foreach (var stroke in selectedStrokes)
-                    {
-                        newSelection.Add(stroke);
-                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
-                        {
-                            Strokes.Add(stroke);
-                        }
-                        doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
-                    }
-                    Select(newSelection);
+                    removeStrokes(undoStrokes); 
+                    addStrokes(selectedStrokes); 
+                    Select(new StrokeCollection(selectedStrokes));
                 };
             Action undo = () =>
                 {
                    
-                    var newSelection = new StrokeCollection();
-                    foreach (var stroke in selectedStrokes)
-                    {
-                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
-                            Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
-                        doMyStrokeRemovedExceptHistory(stroke);
-                    }
-                    foreach (var stroke in undoStrokes)
-                    {
-                        newSelection.Add(stroke);
-                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
-                            Strokes.Add(stroke);
-                        doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
-                    }
-                    Select(newSelection);
+                    removeStrokes(selectedStrokes);
+                    addStrokes(undoStrokes); 
+                    Select(new StrokeCollection(undoStrokes));
                 };
-            redo(); 
+            ClearAdorners();
+            removeStrokes(undoStrokes);
+            addStrokes(selectedStrokes);
+            addAdorners();
             UndoHistory.Queue(undo, redo);
         
         }
+
+        private void removeStrokes(List<Stroke> undoStrokes)
+        {
+            foreach (var stroke in undoStrokes)
+            {
+                if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                {
+                    Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
+                    strokes.Remove(stroke.sum());
+                }
+                doMyStrokeRemovedExceptHistory(stroke);
+            }
+        }
+
+        private void addStrokes(List<Stroke> selectedStrokes)
+        {
+            foreach (var stroke in selectedStrokes)
+            {
+                if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
+                {
+                    Strokes.Add(stroke);
+                }
+                doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
+            }
+        }
+
         private void dirtySelectedRegions(object _sender, InkCanvasSelectionEditingEventArgs _e)
         {
             var selectedStrokes = GetSelectedStrokes();
             Action redo = () =>
                 {
-                    foreach (var stroke in selectedStrokes)
-                    {
-                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
-                        {
-                            Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
-                            doMyStrokeRemovedExceptHistory(stroke);
-                        }
-                    }
+                    ClearAdorners();
+                   removeStrokes(selectedStrokes.ToList()); 
                 };
             Action undo = () =>
                 {
-                    var newSelection = new StrokeCollection();
-                    foreach (var stroke in selectedStrokes)
-                    {
-                        newSelection.Add(stroke);
-                        if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
-                        {
-                            Strokes.Add(stroke);
-                            doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
-                        }
-                    }
-                    Select(newSelection);
+                    ClearAdorners();
+                    addStrokes(selectedStrokes.ToList());
+                    Select(selectedStrokes);
                     addAdorners();
                 };
             redo();

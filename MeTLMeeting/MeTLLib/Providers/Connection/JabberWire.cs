@@ -306,7 +306,6 @@ namespace MeTLLib.Providers.Connection
             conn.OnMessage += OnMessage;
             conn.OnSocketError += HandlerError;
             conn.OnError += HandlerError;
-            conn.OnXmppConnectionStateChanged += conn_OnXmppConnectionStateChanged;
             conn.OnRegisterError += ElementError;
             conn.OnStreamError += ElementError;
             conn.OnPresence += OnPresence;
@@ -317,9 +316,6 @@ namespace MeTLLib.Providers.Connection
 #endif
             openConnection(jid.User);
             Trace.TraceInformation("Logged in");
-        }
-        void conn_OnXmppConnectionStateChanged(object sender, XmppConnectionState state)
-        {
         }
         private object resetLock = new object();
         protected IConversationDetailsProvider conversationDetailsProvider;
@@ -338,6 +334,7 @@ namespace MeTLLib.Providers.Connection
             conn.OnPresence -= OnPresence;
             conn.OnReadXml -= ReadXml;
             conn.OnWriteXml -= WriteXml;
+            conn.OnClose -= OnClose;
         }
         public void Reset(string caller)
         {
