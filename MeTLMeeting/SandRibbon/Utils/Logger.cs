@@ -24,7 +24,7 @@ namespace SandRibbon.Utils
             base.WriteJson(writer);
             writer.WritePropertyName("docType");
             writer.WriteValue("log");
-            writer.WritePropertyName("message");
+            writer.WritePropertyName("content");
             writer.WriteValue(content);
             writer.WritePropertyName("timestamp");
             writer.WriteValue(timestamp);
@@ -63,13 +63,15 @@ namespace SandRibbon.Utils
             Log(s);
         }
         private static void putCouch(string message, DateTime now) {
-            db.SaveArbitraryDocument<LogMessage>(new LogMessage { 
+            var msg = new LogMessage
+            {
                 content = message,
                 timestamp = now.Ticks,
                 user = Globals.me,
                 slide = Globals.location.currentSlide,
                 server = ClientFactory.Connection().server.host
-            });
+            };
+            db.SaveArbitraryDocument<LogMessage>(msg);
         }
         public static void query() {
             var time = DateTime.Now.Ticks - 1000;
