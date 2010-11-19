@@ -50,9 +50,9 @@
             <Border BorderBrush="Gray" CornerRadius="3" BorderThickness="1" MinWidth="600" Padding="3" Margin="0 10 0 0">
                 <StackPanel>
                     <Button HorizontalContentAlignment="Left" Click="Button_Click"  Tag="{Binding Path=Jid}">
-                        <TextBox MinWidth="400" Loaded="TextBox_Loaded"
+                        <TextBox MinWidth="400" MaxWidth="800" Loaded="TextBox_Loaded"
                                  FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" 
-                                 Text="{Binding Path=Title}" TextChanged="EditTitleChanged" PreviewKeyDown="KeyPressedInTitleRename"/>
+                                 Text="{Binding Path=Title}" TextWrapping="Wrap" TextChanged="EditTitleChanged" PreviewKeyDown="KeyPressedInTitleRename"/>
                     </Button>
                     <ContentPresenter x:Name="content" ContentTemplate="{StaticResource doneEditing}" VerticalAlignment="Bottom"/>
                 </StackPanel>

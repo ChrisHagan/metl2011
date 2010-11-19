@@ -308,6 +308,7 @@ namespace SandRibbon.Components
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
             var titleAlreadyUsed = searchResults.Except(new[]{proposedDetails}).Any(c => c.Title.Equals(proposedDetails.Title, StringComparison.InvariantCultureIgnoreCase));
             var errorText = String.Empty;
+            if (proposedDetails.Title.Length > 110) errorText += "Conversation titles have a maximum length of 110 characters";
             if (!thisTitleIsASCII)
                 errorText += "Conversation title can only contain letters, numbers and punctuation marks. "; 
             if (!thisIsAValidTitle) { errorText += "Invalid conversation title.  "; }

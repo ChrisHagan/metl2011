@@ -73,7 +73,8 @@ namespace MeTLLib.Providers.Connection
                 metlServerAddress, 
                 cache, 
                 receiveEvents, 
-                webClientFactory);
+                webClientFactory, 
+                resourceProvider);
             foreach (var parser in new[] { otherParser, this})
             {
                 returnParser.ink.AddRange(parser.ink.Where(s => !returnParser.ink.Contains(s)));

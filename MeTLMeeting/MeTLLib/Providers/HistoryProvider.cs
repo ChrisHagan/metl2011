@@ -51,7 +51,7 @@ namespace MeTLLib.Providers
             string author,
             string room
         ) where T : PreParser {
-            this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{1}{0}", author,room));
+            //this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{1}{0}", author,room));
             this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{0}/{1}", author,room));
         }
     }

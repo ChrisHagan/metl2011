@@ -92,6 +92,7 @@ namespace SandRibbon.Utils.Connection
     public class Printer
     {
         private static int targetPageCount;
+        private static int targetParserCount;
         public PrinterInformation PrinterInfo = new PrinterInformation();
         
         public class PrinterInformation
@@ -105,6 +106,7 @@ namespace SandRibbon.Utils.Connection
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithoutNotes);
             var conversation =  MeTLLib.ClientFactory.Connection().DetailsOf(jid);
             targetPageCount = conversation.Slides.Where(s=>s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
+            targetParserCount = targetPageCount;
             PrinterInfo = new PrinterInformation
                               {
                                   parsers = new Dictionary<string, PrintParser>(),
@@ -117,9 +119,7 @@ namespace SandRibbon.Utils.Connection
                 ClientFactory.Connection().getHistoryProvider().Retrieve<PrintParser>(
                                 null,
                                 null,
-                                (parser)=>{
-                                    ReceiveParser(parser, printDocument );
-                                },
+                                (parser)=> ReceiveParser(parser, printDocument ),
                                 room.ToString());
             }
         }
@@ -127,7 +127,8 @@ namespace SandRibbon.Utils.Connection
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithNotes);
             var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(jid);
-            targetPageCount = conversation.Slides.Where(s=>s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
+            targetPageCount = conversation.Slides.Where(s=>s.type == Slide.TYPE.SLIDE).Count();
+            targetParserCount = targetPageCount * 2;
             PrinterInfo = new PrinterInformation
                               {
                                   parsers = new Dictionary<string, PrintParser>(),
@@ -141,29 +142,28 @@ namespace SandRibbon.Utils.Connection
                 ClientFactory.Connection().getHistoryProvider().Retrieve<PrintParser>(
                                 null,
                                 null,
-                                (parser)=>{
-                                    parsers.Add(parser);
-                                    if (parsers.Count() == 3)
-                                        ReceiveParser(parsers[0].merge<PrintParser>(parsers[1]).merge<PrintParser>(parsers[2]),printDocument );
-                                },
+                                (parser) => ReceiveParser(parser, printDocument),
                                 room.ToString());
                 ClientFactory.Connection().getHistoryProvider().RetrievePrivateContent<PrintParser>(
                                 null,
                                 null,
-                                (parser) =>
-                                {
-                                    parsers.Add(parser);
-                                    if (parsers.Count() == 3)
-                                        ReceiveParser(parsers[0].merge<PrintParser>(parsers[1]).merge<PrintParser>(parsers[2]), printDocument);
-                                },
+                                (parser) => ReceiveParser(parser, printDocument),
                                 user,
                                 room.ToString());
             }
         }
+        int parsers = 0;
         private void ReceiveParser(PrintParser parser, Action<IEnumerable<PrintParser>> ShowPrintDialog)
         {
-            PrinterInfo.parsers.Add(parser.location.currentSlide.ToString(), parser);
-            if (PrinterInfo.parsers.Count() == targetPageCount)
+            parsers++;
+            if (PrinterInfo.parsers.ContainsKey(parser.location.currentSlide.ToString()))
+            {
+                var Merged = PrinterInfo.parsers[parser.location.currentSlide.ToString()].merge(parser);
+                PrinterInfo.parsers[parser.location.currentSlide.ToString()] = Merged;
+            }
+            else
+                PrinterInfo.parsers.Add(parser.location.currentSlide.ToString(), parser);
+            if (PrinterInfo.parsers.Count() == targetPageCount && parsers == targetParserCount)
             {
                 var indicesByJid = PrinterInfo.slides.Aggregate(new Dictionary<string,int>(),
                     (acc,item)=>
@@ -172,8 +172,6 @@ namespace SandRibbon.Utils.Connection
                             return acc;
                         });
                 ShowPrintDialog(from p in PrinterInfo.parsers orderby indicesByJid[p.Value.location.currentSlide.ToString()] select p.Value);
-            }
-            else if (PrinterInfo.parsers.Count() > targetPageCount) { 
             }
         }
         private void ShowPrintDialogWithNotes(IEnumerable<PrintParser> parsers)
