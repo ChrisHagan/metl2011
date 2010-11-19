@@ -1412,12 +1412,16 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var path = string.Format("https://{0}:1188{1}", server.host, GetTag(sourceTag));
-                    var downloadData = downloader.downloadData(new Uri(path));
                     var image = new BitmapImage();
-                    image.BeginInit();
-                    image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
-                    //image.StreamSource = new MemoryStream(downloadData);
-                    image.EndInit();
+                    try
+                    {
+                        image.BeginInit();
+                        image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
+                        image.EndInit();
+                    }
+                    catch (Exception e) { 
+                        //Who knows what sort of hell is lurking in our history
+                    }
                     return image;
                 }
                 set { SetTag(sourceTag, new ImageSourceConverter().ConvertToString(value)); }

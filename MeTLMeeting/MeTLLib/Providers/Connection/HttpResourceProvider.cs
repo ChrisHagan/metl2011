@@ -63,38 +63,16 @@ namespace MeTLLib.Providers.Connection
             client.DownloadStringAsync(resource);
         }
         private void retryUpToXTimes(Action action, int attempts)
-        {//This is being removed as it seems too much like ignoring the problem and hoping it will go away
+        {
             action();
-            /*
-            while (attempts > 0)
-            {
-                try
-                {
-                    action();
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceInformation("retrying (up to {0} times): {1}, exception:  on {2}", attempts, action.Method.ToString(), ex.Message.ToString());
-                    attempts--;
-                    if (attempts > 0)
-                        retryUpToXTimes(action, attempts);
-                    else throw new Exception("retry failed on method ("+action.Method.ToString()+")", ex);
-                }
-            }
-             */
         }
         public string downloadString(Uri resource)
         {
-            string result = "";
-            retryUpToXTimes(delegate { result = client.DownloadString(resource); }, 5);
-            return result;
+            return client.DownloadString(resource);
         }
         public byte[] downloadData(Uri resource)
         {
-            byte[] result = new byte[0];
-            retryUpToXTimes(delegate{ result = client.DownloadData(resource); },5);
-            return result;
+            return client.DownloadData(resource);
         }
         public String uploadData(Uri resource, byte[] data)
         {
@@ -110,11 +88,7 @@ namespace MeTLLib.Providers.Connection
         }
         byte[] IWebClient.uploadFile(Uri resource, string filename)
         {
-            byte[] result = new byte[0];
-            retryUpToXTimes(delegate { 
-                result = client.UploadFile(resource.ToString(), filename); 
-            }, 5);
-            return result;
+            return client.UploadFile(resource.ToString(), filename); 
         }
         private string decode(byte[] bytes)
         {

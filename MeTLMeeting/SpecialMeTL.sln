@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLibTests", "MeTLLibTest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLSimulator", "MeTLSimulator\MeTLSimulator.csproj", "{487BB081-ED5A-4270-82A9-B90B94AA4646}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegratedThumbnailBench", "IntegratedThumbnailBench\IntegratedThumbnailBench.csproj", "{6AB47450-7206-450C-BE84-482FE05EFAE9}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = SandRibbon2.vsmdi
@@ -117,6 +119,16 @@ Global
 		{487BB081-ED5A-4270-82A9-B90B94AA4646}.Release|Mixed Platforms.Build.0 = Release|x86
 		{487BB081-ED5A-4270-82A9-B90B94AA4646}.Release|x86.ActiveCfg = Release|x86
 		{487BB081-ED5A-4270-82A9-B90B94AA4646}.Release|x86.Build.0 = Release|x86
+		{6AB47450-7206-450C-BE84-482FE05EFAE9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{6AB47450-7206-450C-BE84-482FE05EFAE9}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{6AB47450-7206-450C-BE84-482FE05EFAE9}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{6AB47450-7206-450C-BE84-482FE05EFAE9}.Debug|x86.ActiveCfg = Debug|x86
+		{6AB47450-7206-450C-BE84-482FE05EFAE9}.Debug|x86.Build.0 = Debug|x86
+		{6AB47450-7206-450C-BE84-482FE05EFAE9}.Release|Any CPU.ActiveCfg = Release|x86
+		{6AB47450-7206-450C-BE84-482FE05EFAE9}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{6AB47450-7206-450C-BE84-482FE05EFAE9}.Release|Mixed Platforms.Build.0 = Release|x86
+		{6AB47450-7206-450C-BE84-482FE05EFAE9}.Release|x86.ActiveCfg = Release|x86
+		{6AB47450-7206-450C-BE84-482FE05EFAE9}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
