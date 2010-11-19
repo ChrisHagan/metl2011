@@ -46,7 +46,6 @@ namespace SandRibbon.Components
         public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
         public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
         public static SlideIndexConverter SlideIndex;
-        public bool isAuthor = false;
         private bool moveTo;
         public SlideDisplay()
         {
@@ -60,14 +59,7 @@ namespace SandRibbon.Components
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
-            try
-            {
-                Display(Globals.conversationDetails);
-            }
-            catch (NotSetException)
-            {
-                //YAAAAAY
-            }
+            Display(Globals.conversationDetails);
         }
         private void JoinConversation(object _obj)
         {
@@ -115,7 +107,7 @@ namespace SandRibbon.Components
         }
         private void moveToTeacher(int where)
         {
-            if (isAuthor) return;
+            if (Globals.isAuthor) return;
             if (!Globals.synched) return;
             var action = (Action)(() => Dispatcher.adoptAsync((Action)delegate
                                          {
@@ -157,10 +149,6 @@ namespace SandRibbon.Components
                 thumbnailList.Clear();
                 return;
             }
-            if (Globals.me == details.Author)
-                isAuthor = true;
-            else
-                isAuthor = false;
             thumbnailList.Clear();
             foreach (var slide in details.Slides)
             {
@@ -179,20 +167,6 @@ namespace SandRibbon.Components
                 slides.SelectedIndex = 0;
             slides.ScrollIntoView(slides.SelectedItem);
         }
-        private bool isSlideExposed(Slide slide)
-        {
-            var isFirst = slide.id == 0;
-            var isPedagogicallyAbleToSeeSlides = Globals.pedagogy.code >= 3;
-            var isExposedIfNotCurrentSlide = isAuthor || isFirst || isPedagogicallyAbleToSeeSlides;
-            try
-            {
-                return Globals.slide == slide.id || isExposedIfNotCurrentSlide;
-            }
-            catch (NotSetException)
-            {//Don't have a current slide
-                return isExposedIfNotCurrentSlide;
-            }
-        }
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
               var source = (ListBox) sender;
@@ -210,31 +184,6 @@ namespace SandRibbon.Components
                     Commands.SendSyncMove.ExecuteAsync(currentSlideId);
                   slides.ScrollIntoView(slides.SelectedItem);
               }
-        }
-    }
-    public class ThumbListBox : ListBox
-    {
-        public static Dictionary<int, ListBoxItem> visibleContainers = new Dictionary<int, ListBoxItem>();
-        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
-        {
-            var slide = (Slide)item;
-            var container = (ListBoxItem)element;
-            container.Content = null;
-            visibleContainers.Remove(slide.id);
-        }
-        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
-        {
-            var slide = (Slide)item;
-            var container = (ListBoxItem)element;
-            visibleContainers[slide.id] = container;
-            if (SlideDisplay.parsers.ContainsKey(slide.id))
-                Add(slide.id, SlideDisplay.parsers[slide.id]);
-            else Add(slide.id, new PreParser(null,slide.id,null,null,null,null,null,null, null,null));
-        }
-        public static void Add(int id, PreParser parser)
-        {
-            if (!visibleContainers.ContainsKey(id)) return;
-            visibleContainers[id].Content = parser.ToVisual();
         }
     }
 }
