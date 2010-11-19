@@ -14,6 +14,8 @@ namespace SandRibbon.Components
             scroll.SizeChanged += scrollChanged;
             scroll.ScrollChanged += scroll_ScrollChanged;
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(ExtendBoth));
+            VScroll.SmallChange = 3;
+            HScroll.SmallChange = 3;
         }
         public void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
@@ -47,7 +49,10 @@ namespace SandRibbon.Components
         private void VScroll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (scroll.VerticalOffset != VScroll.Value)
+            {
+                
                 scroll.ScrollToVerticalOffset(VScroll.Value);
+            }
         }
         private void HScroll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {

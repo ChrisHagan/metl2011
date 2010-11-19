@@ -73,9 +73,16 @@ namespace SandRibbon.Utils
       System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(ms);
 
       ms.Close();
-      ms.Dispose();     
-
-      Cursor cur = InternalCreateCursor(bmp, xHotSpot, yHotSpot);
+      ms.Dispose();
+      Cursor cur;
+        try
+        {
+           cur = InternalCreateCursor(bmp, xHotSpot, yHotSpot);
+        }
+        catch (Exception)
+        {
+           cur = InternalCreateCursor(bmp, xHotSpot, yHotSpot);
+        }
         
 
       bmp.Dispose();
