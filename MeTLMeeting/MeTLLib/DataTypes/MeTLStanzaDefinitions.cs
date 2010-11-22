@@ -907,6 +907,12 @@ namespace MeTLLib.DataTypes
             {
                 fileResource = file;
             }
+            public FileResource injectDependencies(MeTLServerAddress server)
+            {
+                this.server = server;
+                return this;
+            }
+            private MeTLServerAddress server;
             public TargettedFile fileResource
             {
                 get
@@ -917,13 +923,14 @@ namespace MeTLLib.DataTypes
                     var slide = HasTag(slideTag) ? GetTag(slideTag) : "0";
                     var target = HasTag(targetTag) ? GetTag(targetTag) : "";
                     var privacy = HasTag(privacyTag) ? GetTag(privacyTag) : "public";
-                    var file = new TargettedFile(Int32.Parse(slide), GetTag(authorTag), target, privacy, GetTag(URL), fileuploadTime, filesize, filename);
+                    var url = "https://"+server.host+":1188"+ INodeFix.StemBeneath("/Resource/",INodeFix.StripServer(GetTag(URL)));
+                    var file = new TargettedFile(Int32.Parse(slide), GetTag(authorTag), target, privacy, url, fileuploadTime, filesize, filename);
                     return file;
                 }
                 set
                 {
                     SetTag(AUTHOR, value.author);
-                    SetTag(URL, value.url);
+                    SetTag(URL, INodeFix.StripServer(value.url));
                     SetTag(TIME, value.uploadTime);
                     SetTag(SIZE, value.size);
                     SetTag(NAME, value.name);
@@ -1049,7 +1056,8 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    return new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), GetTag(URL), long.Parse(GetTag(TIME)));
+                    var url = INodeFix.StemBeneath("/Resource/",GetTag(URL));
+                    return new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), url, long.Parse(GetTag(TIME)));
                 }
                 set
                 {
@@ -1161,7 +1169,7 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var quiz = new QuizQuestion(long.Parse(GetTag(ID)), GetTag(TITLE), GetTag(AUTHOR), GetTag(QUESTION), new List<Option>());
-                    quiz.url = HasTag(URL) ? GetTag(URL) : "none";
+                    quiz.url = HasTag(URL) ? INodeFix.StemBeneath("/Resource/",GetTag(URL)) : "none";
                     foreach (var node in ChildNodes)
                     {
                         if (node.GetType() == typeof(QuizOption))

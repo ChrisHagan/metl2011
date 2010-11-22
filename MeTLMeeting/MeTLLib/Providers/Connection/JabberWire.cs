@@ -704,7 +704,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var dirtyImage in message.SelectElements<MeTLStanzas.DirtyImage>(true))
                 actOnDirtyImageReceived(dirtyImage);
             foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))
-                actOnFileResource(file);
+                actOnFileResource(file.injectDependencies(metlServerAddress));
         }
         public virtual void actOnFileResource(MeTLStanzas.FileResource resource)
         {
