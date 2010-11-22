@@ -1411,7 +1411,8 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var path = string.Format("https://{0}:1188{1}", server.host, GetTag(sourceTag));
+                    var stemmedRelativePath = INodeFix.StemBeneath("/Resource/",  GetTag(sourceTag));
+                    var path = string.Format("https://{0}:1188{1}", server.host, stemmedRelativePath);
                     var image = new BitmapImage();
                     try
                     {

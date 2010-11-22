@@ -78,10 +78,7 @@ namespace SandRibbon.Utils
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(EditConversation));
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
             Commands.UpdatePowerpointProgress.RegisterCommand(new DelegateCommand<PowerpointImportProgress>(ReportPowerpointProgress));
-            if (App.isStaging)
-                wire = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
-            else
-                wire = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
+            wire = MeTLLib.ClientFactory.Connection();
         }
         private void ReportPowerpointProgress(PowerpointImportProgress progress)
         {

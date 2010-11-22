@@ -38,7 +38,7 @@ namespace SandRibbon
         public readonly string RECENT_DOCUMENTS = "recentDocuments.xml";
         #region SurroundingServers
         #endregion
-        private PowerPointLoader loader = new PowerPointLoader();
+        private PowerPointLoader loader;
         private UndoHistory history = new UndoHistory();
         public ConversationDetails details = null;
         public string CurrentProgress { get; set; }
@@ -151,10 +151,12 @@ namespace SandRibbon
         }
         private void ImportPowerpoint(object obj)
         {
+            if(loader == null) loader = new PowerPointLoader();
             loader.ImportPowerpoint();
         }
         private void createBlankConversation(object obj)
         {
+            if(loader == null) loader = new PowerPointLoader();
             loader.CreateBlankConversation();
         }
         private void PrintBinding(object sender, EventArgs e) {

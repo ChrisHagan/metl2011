@@ -51,7 +51,6 @@ namespace MeTLLib.Providers
             string author,
             string room
         ) where T : PreParser {
-            //this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{1}{0}", author,room));
             this.Retrieve(retrievalBeginning,retrievalProceeding,retrievalComplete,string.Format("{0}/{1}", author,room));
         }
     }
@@ -84,10 +83,8 @@ namespace MeTLLib.Providers
         }
         private bool isPrivateRoom(string room)
         {
-            var validChar = new[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-            if (!room.All(s=>(validChar.Contains(s)))) return true;
-            return false;
-            
+            var validChar = Enumerable.Range(0, 10).Aggregate("", (acc, item) => acc + item);
+            return room.Any(c => !validChar.Contains(c));
         }
         public void HandleMessage(string to, Element message) {
             if(isPrivateRoom(to)) return;
@@ -107,7 +104,7 @@ namespace MeTLLib.Providers
             var worker = new BackgroundWorker();
             worker.DoWork += (_sender, _args) =>
                                  {
-                                     var zipUri = string.Format("https://{0}:1749/{1}/all.zip", serverAddress.host, room);
+                                     var zipUri = string.Format("https://{0}:1749/{1}/{2}/all.zip", serverAddress.host, INodeFix.Stem(room), room);
                                      try
                                      {
                                          var zipData = resourceProvider.secureGetData(new System.Uri(zipUri));
