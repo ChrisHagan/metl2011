@@ -215,7 +215,6 @@
     can be found.
   -->
   <ItemGroup>
-    <Compile Include="Commands.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

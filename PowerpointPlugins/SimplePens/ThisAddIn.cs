@@ -8,6 +8,7 @@ using Office = Microsoft.Office.Core;
 using System.Windows.Forms;
 using Microsoft.Office.Interop.PowerPoint;
 using Microsoft.Office.Core;
+using System.Windows.Input;
 
 namespace PowerpointJabber
 {

@@ -1052,17 +1052,24 @@ namespace MeTLLib.DataTypes
             {
                 this.parameters = submission;
             }
+            public ScreenshotSubmission injectDependencies(MeTLServerAddress server)
+            {
+                this.server = server;
+                return this;
+            }
+            private MeTLServerAddress server;
             public TargettedSubmission parameters
             {
                 get
                 {
-                    var url = INodeFix.StemBeneath("/Resource/",GetTag(URL));
+                    var url = "https://"+server.host +":1188"+INodeFix.StemBeneath("/Resource/",INodeFix.StripServer(GetTag(URL)));
                     return new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), url, long.Parse(GetTag(TIME)));
                 }
                 set
                 {
+                    var strippedUrl = INodeFix.StripServer(value.url);
                     SetTag(AUTHOR, value.author);
-                    SetTag(URL, value.url);
+                    SetTag(URL, strippedUrl);
                     SetTag(SLIDE, value.slide.ToString());
                     SetTag(TIME, value.time.ToString());
                 }
@@ -1164,12 +1171,18 @@ namespace MeTLLib.DataTypes
             {
                 this.parameters = parameters;
             }
+            public Quiz injectDependencies(MeTLServerAddress server)
+            {
+                this.server = server;
+                return this;
+            }
+            private MeTLServerAddress server;
             public QuizQuestion parameters
             {
                 get
                 {
                     var quiz = new QuizQuestion(long.Parse(GetTag(ID)), GetTag(TITLE), GetTag(AUTHOR), GetTag(QUESTION), new List<Option>());
-                    quiz.url = HasTag(URL) ? INodeFix.StemBeneath("/Resource/",GetTag(URL)) : "none";
+                    quiz.url = HasTag(URL) ? "https://"+server.host+":1188"+INodeFix.StemBeneath("/Resource/",INodeFix.StripServer(GetTag(URL))) : "none";
                     foreach (var node in ChildNodes)
                     {
                         if (node.GetType() == typeof(QuizOption))
@@ -1184,7 +1197,8 @@ namespace MeTLLib.DataTypes
                     SetTag(QUESTION, value.question);
                     SetTag(AUTHOR, value.author);
                     SetTag(ID, value.id.ToString());
-                    SetTag(URL, value.url);
+                    var url = INodeFix.StripServer(value.url);
+                    SetTag(URL, url);
                     foreach (var option in value.options)
                     {
                         var optionElement = new QuizOption(option);

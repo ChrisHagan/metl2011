@@ -4,84 +4,71 @@
     xmlns:plugin="clr-namespace:PowerpointJabber"
     ShowInTaskbar="True" WindowStartupLocation="Manual" Topmost="True" Top="40" Left="0" 
     Closing="Window_Closing" WindowStyle="None" AllowsTransparency="True" Background="Transparent" Cursor="Arrow" 
-        SizeToContent="WidthAndHeight">
-    <Window.CommandBindings>
-        <CommandBinding Command="{x:Static plugin:Commands.CloseApplication}" Executed="closeApplication" />
-        <CommandBinding Command="{x:Static plugin:Commands.PageUp}" Executed="pageUp" />
-        <CommandBinding Command="{x:Static plugin:Commands.PageDown}" Executed="pageDown" />
-    </Window.CommandBindings>
-    <Window.InputBindings>
-        <KeyBinding Key="Escape" Command="{x:Static plugin:Commands.CloseApplication}"/>
-        <KeyBinding Key="PageUp" Command="{x:Static plugin:Commands.PageUp}"/>
-        <KeyBinding Key="PageDown" Command="{x:Static plugin:Commands.PageDown}"/>
-    </Window.InputBindings>
-    <!--<Border Background="AliceBlue" CornerRadius="3" Padding="3" BorderBrush="DarkGray" BorderThickness="1">
-    -->    
+        SizeToContent="WidthAndHeight" Loaded="Window_Loaded">
     <WrapPanel Orientation="Vertical" HorizontalAlignment="Left">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <ItemsControl x:Name="PensControl">
-                    <ItemsControl.Resources>
-                        <LinearGradientBrush x:Key="BrushGradientBackground" StartPoint="0,0" EndPoint="1,0" MappingMode="RelativeToBoundingBox">
-                            <LinearGradientBrush.GradientStops>
-                                <GradientStop Color="White" Offset="0"/>
-                                <GradientStop Color="Transparent" Offset="1"/>
-                            </LinearGradientBrush.GradientStops>
-                        </LinearGradientBrush>
-                        <DrawingBrush x:Key="CheckerboardBackground" Viewport="0,0,.25,.25" TileMode="Tile" Stretch="None">
-                            <DrawingBrush.Drawing>
-                                <DrawingGroup>
-                                    <DrawingGroup.Children>
-                                        <GeometryDrawing Brush="DarkGray" Geometry="F1 M 0,0 5,0 5,10 10,10 10,5 0,5 0,0  Z"/>
-                                    </DrawingGroup.Children>
-                                </DrawingGroup>
-                            </DrawingBrush.Drawing>
-                        </DrawingBrush>
-                    </ItemsControl.Resources>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Click="Pen" Tag="{Binding Path=penName}" Height="50" Width="50" ToolTip="{Binding Path=penName}">
-                                <Grid Width="40" Height="40" >
-                                    <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
-                                    <Rectangle Fill="{StaticResource BrushGradientBackground}"/>
-                                    <Border BorderThickness="0" Padding="0" ClipToBounds="True" >
-                                        <Viewbox Height="40" Width="40">
-                                            <Grid>
-                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static plugin:Converters.reverseBoolToVisibilityConverter}}">
-                                                    <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPenPreviewStroke}" Height="100" Width="100"/>
-                                                    <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=penColour}" />
-                                                    <Image Height="100" Width="100" Source="Resources\MeTLPenOverlay.png"/>
-                                                </Grid>
-                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static plugin:Converters.boolToVisibilityConverter}}">
-                                                    <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnHighlighterPreviewStroke}" Height="100" Width="100"/>
-                                                    <Viewbox Height="100" Width="100">
-                                                        <Polygon Height="400" Width="400" Points="{Binding Path=HighlighterPreviewPoints}" Fill="{Binding Path=penColour}" />
-                                                    </Viewbox>
-                                                    <Image Height="100" Width="100" Source="Resources\MeTLHighlighterOverlay.png"/>
-                                                </Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl x:Name="PensControl">
+                <ItemsControl.Resources>
+                    <LinearGradientBrush x:Key="BrushGradientBackground" StartPoint="0,0" EndPoint="1,0" MappingMode="RelativeToBoundingBox">
+                        <LinearGradientBrush.GradientStops>
+                            <GradientStop Color="White" Offset="0"/>
+                            <GradientStop Color="Transparent" Offset="1"/>
+                        </LinearGradientBrush.GradientStops>
+                    </LinearGradientBrush>
+                    <DrawingBrush x:Key="CheckerboardBackground" Viewport="0,0,.25,.25" TileMode="Tile" Stretch="None">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="DarkGray" Geometry="F1 M 0,0 5,0 5,10 10,10 10,5 0,5 0,0  Z"/>
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </ItemsControl.Resources>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Click="Pen" Tag="{Binding Path=penName}" Height="50" Width="50" ToolTip="{Binding Path=penName}">
+                            <Grid Width="40" Height="40" >
+                                <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
+                                <Rectangle Fill="{StaticResource BrushGradientBackground}"/>
+                                <Border BorderThickness="0" Padding="0" ClipToBounds="True" >
+                                    <Viewbox Height="40" Width="40">
+                                        <Grid>
+                                            <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static plugin:Converters.reverseBoolToVisibilityConverter}}">
+                                                <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPenPreviewStroke}" Height="100" Width="100"/>
+                                                <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=penColour}" />
+                                                <Image Height="100" Width="100" Source="Resources\MeTLPenOverlay.png"/>
                                             </Grid>
-                                        </Viewbox>
-                                    </Border>
-                                </Grid>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Vertical"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-            </ScrollViewer>
-            <Button Click="Eraser" Height="50" Width="50" ToolTip="Eraser">
-                <StackPanel>
-                    <Image Source="Resources\ShinyEraser.png"/>
-                </StackPanel>
-            </Button>
-            <Button Click="Selector" Height="50" Width="50" ToolTip="Arrow">
-                <StackPanel>
-                    <Image Source="Resources\ArrowCursor.png"/>
-                </StackPanel>
-            </Button>
-        </WrapPanel>
-    <!--</Border>-->
+                                            <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static plugin:Converters.boolToVisibilityConverter}}">
+                                                <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnHighlighterPreviewStroke}" Height="100" Width="100"/>
+                                                <Viewbox Height="100" Width="100">
+                                                    <Polygon Height="400" Width="400" Points="{Binding Path=HighlighterPreviewPoints}" Fill="{Binding Path=penColour}" />
+                                                </Viewbox>
+                                                <Image Height="100" Width="100" Source="Resources\MeTLHighlighterOverlay.png"/>
+                                            </Grid>
+                                        </Grid>
+                                    </Viewbox>
+                                </Border>
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
+        <Button x:Name="EraserButton" Click="Eraser" Height="50" Width="50" ToolTip="Eraser">
+            <StackPanel>
+                <Image Source="Resources\ShinyEraser.png"/>
+            </StackPanel>
+        </Button>
+        <Button x:Name="SelectionButton" Click="Selector" Height="50" Width="50" ToolTip="Arrow">
+            <StackPanel>
+                <Image Source="Resources\ArrowCursor.png"/>
+            </StackPanel>
+        </Button>
+    </WrapPanel>
 </Window>

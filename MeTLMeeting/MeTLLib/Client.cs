@@ -262,7 +262,7 @@ namespace MeTLLib
             Action work = delegate
             {
                 Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
-                var newPath = resourceUploader.uploadResource("/Resource/" + lii.slide, lii.file, false);
+                var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
                 Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
                 wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, newPath, DateTimeFactory.Now().Ticks));
                 if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
@@ -629,7 +629,8 @@ namespace MeTLLib
         }
         public Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload)
         {
-            return new System.Uri(resourceUploader.uploadResourceToPath(fileToUpload, pathToUploadTo, nameToUpload),UriKind.Absolute);
+            var resultantPathString = resourceUploader.uploadResourceToPath(fileToUpload, pathToUploadTo, nameToUpload); 
+            return new System.Uri(resultantPathString,UriKind.Absolute);
         }
         public Uri NoAuthUploadResource(byte[] data, string filename, int Room)
         {

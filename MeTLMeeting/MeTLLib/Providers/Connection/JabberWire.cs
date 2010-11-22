@@ -688,13 +688,13 @@ namespace MeTLLib.Providers.Connection
             foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
                 actOnStrokeReceived(ink.Stroke);
             foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
-                actOnScreenshotSubmission(submission.parameters);
+                actOnScreenshotSubmission(submission.injectDependencies(metlServerAddress).parameters);
             foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
                 actOnTextReceived(box.Box);
             foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
                 actOnImageReceived(image.injectDependencies(metlServerAddress, webClientFactory.client()).Img);
             foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
-                actOnQuizReceived(quiz.parameters);
+                actOnQuizReceived(quiz.injectDependencies(metlServerAddress).parameters);
             foreach (var quizAnswer in message.SelectElements<MeTLStanzas.QuizResponse>(true))
                 actOnQuizAnswerReceived(quizAnswer.parameters);
             foreach (var dirtyText in message.SelectElements<MeTLStanzas.DirtyText>(true))

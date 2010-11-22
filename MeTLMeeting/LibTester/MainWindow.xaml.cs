@@ -84,7 +84,7 @@ namespace LibTester
         public MainWindow()
         {
             InitializeComponent();
-            client = ClientFactory.Connection();
+            client = ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
             client.events.StatusChanged += (sender, args) => { Dispatcher.adoptAsync(() => { if (args.isConnected)setup(); }); };
             client.events.StrokeAvailable += (sender, args) => { Dispatcher.adoptAsync(() => inkCanvas.Strokes.Add(args.stroke.stroke)); };
             client.events.DirtyStrokeAvailable += (sender, args) =>
@@ -195,7 +195,7 @@ namespace LibTester
         {
             ConversationListingSource = getAllConversations();
             ConversationListing.ItemsSource = ConversationListingSource;
-            doMoveTo(101);
+            //doMoveTo(101);
         }
         private void getConversations(object sender, RoutedEventArgs e)
         {
@@ -327,6 +327,19 @@ namespace LibTester
                     Canvas.SetTop(internalVideo, 100);
                     client.UploadAndSendVideo(new MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation
                     (client.location.currentSlide, client.username, "presentationSpace", "public", internalVideo, ofdg.FileName, false));
+                }
+            }
+        }
+        private void uploadToUserOptions(object sender, RoutedEventArgs e)
+        {
+            if (client != null)
+            {
+                var ofdg = new Microsoft.Win32.OpenFileDialog();
+                ofdg.Multiselect = false;
+                ofdg.ShowDialog();
+                if (!String.IsNullOrEmpty(ofdg.FileName))
+                {
+                    client.NoAuthUploadResourceToPath(ofdg.FileName, "userOptions/hagand", "whatever.ext");
                 }
             }
         }

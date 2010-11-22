@@ -22,36 +22,6 @@ using Point = System.Windows.Point;
 
 namespace PowerpointJabber
 {
-    class slideIndicator
-    {
-        public slideIndicator(int Id)
-        {
-            slideId = Id;
-        }
-        public int slideId { get; private set; }
-        public Slide slide
-        {
-            get
-            {
-                return ThisAddIn.instance.Application.ActivePresentation.Slides.FindBySlideID(slideId);
-            }
-        }
-        public bool isCurrentSlide { get { return slide.SlideIndex == ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition; } }
-        public bool clickAdvance { get { return slide.SlideShowTransition.AdvanceOnClick == Microsoft.Office.Core.MsoTriState.msoTrue; } }
-        public void setClickAdvance(bool state)
-        {
-            if (clickAdvance != state)
-            {
-                var currentPosition = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GetClickIndex();
-                slide.SlideShowTransition.AdvanceOnClick = state ? Microsoft.Office.Core.MsoTriState.msoTrue : Microsoft.Office.Core.MsoTriState.msoFalse;
-                if (isCurrentSlide)
-                {
-                    ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoClick(currentPosition);
-                    ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.State = PpSlideShowState.ppSlideShowRunning;
-                }
-            }
-        }
-    }
     public partial class SimplePenWindow : Window
     {
         private bool presenterView
@@ -84,11 +54,15 @@ namespace PowerpointJabber
             currentPen = pens[0];
             PensControl.Items.Clear();
             PensControl.ItemsSource = pens;
-            Selector(null, new RoutedEventArgs());
             if (shouldWorkaroundClickAdvance)
                 foreach (var slide in slides)
                     slide.setClickAdvance(false);
         }
+        private void whatever()
+        {
+            Selector(null, new RoutedEventArgs());
+        }
+
         private bool shouldWorkaroundClickAdvance { get { return presenterView && !pptVersionIs2010; } }
         private bool pptVersionIs2010
         {
@@ -608,6 +582,40 @@ namespace PowerpointJabber
                 }
             }
 
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Selector(SelectionButton, new RoutedEventArgs());
+        }
+    }
+    class slideIndicator
+    {
+        public slideIndicator(int Id)
+        {
+            slideId = Id;
+        }
+        public int slideId { get; private set; }
+        public Slide slide
+        {
+            get
+            {
+                return ThisAddIn.instance.Application.ActivePresentation.Slides.FindBySlideID(slideId);
+            }
+        }
+        public bool isCurrentSlide { get { return slide.SlideIndex == ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition; } }
+        public bool clickAdvance { get { return slide.SlideShowTransition.AdvanceOnClick == Microsoft.Office.Core.MsoTriState.msoTrue; } }
+        public void setClickAdvance(bool state)
+        {
+            if (clickAdvance != state)
+            {
+                var currentPosition = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GetClickIndex();
+                slide.SlideShowTransition.AdvanceOnClick = state ? Microsoft.Office.Core.MsoTriState.msoTrue : Microsoft.Office.Core.MsoTriState.msoFalse;
+                if (isCurrentSlide)
+                {
+                    ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoClick(currentPosition);
+                    ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.State = PpSlideShowState.ppSlideShowRunning;
+                }
+            }
         }
     }
 }
