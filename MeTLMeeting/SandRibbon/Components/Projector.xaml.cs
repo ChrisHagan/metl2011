@@ -82,12 +82,20 @@ namespace SandRibbon.Components
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(setLayer));
+            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
             Commands.InternalMoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
             stack.handwriting.EditingModeChanged += modeChanged;
             stack.images.EditingModeChanged += modeChanged;
             stack.text.EditingModeChanged += modeChanged;
             startProjector(null);
         }
+
+        private void setPedagogy(object obj)
+        {
+            //when you change pedagogy all the commands are deregistered this will restart the projector
+            Window.Close();
+        }
+
         private void moveTo(object obj)
         {
             stack.Flush();

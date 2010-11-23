@@ -428,14 +428,11 @@ namespace SandRibbon
         {
             if(ribbon.SelectedTab!=null)
                 ribbon.SelectedTab = ribbon.Tabs[0];
-            var details = Globals.conversationDetails;
+            var thisDetails = ClientFactory.Connection().DetailsOf(title);
             MeTLLib.ClientFactory.Connection().AsyncRetrieveHistoryOf(Int32.Parse(title));
-            RecentConversationProvider.addRecentConversation(details, Globals.me);
-            if (details.Author == Globals.me)
-                Commands.SetPrivacy.ExecuteAsync("public");
-            else
-                Commands.SetPrivacy.ExecuteAsync("private");
-            applyPermissions(details.Permissions);
+            RecentConversationProvider.addRecentConversation(thisDetails, Globals.me);
+            Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
+            applyPermissions(thisDetails.Permissions);
             Logger.Log("Joined conversation " + title);
             Commands.RequerySuggested(Commands.SetConversationPermissions);
             Commands.SetLayer.ExecuteAsync("Sketch");
@@ -562,7 +559,6 @@ namespace SandRibbon
                     HideTutorial();
                 if(details.Jid == Globals.location.activeConversation)
                     UpdateTitle(details);
-                
                 this.details = details;
             });
         }
@@ -965,6 +961,7 @@ namespace SandRibbon
                         case 3:
                             //homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
                             //homeGroups.Add(new Notes());
+                            homeGroups.Add(new PrivacyToolsHost());
                             break;
                         case 4:
                             homeGroups.Add(new Notes());

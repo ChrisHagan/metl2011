@@ -4,21 +4,38 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon" 
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
-    Visibility="Collapsed" >
-    <Grid>
-        <Grid>
-            <Grid Height="25" Width="Auto" HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Top"
-                                       Background="{StaticResource BackgroundBlueGradient}"
-                                       Margin="0,0,20,0">
-                <TextBlock x:Name="notes" Text="Personal Notes" FontSize="18" Margin="0,0,25,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    >
+        <!--Grid x:Name="notespad">
+            <Grid>
+                <ScrollViewer x:Name="scroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                </ScrollViewer>
             </Grid>
-            <ScrollViewer x:Name="scroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                <components:Notepad Margin="0,25,0,0" Width="Auto" Height="Auto" x:Name="scratchPad"/> 
-            </ScrollViewer>
+            <components:ScrollBar x:Name="adornerScroll" />
+        </Grid-->
+        <!--Grid>
+            <StackPanel x:Name="notes">
+                <components:Notepad x:Name="notepad"/>
+            </StackPanel>
+            
         </Grid>
-        <components:ScrollBar x:Name="adornerScroll" />
-    </Grid>
+        <StackPanel Orientation="Horizontal">
+            <dict:RadioButton Text="Slides" x:Name="slideMode" IsChecked="True" Checked="changeMode"/>
+            <dict:RadioButton Text="Notes" x:Name="noteMode" Checked="changeMode"/>
+        </StackPanel-->
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="controls"  Background="{StaticResource BackgroundBlueGradient}"> 
+            <dict:RadioButton Text="Slides" x:Name="slideMode" IsChecked="True" Checked="changeMode"/>
+            <dict:RadioButton Text="Notes" x:Name="noteMode" Checked="changeMode"/>
+        </StackPanel>
+        <Grid>
+            <components:SlideDisplay x:Name="slideDisplay" Width="auto" Height="auto"/>
+            <StackPanel x:Name="notes" Background="White" Visibility="Collapsed">
+                <components:Notepad x:Name="notepad"/>
+            </StackPanel>
+        </Grid>
+        
+    </DockPanel>
 </UserControl>

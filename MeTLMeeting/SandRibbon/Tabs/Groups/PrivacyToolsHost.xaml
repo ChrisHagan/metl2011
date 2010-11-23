@@ -9,12 +9,10 @@
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     ShowDialogLauncher="False" Header="Exposure" Image="\Resources\Ribbon-Public.png">
     <sr:RibbonGroup.Resources>
-        <core:String x:Key="preferredDisplayIndex">1</core:String>
+        <core:String x:Key="preferredDisplayIndex">4</core:String>
     </sr:RibbonGroup.Resources>
     <sr:RibbonGroup.Variants>
-        <sr:GroupVariant Variant="Small" Priority="2"/>
-        <!--<sr:GroupVariant Variant="Medium" Priority="3"/>-->
-        <sr:GroupVariant Variant="Collapsed" Priority="4"/>
+        <sr:GroupVariant Variant="Small" Priority="4"/>
     </sr:RibbonGroup.Variants>
     <StackPanel Orientation="Horizontal" x:Name="LayoutRoot" >
         <components:PrivacyTools x:Name="ribbonPrivacyTools" Visibility="Visible"/>   

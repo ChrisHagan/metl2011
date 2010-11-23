@@ -23,21 +23,6 @@ namespace SandRibbon.Tabs.Groups
         public PrivacyToolsHost()
         {
             InitializeComponent();
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(UpdateConversationDetails));
-        }
-        private void UpdateConversationDetails(object _arg)
-        {
-            try
-            {
-                if (Globals.isAuthor || Globals.pedagogy.code > 2)
-                    this.Visibility = Visibility.Visible;
-                else {
-                    this.Visibility = Visibility.Collapsed; 
-                }
-            }
-            catch (NotSetException e) {
-                throw new Exception("PrivacyToolsHost tried to use unset values ",e);
-            }
         }
      }
 }

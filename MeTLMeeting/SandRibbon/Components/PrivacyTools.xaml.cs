@@ -2,9 +2,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
+using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Providers;
 
 namespace SandRibbon.Components
@@ -25,12 +27,36 @@ namespace SandRibbon.Components
                     Commands.SetPrivacy.ExecuteAsync("public");
                 else
                     Commands.SetPrivacy.ExecuteAsync("private");
+                settingEnabledModes(Globals.conversationDetails);
+                settingSelectedMode(Globals.privacy);
             }
             catch (NotSetException)
             {
                 Commands.SetPrivacy.ExecuteAsync("Private");
             }
+            Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(setPedagogy));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             DataContext = this;
+           
+        }
+
+        private void updateConversationDetails(ConversationDetails details)
+        {
+            settingEnabledModes(details);
+        }
+
+        private void settingEnabledModes(ConversationDetails details)
+        {
+            if (details.Permissions.studentCanPublish || Globals.isAuthor)
+                publicMode.IsEnabled = true;
+            else
+                publicMode.IsEnabled = false;
+        }
+
+        private void setPedagogy(PedagogyLevel obj)
+        {
+            //if (!canBecomePublic())
+              //  WorkPubliclyButton.IsChecked = (Globals.privacy == "private") ? false : true;
         }
         private bool canBecomePublic()
         {
@@ -59,11 +85,21 @@ namespace SandRibbon.Components
         {
             Dispatcher.adoptAsync(delegate
                                       {
-                                          WorkPubliclyButton.IsChecked = p == "public";
+                                          settingSelectedMode(p);
+                                          //WorkPubliclyButton.IsChecked = p == "public";
                                           SetValue(PrivateProperty, p);
                                           Commands.RequerySuggested(Commands.SetPrivacy);
                                       });
         }
+
+        private void settingSelectedMode(string p)
+        {
+            if (p == "public")
+                publicMode.IsChecked = true;
+            else
+                privateMode.IsChecked = true;
+        }
+
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new PrivacyToolsAutomationPeer(this);
@@ -77,12 +113,13 @@ namespace SandRibbon.Components
                 thisButton.IsChecked = (Globals.privacy == "private") ? false : true;
                 return;
             }
-            if (thisButton.IsChecked == true)
-            {
-                Commands.SetPrivacy.ExecuteAsync("public");
-            }
-            else
-                Commands.SetPrivacy.ExecuteAsync("private");
+            Commands.SetPrivacy.ExecuteAsync(thisButton.IsChecked == true ? "public" : "private");
+        }
+
+        private void privacyChange(object sender, RoutedEventArgs e)
+        {
+        
+            Commands.SetPrivacy.Execute(((FrameworkElement)sender).Tag.ToString());
         }
     }
     class PrivacyToolsAutomationPeer : FrameworkElementAutomationPeer, IValueProvider

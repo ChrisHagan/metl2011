@@ -68,7 +68,7 @@ namespace SandRibbon
         {
             var now = SandRibbonObjects.DateTimeFactory.Now();
             var s = string.Format("{2} {0}:{1}", now, now.Millisecond, message);
-            saveInformationToDatabase(message);
+            //saveInformationToDatabase(message);
             Logger.Log(message);
             Trace.TraceInformation(s);
             return s;

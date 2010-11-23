@@ -9,5 +9,8 @@
         <core:String x:Key="target">notepad</core:String>
         <core:String x:Key="defaultPrivacy">private</core:String>
     </UserControl.Resources>
-    <components:UserCanvasStack x:Name="stack"></components:UserCanvasStack>
+    <StackPanel>
+        <components:SlideNavigationControls/>
+        <components:UserCanvasStack x:Name="stack"></components:UserCanvasStack>
+    </StackPanel>
 </UserControl>

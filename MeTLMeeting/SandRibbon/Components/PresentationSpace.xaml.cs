@@ -155,11 +155,23 @@ namespace SandRibbon.Components
         {
             var dpi = 96;
             var size = 1024;
+            int dpiX;
+            int dpiY;
+            if (ActualWidth > ActualHeight)
+            {
+                dpiX = (int)(dpi * (ActualHeight / ActualWidth));
+                dpiY = 96;
+            }
+            else
+            {
+               dpiY = (int)(dpi * (ActualWidth / ActualHeight));
+               dpiX = dpi;
+            }
             var ratio = ActualWidth / ActualHeight;
             string file = "";
             Dispatcher.adopt(() =>
             {
-                var bitmap = new RenderTargetBitmap((int)this.ActualWidth, (int)this.ActualHeight, dpi, dpi, PixelFormats.Default);
+                var bitmap = new RenderTargetBitmap((int)this.ActualWidth, (int)this.ActualHeight, dpiX, dpiY, PixelFormats.Default);
                 var dv = new DrawingVisual();
                 using (var context = dv.RenderOpen())
                 {
