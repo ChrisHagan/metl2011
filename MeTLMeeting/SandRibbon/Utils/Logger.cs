@@ -63,6 +63,7 @@ namespace SandRibbon.Utils
             Log(s);
         }
         private static void putCouch(string message, DateTime now) {
+            if (String.IsNullOrEmpty(Globals.me)) return;
             var msg = new LogMessage
             {
                 content = message,
