@@ -53,11 +53,11 @@ namespace MeTLLib.Providers.Structure
         public ConversationDetails DetailsOf(string conversationJid)
         {
             //So, from a design perspective, conversationJid must be a string, which must be non-empty, non-null.  But it might be a string that isn't currently a conversation Jid.
-            //Expected behavious is return a valid conversationDetails, or return an empty conversationDetails to reflect that the conversation doesn't exist.
+            //Expected behaviour is return a valid conversationDetails, or return an empty conversationDetails to reflect that the conversation doesn't exist.
             if (String.IsNullOrEmpty(conversationJid)) throw new ArgumentNullException("conversationJid", "Argument cannot be null or empty");
             try
             {
-                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, conversationJid, DETAILS));
+                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
                 var response = XElement.Parse(secureGetString(url));
                 var result = ConversationDetails.ReadXml(response);
                 return result;
@@ -151,7 +151,7 @@ namespace MeTLLib.Providers.Structure
         {
             try
             {
-                var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}&filename={4}", ROOT_ADDRESS, UPLOAD, STRUCTURE, details.Jid, DETAILS);
+                var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", ROOT_ADDRESS, UPLOAD, STRUCTURE, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
                 securePutData(new System.Uri(url), details.GetBytes());
                 Commands.SendDirtyConversationDetails.Execute(details.Jid);
                 if (DetailsAreAccurate(details))
@@ -241,8 +241,6 @@ namespace MeTLLib.Providers.Structure
                 details.Slides.Add(new Slide(id + 1, details.Author, Slide.TYPE.SLIDE, 0, 720, 540));
             }
             details.Created = DateTimeFactory.Parse(DateTimeFactory.Now().ToString());
-            //resourceUploader.uploadResourceToPath(Encoding.UTF8.GetBytes(details.WriteXml().ToString(SaveOptions.DisableFormatting)),
-            //    string.Format("Structure/{0}", details.Jid), DETAILS);
             Update(details);
             return details;
         }

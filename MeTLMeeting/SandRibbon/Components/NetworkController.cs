@@ -9,6 +9,12 @@ using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
+    public class CivicServerAddress : MeTLServerAddress{
+        public CivicServerAddress() { 
+            stagingUri = new Uri("http://civic.adm.monash.edu.au", UriKind.Absolute);
+            productionUri = new Uri("http://civic.adm.monash.edu.au", UriKind.Absolute);
+        }
+    }
     public class NetworkController
     {
         private ClientConnection client;
@@ -20,10 +26,13 @@ namespace SandRibbon.Components
         }
         public void switchServer()
         {
+            client = MeTLLib.ClientFactory.Connection(new CivicServerAddress());
+            /*
             if (App.isStaging)
                 client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
             else
                 client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
+             */
             Constants.JabberWire.SERVER = client.server.host;
         }
         #region commands

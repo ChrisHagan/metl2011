@@ -20,7 +20,9 @@ namespace PowerpointJabber
         private const int WS_SHOWMAXIMIZED = 3;
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
+        [DllImport("User32.dll", EntryPoint = "SetActiveWindow")]
+        private static extern void SetActiveWindow(int hWnd);
+        
         // Find window by Caption only. Note you must pass IntPtr.Zero as the first parameter.
 
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
@@ -60,6 +62,7 @@ namespace PowerpointJabber
             ShowWindowAsync(windowHandle, WS_SHOWMAXIMIZED);
             SetForegroundWindow(windowHandle);
             SystemParametersInfo((uint)0x2001, 200000, 200000, 0x0002 | 0x0001);
+            SetActiveWindow((int)windowHandle);
         }
     }
 }

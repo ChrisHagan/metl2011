@@ -82,6 +82,7 @@
                 <Button Click="getHistory">GetHistory</Button>
                 <Button Click="getDisco">currentConversations</Button>
                 <Button Click="getConversations">allConversations</Button>
+                <Button Click="uploadToUserOptions">uploadToUserOptions</Button>
             </WrapPanel>
             <Grid Background="DarkGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                           Height="Auto" Width="Auto">

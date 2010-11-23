@@ -120,12 +120,10 @@ namespace MeTLLib.Providers.Connection
             Commands.AllContentSent.Execute(location.currentSlide);
             Trace.TraceInformation(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
-        public override void actOnFileResource(MeTLStanzas.FileResource resource)
-        {
+        public override void actOnFileResource(MeTLStanzas.FileResource resource){
             files.Add(resource.fileResource);
         }
-        public override void ReceiveCommand(string message)
-        {//Preparsers don't care about commands, they're not a valid part of history.
+        public override void ReceiveCommand(string message){//Preparsers don't care about commands, they're not a valid part of history.
             return;
         }
         public override void actOnScreenshotSubmission(TargettedSubmission submission)
