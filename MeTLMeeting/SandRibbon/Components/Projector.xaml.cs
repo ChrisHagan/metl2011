@@ -83,11 +83,18 @@ namespace SandRibbon.Components
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(setLayer));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
+            Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(shutdown));
             Commands.InternalMoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
             stack.handwriting.EditingModeChanged += modeChanged;
             stack.images.EditingModeChanged += modeChanged;
             stack.text.EditingModeChanged += modeChanged;
             startProjector(null);
+        }
+
+        private void shutdown(object obj)
+        {
+            if(Window != null)
+                Window.Close();
         }
 
         private void setPedagogy(object obj)

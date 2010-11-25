@@ -17,17 +17,16 @@ namespace MeTLLib.Providers
         public MeTLServerAddress serverAddress { private get; set; }
         [Inject]
         public IResourceUploader resourceUploader { private get; set; }
-        private string OPTIONS_PATH = "https://{0}:1188/userOptions/{1}/options.xml";
-        private IEnumerable<string> possibleOptions = "importResolution logLevel pedagogyLevel".Split(' ');
 
         public UserOptions Get(string username) {
             try
             {
-                var path = new Uri(string.Format(OPTIONS_PATH, serverAddress.host, username));
+                var path = new Uri(resourceUploader.getStemmedPathForResource("userOptions/" + username, "options.xml"));
                 var options = Encoding.UTF8.GetString(resourceProvider.secureGetData(path));
                 return UserOptions.ReadXml(options);
             }
             catch (Exception e) {
+                
                 return UserOptions.DEFAULT;
             }
         }

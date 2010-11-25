@@ -49,8 +49,6 @@ namespace SandRibbon.Components.Canvas
                 MouseUp += (c, args) => placeCursor(this, args);
             };
             PreviewKeyDown += keyPressed;
-            //SelectionMoved += SendTextBoxes;
-            //SelectionMoving += dirtyText;
             SelectionMoved += textMovedorResized;
             SelectionMoving += textMovingorResizing;
             SelectionChanged += selectionChanged;
@@ -292,19 +290,13 @@ namespace SandRibbon.Components.Canvas
                   var mySelectedElements = selectedElements.Select(Clone);
                   foreach (TextBox box in mySelectedElements)
                   {
-                      myTextBox = box;
-                      dirtyTextBoxWithoutHistory(box);
-                      myTextBox = null;
+                      removeBox(box);
                   }
                   var selection = new List<UIElement>();
                   foreach (var box in startingText)
                   {
-                      myTextBox = box;
                       selection.Add(box);
-                      if(Children.ToList().Where(c => ((TextBox)c).tag().id == box.tag().id).ToList().Count == 0)
-                          Children.Add(box);
-                      box.TextChanged += SendNewText;
-                      sendTextWithoutHistory(box, box.tag().privacy);
+                      sendBox(box);
                   }
                   Select(selection);
                   addAdorners();
@@ -315,19 +307,11 @@ namespace SandRibbon.Components.Canvas
                   var mySelectedElements = selectedElements.Select(Clone);
                   var selection = new List<UIElement>();
                   foreach (var box in startingText)
-                  {
-                      myTextBox = box;
-                      dirtyTextBoxWithoutHistory(box);
-                      myTextBox = null;
-                  }
+                      removeBox(box);
                   foreach (var box in mySelectedElements)
                   {
                       selection.Add(box);
-                      myTextBox = box;
-                      if(Children.ToList().Where(c => ((TextBox)c).tag().id == box.tag().id).ToList().Count == 0)
-                          Children.Add(box);
-                      box.TextChanged += SendNewText;
-                      sendTextWithoutHistory(box, box.tag().privacy);
+                      sendBox(box); 
                   }
                   Select(selection);
                   addAdorners();
@@ -335,7 +319,23 @@ namespace SandRibbon.Components.Canvas
             redo();
             UndoHistory.Queue(undo, redo);
         }
-       
+
+        private void removeBox(TextBox box)
+        {
+            myTextBox = box;
+            dirtyTextBoxWithoutHistory(box);
+            myTextBox = null;
+        }
+
+        private void sendBox(TextBox box)
+        {
+            myTextBox = box;
+            if(Children.ToList().Where(c => ((TextBox)c).tag().id == box.tag().id).ToList().Count == 0)
+                Children.Add(box);
+            box.TextChanged += SendNewText;
+            sendTextWithoutHistory(box, box.tag().privacy);
+        }
+
         public bool textBoxSelected
         {
             get { return textboxSelectedProperty; }
@@ -784,9 +784,26 @@ namespace SandRibbon.Components.Canvas
                 Clipboard.SetText(box.Text);
                 listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, box.tag().privacy, box.tag().id));
             }
+            CutSelection();
+
+            var selectedElements =GetSelectedElements().Select(tb => Clone((TextBox)tb)).ToList().Select(Clone);
             ClearAdorners();
-            foreach (var element in listToCut)
-                Commands.SendDirtyText.ExecuteAsync(element);
+            Action redo = () =>
+                             {
+                                 foreach (var element in listToCut)
+                                     Commands.SendDirtyText.ExecuteAsync(element);
+                             };
+            Action undo = () =>
+                             {
+                                 foreach (var box in selectedElements)
+                                     Clipboard.GetText();
+                                 foreach (var box in selectedElements)
+                                 {
+                                    sendBox((TextBox)box);
+                                 }
+                             };
+            UndoHistory.Queue(undo, redo);
+            redo();
         }
         public override void showPrivateContent()
         {

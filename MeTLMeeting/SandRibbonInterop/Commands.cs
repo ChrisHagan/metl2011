@@ -30,6 +30,8 @@ namespace SandRibbon
     }
     public class Commands
     {
+
+        public static CompositeCommand ViewSubmissions = new CompositeCommand();
         public static CompositeCommand Reconnecting = new CompositeCommand();
         public static CompositeCommand LeaveAllRooms = new CompositeCommand();
         public static CompositeCommand BackstageModeChanged = new CompositeCommand();

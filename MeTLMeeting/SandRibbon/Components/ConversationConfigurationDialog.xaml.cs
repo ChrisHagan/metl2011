@@ -217,12 +217,12 @@ namespace SandRibbon.Components
                     {
                         try
                         {
-                            Commands.UploadPowerpoint.ExecuteAsync(new PowerpointSpec
+                            Commands.UploadPowerpoint.Execute(new PowerpointSpec
                             {
                                 File = importFile,
                                 Details = details,
                                 Type = importType,
-                                Magnification = importType == (PowerPointLoader.PowerpointImportType)Enum.Parse(typeof(PowerPointLoader.PowerpointImportType), "HighDefImage") ? magnification : 1
+                                Magnification = Globals.UserOptions.powerpointImportScale  
                             });
                         }
                         catch (Exception e)

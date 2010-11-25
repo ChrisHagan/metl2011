@@ -189,6 +189,8 @@ namespace MeTLLib.DataTypes
             newImage.Width = image.Width;
             newImage.tag(image.tag());
             newImage.Source = image.Source;
+            InkCanvas.SetLeft(newImage, InkCanvas.GetLeft(image));
+            InkCanvas.SetTop(newImage, InkCanvas.GetTop(image));
 
             return newImage;
         }

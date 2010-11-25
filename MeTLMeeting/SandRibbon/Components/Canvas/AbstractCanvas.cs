@@ -226,6 +226,11 @@ namespace SandRibbon.Components.Canvas
             }
             e.Handled = true;
         }
+
+        public string generateId()
+        {
+            return string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now());
+        }
         void ImagesDrop(object sender, DragEventArgs e)
         {
             var fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
@@ -242,9 +247,8 @@ namespace SandRibbon.Components.Canvas
             for (var i = 0; i < fileNames.Count(); i++)
             {
                 var filename = fileNames[i];
-           //     var image = Image.createImageFromUri(new Uri(filename, UriKind.RelativeOrAbsolute));
-                Commands.ImageDropped.ExecuteAsync(new ImageDrop { filename = filename, point = pos, target = target, position = i });
-           /*     pos.X += image.Width + 30;
+                var image = Image.createImageFromUri(new Uri(filename, UriKind.RelativeOrAbsolute));
+                pos.X += image.Width + 30;
                 if (image.Height > height) height = image.Height;
                 if ((i + 1) % 4 == 0)
                 {
@@ -252,7 +256,7 @@ namespace SandRibbon.Components.Canvas
                     pos.Y += (height + 30);
                     height = 0.0;
                 }
-            */
+                Commands.ImageDropped.ExecuteAsync(new ImageDrop { filename = filename, point = pos, target = target, position = i });
             }
             e.Handled = true;
         }

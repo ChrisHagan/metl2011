@@ -30,6 +30,7 @@ namespace MeTLLib.Providers.Connection
         string uploadResourceToPath(byte[] data, string file, string name, bool overwrite);
         string uploadResourceToPath(string localFile, string remotePath, string name);
         string uploadResourceToPath(string localFile, string remotePath, string name, bool overwrite);
+        string getStemmedPathForResource(string path, string name);
     }
     public class ProductionResourceUploader : IResourceUploader
     {
@@ -75,6 +76,11 @@ namespace MeTLLib.Providers.Connection
             var res = _httpResourceProvider.securePutData(new System.Uri(url), resourceData);
             return XElement.Parse(res).Attribute("url").Value;
         }
+        public string getStemmedPathForResource(string path, string name)
+        {
+            return string.Format("https://{0}:1188/{1}/{2}/{3}", metlServerAddress.host, INodeFix.Stem(path), path, name);
+        }
+
         public string uploadResourceToPath(string localFile, string remotePath, string name)
         {
             return uploadResourceToPath(localFile, remotePath, name, true);

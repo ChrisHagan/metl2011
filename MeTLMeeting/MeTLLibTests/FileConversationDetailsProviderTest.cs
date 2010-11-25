@@ -524,5 +524,10 @@ namespace MeTLLibTests
         {
             throw new NotImplementedException();
         }
+
+        public string getStemmedPathForResource(string path, string name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

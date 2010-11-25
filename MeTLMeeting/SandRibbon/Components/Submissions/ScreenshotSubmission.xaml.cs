@@ -28,7 +28,6 @@ namespace SandRibbon.Components.Submissions
     }
     public partial class ScreenshotSubmission : UserControl
     {
-        public static RoutedCommand ViewSubmissions = new RoutedCommand();
         public List<TargettedSubmission> submissionList = new List<TargettedSubmission>();
         public ScreenshotSubmission()
         {
@@ -37,15 +36,16 @@ namespace SandRibbon.Components.Submissions
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(detailsChanged));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
+            Commands.ViewSubmissions.RegisterCommand(new DelegateCommand<object>(viewSubmissions, canViewSubmissions));
             conversationChanged(null);
         }
-        private void viewSubmissions(object sender, ExecutedRoutedEventArgs e)
+        private void viewSubmissions(object _obj)
         { 
             new ViewSubmissions(submissionList).Show();
         }
-        private void canViewSubmissions(object sender, CanExecuteRoutedEventArgs e)
+        private bool canViewSubmissions(object _e)
         {
-            e.CanExecute = submissionList.Count > 0;
+           return submissionList.Count > 0;
         }
         private void PreParserAvailable(PreParser parser)
         {
@@ -104,7 +104,8 @@ namespace SandRibbon.Components.Submissions
             if (!IHaveThisSubmission(submission))
             {
                 submissionList.Add(submission);
-                CommandManager.InvalidateRequerySuggested();
+                Commands.RequerySuggested(Commands.ViewSubmissions);
+                
             }
         }
         private bool IHaveThisSubmission(MeTLLib.DataTypes.TargettedSubmission submission)

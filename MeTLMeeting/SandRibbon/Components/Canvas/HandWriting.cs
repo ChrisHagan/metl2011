@@ -86,7 +86,7 @@ namespace SandRibbon.Components.Canvas
                 Commands.RequerySuggested(Commands.SetInkCanvasMode);
             }
         }
-        private bool canChangeMode(string arg)
+        private static bool canChangeMode(string arg)
         {
             return true;
         }
@@ -317,7 +317,7 @@ namespace SandRibbon.Components.Canvas
             {
                 if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
                 {
-                    Strokes.Remove(Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
+                    Strokes.Remove(Strokes.Where(s => Math.Round(s.sum().checksum, 1) == Math.Round(stroke.sum().checksum, 1)).First());
                     strokes.Remove(stroke.sum());
                 }
                 doMyStrokeRemovedExceptHistory(stroke);
@@ -361,7 +361,9 @@ namespace SandRibbon.Components.Canvas
             Dispatcher.adopt(() => selectedStrokes = GetSelectedStrokes().ToList());
             Action redo = () =>
             {
-                foreach (var stroke in selectedStrokes.Where(i => i is Stroke && i.tag().privacy != newPrivacy))
+
+                var newStrokes = new StrokeCollection();
+                foreach (var stroke in selectedStrokes.Where(i => i != null && i.tag().privacy != newPrivacy))
                 {
                     var oldTag = stroke.tag();
 
@@ -374,17 +376,21 @@ namespace SandRibbon.Components.Canvas
                     newStroke.tag(new StrokeTag { author = oldTag.author, privacy = newPrivacy, startingSum = oldTag.startingSum });
                     if (Strokes.Where(s => s.sum().checksum == newStroke.sum().checksum).Count() == 0)
                     {
+                        newStrokes.Add(newStroke);
                         Strokes.Add(newStroke);
                         doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
                     }
+                   
                 }
+                Select(newStrokes);
                 Dispatcher.adopt(() => Select(new StrokeCollection()));
             };
             Action undo = () =>
             {
-                foreach (Stroke stroke in selectedStrokes.Where(i => i is Stroke && i.tag().privacy != newPrivacy))
+                var newStrokes = new StrokeCollection();
+                foreach (var stroke in selectedStrokes.Where(i => i is Stroke && i.tag().privacy != newPrivacy))
                 {
-                    var oldTag = ((Stroke)stroke).tag();
+                    var oldTag = stroke.tag();
                     var newStroke = stroke.Clone();
                     newStroke.tag(new StrokeTag { author = oldTag.author, privacy = newPrivacy, startingSum = oldTag.startingSum });
 
@@ -395,9 +401,11 @@ namespace SandRibbon.Components.Canvas
                     }
                     if (Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
                     {
+                        newStrokes.Add(newStroke);
                         Strokes.Add(stroke);
                         doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
                     }
+                    Select(newStrokes);
                 }
                 Dispatcher.adopt(() => Select(new StrokeCollection()));
             };
@@ -479,10 +487,23 @@ namespace SandRibbon.Components.Canvas
         protected override void HandleCut()
         {
             var listToCut = GetSelectedStrokes().Select(stroke => new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, stroke.tag().privacy, stroke.sum().checksum.ToString())).ToList();
+            var topPoint = GetSelectionBounds().TopLeft;
             CutSelection();
             ClearAdorners();
-            foreach (var element in listToCut)
-                Commands.SendDirtyStroke.Execute(element);
+            Action redo = () =>
+            {
+                foreach (var element in listToCut)
+                    Commands.SendDirtyStroke.Execute(element);
+            };
+            Action undo = () =>
+            {
+                Paste(topPoint); 
+                ClearAdorners();
+                addAdorners();
+            };
+            redo();
+            UndoHistory.Queue(undo, redo);
+
         }
         protected override AutomationPeer OnCreateAutomationPeer()
         {
