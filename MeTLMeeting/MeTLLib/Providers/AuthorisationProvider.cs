@@ -16,88 +16,12 @@ namespace MeTLLib.Providers
     public class AuthorisationProvider : HttpResourceProvider
     {
         private MeTLServerAddress server;
+        private IWebClientFactory webclientFactory;
         public AuthorisationProvider(IWebClientFactory factory, MeTLServerAddress server)
             : base(factory)
         {
+            this.webclientFactory = factory;
             this.server = server;
-        }
-        public List<AuthorizedGroup> getEligibleGroups(string AuthcateName, string AuthcatePassword)
-        {
-            var groups = new List<AuthorizedGroup>();
-            string encryptedPassword = Crypto.encrypt(AuthcatePassword);
-            string sXML = insecureGetString(new System.Uri(String.Format("https://{2}:1188/ldapquery.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, server.host)));
-            var doc = new XmlDocument();
-            doc.LoadXml(sXML);
-            if (doc.GetElementsByTagName("error").Count == 0)
-            {
-                groups.Add(new AuthorizedGroup("Unrestricted", ""));
-                foreach (XmlElement group in doc.GetElementsByTagName("eligibleGroup"))
-                {
-                    groups.Add(new AuthorizedGroup(
-                        group.InnerText.Replace("\"", ""),
-                        group.Attributes["type"].Value));
-                }
-                groups.Add(new AuthorizedGroup(
-                    doc.GetElementsByTagName("user")[0].Attributes["name"].Value,
-                    "username"));
-            }
-            else
-                foreach (XmlElement error in doc.GetElementsByTagName("error"))
-                    Trace.TraceError("XmlError node:" + error.InnerText);
-            return groups;
-        }
-        public bool isAuthenticatedAgainstLDAP(string username, string password)
-        {
-            //if (username.StartsWith(BackDoor.USERNAME_PREFIX)) return true;
-            string LDAPServerURL = @"LDAP://directory.monash.edu.au:389/";
-            string LDAPBaseOU = "o=Monash University,c=AU";
-            try
-            {
-                DirectoryEntry LDAPAuthEntry = new DirectoryEntry(LDAPServerURL + LDAPBaseOU, "", "", AuthenticationTypes.Anonymous);
-                DirectorySearcher LDAPDirectorySearch = new DirectorySearcher(LDAPAuthEntry);
-                LDAPDirectorySearch.ClientTimeout = new System.TimeSpan(0, 0, 5);
-                LDAPDirectorySearch.Filter = "uid=" + username;
-                SearchResult LDAPSearchResponse = LDAPDirectorySearch.FindOne();
-
-                string NewSearchPath = LDAPSearchResponse.Path.ToString();
-                string NewUserName = NewSearchPath.Substring(NewSearchPath.LastIndexOf("/") + 1);
-
-                DirectoryEntry AuthedLDAPAuthEntry = new DirectoryEntry(NewSearchPath, NewUserName, password, AuthenticationTypes.None);
-                DirectorySearcher AuthedLDAPDirectorySearch = new DirectorySearcher(AuthedLDAPAuthEntry);
-                AuthedLDAPDirectorySearch.ClientTimeout = new System.TimeSpan(0, 0, 5);
-                AuthedLDAPDirectorySearch.Filter = "";
-                SearchResultCollection AuthedLDAPSearchResponse = AuthedLDAPDirectorySearch.FindAll();
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError(string.Format("Failed authentication against LDAP because {0}", e.Message));
-                return false;
-            }
-            return true;
-        }
-        public bool isAuthenticatedAgainstWebProxy(string username, string password)
-        {
-            try
-            {
-                var resource = "https://my.monash.edu.au/login";
-                var queryParams = new System.Collections.Specialized.NameValueCollection();
-                queryParams.Add("username", username);
-                queryParams.Add("password", password);
-                queryParams.Add("access", "authcate");
-                String test = Encoding.UTF8.GetString(new System.Net.WebClient().UploadValues(new Uri(resource), queryParams));
-                var xml = XElement.Parse(test);
-                XNamespace ns = "http://www.w3.org/1999/xhtml";
-                var predicate = ns + "title";
-                foreach (var descendant in xml.Descendants(predicate))
-                    if (descendant.Value == "Logged in")
-                        return true;
-                return false;
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError("Web proxy auth error:" + e.Message);
-                return false;
-            }
         }
         public Credentials attemptAuthentication(string username, string password)
         {
@@ -105,9 +29,10 @@ namespace MeTLLib.Providers
             if (String.IsNullOrEmpty(password)) throw new ArgumentNullException("password", "Argument cannot be null");
             string AuthcateUsername = username;
             string AuthcatePassword = password;
-            if (authenticateAgainstFailoverSystem(AuthcateUsername, AuthcatePassword) || isBackdoorUser(AuthcateUsername))
+            var token = login(AuthcateUsername, AuthcatePassword);
+            if (token.authenticated)
             {
-                var eligibleGroups = getEligibleGroups(AuthcateUsername, AuthcatePassword);
+                var eligibleGroups = token.groups;
                 var credentials = new Credentials(AuthcateUsername, AuthcatePassword, eligibleGroups);
                 Globals.credentials = credentials;
                 return credentials;
@@ -118,18 +43,49 @@ namespace MeTLLib.Providers
                 return new Credentials(username, "", new List<AuthorizedGroup>());
             }
         }
-        public bool isBackdoorUser(string user)
+        public class AuthToken
         {
-            return user.ToLower().Contains("admirable");
+            public AuthToken(string Username)
+            {
+                username = Username;
+            }
+            public string username { get; private set; }
+            public List<AuthorizedGroup> groups = new List<AuthorizedGroup>();
+            public bool authenticated = false;
+            public List<String> errors = new List<String>();
         }
-        public bool authenticateAgainstFailoverSystem(string username, string password)
+        public AuthToken login(string AuthcateName, string AuthcatePassword)
         {
-            if (isAuthenticatedAgainstLDAP(username, password))
-                return true;
-            else if (isAuthenticatedAgainstWebProxy(username, password))
-                return true;
+            var token = new AuthToken(AuthcateName);
+            string encryptedPassword = Crypto.encrypt(AuthcatePassword);
+            string sXML = insecureGetString(new Uri(String.Format("https://{2}:1188/authentication.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, server.host),UriKind.RelativeOrAbsolute));
+            var doc = new XmlDocument();
+            if (String.IsNullOrEmpty(sXML)) return token;
+            doc.LoadXml(sXML);
+            if (doc.GetElementsByTagName("error").Count == 0)
+            {
+                token.groups.Add(new AuthorizedGroup("Unrestricted", ""));
+                foreach (XmlElement group in doc.GetElementsByTagName("eligibleGroup"))
+                {
+                    token.groups.Add(new AuthorizedGroup(
+                        group.InnerText.Replace("\"", ""),
+                        group.Attributes["type"].Value));
+                }
+                token.groups.Add(new AuthorizedGroup(
+                    doc.GetElementsByTagName("user")[0].Attributes["name"].Value,
+                    "username"));
+                token.authenticated = true;
+            }
             else
-                return false;
+            {
+                token.authenticated = false;
+                foreach (XmlElement error in doc.GetElementsByTagName("error"))
+                {
+                    Trace.TraceInformation("Authentication XmlError node:" + error.InnerText);
+                    if (!String.IsNullOrEmpty(error.OuterXml)) token.errors.Add(error.OuterXml);
+                }
+            }
+            return token;
         }
     }
 }
