@@ -1723,7 +1723,9 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="5823" fromTop="25" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:Extensions.cs" caret="10542" fromTop="258" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="6921" fromTop="7" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="23372" fromTop="5" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ToolBar.xaml.cs" caret="744" fromTop="10" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="42232" fromTop="26" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:ResourceDictionaries/f:ToolTips.xaml" caret="18115" fromTop="8" />
     </RecentFiles>
     <RecentEdits>
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="21728" fromTop="24" />

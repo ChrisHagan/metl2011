@@ -91,6 +91,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void deleteSelectedImages(object obj)
         {
+            if(GetSelectedElements().Count == 0) return;
             deleteImages();
             ClearAdorners();
         }
@@ -458,13 +459,17 @@ namespace SandRibbon.Components.Canvas
                 foreach (var element in listToCut)
                     Clipboard.GetImage(); //remove the images from the undo queue
 
+                var selection = new List<UIElement>();
                 foreach (var element in selectedImages)
                 {
 
-                      if (!Children.Contains(element))
-                          Children.Add(element);
-                      sendThisElement(element);
+                    if (!Children.Contains(element))
+                        Children.Add(element);
+                    sendThisElement(element);
+                    selection.Add(element);
                 }
+                Select(selection);
+                addAdorners();
 
             };
             UndoHistory.Queue(undo, redo);
@@ -550,49 +555,48 @@ namespace SandRibbon.Components.Canvas
             Action undo = () =>
               {
                   ClearAdorners();
-                  var myStartingImages = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
-                  foreach (var element in myStartingImages)
+                  var selection = new List<UIElement>();
+                  var mySelectedElements = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
+                  foreach (var element in mySelectedElements)
                   {
-                       removeImage(element); 
+                        if(Children.Contains(element))
+                            Children.Remove(element);
+                        dirtyThisElement(element); 
                   }
                   foreach (var element in startingElements)
                   {
-                      addImage(element); 
+                      selection.Add(element);
+                      if (!Children.Contains(element))
+                          Children.Add(element);
+                      sendThisElement(element);
                   }
+                  Select(selection);
+                  addAdorners();
               };
             Action redo = () =>
               {
+                  
                   ClearAdorners();
-                  var myStartingImages = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
+                  var selection = new List<UIElement>();
+                  var mySelectedImages = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
                   foreach (var element in startingElements)
-                        removeImage(element);  
-                  foreach (var element in myStartingImages)
-                        addImage(element); 
-                  Select(selectedElements);
+                  {
+                        if(Children.Contains(element))
+                            Children.Remove(element);
+                        dirtyThisElement(element); 
+                  }
+                  foreach (var element in mySelectedImages)
+                  {
+                      selection.Add(element);
+                      if (!Children.Contains(element))
+                          Children.Add(element);
+                      sendThisElement(element);
+                  }
+                  Select(selection);
                   addAdorners();
               };
             UndoHistory.Queue(undo, redo);
-            foreach (var element in elementsAtStartOfTheMove)
-                dirtyThisElement(element);
-            foreach (var element in selectedElements)
-                sendThisElement(element);
-        }
-
-        private void addImage(UIElement element)
-        {
-            var image = (System.Windows.Controls.Image)element;
-            if(Children.ToList().Select(i => ((System.Windows.Controls.Image)i).tag().id ==image.tag().id).Count() == 0)
-                Children.Add(element);
-            sendThisElement(element);
-        }
-
-        private void removeImage(UIElement element)
-        {
-            var image = (System.Windows.Controls.Image)element;
-            var list = Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id ==image.tag().id).ToList();
-            if(list.Count() != 0)
-                Children.Remove(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id ==image.tag().id).ToList().First());
-            dirtyThisElement(element);
+            redo(); 
         }
 
         private void sendThisElement(UIElement element)
@@ -822,22 +826,33 @@ namespace SandRibbon.Components.Canvas
                 if (image == null) return;
                 SetLeft(image, pos.X);
                 SetTop(image, pos.Y);
-                Children.Add(image);
-                var animationPulse = new DoubleAnimation
-                                         {
-                                             From = .3,
-                                             To = 1,
-                                             Duration = new Duration(TimeSpan.FromSeconds(1)),
-                                             AutoReverse = true,
-                                             RepeatBehavior = RepeatBehavior.Forever
-                                         };
-                image.BeginAnimation(OpacityProperty, animationPulse);
-                image.tag(new ImageTag(Globals.me, privacy,generateId() , false, 0));
+                 image.tag(new ImageTag(Globals.me, privacy,generateId() , false, 0));
                 if (!fileName.StartsWith("http"))
                     MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, target, privacy, image, fileName, false));
                 else
                     MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, target, privacy, image));
-                Children.Remove(image);
+                Action undo = () =>
+                                  {
+                                      ClearAdorners();
+                                      if(Children.Contains(image))
+                                          Children.Remove(image);
+                                      dirtyThisElement(image);
+                                  };
+                Action redo = () =>
+                {
+                    ClearAdorners();
+                    var myImage = image.clone();
+                    SetLeft(myImage, pos.X);
+                    SetTop(myImage, pos.Y);
+                    if (!Children.Contains(myImage))
+                        Children.Add(myImage);
+                    sendThisElement(myImage);
+
+                    Select(new [] {myImage});
+                    addAdorners();
+                };
+                UndoHistory.Queue(undo, redo);
+                Children.Add(image);
             });
         }
         public static System.Windows.Controls.Image createImageFromUri(Uri uri)

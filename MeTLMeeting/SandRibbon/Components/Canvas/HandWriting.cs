@@ -39,7 +39,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
-            Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
+            Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
         }
         private void hideConversationSearchBox(object obj)
@@ -59,11 +59,9 @@ namespace SandRibbon.Components.Canvas
         }
         private void deleteSelectedItems(object obj)
         {
-            Dispatcher.adopt(delegate
-            {
-                deleteSelectedStrokes(null, null);
-                ClearAdorners();
-            });
+            if(GetSelectedElements().Count == 0) return;
+            deleteSelectedStrokes(null, null);
+            ClearAdorners();
         }
         private void HandWritingLoaded(object sender, System.Windows.RoutedEventArgs e)
         {

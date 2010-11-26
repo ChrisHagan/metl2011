@@ -89,6 +89,7 @@ namespace SandRibbon.Components.Canvas
 
         private void deleteSelectedItems(object obj)
         {
+            if(GetSelectedElements().Count == 0) return;
             var selectedElements = GetSelectedElements().Select(b => Clone((TextBox)b)).ToList();
             if (selectedElements.Count == 0) return;
             Action undo = () =>
@@ -778,6 +779,7 @@ namespace SandRibbon.Components.Canvas
         protected override void HandleCut()
         {
             var listToCut = new List<MeTLLib.DataTypes.TargettedDirtyElement>();
+            var selectedElements =GetSelectedElements().Select(tb => Clone((TextBox)tb)).ToList().Select(Clone);
             foreach (TextBox box in GetSelectedElements().Where(e => e is TextBox))
             {
 
@@ -785,8 +787,6 @@ namespace SandRibbon.Components.Canvas
                 listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, box.tag().privacy, box.tag().id));
             }
             CutSelection();
-
-            var selectedElements =GetSelectedElements().Select(tb => Clone((TextBox)tb)).ToList().Select(Clone);
             ClearAdorners();
             Action redo = () =>
                              {
@@ -795,12 +795,18 @@ namespace SandRibbon.Components.Canvas
                              };
             Action undo = () =>
                              {
-                                 foreach (var box in selectedElements)
+                                 
+                                 var mySelectedElements = selectedElements.Select(t => t.clone());
+                                 List<UIElement> selection = new List<UIElement>();
+                                 foreach (var box in mySelectedElements)
                                      Clipboard.GetText();
-                                 foreach (var box in selectedElements)
+                                 foreach (var box in mySelectedElements)
                                  {
                                     sendBox((TextBox)box);
+                                    selection.Add(box);
                                  }
+                                 Select(selection);
+                                 addAdorners();
                              };
             UndoHistory.Queue(undo, redo);
             redo();
