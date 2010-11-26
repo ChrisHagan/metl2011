@@ -222,7 +222,7 @@ namespace SandRibbon.Components
                                 File = importFile,
                                 Details = details,
                                 Type = importType,
-                                Magnification = Globals.UserOptions.powerpointImportScale  
+                                Magnification = Globals.UserOptions.powerpointImportScale == 2 ? 2 : 1 
                             });
                         }
                         catch (Exception e)
@@ -340,9 +340,10 @@ namespace SandRibbon.Components
         }
         internal void Import()
         {
+            var myImportType = Globals.UserOptions.powerpointImportScale == 3 ? PowerPointLoader.PowerpointImportType.Shapes : PowerPointLoader.PowerpointImportType.Image;
             if (importFile == null) return;
              dialogMode = ConversationConfigurationMode.IMPORT;
-             importType = PowerPointLoader.PowerpointImportType.Image;
+             importType = myImportType;
              var suggestedName = generatePresentationTitle(ConversationDetails.DefaultName(Globals.me), importFile );
              details = new ConversationDetails
                     (suggestedName, "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
