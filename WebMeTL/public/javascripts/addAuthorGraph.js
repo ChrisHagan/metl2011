@@ -9,8 +9,9 @@ var frequenciesByAuthor = _.reduce(detailedAuthors.conversationSummaries,
         return acc;
     }, {});
 var flatNodes = pv.dom(frequenciesByAuthor).nodes();
-var clusteredNodes = pv.dom(cluster(frequenciesByAuthor,5)).nodes();
-var dotScale = pv.Scale.linear(_.min(_.values(frequenciesByAuthor)), _.max(_.values(frequenciesByAuthor))).range(20,250)
+var clusteredFrequencies = cluster(frequenciesByAuthor,10);
+var clusteredNodes = pv.dom(clusteredFrequencies).nodes();
+var dotScale = pv.Scale.linear(_.min(_.values(frequenciesByAuthor)), _.max(_.values(frequenciesByAuthor))).range(20,1000)
 
 function active(d, v) {
     drillDown.data = detailedAuthors[d.nodeName].conversation;
@@ -19,14 +20,23 @@ function active(d, v) {
 function color(d){
     return colors[d.nodeName];
 }
+function deepen(level,k,v){
+    var obj = {}
+    obj[k] = v
+    return _.reduce(_.range(level),function(acc,i){
+        var wrapper = {}
+        wrapper[k] = acc
+        return wrapper 
+    },obj) 
+}
 function cluster(subject, maxClusters){
     var subjectValues = _.values(subject)
-    var divisor = Math.round(_.max(subjectValues) / maxClusters);
+    var limit = _.max(subjectValues)
+    var divisor = Math.round(limit / maxClusters);
     return _.reduce(subject, function(acc, v, k){
         var group = Math.floor(v / divisor)
-        if(!acc[group]) acc[group] = {}
-        acc[group][k] = v
-        return acc
+        var deepGroup = deepen(group, k,v)
+        return _.extend(acc, deepGroup)
     }, {});
 }
 function treeMap(parent, nodes){
@@ -61,7 +71,6 @@ function nodeTree(parent, nodes){
 function nodeLink(parent,nodes){
     var nodeTree = parent.add(pv.Layout.Tree)
         .nodes(nodes)
-        .depth(130)
         .orient("radial")
     nodeTree.node.add(pv.Dot)
         .fillStyle(color)
