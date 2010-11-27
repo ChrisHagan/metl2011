@@ -1,0 +1,14 @@
+<head>
+    <link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/metl.css'}">
+    <script src="@{'/public/javascripts/protovis-r3.2.js'}" type="text/javascript"></script>
+    <script src="@{'/public/javascripts/underscore.js'}" type="text/javascript"></script>
+</head>
+<body>
+    <div id="fig" class="stacked"></div>
+    <div id="overlay" class="stacked"></div>
+    <script>
+        var authors = #{verbatim}${frequencyJson}#{/verbatim}
+        var detailedAuthors = #{verbatim}${authorJson}#{/verbatim}
+    </script>
+    <script src="@{'/public/javascripts/addAuthorGraph.js'}" type="text/javascript"></script>
+    </body>
