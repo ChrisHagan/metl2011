@@ -13,6 +13,8 @@ import org.json.simple._
 import net.liftweb._
 import net.liftweb.json._
 import net.liftweb.json.JsonDSL._
+import net.liftweb.json.JsonAST._
+import collection.breakOut;
 
 object Application extends Controller {
     val width = 200
@@ -21,23 +23,25 @@ object Application extends Controller {
     val username = "exampleUsername"
     val password = "examplePassword"
     val TEMP_FILE = "all.zip"
-    def index = {
-        conversations
-    }
-    def conversations = {
+    val history = preloadHistory
+    val contentWeight = mapRandom(history, 1000)
+    val authorsPerConversation = mapRandom(history, 20)
+    private def preloadHistory = {
         val zipFuture = WS.url(server+"/all.zip").authenticate(username,password).get
         FileUtils.writeByteArrayToFile(new File(TEMP_FILE),IOUtils.toByteArray(zipFuture.getStream))
         val zipFile = new ZipFile(new File(TEMP_FILE))
-        val xs = zipFile.getEntries
-                .map(any => any.asInstanceOf[ZipArchiveEntry])
-                .filter(zae=>zae.getName.endsWith("details.xml"))
-                .map(zae => IOUtils.toString(zipFile.getInputStream(zae)))
-                .map(detail => xml.XML.loadString(detail))
-                .toList
-        val frequencyJson = JSONObject.toJSONString(authorFrequencies(xs))
-        val detailedAuthorInformation = authorConversations(xs).toString()
-        val authorJson = detailedAuthorInformation
-        Template(frequencyJson, detailedAuthorInformation)
+        zipFile.getEntries
+            .map(any => any.asInstanceOf[ZipArchiveEntry])
+            .filter(zae=>zae.getName.endsWith("details.xml"))
+            .map(zae => IOUtils.toString(zipFile.getInputStream(zae)))
+            .map(detail => xml.XML.loadString(detail))
+            .toList
+    }
+    private def mapRandom(history:Seq[xml.NodeSeq], max:Int = 10000) = Map(history.map(c => ((c \ "jid").text, (Math.random * max).intValue.toString)):_*)
+    def index = conversations
+    def conversations = {
+        val authorJson = authorSummaries(history).toString()
+        Template(authorJson)
     }
     private def authorFrequencies(xs:Seq[xml.NodeSeq]) = {
         val authors = xs.map(x => (x \ "author").text)
@@ -45,26 +49,30 @@ object Application extends Controller {
     }
     private def elem(name:String, children:xml.Node*) = xml.Elem(null, name ,xml.Null,xml.TopScope, children:_*); 
     private def node(name:String, parent:xml.NodeSeq) = elem(name, xml.Text((parent \ name).text))
-    private def authorConversations(xs:Seq[xml.NodeSeq]) = {
-        val authors = authorFrequencies(xs).map(kv=>{ 
-            val author = kv._1
-            val conversations = xs.filter(x=>(x \ "author").text == kv._1).map(
-                node=>{
-                    val contentWeight = elem("authorCount", xml.Text(130.toString))
-                    val authorCount = elem("authorCount", xml.Text(13.toString))
-                    <conversation>
-                        {List("title","jid").map(name=>this.node(name, node)) ::: List(contentWeight, authorCount)}
-                    </conversation>;
-                })
-            val cXml = 
-                <conversations author={author}>
-                    {conversations}
+    private def authorSummary(kv:Pair[String,Int], xs:Seq[xml.NodeSeq]) = {
+        val author = kv._1
+        val freq = kv._2
+        elem("conversationCount", xml.Text(freq.toString)) :: xs.filter(x=>(x \ "author").text == author).map(
+            node=>{
+                val conversationContentWeight = elem("contentVolume", xml.Text(contentWeight((node \ "jid").text)))
+                val authorCount = elem("contentVolume", xml.Text(authorsPerConversation((node \ "jid").text)))
+                val slideCount = elem("slideCount", xml.Text((node \ "slide").length.toString))
+                <conversations>
+                    {List("title","jid").map(name=>this.node(name, node)) ::: List(conversationContentWeight, authorCount, slideCount)}
                 </conversations>;
-            val jXml = json.Xml.toJson(cXml)
-            println(cXml, jXml)
-            jXml
-        }).reduceLeft(_ merge _)
-        pretty(JsonAST.render(authors))
+            }).toList;
+    }
+    private def authorSummaries(xs:Seq[xml.NodeSeq]) = {
+        val authorXmlList = authorFrequencies(xs).map(kv=>elem(kv._1, authorSummary(kv, xs):_*))
+        val authors = 
+        <conversationSummaries>
+            {authorXmlList}
+        </conversationSummaries>;
+        val authorsJson = json.Xml.toJson(authors).transform {
+            case JField("conversations", x: JObject) => JField("conversations", JArray(x :: Nil))
+            case other => other
+        }
+        pretty(JsonAST.render(authorsJson))
     }
     def conversation(jid:Int)={
         val maybeXml = retrieveDetails(jid).map(renderDetails(_))

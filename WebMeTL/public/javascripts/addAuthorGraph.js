@@ -1,14 +1,18 @@
-colors = _.reduce(authors, function(acc,index,item){
+colors = _.reduce(_.keys(detailedAuthors.conversationSummaries), function(acc,item,index){
     var availableColors = pv.Colors.category19().range();
     acc[item] = availableColors[index % availableColors.length]
     return acc;
 },{});
-conversations = {"chagan":[{x:120,y:145,volume:80}]};
 function active(d, v) {
     drillDown.data = detailedAuthors[d.nodeName].conversation;
     drillDown.render();
 }
-var nodes = pv.dom(authors).root("authors").nodes();
+var frequenciesByAuthor = _.reduce(detailedAuthors.conversationSummaries, 
+    function(acc, v, k){
+        acc[k] = v.conversationCount;
+        return acc;
+    }, {});
+var nodes = pv.dom(frequenciesByAuthor).nodes();
 var color = function(d){
     return colors[d.nodeName];
 };
