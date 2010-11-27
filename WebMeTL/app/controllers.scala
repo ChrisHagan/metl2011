@@ -37,7 +37,7 @@ object Application extends Controller {
             .map(detail => xml.XML.loadString(detail))
             .toList
     }
-    private def mapRandom(history:Seq[xml.NodeSeq], max:Int = 10000) = Map(history.map(c => ((c \ "jid").text, (Math.random * max).intValue.toString)):_*)
+    private def mapRandom(history:Seq[xml.NodeSeq], max:Int = 10) = Map(history.map(c => ((c \ "jid").text, (Math.random * max).intValue.toString)):_*)
     def index = conversations
     def conversations = {
         val authorJson = authorSummaries(history).toString()
