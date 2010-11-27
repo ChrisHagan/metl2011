@@ -9,14 +9,11 @@ var frequenciesByAuthor = _.reduce(detailedAuthors.conversationSummaries,
         return acc;
     }, {});
 var flatNodes = pv.dom(frequenciesByAuthor).nodes();
-var clusteredFrequencies = cluster(frequenciesByAuthor,10);
+var clusteredFrequencies = cluster(frequenciesByAuthor,6);
 var clusteredNodes = pv.dom(clusteredFrequencies).nodes();
 var dotScale = pv.Scale.linear(_.min(_.values(frequenciesByAuthor)), _.max(_.values(frequenciesByAuthor))).range(20,1000)
+var marginScale = pv.Scale.linear().range(-100,100)
 
-function active(d, v) {
-    drillDown.data = detailedAuthors[d.nodeName].conversation;
-    drillDown.render();
-}
 function color(d){
     return colors[d.nodeName];
 }
@@ -34,7 +31,7 @@ function cluster(subject, maxClusters){
     var limit = _.max(subjectValues)
     var divisor = Math.round(limit / maxClusters);
     return _.reduce(subject, function(acc, v, k){
-        var group = Math.floor(v / divisor)
+        var group = Math.min(Math.floor(v / divisor) + 2, maxClusters)
         var deepGroup = deepen(group, k,v)
         return _.extend(acc, deepGroup)
     }, {});
@@ -47,10 +44,7 @@ function treeMap(parent, nodes){
         .fillStyle(color)
         .strokeStyle("#fff")
         .lineWidth(1)
-        .event("click",function(d){
-            active(d, !d.active);
-            return this;
-        })
+        .event("click",detail)
     treemap.label.add(pv.Label);
     parent.render();
 }
@@ -75,9 +69,21 @@ function nodeLink(parent,nodes){
     nodeTree.node.add(pv.Dot)
         .fillStyle(color)
         .size(function(d){return dotScale(d.nodeValue)})
+        .event("click",detail)    
     nodeTree.label.add(pv.Label)
+        .visible(function(d){ return d.lastChild == null })
     nodeTree.link.add(pv.Line)
     parent.render()
 }
 
-nodeLink(new pv.Panel().canvas("fig"), clusteredNodes)
+function overlay(parent){
+    return parent.add(pv.Panel)
+}
+function detail(node){
+    alert("Detail: "+node.nodeName);
+}
+
+var master = new pv.Panel().canvas("fig")
+var detailLayer = overlay(master)
+
+nodeLink(master, clusteredNodes)
