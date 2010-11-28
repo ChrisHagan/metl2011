@@ -142,7 +142,7 @@ namespace SandRibbon.Components
                 }
             }
         }
-        private void UpdateConversationDetails(ConversationDetails details)
+        private static void UpdateConversationDetails(ConversationDetails details)
         {
             extantConversations = null;
             extantConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
@@ -171,7 +171,6 @@ namespace SandRibbon.Components
             if (proposedDetails == null) { return false; }
             if (extantConversations == null) { return false; }
             proposedDetails.Title = proposedDetails.Title.Trim();
-            var currentDetails = details;
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
             var thisTitleIsNotTaken = dialogMode == ConversationConfigurationMode.EDIT ? true :
                 (extantConversations.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).Count() == 0);
@@ -228,7 +227,7 @@ namespace SandRibbon.Components
                         catch (Exception e)
                         {
                             MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your PowerPoint.  If the conversation was created, please check whether it has imported correctly.");
-                            throw e;
+                            throw;
                         }
                         finally
                         {

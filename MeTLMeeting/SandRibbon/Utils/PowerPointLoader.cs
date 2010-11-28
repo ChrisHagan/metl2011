@@ -130,7 +130,7 @@ namespace SandRibbon.Utils
             var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
             if (!Directory.Exists(currentWorkingDirectory))
                 Directory.CreateDirectory(currentWorkingDirectory);
-            var provider = MeTLLib.ClientFactory.Connection();
+            var provider = ClientFactory.Connection();
             var xml = new XElement("presentation");
             xml.Add(new XAttribute("name", details.Title));
             if (details.Tag == null)

@@ -59,7 +59,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void deleteSelectedItems(object obj)
         {
-            if(GetSelectedElements().Count == 0) return;
+            if(GetSelectedStrokes().Count == 0) return;
             deleteSelectedStrokes(null, null);
             ClearAdorners();
         }
