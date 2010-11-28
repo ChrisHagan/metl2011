@@ -52,24 +52,27 @@ object Application extends Controller {
     private def authorSummary(kv:Pair[String,Int], xs:Seq[xml.NodeSeq]) = {
         val author = kv._1
         val freq = kv._2
-        elem("conversationCount", xml.Text(freq.toString)) :: xs.filter(x=>(x \ "author").text == author).map(
+        val count = elem("conversationCount", xml.Text(freq.toString))
+        val conversationsBody = xs.filter(x=>(x \ "author").text == author).map(
             node=>{
                 val conversationContentWeight = elem("contentVolume", xml.Text(contentWeight((node \ "jid").text)))
-                val authorCount = elem("contentVolume", xml.Text(authorsPerConversation((node \ "jid").text)))
+                val authorCount = elem("authorCount", xml.Text(authorsPerConversation((node \ "jid").text)))
                 val slideCount = elem("slideCount", xml.Text((node \ "slide").length.toString))
-                <conversations>
+                <listing>
                     {List("title","jid").map(name=>this.node(name, node)) ::: List(conversationContentWeight, authorCount, slideCount)}
-                </conversations>;
-            }).toList;
+                </listing>;
+            }).toList
+        val conversations = <conversations>{conversationsBody}</conversations>;
+        elem(author, List(count, conversations):_*)
     }
     private def authorSummaries(xs:Seq[xml.NodeSeq]) = {
-        val authorXmlList = authorFrequencies(xs).map(kv=>elem(kv._1, authorSummary(kv, xs):_*))
+        val authorXmlList = authorFrequencies(xs).map(kv=>authorSummary(kv, xs))
         val authors = 
         <conversationSummaries>
             {authorXmlList}
         </conversationSummaries>;
         val authorsJson = json.Xml.toJson(authors).transform {
-            case JField("conversations", x: JObject) => JField("conversations", JArray(x :: Nil))
+            case JField("listing", x: JObject) => JField("listing", JArray(x :: Nil))
             case other => other
         }
         pretty(JsonAST.render(authorsJson))

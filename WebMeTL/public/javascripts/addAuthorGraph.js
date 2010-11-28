@@ -8,6 +8,14 @@ var frequenciesByAuthor = _.reduce(detailedAuthors.conversationSummaries,
         acc[k] = v.conversationCount;
         return acc;
     }, {});
+var detailsByAuthor = _.reduce(detailedAuthors.conversationSummaries,
+    function(acc,v,k){
+        acc[k] = _.reduce(v.conversations.listing, function(acc, v, k){
+            acc[v.title] = v.slideCount
+            return acc;
+        }, {})
+        return acc;
+    }, {});
 var flatNodes = pv.dom(frequenciesByAuthor).nodes();
 var clusteredFrequencies = cluster(frequenciesByAuthor,6);
 var clusteredNodes = pv.dom(clusteredFrequencies).nodes();
@@ -36,8 +44,8 @@ function cluster(subject, maxClusters){
         return _.extend(acc, deepGroup)
     }, {});
 }
-function treeMap(parent, nodes){
-    var treemap = parent.add(pv.Layout.Treemap)
+function treeMap(graphRoot, nodes){
+    var treemap = graphRoot.add(pv.Layout.Treemap)
     .def("active", function(){ return -1})
     .nodes(nodes);
     treemap.leaf.add(pv.Panel)
@@ -46,44 +54,42 @@ function treeMap(parent, nodes){
         .lineWidth(1)
         .event("click",detail)
     treemap.label.add(pv.Label);
-    parent.render();
+    graphRoot.render();
 }
-function nodeTree(parent, nodes){
-    var nodeTree = parent.add(pv.Layout.Partition.Fill)
+function nodeTree(graphRoot, nodes){
+    var newChild = graphRoot.add(pv.Layout.Partition.Fill)
         .nodes(nodes)
         .size(function(d){
             return dotScale(d.nodeValue)})
         .order("descending")
         .orient("radial");
-    nodeTree.node.add(pv.Wedge)
+    newChild.node.add(pv.Wedge)
         .fillStyle(color)
         .strokeStyle("#fff")
         .lineWidth(1)
-    nodeTree.label.add(pv.Label);
-    parent.render();
+    newChild.label.add(pv.Label);
+    graphRoot.render();
 }
-function nodeLink(parent,nodes){
-    var nodeTree = parent.add(pv.Layout.Tree)
+function nodeLink(graphRoot,nodes){
+    var newChild = graphRoot.add(pv.Layout.Tree)
         .nodes(nodes)
         .orient("radial")
-    nodeTree.node.add(pv.Dot)
+    newChild.link.add(pv.Line)
+    newChild.node.add(pv.Dot)
         .fillStyle(color)
-        .size(function(d){return dotScale(d.nodeValue)})
-        .event("click",detail)    
-    nodeTree.label.add(pv.Label)
+        .size(function(d){
+            return dotScale(d.nodeValue)})
+        .event("click",detail)
+    newChild.label.add(pv.Label)
         .visible(function(d){ return d.lastChild == null })
-    nodeTree.link.add(pv.Line)
-    parent.render()
+    graphRoot.render()
 }
 
-function overlay(parent){
-    return parent.add(pv.Panel)
-}
 function detail(node){
-    alert("Detail: "+node.nodeName);
+    var author = node.nodeName;
+    var nodes = pv.dom(cluster(detailsByAuthor[author], 10)).nodes()
+    nodeLink(new pv.Panel().canvas("overlay").left(node.x).top(node.y), nodes)
 }
 
 var master = new pv.Panel().canvas("fig")
-var detailLayer = overlay(master)
-
 nodeLink(master, clusteredNodes)
