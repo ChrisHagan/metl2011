@@ -1,8 +1,27 @@
-img{
+img, image{
     border:1px solid black;
 }
-.stacked{
+#ipadContainer{
+    width:1024px;
+}
+#ipadContainer{
     position:absolute;
-    width:2048;
-    height:1536;
+    top:3em;
+    height:768px;
+    border:1px solid black;
+    text-align:center;
+}
+#fig{
+    width:100%;
+    height:100%;
+}
+#breadcrumb{
+    top:0;
+    background-color:gray;
+    position:fixed;
+    padding:0.5em;
+    text-align:left;
+}
+#slideDisplay{
+    top:0;
 }
