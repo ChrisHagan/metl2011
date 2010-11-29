@@ -14,12 +14,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
-using SandRibbonInterop;
 using MeTLLib.DataTypes;
-
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input.StylusPlugIns;
 using SandRibbonObjects;
 
 
@@ -37,11 +32,9 @@ namespace SandRibbon.Components.Canvas
     public class Text : AbstractCanvas
     {
         private double currentSize = 10.0;
-        private Dictionary<string, List<MeTLLib.DataTypes.TargettedTextBox>> userText;
         private FontFamily currentFamily = new FontFamily("Arial");
         public Text()
         {
-            userText = new Dictionary<String, List<MeTLLib.DataTypes.TargettedTextBox>>();
             EditingMode = InkCanvasEditingMode.None;
             Background = Brushes.Transparent;
             Loaded += (a, b) =>
@@ -123,7 +116,6 @@ namespace SandRibbon.Components.Canvas
 
         private void MoveTo(int _slide)
         {
-            userText.Clear();
             myTextBox = null;
         }
         private bool focusable = true;
@@ -134,7 +126,7 @@ namespace SandRibbon.Components.Canvas
             {
                 if (box.GetType() == typeof(TextBox))
                 {
-                    MeTLLib.DataTypes.TextTag tag = ((TextBox)box).tag();
+                    var tag = ((TextBox)box).tag();
                     ((TextBox)box).Focusable = focusable && (tag.author == Globals.me);
                 }
             }
@@ -175,7 +167,7 @@ namespace SandRibbon.Components.Canvas
         private void receiveDirtyText(TargettedDirtyElement element)
         {
             if (!(element.target.Equals(target))) return;
-            if (!(element.slide == currentSlide)) return;
+            if (element.slide != currentSlide) return;
             Dispatcher.adoptAsync(delegate
             {
                 if (myTextBox != null && element.identifier == myTextBox.tag().id) return;
@@ -373,10 +365,7 @@ namespace SandRibbon.Components.Canvas
         }
         public void FlushText()
         {
-            Dispatcher.adoptAsync(delegate
-            {
-                Children.Clear();
-            });
+            Dispatcher.adoptAsync(() => Children.Clear());
         }
         private void resetTextbox(object obj)
         {
@@ -406,7 +395,6 @@ namespace SandRibbon.Components.Canvas
             currentSize = size;
             Dispatcher.adoptAsync(() =>
             {
-                var selection = GetSelectedElements();
                 if (myTextBox == null) return;
                 RemovePrivacyStylingFromElement(myTextBox);
                 myTextBox.FontSize = size;
@@ -470,7 +458,7 @@ namespace SandRibbon.Components.Canvas
             var currentTextbox = myTextBox;
             if (!Children.Contains(currentTextbox)) return;
             var decorations = currentTextbox.TextDecorations.Select(s => s.Location).Where(t => t.ToString() == "Underline");
-            if (decorations != null && decorations.Count() > 0)
+            if (decorations.Count() > 0)
                 currentTextbox.TextDecorations = new TextDecorationCollection();
             else
                 currentTextbox.TextDecorations = TextDecorations.Underline;
@@ -501,7 +489,7 @@ namespace SandRibbon.Components.Canvas
         public TextBox createNewTextbox()
         {
             var box = new TextBox();
-            box.tag(new MeTLLib.DataTypes.TextTag
+            box.tag(new TextTag
                         {
                             author = Globals.me,
                             privacy = privacy,
@@ -537,10 +525,10 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             if (currentTag.privacy != Globals.privacy)
             {
-                Commands.SendDirtyText.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, currentTag.privacy, currentTag.id));
+                Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(currentSlide, Globals.me, target, currentTag.privacy, currentTag.id));
                 currentTag.privacy = privacy;
                 box.tag(currentTag);
-                Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(currentSlide, Globals.me, target, currentTag.privacy, box));
+                Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(currentSlide, Globals.me, target, currentTag.privacy, box));
             }
             myTextBox = null;
             textBoxSelected = false;
@@ -557,8 +545,8 @@ namespace SandRibbon.Components.Canvas
         }
         private void updateTools()
         {
-            bool strikethrough = false;
-            bool underline = false;
+            var strikethrough = false;
+            var underline = false;
             if (myTextBox.TextDecorations.Count > 0)
             {
                 strikethrough = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
@@ -609,10 +597,12 @@ namespace SandRibbon.Components.Canvas
             UndoHistory.Queue(
             () =>
             {
+                ClearAdorners();
                 dirtyTextBoxWithoutHistory(box);
             },
             () =>
             {
+                ClearAdorners();
                 sendTextWithoutHistory(box, intendedPrivacy);
             });
             GlobalTimers.resetSyncTimer();
@@ -831,21 +821,34 @@ namespace SandRibbon.Components.Canvas
         {
             if (me != "projector")
             {
-                Dispatcher.adopt(delegate{
-                    List<UIElement> selectedElements = new List<UIElement>();
-                    selectedElements = GetSelectedElements().ToList();
-                    foreach (System.Windows.Controls.TextBox textBox in selectedElements.Where(i =>
-                        i is System.Windows.Controls.TextBox
-                        && ((System.Windows.Controls.TextBox)i).tag().privacy != newPrivacy))
-                    {
-                        var oldTag = ((TextBox)textBox).tag();
-                        oldTag.privacy = newPrivacy;
-                        dirtyTextBoxWithoutHistory(textBox);
-                        ((TextBox)textBox).tag(oldTag);
-                        sendText(textBox, newPrivacy);
-                    }
-                    Select(new List<UIElement>());
-                });
+                
+                var selectedElements = GetSelectedElements().ToList();
+                
+                Action redo = () => Dispatcher.adopt(delegate
+                     {
+                          var mySelectedElements = selectedElements.Select(t => Clone((TextBox)t));
+                         foreach (TextBox textBox in mySelectedElements.Where(i => i.tag(). privacy != newPrivacy))
+                         {
+                             var oldTag = ((TextBox)textBox).tag();
+                             oldTag.privacy = newPrivacy;
+                             dirtyTextBoxWithoutHistory(textBox);
+                             ((TextBox)textBox).tag(oldTag);
+                             sendTextWithoutHistory(textBox, newPrivacy);
+                         }
+                     });
+                Action undo = () =>
+                      {
+                          var mySelectedElements = selectedElements.Select(t => Clone((TextBox)t));
+                          foreach (TextBox box in mySelectedElements)
+                          {
+                                if(Children.ToList().Where(tb => ((TextBox)tb).tag().id == box.tag().id).ToList().Count != 0)
+                                    dirtyTextBoxWithoutHistory((TextBox)Children.ToList().Where(tb => ((TextBox)tb).tag().id == box.tag().id).ToList().First());
+                                sendTextWithoutHistory(box, box.tag().privacy);
+
+                          }
+                      };
+                redo();
+                UndoHistory.Queue(undo, redo);
             }
         }
     }

@@ -9,7 +9,6 @@
     xmlns:chrome="clr-namespace:SandRibbon.Chrome"
     xmlns:tabs="clr-namespace:SandRibbon.Tabs"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     AllowDrop="True"
     Title="MeTL Presenter"
     x:Name="ribbonWindow"

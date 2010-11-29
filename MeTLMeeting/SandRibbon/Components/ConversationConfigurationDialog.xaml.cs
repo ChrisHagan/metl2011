@@ -207,7 +207,7 @@ namespace SandRibbon.Components
                     break;
             }
         }
-        private void handleConversationDialogueCompletion()
+        private PowerpointSpec handleConversationDialogueCompletion()
         {
             switch (dialogMode)
             {
@@ -216,13 +216,13 @@ namespace SandRibbon.Components
                     {
                         try
                         {
-                            Commands.UploadPowerpoint.Execute(new PowerpointSpec
+                             return new PowerpointSpec
                             {
                                 File = importFile,
                                 Details = details,
                                 Type = importType,
                                 Magnification = Globals.UserOptions.powerpointImportScale == 2 ? 2 : 1 
-                            });
+                            };
                         }
                         catch (Exception e)
                         {
@@ -233,7 +233,7 @@ namespace SandRibbon.Components
                         {
                             Commands.PowerpointFinished.ExecuteAsync(null);
                         }
-                        return;
+                        return null;
                     }
                     else
                     {
@@ -254,6 +254,7 @@ namespace SandRibbon.Components
                     break;
             }
             Commands.PowerpointFinished.ExecuteAsync(null);
+            return null;
         }
         private void Create(object sender, ExecutedRoutedEventArgs e)
         {
@@ -337,17 +338,18 @@ namespace SandRibbon.Components
         {
             conversationNameTextBox.SelectAll();
         }
-        internal void Import()
+        internal PowerpointSpec Import()
         {
             var myImportType = Globals.UserOptions.powerpointImportScale == 3 ? PowerPointLoader.PowerpointImportType.Shapes : PowerPointLoader.PowerpointImportType.Image;
-            if (importFile == null) return;
+            if (importFile == null) return null;
              dialogMode = ConversationConfigurationMode.IMPORT;
              importType = myImportType;
              var suggestedName = generatePresentationTitle(ConversationDetails.DefaultName(Globals.me), importFile );
              details = new ConversationDetails
                     (suggestedName, "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
             if (checkConversation(details))
-                handleConversationDialogueCompletion();
+                return handleConversationDialogueCompletion();
+            return null;
         }
     }
 }

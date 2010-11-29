@@ -217,21 +217,24 @@ namespace SandRibbon.Components.Canvas
             UndoHistory.Queue(
                 () =>
                 {
+                    ClearAdorners();
                     var existingStroke = Strokes.Where(s => s.sum().checksum == thisStroke.sum().checksum).FirstOrDefault();
                     if (existingStroke != null)
                     {
                         Strokes.Remove(existingStroke);
                         doMyStrokeRemovedExceptHistory(existingStroke);
                     }
-                    addAdorners();
                 },
                 () =>
                 {
+                    ClearAdorners();
                     if (Strokes.Where(s => s.sum().checksum == thisStroke.sum().checksum).Count() == 0)
                     {
                         Strokes.Add(thisStroke);
                         doMyStrokeAddedExceptHistory(thisStroke, thisStroke.tag().privacy);
                     }
+                    Select(new StrokeCollection(new [] {thisStroke}));
+                    addAdorners();
                 });
         }
         private void doMyStrokeAddedExceptHistory(Stroke stroke, string thisPrivacy)
@@ -357,6 +360,7 @@ namespace SandRibbon.Components.Canvas
             if (me == "projector") return;
             var selectedStrokes = new List<Stroke>();
             Dispatcher.adopt(() => selectedStrokes = GetSelectedStrokes().ToList());
+            if (selectedStrokes.Count == 0) return;
             Action redo = () =>
             {
 
