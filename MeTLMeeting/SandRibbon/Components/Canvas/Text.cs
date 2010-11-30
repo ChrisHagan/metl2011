@@ -48,22 +48,14 @@ namespace SandRibbon.Components.Canvas
             SelectionChanging += selectingText;
             SelectionResizing += dirtyText;
             SelectionResized += SendTextBoxes;
-            toggleFontBold = new DelegateCommand<object>(toggleBold, canUseTextCommands);
-            Commands.ToggleBold.RegisterCommand(toggleFontBold);
-            toggleFontItalic = new DelegateCommand<object>(toggleItalics, canUseTextCommands);
-            Commands.ToggleItalic.RegisterCommand(toggleFontItalic);
-            toggleFontUnderline = new DelegateCommand<object>(toggleUnderline, canUseTextCommands);
-            Commands.ToggleUnderline.RegisterCommand(toggleFontUnderline);
-            toggleFontStrikethrough = new DelegateCommand<object>(toggleStrikethrough, canUseTextCommands);
-            Commands.ToggleStrikethrough.RegisterCommand(toggleFontStrikethrough);
-            familyChanged = new DelegateCommand<FontFamily>(setFont, canUseTextCommands);
-            Commands.FontChanged.RegisterCommand(familyChanged);
-            sizeChanged = new DelegateCommand<double>(setTextSize, canUseTextCommands);
-            Commands.FontSizeChanged.RegisterCommand(sizeChanged);
-            colorChanged = new DelegateCommand<Color>(setTextColor, canUseTextCommands);
-            Commands.SetTextColor.RegisterCommand(colorChanged);
-            reset = new DelegateCommand<object>(resetTextbox, canUseTextCommands);
-            Commands.RestoreTextDefaults.RegisterCommand(reset);
+            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(toggleBold, canUseTextCommands));
+            Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalics, canUseTextCommands));
+            Commands.ToggleUnderline.RegisterCommand( new DelegateCommand<object>(toggleUnderline, canUseTextCommands));
+            Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(toggleStrikethrough, canUseTextCommands));
+            Commands.FontChanged.RegisterCommand( new DelegateCommand<FontFamily>(setFont, canUseTextCommands));
+            Commands.FontSizeChanged.RegisterCommand(new DelegateCommand<double>(setTextSize, canUseTextCommands));
+            Commands.SetTextColor.RegisterCommand(new DelegateCommand<Color>(setTextColor, canUseTextCommands));
+            Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(resetTextbox, canUseTextCommands));
             Commands.EstablishPrivileges.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
             Commands.ReceiveTextBox.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.TargettedTextBox>(ReceiveTextBox));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
@@ -83,7 +75,7 @@ namespace SandRibbon.Components.Canvas
         private void deleteSelectedItems(object obj)
         {
             if(GetSelectedElements().Count == 0) return;
-            var selectedElements = GetSelectedElements().Select(b => Clone((TextBox)b)).ToList();
+            var selectedElements = GetSelectedElements().Select(b => Clone((MeTLTextBox)b)).ToList();
             if (selectedElements.Count == 0) return;
             Action undo = () =>
                               {
@@ -92,9 +84,10 @@ namespace SandRibbon.Components.Canvas
                                   {
                                       myTextBox = box;
                                       selection.Add(box);
-                                      if(Children.ToList().Where(c => ((TextBox)c).tag().id == box.tag().id).ToList().Count == 0)
+                                      if(Children.ToList().Where(c => ((MeTLTextBox)c).tag().id == box.tag().id).ToList().Count == 0)
                                           Children.Add(box);
                                       box.TextChanged += SendNewText;
+                                      box.PreviewTextInput += box_PreviewTextInput;
                                       sendTextWithoutHistory(box, box.tag().privacy);
                                   }
                                   Select(selection);
@@ -124,10 +117,10 @@ namespace SandRibbon.Components.Canvas
             focusable = layer == "Text";
             foreach (var box in Children)
             {
-                if (box.GetType() == typeof(TextBox))
+                if (box.GetType() == typeof(MeTLTextBox))
                 {
-                    var tag = ((TextBox)box).tag();
-                    ((TextBox)box).Focusable = focusable && (tag.author == Globals.me);
+                    var tag = ((MeTLTextBox)box).tag();
+                    ((MeTLTextBox)box).Focusable = focusable && (tag.author == Globals.me);
                 }
             }
         }
@@ -139,8 +132,8 @@ namespace SandRibbon.Components.Canvas
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
             if (!Globals.isAuthor || Globals.conversationDetails.Permissions == MeTLLib.DataTypes.Permissions.LECTURE_PERMISSIONS) return;
-            if (element.GetType() != typeof(TextBox)) return;
-            var box = (TextBox)element;
+            if (element.GetType() != typeof(MeTLTextBox)) return;
+            var box = (MeTLTextBox)element;
             Dispatcher.adopt(delegate
             {
                 updateSelectionAdorners();
@@ -156,11 +149,11 @@ namespace SandRibbon.Components.Canvas
                     RemovePrivacyStylingFromElement(element);
             });
         }
-        private void dirtyTextBoxWithoutHistory(TextBox box)
+        private void dirtyTextBoxWithoutHistory(MeTLTextBox box)
         {
             RemovePrivacyStylingFromElement(box);
-            if (Children.ToList().Where(c => ((TextBox)c).tag().id == box.tag().id).ToList().Count != 0)
-                Children.Remove(Children.ToList().Where(b => ((TextBox)b).tag().id == box.tag().id).First());
+            if (Children.ToList().Where(c => ((MeTLTextBox)c).tag().id == box.tag().id).ToList().Count != 0)
+                Children.Remove(Children.ToList().Where(b => ((MeTLTextBox)b).tag().id == box.tag().id).First());
             Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(currentSlide, Globals.me, target, box.tag().privacy, box.tag().id));
         }
 
@@ -174,7 +167,7 @@ namespace SandRibbon.Components.Canvas
                 if (element.author == me) return;
                 for (int i = 0; i < Children.Count; i++)
                 {
-                    var currentTextbox = (TextBox)Children[i];
+                    var currentTextbox = (MeTLTextBox)Children[i];
                     if (element.identifier.Equals(currentTextbox.tag().id))
                         Children.Remove(currentTextbox);
                 }
@@ -193,14 +186,7 @@ namespace SandRibbon.Components.Canvas
             set
             {
                 base.canEdit = value;
-                toggleFontBold.RaiseCanExecuteChanged();
-                toggleFontItalic.RaiseCanExecuteChanged();
-                toggleFontUnderline.RaiseCanExecuteChanged();
-                toggleFontStrikethrough.RaiseCanExecuteChanged();
-                familyChanged.RaiseCanExecuteChanged();
-                sizeChanged.RaiseCanExecuteChanged();
-                colorChanged.RaiseCanExecuteChanged();
-                reset.RaiseCanExecuteChanged();
+                requeryTextCommands(); 
             }
         }
 
@@ -219,7 +205,7 @@ namespace SandRibbon.Components.Canvas
         {
             var selectedElements = GetSelectedElements();
             if (selectedElements.Count == 0) return;
-            var publicElements = selectedElements.Where(t => ((TextBox)t).tag().privacy.ToLower() == "public").ToList();
+            var publicElements = selectedElements.Where(t => ((MeTLTextBox)t).tag().privacy.ToLower() == "public").ToList();
             string privacyChoice;
             if (publicElements.Count == 0)
                 privacyChoice = "show";
@@ -227,7 +213,7 @@ namespace SandRibbon.Components.Canvas
                 privacyChoice = "hide";
             else
                 privacyChoice = "both";
-            foreach (TextBox box in GetSelectedElements().Where(e => e is TextBox).ToList())
+            foreach (MeTLTextBox box in GetSelectedElements().Where(e => e is MeTLTextBox).ToList())
             {
                 if (box != null)
                     box.UpdateLayout();
@@ -242,7 +228,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (inMeeting()) return elements;
             var myText = new List<UIElement>();
-            foreach (TextBox text in elements)
+            foreach (MeTLTextBox text in elements)
             {
                 if (text.tag().author == Globals.me)
                     myText.Add(text);
@@ -252,7 +238,7 @@ namespace SandRibbon.Components.Canvas
         private void SendTextBoxes(object sender, EventArgs e)
         {
             ClearAdorners();
-            foreach (TextBox box in GetSelectedElements())
+            foreach (MeTLTextBox box in GetSelectedElements())
             {
                 myTextBox = box;
                 sendText(box, box.tag().privacy);
@@ -264,24 +250,24 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             foreach (var box in GetSelectedElements())
             {
-                myTextBox = (TextBox)box;
+                myTextBox = (MeTLTextBox)box;
             }
         }
-        List<TextBox> boxesAtTheStart = new List<TextBox>();
+        List<MeTLTextBox> boxesAtTheStart = new List<MeTLTextBox>();
         private void textMovingorResizing(object sender, InkCanvasSelectionEditingEventArgs e)
         {
             boxesAtTheStart.Clear();
-            boxesAtTheStart = GetSelectedElements().Select(tb => Clone((TextBox)tb)).ToList();
+            boxesAtTheStart = GetSelectedElements().Select(tb => Clone((MeTLTextBox)tb)).ToList();
         }
         private void textMovedorResized(object sender, EventArgs e)
         {
             var startingText = boxesAtTheStart.Select(Clone).ToList();
-            var selectedElements =GetSelectedElements().Select(tb => Clone((TextBox)tb)).ToList();
+            var selectedElements =GetSelectedElements().Select(tb => Clone((MeTLTextBox)tb)).ToList();
             Action undo = () =>
               {
                   ClearAdorners();
                   var mySelectedElements = selectedElements.Select(Clone);
-                  foreach (TextBox box in mySelectedElements)
+                  foreach (MeTLTextBox box in mySelectedElements)
                   {
                       removeBox(box);
                   }
@@ -313,19 +299,20 @@ namespace SandRibbon.Components.Canvas
             UndoHistory.Queue(undo, redo);
         }
 
-        private void removeBox(TextBox box)
+        private void removeBox(MeTLTextBox box)
         {
             myTextBox = box;
             dirtyTextBoxWithoutHistory(box);
             myTextBox = null;
         }
 
-        private void sendBox(TextBox box)
+        private void sendBox(MeTLTextBox box)
         {
             myTextBox = box;
-            if(Children.ToList().Where(c => ((TextBox)c).tag().id == box.tag().id).ToList().Count == 0)
+            if(Children.ToList().Where(c => ((MeTLTextBox)c).tag().id == box.tag().id).ToList().Count == 0)
                 Children.Add(box);
             box.TextChanged += SendNewText;
+            box.PreviewTextInput += box_PreviewTextInput;
             sendTextWithoutHistory(box, box.tag().privacy);
         }
 
@@ -335,26 +322,26 @@ namespace SandRibbon.Components.Canvas
             set
             {
                 textboxSelectedProperty = value;
-                toggleFontBold.RaiseCanExecuteChanged();
-                colorChanged.RaiseCanExecuteChanged();
-                toggleFontItalic.RaiseCanExecuteChanged();
-                toggleFontUnderline.RaiseCanExecuteChanged();
-                toggleFontStrikethrough.RaiseCanExecuteChanged();
-                familyChanged.RaiseCanExecuteChanged();
-                sizeChanged.RaiseCanExecuteChanged();
-                reset.RaiseCanExecuteChanged();
+                requeryTextCommands();
             }
         }
+
+        private void requeryTextCommands()
+        {
+            Commands.RequerySuggested(new []{
+                                                Commands.ToggleBold, 
+                                                Commands.ToggleUnderline, 
+                                                Commands.ToggleItalic, 
+                                                Commands.FontChanged,
+                                                Commands.FontSizeChanged, 
+                                                Commands.RestoreTextDefaults,
+                                                Commands.ToggleStrikethrough,
+                                                Commands.SetTextColor
+                                            });
+        }
+
         private Color currentColor = Colors.Black;
-        private TextBox myTextBox;
-        public DelegateCommand<object> toggleFontBold;
-        public DelegateCommand<object> toggleFontItalic;
-        public DelegateCommand<object> toggleFontUnderline;
-        public DelegateCommand<object> toggleFontStrikethrough;
-        public DelegateCommand<FontFamily> familyChanged;
-        public DelegateCommand<double> sizeChanged;
-        public DelegateCommand<Color> colorChanged;
-        public DelegateCommand<object> reset;
+        private MeTLTextBox myTextBox;
 
         private void setInkCanvasMode(string modeString)
         {
@@ -372,7 +359,7 @@ namespace SandRibbon.Components.Canvas
             if (myTextBox == null) return;
             resetText(myTextBox);
         }
-        private void resetText(TextBox box)
+        private void resetText(MeTLTextBox box)
         {
             RemovePrivacyStylingFromElement(box);
             currentColor = Colors.Black;
@@ -469,9 +456,21 @@ namespace SandRibbon.Components.Canvas
         {
             if (myTextBox == null) return;
             var currentTextbox = myTextBox;
-            currentTextbox.FontWeight = currentTextbox.FontWeight == FontWeights.Bold ? FontWeights.Normal : FontWeights.Bold;
-            sendText(currentTextbox);
-            updateTools();
+            var currentWeight = currentTextbox.FontWeight;
+            Action undo = () =>
+                              {
+                                    currentTextbox.FontWeight = currentWeight; 
+                                    sendTextWithoutHistory(currentTextbox, currentTextbox.tag().privacy);
+                                    updateTools();
+                              };
+            Action redo = () =>
+                              {
+                                    currentTextbox.FontWeight = currentWeight == FontWeights.Bold ? FontWeights.Normal : FontWeights.Bold;
+                                    sendTextWithoutHistory(currentTextbox, currentTextbox.tag().privacy);
+                                    updateTools();
+                              };
+            redo();
+            UndoHistory.Queue(undo, redo);
         }
         private void placeCursor(object sender, MouseButtonEventArgs e)
         {
@@ -479,16 +478,16 @@ namespace SandRibbon.Components.Canvas
             if (!canEdit) return;
             var pos = e.GetPosition(this);
             var source = (InkCanvas)sender;
-            TextBox box = createNewTextbox();
+            MeTLTextBox box = createNewTextbox();
             Children.Add(box);
             SetLeft(box, pos.X);
             SetTop(box, pos.Y);
             myTextBox = box;
             box.Focus();
         }
-        public TextBox createNewTextbox()
+        public MeTLTextBox createNewTextbox()
         {
-            var box = new TextBox();
+            var box = new MeTLTextBox();
             box.tag(new TextTag
                         {
                             author = Globals.me,
@@ -498,6 +497,7 @@ namespace SandRibbon.Components.Canvas
             box.FontFamily = currentFamily;
             box.FontSize = currentSize;
             box.Foreground = new SolidColorBrush(currentColor);
+            box.UndoLimit = 0;
             box.LostFocus += (_sender, _args) =>
             {
                 myTextBox = null;
@@ -505,22 +505,27 @@ namespace SandRibbon.Components.Canvas
             };
             return applyDefaultAttributes(box);
         }
-        private TextBox applyDefaultAttributes(TextBox box)
+        private MeTLTextBox applyDefaultAttributes(MeTLTextBox box)
         {
             box.AcceptsReturn = true;
             box.TextWrapping = TextWrapping.WrapWithOverflow;
             box.GotFocus += textboxGotFocus;
             box.LostFocus += textboxLostFocus;
+            box.PreviewTextInput += box_PreviewTextInput;
             box.TextChanged += SendNewText;
+            box.IsUndoEnabled = false;
+            box.UndoLimit = 0;
             box.BorderThickness = new Thickness(0);
             box.BorderBrush = new SolidColorBrush(Colors.Transparent);
             box.Background = new SolidColorBrush(Colors.Transparent);
             box.Focusable = canEdit;
             return box;
         }
+
+      
         private void textboxLostFocus(object sender, RoutedEventArgs e)
         {
-            var box = (TextBox)sender;
+            var box = (MeTLTextBox)sender;
             var currentTag = box.tag();
             ClearAdorners();
             if (currentTag.privacy != Globals.privacy)
@@ -539,7 +544,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void textboxGotFocus(object sender, RoutedEventArgs e)
         {
-            myTextBox = (TextBox)sender;
+            myTextBox = (MeTLTextBox)sender;
             updateTools();
             textBoxSelected = true;
         }
@@ -564,20 +569,47 @@ namespace SandRibbon.Components.Canvas
                            };
             Commands.TextboxFocused.ExecuteAsync(info);
         }
-
+        private void box_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            originalText = ((MeTLTextBox)sender).Text;
+            e.Handled = false;
+        }
         public static Timer typingTimer = null;
+        private string originalText;
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
-            var box = (TextBox)sender;
+
+
+            var box = (MeTLTextBox)sender;
+            Console.WriteLine("\n\nXXXX SENDNEWTEXT SAYS " + originalText + "XXXX\n\n\n");
+
+            var undoText = originalText.Clone().ToString();
             ApplyPrivacyStylingToElement(box, box.tag().privacy);
             box.Height = Double.NaN;
+            Action undo = () =>
+            {
+                var mybox = Clone(box);
+                var myText = undoText.Clone().ToString();
+                dirtyTextBoxWithoutHistory(mybox);
+                mybox.Text = myText;
+                sendTextWithoutHistory(mybox, mybox.tag().privacy);
+                mybox.TextChanged += SendNewText;
+            };
+            Action redo = () =>
+            {
+                var mybox = Clone(box);
+                dirtyTextBoxWithoutHistory(mybox);
+                sendTextWithoutHistory(mybox, mybox.tag().privacy);
+                mybox.TextChanged += SendNewText;
+            }; 
+            UndoHistory.Queue(undo, redo) ;
             if (typingTimer == null)
             {
                 typingTimer = new Timer(delegate
                 {
                     Dispatcher.adoptAsync(delegate
                                                     {
-                                                        sendText((TextBox)sender);
+                                                        sendTextWithoutHistory((MeTLTextBox)sender, privacy);
                                                         typingTimer = null;
                                                     });
                 }, null, 600, Timeout.Infinite);
@@ -588,11 +620,11 @@ namespace SandRibbon.Components.Canvas
                 typingTimer.Change(600, Timeout.Infinite);
             }
         }
-        public void sendText(TextBox box)
+        public void sendText(MeTLTextBox box)
         {
             sendText(box, Globals.privacy);
         }
-        public void sendText(TextBox box, string intendedPrivacy)
+        public void sendText(MeTLTextBox box, string intendedPrivacy)
         {
             UndoHistory.Queue(
             () =>
@@ -609,7 +641,7 @@ namespace SandRibbon.Components.Canvas
             sendTextWithoutHistory(box, intendedPrivacy);
             if (GetSelectedElements().Count > 0) addAdorners();
         }
-        private void sendTextWithoutHistory(TextBox box, string thisPrivacy)
+        private void sendTextWithoutHistory(MeTLTextBox box, string thisPrivacy)
         {
             RemovePrivacyStylingFromElement(box);
             if (box.tag().privacy != Globals.privacy)
@@ -620,7 +652,7 @@ namespace SandRibbon.Components.Canvas
             Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(currentSlide, Globals.me, target, thisPrivacy, box));
         }
 
-        private void setAppropriatePrivacyHalo(TextBox box)
+        private void setAppropriatePrivacyHalo(MeTLTextBox box)
         {
             if (!Children.Contains(box)) return;
             ApplyPrivacyStylingToElement(box, privacy);
@@ -638,7 +670,7 @@ namespace SandRibbon.Components.Canvas
         public void ReceiveTextBox(MeTLLib.DataTypes.TargettedTextBox targettedBox)
         {
             if (targettedBox.target != target) return;
-            if (targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box) && me != "projector")
+            if (targettedBox.author == Globals.me && alreadyHaveThisTextBox(targettedBox.box.toMeTLTextBox()) && me != "projector")
             {
                 var box = textBoxFromId(targettedBox.identity);
                 if (box != null)
@@ -656,15 +688,15 @@ namespace SandRibbon.Components.Canvas
             var doomedChildren = new List<FrameworkElement>();
             foreach (var child in Children)
             {
-                if (child is TextBox)
-                    if (((TextBox)child).tag().id.Equals(box.tag().id))
+                if (child is MeTLTextBox)
+                    if (((MeTLTextBox)child).tag().id.Equals(box.tag().id))
                         doomedChildren.Add((FrameworkElement)child);
             }
             foreach (var child in doomedChildren)
                 Children.Remove(child);
         }
 
-        private bool alreadyHaveThisTextBox(TextBox box)
+        private bool alreadyHaveThisTextBox(MeTLTextBox box)
         {
             bool result = false;
             Dispatcher.adopt(() =>
@@ -672,19 +704,19 @@ namespace SandRibbon.Components.Canvas
                 var boxId = box.tag().id;
                 var privacy = box.tag().privacy;
                 foreach (var text in Children)
-                    if (text is TextBox)
-                        if (((TextBox)text).tag().id == boxId && ((TextBox)text).tag().privacy == privacy) result = true;
+                    if (text is MeTLTextBox)
+                        if (((MeTLTextBox)text).tag().id == boxId && ((MeTLTextBox)text).tag().privacy == privacy) result = true;
             });
             return result;
         }
-        private TextBox textBoxFromId(string boxId)
+        private MeTLTextBox textBoxFromId(string boxId)
         {
-            TextBox result = null;
+            MeTLTextBox result = null;
             Dispatcher.adopt(() =>
             {
                 foreach (var text in Children)
-                    if (text.GetType() == typeof(TextBox))
-                        if (((TextBox)text).tag().id == boxId) result = (TextBox)text;
+                    if (text.GetType() == typeof(MeTLTextBox))
+                        if (((MeTLTextBox)text).tag().id == boxId) result = (MeTLTextBox)text;
             });
             return result;
         }
@@ -701,7 +733,7 @@ namespace SandRibbon.Components.Canvas
                                               (targettedBox.privacy == "public" || targettedBox.author == Globals.me))
                                           {
 
-                                              var box = targettedBox.box;
+                                              var box = targettedBox.box.toMeTLTextBox();
                                               removeDoomedTextBoxes(targettedBox);
                                               Children.Add(applyDefaultAttributes(box));
                                               if (!(targettedBox.author == Globals.me && focusable))
@@ -710,11 +742,11 @@ namespace SandRibbon.Components.Canvas
                                           }
                                       });
         }
-        public TextBox Clone(TextBox OldBox)
+        public MeTLTextBox Clone(MeTLTextBox OldBox)
         {
 
 
-            var box = new TextBox();
+            var box = new MeTLTextBox();
             box.AcceptsReturn = true;
             box.TextWrapping = TextWrapping.WrapWithOverflow;
             box.GotFocus += textboxGotFocus;
@@ -732,7 +764,7 @@ namespace SandRibbon.Components.Canvas
             SetTop(box, GetTop(OldBox));
             return box;
         }
-        public static IEnumerable<Point> getTextPoints(TextBox text)
+        public static IEnumerable<Point> getTextPoints(MeTLTextBox text)
         {
             if (text == null) return null;
             var y = InkCanvas.GetTop(text);
@@ -752,7 +784,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (Clipboard.ContainsText())
             {
-                TextBox box = createNewTextbox();
+                MeTLTextBox box = createNewTextbox();
                 Children.Add(box);
                 SetLeft(box, 15);
                 SetTop(box, 15);
@@ -763,14 +795,14 @@ namespace SandRibbon.Components.Canvas
         }
         protected override void HandleCopy()
         {
-            foreach (var box in GetSelectedElements().Where(e => e is TextBox))
-                Clipboard.SetText(((TextBox)box).Text);
+            foreach (var box in GetSelectedElements().Where(e => e is MeTLTextBox))
+                Clipboard.SetText(((MeTLTextBox)box).Text);
         }
         protected override void HandleCut()
         {
             var listToCut = new List<MeTLLib.DataTypes.TargettedDirtyElement>();
-            var selectedElements =GetSelectedElements().Select(tb => Clone((TextBox)tb)).ToList().Select(Clone);
-            foreach (TextBox box in GetSelectedElements().Where(e => e is TextBox))
+            var selectedElements =GetSelectedElements().Select(tb => Clone((MeTLTextBox)tb)).ToList().Select(Clone);
+            foreach (MeTLTextBox box in GetSelectedElements().Where(e => e is MeTLTextBox))
             {
 
                 Clipboard.SetText(box.Text);
@@ -792,7 +824,7 @@ namespace SandRibbon.Components.Canvas
                                      Clipboard.GetText();
                                  foreach (var box in mySelectedElements)
                                  {
-                                    sendBox((TextBox)box);
+                                    sendBox((MeTLTextBox)box);
                                     selection.Add(box);
                                  }
                                  Select(selection);
@@ -804,13 +836,13 @@ namespace SandRibbon.Components.Canvas
         public override void showPrivateContent()
         {
             foreach (UIElement child in Children)
-                if (child.GetType() == typeof(System.Windows.Controls.TextBox) && ((System.Windows.Controls.TextBox)child).tag().privacy == "private")
+                if (child.GetType() == typeof(MeTLTextBox) && ((MeTLTextBox)child).tag().privacy == "private")
                     child.Visibility = Visibility.Visible;
         }
         public override void hidePrivateContent()
         {
             foreach (UIElement child in Children)
-                if (child.GetType() == typeof(System.Windows.Controls.TextBox) && ((System.Windows.Controls.TextBox)child).tag().privacy == "private")
+                if (child.GetType() == typeof(MeTLTextBox) && ((MeTLTextBox)child).tag().privacy == "private")
                     child.Visibility = Visibility.Collapsed;
         }
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
@@ -826,23 +858,23 @@ namespace SandRibbon.Components.Canvas
                 
                 Action redo = () => Dispatcher.adopt(delegate
                      {
-                          var mySelectedElements = selectedElements.Select(t => Clone((TextBox)t));
-                         foreach (TextBox textBox in mySelectedElements.Where(i => i.tag(). privacy != newPrivacy))
+                          var mySelectedElements = selectedElements.Select(t => Clone((MeTLTextBox)t));
+                         foreach (MeTLTextBox textBox in mySelectedElements.Where(i => i.tag(). privacy != newPrivacy))
                          {
-                             var oldTag = ((TextBox)textBox).tag();
+                             var oldTag = ((MeTLTextBox)textBox).tag();
                              oldTag.privacy = newPrivacy;
                              dirtyTextBoxWithoutHistory(textBox);
-                             ((TextBox)textBox).tag(oldTag);
+                             ((MeTLTextBox)textBox).tag(oldTag);
                              sendTextWithoutHistory(textBox, newPrivacy);
                          }
                      });
                 Action undo = () =>
                       {
-                          var mySelectedElements = selectedElements.Select(t => Clone((TextBox)t));
-                          foreach (TextBox box in mySelectedElements)
+                          var mySelectedElements = selectedElements.Select(t => Clone((MeTLTextBox)t));
+                          foreach (MeTLTextBox box in mySelectedElements)
                           {
-                                if(Children.ToList().Where(tb => ((TextBox)tb).tag().id == box.tag().id).ToList().Count != 0)
-                                    dirtyTextBoxWithoutHistory((TextBox)Children.ToList().Where(tb => ((TextBox)tb).tag().id == box.tag().id).ToList().First());
+                                if(Children.ToList().Where(tb => ((MeTLTextBox)tb).tag().id == box.tag().id).ToList().Count != 0)
+                                    dirtyTextBoxWithoutHistory((MeTLTextBox)Children.ToList().Where(tb => ((MeTLTextBox)tb).tag().id == box.tag().id).ToList().First());
                                 sendTextWithoutHistory(box, box.tag().privacy);
 
                           }
@@ -861,8 +893,61 @@ namespace SandRibbon.Components.Canvas
             var result = new Rect(boxOrigin, boxSize).Contains(point);
             return result;
         }
-        
+        public static MeTLTextBox toMeTLTextBox(this TextBox OldBox)
+        {
+            var box = new MeTLTextBox(); 
+            box.AcceptsReturn = true;
+            box.TextWrapping = TextWrapping.WrapWithOverflow;
+            box.BorderThickness = new Thickness(0);
+            box.BorderBrush = new SolidColorBrush(Colors.Transparent);
+            box.Background = new SolidColorBrush(Colors.Transparent);
+            box.tag(OldBox.tag());
+            box.FontFamily = OldBox.FontFamily;
+            box.FontSize = OldBox.FontSize;
+            box.Foreground = OldBox.Foreground;
+            box.Text = OldBox.Text;
+            InkCanvas.SetLeft(box, InkCanvas.GetLeft(OldBox));
+            InkCanvas.SetTop(box, InkCanvas.GetTop(OldBox));
+            return box;
+        }
+
     }
+    public class MeTLTextBox : System.Windows.Controls.TextBox
+    {
+        CommandBinding undoBinding;
+        CommandBinding redoBinding;
+
+        public MeTLTextBox()
+        {
+            UndoLimit = 1;
+        }
+
+        protected override void OnTextChanged(TextChangedEventArgs e)
+        {
+            if (undoBinding == null)
+            {
+                undoBinding = new CommandBinding(
+                    ApplicationCommands.Undo, new ExecutedRoutedEventHandler(UndoExecuted), null);
+                redoBinding = new CommandBinding(
+                    ApplicationCommands.Redo, new ExecutedRoutedEventHandler(RedoExecuted), null);
+
+                CommandBindings.Add(undoBinding);
+                CommandBindings.Add(redoBinding);
+            }
+            base.OnTextChanged(e);
+        }
+
+        private void UndoExecuted(object sender, ExecutedRoutedEventArgs args)
+        {
+            ApplicationCommands.Undo.Execute(null, Application.Current.MainWindow);
+            Commands.Undo.Execute(null);
+        }
+
+        private void RedoExecuted(object sender, ExecutedRoutedEventArgs args)
+        {
+            ApplicationCommands.Redo.Execute(null, Application.Current.MainWindow);
+        }
+    }  
     public class TextAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
     {
         public TextAutomationPeer(Text owner)

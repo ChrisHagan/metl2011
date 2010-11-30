@@ -181,7 +181,7 @@ namespace SandRibbon.Components.Sandpit
             {
                 IEnumerable<Point>  points;
                 if (child.GetType() == typeof(TextBox))
-                    points = Text.getTextPoints((TextBox) child);
+                    points = Text.getTextPoints((MeTLTextBox) child);
                 else
                     points = Image.getImagePoints((System.Windows.Controls.Image) child);
                 if(points != null)
@@ -210,7 +210,7 @@ namespace SandRibbon.Components.Sandpit
             {
                 IEnumerable<Point> points;
                 if (child.GetType() == typeof (TextBox))
-                    points = Text.getTextPoints((TextBox) child);
+                    points = Text.getTextPoints((MeTLTextBox) child);
                 else
                     points = Image.getImagePoints((System.Windows.Controls.Image) child);
                 if (points != null)
