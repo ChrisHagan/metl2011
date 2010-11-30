@@ -25,6 +25,12 @@ namespace SandRibbon.Quizzing
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
             Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(closeMe));
+            Closing += AnswerAQuiz_Closing;
+        }
+
+        void AnswerAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Commands.UnblockInput.Execute(null);
         }
 
         private void closeMe(object obj)

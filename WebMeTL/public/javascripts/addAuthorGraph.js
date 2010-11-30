@@ -100,6 +100,27 @@ var Authors = {
         newChild.label.add(pv.Label)
             .visible(function(d){ return d.lastChild == null })
         graphRoot.render()
+    },
+    force:function(){
+        var graphRoot = Master.panel();
+        var nodes = []
+        var links = []
+        var ptr = 0
+        _.each(frequenciesByAuthor, function(f,a){
+            nodes.push({freq:f,author:a})
+            links.push({source:ptr++,target:0,value:25})
+        })
+        var newChild = graphRoot.add(pv.Layout.Force)
+            .nodes(nodes)
+            .links(links)
+        newChild.link.add(pv.Line)
+        newChild.node.add(pv.Dot)
+            .size(function(d){return dotScale(d.freq)})
+            .fillStyle("red")
+            .anchor("center")
+            .add(pv.Label)
+            .text(function(d){return d.author})
+        graphRoot.render()
     }
 }
 var Conversations = {
@@ -137,24 +158,31 @@ var Conversations = {
 }
 var Conversation = {
     slides:function(node){
-        var side = 1024
+        var width = 1024
+        var height = 768
         var conversation = node.nodeValue
         var jid = parseInt(conversation.jid)
         var slideCount = parseInt(conversation.slideCount)
         var nodes = pv.range(jid+1, jid+slideCount)
         var graphRoot = new pv.Panel()
             .canvas("slideDisplay")
-            .width(side) 
-            .height(slideCount * side)
+            .width(width*2) 
+            .height(slideCount * height)
         graphRoot.add(pv.Image)
             .data(nodes)
-            .top(function(){return this.index * side})
-            .width(side)
-            .height(side)
+            .top(function(){return this.index * height})
+            .width(width)
+            .height(height)
             .url(function(i){
-                return "http://localhost:8080?width="+side+"&height="+side+"&server=deified&slide="+i
+                return "http://localhost:8080?width="+width+"&height="+height+"&server=deified&slide="+i
             })
             .strokeStyle("black")
+            .anchor("right")
+            .add(pv.Panel)
+                .width(width)
+                .height(height)
+                .top(function(d){return d.y - height /2})
+                .add(pv.Rule)
         graphRoot.render()
         Breadcrumb.add(conversation.title, function(){Conversation.slides(node)})
     }
@@ -171,7 +199,7 @@ var Breadcrumb = (function(){
         render:function(){
             container.html("")
             var recentCrumbs = [{label:"All authors", func:Authors.radial}]
-            _.each(trail.slice(-5), function(crumb){recentCrumbs.push(crumb)})
+            _.each(trail.slice(-10), function(crumb){recentCrumbs.push(crumb)})
             _.each(recentCrumbs, function(crumb){
                 container.append($("<span />").append(crumb.label.slice(0,15) + "->").click(function(){
                     scroll(0,0)

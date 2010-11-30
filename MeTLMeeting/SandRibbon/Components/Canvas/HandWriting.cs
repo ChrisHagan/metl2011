@@ -39,7 +39,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
-            Commands.DeleteSelectedItems.RegisterCommand(new DelegateCommand<object>(deleteSelectedItems));
+            Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
         }
         private void hideConversationSearchBox(object obj)
@@ -59,11 +59,9 @@ namespace SandRibbon.Components.Canvas
         }
         private void deleteSelectedItems(object obj)
         {
-            Dispatcher.adopt(delegate
-            {
-                deleteSelectedStrokes(null, null);
-                ClearAdorners();
-            });
+            if(GetSelectedStrokes().Count == 0) return;
+            deleteSelectedStrokes(null, null);
+            ClearAdorners();
         }
         private void HandWritingLoaded(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -219,21 +217,24 @@ namespace SandRibbon.Components.Canvas
             UndoHistory.Queue(
                 () =>
                 {
+                    ClearAdorners();
                     var existingStroke = Strokes.Where(s => s.sum().checksum == thisStroke.sum().checksum).FirstOrDefault();
                     if (existingStroke != null)
                     {
                         Strokes.Remove(existingStroke);
                         doMyStrokeRemovedExceptHistory(existingStroke);
                     }
-                    addAdorners();
                 },
                 () =>
                 {
+                    ClearAdorners();
                     if (Strokes.Where(s => s.sum().checksum == thisStroke.sum().checksum).Count() == 0)
                     {
                         Strokes.Add(thisStroke);
                         doMyStrokeAddedExceptHistory(thisStroke, thisStroke.tag().privacy);
                     }
+                    Select(new StrokeCollection(new [] {thisStroke}));
+                    addAdorners();
                 });
         }
         private void doMyStrokeAddedExceptHistory(Stroke stroke, string thisPrivacy)
@@ -359,6 +360,7 @@ namespace SandRibbon.Components.Canvas
             if (me == "projector") return;
             var selectedStrokes = new List<Stroke>();
             Dispatcher.adopt(() => selectedStrokes = GetSelectedStrokes().ToList());
+            if (selectedStrokes.Count == 0) return;
             Action redo = () =>
             {
 

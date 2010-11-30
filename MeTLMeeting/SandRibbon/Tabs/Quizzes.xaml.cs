@@ -131,7 +131,8 @@ namespace SandRibbon.Tabs
         private void quiz_Click(object sender, RoutedEventArgs e)
         {
             var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
-            new AnswerAQuiz(thisQuiz).Show();
+            Commands.BlockInput.ExecuteAsync("Answering a Quiz.");
+            new AnswerAQuiz(thisQuiz).ShowDialog();
         }
         private void importQuizSnapshot(string filename)
         {
@@ -150,7 +151,8 @@ namespace SandRibbon.Tabs
         }
         private void OpenResults(object sender, ExecutedRoutedEventArgs e)
         {
-            new ViewQuizResults(answers, activeQuizzes).Show();
+            Commands.BlockInput.ExecuteAsync("Viewing a quiz.");
+            new ViewQuizResults(answers, activeQuizzes).ShowDialog();
         }
     }
 }
