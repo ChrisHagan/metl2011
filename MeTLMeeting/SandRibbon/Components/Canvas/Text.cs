@@ -52,7 +52,6 @@ namespace SandRibbon.Components.Canvas
 
             Commands.UpdateTextStyling.RegisterCommand(new DelegateCommand<TextInformation>(updateStyling, canUseTextCommands));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(resetTextbox, canUseTextCommands));
-            
             Commands.EstablishPrivileges.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
             Commands.ReceiveTextBox.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.TargettedTextBox>(ReceiveTextBox));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
@@ -86,9 +85,7 @@ namespace SandRibbon.Components.Canvas
             UndoHistory.Queue(undo, redo);
             applyStylingTo(currentTextBox, info);
         }
-
-
-        private void applyStylingTo(MeTLTextBox currentTextBox, TextInformation info)
+        private static void applyStylingTo(MeTLTextBox currentTextBox, TextInformation info)
         {
             currentTextBox.FontStyle = info.italics ? FontStyles.Italic : FontStyles.Normal;
             currentTextBox.FontWeight = info.bold ? FontWeights.Bold : FontWeights.Normal;
@@ -100,11 +97,8 @@ namespace SandRibbon.Components.Canvas
             currentTextBox.FontSize = info.size;
             currentTextBox.FontFamily = info.family;
             currentTextBox.Foreground = new SolidColorBrush(info.color);
-
-
         }
-
-        private TextInformation getInfoOfBox(MeTLTextBox box)
+        private static TextInformation getInfoOfBox(MeTLTextBox box)
         {
             var underline = false;
             var strikethrough = false;
@@ -124,12 +118,10 @@ namespace SandRibbon.Components.Canvas
                            color = ((SolidColorBrush) box.Foreground).Color
                        };
         }
-
         private void hideConversationSearchBox(object obj)
         {
             addAdorners();
         }
-
         private void deleteSelectedItems(object obj)
         {
             if(GetSelectedElements().Count == 0) return;
@@ -191,7 +183,6 @@ namespace SandRibbon.Components.Canvas
         {
             if (!Globals.isAuthor || Globals.conversationDetails.Permissions == MeTLLib.DataTypes.Permissions.LECTURE_PERMISSIONS) return;
             if (element.GetType() != typeof(MeTLTextBox)) return;
-            var box = (MeTLTextBox)element;
             Dispatcher.adopt(delegate
             {
                 updateSelectionAdorners();
@@ -378,7 +369,7 @@ namespace SandRibbon.Components.Canvas
             }
         }
 
-        private void requeryTextCommands()
+        private static void requeryTextCommands()
         {
             Commands.RequerySuggested(new []{
                                                 Commands.UpdateTextStyling,
@@ -438,10 +429,6 @@ namespace SandRibbon.Components.Canvas
                            };
             Commands.TextboxFocused.ExecuteAsync(info);
             sendTextWithoutHistory(box, box.tag().privacy);
-        }
-        private bool canUseTextCommands(Color arg)
-        {
-            return canUseTextCommands(1.0);
         }
         private bool canUseTextCommands(object arg)
         {
@@ -559,6 +546,7 @@ namespace SandRibbon.Components.Canvas
         private string originalText;
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
+            if (originalText == null) return; 
             var box = (MeTLTextBox)sender;
             var undoText = originalText.Clone().ToString();
             ApplyPrivacyStylingToElement(box, box.tag().privacy);
@@ -742,56 +730,79 @@ namespace SandRibbon.Components.Canvas
         }
         protected override void HandlePaste()
         {
-            if (Clipboard.ContainsText())
+            if (!Clipboard.ContainsText()) return;
+            if (myTextBox != null)
+            {
+                var text = Clipboard.GetText();
+                myTextBox.Text = myTextBox.Text.Insert(myTextBox.CaretIndex, text);
+                sendTextWithoutHistory(myTextBox, myTextBox.tag().privacy);
+            }
+            else
             {
                 MeTLTextBox box = createNewTextbox();
                 Children.Add(box);
                 SetLeft(box, 15);
                 SetTop(box, 15);
                 box.Text = Clipboard.GetText();
-                Select(new [] {box});
+                Select(new[] {box});
                 addAdorners();
             }
         }
         protected override void HandleCopy()
         {
-            foreach (var box in GetSelectedElements().Where(e => e is MeTLTextBox))
-                Clipboard.SetText(((MeTLTextBox)box).Text);
+            if (myTextBox != null)
+            {
+                Clipboard.SetText(myTextBox.SelectedText);
+            }
+            else
+            {
+                foreach (var box in GetSelectedElements().Where(e => e is MeTLTextBox))
+                    Clipboard.SetText(((MeTLTextBox) box).Text);
+            }
         }
         protected override void HandleCut()
         {
-            var listToCut = new List<MeTLLib.DataTypes.TargettedDirtyElement>();
-            var selectedElements =GetSelectedElements().Select(tb => Clone((MeTLTextBox)tb)).ToList().Select(Clone);
-            foreach (MeTLTextBox box in GetSelectedElements().Where(e => e is MeTLTextBox))
+            if (myTextBox != null)
             {
+                var selection = myTextBox.SelectedText;
+                Clipboard.SetText(selection);
+                myTextBox.Text = myTextBox.Text.Remove(myTextBox.SelectionStart, myTextBox.SelectionLength);
 
-                Clipboard.SetText(box.Text);
-                listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, box.tag().privacy, box.tag().id));
             }
-            CutSelection();
-            ClearAdorners();
-            Action redo = () =>
-                             {
-                                 foreach (var element in listToCut)
-                                     Commands.SendDirtyText.ExecuteAsync(element);
-                             };
-            Action undo = () =>
-                             {
-                                 
-                                 var mySelectedElements = selectedElements.Select(t => t.clone());
-                                 List<UIElement> selection = new List<UIElement>();
-                                 foreach (var box in mySelectedElements)
-                                     Clipboard.GetText();
-                                 foreach (var box in mySelectedElements)
-                                 {
-                                    sendBox((MeTLTextBox)box);
-                                    selection.Add(box);
-                                 }
-                                 Select(selection);
-                                 addAdorners();
-                             };
-            UndoHistory.Queue(undo, redo);
-            redo();
+            else
+            {
+                var listToCut = new List<MeTLTextBox>();
+                var selectedElements = GetSelectedElements().Select(tb => Clone((MeTLTextBox) tb)).ToList().Select(Clone);
+                foreach (MeTLTextBox box in GetSelectedElements().Where(e => e is MeTLTextBox))
+                {
+
+                    Clipboard.SetText(box.Text);
+                    listToCut.Add(box);
+                }
+                ClearAdorners();
+                Action redo = () =>
+                                  {
+                                      foreach (var element in listToCut)
+                                          dirtyTextBoxWithoutHistory(element);
+                                  };
+                Action undo = () =>
+                                  {
+
+                                      var mySelectedElements = selectedElements.Select(t => t.clone());
+                                      List<UIElement> selection = new List<UIElement>();
+                                      foreach (var box in mySelectedElements)
+                                          Clipboard.GetText();
+                                      foreach (var box in mySelectedElements)
+                                      {
+                                          sendBox(box.toMeTLTextBox());
+                                          selection.Add(box);
+                                      }
+                                      Select(selection);
+                                      addAdorners();
+                                  };
+                UndoHistory.Queue(undo, redo);
+                redo();
+            }
         }
         public override void showPrivateContent()
         {
@@ -875,7 +886,7 @@ namespace SandRibbon.Components.Canvas
         }
 
     }
-    public class MeTLTextBox : System.Windows.Controls.TextBox
+    public class MeTLTextBox : TextBox
     {
         CommandBinding undoBinding;
         CommandBinding redoBinding;
@@ -883,17 +894,26 @@ namespace SandRibbon.Components.Canvas
         public MeTLTextBox()
         {
             UndoLimit = 1;
+            CommandManager.AddPreviewCanExecuteHandler(this, canExecute);
         }
+
+        private void canExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (e.Command == ApplicationCommands.Cut || e.Command == ApplicationCommands.Copy || e.Command == ApplicationCommands.Paste)
+            {
+                e.ContinueRouting = true;
+                e.Handled = true;
+                e.CanExecute = false;
+            }
+        }
+
 
         protected override void OnTextChanged(TextChangedEventArgs e)
         {
             if (undoBinding == null)
             {
-                undoBinding = new CommandBinding(
-                    ApplicationCommands.Undo, new ExecutedRoutedEventHandler(UndoExecuted), null);
-                redoBinding = new CommandBinding(
-                    ApplicationCommands.Redo, new ExecutedRoutedEventHandler(RedoExecuted), null);
-
+                undoBinding = new CommandBinding( ApplicationCommands.Undo, UndoExecuted, null);
+                redoBinding = new CommandBinding( ApplicationCommands.Redo, RedoExecuted, null);
                 CommandBindings.Add(undoBinding);
                 CommandBindings.Add(redoBinding);
             }
