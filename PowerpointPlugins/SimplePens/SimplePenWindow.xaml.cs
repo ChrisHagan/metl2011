@@ -81,6 +81,7 @@ namespace PowerpointJabber
         }
         private void setClickAdvanceOnAllSlides(bool state)
         {
+            //This is where we decide whether to try to workaround the ppt2007 presenter mode bug.
             if (shouldWorkaroundClickAdvance)
                 foreach (var slide in slides)
                     slide.setClickAdvance(state);
