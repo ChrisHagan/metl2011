@@ -9,18 +9,9 @@
     HorizontalAlignment="Right"
     AutomationProperties.AutomationId="privacyTools"
     >
-    <!--Margin="0 0 30 0"-->
     <dict:RibbonPanel>
         <dict:Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecuteForPrivacyTools" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
-        <!--dict:CheckBox x:Name="WorkPubliclyButton" Text="Work Publicly" Icon="..\Resources\Ribbon-Public.png" 
-                          ToolTip="{DynamicResource WorkPubliclyToolTip}" ClickMode="Release" Click="CheckBox_Click"
-                          IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/-->
-        <RadioButton GroupName="privacyButtons" x:Name="publicMode"  Tag="public" Content="Public" Checked="privacyChange"></RadioButton>
-        <RadioButton GroupName="privacyButtons" x:Name="privateMode" Tag="private" Content="Private" Checked="privacyChange"></RadioButton>
-        <!--<dict:Button Text="Become Private" Icon="..\Resources\Ribbon-Private.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="private"/>
-        <dict:Button Text="Become Public" Icon="..\Resources\Ribbon-Public.png" Command="{x:Static api:Commands.SetPrivacy}" CommandParameter="public"/>
-        <dict:Button Text="Make selection Public" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="public"/>
-        <dict:Button Text="Make selection Private" Command="{x:Static api:Commands.SetPrivacyOfItems}" CommandParameter="private"/>
-    -->
+        <RadioButton GroupName="privacyButtons" x:Name="publicMode"  ToolTip="{StaticResource WorkPubliclyToolTip}" Tag="public" Content="Public" Checked="privacyChange"></RadioButton>
+        <RadioButton GroupName="privacyButtons" x:Name="privateMode" ToolTip="{StaticResource WorkPrivatelyToolTip}" Tag="private" Content="Private" Checked="privacyChange"></RadioButton>
         </dict:RibbonPanel>
 </UserControl>

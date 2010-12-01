@@ -28,6 +28,7 @@ namespace SandRibbon.Components.Canvas
         public bool bold;
         public bool italics;
         public bool strikethrough;
+        public Color color;
     }
     public class Text : AbstractCanvas
     {
@@ -48,14 +49,10 @@ namespace SandRibbon.Components.Canvas
             SelectionChanging += selectingText;
             SelectionResizing += dirtyText;
             SelectionResized += SendTextBoxes;
-            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(toggleBold, canUseTextCommands));
-            Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalics, canUseTextCommands));
-            Commands.ToggleUnderline.RegisterCommand( new DelegateCommand<object>(toggleUnderline, canUseTextCommands));
-            Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(toggleStrikethrough, canUseTextCommands));
-            Commands.FontChanged.RegisterCommand( new DelegateCommand<FontFamily>(setFont, canUseTextCommands));
-            Commands.FontSizeChanged.RegisterCommand(new DelegateCommand<double>(setTextSize, canUseTextCommands));
-            Commands.SetTextColor.RegisterCommand(new DelegateCommand<Color>(setTextColor, canUseTextCommands));
+
+            Commands.UpdateTextStyling.RegisterCommand(new DelegateCommand<TextInformation>(updateStyling, canUseTextCommands));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(resetTextbox, canUseTextCommands));
+            
             Commands.EstablishPrivileges.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
             Commands.ReceiveTextBox.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.TargettedTextBox>(ReceiveTextBox));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
@@ -65,6 +62,67 @@ namespace SandRibbon.Components.Canvas
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
+        }
+
+        private void updateStyling(TextInformation info)
+        {
+            if (myTextBox == null) return;
+            var currentTextBox = myTextBox;
+            var oldInfo = getInfoOfBox(currentTextBox);
+            currentColor = info.color;
+            currentFamily = info.family;
+            currentSize = info.size;
+            Action undo = () =>
+            {
+                
+                applyStylingTo(currentTextBox, oldInfo);
+                updateTools();
+            };
+            Action redo = () =>
+            {
+                applyStylingTo(currentTextBox, info);
+                updateTools();
+            };
+            UndoHistory.Queue(undo, redo);
+            applyStylingTo(currentTextBox, info);
+        }
+
+
+        private void applyStylingTo(MeTLTextBox currentTextBox, TextInformation info)
+        {
+            currentTextBox.FontStyle = info.italics ? FontStyles.Italic : FontStyles.Normal;
+            currentTextBox.FontWeight = info.bold ? FontWeights.Bold : FontWeights.Normal;
+            currentTextBox.TextDecorations = new TextDecorationCollection();
+            if(info.underline)
+                currentTextBox.TextDecorations = TextDecorations.Underline;
+            else if(info.strikethrough)
+                currentTextBox.TextDecorations= TextDecorations.Strikethrough;
+            currentTextBox.FontSize = info.size;
+            currentTextBox.FontFamily = info.family;
+            currentTextBox.Foreground = new SolidColorBrush(info.color);
+
+
+        }
+
+        private TextInformation getInfoOfBox(MeTLTextBox box)
+        {
+            var underline = false;
+            var strikethrough = false;
+            if(box.TextDecorations.Count > 0)
+            {
+                underline = box.TextDecorations.First().Location.ToString().ToLower() == "underline";
+                strikethrough = box.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
+            }
+            return new TextInformation
+                       {
+                           bold = box.FontWeight == FontWeights.Bold,
+                           italics = box.FontStyle == FontStyles.Italic,
+                           size = box.FontSize,
+                           underline = underline,
+                           strikethrough = strikethrough,
+                           family = box.FontFamily,
+                           color = ((SolidColorBrush) box.Foreground).Color
+                       };
         }
 
         private void hideConversationSearchBox(object obj)
@@ -227,13 +285,7 @@ namespace SandRibbon.Components.Canvas
         private IEnumerable<UIElement> filterMyText(IEnumerable<UIElement> elements)
         {
             if (inMeeting()) return elements;
-            var myText = new List<UIElement>();
-            foreach (MeTLTextBox text in elements)
-            {
-                if (text.tag().author == Globals.me)
-                    myText.Add(text);
-            }
-            return myText;
+            return elements.Cast<MeTLTextBox>().Where(text => text.tag().author == Globals.me).Cast<UIElement>().ToList();
         }
         private void SendTextBoxes(object sender, EventArgs e)
         {
@@ -241,7 +293,7 @@ namespace SandRibbon.Components.Canvas
             foreach (MeTLTextBox box in GetSelectedElements())
             {
                 myTextBox = box;
-                sendText(box, box.tag().privacy);
+                sendTextWithoutHistory(box, box.tag().privacy);
             }
             addAdorners();
         }
@@ -329,14 +381,8 @@ namespace SandRibbon.Components.Canvas
         private void requeryTextCommands()
         {
             Commands.RequerySuggested(new []{
-                                                Commands.ToggleBold, 
-                                                Commands.ToggleUnderline, 
-                                                Commands.ToggleItalic, 
-                                                Commands.FontChanged,
-                                                Commands.FontSizeChanged, 
-                                                Commands.RestoreTextDefaults,
-                                                Commands.ToggleStrikethrough,
-                                                Commands.SetTextColor
+                                                Commands.UpdateTextStyling,
+                                                Commands.RestoreTextDefaults
                                             });
         }
 
@@ -357,7 +403,23 @@ namespace SandRibbon.Components.Canvas
         private void resetTextbox(object obj)
         {
             if (myTextBox == null) return;
-            resetText(myTextBox);
+            var currentTextBox = myTextBox;
+            Action undo = () =>
+            {
+                ClearAdorners();
+                var undoBox = Clone(currentTextBox);
+                dirtyTextBoxWithoutHistory(currentTextBox);
+                sendTextWithoutHistory(undoBox, undoBox.tag().privacy);
+                updateTools();
+                
+            };
+            Action redo = () =>
+                              {
+                                  resetText(currentTextBox);
+                                  updateTools();
+                              };
+            UndoHistory.Queue(undo, redo);
+            redo();
         }
         private void resetText(MeTLTextBox box)
         {
@@ -367,7 +429,7 @@ namespace SandRibbon.Components.Canvas
             box.FontStyle = FontStyles.Normal;
             box.TextDecorations = new TextDecorationCollection();
             box.FontFamily = new FontFamily("Arial");
-            box.FontSize = 10;
+            box.FontSize = 24;
             box.Foreground = Brushes.Black;
             var info = new TextInformation
                            {
@@ -375,36 +437,7 @@ namespace SandRibbon.Components.Canvas
                                size = box.FontSize,
                            };
             Commands.TextboxFocused.ExecuteAsync(info);
-            sendText(box);
-        }
-        private void setTextSize(double size)
-        {
-            currentSize = size;
-            Dispatcher.adoptAsync(() =>
-            {
-                if (myTextBox == null) return;
-                RemovePrivacyStylingFromElement(myTextBox);
-                myTextBox.FontSize = size;
-                myTextBox.Focus();
-                Select(null, null);
-                sendText(myTextBox);
-                myTextBox.UpdateLayout();
-                Select(new[] { myTextBox });
-            });
-        }
-        private void setTextColor(Color color)
-        {
-            currentColor = color;
-            if (myTextBox == null) return;
-            myTextBox.Foreground = new SolidColorBrush(color);
-            sendText(myTextBox);
-        }
-        private void setFont(FontFamily font)
-        {
-            currentFamily = font;
-            if (myTextBox == null) return;
-            myTextBox.FontFamily = font;
-            sendText(myTextBox);
+            sendTextWithoutHistory(box, box.tag().privacy);
         }
         private bool canUseTextCommands(Color arg)
         {
@@ -418,60 +451,7 @@ namespace SandRibbon.Components.Canvas
         {
             return true;
         }
-        private void toggleStrikethrough(object obj)
-        {
-            if (myTextBox == null) return;
-            var currentTextbox = myTextBox;
-            if (!Children.Contains(currentTextbox)) return;
-            var decorations = currentTextbox.TextDecorations.Select(s => s.Location).Where(t => t.ToString() == "Strikethrough");
-            if (decorations.Count() > 0)
-                currentTextbox.TextDecorations = new TextDecorationCollection();
-            else
-                currentTextbox.TextDecorations = TextDecorations.Strikethrough;
-            sendText(currentTextbox);
-            updateTools();
-        }
-        private void toggleItalics(object obj)
-        {
-            if (myTextBox == null) return;
-            var currentTextbox = myTextBox;
-            currentTextbox.FontStyle = currentTextbox.FontStyle == FontStyles.Italic ? FontStyles.Normal : FontStyles.Italic;
-            sendText(currentTextbox);
-            updateTools();
-        }
-        private void toggleUnderline(object obj)
-        {
-            if (myTextBox == null) return;
-            var currentTextbox = myTextBox;
-            if (!Children.Contains(currentTextbox)) return;
-            var decorations = currentTextbox.TextDecorations.Select(s => s.Location).Where(t => t.ToString() == "Underline");
-            if (decorations.Count() > 0)
-                currentTextbox.TextDecorations = new TextDecorationCollection();
-            else
-                currentTextbox.TextDecorations = TextDecorations.Underline;
-            sendText(currentTextbox);
-            updateTools();
-        }
-        private void toggleBold(object obj)
-        {
-            if (myTextBox == null) return;
-            var currentTextbox = myTextBox;
-            var currentWeight = currentTextbox.FontWeight;
-            Action undo = () =>
-                              {
-                                    currentTextbox.FontWeight = currentWeight; 
-                                    sendTextWithoutHistory(currentTextbox, currentTextbox.tag().privacy);
-                                    updateTools();
-                              };
-            Action redo = () =>
-                              {
-                                    currentTextbox.FontWeight = currentWeight == FontWeights.Bold ? FontWeights.Normal : FontWeights.Bold;
-                                    sendTextWithoutHistory(currentTextbox, currentTextbox.tag().privacy);
-                                    updateTools();
-                              };
-            redo();
-            UndoHistory.Queue(undo, redo);
-        }
+        
         private void placeCursor(object sender, MouseButtonEventArgs e)
         {
             if (EditingMode != InkCanvasEditingMode.None) return;
@@ -564,7 +544,8 @@ namespace SandRibbon.Components.Canvas
                                bold = myTextBox.FontWeight == FontWeights.Bold,
                                italics = myTextBox.FontStyle == FontStyles.Italic,
                                strikethrough = strikethrough,
-                               underline = underline
+                               underline = underline,
+                               color =  ((SolidColorBrush)myTextBox.Foreground).Color
 
                            };
             Commands.TextboxFocused.ExecuteAsync(info);
@@ -578,17 +559,14 @@ namespace SandRibbon.Components.Canvas
         private string originalText;
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
-
-
             var box = (MeTLTextBox)sender;
-            Console.WriteLine("\n\nXXXX SENDNEWTEXT SAYS " + originalText + "XXXX\n\n\n");
-
             var undoText = originalText.Clone().ToString();
             ApplyPrivacyStylingToElement(box, box.tag().privacy);
             box.Height = Double.NaN;
+            var mybox = Clone(box);
             Action undo = () =>
             {
-                var mybox = Clone(box);
+                ClearAdorners();
                 var myText = undoText.Clone().ToString();
                 dirtyTextBoxWithoutHistory(mybox);
                 mybox.Text = myText;
@@ -597,7 +575,7 @@ namespace SandRibbon.Components.Canvas
             };
             Action redo = () =>
             {
-                var mybox = Clone(box);
+                ClearAdorners();
                 dirtyTextBoxWithoutHistory(mybox);
                 sendTextWithoutHistory(mybox, mybox.tag().privacy);
                 mybox.TextChanged += SendNewText;
@@ -620,28 +598,7 @@ namespace SandRibbon.Components.Canvas
                 typingTimer.Change(600, Timeout.Infinite);
             }
         }
-        public void sendText(MeTLTextBox box)
-        {
-            sendText(box, Globals.privacy);
-        }
-        public void sendText(MeTLTextBox box, string intendedPrivacy)
-        {
-            UndoHistory.Queue(
-            () =>
-            {
-                ClearAdorners();
-                dirtyTextBoxWithoutHistory(box);
-            },
-            () =>
-            {
-                ClearAdorners();
-                sendTextWithoutHistory(box, intendedPrivacy);
-            });
-            GlobalTimers.resetSyncTimer();
-            sendTextWithoutHistory(box, intendedPrivacy);
-            if (GetSelectedElements().Count > 0) addAdorners();
-        }
-        private void sendTextWithoutHistory(MeTLTextBox box, string thisPrivacy)
+        public void sendTextWithoutHistory(MeTLTextBox box, string thisPrivacy)
         {
             RemovePrivacyStylingFromElement(box);
             if (box.tag().privacy != Globals.privacy)
@@ -757,6 +714,9 @@ namespace SandRibbon.Components.Canvas
             box.Focusable = canEdit;
             box.tag(OldBox.tag());
             box.FontFamily = OldBox.FontFamily;
+            box.FontWeight = OldBox.FontWeight;
+            box.FontStyle = OldBox.FontStyle;
+            box.TextDecorations = OldBox.TextDecorations;
             box.FontSize = OldBox.FontSize;
             box.Foreground = OldBox.Foreground;
             box.Text = OldBox.Text;
@@ -903,6 +863,9 @@ namespace SandRibbon.Components.Canvas
             box.Background = new SolidColorBrush(Colors.Transparent);
             box.tag(OldBox.tag());
             box.FontFamily = OldBox.FontFamily;
+            box.FontStyle = OldBox.FontStyle;
+            box.FontWeight = OldBox.FontWeight;
+            box.TextDecorations = OldBox.TextDecorations;
             box.FontSize = OldBox.FontSize;
             box.Foreground = OldBox.Foreground;
             box.Text = OldBox.Text;
@@ -946,6 +909,7 @@ namespace SandRibbon.Components.Canvas
         private void RedoExecuted(object sender, ExecutedRoutedEventArgs args)
         {
             ApplicationCommands.Redo.Execute(null, Application.Current.MainWindow);
+            Commands.Redo.Execute(null);
         }
     }  
     public class TextAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
@@ -971,7 +935,7 @@ namespace SandRibbon.Components.Canvas
             var box = Text.createNewTextbox();
             box.Text = value;
             box.FontSize = 36;
-            Text.sendText(box);
+            Text.sendTextWithoutHistory(box, "public");
         }
         bool IValueProvider.IsReadOnly
         {

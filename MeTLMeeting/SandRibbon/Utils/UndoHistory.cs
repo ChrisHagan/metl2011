@@ -59,7 +59,6 @@ namespace SandRibbon.Utils
             {
                 var head = undoQueue[currentSlide].Pop();
                 head.undo.Invoke();
-                Console.WriteLine("\n\nThere are {0} elements in the undo queue\n\n", undoQueue[currentSlide].Count);
                 redoQueue[currentSlide].Push(head);
                 RaiseQueryHistoryChanged();
             }
@@ -75,7 +74,6 @@ namespace SandRibbon.Utils
                 var head = redoQueue[currentSlide].Pop();
                 head.redo.Invoke();
                 undoQueue[currentSlide].Push(head);
-                Console.WriteLine("\n\nThere are {0} elements in the undo queue\n\n", undoQueue[currentSlide].Count);
                 RaiseQueryHistoryChanged();
             }
         }
