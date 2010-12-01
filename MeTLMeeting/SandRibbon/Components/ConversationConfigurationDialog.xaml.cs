@@ -142,7 +142,7 @@ namespace SandRibbon.Components
                 }
             }
         }
-        private void UpdateConversationDetails(ConversationDetails details)
+        private static void UpdateConversationDetails(ConversationDetails details)
         {
             extantConversations = null;
             extantConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
@@ -171,7 +171,6 @@ namespace SandRibbon.Components
             if (proposedDetails == null) { return false; }
             if (extantConversations == null) { return false; }
             proposedDetails.Title = proposedDetails.Title.Trim();
-            var currentDetails = details;
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
             var thisTitleIsNotTaken = dialogMode == ConversationConfigurationMode.EDIT ? true :
                 (extantConversations.Where(c => c.Title.ToLower().Equals(proposedDetails.Title.ToLower())).Count() == 0);
@@ -208,7 +207,7 @@ namespace SandRibbon.Components
                     break;
             }
         }
-        private void handleConversationDialogueCompletion()
+        private PowerpointSpec handleConversationDialogueCompletion()
         {
             switch (dialogMode)
             {
@@ -217,24 +216,24 @@ namespace SandRibbon.Components
                     {
                         try
                         {
-                            Commands.UploadPowerpoint.ExecuteAsync(new PowerpointSpec
+                             return new PowerpointSpec
                             {
                                 File = importFile,
                                 Details = details,
                                 Type = importType,
-                                Magnification = importType == (PowerPointLoader.PowerpointImportType)Enum.Parse(typeof(PowerPointLoader.PowerpointImportType), "HighDefImage") ? magnification : 1
-                            });
+                                Magnification = Globals.UserOptions.powerpointImportScale == 2 ? 2 : 1 
+                            };
                         }
                         catch (Exception e)
                         {
                             MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your PowerPoint.  If the conversation was created, please check whether it has imported correctly.");
-                            throw e;
+                            throw;
                         }
                         finally
                         {
                             Commands.PowerpointFinished.ExecuteAsync(null);
                         }
-                        return;
+                        return null;
                     }
                     else
                     {
@@ -255,6 +254,7 @@ namespace SandRibbon.Components
                     break;
             }
             Commands.PowerpointFinished.ExecuteAsync(null);
+            return null;
         }
         private void Create(object sender, ExecutedRoutedEventArgs e)
         {
@@ -338,16 +338,18 @@ namespace SandRibbon.Components
         {
             conversationNameTextBox.SelectAll();
         }
-        internal void Import()
+        internal PowerpointSpec Import()
         {
-            if (importFile == null) return;
+            var myImportType = Globals.UserOptions.powerpointImportScale == 3 ? PowerPointLoader.PowerpointImportType.Shapes : PowerPointLoader.PowerpointImportType.Image;
+            if (importFile == null) return null;
              dialogMode = ConversationConfigurationMode.IMPORT;
-             importType = PowerPointLoader.PowerpointImportType.Image;
+             importType = myImportType;
              var suggestedName = generatePresentationTitle(ConversationDetails.DefaultName(Globals.me), importFile );
              details = new ConversationDetails
                     (suggestedName, "", Globals.me, new List<Slide>(), Permissions.LECTURE_PERMISSIONS, "Unrestricted", SandRibbonObjects.DateTimeFactory.Now(), SandRibbonObjects.DateTimeFactory.Now());
             if (checkConversation(details))
-                handleConversationDialogueCompletion();
+                return handleConversationDialogueCompletion();
+            return null;
         }
     }
 }

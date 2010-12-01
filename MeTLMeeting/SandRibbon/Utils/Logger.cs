@@ -72,7 +72,15 @@ namespace SandRibbon.Utils
                 slide = Globals.location.currentSlide,
                 server = ClientFactory.Connection().server.host
             };
-            db.SaveArbitraryDocument<LogMessage>(msg);
+            try
+            {
+
+                db.SaveArbitraryDocument<LogMessage>(msg);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);    
+            }
         }
         public static void query() {
             var time = DateTime.Now.Ticks - 1000;

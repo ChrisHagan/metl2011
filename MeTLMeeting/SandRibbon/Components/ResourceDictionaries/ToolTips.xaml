@@ -159,6 +159,16 @@
                                         ImageSource="\Resources\ExactPowerpoint.png" 
                                         ContentText="Creates a conversation from a selected PowerPoint"/>
    
+     <resources:MeTLImageToolTip x:Key="ExitMeTLToolTip" 
+                                        TitleText="Quit MeTL"
+                                        ImageSource="\Resources\Delete.png" 
+                                        ContentText="Closes MeTL"/>
+    
+     <resources:MeTLImageToolTip x:Key="LogoutMeTLToolTip" 
+                                        TitleText="Logout and quit MeTL"
+                                        ImageSource="\Resources\logoutAndExit.png" 
+                                        ContentText="Closes MeTL clearing out your saved credentials"/>
+  
     <resources:MeTLImageToolTip x:Key="ImportConversationToolTip" 
                                         TitleText="Import Conversation"
                                         ImageSource="\Resources\Slide_Not_Loaded.png" 
@@ -177,7 +187,7 @@
                                         ContentText="Send your current conversation to a system-available printer."/>
     <resources:MeTLImageToolTip x:Key="HelpToolTip" 
                                         TitleText="Help"
-                                        ImageSource="\Resources\Slide_Not_Loaded.png" 
+                                        ImageSource="\Resources\Help.png" 
                                         ContentText="Find out more about how to use MeTL"/>
     <resources:MeTLImageToolTip x:Key="AboutToolTip" 
                                         TitleText="About"
@@ -215,10 +225,14 @@
                                         TitleText="Create a new quiz"
                                         ImageSource="\Resources\NewQuiz.png" 
                                         ContentText="Create a multiple-choice quiz."/>
+    <resources:MeTLImageToolTip x:Key="WorkPrivatelyToolTip" 
+                                        TitleText="Work Privately"
+                                        ImageSource="\Resources\Ribbon-Private.png" 
+                                        ContentText="When enabled, new content will not be displayed to other participants."/>
     <resources:MeTLImageToolTip x:Key="WorkPubliclyToolTip" 
                                         TitleText="Work Publicly"
                                         ImageSource="\Resources\Ribbon-Public.png" 
-                                        ContentText="When enabled, new changes will be displayed publicly."/>
+                                        ContentText="When enabled, new changes will be displayed to other participants."/>
     <resources:MeTLImageToolTip x:Key="EditingFindToolTip" 
                                         TitleText="Find text"
                                         ImageSource="..\..\Resources\MagnifyingGlassShiny.png" 

@@ -121,7 +121,7 @@ namespace SandRibbon.Utils
         }
         public void ImportPowerpoint()
         {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).Import();
+            UploadPowerpoint( new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).Import());
         }
         public void LoadPowerpointAsFlatSlides(string file, ConversationDetails details, int MagnificationRating)
         {
@@ -130,7 +130,7 @@ namespace SandRibbon.Utils
             var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
             if (!Directory.Exists(currentWorkingDirectory))
                 Directory.CreateDirectory(currentWorkingDirectory);
-            var provider = MeTLLib.ClientFactory.Connection();
+            var provider = ClientFactory.Connection();
             var xml = new XElement("presentation");
             xml.Add(new XAttribute("name", details.Title));
             if (details.Tag == null)
@@ -240,7 +240,8 @@ namespace SandRibbon.Utils
             var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
             try
             {
-                var provider = MeTLLib.ClientFactory.Connection();
+                progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, ppt.Slides.Count);
+                var provider = ClientFactory.Connection();
                 var xml = new XElement("presentation");
                 xml.Add(new XAttribute("name", details.Title));
                 if (details.Tag == null)
@@ -258,7 +259,7 @@ namespace SandRibbon.Utils
                 (startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
                 provider.UpdateConversationDetails(conversation);
                 var xmlSlides = xml.Descendants("slide");
-                for (int i = 0; i < xmlSlides.Count(); i++)
+                for (var i = 0; i < xmlSlides.Count(); i++)
                 {
                     var slideXml = xmlSlides.ElementAt(i);
                     var slideId = conversation.Slides[i].id;
@@ -345,7 +346,7 @@ namespace SandRibbon.Utils
         private void sendTextboxes(int id, IEnumerable<XElement> shapes)
         {
             var me = Globals.me;
-            var privateRoom = id.ToString() + me;
+            var privateRoom = id + me;
             wire.SneakInto(privateRoom);
             var shapeCount = 0;
             var height = 0;
@@ -367,8 +368,7 @@ namespace SandRibbon.Utils
                             id = string.Format("{0}:{1}{2}", me, DateTimeFactory.Now(), shapeCount++)
                         });
                 ;
-                wire.SendTextBox(new TargettedTextBox
-                (id,me,"notepad","private",newText));
+                wire.SendTextBox(new TargettedTextBox (id,me,"notepad","private",newText));
             }
         }
         private XElement uploadXmlUrls(int slide, XElement doc)

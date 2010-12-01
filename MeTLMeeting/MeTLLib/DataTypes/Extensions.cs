@@ -184,11 +184,11 @@ namespace MeTLLib.DataTypes
     {
         public static Image clone(this Image image)
         {
-            var newImage = new Image();
-            newImage.Height = image.Height;
-            newImage.Width = image.Width;
+            var newImage = new Image {Height = image.Height, Width = image.Width};
             newImage.tag(image.tag());
             newImage.Source = image.Source;
+            InkCanvas.SetLeft(newImage, InkCanvas.GetLeft(image));
+            InkCanvas.SetTop(newImage, InkCanvas.GetTop(image));
 
             return newImage;
         }

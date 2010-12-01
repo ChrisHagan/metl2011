@@ -313,6 +313,7 @@ namespace MeTLLib
                 var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
                 Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
                 Image newImage = lii.image;
+                newImage.tag(lii.image.tag());
                 newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
                 wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newImage));
             };

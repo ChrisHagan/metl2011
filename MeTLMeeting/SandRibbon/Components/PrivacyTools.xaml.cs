@@ -47,10 +47,13 @@ namespace SandRibbon.Components
 
         private void settingEnabledModes(ConversationDetails details)
         {
-            if (details.Permissions.studentCanPublish || Globals.isAuthor)
-                publicMode.IsEnabled = true;
-            else
-                publicMode.IsEnabled = false;
+            Dispatcher.adopt(() =>
+                                  {
+                                      if (details.Permissions.studentCanPublish || Globals.isAuthor)
+                                          publicMode.IsEnabled = true;
+                                      else
+                                          publicMode.IsEnabled = false;
+                                  });
         }
 
         private void setPedagogy(PedagogyLevel obj)

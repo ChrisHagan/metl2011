@@ -122,10 +122,7 @@ namespace SandRibbon
             Commands.MoveCanvasByDelta.RegisterCommandToDispatcher(new DelegateCommand<Point>(GrabMove));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.ToggleStrikethrough.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.UpdateTextStyling.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             

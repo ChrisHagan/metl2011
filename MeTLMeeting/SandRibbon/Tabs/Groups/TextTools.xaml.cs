@@ -27,6 +27,27 @@ namespace SandRibbon.Tabs.Groups
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));
             Commands.MoveTo.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(MoveTo));
+            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold ));
+            Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
+            Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
+        }
+
+
+
+        private void togglebold(object obj)
+        {
+            TextBoldButton.IsChecked = !TextBoldButton.IsChecked;
+            sendValues();
+        }
+        private void toggleItalic(object obj)
+        {
+            TextItalicButton.IsChecked = !TextItalicButton.IsChecked;
+            sendValues();
+        }
+        private void toggleUnderline(object obj)
+        {
+            TextUnderlineButton.IsChecked = !TextUnderlineButton.IsChecked;
+            sendValues();
         }
 
         private void MoveTo(object obj)
@@ -49,6 +70,22 @@ namespace SandRibbon.Tabs.Groups
             TextItalicButton.IsChecked = info.italics;
             TextUnderlineButton.IsChecked = info.underline;
             TextStrikethroughButton.IsChecked = info.strikethrough;
+            ColourPickerBorder.BorderBrush = new SolidColorBrush(info.color);
+        }
+        private void sendValues()
+        {
+            if (fontSize == null || fontFamily == null || fontFamily.SelectedItem == null || ColourPickerBorder == null || ColourPickerBorder.BorderBrush == null || TextBoldButton == null || TextItalicButton == null || TextUnderlineButton == null || TextStrikethroughButton == null) return;
+            var info = new TextInformation
+            {
+                size = (double)fontSize.SelectedItem,
+                family = new FontFamily(fontFamily.SelectedItem.ToString()),
+                bold =  TextBoldButton.IsChecked == true,
+                italics = TextItalicButton.IsChecked == true,
+                underline = TextUnderlineButton.IsChecked == true,
+                strikethrough = TextStrikethroughButton.IsChecked == true,
+                color = ((SolidColorBrush) ColourPickerBorder.BorderBrush).Color
+            };
+            Commands.UpdateTextStyling.Execute(info);
         }
 
         private void SetLayer(string layer)
@@ -81,16 +118,14 @@ namespace SandRibbon.Tabs.Groups
                 return defaultFontSize;
             }
         }
-
         private void decreaseFont(object sender, RoutedEventArgs e)
         {
             if (fontSize.ItemsSource == null) return;
             int currentItem = fontSize.SelectedIndex;
             if (currentItem - 1 >= 0)
             {
-                var newSize = fontSizes[currentItem - 1];
                 fontSize.SelectedIndex = currentItem - 1;
-                Commands.FontSizeChanged.ExecuteAsync(newSize);
+                sendValues();
             }
         }
         private void increaseFont(object sender, RoutedEventArgs e)
@@ -99,34 +134,34 @@ namespace SandRibbon.Tabs.Groups
             int currentItem = fontSize.SelectedIndex;
             if (currentItem + 1 < fontSizes.Count())
             {
-                var newSize = fontSizes[currentItem + 1];
                 fontSize.SelectedIndex = currentItem + 1;
-                Commands.FontSizeChanged.ExecuteAsync(newSize);
+                sendValues();
             }
         }
         private void fontSizeSelected(object sender, SelectionChangedEventArgs e)
         {
             if (fontSize.SelectedIndex == -1) return;
             if (e.AddedItems.Count == 0) return;
-            var size = Double.Parse(e.AddedItems[0].ToString());
-            Commands.FontSizeChanged.ExecuteAsync(size);
+            sendValues();
         }
         private void fontFamilySelected(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
-            var font = new FontFamily(e.AddedItems[0].ToString());
-            Commands.FontChanged.ExecuteAsync(font);
+            sendValues();
         }
         private void textColorSelected(object sender, ColorEventArgs e)
         {
             ColourPickerBorder.BorderBrush = new SolidColorBrush(e.Color);
             ((System.Windows.Controls.Primitives.Popup)ColourSelection.Parent).IsOpen = false;
-            Commands.SetTextColor.ExecuteAsync(e.Color);
+            sendValues();
         }
-
         private void ShowColourSelector(object sender, RoutedEventArgs e)
         {
             ((System.Windows.Controls.Primitives.Popup)ColourSelection.Parent).IsOpen = true;
+        }
+        private void valuesUpdated(object sender, RoutedEventArgs e)
+        {
+            sendValues();
         }
     }
 }

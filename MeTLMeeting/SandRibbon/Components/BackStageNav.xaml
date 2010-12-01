@@ -13,8 +13,8 @@
     </UserControl.Resources>
     <Grid Background="{DynamicResource backgroundColor}">
         <StackPanel VerticalAlignment="Top" Margin="15 30 0 0">
-            <dict:Button HorizontalAlignment="Left" Text="Create new" Foreground="{StaticResource ResourceKey=foreground}" x:Name="new" Command="{x:Static api:Commands.CreateBlankConversation}"/>
-            <dict:Button HorizontalAlignment="Left" Text="Import PowerPoint" Foreground="{StaticResource ResourceKey=foreground}" x:Name="import" Command="{x:Static api:Commands.ImportPowerpoint}"/>
+            <dict:Button HorizontalAlignment="Left" Text="Create new" Foreground="{StaticResource ResourceKey=foreground}" x:Name="new" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.CreateBlankConversation}"/>
+            <dict:Button HorizontalAlignment="Left" Text="Import PowerPoint" Foreground="{StaticResource ResourceKey=foreground}" x:Name="import" ToolTip="{StaticResource CreatePowerpointToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
             <Rectangle Fill="White" Width="Auto" Height="2" Margin="-20 5 -20 5"/>
             <dict:RadioButton HorizontalAlignment="Left" Text="Search" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="find" Checked="mode_Checked" IsChecked="True"/>
             <dict:RadioButton HorizontalAlignment="Left" Text="My conversations" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="mine" Checked="mode_Checked"/>
@@ -23,9 +23,9 @@
             <Button HorizontalAlignment="Left" Command="{x:Static api:Commands.HideConversationSearchBox}"  Content="Return to Conversation" Foreground="{StaticResource ResourceKey=foreground}" x:Name="current" />
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">
-            <dict:Button Command="Help" Text="Help" Icon="\Resources\Help.png" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" x:Name="help" />
-            <dict:Button Text="Exit" Icon="\Resources\Delete.png" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.CloseApplication}"/>
-            <dict:Button Text="Logout and exit"  Icon="\Resources\logoutAndExit.png" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.LogOut}"/>
+            <dict:Button Command="Help" Text="Help" Icon="\Resources\Help.png" ToolTip="{StaticResource HelpToolTip}" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" x:Name="help" />
+            <dict:Button Text="Exit" Icon="\Resources\Delete.png" ToolTip="{StaticResource ExitMeTLToolTip}" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.CloseApplication}"/>
+            <dict:Button Text="Logout and exit"  Icon="\Resources\logoutAndExit.png" ToolTip="{StaticResource LogoutMeTLToolTip}" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.LogOut}"/>
         </StackPanel>
     </Grid>
 </UserControl>

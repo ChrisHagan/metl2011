@@ -30,6 +30,8 @@ namespace SandRibbon
     }
     public class Commands
     {
+
+        public static CompositeCommand ViewSubmissions = new CompositeCommand();
         public static CompositeCommand Reconnecting = new CompositeCommand();
         public static CompositeCommand LeaveAllRooms = new CompositeCommand();
         public static CompositeCommand BackstageModeChanged = new CompositeCommand();
@@ -159,22 +161,19 @@ namespace SandRibbon
         public static CompositeCommand SetTextCanvasMode = new CompositeCommand();
         public static CompositeCommand IncreaseFontSize = new CompositeCommand();
         public static CompositeCommand DecreaseFontSize = new CompositeCommand();
-        public static CompositeCommand ToggleBold = new CompositeCommand();
-        public static CompositeCommand ToggleItalic = new CompositeCommand();
-        public static CompositeCommand ToggleUnderline = new CompositeCommand();
-        public static CompositeCommand ToggleStrikethrough = new CompositeCommand();
-        public static CompositeCommand SetTextColor = new CompositeCommand();
         public static CompositeCommand SendTextBox = new CompositeCommand();
         public static CompositeCommand ReceiveTextBox = new CompositeCommand();
         public static CompositeCommand RestoreTextDefaults = new CompositeCommand();
-        public static CompositeCommand FontChanged = new CompositeCommand();
-        public static CompositeCommand FontSizeChanged = new CompositeCommand();
         public static CompositeCommand NewTextCursorPosition = new CompositeCommand();
         public static CompositeCommand InitiateGrabZoom = new CompositeCommand();
         public static CompositeCommand EndGrabZoom = new CompositeCommand();
         public static CompositeCommand MoveCanvasByDelta = new CompositeCommand();
         public static CompositeCommand FitToView = new CompositeCommand();
         public static CompositeCommand FitToPageWidth= new CompositeCommand();
+        public static CompositeCommand UpdateTextStyling = new CompositeCommand();
+        public static CompositeCommand ToggleBold = new CompositeCommand();
+        public static CompositeCommand ToggleItalic = new CompositeCommand();
+        public static CompositeCommand ToggleUnderline = new CompositeCommand();
         #endregion
         #region AppLevel
         public static CompositeCommand RegisterPowerpointSourceDirectoryPreference = new CompositeCommand();

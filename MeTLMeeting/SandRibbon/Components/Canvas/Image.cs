@@ -91,6 +91,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void deleteSelectedImages(object obj)
         {
+            if(GetSelectedElements().Count == 0) return;
             deleteImages();
             ClearAdorners();
         }
@@ -419,7 +420,7 @@ namespace SandRibbon.Components.Canvas
                     {
                         Source = new BitmapImage(uri)
                     };
-                    image.tag(new ImageTag(Globals.me, privacy, string.Format("{0}:{1}:{2}", Globals.me, DateTimeFactory.Now(), 1), false, -1));
+                    image.tag(new ImageTag(Globals.me, privacy, generateId(), false, -1));
                     SetLeft(image, 15);
                     SetTop(image, 15);
                     Commands.SendImage.ExecuteAsync(new TargettedImage
@@ -429,6 +430,7 @@ namespace SandRibbon.Components.Canvas
                 else MessageBox.Show("Sorry, your file could not be pasted.  Try dragging and dropping, or selecting with the add image button.");
             }
         }
+
         protected override void HandleCopy()
         {
             foreach (var image in GetSelectedElements().Where(e => e is System.Windows.Controls.Image))
@@ -436,18 +438,42 @@ namespace SandRibbon.Components.Canvas
         }
         protected override void HandleCut()
         {
-            var listToCut = new List<MeTLLib.DataTypes.TargettedDirtyElement>();
+            var listToCut = new List<TargettedDirtyElement>();
 
             foreach (var element in GetSelectedElements().Where(e => e is System.Windows.Controls.Image))
             {
                 var image = (System.Windows.Controls.Image)element;
                 ApplyPrivacyStylingToElement(image, image.tag().privacy);
                 Clipboard.SetImage((BitmapSource)image.Source);
-                listToCut.Add(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, image.tag().privacy, image.tag().id));
+                listToCut.Add(new TargettedDirtyElement(currentSlide, Globals.me, target, image.tag().privacy, image.tag().id));
             }
-            ClearAdorners();
-            foreach (var element in listToCut)
-                Commands.SendDirtyImage.ExecuteAsync(element);
+            var selectedImages = GetSelectedClonedElements();
+            Action redo = ()=>
+                            {
+                                ClearAdorners();
+                                foreach (var element in listToCut)
+                                    Commands.SendDirtyImage.ExecuteAsync(element);
+                            };
+            Action undo = () =>
+            {
+                foreach (var element in listToCut)
+                    Clipboard.GetImage(); //remove the images from the undo queue
+
+                var selection = new List<UIElement>();
+                foreach (var element in selectedImages)
+                {
+
+                    if (!Children.Contains(element))
+                        Children.Add(element);
+                    sendThisElement(element);
+                    selection.Add(element);
+                }
+                Select(selection);
+                addAdorners();
+
+            };
+            UndoHistory.Queue(undo, redo);
+            redo();
         }
         #region EventHandlers
         /*Event Handlers*/
@@ -524,52 +550,55 @@ namespace SandRibbon.Components.Canvas
         private void elementsMovedOrResized(object sender, EventArgs e)
         {
             ClearAdorners();
-            var selectedElements = GetSelectedElements().ToList();
+            var selectedElements = GetSelectedClonedElements();
+            var startingElements = elementsAtStartOfTheMove.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
             Action undo = () =>
               {
                   ClearAdorners();
-                  foreach (var element in elementsAtStartOfTheMove)
+                  var selection = new List<UIElement>();
+                  var mySelectedElements = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
+                  foreach (var element in mySelectedElements)
                   {
+                        if(Children.Contains(element))
+                            Children.Remove(element);
+                        dirtyThisElement(element); 
+                  }
+                  foreach (var element in startingElements)
+                  {
+                      selection.Add(element);
                       if (!Children.Contains(element))
                           Children.Add(element);
                       sendThisElement(element);
                   }
-                  foreach (var element in selectedElements)
-                  {
-                      if (Children.Contains(element))
-                          Children.Remove(element);
-                      dirtyThisElement(element);
-                  }
-                  Select(elementsAtStartOfTheMove);
+                  Select(selection);
                   addAdorners();
               };
             Action redo = () =>
               {
+                  
                   ClearAdorners();
-                  foreach (var element in elementsAtStartOfTheMove)
+                  var selection = new List<UIElement>();
+                  var mySelectedImages = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
+                  foreach (var element in startingElements)
                   {
-                      if (Children.Contains(element))
-                          Children.Remove(element);
-                      dirtyThisElement(element);
+                        if(Children.Contains(element))
+                            Children.Remove(element);
+                        dirtyThisElement(element); 
                   }
-                  foreach (var element in selectedElements)
+                  foreach (var element in mySelectedImages)
                   {
+                      selection.Add(element);
                       if (!Children.Contains(element))
                           Children.Add(element);
                       sendThisElement(element);
-
                   }
-                  Select(selectedElements);
+                  Select(selection);
                   addAdorners();
               };
             UndoHistory.Queue(undo, redo);
-            foreach (var element in elementsAtStartOfTheMove)
-                dirtyThisElement(element);
-            foreach (var element in selectedElements)
-                sendThisElement(element);
-            Select(selectedElements);
-            addAdorners();
+            redo(); 
         }
+
         private void sendThisElement(UIElement element)
         {
             
@@ -656,32 +685,6 @@ namespace SandRibbon.Components.Canvas
             return MeTLVideo;
         }
         #endregion
-
-        #region AutoShapes
-        private void createNewAutoShape(object obj)
-        {
-            try
-            {
-                var paramPath = (MeTLLib.DataTypes.AutoShape)obj;
-                var newAutoShape = new MeTLLib.DataTypes.AutoShape();
-                newAutoShape.PathData = paramPath.PathData;
-                newAutoShape.Foreground = paramPath.Foreground;
-                newAutoShape.Background = paramPath.Background;
-                newAutoShape.StrokeThickness = paramPath.StrokeThickness;
-                newAutoShape.Height = paramPath.Height;
-                newAutoShape.Width = paramPath.Width;
-                Children.Add(newAutoShape);
-                SetLeft(newAutoShape, 0);
-                SetTop(newAutoShape, 0);
-                tagAutoShape(newAutoShape, 1);
-                Commands.SendAutoShape.ExecuteAsync(new MeTLLib.DataTypes.TargettedAutoShape(currentSlide, Globals.me, target, privacy, newAutoShape));
-            }
-            catch (Exception ex)
-            {//Don't do as I do, do as I say.  DON'T do this.
-                MessageBox.Show("Error creating AutoShape: " + ex.Message);
-            }
-        }
-        #endregion
         #region ImageImport
         private void addImageFromDisk(object obj)
         {
@@ -709,9 +712,10 @@ namespace SandRibbon.Components.Canvas
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {
-            var filter = "Image files(*.jpeg;*.gif;*.bmp;*.jpg;*.png)|*.jpeg;*.gif;*.bmp;*.jpg;*.png|All files (*.*)|*.*";
+            const string filter = "Image files(*.jpeg;*.gif;*.bmp;*.jpg;*.png)|*.jpeg;*.gif;*.bmp;*.jpg;*.png|All files (*.*)|*.*";
             addResourceFromDisk(filter, withResources);
         }
+
         private void addResourceFromDisk(string filter ,Action<IEnumerable<string>> withResources)
         {
             if (target == "presentationSpace" && canEdit && me != "projector")
@@ -768,7 +772,7 @@ namespace SandRibbon.Components.Canvas
                     placeHolder.tag(new MeTLLib.DataTypes.ImageTag
                                       {
                                           author = Globals.me,
-                                          id = string.Format("{0}:{1}:{2}", Globals.me, SandRibbonObjects.DateTimeFactory.Now(), count),
+                                          id = generateId(), 
                                           privacy = privacy,
                                           zIndex = -1
                                       });
@@ -820,44 +824,36 @@ namespace SandRibbon.Components.Canvas
                     return;
                 }
                 if (image == null) return;
-                // Add the image to the Media Panel
-                InkCanvas.SetLeft(image, pos.X);
-                InkCanvas.SetTop(image, pos.Y);
-                Children.Add(image);
-                var animationPulse = new DoubleAnimation
-                                         {
-                                             From = .3,
-                                             To = 1,
-                                             Duration = new Duration(TimeSpan.FromSeconds(1)),
-                                             AutoReverse = true,
-                                             RepeatBehavior = RepeatBehavior.Forever
-                                         };
-                image.BeginAnimation(OpacityProperty, animationPulse);
+                SetLeft(image, pos.X);
+                SetTop(image, pos.Y);
+                 image.tag(new ImageTag(Globals.me, privacy,generateId() , false, 0));
                 if (!fileName.StartsWith("http"))
-                {
                     MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, target, privacy, image, fileName, false));
-                }
                 else
-                {
                     MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, target, privacy, image));
-                }
-                Children.Remove(image);
+                Action undo = () =>
+                                  {
+                                      ClearAdorners();
+                                      if(Children.Contains(image))
+                                          Children.Remove(image);
+                                      dirtyThisElement(image);
+                                  };
+                Action redo = () =>
+                {
+                    ClearAdorners();
+                    var myImage = image.clone();
+                    SetLeft(myImage, pos.X);
+                    SetTop(myImage, pos.Y);
+                    if (!Children.Contains(myImage))
+                        Children.Add(myImage);
+                    sendThisElement(myImage);
+
+                    Select(new [] {myImage});
+                    addAdorners();
+                };
+                UndoHistory.Queue(undo, redo);
+                Children.Add(image);
             });
-        }
-        public void tagAutoShape(MeTLLib.DataTypes.AutoShape autoshape, int count)
-        {
-            tagAutoShape(autoshape, Globals.me, count);
-        }
-        public void tagAutoShape(MeTLLib.DataTypes.AutoShape autoshape, string author, int count)
-        {
-            var id = string.Format("{0}:{1}:{2}", author, SandRibbonObjects.DateTimeFactory.Now(), count);
-            var imageInfo = new ImageInformation
-            {
-                Author = author,
-                isPrivate = privacy.Equals("private"),
-                Id = id
-            };
-            autoshape.Tag = JsonConvert.SerializeObject(imageInfo);
         }
         public static System.Windows.Controls.Image createImageFromUri(Uri uri)
         {
@@ -882,14 +878,6 @@ namespace SandRibbon.Components.Canvas
         #endregion
         #region UtilityMethods
         /*Utility methods*/
-        private bool autoshapeExistsOnCanvas(MeTLLib.DataTypes.AutoShape autoshape)
-        {
-            foreach (UIElement shape in Children)
-                if (shape is MeTLLib.DataTypes.AutoShape)
-                    if (autoshapeCompare((MeTLLib.DataTypes.AutoShape)shape, autoshape))
-                        return true;
-            return false;
-        }
         private bool videoExistsOnCanvas(MeTLLib.DataTypes.Video testVideo)
         {
             foreach (UIElement video in Children)
@@ -908,9 +896,9 @@ namespace SandRibbon.Components.Canvas
         }
         private static bool imageCompare(System.Windows.Controls.Image image, System.Windows.Controls.Image currentImage)
         {
-            if (!(System.Windows.Controls.Canvas.GetTop(currentImage) != System.Windows.Controls.Canvas.GetTop(image)))
+            if (System.Windows.Controls.Canvas.GetTop(currentImage) == System.Windows.Controls.Canvas.GetTop(image))
                 return false;
-            if (!(System.Windows.Controls.Canvas.GetLeft(currentImage) != System.Windows.Controls.Canvas.GetLeft(image)))
+            if (System.Windows.Controls.Canvas.GetLeft(currentImage) == System.Windows.Controls.Canvas.GetLeft(image))
                 return false;
             if (image.Source.ToString() != currentImage.Source.ToString())
                 return false;
@@ -920,35 +908,14 @@ namespace SandRibbon.Components.Canvas
         }
         private static bool videoCompare(MeTLLib.DataTypes.Video video, MeTLLib.DataTypes.Video currentVideo)
         {
-            if (!(System.Windows.Controls.Canvas.GetTop(currentVideo) != System.Windows.Controls.Canvas.GetTop(video)))
+            if (System.Windows.Controls.Canvas.GetTop(currentVideo) == System.Windows.Controls.Canvas.GetTop(video))
                 return false;
-            if (!(System.Windows.Controls.Canvas.GetLeft(currentVideo) != System.Windows.Controls.Canvas.GetLeft(video)))
+            if (System.Windows.Controls.Canvas.GetLeft(currentVideo) == System.Windows.Controls.Canvas.GetLeft(video))
                 return false;
             if (video.VideoSource.ToString() != currentVideo.VideoSource.ToString())
                 return false;
             if (video.tag().id != currentVideo.tag().id)
                 return false;
-            return true;
-        }
-        private static bool autoshapeCompare(MeTLLib.DataTypes.AutoShape autoshape, MeTLLib.DataTypes.AutoShape currentAutoshape)
-        {
-            if (!(System.Windows.Controls.Canvas.GetTop(currentAutoshape) != System.Windows.Controls.Canvas.GetTop(autoshape)))
-                return false;
-            if (!(System.Windows.Controls.Canvas.GetLeft(currentAutoshape) != System.Windows.Controls.Canvas.GetLeft(autoshape)))
-                return false;
-            //this next bit is ALMOST working.  When it gets converted back off the wire, it has some spaces between some parts,
-            //which are not considered to be a perfect match.  As a result, comparing against path data isn't working, but the new
-            //shape is working fine in the program.  Strange peculiarity of shapes, I guess.
-            //For an example see:
-            //currentAutoShape = {M47.7778,48.6667L198,48.6667 198,102C174.889,91.3334 157.111,79.7778 110.889,114.444 64.667,149.111 58.4444,130.444 47.7778,118.889z}
-            //autoShape        = {M47.7778,48.6667L198,48.6667L198,102C174.889,91.3334,157.111,79.7778,110.889,114.444C64.667,149.111,58.4444,130.444,47.7778,118.889z}
-            //diff             =                              *                       *               *               *              *               *
-
-            if (autoshape.PathData.Figures.ToString() != currentAutoshape.PathData.Figures.ToString())
-                return false;
-            if (autoshape.Tag.ToString() != currentAutoshape.Tag.ToString())
-                return false;
-
             return true;
         }
         #endregion

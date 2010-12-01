@@ -31,6 +31,12 @@ namespace SandRibbon.Quizzing
         public ViewQuizResults()
         {
             InitializeComponent();
+            Closing += new System.ComponentModel.CancelEventHandler(ViewQuizResults_Closing);
+        }
+
+        void ViewQuizResults_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Commands.UnblockInput.Execute(null);
         }
         public ViewQuizResults(Dictionary<long, ObservableCollection<QuizAnswer>> answers, ObservableCollection<QuizQuestion> Quizes): this()
         {

@@ -55,10 +55,7 @@ namespace SandRibbon
             Visibility = Visibility.Visible;
             goldLabel.Content = "Joining";
         }
-        private void MoveTo(object _arg) {
-            Visibility = Visibility.Visible;
-            goldLabel.Content = "Moving";
-        }
+        
         private void PreParserAvailable(object _arg) {
             Commands.RequerySuggested();
             Visibility = Visibility.Collapsed;

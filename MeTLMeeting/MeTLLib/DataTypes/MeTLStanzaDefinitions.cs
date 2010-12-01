@@ -233,7 +233,16 @@ namespace MeTLLib.DataTypes
             set
             {
                 if (String.IsNullOrEmpty(id))
-                    id = string.Format("{0}:{1}", author, DateTimeFactory.Now());
+                {
+                    try
+                    {
+                        id = value.tag().id;
+                    }
+                    catch
+                    {
+                        id = string.Format("{0}:{1}", author, DateTimeFactory.Now());
+                    }
+                }
                 value.tag(new ImageTag { author = author, id = id, privacy = privacy });
                 imageProperty = value;
             }

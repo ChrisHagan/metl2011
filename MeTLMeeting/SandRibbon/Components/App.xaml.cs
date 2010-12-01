@@ -126,6 +126,7 @@ namespace SandRibbon
         }
         private void LogOut(object _Unused)
         {
+
             WorkspaceStateProvider.ClearSettings();
             Application.Current.Shutdown();
         }
@@ -140,7 +141,7 @@ namespace SandRibbon
             base.OnStartup(e);
             new Worm();
             new CommandParameterProvider();
-            Commands.LogOut.RegisterCommand(new DelegateCommand<object>(LogOut));
+            Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             Application.Current.Exit += new ExitEventHandler(Current_Exit);
         }

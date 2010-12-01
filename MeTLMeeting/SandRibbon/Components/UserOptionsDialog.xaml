@@ -29,6 +29,7 @@
                 <ComboBox SelectedValue="{Binding Path=powerpointImportScale}" SelectedValuePath="Tag">
                     <ComboBoxItem Tag="1">Low resolution</ComboBoxItem>                    
                     <ComboBoxItem Tag="2">High resolution</ComboBoxItem>                    
+                    <ComboBoxItem Tag="3">Flexible</ComboBoxItem>                    
                 </ComboBox>
             </StackPanel>
             <StackPanel>
