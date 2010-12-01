@@ -602,7 +602,6 @@ namespace SandRibbon.Components.Canvas
             if (!Children.Contains(box)) return;
             ApplyPrivacyStylingToElement(box, privacy);
         }
-
         public void RemoveTextboxWithTag(string tag)
         {
             for (var i = 0; i < Children.Count; i++)
@@ -611,7 +610,6 @@ namespace SandRibbon.Components.Canvas
                     Children.Remove(Children[i]);
             }
         }
-      
         public void ReceiveTextBox(MeTLLib.DataTypes.TargettedTextBox targettedBox)
         {
             if (targettedBox.target != target) return;
@@ -669,11 +667,7 @@ namespace SandRibbon.Components.Canvas
         {
             Dispatcher.adoptAsync(delegate
                                       {
-                                          var author = targettedBox.author == Globals.conversationDetails.Author ? "Teacher" : targettedBox.author;
                                           if (targettedBox.target != target) return;
-                                          //if (targettedBox.author == Globals.me &&
-                                          //  alreadyHaveThisTextBox(targettedBox.box))
-                                          //return; //I never want my live text to collide with me.
                                           if (targettedBox.slide == currentSlide &&
                                               (targettedBox.privacy == "public" || targettedBox.author == Globals.me))
                                           {
@@ -715,8 +709,8 @@ namespace SandRibbon.Components.Canvas
         public static IEnumerable<Point> getTextPoints(MeTLTextBox text)
         {
             if (text == null) return null;
-            var y = InkCanvas.GetTop(text);
-            var x = InkCanvas.GetLeft(text);
+            var y = GetTop(text);
+            var x = GetLeft(text);
             var width = text.FontSize * text.Text.Count();
             var height = (text.Text.Where(l => l.Equals('\n')).Count() + 1) * text.FontSize + 2;
             return new[]
@@ -744,20 +738,50 @@ namespace SandRibbon.Components.Canvas
                 SetLeft(box, 15);
                 SetTop(box, 15);
                 box.Text = Clipboard.GetText();
-                Select(new[] {box});
-                addAdorners();
+                Action undo = () =>
+                                  {
+                                      dirtyTextBoxWithoutHistory(box);
+                                  };
+                     
+                Action redo = () =>
+                               {
+
+                                   
+                                   Select(new[] {box});
+                                   addAdorners();
+                                   myTextBox = box;
+                                   sendTextWithoutHistory(myTextBox, myTextBox.tag().privacy);
+                               };
+                UndoHistory.Queue(undo, redo);
+                redo();
             }
         }
         protected override void HandleCopy()
         {
             if (myTextBox != null)
             {
-                Clipboard.SetText(myTextBox.SelectedText);
+                Action undo = () => Clipboard.GetText();
+                Action redo = () => Clipboard.SetText(myTextBox.SelectedText);
+                redo();
+                UndoHistory.Queue(undo, redo);
+
             }
             else
             {
-                foreach (var box in GetSelectedElements().Where(e => e is MeTLTextBox))
-                    Clipboard.SetText(((MeTLTextBox) box).Text);
+
+                var elements =  GetSelectedElements().Where(e => e is MeTLTextBox);
+                Action undo = () => {
+                    foreach(var box in elements)
+                        Clipboard.GetText();
+                };
+                Action redo = () =>
+                                  {
+                                      foreach (var box in elements)
+                                          Clipboard.SetText(((MeTLTextBox)box).Text);
+                                  };
+                UndoHistory.Queue(undo, redo);
+                redo();
+                
             }
         }
         protected override void HandleCut()
@@ -765,8 +789,21 @@ namespace SandRibbon.Components.Canvas
             if (myTextBox != null)
             {
                 var selection = myTextBox.SelectedText;
-                Clipboard.SetText(selection);
-                myTextBox.Text = myTextBox.Text.Remove(myTextBox.SelectionStart, myTextBox.SelectionLength);
+                var text = myTextBox.Text;
+                var start = myTextBox.SelectionStart;
+                var length = myTextBox.SelectionLength;
+                Action undo = () =>
+                                  {
+                                      myTextBox.Text = text;
+                                      Clipboard.GetText();
+                                  };
+                Action redo = () =>
+                                  {
+                                        Clipboard.SetText(selection);
+                                        myTextBox.Text = text.Remove(start, length);
+                                  };
+                redo();
+                UndoHistory.Queue(undo, redo);
 
             }
             else
