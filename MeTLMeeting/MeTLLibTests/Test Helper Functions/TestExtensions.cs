@@ -40,7 +40,7 @@ namespace MeTLLibTests
                 if (fieldType.IsPrimitive || fieldType.IsEnum || simpleTypes.Contains(fieldType))
                     result = (collection1[a].Equals(collection2[a])) ? true : false;
                 else
-                    result = valueEquals(collection1[a], collection2[a]);
+                    result = valueEqualsUsingReflection(collection1[a], collection2[a]);
                 results.Add(a, new KeyValuePair<bool, KeyValuePair<T, T>>(result, new KeyValuePair<T, T>(collection1[a], collection2[a])));
             }
             return !(results.Any(s => s.Value.Key == false));

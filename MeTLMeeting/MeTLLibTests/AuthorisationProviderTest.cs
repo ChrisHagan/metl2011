@@ -64,8 +64,15 @@ namespace MeTLLibTests
             kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
             kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
             AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            Credentials expected = null;
-            //Credentials expected = new Credentials { name = "eecrole", password = "m0nash2008", authorizedGroups = new List<AuthorizedGroup> { new AuthorizedGroup { groupKey = "Unrestricted", groupType = "" }, new AuthorizedGroup { groupKey = "Office of the Deputy Vice-Chancellor (Education)", groupType = "ou" }, new AuthorizedGroup { groupKey = "Administration", groupType = "ou" }, new AuthorizedGroup { groupKey = "Staff", groupType = "ou" }, new AuthorizedGroup { groupKey = "eecrole", groupType = "username" }, } };
+            Credentials expected = new Credentials(
+                "eecrole",
+                "m0nash2008",
+                new List<AuthorizedGroup> { 
+                    new AuthorizedGroup("Unrestricted",""),
+                    new AuthorizedGroup("Office of the Deputy Vice-Chancellor (Education)","ou"), 
+                    new AuthorizedGroup("Administration","ou"), 
+                    new AuthorizedGroup("Staff", "ou"), 
+                    new AuthorizedGroup("eecrole","username"), });
             Credentials actual = target.attemptAuthentication(username, password);
             Assert.IsTrue(TestExtensions.comparedCollection<AuthorizedGroup>(expected.authorizedGroups, actual.authorizedGroups));
             Assert.AreEqual(expected.name, actual.name);
