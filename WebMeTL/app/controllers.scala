@@ -19,44 +19,85 @@ import collection.breakOut;
 object Application extends Controller {
     val width = 200
     val height = 150
-    val server = "https://deified.adm.monash.edu.au:1188/Structure"
+    val structure = "https://deified.adm.monash.edu.au:1188/Structure"
+    val history = "https://deified.adm.monash.edu.au:1749/"
     val username = "exampleUsername"
     val password = "examplePassword"
     val TEMP_FILE = "all.zip"
-    val history = preloadHistory
-    val contentWeight = mapRandom(history, 1000)
-    val authorsPerConversation = mapRandom(history, 20)
-    private def preloadHistory = {
-        val zipFuture = WS.url(server+"/all.zip").authenticate(username,password).get
+    val cachedConversations = preloadConversations
+    val contentWeight = mapRandom(cachedConversations, 1000)
+    val authorsPerConversation = mapRandom(cachedConversations, 20)
+    private def preloadConversations = {
+        val zipFuture = WS.url(structure+"/all.zip").authenticate(username,password).get
+        FileUtils.writeByteArrayToFile(new File(TEMP_FILE),IOUtils.toByteArray(zipFuture.getStream))
+        val zipFile = new ZipFile(new File(TEMP_FILE))
+        Map(zipFile.getEntries
+            .map(any => any.asInstanceOf[ZipArchiveEntry])
+            .filter(zae=>zae.getName.endsWith("details.xml"))
+            .map(zae => IOUtils.toString(zipFile.getInputStream(zae)))
+            .map(xmlString => xml.XML.loadString(xmlString))
+            .map(detail => ((detail \ "jid").text.toInt -> detail)).toList:_*)
+    }
+    private def mapRandom(history:Map[Int,xml.NodeSeq], max:Int = 10) = history.map(kv => (kv._1 -> (Math.random * max).intValue.toString))
+    def index = conversations
+    def conversations = {
+        val authorJson = authorSummaries(cachedConversations).toString()
+        Template(authorJson)
+    }
+    def conversation(jid:Int)={
+        val messages = (cachedConversations(jid) \\ "slide")
+            .filter(s=> (s \\ "type").text == "SLIDE")
+            .map(s=>slide((s \\ "id").text.toInt))
+            .flatten
+        pretty(render(clump(messages).map(_.toJson)))
+    }
+    private def clump(data:Seq[Message])={
+        data
+    }
+    private case class Message(name:String, timestamp:Long,slide:Int,author:String){
+        def toJson = JObject(List(
+            JField("contentType", JString(name)),
+            JField("timestamp", JInt(timestamp)),
+            JField("slide", JInt(slide)),
+            JField("author", JString(author))))
+    }
+    private def slide(jid:Int)={
+        val zipFuture = WS.url("%s/%s/all.zip".format(history,jid)).authenticate(username,password).get
         FileUtils.writeByteArrayToFile(new File(TEMP_FILE),IOUtils.toByteArray(zipFuture.getStream))
         val zipFile = new ZipFile(new File(TEMP_FILE))
         zipFile.getEntries
             .map(any => any.asInstanceOf[ZipArchiveEntry])
-            .filter(zae=>zae.getName.endsWith("details.xml"))
-            .map(zae => IOUtils.toString(zipFile.getInputStream(zae)))
+            .filter(zae=>zae.getName.endsWith(".xml"))
+            .map(zae => IOUtils.toString(zipFile.getInputStream(zae))+"</logCollection>")
             .map(detail => xml.XML.loadString(detail))
-            .toList
+            .foldLeft(List.empty[Seq[Message]])((acc,item)=>{
+                (item \\ "message").flatMap(message=>{
+                    val timestamp = (message \ "@time").text.toLong
+                    List("image","ink","text")
+                        .flatMap(nodeName=>{
+                            (message \\ nodeName).map(node=>{
+                                val author = (node \ "author").text
+                                Message(nodeName,timestamp,jid,author)
+                           })
+                        })
+                }) :: acc
+            }).flatten
     }
-    private def mapRandom(history:Seq[xml.NodeSeq], max:Int = 10) = Map(history.map(c => ((c \ "jid").text, (Math.random * max).intValue.toString)):_*)
-    def index = conversations
-    def conversations = {
-        val authorJson = authorSummaries(history).toString()
-        Template(authorJson)
-    }
-    private def authorFrequencies(xs:Seq[xml.NodeSeq]) = {
-        val authors = xs.map(x => (x \ "author").text)
-        authors.groupBy(identity).mapValues(_.length)
+    private def authorFrequencies(xs:Map[Int,xml.NodeSeq]) = {
+        val authors = xs.map(kv => (kv._2 \ "author").text)
+        authors.groupBy(identity).mapValues(_.size)
     }
     private def elem(name:String, children:xml.Node*) = xml.Elem(null, name ,xml.Null,xml.TopScope, children:_*); 
     private def node(name:String, parent:xml.NodeSeq) = elem(name, xml.Text((parent \ name).text))
-    private def authorSummary(kv:Pair[String,Int], xs:Seq[xml.NodeSeq]) = {
+    private def authorSummary(kv:Pair[String,Int], xs:Map[Int,xml.NodeSeq]) = {
         val author = kv._1
         val freq = kv._2
         val count = elem("conversationCount", xml.Text(freq.toString))
-        val conversationsBody = xs.filter(x=>(x \ "author").text == author).map(
-            node=>{
-                val conversationContentWeight = elem("contentVolume", xml.Text(contentWeight((node \ "jid").text)))
-                val authorCount = elem("authorCount", xml.Text(authorsPerConversation((node \ "jid").text)))
+        val conversationsBody = xs.filter(kv=>(kv._2 \ "author").text == author).map(
+            kv=>{
+                val node = kv._2
+                val conversationContentWeight = elem("contentVolume", xml.Text(contentWeight((node \ "jid").text.toInt)))
+                val authorCount = elem("authorCount", xml.Text(authorsPerConversation((node \ "jid").text.toInt)))
                 val slideCount = elem("slideCount", xml.Text((node \ "slide").length.toString))
                 <listing>
                     {List("title","jid").map(name=>this.node(name, node)) ::: List(conversationContentWeight, authorCount, slideCount)}
@@ -65,7 +106,7 @@ object Application extends Controller {
         val conversations = <conversations>{conversationsBody}</conversations>;
         elem(author, List(count, conversations):_*)
     }
-    private def authorSummaries(xs:Seq[xml.NodeSeq]) = {
+    private def authorSummaries(xs:Map[Int,xml.NodeSeq]) = {
         val authorXmlList = authorFrequencies(xs).map(kv=>authorSummary(kv, xs))
         val authors = 
         <conversationSummaries>
@@ -75,36 +116,6 @@ object Application extends Controller {
             case JField("listing", x: JObject) => JField("listing", JArray(x :: Nil))
             case other => other
         }
-        pretty(JsonAST.render(authorsJson))
-    }
-    def conversation(jid:Int)={
-        val maybeXml = retrieveDetails(jid).map(renderDetails(_))
-        maybeXml match{
-            case Some(foundXml)=>{
-                val resultXml = foundXml
-                Template(resultXml)
-            }
-            case None=> "Conversation could not be found"
-        }
-    }
-    private def retrieveDetails(id:Int):Option[xml.Node]={
-        val uri = "%s/%s/details.xml".format(server,id)
-        try{
-            println(uri)
-            Some(xml.XML.loadString(WS.url(uri).authenticate(username,password).get.getString))
-        }
-        catch{
-            case e: Exception => None
-        }
-    }
-    private def renderDetails(detail:xml.Node):xml.Node={
-        val slides = (detail \\ "slide").map(slide =>{
-            val thumbUri = "http://spacecaps.adm.monash.edu.au:8080/thumb/%s?width=%d&height=%d".format((slide \\ "id").text, width, height)
-            <img src={thumbUri}></img>;
-        })
-        <div>
-            <div>{(detail \\ "title").text}</div>
-            {slides}
-        </div>;
+        pretty(render(authorsJson))
     }
 }

@@ -20,7 +20,7 @@ var marginScale = pv.Scale.linear().range(-100,100)
 function deepen(level,k,v){
     var obj = {}
     obj[k] = v
-    return _.reduce(_.range(level),function(acc,i){
+    return _.reduce(_.range(level),function(acc){
         var wrapper = {}
         wrapper[k] = acc
         return wrapper 
@@ -62,12 +62,12 @@ var Authors = {
         var graphRoot = Master.panel()
         var treemap = graphRoot.add(pv.Layout.Treemap)
         .def("active", function(){ return -1})
-        .nodes(this.data);
+        .nodes(Authors.data);
         treemap.leaf.add(pv.Panel)
             .fillStyle(Authors.color)
             .strokeStyle("#fff")
             .lineWidth(1)
-            .event("click",detail)
+            .event("click",Conversations.packed)
         treemap.label.add(pv.Label);
         graphRoot.render();
     },
@@ -96,7 +96,7 @@ var Authors = {
             .fillStyle(Authors.color)
             .size(function(d){
                 return dotScale(d.nodeValue)})
-            .event("click",Conversations.radial)
+            .event("click",Conversations.packed)
         newChild.label.add(pv.Label)
             .visible(function(d){ return d.lastChild == null })
         graphRoot.render()
@@ -138,7 +138,7 @@ var Conversations = {
             .nodes(nodes)
             .orient("radial")
             .depth(300)
-            .breadth(20)
+            .breadth(50)
         newChild.link.add(pv.Line)
         newChild.node.add(pv.Dot)
             .fillStyle(function(d){
@@ -154,19 +154,50 @@ var Conversations = {
                 return d.nodeValue.title})
         graphRoot.render()
         Breadcrumb.add(author, function(){Conversations.radial(node)})
-    }
+    },
+    packed:function(node){
+        var graphRoot = Master.panel()
+        var author = node.nodeName;
+        var data = detailsByAuthor[author]
+        var nodes = pv.dom(data)
+            .leaf(function(d){
+                return "jid" in d
+            })
+            .nodes()
+        var newChild = graphRoot.add(pv.Layout.Pack)
+            .nodes(nodes)
+            .size(function(d){
+                if(!d.nodeValue) return 0
+                return d.nodeValue.contentVolume * 4})
+            .top(-50)
+            .bottom(-50)
+            .order(null)
+        newChild.node.add(pv.Dot)
+            .fillStyle(function(d){
+                if(!d.nodeValue) return "white"
+                return Conversations.color(d.nodeValue.authorCount)})
+            .event("click",Conversation.slides)
+            .anchor("center")
+            .add(pv.Label)
+            .text(function(d){
+                if(!d.nodeValue) return ""
+                return d.nodeValue.title})
+        graphRoot.render()
+        Breadcrumb.add(author, function(){Conversations.radial(node)})
+   }
 }
+var width = 1024
+var height = 768
 var Conversation = {
     slides:function(node){
-        var width = 1024
-        var height = 768
         var conversation = node.nodeValue
         var jid = parseInt(conversation.jid)
         var slideCount = parseInt(conversation.slideCount)
         var nodes = pv.range(jid+1, jid+slideCount)
+        var yAxis = pv.Scale.linear(1,slideCount).range(0,height)
         var graphRoot = new pv.Panel()
             .canvas("slideDisplay")
-            .width(width*2) 
+            .width(width) 
             .height(slideCount * height)
         graphRoot.add(pv.Image)
             .data(nodes)
@@ -177,13 +208,42 @@ var Conversation = {
                 return "http://localhost:8080?width="+width+"&height="+height+"&server=deified&slide="+i
             })
             .strokeStyle("black")
-            .anchor("right")
-            .add(pv.Panel)
+        graphRoot.render()
+        $.get("conversation?jid="+jid,function(data){
+            var content = eval(data)
+            var times = _.map(_.pluck(content, "timestamp"),function(s){return parseInt(s)})
+            var xAxis = pv.Scale.linear(_.min(times),_.max(times)).range(0,width)
+            var root = Master.panel()
                 .width(width)
                 .height(height)
-                .top(function(d){return d.y - height /2})
-                .add(pv.Rule)
-        graphRoot.render()
+                .data(content)
+            root.add(pv.Rule)
+                .data(function(d){return yAxis.ticks()})
+                .bottom(yAxis)
+                .add(pv.Label)
+                .text(yAxis.tickFormat)
+            root.add(pv.Rule)
+                .data(function(d){return xAxis.ticks()})
+                .left(xAxis)
+                .add(pv.Label)
+                .bottom(0)
+                .text(function(d){
+                    var date = new Date(d)
+                    var ticks = xAxis.ticks()
+                    var format = "%H:%M %D"
+                    return pv.Format.date(format).format(new Date(d))
+                })
+            root.add(pv.Dot)
+                .size(50)
+                .fillStyle("red")
+                .left(function(d){
+                    return xAxis(d.timestamp)
+                })
+                .top(function(d){
+                    return yAxis(parseInt(d.slide)-jid)
+                })
+            root.render()
+        })
         Breadcrumb.add(conversation.title, function(){Conversation.slides(node)})
     }
 }
