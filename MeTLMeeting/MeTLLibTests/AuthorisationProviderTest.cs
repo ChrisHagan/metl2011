@@ -55,67 +55,6 @@ namespace MeTLLibTests
         //
         #endregion
         [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void authenticateAgainstFailoverSystemTest()
-        {
-            string username = "eecrole";
-            string password = "m0nash2008";
-            bool expected = true;
-            bool actual;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            actual = target.authenticateAgainstFailoverSystem(username, password);
-            Assert.AreEqual(expected, actual);
-        }
-        [TestMethod()]
-        public void getEligibleGroupsTest()
-        {
-            string AuthcateName = "eecrole";
-            string AuthcatePassword = "m0nash2008";
-            //List<AuthorizedGroup> expected = new List<AuthorizedGroup> { new AuthorizedGroup("Unrestricted",""), new AuthorizedGroup { groupKey = "Office of the Deputy Vice-Chancellor (Education)", groupType = "ou" }, new AuthorizedGroup { groupKey = "Administration", groupType = "ou" }, new AuthorizedGroup { groupKey = "Staff", groupType = "ou" }, new AuthorizedGroup { groupKey = "eecrole", groupType = "username" } };
-            List<AuthorizedGroup> expected = null;
-            List<AuthorizedGroup> actual;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            actual = target.getEligibleGroups(AuthcateName, AuthcatePassword);
-            Assert.IsTrue(TestExtensions.comparedCollection<AuthorizedGroup>(expected, actual));
-        }
-        [TestMethod()]
-        public void isAuthenticatedAgainstLDAPTest()
-        {
-            string username = "eecrole";
-            string password = "m0nash2008";
-            bool expected = true;
-            bool actual;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            actual = target.isAuthenticatedAgainstLDAP(username, password);
-            Assert.AreEqual(expected, actual);
-        }
-        [TestMethod()]
-        public void isAuthenticatedAgainstWebProxyTest()
-        {
-            string username = "eecrole";
-            string password = "m0nash2008";
-            bool expected = true;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<WebClientFactory>().InSingletonScope();
-            kernel.Bind<ICredentials>().To<MeTLCredentials>().InSingletonScope();
-            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            bool actual = target.isAuthenticatedAgainstWebProxy(username, password);
-            Assert.AreEqual(expected, actual);
-        }
-        [TestMethod()]
         public void attemptAuthenticationIntegrationTest()
         {
             string username = "eecrole";
@@ -230,59 +169,6 @@ namespace MeTLLibTests
             Credentials expected = new Credentials("","",new List<AuthorizedGroup>());
             Credentials actual;
             actual = target.attemptAuthentication(username, password);
-            Assert.AreEqual(expected, actual);
-        }
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void isBackdoorUserTestReturnsFalseWhenGivenEecrole()
-        {
-            string user = "eecrole"; 
-            bool expected = false; 
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<AuthorizationProviderWebClientFactory>().InSingletonScope();
-            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            bool actual = target.isBackdoorUser(user);
-            Assert.AreEqual(expected, actual);
-        }
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void isBackdoorUserTestReturnsTrueWhenGivenAdmirable()
-        {
-            string user = "AdmirableEecrole";
-            bool expected = true;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<AuthorizationProviderWebClientFactory>().InSingletonScope();
-            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            bool actual = target.isBackdoorUser(user);
-            Assert.AreEqual(expected, actual);
-        }
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void isBackdoorUserTestReturnsFalseWhenGivenEmptyString()
-        {
-            string user = string.Empty;
-            bool expected = false;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<AuthorizationProviderWebClientFactory>().InSingletonScope();
-            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            bool actual = target.isBackdoorUser(user);
-            Assert.AreEqual(expected, actual);
-        }
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        [ExpectedException(typeof(System.NullReferenceException))]
-        public void isBackdoorUserTestFailsWhenGivenNull()
-        {
-            string user = null;
-            bool expected = true;
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<MeTLServerAddress>().To<MadamServerAddress>().InSingletonScope();
-            kernel.Bind<IWebClientFactory>().To<AuthorizationProviderWebClientFactory>().InSingletonScope();
-            AuthorisationProvider target = kernel.Get<AuthorisationProvider>();
-            bool actual = target.isBackdoorUser(user);
             Assert.AreEqual(expected, actual);
         }
         class AuthorizationProviderWebClientFactory : IWebClientFactory
