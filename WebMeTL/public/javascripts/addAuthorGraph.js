@@ -12,7 +12,7 @@ var detailsByAuthor = _.reduce(detailedAuthors.conversationSummaries,
         return acc;
     }, {});
 var flatNodes = pv.dom(frequenciesByAuthor).nodes();
-var clusteredFrequencies = cluster(frequenciesByAuthor,6);
+var clusteredFrequencies = cluster(frequenciesByAuthor,6, false);
 var clusteredNodes = pv.dom(clusteredFrequencies).nodes();
 var dotScale = pv.Scale.linear(_.min(_.values(frequenciesByAuthor)), _.max(_.values(frequenciesByAuthor))).range(20,1000)
 var marginScale = pv.Scale.linear().range(-100,100)
@@ -26,13 +26,32 @@ function deepen(level,k,v){
         return wrapper 
     },obj) 
 }
-function cluster(subject, maxClusters){
+function cluster(subject, maxClusters, smooth){
+    var subjectArray = _.map(subject, function(v,k){
+        return [k,v]
+    }).sort(function(a,b){
+        return a[1] - b[1]
+    })
     var subjectValues = _.values(subject)
     var limit = _.max(subjectValues)
-    var divisor = Math.round(limit / maxClusters);
+    var divisor = Math.floor(limit / maxClusters);
+    if(smooth){
+        var i = 0
+        return _.reduce(subjectArray, function(acc,kv){
+            var k = kv[0]
+            var v = kv[1]
+            var divergenceThreshold = 1
+            var group = (i < subjectArray.length * divergenceThreshold)?
+                Math.floor(i++ / divisor):
+                Math.floor(v / divisor) + 2
+            var adjustedGroup = _.min([maxClusters, group])
+            return _.extend(acc, deepen(adjustedGroup,k,v))
+        }, {})
+    }
     return _.reduce(subject, function(acc, v, k){
-        var group = Math.min(Math.floor(v / divisor) + 2, maxClusters)
-        var deepGroup = deepen(group,k,v)
+        var group = Math.floor(v / divisor)
+        var adjustedGroup = _.min([maxClusters, group + 2])
+        var deepGroup = deepen(adjustedGroup,k,v)
         return _.extend(acc, deepGroup)
     }, {});
 }
@@ -96,7 +115,7 @@ var Authors = {
             .fillStyle(Authors.color)
             .size(function(d){
                 return dotScale(d.nodeValue)})
-            .event("click",Conversations.packed)
+            .event("click",Conversations.radial)
         newChild.label.add(pv.Label)
             .visible(function(d){ return d.lastChild == null })
         graphRoot.render()
@@ -194,7 +213,8 @@ var Conversation = {
         var jid = parseInt(conversation.jid)
         var slideCount = parseInt(conversation.slideCount)
         var nodes = pv.range(jid+1, jid+slideCount)
-        var yAxis = pv.Scale.linear(1,slideCount).range(0,height)
+        var padding = 20
+        var yAxis = pv.Scale.linear(1,slideCount).range(padding,height-padding)
         var graphRoot = new pv.Panel()
             .canvas("slideDisplay")
             .width(width) 
@@ -209,42 +229,107 @@ var Conversation = {
             })
             .strokeStyle("black")
         graphRoot.render()
-        $.get("conversation?jid="+jid,function(data){
-            var content = eval(data)
-            var times = _.map(_.pluck(content, "timestamp"),function(s){return parseInt(s)})
-            var xAxis = pv.Scale.linear(_.min(times),_.max(times)).range(0,width)
-            var root = Master.panel()
-                .width(width)
-                .height(height)
-                .data(content)
-            root.add(pv.Rule)
-                .data(function(d){return yAxis.ticks()})
-                .bottom(yAxis)
-                .add(pv.Label)
-                .text(yAxis.tickFormat)
-            root.add(pv.Rule)
-                .data(function(d){return xAxis.ticks()})
-                .left(xAxis)
-                .add(pv.Label)
-                .bottom(0)
-                .text(function(d){
-                    var date = new Date(d)
-                    var ticks = xAxis.ticks()
-                    var format = "%H:%M %D"
-                    return pv.Format.date(format).format(new Date(d))
-                })
-            root.add(pv.Dot)
-                .size(50)
-                .fillStyle("red")
-                .left(function(d){
-                    return xAxis(d.timestamp)
-                })
-                .top(function(d){
-                    return yAxis(parseInt(d.slide)-jid)
-                })
-            root.render()
-        })
         Breadcrumb.add(conversation.title, function(){Conversation.slides(node)})
+    },
+    analysis:function(node){
+        $.getJSON("conversation?jid="+parseInt(node.nodeValue.jid),Conversation.overflowedDetailOnXAxis)        
+    },
+    horizonSlides:function(content){},
+    overflowedDetailOnXAxis:function(content){
+        var data = content.details
+        var times = _.pluck(data, "timestamp").map(function(t){return parseInt(t)})
+        var min = _.min(times)
+        var max = _.max(times)
+        var timeSpan = (max - min) / 1000//Milis to seconds
+        var master = Master.panel()
+            .width(timeSpan)
+            .height(height)
+            .overflow("visible")
+            .data(data)
+        var timeToX = pv.Scale.linear(_.min(times),_.max(times)).range(0,timeSpan)//1 px per second
+        master.add(pv.Dot)
+            .size(50)
+            .fillStyle("red")
+            .top(250)
+            .left(function(d){return timeToX(d.timestamp)})
+        master.render()
+    },
+    masterDetailOnXAxis:function(content){
+        var data = content.details
+        var master = Master.panel()
+            .width(width)
+            .height(height)
+        var i = {x:200,dx:100}
+        var focusHeight = 900
+        var contextHeight = 100
+        var fx = pv.Scale.linear().range(0,width)
+        var fy = pv.Scale.linear().range(0,focusHeight)
+        var times = _.pluck(data, "timestamp").map(function(t){return parseInt(t)})
+        var dateToX = pv.Scale.linear(_.min(times), _.max(times)).range(0,width)
+        var slides = _.pluck(data, "slide").map(function(t){return parseInt(t)})
+        var slideToY = pv.Scale.linear(_.min(slides), _.max(slides)).range(0,height)
+
+        var focus = master.add(pv.Panel)
+            .def("init",function(){
+                var d1 = dateToX.invert(i.x)
+                var d2 = dateToX.invert(i.x + i.dx)
+                var dd = data.slice(
+                    Math.max(0,pv.search.index(data,d1,function(d){return d.timestamp}) - 1),
+                        pv.search.index(data,d2,function(d){return d.slide}) + 1)
+                fx.domain(d1,d2)
+                fy.domain([0,pv.max(dd,function(d){return d.slide})])
+                console.log(dd.length)
+                return dd
+            })
+            .top(0)
+            .height(focusHeight)
+
+        focus.add(pv.Panel)
+            .overflow("hidden")
+            .add(pv.Dot)
+                .data(function(){
+                    return focus.init()
+                })
+                .left(function(d){ 
+                    return fx(d.timestamp)
+                })
+                .bottom(function(d){
+                    return fy(d.slide)
+                })
+                .size(100)
+                .fillStyle("red")
+                
+        var context = master.add(pv.Panel)
+            .bottom(0)
+            .height(contextHeight)
+            .fillStyle("blue")
+                    
+        context.add(pv.Panel)
+            .data([i])
+            .cursor("crosshair")
+            .events("all")
+            .event("mousedown", pv.Behavior.select())
+            .event("select", focus)
+          .add(pv.Bar)
+            .left(function(d){
+                return d.x
+            })
+            .width(function(d){ 
+                return d.dx
+            })
+            .fillStyle("rgba(255, 128, 128, .4)")
+            .cursor("move")
+            .event("mousedown", pv.Behavior.drag())
+            .event("drag", focus);
+            
+        focus.add(pv.Rule)
+            .data(function(){return fx.ticks()})
+            .left(fx)
+            .strokeStyle("black")
+            .anchor("bottom")
+            .add(pv.Label)
+                .text(fx.tickFormat())
+        master.render()
     }
 }
 var Breadcrumb = (function(){ 
@@ -269,5 +354,70 @@ var Breadcrumb = (function(){
         }
     }
 })()
-Authors.radial()
+var ProofOfConcept = {
+    detail:function(){
+        $.getJSON("conversation?jid=1099400",function(hscHistory){
+            var data = _.flatten(hscHistory.details[0]).slice(50)
+            var times = _.map(_.pluck(data, "timestamp"),function(s){return parseInt(s)})
+            var slides = _.map(_.pluck(data, "slide"),function(s){return parseInt(s)})
+            var xAxis = pv.Scale.linear(_.min(times),_.max(times)).range(50,width - 50)
+            var yAxis = pv.Scale.linear(0,_.max(slides)).range(50,height - 50)
+            var subYAxis = pv.Scale.linear(0,5).range(0,Math.round(height/yAxis.ticks().length /2))
+            var root = Master.panel()
+                .width(width)
+                .height(height)
+                .data(data)
+            root.add(pv.Rule)
+                .data(xAxis.ticks())
+                .bottom(0) 
+                .left(xAxis)
+                .height(20)
+                .strokeStyle("black")
+                .anchor("top")
+                .add(pv.Label)
+                    .text(function(d){
+                        return pv.Format.date("%r")(new Date(d))})
+            root.add(pv.Rule)
+                .data(yAxis.ticks(_.max(slides)))
+                .bottom(yAxis)
+                .width(20)
+                .strokeStyle("black")
+                .anchor("right")
+                .add(pv.Label)
+                    .text(yAxis.tickFormat)
+                    .anchor("right")
+                    .add(pv.Rule)
+                        .width(width - 35)
+                        .left(35)
+                        .strokeStyle("black")
+            root.add(pv.Dot)
+                .size(50)
+                .shape(function(d){
+                    switch(d.contentType){
+                        case "ink":return "cross"
+                        case "image":return "circle"
+                        case "text":return "diamond"
+                    }
+                })
+                .top(function(d){
+                    return height - (yAxis(parseInt(d.slide)) + subYAxis(d.standing))
+                })
+                .left(function(d){
+                    return xAxis(parseInt(d.timestamp))
+                })
+                .fillStyle("red")
+                .event("click",function(d){
+                    alert( 
+                        new Date(parseInt(d.timestamp)).toString() + 
+                        " @ " +
+                        d.slide +
+                        " by "+
+                        d.author)
+                })
+            root.render()
+        })
+    }
+} 
+ProofOfConcept.detail()
+//Authors.radial()
 Breadcrumb.render()

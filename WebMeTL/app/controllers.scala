@@ -15,6 +15,7 @@ import net.liftweb.json._
 import net.liftweb.json.JsonDSL._
 import net.liftweb.json.JsonAST._
 import collection.breakOut;
+import MeTL._
 
 object Application extends Controller {
     val width = 200
@@ -24,10 +25,10 @@ object Application extends Controller {
     val username = "exampleUsername"
     val password = "examplePassword"
     val TEMP_FILE = "all.zip"
-    val cachedConversations = preloadConversations
+    val cachedConversations = loadConversations
     val contentWeight = mapRandom(cachedConversations, 1000)
     val authorsPerConversation = mapRandom(cachedConversations, 20)
-    private def preloadConversations = {
+    private def loadConversations = {
         val zipFuture = WS.url(structure+"/all.zip").authenticate(username,password).get
         FileUtils.writeByteArrayToFile(new File(TEMP_FILE),IOUtils.toByteArray(zipFuture.getStream))
         val zipFile = new ZipFile(new File(TEMP_FILE))
@@ -45,21 +46,18 @@ object Application extends Controller {
         Template(authorJson)
     }
     def conversation(jid:Int)={
-        val messages = (cachedConversations(jid) \\ "slide")
+        val slides = cachedConversations(jid) \\ "slide"
+        val messages = slides
             .filter(s=> (s \\ "type").text == "SLIDE")
             .map(s=>slide((s \\ "id").text.toInt))
             .flatten
-        pretty(render(clump(messages).map(_.toJson)))
-    }
-    private def clump(data:Seq[Message])={
-        data
-    }
-    private case class Message(name:String, timestamp:Long,slide:Int,author:String){
-        def toJson = JObject(List(
-            JField("contentType", JString(name)),
-            JField("timestamp", JInt(timestamp)),
-            JField("slide", JInt(slide)),
-            JField("author", JString(author))))
+        val slideOrders = Map(slides.map(node=>((node \\ "id").text.toInt -> (node \\ "index").text.toInt)).toList:_*)
+        val authors = Map(messages.map(m=>m.author).distinct.map(a=>(a->(Math.random*5).toInt)):_*)
+        val relativizedMessages = messages.map(m=>Message(m.name,m.timestamp,slideOrders(m.slide), m.author, authors(m.author)))
+        //val clump = SimpleClump(messages)
+        //val clump = MessageReductor.clumpSlides(messages)
+        val clump = MessageReductor.clump(relativizedMessages, true)
+        pretty(render(clump.toJsonFull))
     }
     private def slide(jid:Int)={
         val zipFuture = WS.url("%s/%s/all.zip".format(history,jid)).authenticate(username,password).get
@@ -77,7 +75,7 @@ object Application extends Controller {
                         .flatMap(nodeName=>{
                             (message \\ nodeName).map(node=>{
                                 val author = (node \ "author").text
-                                Message(nodeName,timestamp,jid,author)
+                                Message(nodeName,timestamp,jid,author,0)
                            })
                         })
                 }) :: acc
