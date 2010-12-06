@@ -62,7 +62,7 @@ namespace MeTLLib.Providers
             var doc = new XmlDocument();
             if (String.IsNullOrEmpty(sXML)) return token;
             doc.LoadXml(sXML);
-            if (doc.GetElementsByTagName("error").Count == 0)
+            if (doc.GetElementsByTagName("error").Count == 0 && doc.GetElementsByTagName("eligibleConversationGroups").Count > 0)
             {
                 token.groups.Add(new AuthorizedGroup("Unrestricted", ""));
                 foreach (XmlElement group in doc.GetElementsByTagName("eligibleGroup"))
