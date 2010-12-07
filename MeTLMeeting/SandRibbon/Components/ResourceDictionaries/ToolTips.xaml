@@ -167,7 +167,7 @@
      <resources:MeTLImageToolTip x:Key="LogoutMeTLToolTip" 
                                         TitleText="Logout and quit MeTL"
                                         ImageSource="\Resources\logoutAndExit.png" 
-                                        ContentText="Closes MeTL clearing out your saved credentials"/>
+                                        ContentText="Closes MeTL clearing your saved credentials"/>
   
     <resources:MeTLImageToolTip x:Key="ImportConversationToolTip" 
                                         TitleText="Import Conversation"

@@ -26,7 +26,7 @@ xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInte
                 <dict:CheckBox x:Name="TextItalicButton" Icon="..\..\Resources\italic.png" Text="I" ToolTip="{StaticResource ItalicToolTip}" Click="valuesUpdated" InternalButtonSize="Small"/>
                 <dict:CheckBox x:Name="TextUnderlineButton" Icon="..\..\Resources\underline.png" Text="U" ToolTip="{StaticResource UnderlineToolTip}" Click="valuesUpdated" InternalButtonSize="Small"/>
                 <dict:CheckBox x:Name="TextStrikethroughButton" Icon="..\..\Resources\strikethrough.png" Text="S" ToolTip="{StaticResource StrikeThroughToolTip}" Click="valuesUpdated" InternalButtonSize="Small"/>
-                <dict:Button ToolTip="{StaticResource ClearFormattingToolTip}" Icon="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Text="Clear Formatting" Command="{x:Static api:Commands.RestoreTextDefaults}" InternalButtonSize="Small"/>
+                <dict:Button ToolTip="{StaticResource ClearFormattingToolTip}" Icon="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Text="Clear Formatting" Click="restoreDefaults" InternalButtonSize="Small"/>
                 <Border x:Name="ColourPickerBorder" BorderBrush="Black" BorderThickness="2">
                     <dict:DoubleButton IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" Click="ShowColourSelector" x:Name="FontColourButton" Icon="..\..\Resources\changeFontColour.png" Text="C" ToolTip="{StaticResource FontColourToolTip}" InternalButtonSize="Small">
                         <dict:DoubleButton.Popup>
