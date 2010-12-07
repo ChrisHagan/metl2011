@@ -31,9 +31,6 @@ namespace SandRibbon.Tabs.Groups
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
         }
-
-
-
         private void togglebold(object obj)
         {
             TextBoldButton.IsChecked = !TextBoldButton.IsChecked;
@@ -161,6 +158,25 @@ namespace SandRibbon.Tabs.Groups
         }
         private void valuesUpdated(object sender, RoutedEventArgs e)
         {
+            var clickedButton = (CheckBox)sender;
+            if (clickedButton == TextStrikethroughButton)
+                if (clickedButton.IsChecked == true)
+                    TextUnderlineButton.IsChecked = false;
+            if (clickedButton == TextUnderlineButton)
+                if (clickedButton.IsChecked == true)
+                    TextStrikethroughButton.IsChecked = false;
+            sendValues();
+        }
+
+        private void restoreDefaults(object sender, RoutedEventArgs e)
+        {
+            fontSize.SelectedIndex = 0;
+            fontFamily.SelectedIndex = 0;    
+            TextBoldButton.IsChecked = false;
+            TextItalicButton.IsChecked = false;
+            TextUnderlineButton.IsChecked = false;
+            TextStrikethroughButton.IsChecked = false;
+            ColourPickerBorder.BorderBrush = new SolidColorBrush(Colors.Black);
             sendValues();
         }
     }

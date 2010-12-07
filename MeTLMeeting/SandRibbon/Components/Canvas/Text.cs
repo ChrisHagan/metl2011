@@ -65,25 +65,58 @@ namespace SandRibbon.Components.Canvas
 
         private void updateStyling(TextInformation info)
         {
-            if (myTextBox == null) return;
-            var currentTextBox = myTextBox;
-            var oldInfo = getInfoOfBox(currentTextBox);
             currentColor = info.color;
             currentFamily = info.family;
             currentSize = info.size;
-            Action undo = () =>
+            if (myTextBox != null)
             {
-                
-                applyStylingTo(currentTextBox, oldInfo);
-                updateTools();
-            };
-            Action redo = () =>
+                var currentTextBox = myTextBox;
+                var oldInfo = getInfoOfBox(currentTextBox);
+
+                Action undo = () =>
+                                  {
+                                      ClearAdorners();
+                                      applyStylingTo(currentTextBox, oldInfo);
+                                      updateTools();
+                                      addAdorners();
+                                  };
+                Action redo = () =>
+                                  {
+                                      ClearAdorners();
+                                      applyStylingTo(currentTextBox, info);
+                                      updateTools();
+                                      addAdorners();
+                                  };
+                UndoHistory.Queue(undo, redo);
+                redo();
+            }
+            else if(GetSelectedElements().Count > 0)
             {
-                applyStylingTo(currentTextBox, info);
-                updateTools();
-            };
-            UndoHistory.Queue(undo, redo);
-            applyStylingTo(currentTextBox, info);
+                var originalElements = GetSelectedElements().ToList().Select(tb => Clone((MeTLTextBox)tb));
+                Action undo = () =>
+                                  {
+                                      ClearAdorners();
+                                      foreach (var originalElement in originalElements)
+                                      {
+                                         dirtyTextBoxWithoutHistory(originalElement);
+                                         sendTextWithoutHistory(originalElement, originalElement.tag().privacy);
+                                      }
+                                      addAdorners();
+                                  };
+                Action redo = () =>
+                                  {
+                                      ClearAdorners();
+                                      var ids = originalElements.Select(b => b.tag().id);
+                                      var selection = Children.ToList().Where(b => ids.Contains(((MeTLTextBox)b).tag().id));
+                                      foreach(MeTLTextBox currentTextBox in selection)
+                                          applyStylingTo(currentTextBox, info);
+                                      addAdorners();
+                                  };
+                UndoHistory.Queue(undo, redo);
+                redo();
+
+            }
+        
         }
         private static void applyStylingTo(MeTLTextBox currentTextBox, TextInformation info)
         {
@@ -238,13 +271,17 @@ namespace SandRibbon.Components.Canvas
                 requeryTextCommands(); 
             }
         }
-
         private void selectionChanged(object sender, EventArgs e)
         {
             if(GetSelectedElements().Count == 0)
                 ClearAdorners();
             else
                 addAdorners();
+            if (GetSelectedElements().Count == 1)
+            {
+                myTextBox = (MeTLTextBox)GetSelectedElements().First();
+                updateTools();
+            }
         }
         private void updateSelectionAdorners()
         {
@@ -272,6 +309,7 @@ namespace SandRibbon.Components.Canvas
         private void selectingText(object sender, InkCanvasSelectionChangingEventArgs e)
         {
             e.SetSelectedElements(filterMyText(e.GetSelectedElements()));
+           
         }
         private IEnumerable<UIElement> filterMyText(IEnumerable<UIElement> elements)
         {
@@ -379,11 +417,16 @@ namespace SandRibbon.Components.Canvas
 
         private Color currentColor = Colors.Black;
         private MeTLTextBox myTextBox;
-
+        private bool canFocus = true;
         private void setInkCanvasMode(string modeString)
         {
+            canFocus = modeString.ToLower() == "none";
+            foreach (var box in Children.ToList().Where(b => b is MeTLTextBox))
+                    box.Focusable = canFocus;
             if (!canEdit)
+            {
                 EditingMode = InkCanvasEditingMode.None;
+            }
             else
                 EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
         }
@@ -485,7 +528,7 @@ namespace SandRibbon.Components.Canvas
             box.BorderThickness = new Thickness(0);
             box.BorderBrush = new SolidColorBrush(Colors.Transparent);
             box.Background = new SolidColorBrush(Colors.Transparent);
-            box.Focusable = canEdit;
+            box.Focusable = canEdit && canFocus;
             return box;
         }
 
@@ -693,7 +736,7 @@ namespace SandRibbon.Components.Canvas
             box.BorderThickness = new Thickness(0);
             box.BorderBrush = new SolidColorBrush(Colors.Transparent);
             box.Background = new SolidColorBrush(Colors.Transparent);
-            box.Focusable = canEdit;
+            box.Focusable = canEdit && canFocus;
             box.tag(OldBox.tag());
             box.FontFamily = OldBox.FontFamily;
             box.FontWeight = OldBox.FontWeight;
@@ -758,7 +801,7 @@ namespace SandRibbon.Components.Canvas
         }
         protected override void HandleCopy()
         {
-            if (myTextBox != null)
+            if (myTextBox != null && myTextBox.SelectionLength > 0)
             {
                 Action undo = () => Clipboard.GetText();
                 Action redo = () => Clipboard.SetText(myTextBox.SelectedText);
@@ -768,7 +811,7 @@ namespace SandRibbon.Components.Canvas
             }
             else
             {
-
+                myTextBox = null;
                 var elements =  GetSelectedElements().Where(e => e is MeTLTextBox);
                 Action undo = () => {
                     foreach(var box in elements)
@@ -786,21 +829,29 @@ namespace SandRibbon.Components.Canvas
         }
         protected override void HandleCut()
         {
-            if (myTextBox != null)
+            if (myTextBox != null && myTextBox.SelectionLength > 0)
             {
                 var selection = myTextBox.SelectedText;
                 var text = myTextBox.Text;
                 var start = myTextBox.SelectionStart;
                 var length = myTextBox.SelectionLength;
+                var currentTextBox = myTextBox;
                 Action undo = () =>
                                   {
-                                      myTextBox.Text = text;
+                                      currentTextBox.Text = text;
+                                      if (!alreadyHaveThisTextBox(currentTextBox))
+                                          sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
                                       Clipboard.GetText();
                                   };
                 Action redo = () =>
                                   {
-                                        Clipboard.SetText(selection);
-                                        myTextBox.Text = text.Remove(start, length);
+                                      Clipboard.SetText(selection);
+                                      currentTextBox.Text = text.Remove(start, length);
+                                      if (currentTextBox.Text.Length == 0)
+                                      {
+                                          myTextBox = null;
+                                          dirtyTextBoxWithoutHistory(currentTextBox);
+                                      }
                                   };
                 redo();
                 UndoHistory.Queue(undo, redo);
@@ -812,13 +863,13 @@ namespace SandRibbon.Components.Canvas
                 var selectedElements = GetSelectedElements().Select(tb => Clone((MeTLTextBox) tb)).ToList().Select(Clone);
                 foreach (MeTLTextBox box in GetSelectedElements().Where(e => e is MeTLTextBox))
                 {
-
                     Clipboard.SetText(box.Text);
                     listToCut.Add(box);
                 }
                 ClearAdorners();
                 Action redo = () =>
                                   {
+                                      myTextBox = null;
                                       foreach (var element in listToCut)
                                           dirtyTextBoxWithoutHistory(element);
                                   };
