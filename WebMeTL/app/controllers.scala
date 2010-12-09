@@ -115,45 +115,48 @@ object Application extends Controller {
     }
     val resourceCache = collection.mutable.Map.empty[String,java.awt.Image]
     def snapshot(jid:Int, width:Int=640, height:Int=320)={
+        //26.6 Functional naiive
         import java.awt._
         val time = startStopwatch
         time("Made pre image canvas")
-        var maxX = 0
-        var maxY = 0
+        var maxX = 1
+        var maxY = 1
         var preParser = collection.immutable.SortedMap.empty[String,HistoricalItem]
         time("Accquired messages")
         val messageText = "<root>"+slideXmppMessages(jid).mkString+"</root>"
-        val messages = io.Source.fromString(messageText)
         time("Stringified messages")
         val dom = xml.XML.loadString(messageText)
-        for(s <- (dom \\ "image")){
-            val source = (s \ "source").text
-            val width = (s \ "width").text.toDouble.toInt
-            val height = (s \ "height").text.toDouble.toInt
-            val x = (s \ "x").text.toDouble.toInt
-            val y = (s \ "y").text.toDouble.toInt
-            val identity = (s \ "identity").text
-            maxX = max(maxX,x+width)
-            maxY = max(maxY,y+height)
-            preParser=preParser + (identity -> HistoricalImage(identity,x,y,width,height,source))
-        }
-        time("Preparsed images") 
-        for(s <- dom \\ "ink"){
-            val identity = (s \ "checksum").text
-            val color = (s \ "color").text                
-            val thickness = (s \ "thickness").text.toInt
-            val points = (s \ "points").text.split(" ").map(_.toDouble.toInt).grouped(3).grouped(2).withPartial(false).map(
-                ps => ps match{
-                    case Seq(Array(x1,y1,_),Array(x2,y2,_))=>{
-                        maxX = max(maxX,max(x1,x2))
-                        maxY = max(maxY,max(y1,y2))
-                        ps
-                    }
-                }).toList.flatten
-            preParser=preParser + (identity -> HistoricalInk(identity,color,thickness.toInt,points))
-        }
-        time("Preparsed ink") 
-        time("Finished preparsing") 
+        val pointScanner = """(\d+\.\d+) (\d+\.\d+) (\d+\.\d+) (\d+\.\d+) (\d+\.\d+) (\d+\.\d+)""".r
+        (dom \\ "message").foreach(m=>{
+            (m \ "ink").foreach(s=>{
+                val identity = (s \ "checksum").text
+                val color = (s \ "color").text                
+                val thickness = (s \ "thickness").text.toInt
+                val pointText = (s \ "points").text
+                val points = pointText.split(" ").map(_.toDouble.toInt).grouped(3).grouped(2).withPartial(false).map(
+                    ps => ps match{
+                        case Seq(Array(x1,y1,_),Array(x2,y2,_))=>{
+                            maxX = max(maxX,max(x1,x2))
+                            maxY = max(maxY,max(y1,y2))
+                            ps
+                        }
+                    }).toList.flatten
+                preParser=preParser + (identity -> HistoricalInk(identity,color,thickness.toInt,points))
+            })
+            time("Preparsed ink") 
+            (m \ "image").foreach(s=>{
+                val source = (s \ "source").text
+                val width = (s \ "width").text.toDouble.toInt
+                val height = (s \ "height").text.toDouble.toInt
+                val x = (s \ "x").text.toDouble.toInt
+                val y = (s \ "y").text.toDouble.toInt
+                val identity = (s \ "identity").text
+                maxX = max(maxX,x+width)
+                maxY = max(maxY,y+height)
+                preParser=preParser + (identity -> HistoricalImage(identity,x,y,width,height,source))
+            })
+            time("Preparsed images") 
+        })
         val image = new BufferedImage(maxX,maxY,BufferedImage.TYPE_INT_RGB)
         val g = image.createGraphics.asInstanceOf[Graphics2D]
         g.setPaint(Color.white)
@@ -163,7 +166,6 @@ object Application extends Controller {
         time("Finished painting") 
         javax.imageio.ImageIO.write(image, "png", response.out)
         request.contentType = "image/png"
-        time("Done") 
     }
     private def authorFrequencies(xs:Map[Int,xml.NodeSeq]) = {
         val authors = xs.map(kv => (kv._2 \ "author").text)
