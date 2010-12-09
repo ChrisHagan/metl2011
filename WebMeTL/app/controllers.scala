@@ -17,6 +17,8 @@ import net.liftweb.json.JsonAST._
 import collection.breakOut;
 import MeTL._
 import java.awt.image._
+import scala.math._
+import javax.imageio._
 
 object Application extends Controller {
     val width = 200
@@ -69,10 +71,10 @@ object Application extends Controller {
             .map(any => any.asInstanceOf[ZipArchiveEntry])
             .filter(zae=>zae.getName.endsWith(".xml"))
             .map(zae => IOUtils.toString(zipFile.getInputStream(zae))+"</logCollection>")
-            .map(detail => xml.XML.loadString(detail))
     }
     private def slide(jid:Int)={
         slideXmppMessages(jid)
+            .map(detail => xml.XML.loadString(detail))
             .foldLeft(List.empty[Seq[Message]])((acc,item)=>{
                 (item \\ "message").flatMap(message=>{
                     val timestamp = (message \ "@time").text.toLong
@@ -86,42 +88,82 @@ object Application extends Controller {
                 }) :: acc
         }).flatten
     }
+    private def startStopwatch = stopWatch(new java.util.Date().getTime)_
+    private def stopWatch(start:Long)(args:Any*)=println(start,new java.util.Date().getTime - start,args.mkString(" "))
+    trait HistoricalItem { 
+        val identity:String 
+        def zIndex:Int
+        def render(g:java.awt.Graphics2D)
+    }
+    case class HistoricalImage(identity:String,x:Int,y:Int,width:Int,height:Int,source:String)extends HistoricalItem{
+        override def zIndex = 0
+        override def render(g:java.awt.Graphics2D) = {
+            val img = resourceCache.getOrElse(source,ImageIO.read(WS.url(server+source).authenticate(username,password).get.getStream)).asInstanceOf[java.awt.Image]
+            resourceCache.put(source,img)
+            g.drawImage(img,x,y,width,height,null)
+        }
+    }
+    case class HistoricalInk(identity:String,color:String,thickness:Int,points:List[Array[Int]])extends HistoricalItem{
+        override def zIndex = 1
+        override def render(g:java.awt.Graphics2D) ={
+            color.split(" ").map(_.toInt) match{
+                case Array(red,green,blue,alpha) => g.setPaint(new java.awt.Color(red,green,blue,alpha))
+            }
+            g.setStroke(new java.awt.BasicStroke(thickness))
+            points.sliding(2).foreach(pts=>g.draw(new java.awt.geom.Line2D.Double(pts(0)(0),pts(0)(1),pts(1)(0),pts(1)(1))))
+        }
+    }
+    val resourceCache = collection.mutable.Map.empty[String,java.awt.Image]
     def snapshot(jid:Int, width:Int=640, height:Int=320)={
         import java.awt._
-        request.contentType = "image/png"
-        val image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB)
-        val g = image.createGraphics.asInstanceOf[java.awt.Graphics2D]
-        g.setPaint(Color.white)
-        g.fill(new Rectangle(0,0,width,height))
-        for(m <- slideXmppMessages(jid)){
-            for(s <- (m \\ "image")){
-                val source = (s \ "source").text
-                val width = (s \ "width").text.toFloat.toInt
-                val height = (s \ "height").text.toFloat.toInt
-                val x = (s \ "x").text.toFloat.toInt
-                val y = (s \ "y").text.toFloat.toInt
-                val img = javax.imageio.ImageIO.read(WS.url(server+source).authenticate(username,password).get.getStream)
-                g.drawImage(img,x,y,null)
-            }
-            for(s <- (m \\ "ink")){
-                (s \ "color").text.split(" ").map(_.toInt) match{
-                    case Array(red,green,blue,alpha) => g.setPaint(new java.awt.Color(red,green,blue,alpha))
-                }
-                g.setStroke(new BasicStroke((s \ "thickness").text.toInt))
-                for(ps <- (s \ "points").text.split(" ").map(_.toFloat.toInt).grouped(3).grouped(2)){
-                    ps match{
-                        case Seq(Array(x1,y1,_),Array(x2,y2,_))=>{
-                            println(x1,y1,x2,y2)
-                            g.drawLine(x1,y1,x2,y2)
-                        }
-                        case Seq(_)=>false//We lose the last point if odd 
-                    }
-                }
-            }
+        val time = startStopwatch
+        time("Made pre image canvas")
+        var maxX = 0
+        var maxY = 0
+        var preParser = collection.immutable.SortedMap.empty[String,HistoricalItem]
+        time("Accquired messages")
+        val messageText = "<root>"+slideXmppMessages(jid).mkString+"</root>"
+        val messages = io.Source.fromString(messageText)
+        time("Stringified messages")
+        val dom = xml.XML.loadString(messageText)
+        for(s <- (dom \\ "image")){
+            val source = (s \ "source").text
+            val width = (s \ "width").text.toDouble.toInt
+            val height = (s \ "height").text.toDouble.toInt
+            val x = (s \ "x").text.toDouble.toInt
+            val y = (s \ "y").text.toDouble.toInt
+            val identity = (s \ "identity").text
+            maxX = max(maxX,x+width)
+            maxY = max(maxY,y+height)
+            preParser=preParser + (identity -> HistoricalImage(identity,x,y,width,height,source))
         }
-        val baos = new java.io.ByteArrayOutputStream()
-        javax.imageio.ImageIO.write(image, "png", baos)
-        new java.io.ByteArrayInputStream(baos.toByteArray())
+        time("Preparsed images") 
+        for(s <- dom \\ "ink"){
+            val identity = (s \ "checksum").text
+            val color = (s \ "color").text                
+            val thickness = (s \ "thickness").text.toInt
+            val points = (s \ "points").text.split(" ").map(_.toDouble.toInt).grouped(3).grouped(2).withPartial(false).map(
+                ps => ps match{
+                    case Seq(Array(x1,y1,_),Array(x2,y2,_))=>{
+                        maxX = max(maxX,max(x1,x2))
+                        maxY = max(maxY,max(y1,y2))
+                        ps
+                    }
+                }).toList.flatten
+            preParser=preParser + (identity -> HistoricalInk(identity,color,thickness.toInt,points))
+        }
+        time("Preparsed ink") 
+        time("Finished preparsing") 
+        val image = new BufferedImage(maxX,maxY,BufferedImage.TYPE_INT_RGB)
+        val g = image.createGraphics.asInstanceOf[Graphics2D]
+        g.setPaint(Color.white)
+        g.fill(new Rectangle(0,0,maxX,maxY))
+        preParser.values.filter(_.isInstanceOf[HistoricalImage]).foreach(_.render(g))
+        preParser.values.filter(_.isInstanceOf[HistoricalInk]).foreach(_.render(g))
+        time("Finished painting") 
+        javax.imageio.ImageIO.write(image, "png", response.out)
+        request.contentType = "image/png"
+        time("Done") 
     }
     private def authorFrequencies(xs:Map[Int,xml.NodeSeq]) = {
         val authors = xs.map(kv => (kv._2 \ "author").text)
