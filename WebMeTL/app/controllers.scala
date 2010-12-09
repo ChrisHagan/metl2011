@@ -88,7 +88,10 @@ object Application extends Controller {
                 }) :: acc
         }).flatten
     }
-    private def startStopwatch = stopWatch(new java.util.Date().getTime)_
+    private def startStopwatch ={
+        println
+        stopWatch(new java.util.Date().getTime)_
+    }
     private def stopWatch(start:Long)(args:Any*)=println(start,new java.util.Date().getTime - start,args.mkString(" "))
     trait HistoricalItem { 
         val identity:String 
@@ -103,47 +106,53 @@ object Application extends Controller {
             g.drawImage(img,x,y,width,height,null)
         }
     }
-    case class HistoricalInk(identity:String,color:String,thickness:Int,points:List[Array[Int]])extends HistoricalItem{
+    case class HistoricalInk(identity:String,color:String,thickness:Float,points:Iterator[List[Int]])extends HistoricalItem{
         override def zIndex = 1
         override def render(g:java.awt.Graphics2D) ={
             color.split(" ").map(_.toInt) match{
                 case Array(red,green,blue,alpha) => g.setPaint(new java.awt.Color(red,green,blue,alpha))
             }
             g.setStroke(new java.awt.BasicStroke(thickness))
-            points.sliding(2).foreach(pts=>g.draw(new java.awt.geom.Line2D.Double(pts(0)(0),pts(0)(1),pts(1)(0),pts(1)(1))))
+            points.foreach(pts=>g.draw(new java.awt.geom.Line2D.Double(pts(0),pts(1),pts(2),pts(3))))
         }
     }
     val resourceCache = collection.mutable.Map.empty[String,java.awt.Image]
     def snapshot(jid:Int, width:Int=640, height:Int=320)={
         //26.6 Functional naiive
+        //4.0  Grouping reduced, iterators where possible
         import java.awt._
         val time = startStopwatch
-        time("Made pre image canvas")
-        var maxX = 1
-        var maxY = 1
+        val xs = collection.mutable.ListBuffer.empty[Int]
+        val ys = collection.mutable.ListBuffer.empty[Int]
+        val addX = (x:Int)=>xs += x
+        val addY = (y:Int)=>ys += y
         var preParser = collection.immutable.SortedMap.empty[String,HistoricalItem]
-        time("Accquired messages")
-        val messageText = "<root>"+slideXmppMessages(jid).mkString+"</root>"
+        val messageText = new StringBuilder().append("<root>")
+        slideXmppMessages(jid).foreach(m=>messageText.append(m))
+        messageText.append("</root>")
         time("Stringified messages")
-        val dom = xml.XML.loadString(messageText)
-        val pointScanner = """(\d+\.\d+) (\d+\.\d+) (\d+\.\d+) (\d+\.\d+) (\d+\.\d+) (\d+\.\d+)""".r
+        val dom = xml.XML.loadString(messageText.toString)
         (dom \\ "message").foreach(m=>{
             (m \ "ink").foreach(s=>{
                 val identity = (s \ "checksum").text
                 val color = (s \ "color").text                
-                val thickness = (s \ "thickness").text.toInt
+                val thickness = (s \ "thickness").text.toFloat
                 val pointText = (s \ "points").text
-                val points = pointText.split(" ").map(_.toDouble.toInt).grouped(3).grouped(2).withPartial(false).map(
-                    ps => ps match{
-                        case Seq(Array(x1,y1,_),Array(x2,y2,_))=>{
-                            maxX = max(maxX,max(x1,x2))
-                            maxY = max(maxY,max(y1,y2))
-                            ps
+                val points = pointText.split(" ").map(sPt=>sPt.toDouble.toInt).grouped(6).map(pts=>{
+                    pts match{       
+                        case Array(x1,y1,_,x2,y2,_)=>{
+                            addX(x1)
+                            addY(y1)
+                            collection.immutable.List(x1,y1,x2,y2)
                         }
-                    }).toList.flatten
+                        case Array(x1,y1,p1)=>{
+                            addY(y1)
+                            collection.immutable.List(x1,y1,x1,y1)
+                        }
+                    }
+                })
                 preParser=preParser + (identity -> HistoricalInk(identity,color,thickness.toInt,points))
             })
-            time("Preparsed ink") 
             (m \ "image").foreach(s=>{
                 val source = (s \ "source").text
                 val width = (s \ "width").text.toDouble.toInt
@@ -151,12 +160,15 @@ object Application extends Controller {
                 val x = (s \ "x").text.toDouble.toInt
                 val y = (s \ "y").text.toDouble.toInt
                 val identity = (s \ "identity").text
-                maxX = max(maxX,x+width)
-                maxY = max(maxY,y+height)
-                preParser=preParser + (identity -> HistoricalImage(identity,x,y,width,height,source))
+                addX(x+width)
+                addY(y+height)
+                preParser = preParser + (identity -> HistoricalImage(identity,x,y,width,height,source))
             })
-            time("Preparsed images") 
         })
+        time("Ys",ys)
+        val maxX = xs.toList.max
+        val maxY = ys.toList.max
+        time("Finished preparsing",maxX,maxY)
         val image = new BufferedImage(maxX,maxY,BufferedImage.TYPE_INT_RGB)
         val g = image.createGraphics.asInstanceOf[Graphics2D]
         g.setPaint(Color.white)
