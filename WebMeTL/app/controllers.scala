@@ -106,53 +106,32 @@ object Application extends Controller {
             g.drawImage(img,x,y,width,height,null)
         }
     }
-    case class HistoricalInk(identity:String,color:String,thickness:Float,points:Iterator[List[Int]])extends HistoricalItem{
+    case class HistoricalInk(identity:String,color:String,thickness:Float,points:List[Array[Int]])extends HistoricalItem{
         override def zIndex = 1
         override def render(g:java.awt.Graphics2D) ={
             color.split(" ").map(_.toInt) match{
                 case Array(red,green,blue,alpha) => g.setPaint(new java.awt.Color(red,green,blue,alpha))
             }
             g.setStroke(new java.awt.BasicStroke(thickness))
-            points.foreach(pts=>g.draw(new java.awt.geom.Line2D.Double(pts(0),pts(1),pts(2),pts(3))))
+            points.sliding(2).foreach(pts=>
+                pts.length match{
+                    case 2 => g.draw(new java.awt.geom.Line2D.Double(pts(0)(0),pts(0)(1),pts(1)(0),pts(1)(1)))
+                    case _ => false
+                })
         }
     }
     val resourceCache = collection.mutable.Map.empty[String,java.awt.Image]
     def snapshot(jid:Int, width:Int=640, height:Int=320)={
-        //26.6 Functional naiive
-        //4.0  Grouping reduced, iterators where possible
         import java.awt._
         val time = startStopwatch
-        val xs = collection.mutable.ListBuffer.empty[Int]
-        val ys = collection.mutable.ListBuffer.empty[Int]
-        val addX = (x:Int)=>xs += x
-        val addY = (y:Int)=>ys += y
-        var preParser = collection.immutable.SortedMap.empty[String,HistoricalItem]
         val messageText = new StringBuilder().append("<root>")
         slideXmppMessages(jid).foreach(m=>messageText.append(m))
         messageText.append("</root>")
         time("Stringified messages")
         val dom = xml.XML.loadString(messageText.toString)
-        (dom \\ "message").foreach(m=>{
-            (m \ "ink").foreach(s=>{
-                val identity = (s \ "checksum").text
-                val color = (s \ "color").text                
-                val thickness = (s \ "thickness").text.toFloat
-                val pointText = (s \ "points").text
-                val points = pointText.split(" ").map(sPt=>sPt.toDouble.toInt).grouped(6).map(pts=>{
-                    pts match{       
-                        case Array(x1,y1,_,x2,y2,_)=>{
-                            addX(x1)
-                            addY(y1)
-                            collection.immutable.List(x1,y1,x2,y2)
-                        }
-                        case Array(x1,y1,p1)=>{
-                            addY(y1)
-                            collection.immutable.List(x1,y1,x1,y1)
-                        }
-                    }
-                })
-                preParser=preParser + (identity -> HistoricalInk(identity,color,thickness.toInt,points))
-            })
+        var preParser = collection.immutable.SortedMap.empty[String,HistoricalItem]
+        val maxs = (dom \\ "message").map(m=>{
+            val farPoints = collection.mutable.ListBuffer.empty[Array[Int]]
             (m \ "image").foreach(s=>{
                 val source = (s \ "source").text
                 val width = (s \ "width").text.toDouble.toInt
@@ -160,14 +139,24 @@ object Application extends Controller {
                 val x = (s \ "x").text.toDouble.toInt
                 val y = (s \ "y").text.toDouble.toInt
                 val identity = (s \ "identity").text
-                addX(x+width)
-                addY(y+height)
+                farPoints += Array(x+width,y+height)
                 preParser = preParser + (identity -> HistoricalImage(identity,x,y,width,height,source))
             })
+            (m \ "ink").foreach(s=>{
+                val identity = (s \ "checksum").text
+                val color = (s \ "color").text                
+                val thickness = (s \ "thickness").text.toFloat
+                val pointText = (s \ "points").text
+                val points = pointText.split(" ").map(sPt=>sPt.toDouble.toInt).grouped(3).map(_.take(2)).toList
+                points.foreach(p=> farPoints += p)
+                preParser=preParser + (identity -> HistoricalInk(identity,color,thickness.toInt,points))
+            })
+            farPoints
         })
-        time("Ys",ys)
-        val maxX = xs.toList.max
-        val maxY = ys.toList.max
+        time("Parsed and measured")
+        val flatmaxs = maxs.flatten
+        val maxX = flatmaxs.map(p=>p(0)).max
+        val maxY = flatmaxs.map(p=>p(1)).max
         time("Finished preparsing",maxX,maxY)
         val image = new BufferedImage(maxX,maxY,BufferedImage.TYPE_INT_RGB)
         val g = image.createGraphics.asInstanceOf[Graphics2D]
