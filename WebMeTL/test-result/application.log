@@ -1,0 +1,16 @@
+12 Dec 2010 21:53:21,163 INFO  ~ Starting C:\specialMeTL\WebMeTL
+12 Dec 2010 21:53:21,167 INFO  ~ Module scala is available (C:\lib\play-1.1RC1\modules\scala-0.8)
+12 Dec 2010 21:53:21,679 WARN  ~ You're running Play! in DEV mode
+12 Dec 2010 21:53:21,761 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
+12 Dec 2010 21:53:24,880 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+12 Dec 2010 21:53:30,269 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 44 of /app/controllers.scala
+12 Dec 2010 21:53:30,274 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 57 of /app/controllers.scala
+12 Dec 2010 21:53:30,299 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 20 of /app/models/MeTL.scala
+12 Dec 2010 21:53:30,300 WARN  ~ method first in trait IterableLike is deprecated: use `head' instead, at line 24 of /app/models/MeTL.scala
+12 Dec 2010 21:53:30,318 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 74 of /app/models/MeTL.scala
+12 Dec 2010 21:53:30,320 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 92 of /app/models/MeTL.scala
+12 Dec 2010 21:53:30,322 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 106 of /app/models/MeTL.scala
+12 Dec 2010 21:53:30,353 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 110 of /app/viewModels/Snapshot.scala
+12 Dec 2010 21:53:36,334 INFO  ~ Connected to jdbc:hsqldb:mem:playembed
+12 Dec 2010 21:53:36,534 INFO  ~ Application 'WebMeTL' is now started !
+12 Dec 2010 21:53:37,163 INFO  ~ Using Async for web service
