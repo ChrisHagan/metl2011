@@ -225,14 +225,14 @@ var Conversation = {
             .width(width)
             .height(height)
             .url(function(i){
-                return "http://localhost:8080?width="+width+"&height="+height+"&server=deified&slide="+i
+                return "snapshot?width="+width+"&height="+height+"&server=deified&slide="+i
             })
             .strokeStyle("black")
         graphRoot.render()
         Breadcrumb.add(conversation.title, function(){Conversation.slides(node)})
     },
     analysis:function(node){
-        $.getJSON("conversation?jid="+parseInt(node.nodeValue.jid),Conversation.overflowedDetailOnXAxis)        
+        $.getJSON("conversation?server=deified&jid="+parseInt(node.nodeValue.jid),Conversation.overflowedDetailOnXAxis)        
     },
     horizonSlides:function(content){},
     overflowedDetailOnXAxis:function(content){
@@ -558,6 +558,6 @@ var ProofOfConcept = (function(){
        }
     }
 })() 
-ProofOfConcept.usersByStandingOverTime()
-//Authors.radial()
+//ProofOfConcept.usersByStandingOverTime()
+Authors.radial()
 Breadcrumb.render()
