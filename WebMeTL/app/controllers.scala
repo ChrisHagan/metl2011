@@ -110,10 +110,14 @@ object Application extends Controller {
             color.split(" ").map(_.toInt) match{
                 case Array(red,green,blue,alpha) => g.setPaint(new java.awt.Color(red,green,blue,alpha))
             }
-            g.setStroke(new java.awt.BasicStroke(thickness+0.2f))
             points.sliding(2).foreach(pts=>
                 pts.length match{
-                    case 2 => g.draw(new java.awt.geom.Line2D.Double(pts(0)(0),pts(0)(1),pts(1)(0),pts(1)(1)))
+                    case 2 =>{
+                        //val pressure = 0.75 - (((pts(0)(2)+pts(1)(2)) / 2.0) / 255.0)
+                        val pressure = 0.1
+                        g.setStroke(new java.awt.BasicStroke(thickness+pressure.toFloat))
+                        g.draw(new java.awt.geom.Line2D.Double(pts(0)(0),pts(0)(1),pts(1)(0),pts(1)(1)))
+                    }
                     case _ => false
                 })
         }
@@ -153,7 +157,7 @@ object Application extends Controller {
                     val color = (s \ "color").text                
                     val thickness = (s \ "thickness").text.toFloat
                     val pointText = (s \ "points").text
-                    val points = pointText.split(" ").map(sPt=>sPt.toDouble.toInt).grouped(3).map(_.take(2)).toList
+                    val points = pointText.split(" ").map(sPt=>sPt.toDouble.toInt).grouped(3).toList
                     points.foreach(p=> farPoints += p)
                     preParser += HistoricalInk(identity,color,thickness.toInt,points)
                 }
@@ -182,6 +186,7 @@ object Application extends Controller {
         g.fill(new Rectangle(0,0,maxX,maxY))
         preParser.filter(_.isInstanceOf[HistoricalImage]).foreach(_.render(g))
         preParser.filter(_.isInstanceOf[HistoricalInk]).foreach(_.render(g))
+        time("Finished painting unscaled") 
         val scaledImage = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB)
         val scaledG = scaledImage.createGraphics.asInstanceOf[Graphics2D]
         scaledG.setPaint(Color.white)
