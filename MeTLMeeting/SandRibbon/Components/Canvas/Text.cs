@@ -396,17 +396,6 @@ namespace SandRibbon.Components.Canvas
             box.PreviewTextInput += box_PreviewTextInput;
             sendTextWithoutHistory(box, box.tag().privacy);
         }
-
-        public bool textBoxSelected
-        {
-            get { return textboxSelectedProperty; }
-            set
-            {
-                textboxSelectedProperty = value;
-                requeryTextCommands();
-            }
-        }
-
         private static void requeryTextCommands()
         {
             Commands.RequerySuggested(new []{
@@ -420,9 +409,11 @@ namespace SandRibbon.Components.Canvas
         private bool canFocus = true;
         private void setInkCanvasMode(string modeString)
         {
+            /*
             canFocus = modeString.ToLower() == "none";
             foreach (var box in Children.ToList().Where(b => b is MeTLTextBox))
                     box.Focusable = canFocus;
+             */
             if (!canEdit)
             {
                 EditingMode = InkCanvasEditingMode.None;
@@ -546,7 +537,7 @@ namespace SandRibbon.Components.Canvas
                 Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(currentSlide, Globals.me, target, currentTag.privacy, box));
             }
             myTextBox = null;
-            textBoxSelected = false;
+            requeryTextCommands();
             if (box.Text.Length == 0)
                 Children.Remove(box);
             else
@@ -556,7 +547,9 @@ namespace SandRibbon.Components.Canvas
         {
             myTextBox = (MeTLTextBox)sender;
             updateTools();
-            textBoxSelected = true;
+            requeryTextCommands();
+            Select(new List<UIElement>());
+            Commands.ChangeTextMode.Execute("None");
         }
         private void updateTools()
         {
