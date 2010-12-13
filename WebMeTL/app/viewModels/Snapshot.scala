@@ -198,10 +198,10 @@ object Snapshot{
         scaledG.fill(new Rectangle(0,0,width,height))
         val xScale = width.toDouble / maxX.toDouble
         val yScale = height.toDouble / maxY.toDouble
-        val aspectScale = Math.min(xScale, yScale);
+        val aspectScale = immutable.List(xScale, yScale).min;
         val xOffset = ((width - maxX * aspectScale) / 2).toInt
         scaledG.drawImage(unscaledImage,xOffset,0,xOffset+(maxX * aspectScale).toInt,(maxY * aspectScale).toInt,0,0,maxX,maxY,null)
-        time("Finished painting scaled") 
+        time("Finished painting scaled",maxX,maxY,aspectScale) 
         scaledImage
     }
 }

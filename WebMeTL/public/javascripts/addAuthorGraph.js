@@ -205,8 +205,8 @@ var Conversations = {
         Breadcrumb.add(author, function(){Conversations.radial(node)})
    }
 }
-var width = 1024
-var height = 768
+var width = window.innerWidth
+var height = window.innerHeight
 var Conversation = {
     slides:function(node){
         var conversation = node.nodeValue
