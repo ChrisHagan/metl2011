@@ -24,10 +24,10 @@ object Snapshot{
                     case Array(red,green,blue,alpha) => new java.awt.Color(red,green,blue,alpha)
                 }
     }
-    case class HistoricalImage(identity:String,x:Int,y:Int,width:Int,height:Int,source:String)extends HistoricalItem {
+    case class HistoricalImage(identity:String,x:Int,y:Int,width:Int,height:Int,img:Image)extends HistoricalItem {
         override def render(g:java.awt.Graphics2D) = {
-            val img = resourceCache.getOrElse(source,ImageIO.read(WS.url(Application.server+source).authenticate(Application.username,Application.password).get.getStream)).asInstanceOf[java.awt.Image]
-            resourceCache.put(source,img)
+            if(width == 0 || height == 0)
+                g.drawImage(img,x,y,null)
             g.drawImage(img,x,y,width,height,null)
         }
     }
@@ -42,61 +42,66 @@ object Snapshot{
         }
     }
 
-    case class HistoricalText(identity:String,width:Int,x:Float,y:Float,text:String,style:String,family:String,weight:String,size:Int,decoration:String,color:String) extends HistoricalItem{
+    case class HistoricalText(identity:String,width:Float,height:Float,x:Float,y:Float,text:String,style:String,family:String,weight:String,size:Int,decoration:String,color:String) extends HistoricalItem{
         override def render(g:java.awt.Graphics2D) = {
-            g.setPaint(getColor(color))
-            val frc = g.getFontRenderContext()
-            val font = new Font(family, weight match{
-                case "Normal" => 
-                    if(style.contains("Italic"))
-                        Font.ITALIC
-                    else
-                        Font.PLAIN
-                case "Bold" => 
-                    if(style.contains("Italic"))
-                        Font.BOLD + Font.ITALIC
-                    else
-                        Font.BOLD
-            }, size)
-            var _y = y
-            text.split("\n").foreach(t=>{
-                println("Rendering ",t)
-                val styledText = new AttributedString(t)
-                val stubLayout = new TextLayout(t,font,frc)
-                println(stubLayout.getAscent,stubLayout.getDescent,stubLayout.getLeading)
-                _y = _y + stubLayout.getAscent + stubLayout.getDescent
-                t.length match{
-                    case 0 => false
-                    case _ => {
-                        styledText.addAttribute(TextAttribute.FONT, font)
-                        if(decoration.contains("Underline"))
-                            styledText.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, 0, t.length)
-                        if(decoration.contains("Strikethrough"))
-                            styledText.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, 0, t.length)
-                        width match{
-                            case -1 => g.drawString(styledText.getIterator,x,_y)
-                            case _ =>{
-                                val styledTextIterator = styledText.getIterator()
-                                val measurer = new LineBreakMeasurer(styledTextIterator, frc)
-                                while (measurer.getPosition() < text.length()) {
-                                    val textLayout = measurer.nextLayout(width)
-                                    _y += textLayout.getAscent()
-                                    textLayout.draw(g, x, _y)
-                                    _y += textLayout.getDescent() + textLayout.getLeading()
+            if(text != null){
+                g.setPaint(getColor(color))
+                val frc = g.getFontRenderContext()
+                val font = new Font(family, weight match{
+                    case "Normal" => 
+                        if(style.contains("Italic"))
+                            Font.ITALIC
+                        else
+                            Font.PLAIN
+                    case "Bold" => 
+                        if(style.contains("Italic"))
+                            Font.BOLD + Font.ITALIC
+                        else
+                            Font.BOLD
+                }, size)
+                var _y = y
+                text.split("\n").foreach(t=>{
+                    t.length match{
+                        case 0 => false
+                        case _ => {
+                            val styledText = new AttributedString(t)
+                            val stubLayout = new TextLayout(t,font,frc)
+                            _y = _y + stubLayout.getAscent + stubLayout.getDescent
+                            styledText.addAttribute(TextAttribute.FONT, font)
+                            if(decoration.contains("Underline"))
+                                styledText.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, 0, t.length)
+                            if(decoration.contains("Strikethrough"))
+                                styledText.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, 0, t.length)
+                            width match{
+                                case -1.0f => g.drawString(styledText.getIterator,x,_y)
+                                case _ =>{
+                                    val styledTextIterator = styledText.getIterator()
+                                    val measurer = new LineBreakMeasurer(styledTextIterator, frc)
+                                    var moreMeasures = true
+                                    var wraps = 0
+                                    while (measurer.getPosition() < text.length() && moreMeasures) {
+                                        val textLayout = measurer.nextLayout(width)
+                                        if(textLayout != null){
+                                            if(wraps > 0) _y += textLayout.getAscent()
+                                            textLayout.draw(g, x, _y)
+                                            _y += textLayout.getDescent() + textLayout.getLeading()
+                                            wraps += 1
+                                        }
+                                        else
+                                            moreMeasures = false
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            })
+                })
+            }
         }
     }
-    val resourceCache = collection.mutable.Map.empty[String,java.awt.Image]
     def png(width:Int,height:Int,messages:immutable.List[String]):BufferedImage = {
-        println
+        val time = Stopwatch.start
         var preParser = mutable.ListBuffer.empty[HistoricalItem]
         val relevantNodes = Array("image", "ink", "textbox","dirtyInk", "dirtyImage","dirtyText")
-        val time = Stopwatch.start
         val nodes = 
             messages.map( message=>
                 xml.XML.loadString(message)
@@ -115,8 +120,15 @@ object Snapshot{
                     val x = (s \ "x").text.toDouble.toInt
                     val y = (s \ "y").text.toDouble.toInt
                     val identity = (s \ "identity").text
-                    farPoints += Array(x+width,y+height)
-                    preParser += HistoricalImage(identity,x,y,width,height,source)
+                    val img = ImageIO.read(WS.url(Application.server+source).authenticate(Application.username,Application.password).get.getStream).asInstanceOf[java.awt.Image]
+                    farPoints += Array(x+(width match{
+                        case 0 => img.getWidth(null)
+                        case value => value
+                    }),y+(height match{
+                        case 0 => img.getHeight(null)
+                        case value => value
+                    }))
+                    preParser += HistoricalImage(identity,x,y,width,height,img)
                 }
                 case "ink"=>{
                     val identity = (s \ "checksum").text
@@ -129,14 +141,14 @@ object Snapshot{
                 }
                 case "textbox"=>{
                   val width = (s \ "width").text match{
-                      case "NaN"=> -1
-                      case t => t.toInt
+                      case "NaN"=> -1.0f
+                      case t => t.toFloat
                   }
                   val height = (s \ "height").text match{
-                      case "NaN"=> -1
-                      case t => t.toInt
+                      case "NaN"=> -1.0f
+                      case t => t.toFloat
                   }
-                  val text = (s \ "text").text
+                  val text = new String((s \ "text").text.getBytes,"UTF-8")
                   val x = (s \ "x").text.toFloat
                   val y = (s \ "y").text.toFloat
                   val style = (s \ "style").text
@@ -148,7 +160,7 @@ object Snapshot{
                   val identity = (s \ "identity").text
                   preParser.filter(_.identity == identity).foreach(identified=>preParser -= identified)
                   if(text.length > 0)
-                      preParser += HistoricalText(identity,width,x,y,text,style,family,weight,size,decoration,color)
+                      preParser += HistoricalText(identity,width,height,x,y,text,style,family,weight,size,decoration,color)
                 }
                 case "dirtyInk" | "dirtyImage" | "dirtyText" =>{
                     val identity = (s \ "identity").text
@@ -159,14 +171,14 @@ object Snapshot{
         })
         time("Parsed and measured")
         val flatmaxs = maxs.flatten
-        val maxX = (flatmaxs.length match{
+        val maxX = math.max((flatmaxs.length match{
             case 0 => width
             case _ => flatmaxs.map(p=>p(0)).max
-        }).toInt
-        val maxY = (flatmaxs.length match{
+        }).toInt,1)
+        val maxY = math.max((flatmaxs.length match{
             case 0 => height
             case _ => flatmaxs.map(p=>p(1)).max
-        }).toInt
+        }).toInt,1)
         time("Max dimensions calculated",maxX,maxY)
         val unscaledImage = new BufferedImage(maxX,maxY,BufferedImage.TYPE_3BYTE_BGR)
         val g = unscaledImage.createGraphics.asInstanceOf[Graphics2D]
