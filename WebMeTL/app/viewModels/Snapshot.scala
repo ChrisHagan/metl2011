@@ -115,12 +115,18 @@ object Snapshot{
             s.label match{
                 case "image"=> {
                     val source = (s \ "source").text
-                    val width = (s \ "width").text.toDouble.toInt
+					var parts = source.split("/").drop(2)
+					if (source.contains("//"))
+						parts = source.split("//")(1).split("/").drop(2)
+					val stemmedPath = (("0" * (5 - parts(0).length))+parts(0)).reverse.take(5).reverse.take(2) + "/" + parts(0)
+                    val file = parts.reverse.take(1)(0)
+					val stemmedSource = Application.server+"/Resource/"+stemmedPath+"/"+file	
+					val width = (s \ "width").text.toDouble.toInt
                     val height = (s \ "height").text.toDouble.toInt
                     val x = (s \ "x").text.toDouble.toInt
                     val y = (s \ "y").text.toDouble.toInt
                     val identity = (s \ "identity").text
-                    val img = ImageIO.read(WS.url(Application.server+source).authenticate(Application.username,Application.password).get.getStream).asInstanceOf[java.awt.Image]
+                    val img = ImageIO.read(WS.url(stemmedSource).authenticate(Application.username,Application.password).get.getStream).asInstanceOf[java.awt.Image]
                     farPoints += Array(x+(width match{
                         case 0 => img.getWidth(null)
                         case value => value
