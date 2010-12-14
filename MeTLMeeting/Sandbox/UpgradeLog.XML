@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="Sandbox">
+</Property><Property Name="Solution File" Value="C:\specialMeTL\MeTLMeeting\Sandbox\Sandbox.sln">
+</Property><Property Name="User Options File" Value="C:\specialMeTL\MeTLMeeting\Sandbox\Sandbox.suo">
+</Property><Property Name="Date" Value="Friday, 22 October 2010">
+</Property><Property Name="Time" Value="10:14 AM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="Sandbox.sln" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox.sln">
+</Event><Event ErrorLevel="0" Project="" Source="Sandbox.suo" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox.suo">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\Sandbox.csproj" Description="Project file successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\Sandbox.csproj">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\App.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\App.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\Window1.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\Window1.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\AbsoluteFlow.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\AbsoluteFlow.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\fancySelect.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\fancySelect.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\GetVersion.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\GetVersion.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\interceptingApplicationCommands.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\interceptingApplicationCommands.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\MultiTextCanvas.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\MultiTextCanvas.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\Properties\AssemblyInfo.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\Properties\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\Properties\Resources.Designer.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\Properties\Resources.Designer.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\Properties\Settings.Designer.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\Properties\Settings.Designer.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\SelectionTools.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\SelectionTools.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\slideReorderer.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\slideReorderer.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\TagCloud.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\TagCloud.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\TextCanvasWrapper.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\TextCanvasWrapper.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\WhatTheFuckin.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\WhatTheFuckin.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\XmppMuc.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\XmppMuc.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\XmppPubSub.xaml.cs" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\XmppPubSub.xaml.cs">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\Properties\Settings.settings" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\Properties\Settings.settings">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\Properties\Resources.resx" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\Properties\Resources.resx">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\App.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\App.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\AbsoluteFlow.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\AbsoluteFlow.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\fancySelect.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\fancySelect.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\GetVersion.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\GetVersion.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\interceptingApplicationCommands.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\interceptingApplicationCommands.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\MultiTextCanvas.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\MultiTextCanvas.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\ResourceUpload.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\ResourceUpload.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\SelectionTools.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\SelectionTools.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\slideReorderer.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\slideReorderer.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\TagCloud.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\TagCloud.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\TextCanvasWrapper.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\TextCanvasWrapper.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\WhatTheFuckin.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\WhatTheFuckin.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\XmppMuc.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\XmppMuc.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\XmppPubSub.xaml" Description="File successfully backed up as C:\specialMeTL\MeTLMeeting\Sandbox\Backup\Sandbox\XmppPubSub.xaml">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\Sandbox.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="Sandbox" Source="Sandbox\Sandbox.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="Sandbox.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="Sandbox.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="Sandbox" Source="Sandbox\Sandbox.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>

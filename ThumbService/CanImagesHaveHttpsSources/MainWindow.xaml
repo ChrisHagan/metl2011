@@ -1,0 +1,17 @@
+﻿<Window x:Class="CanImagesHaveHttpsSources.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:core="clr-namespace:System;assembly=mscorlib"
+        xmlns:my="clr-namespace:CanImagesHaveHttpsSources"
+        Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+        <core:String x:Key="url">
+            https://deified.adm.monash.edu.au:1188/Resource/1517401/Desert.jpg
+        </core:String>
+    </Window.Resources> 
+    <Grid>
+        <Border BorderBrush="Black" BorderThickness="2">
+            <Image Source="{Binding Source={StaticResource url}, Converter={x:Static my:MainWindow.proxy}}" Width="600" Height="400"/> 
+        </Border>
+    </Grid>
+</Window>

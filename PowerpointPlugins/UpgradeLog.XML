@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="SimplePens">
+</Property><Property Name="Solution File" Value="C:\specialMeTL\PowerpointPlugins\SimplePens.sln">
+</Property><Property Name="User Options File" Value="C:\specialMeTL\PowerpointPlugins\SimplePens.suo">
+</Property><Property Name="Date" Value="Wednesday, 17 November 2010">
+</Property><Property Name="Time" Value="14:29 PM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="SimplePens.sln" Description="File successfully backed up as C:\specialMeTL\PowerpointPlugins\Backup\SimplePens.sln">
+</Event><Event ErrorLevel="0" Project="" Source="SimplePens.suo" Description="File successfully backed up as C:\specialMeTL\PowerpointPlugins\Backup\SimplePens.suo">
+</Event><Event ErrorLevel="2" Project="SimplePens" Source="SimplePens\SimplePens.csproj" Description="Unable to parse project file: C:\specialMeTL\PowerpointPlugins\SimplePens\SimplePens.csproj">
+</Event><Event ErrorLevel="3" Project="SimplePens" Source="SimplePens\SimplePens.csproj" Description="Not Converted">
+</Event><Event ErrorLevel="0" Project="" Source="SimplePens.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="SimplePens.sln" Description="Converted">
+</Event></UpgradeLog>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="ThumbService">
+</Property><Property Name="Solution File" Value="C:\specialMeTL\ThumbService\ThumbService.sln">
+</Property><Property Name="User Options File" Value="C:\specialMeTL\ThumbService\ThumbService.suo">
+</Property><Property Name="Date" Value="Sunday, 24 October 2010">
+</Property><Property Name="Time" Value="23:21 PM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="ThumbService.sln" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\ThumbService.sln">
+</Event><Event ErrorLevel="0" Project="" Source="ThumbService.suo" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\ThumbService.suo">
+</Event><Event ErrorLevel="0" Project="ThumbService" Source="ThumbService\ThumbService.csproj" Description="Project file successfully backed up as C:\specialMeTL\ThumbService\Backup\ThumbService\ThumbService.csproj">
+</Event><Event ErrorLevel="0" Project="ThumbService" Source="ThumbService\ServiceRoot.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\ThumbService\ServiceRoot.cs">
+</Event><Event ErrorLevel="0" Project="ThumbService" Source="ThumbService\Properties\AssemblyInfo.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\ThumbService\Properties\AssemblyInfo.cs">
+</Event><Event ErrorLevel="2" Project="ThumbService" Source="ThumbService\metl.html" Description="Failed to backup file as C:\specialMeTL\ThumbService\Backup\ThumbService\metl.html">
+</Event><Event ErrorLevel="0" Project="ThumbService" Source="ThumbService\superman.jpg" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\ThumbService\superman.jpg">
+</Event><Event ErrorLevel="0" Project="ThumbService" Source="ThumbService\thumbnail.startup.xml" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\ThumbService\thumbnail.startup.xml">
+</Event><Event ErrorLevel="0" Project="ThumbService" Source="ThumbService\ThumbService.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="ThumbService" Source="ThumbService\ThumbService.csproj" Description="Converted">
+</Event><Event ErrorLevel="1" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\MeTLLib.csproj" Description="Warning: The project file is being backed up to a relative path that differs from the original solution relative path.  The difference in folder hierarchy may create problems in opening or building the backed up solution and project.">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\MeTLLib.csproj" Description="Project file successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\MeTLLib.csproj">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\BaseModule.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\BaseModule.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\ReceiveEvents.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\ReceiveEvents.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\ClientFactory.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\ClientFactory.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Client.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Client.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Commands\CommandParameterProvider.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Commands\CommandParameterProvider.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Commands\Commands.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Commands\Commands.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\DataTypes\Button.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\DataTypes\Button.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\DataTypes\ConnectionExtensions.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\DataTypes\ConnectionExtensions.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\DataTypes\ConversationDetails.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\DataTypes\ConversationDetails.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\DataTypes\Extensions.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\DataTypes\Extensions.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\DataTypes\LiveWindowSetup.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\DataTypes\LiveWindowSetup.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\DataTypes\MeTLStanzaDefinitions.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\DataTypes\MeTLStanzaDefinitions.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\DataTypes\PollParameters.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\DataTypes\PollParameters.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Constants.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Constants.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Commands\DispatcherExtensions.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Commands\DispatcherExtensions.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\ProductionModule.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\ProductionModule.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\AuthorisationProvider.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\AuthorisationProvider.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\ConfigurationProvider.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\ConfigurationProvider.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\Connection\ProviderMonitor.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\Connection\ProviderMonitor.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\GlobalCultureCompatibility.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\GlobalCultureCompatibility.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\Globals.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\Globals.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\Crypto.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\Crypto.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\Structure\FileConversationDetailsProvider.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\Structure\FileConversationDetailsProvider.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\HistoryProvider.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\HistoryProvider.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\Connection\HttpResourceProvider.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\Connection\HttpResourceProvider.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\Structure\IConversationDetailsProvider.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\Structure\IConversationDetailsProvider.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\Connection\JabberWire.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\Connection\JabberWire.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\LocalCache.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\LocalCache.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\Connection\PreParser.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\Connection\PreParser.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Properties\AssemblyInfo.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Properties\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\Providers\ResourceUploader.cs" Description="File successfully backed up as C:\specialMeTL\ThumbService\Backup\MeTLLib\Providers\ResourceUploader.cs">
+</Event><Event ErrorLevel="0" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\MeTLLib.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="MeTLLib" Source="..\MeTLMeeting\MeTLLib\MeTLLib.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="2" Project="PowerpointProgressDialog" Source="PowerpointProgressDialog\PowerpointProgressDialog.csproj" Description="Unable to open project file to perform upgrade.  ">
+</Event><Event ErrorLevel="0" Project="" Source="ThumbService.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="ThumbService.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="ThumbService" Source="ThumbService\ThumbService.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>

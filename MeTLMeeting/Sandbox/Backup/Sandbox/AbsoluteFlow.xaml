@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="Sandbox.AbsoluteFlow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Height="300" Width="300">
+    <FlowDocumentReader>
+        <FlowDocument>
+            <Paragraph>
+                <Figure Width="Content" HorizontalAnchor="PageLeft" VerticalAnchor="PageTop" HorizontalOffset="200" VerticalOffset="100">
+                    <Paragraph>
+                        <Run>Here the motherfucker lies.</Run>
+                    </Paragraph>
+                </Figure> 
+            </Paragraph>
+        </FlowDocument>          
+    </FlowDocumentReader>
+</UserControl>
