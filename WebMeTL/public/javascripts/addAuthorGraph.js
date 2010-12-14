@@ -207,6 +207,7 @@ var Conversations = {
 }
 var width = window.innerWidth
 var height = window.innerHeight
+$('#ipadContainer').width(width).height(height)
 var Conversation = {
     slides:function(node){
         var conversation = node.nodeValue
@@ -215,6 +216,7 @@ var Conversation = {
         var nodes = pv.range(jid+1, jid+slideCount)
         var padding = 20
         var yAxis = pv.Scale.linear(1,slideCount).range(padding,height-padding)
+        $("#slideDisplay").height(slideCount * height).width(width)
         var graphRoot = new pv.Panel()
             .canvas("slideDisplay")
             .width(width) 
@@ -229,6 +231,7 @@ var Conversation = {
             })
             .strokeStyle("black")
         graphRoot.render()
+        conversationJoined()
         Breadcrumb.add(conversation.title, function(){Conversation.slides(node)})
     },
     analysis:function(node){
@@ -558,6 +561,8 @@ var ProofOfConcept = (function(){
        }
     }
 })() 
-//ProofOfConcept.usersByStandingOverTime()
-Authors.radial()
-Breadcrumb.render()
+$(function(){
+    //ProofOfConcept.usersByStandingOverTime()
+    Authors.radial()
+    Breadcrumb.render()
+})

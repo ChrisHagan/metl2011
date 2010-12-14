@@ -2,10 +2,6 @@ img, image{
     border:1px solid black;
 }
 #ipadContainer{
-    width:1024px;
-}
-#ipadContainer{
-    height:768px;
     border:1px solid black;
     text-align:center;
 }
