@@ -13,7 +13,22 @@ namespace SandRibbon.Tabs.Groups
             InitializeComponent();
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
+            Commands.ChangeTextMode.RegisterCommand(new DelegateCommand<string>(changeTextMode));
             SetLayer((string)Commands.SetLayer.lastValue());
+        }
+
+        private void changeTextMode(string mode)
+        {
+            switch (mode.ToLower())
+            {
+                case "none":
+                    type.IsChecked = true;
+                    break;
+                default:
+                    select.IsChecked = true;
+                    break;
+            }
+            Commands.SetTextCanvasMode.Execute(mode);
         }
 
         private void joinConversation(object obj)
