@@ -127,3 +127,28 @@ case class Message(name:String, timestamp:Long,slide:Int,author:String,standing:
     ))
     override def toString = author+"@"+timestamp.toString
 }
+case class Quiz(title:String, timestamp:Long, conversation:Int, author:String, options:Seq[QuizOption]){
+    def toJson = JObject(List(
+        JField("title",JString(title)),
+        JField("timestamp",JInt(timestamp)),
+        JField("conversation",JInt(conversation)),
+        JField("author",JString(author)),
+        JField("options",JArray(options.map(_.toJson).toList))
+    ))
+}
+object QuizOption{
+    def parse(message:xml.Node)={
+        val name = (message \ "name").text
+        val text = (message \ "text").text
+        val correct = (message \ "correct").text.toBoolean
+        val color = (message \ "color").text
+        QuizOption(name,text,correct,color)
+    }
+}
+case class QuizOption(name:String,text:String,correct:Boolean,color:String){
+    def toJson = JObject(List(
+        JField("name",JString(name)),
+        JField("text",JString(text)),
+        JField("correct",JBool(correct)),
+        JField("color",JString(color))))
+}

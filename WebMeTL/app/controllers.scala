@@ -1,5 +1,6 @@
 package controllers
 
+import utils.Stemmer._
 import play._
 import play.mvc._
 import play.libs._
@@ -62,10 +63,8 @@ object Application extends Controller {
         pretty(render(clump.toJsonFull))
     }
     private def slideXmppMessages(server:String,jid:Int)={
-		val stemmedJid = ("0" * (5 - jid.toString.length) + jid.toString).reverse.take(5).reverse.take(2)
-		val uri = history.format(server,stemmedJid +"/"+jid.toString)
-        println(uri.toString)
-		val zipFuture = WS.url(uri).authenticate(username,password).get
+        val uri = history.format(server,stem(jid),jid)
+        val zipFuture = WS.url(uri).authenticate(username,password).get
         FileUtils.writeByteArrayToFile(new File(TEMP_FILE),IOUtils.toByteArray(zipFuture.getStream))
         val zipFile = new ZipFile(new File(TEMP_FILE))
         zipFile.getEntries
@@ -88,6 +87,24 @@ object Application extends Controller {
                         })
                 }) :: acc
         }).flatten
+    }
+    def quizzes(server:String,jid:Int)={
+        val qs = slideXmppMessages(server,jid)
+            .map(d=>xml.XML.loadString(d))
+            .foldLeft(List.empty[Quiz])((acc,item)=>{
+                (item \\ "message").flatMap(message=>{
+                    val timestamp = (message \ "@time").text.toLong
+                    (message \ "quiz").map(quiz=>{
+                        println(quiz)
+                        val title = (quiz \ "title").text
+                        val conversation = jid
+                        val author = (quiz \ "author").text
+                        val options = (quiz \ "quizOption").map(QuizOption.parse(_))
+                        Quiz(title,timestamp,conversation,author,options)
+                    })
+                }).toList ::: acc
+            })        
+        pretty(render(JArray(qs.map(_.toJson))))
     }
     def snapshot(width:Int=640, height:Int=320,server:String,slide:Int) ={
         println("Snapshotting "+slide)

@@ -7,7 +7,7 @@ import net.liftweb.json.JsonDSL._
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonParser._
 
-class MessageClumping extends UnitTest{
+class MessageClumping extends UnitTest with JsonTest{
     val message1 = Message("ink", 100000, 1, "guy1",1)
     val message2 = Message("ink", 100050, 2, "guy2",2)
     val message3 = Message("ink", 100100, 3, "guy3",3)
@@ -202,7 +202,9 @@ class MessageClumping extends UnitTest{
         val expected = DetailedClump(Seq(Seq(message1),Seq(message2),Seq(message3),Seq(message9,message10,message11,message12)))
         assertEquals(actual,expected)
     }
-    private def jsonEquals(expected:String,actual:String)={
+}
+trait JsonTest{
+    def jsonEquals(expected:String,actual:String)={
         val errorText = "Expected "+expected+" but was "+actual
         assertEquals(errorText,parse(expected),parse(actual))
     }
