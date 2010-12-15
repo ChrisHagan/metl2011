@@ -98,7 +98,7 @@ object Snapshot{
             }
         }
     }
-    def png(width:Int,height:Int,messages:immutable.List[String]):BufferedImage = {
+    def png(server:String,width:Int,height:Int,messages:immutable.List[String]):BufferedImage = {
         val time = Stopwatch.start
         var preParser = mutable.ListBuffer.empty[HistoricalItem]
         val relevantNodes = Array("image", "ink", "textbox","dirtyInk", "dirtyImage","dirtyText")
@@ -121,7 +121,8 @@ object Snapshot{
 						parts = source.split("//")(1).split("/").drop(2)
 					val stemmedPath = (("0" * (5 - parts(0).length))+parts(0)).reverse.take(5).reverse.take(2) + "/" + parts(0)
                     val file = parts.reverse.take(1)(0)
-					val stemmedSource = Application.server+"/Resource/"+stemmedPath+"/"+file	
+					val stemmedSource = server+"/Resource/"+stemmedPath+"/"+file	
+                    println(stemmedSource)
 					val width = (s \ "width").text.toDouble.toInt
                     val height = (s \ "height").text.toDouble.toInt
                     val x = (s \ "x").text.toDouble.toInt

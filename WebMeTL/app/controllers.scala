@@ -22,17 +22,14 @@ import scala.math._
 object Application extends Controller {
     val width = 200
     val height = 150
-    val server = "https://reifier.adm.monash.edu.au:1188"
-    val structure = "https://reifier.adm.monash.edu.au:1188/Structure"
+    val structure = "https://%s.adm.monash.edu.au:1188/Structure"
     val history = "https://%s.adm.monash.edu.au:1749/%s/%d/all.zip"
     val username = "exampleUsername"
     val password = "examplePassword"
     val TEMP_FILE = "all.zip"
-    val cachedConversations = loadConversations
-    val contentWeight = mapRandom(cachedConversations, 1000)
-    val authorsPerConversation = mapRandom(cachedConversations, 20)
-    private def loadConversations = {
-        val zipFuture = WS.url(structure+"/all.zip").authenticate(username,password).get
+    private def loadConversations(server:String) = {
+        println("Loading conversations for "+server)
+        val zipFuture = WS.url(structure.format(server)+"/all.zip").authenticate(username,password).get
         FileUtils.writeByteArrayToFile(new File(TEMP_FILE),IOUtils.toByteArray(zipFuture.getStream))
         val zipFile = new ZipFile(new File(TEMP_FILE))
         Map(zipFile.getEntries
@@ -43,13 +40,14 @@ object Application extends Controller {
             .map(detail => ((detail \ "jid").text.toInt -> detail)).toList:_*)
     }
     private def mapRandom(history:Map[Int,xml.NodeSeq], max:Int = 10) = history.map(kv => (kv._1 -> (Math.random * max).intValue.toString))
-    def index = conversations
-    def conversations = {
-        val authorJson = authorSummaries(cachedConversations).toString()
-        Template(authorJson)
+    def index = conversations("deified")
+    def conversations(server:String) = {
+        val serverName = server
+        val authorJson = authorSummaries(server).toString()
+        Template(serverName,authorJson)
     }
     def conversation(server:String,jid:Int)={
-        val slides = cachedConversations(jid) \\ "slide"
+        val slides = loadConversations(server)(jid) \\ "slide"
         val messages = slides
             .filter(s=> (s \\ "type").text == "SLIDE")
             .map(s=>slide(server,(s \\ "id").text.toInt))
@@ -109,7 +107,7 @@ object Application extends Controller {
     }
     def snapshot(width:Int=640, height:Int=320,server:String,slide:Int) ={
         println("Snapshotting "+slide)
-        val image = viewModels.Snapshot.png(width,height,slideXmppMessages(server,slide).toList)
+        val image = viewModels.Snapshot.png("https://%s.adm.monash.edu:1188".format(server),width,height,slideXmppMessages(server,slide).toList)
         javax.imageio.ImageIO.write(image, "png", response.out)
         request.contentType = "image/png"
     }
@@ -120,6 +118,8 @@ object Application extends Controller {
     private def elem(name:String, children:xml.Node*) = xml.Elem(null, name ,xml.Null,xml.TopScope, children:_*); 
     private def node(name:String, parent:xml.NodeSeq) = elem(name, xml.Text((parent \ name).text))
     private def authorSummary(kv:Pair[String,Int], xs:Map[Int,xml.NodeSeq]) = {
+        val contentWeight = mapRandom(xs, 1000)
+        val authorsPerConversation = mapRandom(xs, 20)
         val author = kv._1
         val freq = kv._2
         val count = elem("conversationCount", xml.Text(freq.toString))
@@ -136,7 +136,8 @@ object Application extends Controller {
         val conversations = <conversations>{conversationsBody}</conversations>;
         elem(author, List(count, conversations):_*)
     }
-    private def authorSummaries(xs:Map[Int,xml.NodeSeq]) = {
+    private def authorSummaries(server:String)={
+        val xs = loadConversations(server)
         val authorXmlList = authorFrequencies(xs).map(kv=>authorSummary(kv, xs))
         val authors = 
         <conversationSummaries>

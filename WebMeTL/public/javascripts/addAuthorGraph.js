@@ -227,7 +227,7 @@ var Conversation = {
             .width(width)
             .height(height)
             .url(function(i){
-                return "snapshot?width="+width+"&height="+height+"&server=reifier&slide="+i
+                return "snapshot?width="+width+"&height="+height+"&server="+server+"&slide="+i
             })
             .strokeStyle("black")
         graphRoot.render()
@@ -235,7 +235,7 @@ var Conversation = {
         Breadcrumb.add(conversation.title, function(){Conversation.slides(node)})
     },
     analysis:function(node){
-        $.getJSON("conversation?server=reifier&jid="+parseInt(node.nodeValue.jid),Conversation.overflowedDetailOnXAxis)        
+        $.getJSON("conversation?server="+server+"&jid="+parseInt(node.nodeValue.jid),Conversation.overflowedDetailOnXAxis)        
     },
     horizonSlides:function(content){},
     overflowedDetailOnXAxis:function(content){

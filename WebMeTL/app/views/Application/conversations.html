@@ -12,6 +12,7 @@
         <span id="slideDisplay"></span>
     </div>
     <script>
+        var server = "${serverName}";
         var detailedAuthors = #{verbatim}${authorJson}#{/verbatim}
     </script>
     <script src="@{'/public/javascripts/commands.js'}" type="text/javascript"></script>
