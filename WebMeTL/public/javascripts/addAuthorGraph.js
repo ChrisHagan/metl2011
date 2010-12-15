@@ -335,28 +335,6 @@ var Conversation = {
         master.render()
     }
 }
-var Breadcrumb = (function(){ 
-    var trail = []
-    var container = $("#breadcrumb")          
-    return {
-        add: function(label, func){
-            if(_.contains(_.pluck(trail, "label"), label)) return;
-            trail.push({label:label, func:func})
-            this.render()
-        },
-        render:function(){
-            container.html("")
-            var recentCrumbs = [{label:"All authors", func:Authors.radial}]
-            _.each(trail.slice(-10), function(crumb){recentCrumbs.push(crumb)})
-            _.each(recentCrumbs, function(crumb){
-                container.append($("<span />").append(crumb.label.slice(0,15) + "->").click(function(){
-                    scroll(0,0)
-                    crumb.func()
-                }))
-            })
-        }
-    }
-})()
 var ClassRoom =(function(){
     var tick = 10000
     var ONE_HOUR = 3600000
