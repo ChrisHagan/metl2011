@@ -12,7 +12,7 @@ xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInte
         <!--<dict:RibbonPanel Tag="inkModes" x:Name="InkOptions" >
         </dict:RibbonPanel>-->
         <dict:RibbonPanel x:Name="TextOptions" >
-            <dict:RadioButton ToolTip="{StaticResource SelectTextBoxToolTip}" Icon="\Resources\SelectText.png" Text="Select" Command="api:Commands.SetTextCanvasMode" CommandParameter="Select" />
+            <dict:RadioButton x:Name="select"  ToolTip="{StaticResource SelectTextBoxToolTip}" Icon="\Resources\SelectText.png" Text="Select" Command="api:Commands.SetTextCanvasMode" CommandParameter="Select" />
             <dict:RadioButton x:Name="type" ToolTip="{StaticResource TextBoxToolTip}" Icon="\Resources\PlaceTextBox.png" Text="Type" Command="api:Commands.SetTextCanvasMode" CommandParameter="None"  IsChecked="True"/>
         </dict:RibbonPanel>
         <dict:RibbonPanel x:Name="ImageOptions">

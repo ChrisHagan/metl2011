@@ -155,6 +155,7 @@ namespace SandRibbon
 
         #endregion
         #region TextCanvas
+        public static CompositeCommand ChangeTextMode = new CompositeCommand();
         public static CompositeCommand TextboxFocused = new CompositeCommand();
         public static CompositeCommand SendDirtyText = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyText = new CompositeCommand();
