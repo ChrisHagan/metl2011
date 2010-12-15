@@ -114,6 +114,7 @@ object Snapshot{
             val farPoints = mutable.ListBuffer.empty[Array[Float]]
             s.label match{
                 case "image"=> {
+                    time("image")
                     val source = (s \ "source").text
 					var parts = source.split("/").drop(2)
 					if (source.contains("//"))

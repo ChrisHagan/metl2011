@@ -24,7 +24,7 @@ object Application extends Controller {
     val height = 150
     val server = "https://reifier.adm.monash.edu.au:1188"
     val structure = "https://reifier.adm.monash.edu.au:1188/Structure"
-    val history = "https://%s.adm.monash.edu.au:1749/%s/all.zip"
+    val history = "https://%s.adm.monash.edu.au:1749/%s/%d/all.zip"
     val username = "exampleUsername"
     val password = "examplePassword"
     val TEMP_FILE = "all.zip"
@@ -64,6 +64,7 @@ object Application extends Controller {
     }
     private def slideXmppMessages(server:String,jid:Int)={
         val uri = history.format(server,stem(jid),jid)
+        println("Retrieving "+uri)
         val zipFuture = WS.url(uri).authenticate(username,password).get
         FileUtils.writeByteArrayToFile(new File(TEMP_FILE),IOUtils.toByteArray(zipFuture.getStream))
         val zipFile = new ZipFile(new File(TEMP_FILE))
