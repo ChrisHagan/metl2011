@@ -61,7 +61,7 @@ object Application extends Controller {
         pretty(render(clump.toJsonFull))
     }
     private def slideXmppMessages(server:String,jid:Int)={
-        val uri = history.format(server,stem(jid),jid)
+        val uri = history.format(server,stem(jid.toString),jid)
         println("Retrieving "+uri)
         val zipFuture = WS.url(uri).authenticate(username,password).get
         FileUtils.writeByteArrayToFile(new File(TEMP_FILE),IOUtils.toByteArray(zipFuture.getStream))

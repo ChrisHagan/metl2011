@@ -61,3 +61,2030 @@ play.exceptions.CompilationException: not found: value reabsolutizeUri
 16 Dec 2010 10:09:07,346 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
 16 Dec 2010 10:09:07,348 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
 16 Dec 2010 10:09:09,211 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 10:18:26,105 ERROR ~ 
+
+@64nlmebhj
+Internal Server Error (500) for request GET /@tests/init
+
+Compilation error (In /app/viewModels/Snapshot.scala around line 118)
+The file /app/viewModels/Snapshot.scala could not be compiled. Error raised is : value Stemmer is not a member of package play.utils
+
+play.exceptions.CompilationException: value Stemmer is not a member of package play.utils
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:18:26,415 ERROR ~ 
+
+@64nlmebhk
+Internal Server Error (500) for request GET /@tests/end?result=passed
+
+Compilation error (In /app/viewModels/Snapshot.scala around line 118)
+The file /app/viewModels/Snapshot.scala could not be compiled. Error raised is : value Stemmer is not a member of package play.utils
+
+play.exceptions.CompilationException: value Stemmer is not a member of package play.utils
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:18:27,416 ERROR ~ 
+
+@64nlmebhl
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/viewModels/Snapshot.scala around line 118)
+The file /app/viewModels/Snapshot.scala could not be compiled. Error raised is : value Stemmer is not a member of package play.utils
+
+play.exceptions.CompilationException: value Stemmer is not a member of package play.utils
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:18:27,813 ERROR ~ 
+
+@64nlmebhm
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/viewModels/Snapshot.scala around line 118)
+The file /app/viewModels/Snapshot.scala could not be compiled. Error raised is : value Stemmer is not a member of package play.utils
+
+play.exceptions.CompilationException: value Stemmer is not a member of package play.utils
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:18:57,687 ERROR ~ 
+
+@64nlmebhn
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 5)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value source
+
+play.exceptions.CompilationException: not found: value source
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:18:58,021 ERROR ~ 
+
+@64nlmebho
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 5)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value source
+
+play.exceptions.CompilationException: not found: value source
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:19:16,627 ERROR ~ 
+
+@64nlmebhp
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/viewModels/Snapshot.scala around line 119)
+The file /app/viewModels/Snapshot.scala could not be compiled. Error raised is : not enough arguments for method reabsolutizeUri: (server: String,possiblyAbsoluteUri: String)java.lang.String. Unspecified value parameter possiblyAbsoluteUri.
+
+play.exceptions.CompilationException: not enough arguments for method reabsolutizeUri: (server: String,possiblyAbsoluteUri: String)java.lang.String.
+Unspecified value parameter possiblyAbsoluteUri.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:19:17,615 ERROR ~ 
+
+@64nlmebi0
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/viewModels/Snapshot.scala around line 119)
+The file /app/viewModels/Snapshot.scala could not be compiled. Error raised is : not enough arguments for method reabsolutizeUri: (server: String,possiblyAbsoluteUri: String)java.lang.String. Unspecified value parameter possiblyAbsoluteUri.
+
+play.exceptions.CompilationException: not enough arguments for method reabsolutizeUri: (server: String,possiblyAbsoluteUri: String)java.lang.String.
+Unspecified value parameter possiblyAbsoluteUri.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:19:30,965 ERROR ~ 
+
+@64nlmebi1
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/viewModels/Snapshot.scala around line 125)
+The file /app/viewModels/Snapshot.scala could not be compiled. Error raised is : not found: value stemmedSource
+
+play.exceptions.CompilationException: not found: value stemmedSource
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:19:31,949 ERROR ~ 
+
+@64nlmebi2
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/viewModels/Snapshot.scala around line 125)
+The file /app/viewModels/Snapshot.scala could not be compiled. Error raised is : not found: value stemmedSource
+
+play.exceptions.CompilationException: not found: value stemmedSource
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:19:44,088 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 10:19:44,090 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 10:19:45,872 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 10:21:02,019 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 10:21:02,021 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 10:21:54,722 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 10:21:54,724 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 10:22:47,567 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 10:22:47,569 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 10:22:54,867 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 10:24:41,370 ERROR ~ 
+
+@64nlmebi3
+Internal Server Error (500) for request GET /@tests/init
+
+Compilation error (In /test/controllerUtils.scala around line 16)
+The file /test/controllerUtils.scala could not be compiled. Error raised is : unclosed character literal
+
+play.exceptions.CompilationException: unclosed character literal
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:24:41,416 ERROR ~ 
+
+@64nlmebi4
+Internal Server Error (500) for request GET /@tests/end?result=passed
+
+Compilation error (In /test/controllerUtils.scala around line 16)
+The file /test/controllerUtils.scala could not be compiled. Error raised is : unclosed character literal
+
+play.exceptions.CompilationException: unclosed character literal
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:24:42,392 ERROR ~ 
+
+@64nlmebi5
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /test/controllerUtils.scala around line 16)
+The file /test/controllerUtils.scala could not be compiled. Error raised is : unclosed character literal
+
+play.exceptions.CompilationException: unclosed character literal
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:24:42,643 ERROR ~ 
+
+@64nlmebi6
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /test/controllerUtils.scala around line 16)
+The file /test/controllerUtils.scala could not be compiled. Error raised is : unclosed character literal
+
+play.exceptions.CompilationException: unclosed character literal
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:25:36,549 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 10:30:27,456 ERROR ~ 
+
+@64nlmebi7
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 6)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String("Structure")  required: Boolean
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String("Structure")
+ required: Boolean
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:30:27,841 ERROR ~ 
+
+@64nlmebi8
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 6)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String("Structure")  required: Boolean
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String("Structure")
+ required: Boolean
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:31:01,833 ERROR ~ 
+
+@64nlmebi9
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 6)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : value || is not a member of java.lang.String
+
+play.exceptions.CompilationException: value || is not a member of java.lang.String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:31:02,254 ERROR ~ 
+
+@64nlmebia
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 6)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : value || is not a member of java.lang.String
+
+play.exceptions.CompilationException: value || is not a member of java.lang.String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:31:38,749 ERROR ~ 
+
+@64nlmebib
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 6)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value immutable
+
+play.exceptions.CompilationException: not found: value immutable
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 10:31:39,717 ERROR ~ 
+
+@64nlmebic
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 6)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value immutable
+
+play.exceptions.CompilationException: not found: value immutable
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 11:06:06,803 ERROR ~ 
+
+@64nlmebid
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 6)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value immutable
+
+play.exceptions.CompilationException: not found: value immutable
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 11:06:07,198 ERROR ~ 
+
+@64nlmebie
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 6)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value immutable
+
+play.exceptions.CompilationException: not found: value immutable
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 11:06:24,935 ERROR ~ 
+
+@64nlmebif
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 2)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value collections
+
+play.exceptions.CompilationException: not found: value collections
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 11:06:25,904 ERROR ~ 
+
+@64nlmebig
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 2)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value collections
+
+play.exceptions.CompilationException: not found: value collections
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 11:06:33,317 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 11:06:33,319 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 11:06:41,050 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 11:38:45,373 ERROR ~ 
+
+@64nlmebih
+Internal Server Error (500) for request GET /application/snapshot?width=1920&height=1091&server=deified&slide=1642401
+
+Execution exception (In /app/viewModels/Snapshot.scala around line 125)
+RuntimeException occured : java.lang.NullPointerException
+
+play.exceptions.JavaExecutionException: java.lang.NullPointerException
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.lang.RuntimeException: java.lang.NullPointerException
+	at play.libs.ws.WSAsync$HttpAsyncResponse.getStream(WSAsync.java:351)
+	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:125)
+	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:114)
+	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:114)
+	at controllers.Application$.snapshot(/app/controllers.scala:110)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+Caused by: java.lang.NullPointerException
+	at play.libs.ws.WSAsync$HttpAsyncResponse.getStream(WSAsync.java:349)
+	... 8 more
+16 Dec 2010 11:47:02,916 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 11:48:00,130 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 12:19:39,051 ERROR ~ 
+
+@64nlmebii
+Internal Server Error (500) for request GET /@tests/init
+
+Compilation error (In /app/utils/Stemmer.scala around line 16)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : 'case' expected but identifier found.
+
+play.exceptions.CompilationException: 'case' expected but identifier found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:19:39,095 ERROR ~ 
+
+@64nlmebij
+Internal Server Error (500) for request GET /@tests/end?result=passed
+
+Compilation error (In /app/utils/Stemmer.scala around line 16)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : 'case' expected but identifier found.
+
+play.exceptions.CompilationException: 'case' expected but identifier found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:19:40,082 ERROR ~ 
+
+@64nlmebik
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 16)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : 'case' expected but identifier found.
+
+play.exceptions.CompilationException: 'case' expected but identifier found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:19:40,324 ERROR ~ 
+
+@64nlmebil
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 16)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : 'case' expected but identifier found.
+
+play.exceptions.CompilationException: 'case' expected but identifier found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:41:38,062 ERROR ~ 
+
+@64nlmebim
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : identifier expected but 'match' found.
+
+play.exceptions.CompilationException: identifier expected but 'match' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:41:38,127 ERROR ~ 
+
+@64nlmebin
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : identifier expected but 'match' found.
+
+play.exceptions.CompilationException: identifier expected but 'match' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:41:45,794 ERROR ~ 
+
+@64nlmebio
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : identifier expected but 'match' found.
+
+play.exceptions.CompilationException: identifier expected but 'match' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:41:46,801 ERROR ~ 
+
+@64nlmebip
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : identifier expected but 'match' found.
+
+play.exceptions.CompilationException: identifier expected but 'match' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:41:52,640 ERROR ~ 
+
+@64nlmebj0
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : scrutinee is incompatible with pattern type;  found   : List[A]  required: Array[java.lang.String]
+
+play.exceptions.CompilationException: scrutinee is incompatible with pattern type;
+ found   : List[A]
+ required: Array[java.lang.String]
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:41:53,605 ERROR ~ 
+
+@64nlmebj1
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : scrutinee is incompatible with pattern type;  found   : List[A]  required: Array[java.lang.String]
+
+play.exceptions.CompilationException: scrutinee is incompatible with pattern type;
+ found   : List[A]
+ required: Array[java.lang.String]
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:42:04,305 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 12:42:04,307 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 12:42:06,240 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 12:43:14,441 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 12:43:14,443 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 12:43:23,447 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 12:43:23,449 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 12:43:55,114 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 12:43:55,116 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 12:44:03,930 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 12:46:28,539 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 12:46:28,541 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 12:47:08,990 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 12:47:08,992 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 12:47:57,334 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 12:47:57,337 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 12:48:05,387 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 12:48:46,599 ERROR ~ 
+
+@64nlmebj2
+Internal Server Error (500) for request GET /@tests/init
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : constructor cannot be instantiated to expected type;  found   : collection.immutable.::[B]  required: java.lang.String
+
+play.exceptions.CompilationException: constructor cannot be instantiated to expected type;
+ found   : collection.immutable.::[B]
+ required: java.lang.String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:48:46,720 ERROR ~ 
+
+@64nlmebj3
+Internal Server Error (500) for request GET /@tests/end?result=passed
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : constructor cannot be instantiated to expected type;  found   : collection.immutable.::[B]  required: java.lang.String
+
+play.exceptions.CompilationException: constructor cannot be instantiated to expected type;
+ found   : collection.immutable.::[B]
+ required: java.lang.String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:48:47,702 ERROR ~ 
+
+@64nlmebj4
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : constructor cannot be instantiated to expected type;  found   : collection.immutable.::[B]  required: java.lang.String
+
+play.exceptions.CompilationException: constructor cannot be instantiated to expected type;
+ found   : collection.immutable.::[B]
+ required: java.lang.String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:48:47,949 ERROR ~ 
+
+@64nlmebj5
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : constructor cannot be instantiated to expected type;  found   : collection.immutable.::[B]  required: java.lang.String
+
+play.exceptions.CompilationException: constructor cannot be instantiated to expected type;
+ found   : collection.immutable.::[B]
+ required: java.lang.String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:50:23,567 ERROR ~ 
+
+@64nlmebj6
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value :::
+
+play.exceptions.CompilationException: not found: value :::
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:50:23,713 ERROR ~ 
+
+@64nlmebj7
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value :::
+
+play.exceptions.CompilationException: not found: value :::
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:53:43,476 ERROR ~ 
+
+@64nlmebj8
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : '=>' expected but ')' found.
+
+play.exceptions.CompilationException: '=>' expected but ')' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:53:43,536 ERROR ~ 
+
+@64nlmebj9
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : '=>' expected but ')' found.
+
+play.exceptions.CompilationException: '=>' expected but ')' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:59:13,884 ERROR ~ 
+
+@64nlmebja
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value where
+
+play.exceptions.CompilationException: not found: value where
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 12:59:14,017 ERROR ~ 
+
+@64nlmebjb
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value where
+
+play.exceptions.CompilationException: not found: value where
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:00:14,153 ERROR ~ 
+
+@64nlmebjc
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:00:15,166 ERROR ~ 
+
+@64nlmebjd
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:27,771 ERROR ~ 
+
+@64nlmebje
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:27,944 ERROR ~ 
+
+@64nlmebjf
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:29,330 ERROR ~ 
+
+@64nlmebjg
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:30,351 ERROR ~ 
+
+@64nlmebjh
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:30,509 ERROR ~ 
+
+@64nlmebji
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:31,137 ERROR ~ 
+
+@64nlmebjj
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:48,760 ERROR ~ 
+
+@64nlmebjk
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:48,910 ERROR ~ 
+
+@64nlmebjl
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:50,518 ERROR ~ 
+
+@64nlmebjm
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:50,674 ERROR ~ 
+
+@64nlmebjn
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:50,915 ERROR ~ 
+
+@64nlmebjo
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:01:51,835 ERROR ~ 
+
+@64nlmebjp
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : type mismatch;  found   : java.lang.String  required: Int
+
+play.exceptions.CompilationException: type mismatch;
+ found   : java.lang.String
+ required: Int
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:02:39,044 ERROR ~ 
+
+@64nlmebk0
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value rest_*
+
+play.exceptions.CompilationException: not found: value rest_*
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:02:40,044 ERROR ~ 
+
+@64nlmebk1
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value rest_*
+
+play.exceptions.CompilationException: not found: value rest_*
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:02:40,175 ERROR ~ 
+
+@64nlmebk2
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value rest_*
+
+play.exceptions.CompilationException: not found: value rest_*
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:02:41,003 ERROR ~ 
+
+@64nlmebk3
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value rest_*
+
+play.exceptions.CompilationException: not found: value rest_*
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:03:12,559 ERROR ~ 
+
+@64nlmebk4
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value rest_*
+
+play.exceptions.CompilationException: not found: value rest_*
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:03:12,696 ERROR ~ 
+
+@64nlmebk5
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value rest_*
+
+play.exceptions.CompilationException: not found: value rest_*
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:03:14,542 ERROR ~ 
+
+@64nlmebk6
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value rest_*
+
+play.exceptions.CompilationException: not found: value rest_*
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:03:14,675 ERROR ~ 
+
+@64nlmebk7
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value rest_*
+
+play.exceptions.CompilationException: not found: value rest_*
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:03:28,681 ERROR ~ 
+
+@64nlmebk8
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value rest_*
+
+play.exceptions.CompilationException: not found: value rest_*
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:03:29,687 ERROR ~ 
+
+@64nlmebk9
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : not found: value rest_*
+
+play.exceptions.CompilationException: not found: value rest_*
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:03:39,448 ERROR ~ 
+
+@64nlmebka
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/controllers.scala around line 64)
+The file /app/controllers.scala could not be compiled. Error raised is : type mismatch;  found   : Int  required: String
+
+play.exceptions.CompilationException: type mismatch;
+ found   : Int
+ required: String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:03:40,414 ERROR ~ 
+
+@64nlmebkb
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/controllers.scala around line 64)
+The file /app/controllers.scala could not be compiled. Error raised is : type mismatch;  found   : Int  required: String
+
+play.exceptions.CompilationException: type mismatch;
+ found   : Int
+ required: String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:04:00,375 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 13:04:00,377 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 13:04:00,409 ERROR ~ 
+
+@64nlmebkc
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : no `: _*' annotation allowed here (such annotations are only allowed in arguments to *-parameters)
+
+play.exceptions.CompilationException: no `: _*' annotation allowed here
+(such annotations are only allowed in arguments to *-parameters)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:04:01,357 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 13:04:01,359 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 13:04:01,387 ERROR ~ 
+
+@64nlmebkd
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : no `: _*' annotation allowed here (such annotations are only allowed in arguments to *-parameters)
+
+play.exceptions.CompilationException: no `: _*' annotation allowed here
+(such annotations are only allowed in arguments to *-parameters)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:04:36,778 ERROR ~ 
+
+@64nlmebke
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : value ::: is not a member of java.lang.String
+
+play.exceptions.CompilationException: value ::: is not a member of java.lang.String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:04:37,766 ERROR ~ 
+
+@64nlmebkf
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : value ::: is not a member of java.lang.String
+
+play.exceptions.CompilationException: value ::: is not a member of java.lang.String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:04:38,411 ERROR ~ 
+
+@64nlmebkg
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : value ::: is not a member of java.lang.String
+
+play.exceptions.CompilationException: value ::: is not a member of java.lang.String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:04:39,155 ERROR ~ 
+
+@64nlmebkh
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 8)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : value ::: is not a member of java.lang.String
+
+play.exceptions.CompilationException: value ::: is not a member of java.lang.String
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at scala.Tuple2$Zipped$$anonfun$map$1.apply(Tuple2.scala:61)
+	at scala.Tuple2$Zipped.map(Tuple2.scala:59)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:05:32,028 ERROR ~ 
+
+@64nlmebki
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : ')' expected but 'case' found.
+
+play.exceptions.CompilationException: ')' expected but 'case' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:05:32,143 ERROR ~ 
+
+@64nlmebkj
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 9)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : ')' expected but 'case' found.
+
+play.exceptions.CompilationException: ')' expected but 'case' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:05:46,080 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 13:05:46,082 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 13:05:47,691 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 13:08:15,197 ERROR ~ 
+
+@64nlmebkk
+Internal Server Error (500) for request GET /@tests?select=UtilsTest.class,MessageClumping.class,QuizSerialization.class
+
+Compilation error (In /app/utils/Stemmer.scala around line 7)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : Missing closing brace `}' assumed here
+
+play.exceptions.CompilationException: Missing closing brace `}' assumed here
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:08:15,258 ERROR ~ 
+
+@64nlmebkl
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/utils/Stemmer.scala around line 7)
+The file /app/utils/Stemmer.scala could not be compiled. Error raised is : Missing closing brace `}' assumed here
+
+play.exceptions.CompilationException: Missing closing brace `}' assumed here
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+16 Dec 2010 13:08:28,525 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 13:08:28,527 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 13:08:36,898 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 13:14:28,914 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 13:14:28,915 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 13:14:58,050 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 13:14:58,052 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 13:48:51,558 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 13:48:51,560 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 13:49:01,134 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 13:49:01,136 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 13:50:24,499 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 13:50:24,501 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 13:50:33,017 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 13:52:35,143 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 13:52:35,145 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+16 Dec 2010 13:52:43,769 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+16 Dec 2010 13:54:06,194 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+16 Dec 2010 13:54:06,197 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
