@@ -107,7 +107,7 @@ object Application extends Controller {
     }
     def snapshot(width:Int=640, height:Int=320,server:String,slide:Int) ={
         println("Snapshotting "+slide)
-        val image = viewModels.Snapshot.png("https://%s.adm.monash.edu:1188".format(server),width,height,slideXmppMessages(server,slide).toList)
+        val image = viewModels.Snapshot.png(server,width,height,slideXmppMessages(server,slide).toList)
         javax.imageio.ImageIO.write(image, "png", response.out)
         request.contentType = "image/png"
     }

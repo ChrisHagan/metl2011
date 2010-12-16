@@ -117,6 +117,7 @@ object Snapshot{
                 case "image"=> {
                     time("image")
                     val source = reabsolutizeUri(server,(s \ "source").text)
+                    println(source)
 					val width = (s \ "width").text.toDouble.toInt
                     val height = (s \ "height").text.toDouble.toInt
                     val x = (s \ "x").text.toDouble.toInt
