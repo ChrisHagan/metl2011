@@ -1,7 +1,12 @@
 var Breadcrumb = (function(){
-    var breadcrumbHost = $("<div id='breadcrumbHost'>Breadcrumbs go here</div>")
+    var breadcrumbHost = $("<div id='breadcrumbHost' title='Breadcrumbs'></div>")
     $('body').append(breadcrumbHost)
-    breadcrumbHost.dialog()
+    breadcrumbHost.dialog({minHeight:75})
+    Commands.add("conversationJoined",function(conversation){
+        Breadcrumb.add(conversation.title, function(){
+            conversationJoined(conversation)
+        })
+    })
     var trail = []
     return {
         add: function(label, func){

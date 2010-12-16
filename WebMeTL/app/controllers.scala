@@ -96,10 +96,11 @@ object Application extends Controller {
                     (message \ "quiz").map(quiz=>{
                         println(quiz)
                         val title = (quiz \ "title").text
+                        val id = (quiz \ "id").text.toLong
                         val conversation = jid
                         val author = (quiz \ "author").text
                         val options = (quiz \ "quizOption").map(QuizOption.parse(_))
-                        Quiz(title,timestamp,conversation,author,options)
+                        Quiz(title,id,timestamp,conversation,author,options)
                     })
                 }).toList ::: acc
             })        

@@ -127,10 +127,11 @@ case class Message(name:String, timestamp:Long,slide:Int,author:String,standing:
     ))
     override def toString = author+"@"+timestamp.toString
 }
-case class Quiz(title:String, timestamp:Long, conversation:Int, author:String, options:Seq[QuizOption]){
+case class Quiz(title:String, id:Long,timestamp:Long, conversation:Int, author:String, options:Seq[QuizOption]){
     def toJson = JObject(List(
         JField("title",JString(title)),
         JField("timestamp",JInt(timestamp)),
+        JField("id",JInt(id)),
         JField("conversation",JInt(conversation)),
         JField("author",JString(author)),
         JField("options",JArray(options.map(_.toJson).toList))
@@ -150,5 +151,5 @@ case class QuizOption(name:String,text:String,correct:Boolean,color:String){
         JField("name",JString(name)),
         JField("text",JString(text)),
         JField("correct",JBool(correct)),
-        JField("color",JString(color))))
+        JField("color",JString("rgb(%s)".format(color.split(" ").take(3).mkString(","))))))
 }

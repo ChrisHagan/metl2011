@@ -50,4 +50,4 @@ var MeTL_Ink = function(context){
         return( false );
     });
 }
-Commands.add("conversationJoined",function(){MeTL_Ink($("#slideDisplay"))})
+Commands.add("conversationJoined",function(){MeTL_Ink($("#visualSlideDisplay"))})
