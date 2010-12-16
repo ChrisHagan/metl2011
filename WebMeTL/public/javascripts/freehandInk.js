@@ -30,6 +30,7 @@ var MeTL_Ink = function(context){
         pen.moveTo( lastPenPoint.x, lastPenPoint.y );
         canvas.bind( (isIPhone ? "touchmove" : "mousemove"), onTouchMove);
         canvas.bind( (isIPhone ? "touchend" : "mouseup"), onTouchEnd);
+        event.preventDefaults()
     };
     var onTouchMove = function( event ){
         var touch = getTouchEvent( event );
@@ -43,11 +44,13 @@ var MeTL_Ink = function(context){
     };
     var onTouchEnd = function( event ){
         canvas.unbind( (isIPhone ? "touchmove" : "mousemove"));
-        canvas.unbind( (isIPhone ? "touchend" : "mouseup"));
-    };
-    canvas.bind( (isIPhone ? "touchstart" : "mousedown"), function( event ){
-        onTouchStart( event );
-        return( false );
-    });
+    canvas.unbind( (isIPhone ? "touchend" : "mouseup"));
+};
+canvas.bind( (isIPhone ? "touchstart" : "mousedown"), function( event ){
+    onTouchStart( event );
+    return( false );
+});
 }
-Commands.add("conversationJoined",function(){MeTL_Ink($("#visualSlideDisplay"))})
+Commands.add("slideRendered",function(details){
+    MeTL_Ink($(details.img))
+})
