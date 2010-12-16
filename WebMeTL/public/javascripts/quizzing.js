@@ -1,10 +1,11 @@
 var Quizzing = (function(){
     var cornerRadius = "30px"
-    var quizHost = $("<div id='quizHost' title='Quizzes'></div>")
-    $('body').append($("<link rel='stylesheet' href='/public/stylesheets/quiz.css'></link>"))
-    $('body').append(quizHost)
-    quizHost.dialog()
     Commands.add("conversationJoined",function(conversation){
+        $('#quizHost').remove()
+        var quizHost = $("<div id='quizHost' title='Quizzes'></div>")
+        $('body').append($("<link rel='stylesheet' href='/public/stylesheets/quiz.css'></link>"))
+        $('body').append(quizHost)
+        quizHost.dialog()
         $.getJSON("/application/quizzes?server="+server+"&jid="+conversation.jid,function(quizzes){
             quizHost.html("")
             _.each(quizzes,function(quiz){

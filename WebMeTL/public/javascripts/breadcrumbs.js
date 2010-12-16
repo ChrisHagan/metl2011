@@ -16,7 +16,7 @@ var Breadcrumb = (function(){
         },
         render:function(){
             breadcrumbHost.html("")
-            var recentCrumbs = [{label:"All authors", func:Authors.radial}]
+            var recentCrumbs = [{label:"All authors", func:searchForConversations}]
             _.each(trail.slice(-10), function(crumb){recentCrumbs.push(crumb)})
             _.each(recentCrumbs, function(crumb){
                 breadcrumbHost.append($("<span />").append(crumb.label.slice(0,15) + "->").click(function(){
