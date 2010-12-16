@@ -6,9 +6,9 @@
     Commands.add("slideRendered", function(details){
         var img = details.img
         var onComplete = function(){
-            var context = $(img)  
+            var context = $(img)
         /*Canvas seems to need to be initialized with dimensions already in place or it behaves oddly with scaling*/
-            var canvas = $("<canvas id='"+id+"' width='"+img.naturalWidth+"px' height='"+img.naturalWidth+"px'></canvas>").css({left:0,top:0}).css("position","absolute").css("z-index",9)
+            var canvas = $("<canvas id='"+id+"' width='"+img.naturalWidth+"px' height='"+img.naturalHeight+"px'></canvas>").css({left:0,top:0}).css("position","absolute").css("z-index",9)
             context.after(canvas)
             var pen = canvas[ 0 ].getContext( "2d" );  
             var lastPenPoint = null;
