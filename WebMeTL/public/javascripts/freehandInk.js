@@ -30,7 +30,6 @@ var MeTL_Ink = function(context){
         pen.moveTo( lastPenPoint.x, lastPenPoint.y );
         canvas.bind( (isIPhone ? "touchmove" : "mousemove"), onTouchMove);
         canvas.bind( (isIPhone ? "touchend" : "mouseup"), onTouchEnd);
-        event.preventDefaults()
     };
     var onTouchMove = function( event ){
         var touch = getTouchEvent( event );
