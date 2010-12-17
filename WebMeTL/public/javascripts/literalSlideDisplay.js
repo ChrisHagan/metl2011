@@ -9,7 +9,10 @@ var VisualSlideDisplay = (function(){
         _.each(nodes,function(i){
             var img = new Image()
             img.src = "snapshot?width="+width+"&height="+height+"&server="+server+"&slide="+i
-            $('#visualSlideDisplay').append(img)
+            var imgContainer = $("<div class='imgContainer'></div>")
+            imgContainer.append(img)
+            $('#visualSlideDisplay').append(imgContainer)
+            img.width = width
             slideRendered({server:server,slide:i,img:img})
         })
     }
@@ -117,7 +120,12 @@ var VisualSlideDisplay = (function(){
         var id = "visualSlideDisplay"
         $("#"+id).remove()
         $('body').append($("<div id='"+id+"' title='Slide visuals'></div>"))
-        $("#"+id).dialog()
+        $("#"+id).dialog({
+            resize:function(event,ui){
+                $("#"+id).find(".imgContainer").width(ui.size.width)
+                slideDisplayResized(ui)
+            }
+        })
         slides(conversation)
     })
 })()

@@ -71,3 +71,64 @@ Caused by: java.util.zip.ZipException: invalid block type
 	at com.sun.imageio.plugins.png.PNGImageReader.decodePass(Unknown Source)
 	at com.sun.imageio.plugins.png.PNGImageReader.decodeImage(Unknown Source)
 	... 12 more
+17 Dec 2010 09:42:37,385 ERROR ~ 
+
+@64o2op2l7
+Internal Server Error (500) for request GET /application/snapshot?width=1600&height=768&server=deified&slide=767402
+
+Execution exception (In /app/viewModels/Snapshot.scala around line 126)
+OutOfMemoryError occured : Java heap space
+
+play.exceptions.JavaExecutionException: Java heap space
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.lang.OutOfMemoryError: Java heap space
+	at org.jboss.netty.buffer.HeapChannelBuffer.<init>(HeapChannelBuffer.java:47)
+	at org.jboss.netty.buffer.BigEndianHeapChannelBuffer.<init>(BigEndianHeapChannelBuffer.java:39)
+	at org.jboss.netty.buffer.ChannelBuffers.buffer(ChannelBuffers.java:139)
+	at org.jboss.netty.buffer.HeapChannelBufferFactory.getBuffer(HeapChannelBufferFactory.java:73)
+	at org.jboss.netty.buffer.DynamicChannelBuffer.ensureWritableBytes(DynamicChannelBuffer.java:84)
+	at org.jboss.netty.buffer.DynamicChannelBuffer.writeBytes(DynamicChannelBuffer.java:233)
+	at org.jboss.netty.buffer.AbstractChannelBuffer.writeBytes(AbstractChannelBuffer.java:446)
+	at com.ning.http.client.providers.netty.NettyAsyncResponse.getResponseBodyAsStream(NettyAsyncResponse.java:106)
+	at play.libs.ws.WSAsync$HttpAsyncResponse.getStream(WSAsync.java:349)
+	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:126)
+	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:114)
+	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:114)
+	at controllers.Application$.snapshot(/app/controllers.scala:111)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+17 Dec 2010 09:42:54,844 ERROR ~ 
+
+@64o2op2l8
+Internal Server Error (500) for request GET /application/snapshot?width=1600&height=768&server=deified&slide=767402
+
+Execution exception (In /app/viewModels/Snapshot.scala around line 126)
+OutOfMemoryError occured : Java heap space
+
+play.exceptions.JavaExecutionException: Java heap space
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.lang.OutOfMemoryError: Java heap space
+	at java.awt.image.DataBufferByte.<init>(Unknown Source)
+	at java.awt.image.ComponentSampleModel.createDataBuffer(Unknown Source)
+	at java.awt.image.Raster.createWritableRaster(Unknown Source)
+	at javax.imageio.ImageTypeSpecifier.createBufferedImage(Unknown Source)
+	at javax.imageio.ImageReader.getDestination(Unknown Source)
+	at com.sun.imageio.plugins.jpeg.JPEGImageReader.readInternal(Unknown Source)
+	at com.sun.imageio.plugins.jpeg.JPEGImageReader.read(Unknown Source)
+	at javax.imageio.ImageIO.read(Unknown Source)
+	at javax.imageio.ImageIO.read(Unknown Source)
+	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:126)
+	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:114)
+	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:114)
+	at controllers.Application$.snapshot(/app/controllers.scala:111)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+17 Dec 2010 09:52:29,519 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+17 Dec 2010 09:52:29,521 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+17 Dec 2010 09:52:37,154 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.

@@ -1,16 +1,21 @@
 (function(contexts){
     var id = "metl_ink_generated_canvas"
     Commands.add("joinedConversation",function(conversation){
-        $('#'+id).remove()
+        $('.'+id).remove()
     })
     Commands.add("slideRendered", function(details){
         var img = details.img
         var onComplete = function(){
             var context = $(img)
         /*Canvas seems to need to be initialized with dimensions already in place or it behaves oddly with scaling*/
-            var canvas = $("<canvas id='"+id+"' width='"+img.naturalWidth+"px' height='"+img.naturalHeight+"px'></canvas>").css({left:0,top:0}).css("position","absolute").css("z-index",9)
+            var canvas = $("<canvas class='"+id+"' width='"+img.naturalWidth+"px' height='"+img.naturalHeight+"px'></canvas>").css({left:0,top:0}).css("position","absolute").css("z-index",9)
             context.after(canvas)
             var pen = canvas[ 0 ].getContext( "2d" );  
+            Commands.add("slideDisplayResized", function(ui){
+                var scale = (ui.size.width / img.naturalWidth)
+                pen.scale(scale,0,0,scale,0,0)
+                canvas.css("width",ui.size.width)
+            })
             var lastPenPoint = null;
             var isIPhone = 
                 (new RegExp( "iPhone", "i" )).test(navigator.userAgent) || (new RegExp( "iPad", "i" )).test(navigator.userAgent)

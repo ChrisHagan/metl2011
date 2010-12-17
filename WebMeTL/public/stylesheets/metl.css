@@ -5,3 +5,6 @@ img, image{
     background:darkblue;
     border:none;
 }
+#visualSlideDisplay img{
+    width:100%;
+}
