@@ -104,12 +104,13 @@
             var pen = canvas.getContext( "2d" );
             pen.strokeStyle = message.color
             pen.lineWidth = 2
-            pen.beginPath();
             var points = message.points
             pen.moveTo( points[0], points[1] );
-            var offset = Math.random() * 100
-            for(var i = 0; i < points.length;)
-                pen.lineTo(points[i++]+offset, points[i++]+offset)
+            pen.beginPath();
+            for(var i = 0; i < points.length;){
+                pen.lineTo(points[i++], points[i++])
+                i++//Skip pressure
+            }
             pen.stroke()
         }
     })

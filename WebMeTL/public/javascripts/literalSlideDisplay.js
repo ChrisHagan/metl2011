@@ -124,7 +124,8 @@ var VisualSlideDisplay = (function(){
             resize:function(event,ui){
                 $("#"+id).find(".imgContainer").width(ui.size.width)
                 slideDisplayResized(ui)
-            }
+            },
+            position:'left'
         })
         slides(conversation)
     })

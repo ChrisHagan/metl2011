@@ -96,3 +96,130 @@ Caused by: java.lang.OutOfMemoryError: Java heap space
 	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
 	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
 	... 1 more
+18 Dec 2010 16:46:40,566 ERROR ~ 
+
+@64oblhklp
+Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=420400
+
+Execution exception (In /app/controllers.scala around line 95)
+NumberFormatException occured : For input string: ""
+
+play.exceptions.JavaExecutionException: For input string: ""
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.lang.NumberFormatException: For input string: ""
+	at java.lang.NumberFormatException.forInputString(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:95)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:94)
+	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
+	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:94)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:93)
+	at controllers.Application$.quizzes(/app/controllers.scala:93)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+18 Dec 2010 16:47:12,322 ERROR ~ 
+
+@64oblhkm0
+Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=420400
+
+Execution exception (In /app/controllers.scala around line 95)
+NumberFormatException occured : For input string: ""
+
+play.exceptions.JavaExecutionException: For input string: ""
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.lang.NumberFormatException: For input string: ""
+	at java.lang.NumberFormatException.forInputString(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:95)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:94)
+	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
+	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:94)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:93)
+	at controllers.Application$.quizzes(/app/controllers.scala:93)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+18 Dec 2010 16:50:07,595 ERROR ~ 
+
+@64oblhkm1
+Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=445400
+
+Execution exception (In /app/controllers.scala around line 95)
+NumberFormatException occured : For input string: ""
+
+play.exceptions.JavaExecutionException: For input string: ""
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.lang.NumberFormatException: For input string: ""
+	at java.lang.NumberFormatException.forInputString(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:95)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:94)
+	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
+	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:94)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:93)
+	at controllers.Application$.quizzes(/app/controllers.scala:93)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+18 Dec 2010 17:34:45,367 ERROR ~ 
+
+@64oblhkm2
+Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=1422400
+
+Execution exception (In /app/controllers.scala around line 68)
+ZipException occured : archive is not a ZIP archive
+
+play.exceptions.JavaExecutionException: archive is not a ZIP archive
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.util.zip.ZipException: archive is not a ZIP archive
+	at org.apache.commons.compress.archivers.zip.ZipFile.positionAtCentralDirectory(ZipFile.java:503)
+	at org.apache.commons.compress.archivers.zip.ZipFile.populateFromCentralDirectory(ZipFile.java:344)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:184)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:161)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:122)
+	at controllers.Application$.slideXmppMessages(/app/controllers.scala:68)
+	at controllers.Application$.quizzes(/app/controllers.scala:91)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+18 Dec 2010 19:43:12,341 ERROR ~ 
+
+@64oblhkm3
+Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=420400
+
+Execution exception (In /app/controllers.scala around line 95)
+NumberFormatException occured : For input string: ""
+
+play.exceptions.JavaExecutionException: For input string: ""
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.lang.NumberFormatException: For input string: ""
+	at java.lang.NumberFormatException.forInputString(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:95)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:94)
+	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
+	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:94)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:93)
+	at controllers.Application$.quizzes(/app/controllers.scala:93)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more

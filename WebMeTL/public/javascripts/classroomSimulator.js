@@ -31,6 +31,13 @@ var ClassRoom =(function(){
     }
     var groups = [
         {
+            members:["Wordy"],
+            parameters:{
+                likelihoodOfWriting:1,
+                beginAfterSeconds:0
+            }
+        },
+        {
             members:["Albert"],
             parameters:{
                 likelihoodOfWriting:0.5,
@@ -79,34 +86,61 @@ var ClassRoom =(function(){
                 classToggle.text("Start class")
             }
         })
-        var act = function(message){
-            messageReceived(_.extend(message,{
-                color:"black",
-                points:[118.7,93.5,127,116.8,92.1,127,115,92.1,127,113.1,93.5,127,104.7,105.6,127,99.5,115,127,93.5,129.4,127,89.3,143.5,127,89.3,174.3,127,90.7,183.2,127,93.5,188.3,127,98.1,192.1,127,100.5,193,127,105.1,193,127,106.1,191.1,127,107.5,189.7,127,107.5,187.9,127]
-            }))  
+        var inkScaleFactor = 5
+        var maxX = width * inkScaleFactor
+        var act = function(){
+            var voice = new ElizaBot()
+            var sentiment = voice.getInitial()
+            var x = 0
+            var y = 0
+            return function(message){
+                sentiment = voice.transform(sentiment)
+                x = x + 100
+                _.each(Automated.points(sentiment),function(points){
+                    x = x + 80
+                    if(x > maxX){
+                        y = y + 100
+                        x = 0
+                    }
+                    if(points)
+                        messageReceived(_.extend(message,{
+                            color:"black",
+                            points:_.map(points,(function(p,i){
+                                switch(i % 3){
+                                    case 0 : return (p + x) / inkScaleFactor
+                                    case 1 : return (p + y) / inkScaleFactor
+                                    case 2 : return p
+                                }
+                            }))
+                        }))
+                })
+            }
         }
+        var groupActivities = _.map(groups,act)
         if(classTimer) clearInterval(classTimer)
         classTimer = setInterval(function(){
-            console.log("Class is in session: "+classIsInSession)
             if(classIsInSession){
                 _.each(groups,function(group){
                     var conchHolder = group.members[Math.floor(Math.random() * (group.members.length -1))]
                     var time = 100000
-                    if(Math.random() < group.parameters.likelihoodOfWriting)
-                        act({
+                    if(Math.random() < group.parameters.likelihoodOfWriting){
+                        var  slide = groups.indexOf(group)
+                        var action = {
                             contentType:group.parameters.contentType,
                             author : conchHolder,
                             timestamp : time,
-                            slide : (groups.indexOf(group)).toString(),
+                            slide : slide.toString(),
                             standing:group.members.indexOf(conchHolder)
-                        })
+                        }
+                        groupActivities[slide](action)
+                    }
                     if(Math.random() < group.parameters.conchHandoffProbability)
                         conchHolder = group.members[Math.floor(Math.random() * (group.members.length -1))]
                 })
             }
         },1000)
         $('body').append(classToggle)
-        classToggle.dialog()
+        classToggle.dialog({position:'top'})
     })
     return {
         groups:groups,

@@ -1,7 +1,7 @@
 var Breadcrumb = (function(){
     var breadcrumbHost = $("<div id='breadcrumbHost' title='Breadcrumbs'></div>")
     $('body').append(breadcrumbHost)
-    breadcrumbHost.dialog({minHeight:75})
+    breadcrumbHost.dialog({minHeight:75, position:['left','top']})
     Commands.add("conversationJoined",function(conversation){
         Breadcrumb.add(conversation.title, function(){
             conversationJoined(conversation)

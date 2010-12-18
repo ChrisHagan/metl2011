@@ -1,10 +1,11 @@
 var PostIts = (function(){
+    var eliza = new ElizaBot()
     var id = "postItsHost"
     var keys = ""
     var input = $("<div></div>")
     var submit = $("<submit>Submit</submit>")
         .click(function(){
-           alert(keys)
+           alert(eliza.transform(keys))
            keys = ""
            input.html(keys)
            dialog.dialog("close")
