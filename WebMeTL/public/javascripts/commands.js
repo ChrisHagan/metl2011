@@ -2,6 +2,9 @@ var CommandInserter = function(context){
     var events = []
     var handlers = []
     return{
+        handlers:function(){
+           return handlers 
+        },
         add:function(evt,handler){
             if(!(evt in handlers))
                 handlers[evt] = []

@@ -1,8 +1,8 @@
 var MeTL_Ink = function(context){
     var id = "metl_ink_generated_canvas"
-    $('#'+id).remove()
+    $('.'+id).remove()
     /*Canvas seems to need to be initialized with dimensions already in place or it behaves oddly with scaling*/
-    var canvas = $("<canvas id='"+id+"' width='"+context.width()+"px' height='"+context.height()+"px'></canvas>").css(context.offset()).css("position","absolute").css("z-index",9)
+    var canvas = $("<canvas class='"+id+"' width='"+context.width()+"px' height='"+context.height()+"px'></canvas>").css(context.offset()).css("position","absolute").css("z-index",9)
     context.after(canvas)
     var pen = canvas[0].getContext( "2d" );
     pen.strokeStyle = "red"
@@ -53,3 +53,4 @@ canvas.bind( (isIPhone ? "touchstart" : "mousedown"), function( event ){
 Commands.add("slideRendered",function(details){
     MeTL_Ink($(details.img))
 })
+

@@ -1,6 +1,6 @@
 (function(contexts){
     var id = "metl_ink_generated_canvas"
-    Commands.add("joinedConversation",function(conversation){
+    Commands.add("conversationJoined",function(conversation){
         $('.'+id).remove()
     })
     Commands.add("slideRendered", function(details){
@@ -95,5 +95,22 @@
         img.onload = onComplete
     else
         onComplete()
+    })
+    Commands.add("messageReceived",function(message){
+        var inks = $('.'+id)
+        var slide = parseInt(message.slide)
+        if(inks.length > slide){
+            var canvas = inks[slide]    
+            var pen = canvas.getContext( "2d" );
+            pen.strokeStyle = message.color
+            pen.lineWidth = 2
+            pen.beginPath();
+            var points = message.points
+            pen.moveTo( points[0], points[1] );
+            var offset = Math.random() * 100
+            for(var i = 0; i < points.length;)
+                pen.lineTo(points[i++]+offset, points[i++]+offset)
+            pen.stroke()
+        }
     })
 })()
