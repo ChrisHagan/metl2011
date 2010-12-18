@@ -11,9 +11,10 @@
             var canvas = $("<canvas class='"+id+"' width='"+img.naturalWidth+"px' height='"+img.naturalHeight+"px'></canvas>").css({left:0,top:0}).css("position","absolute").css("z-index",9)
             context.after(canvas)
             var pen = canvas[ 0 ].getContext( "2d" );  
+            pen.lineWidth = 4
             Commands.add("slideDisplayResized", function(ui){
-                var scale = (ui.size.width / img.naturalWidth)
-                pen.scale(scale,0,0,scale,0,0)
+                var scale = (img.naturalWidth / ui.size.width) // Remove scaling from hit
+                pen.setTransform(scale,0,0,scale,0,0)
                 canvas.css("width",ui.size.width)
             })
             var lastPenPoint = null;

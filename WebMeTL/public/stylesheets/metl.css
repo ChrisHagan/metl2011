@@ -8,3 +8,6 @@ img, image{
 #visualSlideDisplay img{
     width:100%;
 }
+.imgContainer{
+    position:relative;
+}

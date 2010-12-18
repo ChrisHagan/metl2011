@@ -1,109 +1,21 @@
-17 Dec 2010 09:26:47,554 INFO  ~ Starting C:\specialMeTL\WebMeTL
-17 Dec 2010 09:26:47,558 INFO  ~ Module scala is available (C:\lib\play-1.1\modules\scala-0.8)
-17 Dec 2010 09:26:48,130 WARN  ~ You're running Play! in DEV mode
-17 Dec 2010 09:26:48,208 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
-17 Dec 2010 09:26:51,169 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
-17 Dec 2010 09:26:57,399 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
-17 Dec 2010 09:26:57,403 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
-17 Dec 2010 09:26:57,431 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 20 of /app/models/MeTL.scala
-17 Dec 2010 09:26:57,433 WARN  ~ method first in trait IterableLike is deprecated: use `head' instead, at line 24 of /app/models/MeTL.scala
-17 Dec 2010 09:26:57,446 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 74 of /app/models/MeTL.scala
-17 Dec 2010 09:26:57,448 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 92 of /app/models/MeTL.scala
-17 Dec 2010 09:26:57,450 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 106 of /app/models/MeTL.scala
-17 Dec 2010 09:27:02,906 INFO  ~ Connected to jdbc:hsqldb:mem:playembed
-17 Dec 2010 09:27:02,930 INFO  ~ Application 'WebMeTL' is now started !
-17 Dec 2010 09:32:58,298 ERROR ~ 
+17 Dec 2010 19:50:24,917 INFO  ~ Starting C:\specialMeTL\WebMeTL
+17 Dec 2010 19:50:24,921 INFO  ~ Module scala is available (C:\lib\play-1.1\modules\scala-0.8)
+17 Dec 2010 19:50:25,471 WARN  ~ You're running Play! in DEV mode
+17 Dec 2010 19:50:25,556 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
+17 Dec 2010 19:50:28,815 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+17 Dec 2010 19:50:34,694 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+17 Dec 2010 19:50:34,699 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+17 Dec 2010 19:50:34,726 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 20 of /app/models/MeTL.scala
+17 Dec 2010 19:50:34,728 WARN  ~ method first in trait IterableLike is deprecated: use `head' instead, at line 24 of /app/models/MeTL.scala
+17 Dec 2010 19:50:34,741 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 74 of /app/models/MeTL.scala
+17 Dec 2010 19:50:34,743 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 92 of /app/models/MeTL.scala
+17 Dec 2010 19:50:34,745 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 106 of /app/models/MeTL.scala
+17 Dec 2010 19:50:40,483 INFO  ~ Connected to jdbc:hsqldb:mem:playembed
+17 Dec 2010 19:50:40,510 INFO  ~ Application 'WebMeTL' is now started !
+17 Dec 2010 19:52:11,870 ERROR ~ 
 
-@64o2op2l5
-Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=420400
-
-Execution exception (In /app/controllers.scala around line 95)
-NumberFormatException occured : For input string: ""
-
-play.exceptions.JavaExecutionException: For input string: ""
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
-	at Invocation.HTTP Request(Play!)
-Caused by: java.lang.NumberFormatException: For input string: ""
-	at java.lang.NumberFormatException.forInputString(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:95)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:94)
-	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
-	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:94)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:93)
-	at controllers.Application$.quizzes(/app/controllers.scala:93)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
-	... 1 more
-17 Dec 2010 09:40:18,094 ERROR ~ 
-
-@64o2op2l6
-Internal Server Error (500) for request GET /application/snapshot?width=1600&height=768&server=deified&slide=1642401
-
-Execution exception (In /app/viewModels/Snapshot.scala around line 126)
-IIOException occured : Error reading PNG image data
-
-play.exceptions.JavaExecutionException: Error reading PNG image data
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
-	at Invocation.HTTP Request(Play!)
-Caused by: javax.imageio.IIOException: Error reading PNG image data
-	at com.sun.imageio.plugins.png.PNGImageReader.readImage(Unknown Source)
-	at com.sun.imageio.plugins.png.PNGImageReader.read(Unknown Source)
-	at javax.imageio.ImageIO.read(Unknown Source)
-	at javax.imageio.ImageIO.read(Unknown Source)
-	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:126)
-	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:114)
-	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:114)
-	at controllers.Application$.snapshot(/app/controllers.scala:111)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
-	... 1 more
-Caused by: java.util.zip.ZipException: invalid block type
-	at java.util.zip.InflaterInputStream.read(Unknown Source)
-	at java.io.BufferedInputStream.fill(Unknown Source)
-	at java.io.BufferedInputStream.read1(Unknown Source)
-	at java.io.BufferedInputStream.read(Unknown Source)
-	at java.io.DataInputStream.readFully(Unknown Source)
-	at com.sun.imageio.plugins.png.PNGImageReader.decodePass(Unknown Source)
-	at com.sun.imageio.plugins.png.PNGImageReader.decodeImage(Unknown Source)
-	... 12 more
-17 Dec 2010 09:42:37,385 ERROR ~ 
-
-@64o2op2l7
-Internal Server Error (500) for request GET /application/snapshot?width=1600&height=768&server=deified&slide=767402
-
-Execution exception (In /app/viewModels/Snapshot.scala around line 126)
-OutOfMemoryError occured : Java heap space
-
-play.exceptions.JavaExecutionException: Java heap space
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
-	at Invocation.HTTP Request(Play!)
-Caused by: java.lang.OutOfMemoryError: Java heap space
-	at org.jboss.netty.buffer.HeapChannelBuffer.<init>(HeapChannelBuffer.java:47)
-	at org.jboss.netty.buffer.BigEndianHeapChannelBuffer.<init>(BigEndianHeapChannelBuffer.java:39)
-	at org.jboss.netty.buffer.ChannelBuffers.buffer(ChannelBuffers.java:139)
-	at org.jboss.netty.buffer.HeapChannelBufferFactory.getBuffer(HeapChannelBufferFactory.java:73)
-	at org.jboss.netty.buffer.DynamicChannelBuffer.ensureWritableBytes(DynamicChannelBuffer.java:84)
-	at org.jboss.netty.buffer.DynamicChannelBuffer.writeBytes(DynamicChannelBuffer.java:233)
-	at org.jboss.netty.buffer.AbstractChannelBuffer.writeBytes(AbstractChannelBuffer.java:446)
-	at com.ning.http.client.providers.netty.NettyAsyncResponse.getResponseBodyAsStream(NettyAsyncResponse.java:106)
-	at play.libs.ws.WSAsync$HttpAsyncResponse.getStream(WSAsync.java:349)
-	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:126)
-	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:114)
-	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:114)
-	at controllers.Application$.snapshot(/app/controllers.scala:111)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
-	... 1 more
-17 Dec 2010 09:42:54,844 ERROR ~ 
-
-@64o2op2l8
-Internal Server Error (500) for request GET /application/snapshot?width=1600&height=768&server=deified&slide=767402
+@64o626p55
+Internal Server Error (500) for request GET /application/snapshot?width=1920&height=1039&server=deified&slide=767402
 
 Execution exception (In /app/viewModels/Snapshot.scala around line 126)
 OutOfMemoryError occured : Java heap space
@@ -129,6 +41,3 @@ Caused by: java.lang.OutOfMemoryError: Java heap space
 	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
 	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
 	... 1 more
-17 Dec 2010 09:52:29,519 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
-17 Dec 2010 09:52:29,521 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
-17 Dec 2010 09:52:37,154 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
