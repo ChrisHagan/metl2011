@@ -122,15 +122,14 @@
             },[100000,100000,0,0])
             var foreignCanvas = $("<canvas style='position:absolute;left:"+dimensions[0]+";top:"+dimensions[1]+";border:1px solid red;' width='"+(dimensions[2]-dimensions[0])+"' height='"+(dimensions[3]-dimensions[1])+"'></canvas>")
             $(canvas).after(foreignCanvas)
-            var foreignPen = pen
+            var foreignPen = foreignCanvas[0].getContext('2d')
             foreignPen.strokeStyle = message.color
             foreignPen.lineWidth = 2
             _.each(strokes,function(points){
-                foreignPen.moveTo( points[0]-dimensions[0], points[1]-dimensions[1] );
                 foreignPen.beginPath();
                 for(var i = 0; i < points.length;){
-                    var x = points[i++]
-                    var y = points[i++]
+                    var x = points[i++]-dimensions[0]
+                    var y = points[i++]-dimensions[1]
                     foreignPen.lineTo(x, y)
                     i++//Skip pressure
                 }
