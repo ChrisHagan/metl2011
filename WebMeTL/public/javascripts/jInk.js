@@ -1,4 +1,5 @@
 (function(contexts){
+    var svgns = 'http://www.w3.org/2000/svg'
     var id = "metl_ink_generated_canvas"
     Commands.add("conversationJoined",function(conversation){
         $('.'+id).remove()
@@ -7,15 +8,20 @@
         var img = details.img
         var onComplete = function(){
             var context = $(img)
+            var style = {left:0,top:0,position:"absolute","z-index":9}
         /*Canvas seems to need to be initialized with dimensions already in place or it behaves oddly with scaling*/
-            var canvas = $("<canvas class='"+id+"' width='"+img.naturalWidth+"px' height='"+img.naturalHeight+"px'></canvas>").css({left:0,top:0}).css("position","absolute").css("z-index",9)
+            var canvas = $("<canvas class='"+id+"' width='"+img.naturalWidth+"px' height='"+img.naturalHeight+"px'></canvas>").css(style)
             context.after(canvas)
+            var svg = $("<svg class='svg_"+id+"' xmlns='"+svgns+"' viewBox='0 0 "+canvas.width()+" "+canvas.height()+"'>"+
+                        "</svg>").css(_.extend(style,{'z-Index':8}))
+            canvas.before(svg)
             var pen = canvas[ 0 ].getContext( "2d" );  
             pen.lineWidth = 4
             Commands.add("slideDisplayResized", function(ui){
                 var scale = (img.naturalWidth / ui.size.width) // Remove scaling from hit
                 pen.setTransform(scale,0,0,scale,0,0)
                 canvas.css("width",ui.size.width)
+                svg.attr("viewBox","0 0 "+ui.size.width+" "+ui.size.height)
             })
             var lastPenPoint = null;
             var isIPhone = 
@@ -98,12 +104,28 @@
     })
     Commands.add("messageReceived",function(message){
         var inks = $('.'+id)
+        var svgs = $('.svg_'+id)
         var slide = parseInt(message.slide)
+        if(svgs.length > slide){
+            var svg = svgs[slide]
+            _.each(message.strokes,function(points){
+                var pointString = _.reduce(points,function(acc,item,index){
+                    switch(index % 3){
+                        case 0 : return acc+item+","
+                        case 1 : return acc+item+" "
+                        default : return acc
+                    }
+                },"").trim()
+                var polyline = document.createElementNS(svgns,"polyline")
+                polyline.setAttributeNS(null,"style","stroke:#006600;fill:none;")
+                polyline.setAttributeNS(null,"points",pointString)
+                svg.appendChild(polyline)
+            })
+        }
+        /*
         if(inks.length > slide){
             var canvas = inks[slide]    
             var c = $(canvas)
-            var w = c.width()
-            var h = c.height()
             var pen = canvas.getContext( "2d" );
             pen.strokeStyle = message.color
             pen.lineWidth = 2
@@ -136,5 +158,6 @@
                 foreignPen.stroke()
             })
         }
+        */
     })
 })()
