@@ -107,17 +107,35 @@
             var pen = canvas.getContext( "2d" );
             pen.strokeStyle = message.color
             pen.lineWidth = 2
-            var points = message.points
-            pen.moveTo( points[0], points[1] );
-            pen.beginPath();
-            for(var i = 0; i < points.length;){
-                var x = points[i++]
-                var y = points[i++]
-                //if(x > w || y > h) slideDisplayResized({size:{width:x}})
-                pen.lineTo(x, y)
-                i++//Skip pressure
-            }
-            pen.stroke()
+            var strokes = message.strokes
+            var strokesPoints = _.flatten(strokes)
+            var dimensions = _.reduce(strokesPoints,function(acc,item,index){
+                var minX = acc[0]
+                var minY = acc[1]
+                var maxX = acc[2]
+                var maxY = acc[3]
+                switch(index % 3){
+                    case 0 : return [Math.min(minX,item),minY,Math.max(maxX,item),maxY]
+                    case 1 : return [minX,Math.min(minY,item),maxX,Math.max(maxY,item)]
+                    case 2 : return acc
+                }
+            },[100000,100000,0,0])
+            var foreignCanvas = $("<canvas style='position:absolute;left:"+dimensions[0]+";top:"+dimensions[1]+";border:1px solid red;' width='"+(dimensions[2]-dimensions[0])+"' height='"+(dimensions[3]-dimensions[1])+"'></canvas>")
+            $(canvas).after(foreignCanvas)
+            var foreignPen = pen
+            foreignPen.strokeStyle = message.color
+            foreignPen.lineWidth = 2
+            _.each(strokes,function(points){
+                foreignPen.moveTo( points[0]-dimensions[0], points[1]-dimensions[1] );
+                foreignPen.beginPath();
+                for(var i = 0; i < points.length;){
+                    var x = points[i++]
+                    var y = points[i++]
+                    foreignPen.lineTo(x, y)
+                    i++//Skip pressure
+                }
+                foreignPen.stroke()
+            })
         }
     })
 })()

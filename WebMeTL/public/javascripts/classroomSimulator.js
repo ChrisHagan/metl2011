@@ -101,32 +101,34 @@ var ClassRoom =(function(){
             var x = 0
             var y = 0
             var lastAuthor = "nobody yet"
+            var descent = 130
             return function(message){
                 if(message.author != lastAuthor){
-                    y = y + 100
+                    y = y + descent
                     x = 0
                 }
                 lastAuthor = message.author
                 sentiment = voice.transform(sentiment)
                 x = x + 100
-                _.each(Automated.points(sentiment),function(points){
+                var strokes = _.map(_.compact(Automated.points(sentiment)),function(points){
                     x = x + 80
                     if(x > maxX){
-                        y = y + 100
+                        y = y + descent
                         x = 0
                     }
                     if(points)
-                        messageReceived(_.extend(message,{
-                            color:colorsByMember[message.author].color,
-                            points:_.map(points,(function(p,i){
-                                switch(i % 3){
-                                    case 0 : return (p + x) / inkScaleFactor
-                                    case 1 : return (p + y) / inkScaleFactor
-                                    case 2 : return p
-                                }
-                            }))
+                        return _.map(points,(function(p,i){
+                            switch(i % 3){
+                                case 0 : return (p + x) / inkScaleFactor
+                                case 1 : return (p + y) / inkScaleFactor
+                                case 2 : return p
+                            }
                         }))
-                })
+                    })
+                messageReceived(_.extend(message,{
+                    color:colorsByMember[message.author].color,
+                    strokes:strokes
+                }))
             }
         }
         var groupActivities = _.map(groups,act)
