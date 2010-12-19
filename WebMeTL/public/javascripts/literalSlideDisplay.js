@@ -116,8 +116,8 @@ var VisualSlideDisplay = (function(){
                 .text(fx.tickFormat())
         master.render()
     }
+    var id = "visualSlideDisplay"
     Commands.add("conversationJoined",function(conversation){
-        var id = "visualSlideDisplay"
         $("#"+id).remove()
         $('body').append($("<div id='"+id+"' title='Slide visuals'></div>"))
         $("#"+id).dialog({

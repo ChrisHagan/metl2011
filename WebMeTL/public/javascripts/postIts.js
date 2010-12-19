@@ -5,7 +5,7 @@ var PostIts = (function(){
     var input = $("<div></div>")
     var submit = $("<submit>Submit</submit>")
         .click(function(){
-           alert(eliza.transform(keys))
+           bubble({text:keys})
            keys = ""
            input.html(keys)
            dialog.dialog("close")
@@ -20,6 +20,8 @@ var PostIts = (function(){
             case 13 ://Enter
                 if(keys.length > 0)
                     $("#"+id+" submit").click(); 
+                else
+                    dialog.dialog("close")
                 break;
             case 32 ://Space
                 if(keys.length > 0){

@@ -101,6 +101,9 @@
         var slide = parseInt(message.slide)
         if(inks.length > slide){
             var canvas = inks[slide]    
+            var c = $(canvas)
+            var w = c.width()
+            var h = c.height()
             var pen = canvas.getContext( "2d" );
             pen.strokeStyle = message.color
             pen.lineWidth = 2
@@ -108,7 +111,10 @@
             pen.moveTo( points[0], points[1] );
             pen.beginPath();
             for(var i = 0; i < points.length;){
-                pen.lineTo(points[i++], points[i++])
+                var x = points[i++]
+                var y = points[i++]
+                //if(x > w || y > h) slideDisplayResized({size:{width:x}})
+                pen.lineTo(x, y)
                 i++//Skip pressure
             }
             pen.stroke()

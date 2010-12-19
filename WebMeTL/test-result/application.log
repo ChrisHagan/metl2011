@@ -1,183 +1,59 @@
-18 Dec 2010 13:44:09,376 INFO  ~ Starting C:\specialMeTL\WebMeTL
-18 Dec 2010 13:44:09,380 INFO  ~ Module scala is available (C:\lib\play-1.1\modules\scala-0.8)
-18 Dec 2010 13:44:09,920 WARN  ~ You're running Play! in DEV mode
-18 Dec 2010 13:44:10,013 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
-18 Dec 2010 13:44:16,937 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
-18 Dec 2010 13:44:23,379 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
-18 Dec 2010 13:44:23,384 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
-18 Dec 2010 13:44:23,411 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 20 of /app/models/MeTL.scala
-18 Dec 2010 13:44:23,412 WARN  ~ method first in trait IterableLike is deprecated: use `head' instead, at line 24 of /app/models/MeTL.scala
-18 Dec 2010 13:44:23,428 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 74 of /app/models/MeTL.scala
-18 Dec 2010 13:44:23,431 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 92 of /app/models/MeTL.scala
-18 Dec 2010 13:44:23,432 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 106 of /app/models/MeTL.scala
-18 Dec 2010 13:44:29,280 INFO  ~ Connected to jdbc:hsqldb:mem:playembed
-18 Dec 2010 13:44:29,305 INFO  ~ Application 'WebMeTL' is now started !
-18 Dec 2010 14:50:11,343 ERROR ~ 
+19 Dec 2010 09:16:19,590 INFO  ~ Starting C:\specialMeTL\WebMeTL
+19 Dec 2010 09:16:19,594 INFO  ~ Module scala is available (C:\lib\play-1.1\modules\scala-0.8)
+19 Dec 2010 09:16:20,104 WARN  ~ You're running Play! in DEV mode
+19 Dec 2010 09:16:20,194 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
+19 Dec 2010 09:16:23,631 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+19 Dec 2010 09:16:29,677 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+19 Dec 2010 09:16:29,680 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+19 Dec 2010 09:16:29,706 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 20 of /app/models/MeTL.scala
+19 Dec 2010 09:16:29,707 WARN  ~ method first in trait IterableLike is deprecated: use `head' instead, at line 24 of /app/models/MeTL.scala
+19 Dec 2010 09:16:29,722 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 74 of /app/models/MeTL.scala
+19 Dec 2010 09:16:29,725 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 92 of /app/models/MeTL.scala
+19 Dec 2010 09:16:29,727 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 106 of /app/models/MeTL.scala
+19 Dec 2010 09:16:35,163 INFO  ~ Connected to jdbc:hsqldb:mem:playembed
+19 Dec 2010 09:16:35,187 INFO  ~ Application 'WebMeTL' is now started !
+19 Dec 2010 09:16:46,467 ERROR ~ java.util.concurrent.ExecutionException: java.net.ConnectException: [New I/O client boss #1] Connection refused to https://deified.adm.monash.edu.au:1188/Structure/all.zip
+19 Dec 2010 09:16:48,173 ERROR ~ 
 
-@64oblhklm
-Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=420400
+@64ohapaed
+Internal Server Error (500) for request GET /application/conversations?server=deified
 
-Execution exception (In /app/controllers.scala around line 95)
-NumberFormatException occured : For input string: ""
+Execution exception (In /app/controllers.scala around line 32)
+RuntimeException occured : java.util.concurrent.ExecutionException: java.net.ConnectException: [New I/O client boss #1] Connection refused to https://deified.adm.monash.edu.au:1188/Structure/all.zip
 
-play.exceptions.JavaExecutionException: For input string: ""
+play.exceptions.JavaExecutionException: java.util.concurrent.ExecutionException: java.net.ConnectException: [New I/O client boss #1] Connection refused to https://deified.adm.monash.edu.au:1188/Structure/all.zip
 	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
 	at Invocation.HTTP Request(Play!)
-Caused by: java.lang.NumberFormatException: For input string: ""
-	at java.lang.NumberFormatException.forInputString(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:95)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:94)
-	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
-	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:94)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:93)
-	at controllers.Application$.quizzes(/app/controllers.scala:93)
+Caused by: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.net.ConnectException: [New I/O client boss #1] Connection refused to https://deified.adm.monash.edu.au:1188/Structure/all.zip
+	at play.libs.ws.WSAsync$WSAsyncRequest.get(WSAsync.java:109)
+	at controllers.Application$.loadConversations(/app/controllers.scala:32)
+	at controllers.Application$.authorSummaries(/app/controllers.scala:141)
+	at controllers.Application$.conversations(/app/controllers.scala:46)
 	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
 	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
 	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
 	... 1 more
-18 Dec 2010 14:56:52,339 ERROR ~ 
+Caused by: java.util.concurrent.ExecutionException: java.net.ConnectException: [New I/O client boss #1] Connection refused to https://deified.adm.monash.edu.au:1188/Structure/all.zip
+	at com.ning.http.client.providers.netty.NettyResponseFuture.abort(NettyResponseFuture.java:207)
+	at com.ning.http.client.providers.netty.ConnectListener.operationComplete(ConnectionListener.java:59)
+	at org.jboss.netty.channel.DefaultChannelFuture.notifyListener(DefaultChannelFuture.java:381)
+	at org.jboss.netty.channel.DefaultChannelFuture.notifyListeners(DefaultChannelFuture.java:372)
+	at org.jboss.netty.channel.DefaultChannelFuture.setFailure(DefaultChannelFuture.java:334)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processConnectTimeout(NioClientSocketPipelineSink.java:374)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:283)
+	at org.jboss.netty.util.ThreadRenamingRunnable.run(ThreadRenamingRunnable.java:108)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:46)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.net.ConnectException: [New I/O client boss #1] Connection refused to https://deified.adm.monash.edu.au:1188/Structure/all.zip
+	at com.ning.http.client.providers.netty.NettyAsyncHttpProvider.executeRequest(NettyAsyncHttpProvider.java:287)
+	at com.ning.http.client.providers.netty.ConnectListener.operationComplete(ConnectionListener.java:57)
+	... 10 more
+19 Dec 2010 10:04:26,597 ERROR ~ 
 
-@64oblhkln
-Internal Server Error (500) for request GET /application/snapshot?width=1920&height=696&server=deified&slide=767402
-
-Execution exception (In /app/viewModels/Snapshot.scala around line 126)
-OutOfMemoryError occured : Java heap space
-
-play.exceptions.JavaExecutionException: Java heap space
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
-	at Invocation.HTTP Request(Play!)
-Caused by: java.lang.OutOfMemoryError: Java heap space
-	at java.awt.image.DataBufferByte.<init>(Unknown Source)
-	at java.awt.image.ComponentSampleModel.createDataBuffer(Unknown Source)
-	at java.awt.image.Raster.createWritableRaster(Unknown Source)
-	at javax.imageio.ImageTypeSpecifier.createBufferedImage(Unknown Source)
-	at javax.imageio.ImageReader.getDestination(Unknown Source)
-	at com.sun.imageio.plugins.jpeg.JPEGImageReader.readInternal(Unknown Source)
-	at com.sun.imageio.plugins.jpeg.JPEGImageReader.read(Unknown Source)
-	at javax.imageio.ImageIO.read(Unknown Source)
-	at javax.imageio.ImageIO.read(Unknown Source)
-	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:126)
-	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:114)
-	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:114)
-	at controllers.Application$.snapshot(/app/controllers.scala:111)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
-	... 1 more
-18 Dec 2010 14:57:46,486 ERROR ~ 
-
-@64oblhklo
-Internal Server Error (500) for request GET /application/snapshot?width=1920&height=696&server=deified&slide=767402
-
-Execution exception (In /app/viewModels/Snapshot.scala around line 126)
-OutOfMemoryError occured : Java heap space
-
-play.exceptions.JavaExecutionException: Java heap space
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
-	at Invocation.HTTP Request(Play!)
-Caused by: java.lang.OutOfMemoryError: Java heap space
-	at java.awt.image.DataBufferByte.<init>(Unknown Source)
-	at java.awt.image.ComponentSampleModel.createDataBuffer(Unknown Source)
-	at java.awt.image.Raster.createWritableRaster(Unknown Source)
-	at javax.imageio.ImageTypeSpecifier.createBufferedImage(Unknown Source)
-	at javax.imageio.ImageReader.getDestination(Unknown Source)
-	at com.sun.imageio.plugins.jpeg.JPEGImageReader.readInternal(Unknown Source)
-	at com.sun.imageio.plugins.jpeg.JPEGImageReader.read(Unknown Source)
-	at javax.imageio.ImageIO.read(Unknown Source)
-	at javax.imageio.ImageIO.read(Unknown Source)
-	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:126)
-	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:114)
-	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:114)
-	at controllers.Application$.snapshot(/app/controllers.scala:111)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
-	... 1 more
-18 Dec 2010 16:46:40,566 ERROR ~ 
-
-@64oblhklp
-Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=420400
-
-Execution exception (In /app/controllers.scala around line 95)
-NumberFormatException occured : For input string: ""
-
-play.exceptions.JavaExecutionException: For input string: ""
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
-	at Invocation.HTTP Request(Play!)
-Caused by: java.lang.NumberFormatException: For input string: ""
-	at java.lang.NumberFormatException.forInputString(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:95)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:94)
-	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
-	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:94)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:93)
-	at controllers.Application$.quizzes(/app/controllers.scala:93)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
-	... 1 more
-18 Dec 2010 16:47:12,322 ERROR ~ 
-
-@64oblhkm0
-Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=420400
-
-Execution exception (In /app/controllers.scala around line 95)
-NumberFormatException occured : For input string: ""
-
-play.exceptions.JavaExecutionException: For input string: ""
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
-	at Invocation.HTTP Request(Play!)
-Caused by: java.lang.NumberFormatException: For input string: ""
-	at java.lang.NumberFormatException.forInputString(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:95)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:94)
-	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
-	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:94)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:93)
-	at controllers.Application$.quizzes(/app/controllers.scala:93)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
-	... 1 more
-18 Dec 2010 16:50:07,595 ERROR ~ 
-
-@64oblhkm1
-Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=445400
-
-Execution exception (In /app/controllers.scala around line 95)
-NumberFormatException occured : For input string: ""
-
-play.exceptions.JavaExecutionException: For input string: ""
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
-	at Invocation.HTTP Request(Play!)
-Caused by: java.lang.NumberFormatException: For input string: ""
-	at java.lang.NumberFormatException.forInputString(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:95)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:94)
-	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
-	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:94)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:93)
-	at controllers.Application$.quizzes(/app/controllers.scala:93)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
-	... 1 more
-18 Dec 2010 17:34:45,367 ERROR ~ 
-
-@64oblhkm2
-Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=1422400
+@64ohapaee
+Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=751400
 
 Execution exception (In /app/controllers.scala around line 68)
 ZipException occured : archive is not a ZIP archive
@@ -197,28 +73,289 @@ Caused by: java.util.zip.ZipException: archive is not a ZIP archive
 	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
 	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
 	... 1 more
-18 Dec 2010 19:43:12,341 ERROR ~ 
+19 Dec 2010 15:52:29,808 ERROR ~ java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+19 Dec 2010 15:52:29,890 ERROR ~ 
 
-@64oblhkm3
-Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=420400
+@64ohapaef
+Internal Server Error (500) for request GET /application/conversations?server=deified
 
-Execution exception (In /app/controllers.scala around line 95)
-NumberFormatException occured : For input string: ""
+Execution exception (In /app/controllers.scala around line 32)
+RuntimeException occured : java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
 
-play.exceptions.JavaExecutionException: For input string: ""
+play.exceptions.JavaExecutionException: java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
 	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
 	at Invocation.HTTP Request(Play!)
-Caused by: java.lang.NumberFormatException: For input string: ""
-	at java.lang.NumberFormatException.forInputString(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at java.lang.Long.parseLong(Unknown Source)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:95)
-	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:94)
-	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
-	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:94)
-	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:93)
-	at controllers.Application$.quizzes(/app/controllers.scala:93)
+Caused by: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+	at play.libs.ws.WSAsync$WSAsyncRequest.get(WSAsync.java:109)
+	at controllers.Application$.loadConversations(/app/controllers.scala:32)
+	at controllers.Application$.authorSummaries(/app/controllers.scala:141)
+	at controllers.Application$.conversations(/app/controllers.scala:46)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+Caused by: java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+	at com.ning.http.client.providers.netty.NettyResponseFuture.abort(NettyResponseFuture.java:207)
+	at com.ning.http.client.providers.netty.NettyAsyncHttpProvider.abort(NettyAsyncHttpProvider.java:848)
+	at com.ning.http.client.providers.netty.NettyAsyncHttpProvider.exceptionCaught(NettyAsyncHttpProvider.java:1014)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:122)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:754)
+	at org.jboss.netty.handler.stream.ChunkedWriteHandler.handleUpstream(ChunkedWriteHandler.java:144)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:754)
+	at org.jboss.netty.handler.codec.replay.ReplayingDecoder.exceptionCaught(ReplayingDecoder.java:462)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:122)
+	at org.jboss.netty.handler.codec.http.HttpClientCodec.handleUpstream(HttpClientCodec.java:77)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:754)
+	at org.jboss.netty.handler.ssl.SslHandler.exceptionCaught(SslHandler.java:510)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:122)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:540)
+	at org.jboss.netty.channel.Channels.fireExceptionCaught(Channels.java:432)
+	at org.jboss.netty.channel.socket.nio.NioWorker.write0(NioWorker.java:510)
+	at org.jboss.netty.channel.socket.nio.NioWorker.writeFromUserCode(NioWorker.java:388)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink.eventSunk(NioClientSocketPipelineSink.java:117)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendDownstream(DefaultChannelPipeline.java:742)
+	at org.jboss.netty.channel.Channels.write(Channels.java:632)
+	at org.jboss.netty.channel.Channels.write(Channels.java:593)
+	at org.jboss.netty.handler.ssl.SslHandler.wrapNonAppData(SslHandler.java:803)
+	at org.jboss.netty.handler.ssl.SslHandler.unwrap(SslHandler.java:883)
+	at org.jboss.netty.handler.ssl.SslHandler.decode(SslHandler.java:605)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.callDecode(FrameDecoder.java:282)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.messageReceived(FrameDecoder.java:216)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:80)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:540)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:274)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:261)
+	at org.jboss.netty.channel.socket.nio.NioWorker.read(NioWorker.java:350)
+	at org.jboss.netty.channel.socket.nio.NioWorker.processSelectedKeys(NioWorker.java:281)
+	at org.jboss.netty.channel.socket.nio.NioWorker.run(NioWorker.java:201)
+	at org.jboss.netty.util.ThreadRenamingRunnable.run(ThreadRenamingRunnable.java:108)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:46)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.io.IOException: An established connection was aborted by the software in your host machine
+	at sun.nio.ch.SocketDispatcher.write0(Native Method)
+	at sun.nio.ch.SocketDispatcher.write(Unknown Source)
+	at sun.nio.ch.IOUtil.writeFromNativeBuffer(Unknown Source)
+	at sun.nio.ch.IOUtil.write(Unknown Source)
+	at sun.nio.ch.SocketChannelImpl.write(Unknown Source)
+	at org.jboss.netty.channel.socket.nio.SocketSendBufferPool$PooledSendBuffer.transferTo(SocketSendBufferPool.java:243)
+	at org.jboss.netty.channel.socket.nio.NioWorker.write0(NioWorker.java:470)
+	at org.jboss.netty.channel.socket.nio.NioWorker.writeFromUserCode(NioWorker.java:388)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink.eventSunk(NioClientSocketPipelineSink.java:117)
+	at org.jboss.netty.channel.Channels.write(Channels.java:632)
+	at org.jboss.netty.channel.Channels.write(Channels.java:593)
+	at org.jboss.netty.handler.ssl.SslHandler.wrapNonAppData(SslHandler.java:803)
+	at org.jboss.netty.handler.ssl.SslHandler.unwrap(SslHandler.java:883)
+	at org.jboss.netty.handler.ssl.SslHandler.decode(SslHandler.java:605)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.callDecode(FrameDecoder.java:282)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.messageReceived(FrameDecoder.java:216)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:274)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:261)
+	at org.jboss.netty.channel.socket.nio.NioWorker.read(NioWorker.java:350)
+	at org.jboss.netty.channel.socket.nio.NioWorker.processSelectedKeys(NioWorker.java:281)
+	at org.jboss.netty.channel.socket.nio.NioWorker.run(NioWorker.java:201)
+	... 4 more
+19 Dec 2010 15:55:17,448 ERROR ~ java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+19 Dec 2010 15:55:17,483 ERROR ~ 
+
+@64ohapaeg
+Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=610400
+
+Execution exception (In /app/controllers.scala around line 66)
+RuntimeException occured : java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+
+play.exceptions.JavaExecutionException: java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+	at play.libs.ws.WSAsync$WSAsyncRequest.get(WSAsync.java:109)
+	at controllers.Application$.slideXmppMessages(/app/controllers.scala:66)
+	at controllers.Application$.quizzes(/app/controllers.scala:91)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+Caused by: java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+	at com.ning.http.client.providers.netty.NettyResponseFuture.abort(NettyResponseFuture.java:207)
+	at com.ning.http.client.providers.netty.NettyAsyncHttpProvider.abort(NettyAsyncHttpProvider.java:848)
+	at com.ning.http.client.providers.netty.NettyAsyncHttpProvider.exceptionCaught(NettyAsyncHttpProvider.java:1014)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:122)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:754)
+	at org.jboss.netty.handler.stream.ChunkedWriteHandler.handleUpstream(ChunkedWriteHandler.java:144)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:754)
+	at org.jboss.netty.handler.codec.replay.ReplayingDecoder.exceptionCaught(ReplayingDecoder.java:462)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:122)
+	at org.jboss.netty.handler.codec.http.HttpClientCodec.handleUpstream(HttpClientCodec.java:77)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:754)
+	at org.jboss.netty.handler.ssl.SslHandler.exceptionCaught(SslHandler.java:510)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:122)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:540)
+	at org.jboss.netty.channel.Channels.fireExceptionCaught(Channels.java:432)
+	at org.jboss.netty.channel.socket.nio.NioWorker.write0(NioWorker.java:510)
+	at org.jboss.netty.channel.socket.nio.NioWorker.writeFromUserCode(NioWorker.java:388)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink.eventSunk(NioClientSocketPipelineSink.java:117)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendDownstream(DefaultChannelPipeline.java:742)
+	at org.jboss.netty.channel.Channels.write(Channels.java:632)
+	at org.jboss.netty.channel.Channels.write(Channels.java:593)
+	at org.jboss.netty.handler.ssl.SslHandler.wrapNonAppData(SslHandler.java:803)
+	at org.jboss.netty.handler.ssl.SslHandler.unwrap(SslHandler.java:883)
+	at org.jboss.netty.handler.ssl.SslHandler.decode(SslHandler.java:605)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.callDecode(FrameDecoder.java:282)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.messageReceived(FrameDecoder.java:216)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:80)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:540)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:274)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:261)
+	at org.jboss.netty.channel.socket.nio.NioWorker.read(NioWorker.java:350)
+	at org.jboss.netty.channel.socket.nio.NioWorker.processSelectedKeys(NioWorker.java:281)
+	at org.jboss.netty.channel.socket.nio.NioWorker.run(NioWorker.java:201)
+	at org.jboss.netty.util.ThreadRenamingRunnable.run(ThreadRenamingRunnable.java:108)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:46)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.io.IOException: An established connection was aborted by the software in your host machine
+	at sun.nio.ch.SocketDispatcher.write0(Native Method)
+	at sun.nio.ch.SocketDispatcher.write(Unknown Source)
+	at sun.nio.ch.IOUtil.writeFromNativeBuffer(Unknown Source)
+	at sun.nio.ch.IOUtil.write(Unknown Source)
+	at sun.nio.ch.SocketChannelImpl.write(Unknown Source)
+	at org.jboss.netty.channel.socket.nio.SocketSendBufferPool$PooledSendBuffer.transferTo(SocketSendBufferPool.java:243)
+	at org.jboss.netty.channel.socket.nio.NioWorker.write0(NioWorker.java:470)
+	at org.jboss.netty.channel.socket.nio.NioWorker.writeFromUserCode(NioWorker.java:388)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink.eventSunk(NioClientSocketPipelineSink.java:117)
+	at org.jboss.netty.channel.Channels.write(Channels.java:632)
+	at org.jboss.netty.channel.Channels.write(Channels.java:593)
+	at org.jboss.netty.handler.ssl.SslHandler.wrapNonAppData(SslHandler.java:803)
+	at org.jboss.netty.handler.ssl.SslHandler.unwrap(SslHandler.java:883)
+	at org.jboss.netty.handler.ssl.SslHandler.decode(SslHandler.java:605)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.callDecode(FrameDecoder.java:282)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.messageReceived(FrameDecoder.java:216)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:274)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:261)
+	at org.jboss.netty.channel.socket.nio.NioWorker.read(NioWorker.java:350)
+	at org.jboss.netty.channel.socket.nio.NioWorker.processSelectedKeys(NioWorker.java:281)
+	at org.jboss.netty.channel.socket.nio.NioWorker.run(NioWorker.java:201)
+	... 4 more
+19 Dec 2010 15:55:29,564 ERROR ~ java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+19 Dec 2010 15:55:29,618 ERROR ~ 
+
+@64ohapaeh
+Internal Server Error (500) for request GET /application/snapshot?width=1920&height=674&server=deified&slide=1508401
+
+Execution exception (In /app/viewModels/Snapshot.scala around line 126)
+RuntimeException occured : java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+
+play.exceptions.JavaExecutionException: java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+	at play.libs.ws.WSAsync$WSAsyncRequest.get(WSAsync.java:109)
+	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:126)
+	at viewModels.Snapshot$$anonfun$2.apply(/app/viewModels/Snapshot.scala:114)
+	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:114)
+	at controllers.Application$.snapshot(/app/controllers.scala:111)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+Caused by: java.util.concurrent.ExecutionException: java.io.IOException: An established connection was aborted by the software in your host machine
+	at com.ning.http.client.providers.netty.NettyResponseFuture.abort(NettyResponseFuture.java:207)
+	at com.ning.http.client.providers.netty.NettyAsyncHttpProvider.abort(NettyAsyncHttpProvider.java:848)
+	at com.ning.http.client.providers.netty.NettyAsyncHttpProvider.exceptionCaught(NettyAsyncHttpProvider.java:1014)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:122)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:754)
+	at org.jboss.netty.handler.stream.ChunkedWriteHandler.handleUpstream(ChunkedWriteHandler.java:144)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:754)
+	at org.jboss.netty.handler.codec.replay.ReplayingDecoder.exceptionCaught(ReplayingDecoder.java:462)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:122)
+	at org.jboss.netty.handler.codec.http.HttpClientCodec.handleUpstream(HttpClientCodec.java:77)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:754)
+	at org.jboss.netty.handler.ssl.SslHandler.exceptionCaught(SslHandler.java:510)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:122)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:540)
+	at org.jboss.netty.channel.Channels.fireExceptionCaught(Channels.java:432)
+	at org.jboss.netty.channel.socket.nio.NioWorker.write0(NioWorker.java:510)
+	at org.jboss.netty.channel.socket.nio.NioWorker.writeFromUserCode(NioWorker.java:388)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink.eventSunk(NioClientSocketPipelineSink.java:117)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendDownstream(DefaultChannelPipeline.java:742)
+	at org.jboss.netty.channel.Channels.write(Channels.java:632)
+	at org.jboss.netty.channel.Channels.write(Channels.java:593)
+	at org.jboss.netty.handler.ssl.SslHandler.wrapNonAppData(SslHandler.java:803)
+	at org.jboss.netty.handler.ssl.SslHandler.unwrap(SslHandler.java:883)
+	at org.jboss.netty.handler.ssl.SslHandler.decode(SslHandler.java:605)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.callDecode(FrameDecoder.java:282)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.messageReceived(FrameDecoder.java:216)
+	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:80)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:545)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:540)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:274)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:261)
+	at org.jboss.netty.channel.socket.nio.NioWorker.read(NioWorker.java:350)
+	at org.jboss.netty.channel.socket.nio.NioWorker.processSelectedKeys(NioWorker.java:281)
+	at org.jboss.netty.channel.socket.nio.NioWorker.run(NioWorker.java:201)
+	at org.jboss.netty.util.ThreadRenamingRunnable.run(ThreadRenamingRunnable.java:108)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:46)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.io.IOException: An established connection was aborted by the software in your host machine
+	at sun.nio.ch.SocketDispatcher.write0(Native Method)
+	at sun.nio.ch.SocketDispatcher.write(Unknown Source)
+	at sun.nio.ch.IOUtil.writeFromNativeBuffer(Unknown Source)
+	at sun.nio.ch.IOUtil.write(Unknown Source)
+	at sun.nio.ch.SocketChannelImpl.write(Unknown Source)
+	at org.jboss.netty.channel.socket.nio.SocketSendBufferPool$PooledSendBuffer.transferTo(SocketSendBufferPool.java:243)
+	at org.jboss.netty.channel.socket.nio.NioWorker.write0(NioWorker.java:470)
+	at org.jboss.netty.channel.socket.nio.NioWorker.writeFromUserCode(NioWorker.java:388)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink.eventSunk(NioClientSocketPipelineSink.java:117)
+	at org.jboss.netty.channel.Channels.write(Channels.java:632)
+	at org.jboss.netty.channel.Channels.write(Channels.java:593)
+	at org.jboss.netty.handler.ssl.SslHandler.wrapNonAppData(SslHandler.java:803)
+	at org.jboss.netty.handler.ssl.SslHandler.unwrap(SslHandler.java:883)
+	at org.jboss.netty.handler.ssl.SslHandler.decode(SslHandler.java:605)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.callDecode(FrameDecoder.java:282)
+	at org.jboss.netty.handler.codec.frame.FrameDecoder.messageReceived(FrameDecoder.java:216)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:274)
+	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:261)
+	at org.jboss.netty.channel.socket.nio.NioWorker.read(NioWorker.java:350)
+	at org.jboss.netty.channel.socket.nio.NioWorker.processSelectedKeys(NioWorker.java:281)
+	at org.jboss.netty.channel.socket.nio.NioWorker.run(NioWorker.java:201)
+	... 4 more
+19 Dec 2010 17:11:05,197 ERROR ~ 
+
+@64ohapaei
+Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=1498400
+
+Execution exception (In /app/controllers.scala around line 68)
+ZipException occured : archive is not a ZIP archive
+
+play.exceptions.JavaExecutionException: archive is not a ZIP archive
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.util.zip.ZipException: archive is not a ZIP archive
+	at org.apache.commons.compress.archivers.zip.ZipFile.positionAtCentralDirectory(ZipFile.java:503)
+	at org.apache.commons.compress.archivers.zip.ZipFile.populateFromCentralDirectory(ZipFile.java:344)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:184)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:161)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:122)
+	at controllers.Application$.slideXmppMessages(/app/controllers.scala:68)
+	at controllers.Application$.quizzes(/app/controllers.scala:91)
 	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
 	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
 	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)

@@ -74,10 +74,17 @@ var ClassRoom =(function(){
             }
         }
     ]
+    var colorsByMember = _.reduce(_.flatten(_.pluck(groups,'members')), function(acc,member,index){
+            var availableColors = pv.Colors.category19().range();
+            acc[member] = availableColors[index % availableColors.length]
+            return acc;
+        },{})
     Commands.add("conversationJoined",function(conversation){
         var classIsInSession = false
         var classTimer = false
-        var classToggle = $("<div title='Skynet'>Start class</div>").click(function(){
+        var id = "classToggle"
+        $('.'+id).remove()
+        var classToggle = $("<div title='Skynet' id='"+id+"'>Start class</div>").click(function(){
             classIsInSession = !classIsInSession
             if(classIsInSession){
                 classToggle.text("Stop class")
@@ -93,7 +100,13 @@ var ClassRoom =(function(){
             var sentiment = voice.getInitial()
             var x = 0
             var y = 0
+            var lastAuthor = "nobody yet"
             return function(message){
+                if(message.author != lastAuthor){
+                    y = y + 100
+                    x = 0
+                }
+                lastAuthor = message.author
                 sentiment = voice.transform(sentiment)
                 x = x + 100
                 _.each(Automated.points(sentiment),function(points){
@@ -104,7 +117,7 @@ var ClassRoom =(function(){
                     }
                     if(points)
                         messageReceived(_.extend(message,{
-                            color:"black",
+                            color:colorsByMember[message.author].color,
                             points:_.map(points,(function(p,i){
                                 switch(i % 3){
                                     case 0 : return (p + x) / inkScaleFactor

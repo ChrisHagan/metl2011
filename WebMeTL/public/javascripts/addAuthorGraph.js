@@ -1,5 +1,6 @@
 (function(){
-     $('body').append($("<div id='visualGraphNavigation' style='text-align:center;' width='"+width+"' height='"+height+"'></div>"))
+    var id = 'visualGraphNavigation'
+    $('body').append($("<div id='"+id+"' style='text-align:center;' width='"+width+"' height='"+height+"'></div>"))
     var frequenciesByAuthor = _.reduce(detailedAuthors.conversationSummaries, 
         function(acc, v, k){
             acc[k] = v.conversationCount;
