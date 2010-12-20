@@ -55,7 +55,15 @@ namespace MeTLLib.Providers.Connection
             foreach (var video in videos)
                 canvas.Children.Add(video.Value.video);
             foreach (var image in images)
-                canvas.Children.Add(image.Value.image);
+            {
+                var myImage = new Image
+                {
+                    Height = image.Value.imageSpecification.height,
+                    Width= image.Value.imageSpecification.height,
+                    Source = image.Value.imageSpecification.source
+                };
+                canvas.Children.Add(myImage);
+            }
             foreach (var textbox in text)
                 canvas.Children.Add(textbox.Value.box);
             foreach (var stroke in ink)

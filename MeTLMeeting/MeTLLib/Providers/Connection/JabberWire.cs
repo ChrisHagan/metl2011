@@ -692,7 +692,7 @@ namespace MeTLLib.Providers.Connection
             foreach (var box in message.SelectElements<MeTLStanzas.TextBox>(true))
                 actOnTextReceived(box.Box);
             foreach (var image in message.SelectElements<MeTLStanzas.Image>(true))
-                actOnImageReceived(image.injectDependencies(metlServerAddress, webClientFactory.client()).Img);
+                actOnImageReceived(image.injectDependencies(metlServerAddress, webClientFactory.client(), resourceProvider).Img);
             foreach (var quiz in message.SelectElements<MeTLStanzas.Quiz>(true))
                 actOnQuizReceived(quiz.injectDependencies(metlServerAddress).parameters);
             foreach (var quizAnswer in message.SelectElements<MeTLStanzas.QuizResponse>(true))

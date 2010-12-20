@@ -206,7 +206,7 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning Image send: " + image.id);
             Action work = delegate
             {
-                image.injectDependencies(server, downloaderFactory.client());
+                image.injectDependencies(server, downloaderFactory.client(), resourceProvider);
                 wire.SendImage(image);
             };
             tryIfConnected(work);

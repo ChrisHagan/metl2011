@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -26,6 +27,13 @@ using System.Windows.Data;
 
 namespace SandRibbon.Components
 {
+    public class ThumbnailCollection<T> : ObservableCollection<T>
+    {
+        public void UpdateCollection()
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+    }
     public class SlideIndexConverter : IValueConverter {
         private ObservableCollection<Slide> collection;
         public SlideIndexConverter(ObservableCollection<Slide> collection) {
@@ -42,9 +50,10 @@ namespace SandRibbon.Components
     {
         public int currentSlideIndex = -1;
         public int currentSlideId = -1;
-        public ObservableCollection<Slide> thumbnailList = new ObservableCollection<Slide>();
+        public ThumbnailCollection<Slide> thumbnailList = new ThumbnailCollection<Slide>();
         public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
         public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
+        private ThumbnailCaptureHost thumbnailer = new ThumbnailCaptureHost();
         public static SlideIndexConverter SlideIndex;
         private bool moveTo;
         public SlideDisplay()
@@ -55,14 +64,15 @@ namespace SandRibbon.Components
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(Display));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
             Display(Globals.conversationDetails);
         }
-        private void JoinConversation(object _obj)
+        private void JoinConversation(string jid)
         {
+            Dispatcher.adoptAsync(delegate { thumbnailer = new ThumbnailCaptureHost(jid); });
             currentSlideIndex = 0;
         }
         private bool canAddSlide(object _slide)
@@ -178,6 +188,9 @@ namespace SandRibbon.Components
                   if (proposedId == currentSlideId) return;
                   currentSlideIndex = proposedIndex;
                   currentSlideId = proposedId;
+                  thumbnailer.thumb(Globals.location.currentSlide);
+                  thumbnailer.thumb(currentSlideId);
+                  thumbnailList.UpdateCollection();
                   Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                   Commands.MoveTo.ExecuteAsync(currentSlideId);
                   if (Globals.isAuthor && Globals.synched)

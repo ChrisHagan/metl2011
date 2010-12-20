@@ -214,19 +214,20 @@ namespace MeTLLib.DataTypes
         public MeTLStanzas.Image imageSpecification;
         public MeTLServerAddress server;
         private IWebClient downloader;
+        private HttpResourceProvider provider;
         public string id;
-        public void injectDependencies(MeTLServerAddress server, IWebClient downloader)
+        public void injectDependencies(MeTLServerAddress server, IWebClient downloader, HttpResourceProvider provider)
         {
             if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
             this.server = server;
             this.downloader = downloader;
-            imageSpecification.injectDependencies(server, downloader);
+            imageSpecification.injectDependencies(server, downloader, provider);
         }
         public System.Windows.Controls.Image image
         {
             get
             {
-                if (server != null) imageSpecification.injectDependencies(server, downloader);
+                if (server != null) imageSpecification.injectDependencies(server, downloader, provider);
                 if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
                 return imageSpecification.forceEvaluation();
             }
@@ -1367,6 +1368,7 @@ namespace MeTLLib.DataTypes
         {
             private IWebClient downloader;
             private MeTLServerAddress server;
+            private HttpResourceProvider provider;
             static Image()
             {
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Image));
@@ -1382,8 +1384,9 @@ namespace MeTLLib.DataTypes
             {
                 this.Img = image;
             }
-            public Image injectDependencies(MeTLServerAddress server, IWebClient downloader)
+            public Image injectDependencies(MeTLServerAddress server, IWebClient downloader, HttpResourceProvider provider)
             {
+                this.provider = provider;
                 this.server = server;
                 this.downloader = downloader;
                 return this;
@@ -1444,11 +1447,13 @@ namespace MeTLLib.DataTypes
                 {
                     var stemmedRelativePath = INodeFix.StemBeneath("/Resource/",  GetTag(sourceTag));
                     var path = string.Format("https://{0}:1188{1}", server.host, stemmedRelativePath);
+                    var stream =  new MemoryStream(provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute)));
+
                     var image = new BitmapImage();
                     try
                     {
                         image.BeginInit();
-                        image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
+                        image.StreamSource = stream;
                         image.EndInit();
                     }
                     catch (Exception e) { 

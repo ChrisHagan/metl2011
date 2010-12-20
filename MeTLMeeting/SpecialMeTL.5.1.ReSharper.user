@@ -12,15 +12,15 @@
   </NAntValidationSettings>
   <CompletionStatisticsManager>
     <ItemStatistics item="Default">
-      <Item value="sender" priority="7" />
+      <Item value="sender" priority="8" />
       <Item value="OpacityProperty" priority="1" />
       <Item value="animationPulse" priority="0" />
-      <Item value="slides" priority="6" />
+      <Item value="slides" priority="7" />
       <Item value="foreach" priority="42" />
       <Item value="Slider" priority="1" />
-      <Item value="var" priority="143" />
+      <Item value="var" priority="148" />
       <Item value="in" priority="35" />
-      <Item value="slide" priority="5" />
+      <Item value="slide" priority="6" />
       <Item value="slideList" priority="0" />
       <Item value="ThumbnailInformation" priority="1" />
       <Item value="MessageBox" priority="3" />
@@ -34,20 +34,20 @@
       <Item value="strokes" priority="7" />
       <Item value="listX" priority="0" />
       <Item value="child" priority="3" />
-      <Item value="new" priority="119" />
+      <Item value="new" priority="129" />
       <Item value="InkCanvas" priority="6" />
       <Item value="children" priority="0" />
       <Item value="bounds" priority="0" />
       <Item value="thoughtView" priority="2" />
-      <Item value="public" priority="125" />
-      <Item value="private" priority="48" />
+      <Item value="public" priority="129" />
+      <Item value="private" priority="50" />
       <Item value="bool" priority="15" />
       <Item value="operator" priority="1" />
       <Item value="false" priority="14" />
       <Item value="int" priority="32" />
       <Item value="parent" priority="14" />
-      <Item value="string" priority="87" />
-      <Item value="conversation" priority="1" />
+      <Item value="string" priority="94" />
+      <Item value="conversation" priority="4" />
       <Item value="Typeface" priority="0" />
       <Item value="ConversationDetails" priority="5" />
       <Item value="currentDetails" priority="0" />
@@ -63,7 +63,7 @@
       <Item value="currentSlide" priority="7" />
       <Item value="details" priority="15" />
       <Item value="thoughtBubble" priority="6" />
-      <Item value="if" priority="110" />
+      <Item value="if" priority="112" />
       <Item value="opened" priority="3" />
       <Item value="position" priority="5" />
       <Item value="PointCollectionExtension" priority="3" />
@@ -82,24 +82,24 @@
       <Item value="adorner" priority="5" />
       <Item value="ThoughtBubble" priority="8" />
       <Item value="typeof" priority="13" />
-      <Item value="this" priority="25" />
+      <Item value="this" priority="26" />
       <Item value="Slide" priority="1" />
       <Item value="ThoughtBubbleSpace_MouseDown" priority="4" />
       <Item value="Ionic" priority="0" />
-      <Item value="return" priority="78" />
+      <Item value="return" priority="80" />
       <Item value="UIAdorner" priority="2" />
       <Item value="FrameworkElement" priority="2" />
-      <Item value="Dispatcher" priority="23" />
+      <Item value="Dispatcher" priority="24" />
       <Item value="Thread" priority="11" />
       <Item value="Action" priority="9" />
       <Item value="images" priority="2" />
       <Item value="List" priority="35" />
       <Item value="text" priority="2" />
       <Item value="elements" priority="4" />
-      <Item value="Windows" priority="5" />
+      <Item value="Windows" priority="6" />
       <Item value="Controls" priority="4" />
       <Item value="thought" priority="13" />
-      <Item value="true" priority="15" />
+      <Item value="true" priority="16" />
       <Item value="SystemParameters" priority="0" />
       <Item value="Point" priority="0" />
       <Item value="Rect" priority="1" />
@@ -116,7 +116,7 @@
       <Item value="delegate" priority="5" />
       <Item value="null" priority="24" />
       <Item value="Visibility" priority="6" />
-      <Item value="currentSlideId" priority="1" />
+      <Item value="currentSlideId" priority="2" />
       <Item value="Console" priority="11" />
       <Item value="nguid" priority="0" />
       <Item value="target" priority="5" />
@@ -133,7 +133,7 @@
       <Item value="SneakOutOf" priority="0" />
       <Item value="stroke" priority="75" />
       <Item value="Colors" priority="2" />
-      <Item value="class" priority="10" />
+      <Item value="class" priority="12" />
       <Item value="IEnumerable" priority="9" />
       <Item value="HighlightData" priority="0" />
       <Item value="privacyOverlay" priority="2" />
@@ -168,7 +168,7 @@
       <Item value="SandRibbon" priority="1" />
       <Item value="Providers" priority="0" />
       <Item value="Globals" priority="81" />
-      <Item value="try" priority="29" />
+      <Item value="try" priority="30" />
       <Item value="catch" priority="27" />
       <Item value="NotSetException" priority="23" />
       <Item value="self" priority="4" />
@@ -198,7 +198,7 @@
       <Item value="DateTime" priority="19" />
       <Item value="Button" priority="1" />
       <Item value="TargettedSubmission" priority="9" />
-      <Item value="ObservableCollection" priority="10" />
+      <Item value="ObservableCollection" priority="11" />
       <Item value="snapshotTime" priority="1" />
       <Item value="TimeoutException" priority="0" />
       <Item value="time" priority="5" />
@@ -245,7 +245,7 @@
       <Item value="submit" priority="0" />
       <Item value="view" priority="0" />
       <Item value="command" priority="3" />
-      <Item value="base" priority="5" />
+      <Item value="base" priority="6" />
       <Item value="conversationChanged" priority="1" />
       <Item value="Automation" priority="1" />
       <Item value="AutomationElement" priority="19" />
@@ -286,7 +286,7 @@
       <Item value="searchText" priority="0" />
       <Item value="matchingItems" priority="3" />
       <Item value="UserCanvasStack" priority="5" />
-      <Item value="image" priority="7" />
+      <Item value="image" priority="9" />
       <Item value="autoImage" priority="4" />
       <Item value="privacy" priority="0" />
       <Item value="a" priority="0" />
@@ -354,7 +354,7 @@
       <Item value="hostedFilename" priority="2" />
       <Item value="questionContainer" priority="0" />
       <Item value="hostedFileName" priority="0" />
-      <Item value="source" priority="0" />
+      <Item value="source" priority="1" />
       <Item value="ScreenshotDetails" priority="2" />
       <Item value="message" priority="1" />
       <Item value="url" priority="4" />
@@ -454,9 +454,9 @@
       <Item value="kv" priority="0" />
       <Item value="media" priority="0" />
       <Item value="k" priority="0" />
-      <Item value="Uri" priority="8" />
+      <Item value="Uri" priority="10" />
       <Item value="UriKind" priority="5" />
-      <Item value="uri" priority="7" />
+      <Item value="uri" priority="8" />
       <Item value="Source" priority="0" />
       <Item value="selectedImage" priority="0" />
       <Item value="NAME" priority="1" />
@@ -529,7 +529,7 @@
       <Item value="newStrokes" priority="3" />
       <Item value="List&lt;TargettedImage&gt;" priority="0" />
       <Item value="dirtyImage" priority="1" />
-      <Item value="BitmapImage" priority="0" />
+      <Item value="BitmapImage" priority="1" />
       <Item value="ReceiveImage" priority="1" />
       <Item value="allVisibleImages" priority="0" />
       <Item value="TargettedTextBox" priority="4" />
@@ -556,7 +556,7 @@
       <Item value="UserVisibility`0" priority="1" />
       <Item value="username" priority="1" />
       <Item value="DivideByZeroException`0" priority="0" />
-      <Item value="Globals`0" priority="11" />
+      <Item value="Globals`0" priority="14" />
       <Item value="selectedElements" priority="15" />
       <Item value="UIElement`0" priority="8" />
       <Item value="List&lt;UIElement&gt;" priority="3" />
@@ -608,16 +608,16 @@
       <Item value="Dictionary&lt;long,ObservableCollection&lt;QuizAnswer&gt;&gt;" priority="0" />
       <Item value="ObservableCollection&lt;QuizQuestion&gt;" priority="0" />
       <Item value="DispatcherExtensions`0" priority="0" />
-      <Item value="Dispatcher`0" priority="0" />
+      <Item value="Dispatcher`0" priority="4" />
       <Item value="Quizes" priority="0" />
       <Item value="Window`0" priority="0" />
       <Item value="ListBox`0" priority="1" />
-      <Item value="Directory`0" priority="0" />
+      <Item value="Directory`0" priority="9" />
       <Item value="wire" priority="1" />
       <Item value="resourceUploader" priority="0" />
       <Item value="Reverse`1" priority="0" />
       <Item value="UploadFile`0" priority="0" />
-      <Item value="File`0" priority="0" />
+      <Item value="File`0" priority="3" />
       <Item value="fileUploaded" priority="2" />
       <Item value="filename" priority="0" />
       <Item value="StackPanel`0" priority="0" />
@@ -638,7 +638,7 @@
       <Item value="poly" priority="1" />
       <Item value="Cursors`0" priority="1" />
       <Item value="Icon`0" priority="0" />
-      <Item value="bitmap" priority="0" />
+      <Item value="bitmap" priority="15" />
       <Item value="resultStream" priority="0" />
       <Item value="FrameworkElement`0" priority="1" />
       <Item value="bitmapSource" priority="0" />
@@ -682,11 +682,11 @@
       <Item value="NpgsqlCommand`0" priority="0" />
       <Item value="insertionString" priority="3" />
       <Item value="conn" priority="2" />
-      <Item value="while" priority="1" />
+      <Item value="while" priority="4" />
       <Item value="failedLogging" priority="0" />
       <Item value="tableExists" priority="1" />
       <Item value="getCommand" priority="2" />
-      <Item value="data" priority="0" />
+      <Item value="data" priority="1" />
       <Item value="cur" priority="0" />
       <Item value="VScroll" priority="3" />
       <Item value="HScroll" priority="0" />
@@ -696,7 +696,7 @@
       <Item value="List&lt;PrintParser&gt;" priority="1" />
       <Item value="PrinterInfo" priority="1" />
       <Item value="Merged" priority="0" />
-      <Item value="ValidationResult`0" priority="0" />
+      <Item value="ValidationResult`0" priority="1" />
       <Item value="targetPageCount" priority="2" />
       <Item value="targetParserCount" priority="1" />
       <Item value="HttpResourceProvider`0" priority="0" />
@@ -710,7 +710,7 @@
       <Item value="publicMode" priority="4" />
       <Item value="privateMode" priority="0" />
       <Item value="ClientFactory`0" priority="0" />
-      <Item value="thisDetails" priority="1" />
+      <Item value="thisDetails" priority="2" />
       <Item value="Permissions`0" priority="0" />
       <Item value="settingEnabledModes`0" priority="0" />
       <Item value="settingSelectedMode`0" priority="0" />
@@ -729,6 +729,32 @@
       <Item value="UploadPowerpoint`0" priority="0" />
       <Item value="StrokesProperty" priority="0" />
       <Item value="thisStroke" priority="0" />
+      <Item value="Threading" priority="0" />
+      <Item value="ThumbnailCaptureHost`0" priority="2" />
+      <Item value="imageCollection" priority="0" />
+      <Item value="stream" priority="0" />
+      <Item value="slideId" priority="0" />
+      <Item value="ThumbnailCaptureHost" priority="1" />
+      <Item value="conversationDetailsToDescription`0" priority="0" />
+      <Item value="jid" priority="0" />
+      <Item value="thumbnailer" priority="2" />
+      <Item value="thumbConversation`0" priority="0" />
+      <Item value="Action`0" priority="0" />
+      <Item value="localPath" priority="3" />
+      <Item value="ImageBrush" priority="0" />
+      <Item value="thumbnailList" priority="3" />
+      <Item value="DirectoryNotFoundException`0" priority="0" />
+      <Item value="ImageBrush`0" priority="0" />
+      <Item value="BitmapSource`0" priority="0" />
+      <Item value="BitmapImage`0" priority="1" />
+      <Item value="BitmapCacheOption`0" priority="0" />
+      <Item value="BitmapPalette`0" priority="0" />
+      <Item value="BitmapCreateOptions`0" priority="0" />
+      <Item value="App`0" priority="0" />
+      <Item value="ZoomControls`0" priority="0" />
+      <Item value="OnCollectionChanged`0" priority="0" />
+      <Item value="NotifyCollectionChangedEventArgs" priority="0" />
+      <Item value="NotifyCollectionChangedAction`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.FrameworkElement">
       <Item value="BeginAnimation" priority="0" />
@@ -746,6 +772,7 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.Media.ImageBrush">
       <Item value="BeginAnimation" priority="0" />
+      <Item value="ImageSource" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.Rect">
       <Item value="Width" priority="2" />
@@ -1018,8 +1045,9 @@
       <Item value="BeginInvoke" priority="4" />
       <Item value="Invoke" priority="1" />
       <Item value="adoptAsync" priority="6" />
-      <Item value="adoptAsync`0" priority="4" />
+      <Item value="adoptAsync`0" priority="6" />
       <Item value="adopt`0" priority="7" />
+      <Item value="BeginInvoke`0" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Threading.Thread">
       <Item value="CurrentThread" priority="0" />
@@ -1090,7 +1118,7 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.String">
       <Item value="Format" priority="16" />
-      <Item value="Format`0" priority="1" />
+      <Item value="Format`0" priority="5" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.String">
       <Item value="ToString" priority="0" />
@@ -1173,7 +1201,7 @@
       <Item value="slide" priority="16" />
       <Item value="conversationDetails" priority="47" />
       <Item value="credentials" priority="2" />
-      <Item value="location" priority="5" />
+      <Item value="location" priority="7" />
       <Item value="isAuthor" priority="5" />
       <Item value="slides" priority="1" />
       <Item value="MeTLType" priority="0" />
@@ -1241,8 +1269,9 @@
     <ItemStatistics item="Qualified:System.Windows.Controls.ListBox">
       <Item value="SelectedItem" priority="5" />
       <Item value="ItemTemplate" priority="1" />
-      <Item value="ItemsSource" priority="6" />
+      <Item value="ItemsSource" priority="7" />
       <Item value="SelectedIndex" priority="0" />
+      <Item value="UpdateLayout`0" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Windows.FontWeights">
       <Item value="Bold" priority="0" />
@@ -1398,8 +1427,16 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.Media.Imaging.BitmapImage">
       <Item value="Width" priority="0" />
-      <Item value="StreamSource" priority="0" />
+      <Item value="StreamSource" priority="2" />
       <Item value="EndInit" priority="0" />
+      <Item value="IsSealed" priority="0" />
+      <Item value="Freeze`0" priority="1" />
+      <Item value="CreateOptions" priority="1" />
+      <Item value="UriSource" priority="1" />
+      <Item value="BeginInit`0" priority="0" />
+      <Item value="BaseUri" priority="0" />
+      <Item value="CacheOption" priority="0" />
+      <Item value="EndInit`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.Controls.Image">
       <Item value="Width" priority="0" />
@@ -1469,7 +1506,9 @@
       <Item value="ReadAllBytes" priority="0" />
       <Item value="AppendText" priority="1" />
       <Item value="WriteAllText" priority="0" />
-      <Item value="Exists`0" priority="0" />
+      <Item value="Exists`0" priority="1" />
+      <Item value="Create`0" priority="0" />
+      <Item value="WriteAllBytes`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:SandRibbonInterop.MeTLStanzas.MeTLStanzas+FileResource">
       <Item value="fileResource" priority="0" />
@@ -1524,9 +1563,9 @@
       <Item value="GetFiles" priority="0" />
       <Item value="GetLastAccessTime" priority="0" />
       <Item value="Delete" priority="0" />
-      <Item value="Exists`0" priority="0" />
-      <Item value="CreateDirectory`0" priority="0" />
-      <Item value="GetCurrentDirectory`0" priority="0" />
+      <Item value="Exists`0" priority="2" />
+      <Item value="CreateDirectory`0" priority="2" />
+      <Item value="GetCurrentDirectory`0" priority="5" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Uri">
       <Item value="ToString" priority="3" />
@@ -1598,7 +1637,8 @@
       <Item value="conversationDetailsProvider" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:MeTLLib.DataTypes.Location">
-      <Item value="currentSlide" priority="2" />
+      <Item value="currentSlide" priority="3" />
+      <Item value="activeConversation" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:SandRibbon.Components.Projector+RoomAndAction">
       <Item value="room" priority="0" />
@@ -1636,6 +1676,7 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Drawing.Bitmap">
       <Item value="GetHicon`0" priority="1" />
+      <Item value="GetThumbnailImage`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Drawing.Imaging.PixelFormat">
       <Item value="DontCare" priority="0" />
@@ -1670,6 +1711,7 @@
     <ItemStatistics item="Qualified:MeTLLib.DataTypes.ConversationDetails">
       <Item value="Title" priority="0" />
       <Item value="Permissions" priority="2" />
+      <Item value="Jid" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:SandRibbon.Utils.Connection.Printer+PrinterInformation">
       <Item value="parsers" priority="1" />
@@ -1696,6 +1738,37 @@
     <ItemStatistics item="Qualified:@System.Windows.Clipboard">
       <Item value="GetImage`0" priority="0" />
     </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Windows.Threading.Dispatcher">
+      <Item value="CurrentDispatcher" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:MeTLLib.DataTypes.Slide">
+      <Item value="id" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@MeTLLib.MeTLServerAddress">
+      <Item value="serverMode`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:SandRibbon.Providers.ThumbnailCaptureHost">
+      <Item value="thumb`0" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.IO.Stream">
+      <Item value="Close`0" priority="0" />
+      <Item value="Dispose`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Windows.Media.Imaging.BitmapCacheOption">
+      <Item value="OnLoad" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Windows.Media.Imaging.BitmapCreateOptions">
+      <Item value="IgnoreImageCache" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@SandRibbon.App">
+      <Item value="Now`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Collections.Specialized.NotifyCollectionChangedAction">
+      <Item value="Reset" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:SandRibbon.Components.ThumbnailCollection`1">
+      <Item value="UpdateCollection`0" priority="0" />
+    </ItemStatistics>
   </CompletionStatisticsManager>
   <RecentFiles>
     <RecentFiles>
@@ -1705,43 +1778,50 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Login.xaml.cs" caret="138" fromTop="4" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Login.xaml" caret="1161" fromTop="4" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml" caret="6459" fromTop="11" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="10172" fromTop="19" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="10217" fromTop="34" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="12826" fromTop="4" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AnswerAQuiz.xaml.cs" caret="0" fromTop="0" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="10423" fromTop="28" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="5998" fromTop="14" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AnswerAQuiz.xaml" caret="1846" fromTop="29" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:ClientFactory.cs" caret="929" fromTop="12" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="22295" fromTop="15" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:PreParser.cs" caret="1463" fromTop="10" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml" caret="2938" fromTop="25" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="4855" fromTop="4" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="8683" fromTop="14" />
     </RecentFiles>
     <RecentEdits>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml" caret="648" fromTop="11" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="16879" fromTop="27" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="10217" fromTop="16" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="10584" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="10925" fromTop="28" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="11494" fromTop="30" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="12544" fromTop="16" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="16266" fromTop="16" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="5225" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AnswerAQuiz.xaml" caret="2486" fromTop="24" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="23063" fromTop="23" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="22441" fromTop="29" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="20699" fromTop="14" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="19463" fromTop="13" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="16933" fromTop="21" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="15830" fromTop="8" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="8038" fromTop="20" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="6154" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="524" fromTop="1" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="1059" fromTop="7" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="5835" fromTop="9" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="13354" fromTop="16" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="13447" fromTop="20" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="6702" fromTop="0" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="9594" fromTop="10" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="9963" fromTop="17" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="10424" fromTop="28" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="5998" fromTop="14" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="6606" fromTop="0" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="5194" fromTop="20" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="6614" fromTop="25" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="6614" fromTop="0" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="2100" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="2100" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="1419" fromTop="19" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="691" fromTop="0" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="2111" fromTop="14" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="2108" fromTop="6" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="884" fromTop="11" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="1761" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="1279" fromTop="6" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="22295" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="2924" fromTop="9" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="3466" fromTop="17" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="5971" fromTop="28" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="6358" fromTop="30" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="6485" fromTop="29" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="6580" fromTop="28" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="4856" fromTop="16" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml" caret="1532" fromTop="6" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="1074" fromTop="26" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="862" fromTop="7" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="1892" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="8684" fromTop="14" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>
