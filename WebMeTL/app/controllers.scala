@@ -73,6 +73,7 @@ object Application extends Controller {
             }
             entry = zipStream.getNextEntry
         }
+        zipStream.close
         messages.toList
     }
     private def slide(server:String,jid:Int)={
