@@ -64,12 +64,16 @@ object Application extends Controller {
         val uri = history.format(server,stem(jid.toString),jid)
         println("Retrieving "+uri)
         val zipFuture = WS.url(uri).authenticate(username,password).get
-        FileUtils.writeByteArrayToFile(new File(TEMP_FILE),IOUtils.toByteArray(zipFuture.getStream))
-        val zipFile = new ZipFile(new File(TEMP_FILE))
-        zipFile.getEntries
-            .map(any => any.asInstanceOf[ZipArchiveEntry])
-            .filter(zae=>zae.getName.endsWith(".xml"))
-            .map(zae => IOUtils.toString(zipFile.getInputStream(zae))+"</logCollection>")
+        val zipStream = new java.util.zip.ZipInputStream(zipFuture.getStream)
+        val messages = collection.mutable.ListBuffer.empty[String]
+        var entry = zipStream.getNextEntry
+        while(entry != null){
+            if(entry.asInstanceOf[java.util.zip.ZipEntry].getName.endsWith(".xml")){
+                messages += IOUtils.toString(zipStream)+"</logCollection>"
+            }
+            entry = zipStream.getNextEntry
+        }
+        messages.toList
     }
     private def slide(server:String,jid:Int)={
         slideXmppMessages(server,jid)

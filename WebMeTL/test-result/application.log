@@ -1,4 +1,533 @@
-21 Dec 2010 20:34:01,020 INFO  ~ Starting C:\specialMeTL\WebMeTL
-21 Dec 2010 20:34:01,024 INFO  ~ Module scala is available (C:\lib\play-1.1\modules\scala-0.8)
-21 Dec 2010 20:34:01,582 WARN  ~ You're running Play! in DEV mode
-21 Dec 2010 20:34:01,678 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
+21 Dec 2010 20:57:30,682 INFO  ~ Starting C:\specialMeTL\WebMeTL
+21 Dec 2010 20:57:30,686 INFO  ~ Module scala is available (C:\lib\play-1.1\modules\scala-0.8)
+21 Dec 2010 20:57:31,218 WARN  ~ You're running Play! in DEV mode
+21 Dec 2010 20:57:31,304 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
+21 Dec 2010 20:57:34,227 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+21 Dec 2010 20:57:40,276 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+21 Dec 2010 20:57:40,280 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+21 Dec 2010 20:57:40,308 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 20 of /app/models/MeTL.scala
+21 Dec 2010 20:57:40,310 WARN  ~ method first in trait IterableLike is deprecated: use `head' instead, at line 24 of /app/models/MeTL.scala
+21 Dec 2010 20:57:40,326 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 74 of /app/models/MeTL.scala
+21 Dec 2010 20:57:40,328 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 92 of /app/models/MeTL.scala
+21 Dec 2010 20:57:40,330 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 106 of /app/models/MeTL.scala
+21 Dec 2010 20:57:46,025 INFO  ~ Connected to jdbc:hsqldb:mem:playembed
+21 Dec 2010 20:57:46,050 INFO  ~ Application 'WebMeTL' is now started !
+21 Dec 2010 20:58:46,755 ERROR ~ 
+
+@64p9d7bla
+Internal Server Error (500) for request GET /application/snapshot?width=1920&height=1039&server=madam&slide=73601
+
+Execution exception (In /app/viewModels/Snapshot.scala around line 108)
+SAXParseException occured : XML document structures must start and end within the same entity.
+
+play.exceptions.JavaExecutionException: XML document structures must start and end within the same entity.
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: org.xml.sax.SAXParseException: XML document structures must start and end within the same entity.
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLScanner.reportFatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityManager.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.load(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.skipSpaces(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanEndElement(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at javax.xml.parsers.SAXParser.parse(Unknown Source)
+	at scala.xml.factory.XMLLoader$class.loadXML(XMLLoader.scala:40)
+	at scala.xml.XML$.loadXML(XML.scala:40)
+	at scala.xml.factory.XMLLoader$class.loadString(XMLLoader.scala:59)
+	at scala.xml.XML$.loadString(XML.scala:40)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:108)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:107)
+	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:107)
+	at controllers.Application$.snapshot(/app/controllers.scala:115)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+21 Dec 2010 20:59:26,784 ERROR ~ 
+
+@64p9d7blb
+Internal Server Error (500) for request GET /application/snapshot?width=1920&height=1039&server=madam&slide=67201
+
+Execution exception (In /app/viewModels/Snapshot.scala around line 108)
+SAXParseException occured : XML document structures must start and end within the same entity.
+
+play.exceptions.JavaExecutionException: XML document structures must start and end within the same entity.
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: org.xml.sax.SAXParseException: XML document structures must start and end within the same entity.
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLScanner.reportFatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityManager.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.load(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.skipSpaces(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanEndElement(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at javax.xml.parsers.SAXParser.parse(Unknown Source)
+	at scala.xml.factory.XMLLoader$class.loadXML(XMLLoader.scala:40)
+	at scala.xml.XML$.loadXML(XML.scala:40)
+	at scala.xml.factory.XMLLoader$class.loadString(XMLLoader.scala:59)
+	at scala.xml.XML$.loadString(XML.scala:40)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:108)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:107)
+	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:107)
+	at controllers.Application$.snapshot(/app/controllers.scala:115)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+21 Dec 2010 21:00:37,662 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+21 Dec 2010 21:00:37,669 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+21 Dec 2010 21:00:44,538 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+21 Dec 2010 21:00:53,122 ERROR ~ 
+
+@64p9d7blc
+Internal Server Error (500) for request GET /application/snapshot?width=1920&height=1039&server=madam&slide=73601
+
+Execution exception (In /app/viewModels/Snapshot.scala around line 108)
+SAXParseException occured : XML document structures must start and end within the same entity.
+
+play.exceptions.JavaExecutionException: XML document structures must start and end within the same entity.
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: org.xml.sax.SAXParseException: XML document structures must start and end within the same entity.
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLScanner.reportFatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityManager.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.load(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.skipSpaces(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanEndElement(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at javax.xml.parsers.SAXParser.parse(Unknown Source)
+	at scala.xml.factory.XMLLoader$class.loadXML(XMLLoader.scala:40)
+	at scala.xml.XML$.loadXML(XML.scala:40)
+	at scala.xml.factory.XMLLoader$class.loadString(XMLLoader.scala:59)
+	at scala.xml.XML$.loadString(XML.scala:40)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:108)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:107)
+	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:107)
+	at controllers.Application$.snapshot(/app/controllers.scala:115)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+21 Dec 2010 21:01:52,796 ERROR ~ 
+
+@64p9d7bld
+Internal Server Error (500) for request GET /application/conversations?server=madam
+
+Compilation error (In /app/controllers.scala around line 75)
+The file /app/controllers.scala could not be compiled. Error raised is : ')' expected but '}' found.
+
+play.exceptions.CompilationException: ')' expected but '}' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+21 Dec 2010 21:01:52,874 ERROR ~ 
+
+@64p9d7ble
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/controllers.scala around line 75)
+The file /app/controllers.scala could not be compiled. Error raised is : ')' expected but '}' found.
+
+play.exceptions.CompilationException: ')' expected but '}' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+21 Dec 2010 21:02:13,328 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+21 Dec 2010 21:02:13,330 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+21 Dec 2010 21:02:31,133 ERROR ~ 
+
+@64p9d7blf
+Internal Server Error (500) for request GET /application/snapshot?width=1920&height=1039&server=madam&slide=72801
+
+Execution exception (In /app/viewModels/Snapshot.scala around line 108)
+SAXParseException occured : The markup in the document preceding the root element must be well-formed.
+
+play.exceptions.JavaExecutionException: The markup in the document preceding the root element must be well-formed.
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: org.xml.sax.SAXParseException: The markup in the document preceding the root element must be well-formed.
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLScanner.reportFatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl$PrologDriver.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at javax.xml.parsers.SAXParser.parse(Unknown Source)
+	at scala.xml.factory.XMLLoader$class.loadXML(XMLLoader.scala:40)
+	at scala.xml.XML$.loadXML(XML.scala:40)
+	at scala.xml.factory.XMLLoader$class.loadString(XMLLoader.scala:59)
+	at scala.xml.XML$.loadString(XML.scala:40)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:108)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:107)
+	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:107)
+	at controllers.Application$.snapshot(/app/controllers.scala:118)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+21 Dec 2010 21:02:57,876 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+21 Dec 2010 21:02:57,883 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+21 Dec 2010 21:03:12,977 ERROR ~ 
+
+@64p9d7blg
+Internal Server Error (500) for request GET /application/snapshot?width=1920&height=1039&server=madam&slide=74001
+
+Execution exception (In /app/viewModels/Snapshot.scala around line 108)
+SAXParseException occured : Content is not allowed in prolog.
+
+play.exceptions.JavaExecutionException: Content is not allowed in prolog.
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: org.xml.sax.SAXParseException: Content is not allowed in prolog.
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLScanner.reportFatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl$PrologDriver.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at javax.xml.parsers.SAXParser.parse(Unknown Source)
+	at scala.xml.factory.XMLLoader$class.loadXML(XMLLoader.scala:40)
+	at scala.xml.XML$.loadXML(XML.scala:40)
+	at scala.xml.factory.XMLLoader$class.loadString(XMLLoader.scala:59)
+	at scala.xml.XML$.loadString(XML.scala:40)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:108)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:107)
+	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:107)
+	at controllers.Application$.snapshot(/app/controllers.scala:116)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+21 Dec 2010 21:04:11,089 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+21 Dec 2010 21:04:11,097 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+21 Dec 2010 21:04:12,888 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+21 Dec 2010 21:04:20,360 ERROR ~ 
+
+@64p9d7blh
+Internal Server Error (500) for request GET /application/snapshot?width=1920&height=1039&server=madam&slide=74001
+
+Execution exception (In /app/viewModels/Snapshot.scala around line 108)
+SAXParseException occured : XML document structures must start and end within the same entity.
+
+play.exceptions.JavaExecutionException: XML document structures must start and end within the same entity.
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: org.xml.sax.SAXParseException: XML document structures must start and end within the same entity.
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLScanner.reportFatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityManager.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.load(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.skipSpaces(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanEndElement(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at javax.xml.parsers.SAXParser.parse(Unknown Source)
+	at scala.xml.factory.XMLLoader$class.loadXML(XMLLoader.scala:40)
+	at scala.xml.XML$.loadXML(XML.scala:40)
+	at scala.xml.factory.XMLLoader$class.loadString(XMLLoader.scala:59)
+	at scala.xml.XML$.loadString(XML.scala:40)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:108)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:107)
+	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:107)
+	at controllers.Application$.snapshot(/app/controllers.scala:115)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+21 Dec 2010 21:05:16,326 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+21 Dec 2010 21:05:16,333 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+21 Dec 2010 21:05:18,027 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+21 Dec 2010 21:06:49,659 ERROR ~ 
+
+@64p9d7bli
+Internal Server Error (500) for request GET /application/snapshot?width=1920&height=1039&server=madam&slide=75401
+
+Execution exception (In /app/viewModels/Snapshot.scala around line 108)
+SAXParseException occured : XML document structures must start and end within the same entity.
+
+play.exceptions.JavaExecutionException: XML document structures must start and end within the same entity.
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: org.xml.sax.SAXParseException: XML document structures must start and end within the same entity.
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLScanner.reportFatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityManager.endEntity(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.load(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.skipSpaces(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanEndElement(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at javax.xml.parsers.SAXParser.parse(Unknown Source)
+	at scala.xml.factory.XMLLoader$class.loadXML(XMLLoader.scala:40)
+	at scala.xml.XML$.loadXML(XML.scala:40)
+	at scala.xml.factory.XMLLoader$class.loadString(XMLLoader.scala:59)
+	at scala.xml.XML$.loadString(XML.scala:40)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:108)
+	at viewModels.Snapshot$$anonfun$1.apply(/app/viewModels/Snapshot.scala:107)
+	at viewModels.Snapshot$.png(/app/viewModels/Snapshot.scala:107)
+	at controllers.Application$.snapshot(/app/controllers.scala:116)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+21 Dec 2010 21:07:15,215 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+21 Dec 2010 21:07:15,222 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+21 Dec 2010 21:11:19,499 ERROR ~ 
+
+@64p9d7blj
+Internal Server Error (500) for request GET /application/conversations?server=madam
+
+Compilation error (In /app/controllers.scala around line 43)
+The file /app/controllers.scala could not be compiled. Error raised is : ';' expected but ')' found.
+
+play.exceptions.CompilationException: ';' expected but ')' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+21 Dec 2010 21:11:19,598 ERROR ~ 
+
+@64p9d7blk
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/controllers.scala around line 43)
+The file /app/controllers.scala could not be compiled. Error raised is : ';' expected but ')' found.
+
+play.exceptions.CompilationException: ';' expected but ')' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+21 Dec 2010 21:12:51,127 ERROR ~ 
+
+@64p9d7bll
+Internal Server Error (500) for request GET /application/conversations?server=madam
+
+Compilation error (In /app/controllers.scala around line 44)
+The file /app/controllers.scala could not be compiled. Error raised is : ';' expected but ')' found.
+
+play.exceptions.CompilationException: ';' expected but ')' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+21 Dec 2010 21:12:51,177 ERROR ~ 
+
+@64p9d7blm
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/controllers.scala around line 44)
+The file /app/controllers.scala could not be compiled. Error raised is : ';' expected but ')' found.
+
+play.exceptions.CompilationException: ';' expected but ')' found.
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+21 Dec 2010 21:13:18,044 ERROR ~ 
+
+@64p9d7bln
+Internal Server Error (500) for request GET /application/conversations?server=madam
+
+Compilation error (In /app/controllers.scala around line 150)
+The file /app/controllers.scala could not be compiled. Error raised is : type mismatch;  found   : scala.collection.mutable.ListBuffer[(Int, scala.xml.Elem)]  required: Map[Int,scala.xml.NodeSeq]
+
+play.exceptions.CompilationException: type mismatch;
+ found   : scala.collection.mutable.ListBuffer[(Int, scala.xml.Elem)]
+ required: Map[Int,scala.xml.NodeSeq]
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+21 Dec 2010 21:13:19,311 ERROR ~ 
+
+@64p9d7blo
+Internal Server Error (500) for request GET /favicon.ico
+
+Compilation error (In /app/controllers.scala around line 150)
+The file /app/controllers.scala could not be compiled. Error raised is : type mismatch;  found   : scala.collection.mutable.ListBuffer[(Int, scala.xml.Elem)]  required: Map[Int,scala.xml.NodeSeq]
+
+play.exceptions.CompilationException: type mismatch;
+ found   : scala.collection.mutable.ListBuffer[(Int, scala.xml.Elem)]
+ required: Map[Int,scala.xml.NodeSeq]
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anon$1.info0(ScalaPlugin.scala:184)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply$mcV$sp(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler$$anonfun$compile$1.apply(ScalaPlugin.scala:344)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:71)
+	at scala.Console$.withOut(Console.scala:81)
+	at play.scalasupport.core.ScalaPlugin$ScalaCompiler.compile(ScalaPlugin.scala:343)
+	at play.scalasupport.core.ScalaPlugin.compile(ScalaPlugin.scala:171)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:150)
+	at play.scalasupport.core.ScalaPlugin.onClassesChange(ScalaPlugin.scala:39)
+	at play.classloading.ApplicationClassloader.detectChanges(ApplicationClassloader.java:286)
+	at play.Play.detectChanges(Play.java:517)
+	at play.Invoker$Invocation.init(Invoker.java:100)
+	at Invocation.HTTP Request(Play!)
+21 Dec 2010 21:14:12,815 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 47 of /app/controllers.scala
+21 Dec 2010 21:14:12,817 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 61 of /app/controllers.scala
+21 Dec 2010 21:14:14,711 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+21 Dec 2010 21:14:16,159 ERROR ~ 
+
+@64p9d7blp
+Internal Server Error (500) for request GET /application/conversations?server=madam
+
+Execution exception (In /app/controllers.scala around line 35)
+ZipException occured : only DEFLATED entries can have EXT descriptor
+
+play.exceptions.JavaExecutionException: only DEFLATED entries can have EXT descriptor
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.util.zip.ZipException: only DEFLATED entries can have EXT descriptor
+	at java.util.zip.ZipInputStream.readLOC(Unknown Source)
+	at java.util.zip.ZipInputStream.getNextEntry(Unknown Source)
+	at controllers.Application$.loadConversations(/app/controllers.scala:35)
+	at controllers.Application$.authorSummaries(/app/controllers.scala:150)
+	at controllers.Application$.conversations(/app/controllers.scala:51)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+21 Dec 2010 21:15:36,646 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+21 Dec 2010 21:15:36,648 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+21 Dec 2010 21:15:38,415 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
