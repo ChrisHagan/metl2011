@@ -11,3 +11,13 @@ img, image{
 .imgContainer{
     position:relative;
 }
+#marketplaceHost .item{
+    border:1px solid black;
+    text-align:center;
+    display:inline-block;
+}
+#marketplaceHost .item img{
+    width:150px;
+    height:150px;
+}
+

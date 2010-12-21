@@ -32,11 +32,9 @@ namespace SandRibbon.Providers
         }
         public ThumbnailCaptureHost(string jid):this()
         {
-            if (!Directory.Exists(string.Format("{0}\\thumbs\\", Directory.GetCurrentDirectory())))
-                Directory.CreateDirectory(string.Format("{0}\\thumbs\\", Directory.GetCurrentDirectory()));
             conversation = jid;
-            if(!Directory.Exists(string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), conversation)))
-                Directory.CreateDirectory(string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), conversation));
+            createThumbnailFileStructure(jid);
+            
         }
 
         public void thumbConversation() {
@@ -53,6 +51,7 @@ namespace SandRibbon.Providers
         public void thumb(string jid, int slideId)
         {
             conversation = jid;
+            createThumbnailFileStructure(jid);
             thumb(slideId);
         }
         public void thumb(int[] ids)
@@ -63,7 +62,7 @@ namespace SandRibbon.Providers
 
         public void thumb(int slideId) { 
             var data = createImage(slideId);
-            File.WriteAllBytes(string.Format("{0}\\thumbs\\{1}\\{2}.png",Directory.GetCurrentDirectory(),conversation, slideId), data);
+            File.WriteAllBytes(ThumbnailPath(conversation, slideId), data);
             return;
         }
 
@@ -94,9 +93,9 @@ namespace SandRibbon.Providers
             {
                 try
                 {
-                    var size = new Size(WIDTH, HEIGHT);
                     var canvas = new InkCanvas();
                     parser.Populate(canvas);
+                    var size = new Size(WIDTH, HEIGHT);
                     var viewBox = new Viewbox
                                       {
                                           Stretch = Stretch.Uniform,
@@ -127,29 +126,32 @@ namespace SandRibbon.Providers
             waitHandler.WaitOne();
             return result;
         }
-
         public string ThumbnailPath(string jid, int id)
         {
-            
-            if (!Directory.Exists("thumbs"))
-                Directory.CreateDirectory("thumbs");
-            var fullPath = string.Format("thumbs\\{0}", jid);
-            if (!Directory.Exists(fullPath))
-                Directory.CreateDirectory(fullPath);
+            string fullPath = createThumbnailFileStructure(jid);
             var path = string.Format("{0}\\{1}.png", fullPath, id);
             return path;
+        }
+
+        private static string createThumbnailFileStructure(string jid)
+        {
+            if (!Directory.Exists(string.Format("{0}\\thumbs\\", Directory.GetCurrentDirectory())))
+                Directory.CreateDirectory(string.Format("{0}\\thumbs\\", Directory.GetCurrentDirectory()));
+            if(!Directory.Exists(string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), Globals.me)))
+                Directory.CreateDirectory(string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), Globals.me));
+            var fullPath = string.Format("{0}\\thumbs\\{1}\\{2}\\", Directory.GetCurrentDirectory(), Globals.me, jid);
+            if(!Directory.Exists(fullPath))
+                Directory.CreateDirectory(fullPath);
+            return fullPath;
         }
     }
     public class ThumbnailProvider
     {
-        private static RequestCachePolicy bitmapRetrievePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
         public static SlideToThumbConverter SlideToThumb = new SlideToThumbConverter();
-        private static ThumbnailCaptureHost thumbnailer = new ThumbnailCaptureHost(); 
         public class SlideToThumbConverter : IValueConverter {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                var slide = (Slide)value;
-                var val = ThumbnailProvider.get((Slide)value);
+                var val = get((Slide)value);
                 return val;
             }
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -159,7 +161,7 @@ namespace SandRibbon.Providers
         }
         public static ImageBrush get(Slide slide)
         {
-            var localPath = string.Format("{0}\\thumbs\\{1}\\{2}.png", Directory.GetCurrentDirectory(),Globals.location.activeConversation, slide.id );
+            var localPath = new ThumbnailCaptureHost().ThumbnailPath(Globals.conversationDetails.Jid, slide.id); 
             if(!File.Exists(localPath))
                 return new ImageBrush();
             App.Now("Loading thumbnail for {0} at {1}", slide.id, localPath);

@@ -143,7 +143,7 @@ namespace SandRibbon.Utils
             foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
             {
                 int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
-                var slidePath = Directory.GetCurrentDirectory() + "\\" + new ThumbnailCaptureHost().ThumbnailPath( conversation.Jid, thumbnailStartId++);
+                var slidePath = new ThumbnailCaptureHost().ThumbnailPath( conversation.Jid, thumbnailStartId++);
                 foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                 {
                     shape.Visible = MsoTriState.msoFalse;
