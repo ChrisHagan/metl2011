@@ -47,16 +47,6 @@ namespace SandRibbon.Components
             }   
             return path;
         }
-        public string ThumbnailPath(int id)
-        {
-            if (!Directory.Exists("thumbs"))
-                Directory.CreateDirectory("thumbs");
-            var fullPath = string.Format("thumbs\\{0}", Globals.me);
-            if (!Directory.Exists(fullPath))
-                Directory.CreateDirectory(fullPath);
-            var path = string.Format("{0}\\{1}.png", fullPath, id);
-            return path;
-        }
         public void saveCanvasToDisk(FrameworkElement content, string path, int sourceWidth, int sourceHeight, int desiredWidth, int desiredHeight)
         {
             var bitmap = new RenderTargetBitmap(sourceWidth, sourceHeight, 96, 96, PixelFormats.Pbgra32);

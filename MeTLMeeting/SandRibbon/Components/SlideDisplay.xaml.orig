@@ -7,6 +7,7 @@
     xmlns:my="clr-namespace:SandRibbon"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:providers="clr-namespace:SandRibbon.Providers"
     x:Name="SlideMeasure" >
     <UserControl.Resources>
         <core:String x:Key="defaultPrivacy">public</core:String>
@@ -19,14 +20,18 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
-        <ListBox Grid.Row="1"
+        <ListBox
+             Grid.Row="1"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
              ScrollViewer.VerticalScrollBarVisibility="Visible"
+             ScrollViewer.IsDeferredScrollingEnabled="True"
+             VirtualizingStackPanel.IsVirtualizing="True"
+             ScrollViewer.CanContentScroll="True"
              OverridesDefaultStyle="False"
              SelectionChanged="slides_SelectionChanged"
-             VerticalAlignment="Stretch" Height="Auto" 
              Background="Transparent"
              HorizontalAlignment="Stretch" Width="Auto" x:Name="slides">
+            
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="Height">
@@ -48,13 +53,13 @@
                                     SnapsToDevicePixels="true" CornerRadius="2">
                                     <Grid>
                                         <Viewbox IsHitTestVisible="False">
-                                            <Rectangle Fill="{Binding Path=Image}" Width="100" Height="100"/>
+                                            <Rectangle Height="200" Width="320" Fill="{Binding Converter={x:Static providers:ThumbnailProvider.SlideToThumb}}"/>
                                         </Viewbox>
                                         <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                 VerticalAlignment="Bottom" 
                                                 BorderThickness="1">
-                                            <Label Content="{Binding Path=slideNumber}"/>
+                                            <Label Content="{Binding Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
                                         </Border>
                                     </Grid>
                                 </Border>

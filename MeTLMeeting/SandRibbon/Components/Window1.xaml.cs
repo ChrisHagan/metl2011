@@ -164,7 +164,13 @@ namespace SandRibbon
         }
         private void LaunchHelp(object _arg)
         {
-            Process.Start("http://penny-arcade.com");
+            try
+            {
+                Process.Start("http://penny-arcade.com");
+            }
+            catch (Exception)
+            {
+            }
         }
         private void PrintConversation(object _arg) {
             if(Globals.UserOptions.includePrivateNotesOnPrint)

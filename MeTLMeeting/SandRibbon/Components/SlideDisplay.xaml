@@ -21,13 +21,16 @@
         </Grid.RowDefinitions>
         <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
         <ListBox
+             x:Name="slides"
              Grid.Row="1"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
              ScrollViewer.VerticalScrollBarVisibility="Visible"
+             ScrollViewer.IsDeferredScrollingEnabled="False"
+             VirtualizingStackPanel.IsVirtualizing ="True"
              OverridesDefaultStyle="False"
              SelectionChanged="slides_SelectionChanged"
              Background="Transparent"
-             HorizontalAlignment="Stretch" Width="Auto" x:Name="slides">
+             HorizontalAlignment="Stretch" Width="Auto" >
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="Height">

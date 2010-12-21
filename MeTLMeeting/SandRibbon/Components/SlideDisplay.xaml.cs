@@ -188,8 +188,7 @@ namespace SandRibbon.Components
                   if (proposedId == currentSlideId) return;
                   currentSlideIndex = proposedIndex;
                   currentSlideId = proposedId;
-                  thumbnailer.thumb(Globals.location.currentSlide);
-                  thumbnailer.thumb(currentSlideId);
+                  thumbnailer.thumb(new[] {Globals.location.currentSlide, currentSlideId});
                   thumbnailList.UpdateCollection();
                   Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                   Commands.MoveTo.ExecuteAsync(currentSlideId);
@@ -198,5 +197,6 @@ namespace SandRibbon.Components
                   slides.ScrollIntoView(slides.SelectedItem);
               }
         }
+        
     }
 }

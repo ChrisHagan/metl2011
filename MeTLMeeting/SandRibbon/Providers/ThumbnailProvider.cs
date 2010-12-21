@@ -37,7 +37,6 @@ namespace SandRibbon.Providers
             conversation = jid;
             if(!Directory.Exists(string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), conversation)))
                 Directory.CreateDirectory(string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), conversation));
-            thumbConversation();
         }
 
         public void thumbConversation() {
@@ -49,10 +48,21 @@ namespace SandRibbon.Providers
                 });
             }
         }
+
+
+        public void thumb(string jid, int slideId)
+        {
+            conversation = jid;
+            thumb(slideId);
+        }
+        public void thumb(int[] ids)
+        {
+            foreach(var id in ids)
+                thumb(id);
+        }
+
         public void thumb(int slideId) { 
             var data = createImage(slideId);
-            var stream = new MemoryStream(data);
-            
             File.WriteAllBytes(string.Format("{0}\\thumbs\\{1}\\{2}.png",Directory.GetCurrentDirectory(),conversation, slideId), data);
             return;
         }
@@ -61,26 +71,20 @@ namespace SandRibbon.Providers
         int HEIGHT = 240;
         private byte[] createImage(int slide){
             byte[] result = new byte[0];
-            Dispatcher.CurrentDispatcher.adoptAsync(delegate
-            {
-                var provider = conn.getHistoryProvider();
-                ManualResetEvent waitHandler = new ManualResetEvent(false);
-                var synchrony = new Thread(
-                        new ThreadStart(delegate {
-                                                   provider.Retrieve <PreParser>
-                                                       (
-                                                           null,
-                                                           null,
-                                                           parser => {
-                                                               result = parserToInkCanvas(parser);
-                                                               waitHandler.Set();
-                                                           },
-                                                           slide.ToString());
-                                                   }));
-                                            synchrony.Start();
-                                                            waitHandler.WaitOne();
-                                                        });
-
+            var provider = conn.getHistoryProvider();
+            
+            ManualResetEvent waitHandler = new ManualResetEvent(false);
+            var synchrony = new Thread(() => provider.Retrieve<PreParser>(
+                                             null,
+                                             null,
+                                             parser =>
+                                                 {
+                                                     result = parserToInkCanvas(parser);
+                                                     waitHandler.Set();
+                                                 },
+                                             slide.ToString()));
+            synchrony.Start();
+            waitHandler.WaitOne();
             return result;
         }
         private byte[] parserToInkCanvas(PreParser parser){
@@ -91,10 +95,8 @@ namespace SandRibbon.Providers
                 try
                 {
                     var size = new Size(WIDTH, HEIGHT);
-                    var canvas = parser.ToVisual();
-                    canvas.Measure(size);
-                    canvas.Arrange(new Rect(size));
-                    canvas.UpdateLayout();
+                    var canvas = new InkCanvas();
+                    parser.Populate(canvas);
                     var viewBox = new Viewbox
                                       {
                                           Stretch = Stretch.Uniform,
@@ -126,16 +128,27 @@ namespace SandRibbon.Providers
             return result;
         }
 
+        public string ThumbnailPath(string jid, int id)
+        {
+            
+            if (!Directory.Exists("thumbs"))
+                Directory.CreateDirectory("thumbs");
+            var fullPath = string.Format("thumbs\\{0}", jid);
+            if (!Directory.Exists(fullPath))
+                Directory.CreateDirectory(fullPath);
+            var path = string.Format("{0}\\{1}.png", fullPath, id);
+            return path;
+        }
     }
     public class ThumbnailProvider
     {
-        
         private static RequestCachePolicy bitmapRetrievePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
         public static SlideToThumbConverter SlideToThumb = new SlideToThumbConverter();
-        
+        private static ThumbnailCaptureHost thumbnailer = new ThumbnailCaptureHost(); 
         public class SlideToThumbConverter : IValueConverter {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
+                var slide = (Slide)value;
                 var val = ThumbnailProvider.get((Slide)value);
                 return val;
             }
@@ -146,8 +159,6 @@ namespace SandRibbon.Providers
         }
         public static ImageBrush get(Slide slide)
         {
-            var path = string.Format("http://spacecaps.adm.monash.edu.au:8080/?slide={0}&width={1}&height={2}&server={3}",
-                slide.id, 180, 135, ClientFactory.Connection().server.host.Split('.').First());
             var localPath = string.Format("{0}\\thumbs\\{1}\\{2}.png", Directory.GetCurrentDirectory(),Globals.location.activeConversation, slide.id );
             if(!File.Exists(localPath))
                 return new ImageBrush();
