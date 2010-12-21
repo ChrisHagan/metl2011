@@ -16,7 +16,8 @@ Marketplace.add({
                 imgContainer.append(img)
                 $('#visualSlideDisplay').append(imgContainer)
                 img.width = width
-                slideRendered({server:server,slide:i,img:img})
+                if(slideRendered)
+                    slideRendered({server:server,slide:i,img:img})
             })
         }
         function analysis(node){
@@ -126,7 +127,8 @@ Marketplace.add({
             $("#"+id).dialog({
                 resize:function(event,ui){
                     $("#"+id).find(".imgContainer").width(ui.size.width)
-                    slideDisplayResized(ui)
+                    if('undefined' != typeof slideDisplayResized)
+                        slideDisplayResized(ui)
                 },
                 position:'left'
             }).droppable({accept:'.canDropOnSlides'})

@@ -2,6 +2,8 @@ Marketplace.add({
     label:"Skynet",
     icon:"skynet.jpg",
     add:function(){
+        $('body').append($("<script src='/public/javascripts/availableStrokes.js' type='text/javascript'></script>"))
+        $('body').append($("<script src='/public/javascripts/eliza.js' type='text/javascript'></script>"))
         var tick = 10000
         var ONE_HOUR = 3600000
         var start = new Date(new Date().setHours(14)).setMinutes(0)
@@ -160,7 +162,7 @@ Marketplace.add({
             $('body').append(classToggle)
             classToggle.dialog({position:'top'})
         })
-        return {
+        window.ClassRoom =  {
             groups:groups,
             messages:function(){
                 return _.flatten(_.map(groups,

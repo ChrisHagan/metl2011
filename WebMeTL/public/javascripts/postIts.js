@@ -3,7 +3,6 @@ Marketplace.add(
         label:"Just type",
         icon:"justType.jpg",
         add:function(){
-            var eliza = new ElizaBot()
             var id = "postItsHost"
             var keys = ""
             var input = $("<div></div>")
