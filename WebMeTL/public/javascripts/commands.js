@@ -1,4 +1,4 @@
-var CommandInserter = function(context){
+var Commands = (function(){
     var events = []
     var handlers = []
     return{
@@ -9,13 +9,13 @@ var CommandInserter = function(context){
             if(!(evt in handlers))
                 handlers[evt] = []
             handlers[evt].push(handler)
-            context[evt] = function(args){
+        },
+        fire:function(evt,args){
+            if(evt in handlers)
                 for(var i = 0;i<handlers[evt].length;i++)
                     //Undefined is false.  Return true ("handled") to stop further handlers
                     if(handlers[evt][i](args))
                         break 
-                }
-            }
         }
     }
-var Commands = CommandInserter(window)
+})()

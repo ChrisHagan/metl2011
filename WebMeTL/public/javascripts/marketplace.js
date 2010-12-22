@@ -5,7 +5,7 @@ var Marketplace = (function(){
     $('body').append(launch)
     var id = "marketplaceHost"
     $('#'+id).remove()
-    var host = $("<div id='"+id+"' title='MeTL Marketplace'></div>").dialog({width:500,height:600,position:['left','top']})
+    var host = $("<div id='"+id+"' title='MeTL Marketplace'></div>").dialog({width:520,minHeight:600,position:['left','top']})
     return {
         add:function(marketable){
             host.append($("<div class='item'><div><img src='/public/images/"+marketable.icon+"' /><div><div>"+marketable.label+"</div></div>").click(function(){

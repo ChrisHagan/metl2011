@@ -9,7 +9,7 @@ Marketplace.add({
             },
             render:function(){
                 breadcrumbHost.html("")
-                var recentCrumbs = [{label:"All authors", func:searchForConversations}]
+                var recentCrumbs = [{label:"All authors", func:Commands.fire.bind('searchForConversations')}]
                 _.each(trail.slice(-10), function(crumb){recentCrumbs.push(crumb)})
                 _.each(recentCrumbs, function(crumb){
                     breadcrumbHost.append($("<span />").append(crumb.label.slice(0,15) + "->").click(function(){
@@ -26,7 +26,7 @@ Marketplace.add({
         breadcrumbHost.dialog({minHeight:75, position:['left','top']})
         Commands.add("conversationJoined",function(conversation){
             Breadcrumb.add(conversation.title, function(){
-                conversationJoined(conversation)
+                Commands.fire('conversationJoined',conversation)
             })
         })
     },

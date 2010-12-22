@@ -175,8 +175,7 @@ Marketplace.add({
                         if(!d.nodeValue) return 0
                         return d.nodeValue.contentVolume})
                     .event("click",function(node){
-                        if('undefined' != typeof conversationJoined)
-                            conversationJoined(node.nodeValue)
+                        Commands.fire('conversationJoined',node.nodeValue)
                     })
                 newChild.label.add(pv.Label)
                     .text(function(d){
@@ -206,7 +205,7 @@ Marketplace.add({
                         if(!d.nodeValue) return "white"
                         return Conversations.color(d.nodeValue.authorCount)})
                     .event("click",function(node){
-                        conversationJoined(node.nodeValue)
+                        Commands.fire('conversationJoined',node.nodeValue)
                     })
                     .anchor("center")
                     .add(pv.Label)
@@ -219,6 +218,6 @@ Marketplace.add({
         Commands.add("searchForConversations",function(){
             Authors.radial()
         })
-        searchForConversations()
+        Commands.fire('searchForConversations')
     }
 })

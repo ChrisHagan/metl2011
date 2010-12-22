@@ -14,7 +14,7 @@ Marketplace.add({
             $('#'+id).remove()
             var host = $("<div title='Find a conversation' id='"+id+"'></div>").dialog()
             host.append($("<input />").bind('textchange',function(){
-                filterDisplayedConversations($(this).val())    
+                Commands.fire('filterDisplayedConversations',$(this).val())  
             }))
             var results = $('<div></div>')
             host.append(results)
@@ -31,6 +31,6 @@ Marketplace.add({
                 })
             })
         })
-        searchForConversations()
+        Commands.fire('searchForConversations')
     }
 })

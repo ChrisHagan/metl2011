@@ -16,8 +16,7 @@ Marketplace.add({
                 imgContainer.append(img)
                 $('#visualSlideDisplay').append(imgContainer)
                 img.width = width
-                if(slideRendered)
-                    slideRendered({server:server,slide:i,img:img})
+                Commands.fire('slideRendered',{server:server,slide:i,img:img})
             })
         }
         function analysis(node){
