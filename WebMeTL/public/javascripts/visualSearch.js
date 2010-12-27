@@ -64,9 +64,8 @@ Marketplace.add({
 
         var Master = {
             panel:function(id){
-                $(sprintf("<div id='id'></div>")).dialog({position:['left','top']})
                 return new pv.Panel()
-                    .canvas("id")
+                    .canvas(id)
                     .left(0)
                     .top(0)
                     .bottom(0)
@@ -79,7 +78,9 @@ Marketplace.add({
             color:pv.Scale.linear(0,10).range("white","red"),
             radial:function(node){
                 var display = function(data){
-                    var graphRoot = Master.panel("conversations")
+                    var id = "visualSearchConversations"
+                    $(sprintf("<div id='%s'></div>",id)).dialog({position:['left','top']})
+                    var graphRoot = Master.panel(id)
                     var nodes = pv.dom(data)
                         .leaf(function(d){
                             return "jid" in d
@@ -129,7 +130,9 @@ Marketplace.add({
                     return Authors.colors[d.nodeName]
                 }
                 var _data = clusteredNodes
-                var graphRoot = Master.panel("authors")
+                var id = "visualSearchAuthors"
+                $(sprintf("<div id='%s'></div>",id)).dialog({position:['left','top']})
+                var graphRoot = Master.panel(id)
                 var tree = graphRoot.add(pv.Layout.Tree)
                     .nodes(function(){
                         return _data
