@@ -16,8 +16,7 @@ img, image{
     text-align:center;
     display:inline-block;
 }
-#marketplaceHost .item img{
+#marketplaceHost .item img, #deviceDefaultsHost img{
     width:150px;
     height:150px;
 }
-

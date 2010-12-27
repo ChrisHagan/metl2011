@@ -26,7 +26,7 @@ Marketplace.add({
                     results.append($("<div>"+foundConversation.title+"</div>").click(function(){
                         results.find('div').css('background-color','')
                         $(this).css({'background-color':'yellow'})
-                        conversationJoined(foundConversation)
+                        Commands.fire('conversationJoined',foundConversation)
                     }))
                 })
             })
