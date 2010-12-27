@@ -63,9 +63,10 @@ Marketplace.add({
         }
 
         var Master = {
-            panel:function(){
+            panel:function(id){
+                $(sprintf("<div id='id'></div>")).dialog({position:['left','top']})
                 return new pv.Panel()
-                    .canvas("visualGraphNavigation")
+                    .canvas("id")
                     .left(0)
                     .top(0)
                     .bottom(0)
@@ -74,87 +75,11 @@ Marketplace.add({
                     .height(height)
             }
         }
-        var Authors = {
-            colors:_.reduce(_.keys(detailedAuthors.conversationSummaries), function(acc,item,index){
-                var availableColors = pv.Colors.category19().range();
-                acc[item] = availableColors[index % availableColors.length]
-                return acc;
-            },{}),
-            color:function(d){
-                if(!d.nodeName) return "black"
-                return Authors.colors[d.nodeName]
-            },
-            data:clusteredNodes,
-            squares : function(){
-                var graphRoot = Master.panel()
-                var treemap = graphRoot.add(pv.Layout.Treemap)
-                .def("active", function(){ return -1})
-                .nodes(Authors.data);
-                treemap.leaf.add(pv.Panel)
-                    .fillStyle(Authors.color)
-                    .strokeStyle("#fff")
-                    .lineWidth(1)
-                    .event("click",Conversations.packed)
-                treemap.label.add(pv.Label);
-                graphRoot.render();
-            },
-            wedges: function(){
-                var graphRoot = Master.panel()
-                var newChild = graphRoot.add(pv.Layout.Partition.Fill)
-                    .nodes(Authors.data)
-                    .size(function(d){
-                        return dotScale(d.nodeValue)})
-                    .order("descending")
-                    .orient("radial");
-                newChild.node.add(pv.Wedge)
-                    .fillStyle(Authors.color)
-                    .strokeStyle("#fff")
-                    .lineWidth(1)
-                newChild.label.add(pv.Label);
-                graphRoot.render();
-            },
-            radial: function(){
-                var graphRoot = Master.panel()
-                var newChild = graphRoot.add(pv.Layout.Tree)
-                    .nodes(Authors.data)
-                    .orient("radial")
-                newChild.link.add(pv.Line)
-                newChild.node.add(pv.Dot)
-                    .fillStyle(Authors.color)
-                    .size(function(d){
-                        return dotScale(d.nodeValue)})
-                    .event("click",Conversations.radial)
-                newChild.label.add(pv.Label)
-                    .visible(function(d){ return d.lastChild == null })
-                graphRoot.render()
-            },
-            force:function(){
-                var graphRoot = Master.panel();
-                var nodes = []
-                var links = []
-                var ptr = 0
-                _.each(frequenciesByAuthor, function(f,a){
-                    nodes.push({freq:f,author:a})
-                    links.push({source:ptr++,target:0,value:25})
-                })
-                var newChild = graphRoot.add(pv.Layout.Force)
-                    .nodes(nodes)
-                    .links(links)
-                newChild.link.add(pv.Line)
-                newChild.node.add(pv.Dot)
-                    .size(function(d){return dotScale(d.freq)})
-                    .fillStyle("red")
-                    .anchor("center")
-                    .add(pv.Label)
-                    .text(function(d){return d.author})
-                graphRoot.render()
-            }
-        }
         var Conversations = {
             color:pv.Scale.linear(0,10).range("white","red"),
             radial:function(node){
                 var display = function(data){
-                    var graphRoot = Master.panel()
+                    var graphRoot = Master.panel("conversations")
                     var nodes = pv.dom(data)
                         .leaf(function(d){
                             return "jid" in d
@@ -190,38 +115,67 @@ Marketplace.add({
                     }))
                 })
                 display(data) 
-            },
-            packed:function(node){
-                var graphRoot = Master.panel()
-                var author = node.nodeName;
-                var data = detailsByAuthor[author]
-                var nodes = pv.dom(data)
-                    .leaf(function(d){
-                        return "jid" in d
+            }
+        }
+        var Authors = {
+            colors:_.reduce(_.keys(detailedAuthors.conversationSummaries), function(acc,item,index){
+                var availableColors = pv.Colors.category19().range();
+                acc[item] = availableColors[index % availableColors.length]
+                return acc;
+            },{}),
+            radial:(function(){
+                var color = function(d){
+                    if(!d.nodeName) return "black"
+                    return Authors.colors[d.nodeName]
+                }
+                var _data = clusteredNodes
+                var graphRoot = Master.panel("authors")
+                var tree = graphRoot.add(pv.Layout.Tree)
+                    .nodes(function(){
+                        return _data
                     })
-                    .nodes()
-                var newChild = graphRoot.add(pv.Layout.Pack)
-                    .nodes(nodes)
+                    .orient("radial")
+                tree.link.add(pv.Line)
+                tree.node.add(pv.Dot)
+                    .fillStyle(color)
                     .size(function(d){
-                        if(!d.nodeValue) return 0
-                        return d.nodeValue.contentVolume * 4})
-                    .top(-50)
-                    .bottom(-50)
-                    .order(null)
-                newChild.node.add(pv.Dot)
-                    .fillStyle(function(d){
-                        if(!d.nodeValue) return "white"
-                        return Conversations.color(d.nodeValue.authorCount)})
-                    .event("click",function(node){
-                        Commands.fire('conversationJoined',node.nodeValue)
-                    })
-                    .anchor("center")
-                    .add(pv.Label)
-                    .text(function(d){
-                        if(!d.nodeValue) return ""
-                        return d.nodeValue.title})
-                graphRoot.render()
-           }
+                        return dotScale(d.nodeValue)})
+                    .event("click",Conversations.radial)
+                tree.label.add(pv.Label)
+                    .visible(function(d){ return d.lastChild == null })
+                var display = function(data){
+                    _data = pv.dom(data).nodes()
+                    tree.reset()
+                    graphRoot.render()
+                }
+                Commands.add("filterDisplayedAuthors",function(searchTerm){
+                    if(searchTerm.length == 0){
+                        display(clusteredFrequencies)
+                    }
+                    else{
+                        var raw = frequenciesByAuthor
+                        display(_.reduce(_.filter(_.keys(raw),function(author){
+                            return author.indexOf(searchTerm) >= 0
+                        }),function(acc,author){
+                            acc[author] = raw[author]        
+                            return acc
+                        },{}))
+                    }
+                })
+                return function(){
+                    var raw = detailedAuthors.conversationSummaries
+                    var expanded = _.reduce(_.keys(raw),function(acc,author){
+                        var authorDetails = raw[author]
+                        var band = Math.floor(parseFloat(authorDetails.conversationCount) / 6);
+                        acc[author] = deepen(band,author,_.reduce(authorDetails.conversations.listing,function(acc,conversation){
+                            acc[conversation.title] = conversation.contentVolume
+                            return acc
+                        },{}))
+                        return acc
+                    },{})
+                    display(clusteredFrequencies)
+                }
+            })()
         }
         Commands.add("searchForConversations",function(){
             Authors.radial()

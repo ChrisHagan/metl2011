@@ -7,7 +7,7 @@ var Marketplace = (function(){
     $('body').append(launch)
     var id = "marketplaceHost"
     $('#'+id).remove()
-    var host = $("<div id='"+id+"' title='MeTL Marketplace'></div>").dialog({width:520,minHeight:600,position:['left','top']})
+    var host = $("<div id='"+id+"' title='MeTL Marketplace'></div>").dialog({width:520,minHeight:600,position:['left','top'],autoOpen:false})
     Commands.add("loadPlugin",function(param){
         var marketable
         if(typeof param == "string"){

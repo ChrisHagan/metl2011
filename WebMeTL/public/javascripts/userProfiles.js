@@ -14,12 +14,12 @@ Marketplace.add({
         {
             label:'Tablet PC',
             icon:'tablet.jpg',
-            plugins:["Visual navigation","Search","Quizzing","Active ink","Easy Tiling","Visual slide display"]
+            plugins:["Easy Tiling","Visual navigation","Search","Quizzing","Active ink","Visual slide display","Author search"]
         },
         {
             label:'Laptop',
             icon:'laptop.jpg',
-            plugins:["Visual navigation","Search","Quizzing","Easy Tiling","Visual slide display"]
+            plugins:["Easy Tiling","Visual navigation","Search","Quizzing","Visual slide display","Author search"]
         }]
         _.each(profiles,function(deviceProfile){
             var profileLauncher = $("<img src='/public/images/"+deviceProfile.icon+"'></img>").click(function(){
