@@ -28,7 +28,6 @@ object Application extends Controller {
     val password = "examplePassword"
     val TEMP_FILE = "all.zip"
     private def loadConversations(server:String) = {
-        println("Loading conversations for "+server)
         val zipFuture = WS.url(structure.format(server)+"/all.zip").authenticate(username,password).get
         FileUtils.writeByteArrayToFile(new File(TEMP_FILE),IOUtils.toByteArray(zipFuture.getStream))
         val zipFile = new ZipFile(new File(TEMP_FILE))
@@ -40,8 +39,18 @@ object Application extends Controller {
             .map(detail => ((detail \ "jid").text.toInt -> detail)).toList:_*)
     }
     private def mapRandom(history:Map[Int,xml.NodeSeq], max:Int = 10) = history.map(kv => (kv._1 -> (Math.random * max).intValue.toString))
-    def index = conversations("deified")
-    def conversations(server:String) = {
+    def index = tablet("deified")
+    def tablet(server:String) = {
+        val serverName = server
+        val authorJson = authorSummaries(server).toString()
+        Template(serverName,authorJson)
+    }
+    def iPhone(server:String) = {
+        val serverName = server
+        val authorJson = authorSummaries(server).toString()
+        Template(serverName,authorJson)
+    }
+    def laptop(server:String) = {
         val serverName = server
         val authorJson = authorSummaries(server).toString()
         Template(serverName,authorJson)
