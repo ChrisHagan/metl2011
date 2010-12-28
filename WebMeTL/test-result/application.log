@@ -1,14 +1,112 @@
-28 Dec 2010 10:22:00,347 INFO  ~ Starting C:\specialMeTL\WebMeTL
-28 Dec 2010 10:22:00,351 INFO  ~ Module scala is available (C:\lib\play-1.1\modules\scala-0.8)
-28 Dec 2010 10:22:01,067 WARN  ~ You're running Play! in DEV mode
-28 Dec 2010 10:22:01,177 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
-28 Dec 2010 10:22:39,132 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
-28 Dec 2010 10:22:45,091 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
-28 Dec 2010 10:22:45,094 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
-28 Dec 2010 10:22:45,127 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 20 of /app/models/MeTL.scala
-28 Dec 2010 10:22:45,129 WARN  ~ method first in trait IterableLike is deprecated: use `head' instead, at line 24 of /app/models/MeTL.scala
-28 Dec 2010 10:22:45,145 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 74 of /app/models/MeTL.scala
-28 Dec 2010 10:22:45,147 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 92 of /app/models/MeTL.scala
-28 Dec 2010 10:22:45,149 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 106 of /app/models/MeTL.scala
-28 Dec 2010 10:22:50,999 INFO  ~ Connected to jdbc:hsqldb:mem:playembed
-28 Dec 2010 10:22:51,229 INFO  ~ Application 'WebMeTL' is now started !
+28 Dec 2010 12:46:38,114 INFO  ~ Starting C:\specialMeTL\WebMeTL
+28 Dec 2010 12:46:38,119 INFO  ~ Module scala is available (C:\lib\play-1.1\modules\scala-0.8)
+28 Dec 2010 12:46:38,877 WARN  ~ You're running Play! in DEV mode
+28 Dec 2010 12:46:38,999 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
+28 Dec 2010 12:46:47,560 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+28 Dec 2010 12:46:54,187 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 42 of /app/controllers.scala
+28 Dec 2010 12:46:54,191 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 56 of /app/controllers.scala
+28 Dec 2010 12:46:54,217 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 20 of /app/models/MeTL.scala
+28 Dec 2010 12:46:54,219 WARN  ~ method first in trait IterableLike is deprecated: use `head' instead, at line 24 of /app/models/MeTL.scala
+28 Dec 2010 12:46:54,235 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 74 of /app/models/MeTL.scala
+28 Dec 2010 12:46:54,237 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 92 of /app/models/MeTL.scala
+28 Dec 2010 12:46:54,239 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 106 of /app/models/MeTL.scala
+28 Dec 2010 12:47:01,227 INFO  ~ Connected to jdbc:hsqldb:mem:playembed
+28 Dec 2010 12:47:01,259 INFO  ~ Application 'WebMeTL' is now started !
+28 Dec 2010 13:00:59,200 ERROR ~ 
+
+@651600odj
+Internal Server Error (500) for request GET /application/conversations?server=deified
+
+Execution exception (In /app/controllers.scala around line 34)
+IOException occured : central directory is empty, can't expand corrupt archive.
+
+play.exceptions.JavaExecutionException: central directory is empty, can't expand corrupt archive.
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.io.IOException: central directory is empty, can't expand corrupt archive.
+	at org.apache.commons.compress.archivers.zip.ZipFile.populateFromCentralDirectory(ZipFile.java:353)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:184)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:161)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:122)
+	at controllers.Application$.loadConversations(/app/controllers.scala:34)
+	at controllers.Application$.authorSummaries(/app/controllers.scala:146)
+	at controllers.Application$.conversations(/app/controllers.scala:46)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+28 Dec 2010 15:20:50,396 ERROR ~ 
+
+@651600odk
+Internal Server Error (500) for request GET /application/conversations?server=deified
+
+Execution exception (In /app/controllers.scala around line 34)
+IOException occured : central directory is empty, can't expand corrupt archive.
+
+play.exceptions.JavaExecutionException: central directory is empty, can't expand corrupt archive.
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.io.IOException: central directory is empty, can't expand corrupt archive.
+	at org.apache.commons.compress.archivers.zip.ZipFile.populateFromCentralDirectory(ZipFile.java:353)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:184)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:161)
+	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:122)
+	at controllers.Application$.loadConversations(/app/controllers.scala:34)
+	at controllers.Application$.authorSummaries(/app/controllers.scala:146)
+	at controllers.Application$.conversations(/app/controllers.scala:46)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+28 Dec 2010 17:42:03,757 ERROR ~ 
+
+@651600odl
+Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=420400
+
+Execution exception (In /app/controllers.scala around line 100)
+NumberFormatException occured : For input string: ""
+
+play.exceptions.JavaExecutionException: For input string: ""
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.lang.NumberFormatException: For input string: ""
+	at java.lang.NumberFormatException.forInputString(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:100)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:99)
+	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
+	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:99)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:98)
+	at controllers.Application$.quizzes(/app/controllers.scala:98)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more
+28 Dec 2010 17:43:38,694 ERROR ~ 
+
+@651600odm
+Internal Server Error (500) for request GET /application/quizzes?server=deified&jid=420400
+
+Execution exception (In /app/controllers.scala around line 100)
+NumberFormatException occured : For input string: ""
+
+play.exceptions.JavaExecutionException: For input string: ""
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
+	at Invocation.HTTP Request(Play!)
+Caused by: java.lang.NumberFormatException: For input string: ""
+	at java.lang.NumberFormatException.forInputString(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at java.lang.Long.parseLong(Unknown Source)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:100)
+	at controllers.Application$$anonfun$9$$anonfun$10.apply(/app/controllers.scala:99)
+	at scala.xml.NodeSeq.foreach(NodeSeq.scala:43)
+	at scala.xml.NodeSeq.flatMap(NodeSeq.scala:43)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:99)
+	at controllers.Application$$anonfun$9.apply(/app/controllers.scala:98)
+	at controllers.Application$.quizzes(/app/controllers.scala:98)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
+	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
+	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
+	... 1 more

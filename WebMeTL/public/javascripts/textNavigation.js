@@ -10,13 +10,11 @@ Marketplace.add({
                     return conversation
                 })
             }))
-            var id = 'conversationTextNavigation'
-            $('#'+id).remove()
-            var host = $("<div title='Find a conversation' id='"+id+"'></div>").dialog()
-            host.append($("<input />").bind('textchange',function(){
+            $('#conversationFilter').append($("<input />").bind('textchange',function(){
                 Commands.fire('filterDisplayedConversations',$(this).val())  
             }))
             var results = $('<div></div>')
+            var host = $('#filterResults')
             host.append(results)
             Commands.add('filterDisplayedConversations',function(searchTerm){
                 results.html("")    

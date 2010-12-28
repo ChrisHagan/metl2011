@@ -2,8 +2,8 @@ Marketplace.add({
     label:'Visual navigation',
     icon:'visualNav.png',
     add:function(){
-        var id = 'visualGraphNavigation'
-        $('body').append($("<div id='"+id+"' style='text-align:center;' width='"+width+"' height='"+height+"'></div>"))
+        var svg = pv.SvgScene.expect(null,'svg',{id:'authorsSvgHost',viewBox:sprintf('0 0 %d %d',850,800)})
+        $('#main').append(svg)
         var frequenciesByAuthor = _.reduce(detailedAuthors.conversationSummaries, 
             function(acc, v, k){
                 acc[k] = v.conversationCount;
@@ -61,26 +61,22 @@ Marketplace.add({
                 return _.extend(acc, deepGroup)
             }, {});
         }
-
-        var Master = {
-            panel:function(id){
-                return new pv.Panel()
-                    .canvas(id)
-                    .left(0)
-                    .top(0)
-                    .bottom(0)
-                    .right(0)
-                    .width(width)
-                    .height(height)
-            }
-        }
         var Conversations = {
             color:pv.Scale.linear(0,10).range("white","red"),
             radial:function(node){
                 var display = function(data){
                     var id = "visualSearchConversations"
-                    $(sprintf("<div id='%s'></div>",id)).dialog({position:['left','top']})
-                    var graphRoot = Master.panel(id)
+                    $('#'+id).remove()
+                    $('#main').append($(sprintf("<div id='%s'></div>",id)))
+                    var graphRoot = 
+                        new pv.Panel()
+                            .canvas(id)
+                            .left(0)
+                            .top(0)
+                            .bottom(0)
+                            .right(0)
+                            .width(width)
+                            .height(height)
                     var nodes = pv.dom(data)
                         .leaf(function(d){
                             return "jid" in d
@@ -130,9 +126,15 @@ Marketplace.add({
                     return Authors.colors[d.nodeName]
                 }
                 var _data = clusteredNodes
-                var id = "visualSearchAuthors"
-                $(sprintf("<div id='%s'></div>",id)).dialog({position:['left','top']})
-                var graphRoot = Master.panel(id)
+                var graphRoot = 
+                    new pv.Panel()
+                        .canvas('authorsSvgHost')
+                        .left(0)
+                        .top(0)
+                        .bottom(0)
+                        .right(0)
+                        .width(900)
+                        .height(800)
                 var tree = graphRoot.add(pv.Layout.Tree)
                     .nodes(function(){
                         return _data

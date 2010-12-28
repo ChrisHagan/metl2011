@@ -2,19 +2,26 @@ Marketplace.add({
     label:"Visual slide display",
     icon:"slides.jpg",
     add:function(){
+        var host = $("#visualSlideDisplayHost")
+        host.resize(function(event,ui){
+            host.find(".imgContainer").width(ui.size.width)
+            if('undefined' != typeof slideDisplayResized)
+                slideDisplayResized(ui)
+        })
         function slides(conversation){
             var jid = parseInt(conversation.jid)
             var slideCount = parseInt(conversation.slideCount)
             var nodes = pv.range(jid+1, jid+slideCount)
             var padding = 20
             var yAxis = pv.Scale.linear(1,slideCount).range(padding,height-padding)
-            $("#visualSlideDisplay").height(slideCount * height).width(width)
+            host.html("")
+            host.height(slideCount * height).width(width)
             _.each(nodes,function(i){
                 var img = new Image()
                 img.src = "snapshot?width="+width+"&height="+height+"&server="+server+"&slide="+i
                 var imgContainer = $("<div class='imgContainer'></div>")
                 imgContainer.append(img)
-                $('#visualSlideDisplay').append(imgContainer)
+                host.append(imgContainer)
                 img.width = width
                 Commands.fire('slideRendered',{server:server,slide:i,img:img})
             })
@@ -119,18 +126,7 @@ Marketplace.add({
                     .text(fx.tickFormat())
             master.render()
         }
-        var id = "visualSlideDisplay"
         Commands.add("conversationJoined",function(conversation){
-            $("#"+id).remove()
-            $('body').append($("<div id='"+id+"' title='Slide visuals'></div>"))
-            $("#"+id).dialog({
-                resize:function(event,ui){
-                    $("#"+id).find(".imgContainer").width(ui.size.width)
-                    if('undefined' != typeof slideDisplayResized)
-                        slideDisplayResized(ui)
-                },
-                position:'left'
-            }).droppable({accept:'.canDropOnSlides'})
             slides(conversation)
         })
     }
