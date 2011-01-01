@@ -60,72 +60,79 @@ Marketplace.add({
             root.render()
         }
         function contentBySlideOverTime(hostname){
-            var times = _.map(_.pluck(data, "timestamp"),function(s){return parseInt(s)})
-            var slides = _.uniq(_.map(_.pluck(data, "slide"),function(s){return parseInt(s)}))
-            var xAxis = pv.Scale.linear(_.min(times),_.max(times)).range(50,width - 50)
-            var yAxis = pv.Scale.linear(0,_.max(slides)).range(50,height - 50)
-            var slideHeight = Math.round((height - 100) / slides.length)
-            var lineTicks = slides.length -1
-            var lineHeight = Math.round((height - 100) / lineTicks)
-            var subYAxis = pv.Scale.linear(0,5).range(5,lineHeight - 5)
-            var lightLines = pv.Scale.linear(0,lineTicks).range(0,lineTicks)
-            var root = new pv.Panel()
-               .canvas(hostname)
-               .width(width)
-               .height(height)
-               .data(data)
-            root.add(pv.Rule)
-                .data(xAxis.ticks())
-                .bottom(0) 
-                .left(xAxis)
-                .height(20)
-                .strokeStyle("black")
-                .anchor("top")
-                .add(pv.Label)
-                    .text(function(d){
-                        return pv.Format.date("%r")(new Date(d))})
-            root.add(pv.Rule)
-                .data(lightLines.ticks(lineTicks))
-                .width(width)
-                .left(0)
-                .strokeStyle("lightgray")
-                .top(function(){
-                    return 50 + (this.index * lineHeight) - lineHeight / 2
-                })
-            root.add(pv.Rule)
-                .data(yAxis.ticks(_.max(slides)))
-                .bottom(yAxis)
-                .width(20)
-                .strokeStyle("black")
-                .anchor("right")
-                .add(pv.Label)
-                    .text(yAxis.tickFormat)
-            root.add(pv.Dot)
-                .size(50)
-                .shape(function(d){
-                    switch(d.contentType){
-                        case "ink":return "cross"
-                        case "image":return "circle"
-                        case "text":return "diamond"
-                    }
-                })
-                .top(function(d){
-                    return height - (yAxis(parseInt(d.slide)) + subYAxis(d.standing))
-                })
-                .left(function(d){
-                    return xAxis(parseInt(d.timestamp))
-                })
-                .fillStyle(colorByStudent)
-                .strokeStyle(colorByStudent)
-                .event("click",function(d){
-                    alert( 
-                        new Date(parseInt(d.timestamp)).toString() + 
-                        " @ " +
-                        d.slide +
-                        " by "+
-                        d.author)
-                })
-            root.render()
+            var _data = []
+            var display = function(){
+                var times = _.map(_.pluck(_data, "timestamp"),function(s){return parseInt(s)})
+                var xAxis = pv.Scale.linear(_.min(times),_.max(times)).range(50,width - 50)
+                var slides = _.uniq(_.map(_.pluck(_data, "slide"),function(s){return parseInt(s)}))
+                var yAxis = pv.Scale.linear(0,_.max(slides)).range(50,height - 50)
+                var slideHeight = Math.round((height - 100) / slides.length)
+                var lineTicks = slides.length -1
+                var lineHeight = Math.round((height - 100) / lineTicks)
+                var subYAxis = pv.Scale.linear(0,5).range(5,lineHeight - 5)
+                var lightLines = pv.Scale.linear(0,lineTicks).range(0,lineTicks)
+                var root = new pv.Panel()
+                   .canvas(hostname)
+                   .width(width)
+                   .height(height)
+                   .data(function(){return _data})
+                root.add(pv.Rule)
+                    .data(xAxis.ticks())
+                    .bottom(0) 
+                    .left(xAxis)
+                    .height(20)
+                    .strokeStyle("black")
+                    .anchor("top")
+                    .add(pv.Label)
+                        .text(function(d){
+                            return pv.Format.date("%r")(new Date(d))})
+                root.add(pv.Rule)
+                    .data(lightLines.ticks(lineTicks))
+                    .width(width)
+                    .left(0)
+                    .strokeStyle("lightgray")
+                    .top(function(){
+                        return 50 + (this.index * lineHeight) - lineHeight / 2
+                    })
+                root.add(pv.Rule)
+                    .data(yAxis.ticks(_.max(slides)))
+                    .bottom(yAxis)
+                    .width(20)
+                    .strokeStyle("black")
+                    .anchor("right")
+                    .add(pv.Label)
+                        .text(yAxis.tickFormat)
+                root.add(pv.Dot)
+                    .size(50)
+                    .shape(function(d){
+                        switch(d.contentType){
+                            case "ink":return "cross"
+                            case "image":return "circle"
+                            case "text":return "diamond"
+                        }
+                    })
+                    .top(function(d){
+                        return height - (yAxis(parseInt(d.slide)) + subYAxis(d.standing))
+                    })
+                    .left(function(d){
+                        return xAxis(parseInt(d.timestamp))
+                    })
+                    .fillStyle(colorByStudent)
+                    .strokeStyle(colorByStudent)
+                    .event("click",function(d){
+                        alert( 
+                            new Date(parseInt(d.timestamp)).toString() + 
+                            " @ " +
+                            d.slide +
+                            " by "+
+                            d.author)
+                    })
+                root.render()
+            }
+            Commands.add("messageReceived",function(message){
+                _data.push(message)
+                display()
+            })
        }
        Commands.add("conversationJoined",function(conversation){
            $("#standingsOverTime").remove()

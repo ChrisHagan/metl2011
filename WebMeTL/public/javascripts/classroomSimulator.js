@@ -130,7 +130,7 @@ Marketplace.add({
                                 }
                             }))
                         })
-                    messageReceived(_.extend(message,{
+                    Commands.fire('messageReceived',_.extend(message,{
                         color:colorsByMember[message.author].color,
                         strokes:strokes
                     }))
@@ -142,7 +142,7 @@ Marketplace.add({
                 if(classIsInSession){
                     _.each(groups,function(group){
                         var conchHolder = group.members[Math.floor(Math.random() * (group.members.length -1))]
-                        var time = 100000
+                        var time = new Date().getTime()
                         if(Math.random() < group.parameters.likelihoodOfWriting){
                             var  slide = groups.indexOf(group)
                             var action = {
@@ -158,7 +158,7 @@ Marketplace.add({
                             conchHolder = group.members[Math.floor(Math.random() * (group.members.length -1))]
                     })
                 }
-            },1000)
+            },10000)
             $('body').append(classToggle)
             classToggle.dialog({position:'top'})
         })

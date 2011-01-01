@@ -64,8 +64,6 @@ object Application extends Controller {
         val slideOrders = Map(slides.map(node=>((node \\ "id").text.toInt -> (node \\ "index").text.toInt)).toList:_*)
         val authors = Map(messages.map(m=>m.author).distinct.map(a=>(a->(Math.random*5).toInt)):_*)
         val relativizedMessages = messages.map(m=>Message(m.name,m.timestamp,slideOrders(m.slide), m.author, authors(m.author)))
-        //val clump = SimpleClump(messages)
-        //val clump = MessageReductor.clumpSlides(messages)
         val clump = MessageReductor.clump(relativizedMessages, true)
         pretty(render(clump.toJsonFull))
     }

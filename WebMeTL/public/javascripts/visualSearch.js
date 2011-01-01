@@ -85,8 +85,6 @@ Marketplace.add({
                     var newChild = graphRoot.add(pv.Layout.Tree)
                         .nodes(nodes)
                         .orient("radial")
-                        .depth(300)
-                        .breadth(50)
                     newChild.link.add(pv.Line)
                     newChild.node.add(pv.Dot)
                         .fillStyle(function(d){
