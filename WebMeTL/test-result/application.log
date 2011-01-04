@@ -1,37 +1,14 @@
-31 Dec 2010 14:03:29,156 INFO  ~ Starting C:\specialMeTL\WebMeTL
-31 Dec 2010 14:03:29,160 INFO  ~ Module scala is available (C:\lib\play-1.1\modules\scala-0.8)
-31 Dec 2010 14:03:29,660 WARN  ~ You're running Play! in DEV mode
-31 Dec 2010 14:03:29,750 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
-31 Dec 2010 14:03:37,472 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
-31 Dec 2010 14:03:43,346 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 41 of /app/controllers.scala
-31 Dec 2010 14:03:43,351 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 65 of /app/controllers.scala
-31 Dec 2010 14:03:43,380 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 20 of /app/models/MeTL.scala
-31 Dec 2010 14:03:43,381 WARN  ~ method first in trait IterableLike is deprecated: use `head' instead, at line 24 of /app/models/MeTL.scala
-31 Dec 2010 14:03:43,397 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 74 of /app/models/MeTL.scala
-31 Dec 2010 14:03:43,400 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 92 of /app/models/MeTL.scala
-31 Dec 2010 14:03:43,401 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 106 of /app/models/MeTL.scala
-31 Dec 2010 14:03:48,729 INFO  ~ Connected to jdbc:hsqldb:mem:playembed
-31 Dec 2010 14:03:48,751 INFO  ~ Application 'WebMeTL' is now started !
-31 Dec 2010 14:40:54,297 ERROR ~ 
-
-@652289b24
-Internal Server Error (500) for request GET /application/laptop?server=deified
-
-Execution exception (In /app/controllers.scala around line 33)
-IOException occured : central directory is empty, can't expand corrupt archive.
-
-play.exceptions.JavaExecutionException: central directory is empty, can't expand corrupt archive.
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:285)
-	at Invocation.HTTP Request(Play!)
-Caused by: java.io.IOException: central directory is empty, can't expand corrupt archive.
-	at org.apache.commons.compress.archivers.zip.ZipFile.populateFromCentralDirectory(ZipFile.java:353)
-	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:184)
-	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:161)
-	at org.apache.commons.compress.archivers.zip.ZipFile.<init>(ZipFile.java:122)
-	at controllers.Application$.loadConversations(/app/controllers.scala:33)
-	at controllers.Application$.authorSummaries(/app/controllers.scala:153)
-	at controllers.Application$.laptop(/app/controllers.scala:55)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:420)
-	at play.mvc.ActionInvoker.invokeControllerMethod(ActionInvoker.java:403)
-	at play.mvc.ActionInvoker.invoke(ActionInvoker.java:176)
-	... 1 more
+02 Jan 2011 22:41:04,571 INFO  ~ Starting C:\specialMeTL\WebMeTL
+02 Jan 2011 22:41:04,575 INFO  ~ Module scala is available (C:\lib\play-1.1\modules\scala-0.8)
+02 Jan 2011 22:41:05,060 WARN  ~ You're running Play! in DEV mode
+02 Jan 2011 22:41:05,142 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
+02 Jan 2011 23:01:23,683 WARN  ~ Automatic action redirect is deprecated for scala controllers. Add 'scala.enableAutoRedirect=false' to your application.conf file to disable it. Note that it will be the default in the final release.
+02 Jan 2011 23:01:29,886 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 41 of /app/controllers.scala
+02 Jan 2011 23:01:29,891 WARN  ~ object Math in package scala is deprecated: use scala.math package instead, at line 65 of /app/controllers.scala
+02 Jan 2011 23:01:29,919 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 20 of /app/models/MeTL.scala
+02 Jan 2011 23:01:29,920 WARN  ~ method first in trait IterableLike is deprecated: use `head' instead, at line 24 of /app/models/MeTL.scala
+02 Jan 2011 23:01:29,934 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 74 of /app/models/MeTL.scala
+02 Jan 2011 23:01:29,936 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 92 of /app/models/MeTL.scala
+02 Jan 2011 23:01:29,937 WARN  ~ method sort in class List is deprecated: use `sortWith' instead, at line 106 of /app/models/MeTL.scala
+02 Jan 2011 23:01:35,531 INFO  ~ Connected to jdbc:hsqldb:mem:playembed
+02 Jan 2011 23:01:35,555 INFO  ~ Application 'WebMeTL' is now started !
