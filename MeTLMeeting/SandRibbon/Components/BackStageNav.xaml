@@ -26,6 +26,7 @@
             <dict:Button Command="Help" Text="Help" Icon="\Resources\Help.png" ToolTip="{StaticResource HelpToolTip}" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" x:Name="help" />
             <dict:Button Text="Exit" Icon="\Resources\Delete.png" ToolTip="{StaticResource ExitMeTLToolTip}" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.CloseApplication}"/>
             <dict:Button Text="Logout and exit"  Icon="\Resources\logoutAndExit.png" ToolTip="{StaticResource LogoutMeTLToolTip}" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.LogOut}"/>
+            <dict:Button Text="Delete all my conversations" Click="deleteConversations"/>
         </StackPanel>
     </Grid>
 </UserControl>

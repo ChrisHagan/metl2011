@@ -1453,6 +1453,7 @@ namespace MeTLLib.DataTypes
                     try
                     {
                         image.BeginInit();
+                        image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
                         image.StreamSource = stream;
                         image.EndInit();
                     }
