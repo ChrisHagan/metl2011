@@ -27,7 +27,6 @@ namespace SandRibbon.Components
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(updateDetails));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(updateDetails));
-            //setMyConversationVisibility();
         }
         private void setMyConversationVisibility()
         {
@@ -43,7 +42,7 @@ namespace SandRibbon.Components
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
             }
-            //setMyConversationVisibility();
+            setMyConversationVisibility();
         }
         private void ShowConversationSearchBox(object mode)
         {
@@ -59,6 +58,7 @@ namespace SandRibbon.Components
                 separator2.Visibility = Visibility.Visible;
             }
             openCorrectTab((string)mode);
+            setMyConversationVisibility();
         }
         private void openMyConversations()
         {
