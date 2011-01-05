@@ -100,6 +100,17 @@ namespace SandRibbon.Components
             });
         }
 
+        private void setMyConversationVisibility()
+        {
+            Dispatcher.adoptAsync(()=>
+                                      {
+
+                                          mine.Visibility =
+                                              searchResults.ToList().Where(c => c.Author == Globals.me && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
+                                          if (mine.Visibility == Visibility.Collapsed)
+                                              find.IsChecked = true;
+                                      });
+        }
         private bool canSetPermissions(object arg)
         {
             return this.Visibility == Visibility.Collapsed;
@@ -139,6 +150,7 @@ namespace SandRibbon.Components
                     if(conversation.Subject.ToLower() != "deleted")
                         searchResults.Add(conversation);
             });
+            //setMyConversationVisibility();
         }
         private void clearState(){
             SearchInput.Text = "";
@@ -154,6 +166,7 @@ namespace SandRibbon.Components
             else {
                 currentConversation.Visibility = Visibility.Visible;
             }
+            //setMyConversationVisibility();
             Commands.RequerySuggested();
             this.Visibility = Visibility.Visible;
             clearState();
@@ -200,6 +213,7 @@ namespace SandRibbon.Components
                 this.Visibility = Visibility.Visible;
             }
             GetListCollectionView().Refresh();
+            setMyConversationVisibility();
         }
         private bool shouldShowConversation(ConversationDetails conversation)
         {

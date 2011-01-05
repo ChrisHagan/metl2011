@@ -344,6 +344,7 @@ namespace SandRibbon.Components.Canvas
         {
             var startingText = boxesAtTheStart.Select(Clone).ToList();
             var selectedElements =GetSelectedElements().Select(tb => Clone((MeTLTextBox)tb)).ToList();
+            abosoluteizeTextboxes(selectedElements);
             Action undo = () =>
               {
                   ClearAdorners();
@@ -378,6 +379,17 @@ namespace SandRibbon.Components.Canvas
               };
             redo();
             UndoHistory.Queue(undo, redo);
+        }
+
+        private static void abosoluteizeTextboxes(List<MeTLTextBox> selectedElements)
+        {
+            foreach (var box in selectedElements)
+            {
+                if(GetLeft(box) < 0)
+                    SetLeft(box, 0);
+                if(GetTop(box) < 0)
+                    SetTop(box, 0);
+            }
         }
 
         private void removeBox(MeTLTextBox box)
