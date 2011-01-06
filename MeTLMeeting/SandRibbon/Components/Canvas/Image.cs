@@ -831,17 +831,17 @@ namespace SandRibbon.Components.Canvas
                     MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, target, privacy, image, fileName, false));
                 else
                     MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, target, privacy, image));
+                var myImage = image.clone();
                 Action undo = () =>
                                   {
                                       ClearAdorners();
-                                      if(Children.Contains(image))
-                                          Children.Remove(image);
-                                      dirtyThisElement(image);
+                                      if(Children.Contains(myImage))
+                                          Children.Remove(myImage);
+                                      dirtyThisElement(myImage);
                                   };
                 Action redo = () =>
                 {
                     ClearAdorners();
-                    var myImage = image.clone();
                     SetLeft(myImage, pos.X);
                     SetTop(myImage, pos.Y);
                     if (!Children.Contains(myImage))

@@ -109,8 +109,11 @@ namespace SandRibbon.Components.Canvas
                                       ClearAdorners();
                                       var ids = originalElements.Select(b => b.tag().id);
                                       var selection = Children.ToList().Where(b => ids.Contains(((MeTLTextBox)b).tag().id));
-                                      foreach(MeTLTextBox currentTextBox in selection)
+                                      foreach (MeTLTextBox currentTextBox in selection)
+                                      {
                                           applyStylingTo(currentTextBox, info);
+                                          sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
+                                      }
                                       addAdorners();
                                   };
                 UndoHistory.Queue(undo, redo);
@@ -278,11 +281,13 @@ namespace SandRibbon.Components.Canvas
                 ClearAdorners();
             else
                 addAdorners();
+            myTextBox = null;
+            /*
             if (GetSelectedElements().Count == 1)
             {
                 myTextBox = (MeTLTextBox)GetSelectedElements().First();
                 updateTools();
-            }
+            }*/
         }
         private void updateSelectionAdorners()
         {
@@ -784,6 +789,7 @@ namespace SandRibbon.Components.Canvas
             {
                 var text = Clipboard.GetText();
                 var undoText = myTextBox.Text;
+                var caret = myTextBox.CaretIndex;
                 var redoText = myTextBox.Text.Insert(myTextBox.CaretIndex, text);
                 var currentTextBox = myTextBox.clone();
                 Action undo = () =>
@@ -791,6 +797,7 @@ namespace SandRibbon.Components.Canvas
                     var box = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
                     box.TextChanged -= SendNewText;
                     box.Text = undoText;
+                    box.CaretIndex = caret;
                     sendTextWithoutHistory(box, box.tag().privacy);
                     box.TextChanged += SendNewText;
                 };
@@ -799,6 +806,7 @@ namespace SandRibbon.Components.Canvas
                     var box = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
                     box.TextChanged -= SendNewText;
                     box.Text = redoText;
+                    box.CaretIndex = caret + text.Length;
                     sendTextWithoutHistory(box, box.tag().privacy);
                     box.TextChanged += SendNewText;
                 };
@@ -819,12 +827,8 @@ namespace SandRibbon.Components.Canvas
                      
                 Action redo = () =>
                                {
-
                                    
-                                   Select(new[] {box});
-                                   addAdorners();
-                                   myTextBox = box;
-                                   sendTextWithoutHistory(myTextBox, myTextBox.tag().privacy);
+                                   sendTextWithoutHistory(box, box.tag().privacy);
                                };
                 UndoHistory.Queue(undo, redo);
                 redo();
@@ -869,23 +873,30 @@ namespace SandRibbon.Components.Canvas
                 var currentTextBox = myTextBox.clone();
                 Action undo = () =>
                                   {
+                                      ClearAdorners();
                                       var activeTextbox = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
                                       activeTextbox.Text = text;
+                                      activeTextbox.CaretIndex = start + length;
                                       if (!alreadyHaveThisTextBox(activeTextbox))
                                           sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
                                       Clipboard.GetText();
+                                      addAdorners();
                                   };
                 Action redo = () =>
                                   {
+                                      ClearAdorners();
                                       Clipboard.SetText(selection);
                                       var activeTextbox = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
                                       if (activeTextbox == null) return;
                                       activeTextbox.Text = text.Remove(start, length);
-                                      if (currentTextBox.Text.Length == 0)
+                                      activeTextbox.CaretIndex = start;
+                                      if (activeTextbox.Text.Length == 0)
                                       {
+                                          ClearAdorners();
                                           myTextBox = null;
                                           dirtyTextBoxWithoutHistory(currentTextBox);
                                       }
+                                      addAdorners();
                                   };
                 redo();
                 UndoHistory.Queue(undo, redo);
@@ -903,13 +914,16 @@ namespace SandRibbon.Components.Canvas
                 ClearAdorners();
                 Action redo = () =>
                                   {
+                                      ClearAdorners();
                                       myTextBox = null;
                                       foreach (var element in listToCut)
                                           dirtyTextBoxWithoutHistory(element);
+                                      addAdorners();
                                   };
                 Action undo = () =>
                                   {
 
+                                      ClearAdorners();
                                       var mySelectedElements = selectedElements.Select(t => t.clone());
                                       List<UIElement> selection = new List<UIElement>();
                                       foreach (var box in mySelectedElements)
