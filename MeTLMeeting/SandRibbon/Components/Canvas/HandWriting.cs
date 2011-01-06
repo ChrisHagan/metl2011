@@ -233,7 +233,8 @@ namespace SandRibbon.Components.Canvas
                         Strokes.Add(thisStroke);
                         doMyStrokeAddedExceptHistory(thisStroke, thisStroke.tag().privacy);
                     }
-                    Select(new StrokeCollection(new [] {thisStroke}));
+                    if(EditingMode == InkCanvasEditingMode.Select)
+                        Select(new StrokeCollection(new [] {thisStroke}));
                     addAdorners();
                 });
         }
@@ -295,14 +296,18 @@ namespace SandRibbon.Components.Canvas
                 {
                     removeStrokes(undoStrokes); 
                     addStrokes(selectedStrokes); 
-                    Select(new StrokeCollection(selectedStrokes));
+                    if(EditingMode == InkCanvasEditingMode.Select)
+                        Select(new StrokeCollection(selectedStrokes));
                 };
             Action undo = () =>
                 {
                    
                     removeStrokes(selectedStrokes);
                     addStrokes(undoStrokes); 
-                    Select(new StrokeCollection(undoStrokes));
+                    
+                    if(EditingMode == InkCanvasEditingMode.Select)
+                        Select(new StrokeCollection(undoStrokes));
+
                 };
             ClearAdorners();
             removeStrokes(undoStrokes);
@@ -349,7 +354,10 @@ namespace SandRibbon.Components.Canvas
                 {
                     ClearAdorners();
                     addStrokes(selectedStrokes.ToList());
-                    Select(selectedStrokes);
+                    
+                    if(EditingMode == InkCanvasEditingMode.Select)
+                        Select(selectedStrokes);
+
                     addAdorners();
                 };
             redo();
@@ -384,7 +392,9 @@ namespace SandRibbon.Components.Canvas
                     }
                    
                 }
-                Select(newStrokes);
+                
+                if(EditingMode == InkCanvasEditingMode.Select)
+                    Select(newStrokes);
                 Dispatcher.adopt(() => Select(new StrokeCollection()));
             };
             Action undo = () =>
@@ -453,10 +463,6 @@ namespace SandRibbon.Components.Canvas
         {
             DefaultDrawingAttributes.Color = color;
         }
-        public void SetEditingMode(InkCanvasEditingMode mode)
-        {
-            EditingMode = mode;
-        }
         #endregion
 
         public override void showPrivateContent()
@@ -479,7 +485,9 @@ namespace SandRibbon.Components.Canvas
                 selection.Add(stroke);
                 doMyStrokeAdded(stroke, stroke.tag().privacy);
             }
-            Select(selection);
+            
+            if(EditingMode == InkCanvasEditingMode.Select)
+                Select(selection);
             addAdorners();
         }
         protected override void HandleCopy()
