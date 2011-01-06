@@ -22,7 +22,7 @@ Marketplace.add({
             id:'laptop',
             label:'Laptop',
             icon:'laptop.jpg',
-            plugins:["Easy Tiling","Visual navigation","Search","Quizzing","Visual slide display","Author search","Skynet","Analysis"]
+            plugins:["Easy Tiling","Visual navigation","Search","Quizzing","Visual slide display","Author search","Skynet","Analysis","Threaded discussion"]
         }]
         host.dialog({width:500,height:220})
         _.each(profiles,function(deviceProfile){
