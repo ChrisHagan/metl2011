@@ -9,6 +9,8 @@ Marketplace.add({
                 slideDisplayResized(ui)
         })
         function slides(conversation){
+            var width = host.width()
+            var height = host.height()
             var jid = parseInt(conversation.jid)
             var slideCount = parseInt(conversation.slideCount)
             var nodes = pv.range(jid+1, jid+slideCount)
