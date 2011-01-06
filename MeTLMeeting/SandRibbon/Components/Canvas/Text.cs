@@ -109,8 +109,11 @@ namespace SandRibbon.Components.Canvas
                                       ClearAdorners();
                                       var ids = originalElements.Select(b => b.tag().id);
                                       var selection = Children.ToList().Where(b => ids.Contains(((MeTLTextBox)b).tag().id));
-                                      foreach(MeTLTextBox currentTextBox in selection)
+                                      foreach (MeTLTextBox currentTextBox in selection)
+                                      {
                                           applyStylingTo(currentTextBox, info);
+                                          sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
+                                      }
                                       addAdorners();
                                   };
                 UndoHistory.Queue(undo, redo);
@@ -786,6 +789,7 @@ namespace SandRibbon.Components.Canvas
             {
                 var text = Clipboard.GetText();
                 var undoText = myTextBox.Text;
+                var caret = myTextBox.CaretIndex;
                 var redoText = myTextBox.Text.Insert(myTextBox.CaretIndex, text);
                 var currentTextBox = myTextBox.clone();
                 Action undo = () =>
@@ -793,6 +797,7 @@ namespace SandRibbon.Components.Canvas
                     var box = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
                     box.TextChanged -= SendNewText;
                     box.Text = undoText;
+                    box.CaretIndex = caret;
                     sendTextWithoutHistory(box, box.tag().privacy);
                     box.TextChanged += SendNewText;
                 };
@@ -801,6 +806,7 @@ namespace SandRibbon.Components.Canvas
                     var box = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
                     box.TextChanged -= SendNewText;
                     box.Text = redoText;
+                    box.CaretIndex = caret + text.Length;
                     sendTextWithoutHistory(box, box.tag().privacy);
                     box.TextChanged += SendNewText;
                 };
@@ -870,6 +876,7 @@ namespace SandRibbon.Components.Canvas
                                       ClearAdorners();
                                       var activeTextbox = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
                                       activeTextbox.Text = text;
+                                      activeTextbox.CaretIndex = start + length;
                                       if (!alreadyHaveThisTextBox(activeTextbox))
                                           sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
                                       Clipboard.GetText();
@@ -882,6 +889,7 @@ namespace SandRibbon.Components.Canvas
                                       var activeTextbox = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
                                       if (activeTextbox == null) return;
                                       activeTextbox.Text = text.Remove(start, length);
+                                      activeTextbox.CaretIndex = start;
                                       if (activeTextbox.Text.Length == 0)
                                       {
                                           ClearAdorners();
