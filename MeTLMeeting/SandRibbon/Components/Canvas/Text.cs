@@ -62,7 +62,6 @@ namespace SandRibbon.Components.Canvas
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
         }
-
         private void updateStyling(TextInformation info)
         {
             currentColor = info.color;
@@ -79,6 +78,7 @@ namespace SandRibbon.Components.Canvas
                                       applyStylingTo(currentTextBox, oldInfo);
                                       updateTools();
                                       addAdorners();
+                                      sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
                                   };
                 Action redo = () =>
                                   {
@@ -86,6 +86,7 @@ namespace SandRibbon.Components.Canvas
                                       applyStylingTo(currentTextBox, info);
                                       updateTools();
                                       addAdorners();
+                                      sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
                                   };
                 UndoHistory.Queue(undo, redo);
                 redo();
@@ -595,8 +596,12 @@ namespace SandRibbon.Components.Canvas
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
             if (originalText == null) return; 
+
+
             var box = (MeTLTextBox)sender;
+            Console.WriteLine(string.Format("Text.cs Line 592 => undo => {0} redp => {1}", originalText, box.Text ));
             var undoText = originalText.Clone().ToString();
+            var redoText = box.Text.Clone().ToString();
             ApplyPrivacyStylingToElement(box, box.tag().privacy);
             box.Height = Double.NaN;
             var mybox = Clone(box);
@@ -612,6 +617,8 @@ namespace SandRibbon.Components.Canvas
             Action redo = () =>
             {
                 ClearAdorners();
+                var myText = redoText;
+                mybox.Text = myText;
                 dirtyTextBoxWithoutHistory(mybox);
                 sendTextWithoutHistory(mybox, mybox.tag().privacy);
                 mybox.TextChanged += SendNewText;
@@ -999,11 +1006,9 @@ namespace SandRibbon.Components.Canvas
                 e.CanExecute = false;
             }
         }
-
-
         protected override void OnTextChanged(TextChangedEventArgs e)
         {
-            if (undoBinding == null)
+            if (undoBinding == null || redoBinding == null)
             {
                 undoBinding = new CommandBinding( ApplicationCommands.Undo, UndoExecuted, null);
                 redoBinding = new CommandBinding( ApplicationCommands.Redo, RedoExecuted, null);
@@ -1012,7 +1017,6 @@ namespace SandRibbon.Components.Canvas
             }
             base.OnTextChanged(e);
         }
-
         private void UndoExecuted(object sender, ExecutedRoutedEventArgs args)
         {
             ApplicationCommands.Undo.Execute(null, Application.Current.MainWindow);
