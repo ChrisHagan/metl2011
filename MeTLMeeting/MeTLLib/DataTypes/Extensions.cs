@@ -103,22 +103,7 @@ namespace MeTLLib.DataTypes
     public static class TextExtensions
     {
         //Image and TextTags are identical, reusing imagetag
-        public static TextBox clone(this TextBox box)
-        {
-            var newBox = new TextBox();
-            newBox.Text = box.Text;
-            newBox.TextAlignment = box.TextAlignment;
-            newBox.TextDecorations = box.TextDecorations;
-            newBox.FontFamily = box.FontFamily;
-            newBox.FontSize = box.FontSize;
-            newBox.Foreground = box.Foreground;
-            newBox.Background = box.Background;
-            newBox.tag(box.tag());
-            InkCanvas.SetLeft(newBox, InkCanvas.GetLeft(box));
-            InkCanvas.SetTop(newBox, InkCanvas.GetTop(box));
-
-            return newBox;
-        }
+        
 
         public static TextTag tag(this TextBox box )
         {

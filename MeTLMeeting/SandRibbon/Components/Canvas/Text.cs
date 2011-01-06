@@ -783,8 +783,27 @@ namespace SandRibbon.Components.Canvas
             if (myTextBox != null)
             {
                 var text = Clipboard.GetText();
-                myTextBox.Text = myTextBox.Text.Insert(myTextBox.CaretIndex, text);
-                sendTextWithoutHistory(myTextBox, myTextBox.tag().privacy);
+                var undoText = myTextBox.Text;
+                var redoText = myTextBox.Text.Insert(myTextBox.CaretIndex, text);
+                var currentTextBox = myTextBox.clone();
+                Action undo = () =>
+                {
+                    var box = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
+                    box.TextChanged -= SendNewText;
+                    box.Text = undoText;
+                    sendTextWithoutHistory(box, box.tag().privacy);
+                    box.TextChanged += SendNewText;
+                };
+                Action redo = () =>
+                {
+                    var box = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
+                    box.TextChanged -= SendNewText;
+                    box.Text = redoText;
+                    sendTextWithoutHistory(box, box.tag().privacy);
+                    box.TextChanged += SendNewText;
+                };
+                redo();
+                UndoHistory.Queue(undo, redo);
             }
             else
             {
@@ -847,18 +866,21 @@ namespace SandRibbon.Components.Canvas
                 var text = myTextBox.Text;
                 var start = myTextBox.SelectionStart;
                 var length = myTextBox.SelectionLength;
-                var currentTextBox = myTextBox;
+                var currentTextBox = myTextBox.clone();
                 Action undo = () =>
                                   {
-                                      currentTextBox.Text = text;
-                                      if (!alreadyHaveThisTextBox(currentTextBox))
+                                      var activeTextbox = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
+                                      activeTextbox.Text = text;
+                                      if (!alreadyHaveThisTextBox(activeTextbox))
                                           sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
                                       Clipboard.GetText();
                                   };
                 Action redo = () =>
                                   {
                                       Clipboard.SetText(selection);
-                                      currentTextBox.Text = text.Remove(start, length);
+                                      var activeTextbox = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
+                                      if (activeTextbox == null) return;
+                                      activeTextbox.Text = text.Remove(start, length);
                                       if (currentTextBox.Text.Length == 0)
                                       {
                                           myTextBox = null;
@@ -963,6 +985,22 @@ namespace SandRibbon.Components.Canvas
             var boxSize = new Size(box.ActualWidth, box.ActualHeight);
             var result = new Rect(boxOrigin, boxSize).Contains(point);
             return result;
+        }
+        public static MeTLTextBox clone(this MeTLTextBox box)
+        {
+            var newBox = new MeTLTextBox();
+            newBox.Text = box.Text;
+            newBox.TextAlignment = box.TextAlignment;
+            newBox.TextDecorations = box.TextDecorations;
+            newBox.FontFamily = box.FontFamily;
+            newBox.FontSize = box.FontSize;
+            newBox.Foreground = box.Foreground;
+            newBox.Background = box.Background;
+            newBox.tag(box.tag());
+            InkCanvas.SetLeft(newBox, InkCanvas.GetLeft(box));
+            InkCanvas.SetTop(newBox, InkCanvas.GetTop(box));
+
+            return newBox;
         }
         public static MeTLTextBox toMeTLTextBox(this TextBox OldBox)
         {
