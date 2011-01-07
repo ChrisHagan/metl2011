@@ -69,24 +69,33 @@ namespace SandRibbon.Components.Canvas
             currentSize = info.size;
             if (myTextBox != null)
             {
-                var currentTextBox = myTextBox;
+                var currentTextBox = Clone(myTextBox);
                 var oldInfo = getInfoOfBox(currentTextBox);
 
                 Action undo = () =>
                                   {
                                       ClearAdorners();
-                                      applyStylingTo(currentTextBox, oldInfo);
-                                      updateTools();
+                                      var currentInfo = oldInfo;
+                                      var activeTextbox = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
+                                      activeTextbox.TextChanged -= SendNewText;
+                                      applyStylingTo(activeTextbox, currentInfo);
+                                      Commands.TextboxFocused.ExecuteAsync(currentInfo);
                                       addAdorners();
-                                      sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
+                                      sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
+                                      activeTextbox.TextChanged += SendNewText;
                                   };
                 Action redo = () =>
                                   {
                                       ClearAdorners();
-                                      applyStylingTo(currentTextBox, info);
-                                      updateTools();
+                                      var currentInfo = info;
+                                      var activeTextbox = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
+                                      activeTextbox.TextChanged -= SendNewText;
+                                      applyStylingTo(activeTextbox, currentInfo);
+                                      Commands.TextboxFocused.ExecuteAsync(currentInfo);
                                       addAdorners();
-                                      sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
+                                      sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
+                                      activeTextbox.TextChanged += SendNewText;
+                                     
                                   };
                 UndoHistory.Queue(undo, redo);
                 redo();
@@ -447,12 +456,13 @@ namespace SandRibbon.Components.Canvas
         {
             if (myTextBox == null) return;
             var currentTextBox = myTextBox;
+            var undoInfo = getInfoOfBox(currentTextBox);
             Action undo = () =>
             {
                 ClearAdorners();
-                var undoBox = Clone(currentTextBox);
-                dirtyTextBoxWithoutHistory(currentTextBox);
-                sendTextWithoutHistory(undoBox, undoBox.tag().privacy);
+                applyStylingTo(currentTextBox, undoInfo);
+                sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
+
                 updateTools();
                 
             };
@@ -573,6 +583,7 @@ namespace SandRibbon.Components.Canvas
         {
             var strikethrough = false;
             var underline = false;
+            if(myTextBox == null) return;
             if (myTextBox.TextDecorations.Count > 0)
             {
                 strikethrough = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";

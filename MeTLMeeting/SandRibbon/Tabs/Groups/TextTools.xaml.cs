@@ -23,9 +23,10 @@ namespace SandRibbon.Tabs.Groups
             fontFamily.ItemsSource = fontList;
             fontSize.ItemsSource = fontSizes;
             fontSize.SelectedIndex = 0;
+            fontSize.SelectionChanged += fontSizeSelected;
+            fontFamily.SelectionChanged += fontFamilySelected;
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
-            Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(restoreTextDefaults));
             Commands.MoveTo.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(MoveTo));
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold ));
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
@@ -61,13 +62,17 @@ namespace SandRibbon.Tabs.Groups
 
         private void update(TextInformation info)
         {
-            fontSize.SelectedItem = info.size;
-            fontFamily.SelectedItem = info.family.ToString();
+            fontSize.SelectionChanged -= fontSizeSelected;
+            fontFamily.SelectionChanged -= fontFamilySelected;
             TextBoldButton.IsChecked = info.bold;
             TextItalicButton.IsChecked = info.italics;
             TextUnderlineButton.IsChecked = info.underline;
             TextStrikethroughButton.IsChecked = info.strikethrough;
             ColourPickerBorder.BorderBrush = new SolidColorBrush(info.color);
+            fontSize.SelectedItem = info.size;
+            fontFamily.SelectedItem = info.family.ToString();
+            fontSize.SelectionChanged += fontSizeSelected;
+            fontFamily.SelectionChanged += fontFamilySelected;
         }
         private void sendValues()
         {
@@ -170,14 +175,7 @@ namespace SandRibbon.Tabs.Groups
 
         private void restoreDefaults(object sender, RoutedEventArgs e)
         {
-            fontSize.SelectedIndex = 0;
-            fontFamily.SelectedIndex = 0;    
-            TextBoldButton.IsChecked = false;
-            TextItalicButton.IsChecked = false;
-            TextUnderlineButton.IsChecked = false;
-            TextStrikethroughButton.IsChecked = false;
-            ColourPickerBorder.BorderBrush = new SolidColorBrush(Colors.Black);
-            sendValues();
+            Commands.RestoreTextDefaults.Execute(null); 
         }
     }
 }

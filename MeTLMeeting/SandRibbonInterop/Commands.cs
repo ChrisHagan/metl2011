@@ -172,6 +172,7 @@ namespace SandRibbon
         public static CompositeCommand FitToView = new CompositeCommand();
         public static CompositeCommand FitToPageWidth= new CompositeCommand();
         public static CompositeCommand UpdateTextStyling = new CompositeCommand();
+
         public static CompositeCommand ToggleBold = new CompositeCommand();
         public static CompositeCommand ToggleItalic = new CompositeCommand();
         public static CompositeCommand ToggleUnderline = new CompositeCommand();

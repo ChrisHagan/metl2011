@@ -18,8 +18,8 @@ xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInte
         <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
         <StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">
-                <ComboBox ToolTip="{StaticResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily"  SelectionChanged="fontFamilySelected" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-                <ComboBox ToolTip="{StaticResource FontSizeToolTip}" Text="Font size" Width="40" x:Name="fontSize"  SelectionChanged="fontSizeSelected" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                <ComboBox ToolTip="{StaticResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily"   IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                <ComboBox ToolTip="{StaticResource FontSizeToolTip}" Text="Font size" Width="40" x:Name="fontSize"  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
             </StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">
                 <dict:CheckBox x:Name="TextBoldButton" Icon="..\..\Resources\bold.png" Text="B" ToolTip="{StaticResource BoldToolTip}" Click="valuesUpdated" InternalButtonSize="Small"/>
