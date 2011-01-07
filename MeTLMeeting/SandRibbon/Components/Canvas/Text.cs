@@ -69,6 +69,7 @@ namespace SandRibbon.Components.Canvas
             currentSize = info.size;
             if (myTextBox != null)
             {
+                var caret = myTextBox.CaretIndex;
                 var currentTextBox = Clone(myTextBox);
                 var oldInfo = getInfoOfBox(currentTextBox);
 
@@ -99,6 +100,10 @@ namespace SandRibbon.Components.Canvas
                                   };
                 UndoHistory.Queue(undo, redo);
                 redo();
+                myTextBox.GotFocus -= textboxGotFocus;
+                myTextBox.CaretIndex = caret;
+                myTextBox.Focus();
+                myTextBox.GotFocus += textboxGotFocus;
             }
             else if(GetSelectedElements().Count > 0)
             {
@@ -290,13 +295,8 @@ namespace SandRibbon.Components.Canvas
                 ClearAdorners();
             else
                 addAdorners();
+            if (GetSelectedElements().Count == 0 && myTextBox != null) return;
             myTextBox = null;
-            /*
-            if (GetSelectedElements().Count == 1)
-            {
-                myTextBox = (MeTLTextBox)GetSelectedElements().First();
-                updateTools();
-            }*/
         }
         private void updateSelectionAdorners()
         {
@@ -436,11 +436,6 @@ namespace SandRibbon.Components.Canvas
         private bool canFocus = true;
         private void setInkCanvasMode(string modeString)
         {
-            /*
-            canFocus = modeString.ToLower() == "none";
-            foreach (var box in Children.ToList().Where(b => b is MeTLTextBox))
-                    box.Focusable = canFocus;
-             */
             if (!canEdit)
             {
                 EditingMode = InkCanvasEditingMode.None;
@@ -574,6 +569,7 @@ namespace SandRibbon.Components.Canvas
         private void textboxGotFocus(object sender, RoutedEventArgs e)
         {
             myTextBox = (MeTLTextBox)sender;
+            Console.WriteLine(string.Format("my textbox => {0}", myTextBox.Text));
             updateTools();
             requeryTextCommands();
             Select(new List<UIElement>());
