@@ -145,9 +145,9 @@
         <Border DockPanel.Dock="Top" HorizontalAlignment="Stretch" Background="{DynamicResource reversedBackgroundColor}" Margin="-5 0 0 0">
             <Grid>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <dict:RadioButton Width="150" Text="Search" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True" Foreground="White" />
-                    <dict:RadioButton Width="150" Text="My conversations" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked" Foreground="White" />
-                    <dict:RadioButton Width="150" Text="Current conversation" GroupName="SearchOptions" x:Name="currentConversation"  Checked="mode_Checked" Foreground="White" />
+                    <dict:RadioButton Width="150" Text="Search" ToolTip="{StaticResource SearchConversationsToolTip}" GroupName="SearchOptions" x:Name="find" Checked="mode_Checked" IsChecked="True" Foreground="White" />
+                    <dict:RadioButton Width="150" Text="My conversations" ToolTip="{StaticResource SearchMyConversationsToolTip}" GroupName="SearchOptions" x:Name="mine" Checked="mode_Checked" Foreground="White" />
+                    <dict:RadioButton Width="150" Text="Current conversation" ToolTip="{StaticResource SearchCurrentConversationsToolTip}" GroupName="SearchOptions" x:Name="currentConversation"  Checked="mode_Checked" Foreground="White" />
                 </StackPanel>
             </Grid>
         </Border>

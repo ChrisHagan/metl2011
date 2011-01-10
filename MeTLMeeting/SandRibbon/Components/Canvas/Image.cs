@@ -185,8 +185,12 @@ namespace SandRibbon.Components.Canvas
             canEdit = base.canEdit;
             if (privacy == "private") canEdit = true;
         }
+        private int count = 0;
         public void ReceiveImages(IEnumerable<TargettedImage> images)
         {
+            if(images.Count() > 0 && images.First().author == me)
+                Console.WriteLine(string.Format("image received: {0}", count++));
+            count++;
             var safeImages = images.Where(shouldDisplay).ToList();
             foreach (var image in safeImages)
                 ReceiveImage(image);
@@ -552,6 +556,7 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             var selectedElements = GetSelectedClonedElements();
             var startingElements = elementsAtStartOfTheMove.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
+            abosoluteizeElements(selectedElements);
             Action undo = () =>
               {
                   ClearAdorners();
@@ -797,12 +802,20 @@ namespace SandRibbon.Components.Canvas
                     break;
             }
         }
+        private const int KILOBYTE = 1024;
+        private const int MEGABYTE = 1024 * KILOBYTE;
         private void uploadFileForUse(string unMangledFilename)
         {
             string filename = unMangledFilename + ".MeTLFileUpload";
             if (filename.Length > 260)
             {
                 MessageBox.Show("Sorry, your filename is too long, must be less than 260 characters");
+                return;
+            }
+            var info = new FileInfo(filename);
+            if (info.Length > 25 * MEGABYTE)
+            {
+                MessageBox.Show("Sorry, your file is too large, must be less than 25mb");
                 return;
             }
             File.Copy(unMangledFilename, filename);
@@ -826,7 +839,8 @@ namespace SandRibbon.Components.Canvas
                 if (image == null) return;
                 SetLeft(image, pos.X);
                 SetTop(image, pos.Y);
-                 image.tag(new ImageTag(Globals.me, privacy,generateId() , false, 0));
+                image.tag(new ImageTag(Globals.me, privacy,generateId() , false, 0));
+                Console.WriteLine(string.Format("The image id is : {0}", image.tag().id));
                 if (!fileName.StartsWith("http"))
                     MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, target, privacy, image, fileName, false));
                 else

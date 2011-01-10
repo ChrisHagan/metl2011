@@ -121,7 +121,9 @@ namespace SandRibbon.Utils
         }
         public void ImportPowerpoint()
         {
-            UploadPowerpoint( new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).Import());
+            var spec = new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).Import();
+            if (spec == null) return;
+            UploadPowerpoint(spec);
         }
         public void LoadPowerpointAsFlatSlides(string file, ConversationDetails details, int MagnificationRating)
         {

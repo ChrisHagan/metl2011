@@ -141,6 +141,8 @@ namespace SandRibbon.Components
                     WorkspaceStateProvider.SaveCurrentSettings();
                 }
             }
+            if (fileDialogResult == System.Windows.Forms.DialogResult.Cancel)
+                importFile = null;
         }
         private static void UpdateConversationDetails(ConversationDetails details)
         {

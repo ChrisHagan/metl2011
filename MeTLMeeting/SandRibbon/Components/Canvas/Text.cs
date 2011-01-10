@@ -358,12 +358,12 @@ namespace SandRibbon.Components.Canvas
         private void textMovedorResized(object sender, EventArgs e)
         {
             var startingText = boxesAtTheStart.Select(Clone).ToList();
-            var selectedElements =GetSelectedElements().Select(tb => Clone((MeTLTextBox)tb)).ToList();
-            abosoluteizeTextboxes(selectedElements);
+            List<UIElement> selectedElements =GetSelectedElements().Select(tb => (UIElement)Clone((MeTLTextBox)tb)).ToList();
+            abosoluteizeElements(selectedElements);
             Action undo = () =>
               {
                   ClearAdorners();
-                  var mySelectedElements = selectedElements.Select(Clone);
+                  var mySelectedElements = selectedElements.Select(element => Clone((MeTLTextBox)element));
                   foreach (MeTLTextBox box in mySelectedElements)
                   {
                       removeBox(box);
@@ -380,7 +380,7 @@ namespace SandRibbon.Components.Canvas
             Action redo = () =>
               {
                   ClearAdorners();
-                  var mySelectedElements = selectedElements.Select(Clone);
+                  var mySelectedElements = selectedElements.Select(element => Clone((MeTLTextBox)element));
                   var selection = new List<UIElement>();
                   foreach (var box in startingText)
                       removeBox(box);
@@ -396,16 +396,6 @@ namespace SandRibbon.Components.Canvas
             UndoHistory.Queue(undo, redo);
         }
 
-        private static void abosoluteizeTextboxes(List<MeTLTextBox> selectedElements)
-        {
-            foreach (var box in selectedElements)
-            {
-                if(GetLeft(box) < 0)
-                    SetLeft(box, 0);
-                if(GetTop(box) < 0)
-                    SetTop(box, 0);
-            }
-        }
 
         private void removeBox(MeTLTextBox box)
         {

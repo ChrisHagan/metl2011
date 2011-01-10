@@ -129,6 +129,17 @@ namespace SandRibbon.Components.Canvas
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideAdorners));
         }
 
+
+        protected static void abosoluteizeElements(List<UIElement> selectedElements)
+        {
+            foreach (var element in selectedElements)
+            {
+                if(GetLeft(element) < 0)
+                    SetLeft(element, 0);
+                if(GetTop(element) < 0)
+                    SetTop(element, 0);
+            }
+        }
         private void hideAdorners(object obj)
         {
             ClearAdorners();
@@ -229,7 +240,7 @@ namespace SandRibbon.Components.Canvas
 
         public string generateId()
         {
-            return string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now());
+            return string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks);
         }
         void ImagesDrop(object sender, DragEventArgs e)
         {
@@ -248,7 +259,7 @@ namespace SandRibbon.Components.Canvas
             {
                 var filename = fileNames[i];
                 var image = Image.createImageFromUri(new Uri(filename, UriKind.RelativeOrAbsolute));
-                Commands.ImageDropped.ExecuteAsync(new ImageDrop { filename = filename, point = pos, target = target, position = i });
+                Commands.ImageDropped.Execute(new ImageDrop { filename = filename, point = pos, target = target, position = i });
                 pos.X += image.Width + 30;
                 if (image.Height > height) height = image.Height;
                 if ((i + 1) % 4 == 0)

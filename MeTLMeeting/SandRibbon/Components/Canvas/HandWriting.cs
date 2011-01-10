@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
@@ -288,10 +289,26 @@ namespace SandRibbon.Components.Canvas
                 strokesAtTheStart.Add(stroke.Clone());
             }
         }
+
+
+        protected static void abosoluteizeStrokes(List<Stroke> selectedElements)
+        {
+            foreach (var stroke in selectedElements)
+            {
+                if (stroke.GetBounds().Top < 0)
+                    stroke.GetBounds().Offset(0, Math.Abs(stroke.GetBounds().Top));
+                if (stroke.GetBounds().Left < 0)
+                    stroke.GetBounds().Offset(Math.Abs(stroke.GetBounds().Left), 0);
+                if (stroke.GetBounds().Left < 0 && stroke.GetBounds().Top < 0)
+                    stroke.GetBounds().Offset(Math.Abs(stroke.GetBounds().Left), Math.Abs(stroke.GetBounds().Top));
+            }
+           
+        }
         private void selectionMoved(object sender, EventArgs e)
         {
             var selectedStrokes = GetSelectedStrokes().Select(stroke => stroke.Clone()).ToList();
             var undoStrokes = strokesAtTheStart.Select(stroke => stroke.Clone()).ToList();
+            abosoluteizeStrokes(selectedStrokes);
             Action redo = () =>
                 {
                     removeStrokes(undoStrokes); 

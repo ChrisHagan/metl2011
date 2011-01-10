@@ -31,8 +31,8 @@ namespace SandRibbon.Providers
                 var allConversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
                 var sortedConversations = allConversations
                     .Where(ac => ac.Subject != "Deleted" && recentConversations.Select(c => c.Jid).Contains(ac.Jid))
-                    .OrderBy(conversation=>conversation.LastAccessed)
-                    .Reverse()
+                    .OrderBy(conversation=>conversation.Created)
+                    //.Reverse()
                     .ToList();
                 return sortedConversations;
             }

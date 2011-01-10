@@ -49,6 +49,8 @@ namespace SandRibbon.Components
             var details = (ConversationDetails)obj;
             if (details == null) 
                 return true;
+            if(details.Subject.ToLower() == "deleted")
+                return true;
             if (details.Title.Length == 0) 
                 return true;
             var currentConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;

@@ -137,7 +137,14 @@
                                         TitleText="Search for Conversations"
                                         ImageSource="\Resources\MagnifyingGlassShiny.png"
                                         ContentText="Search for a conversation"/>
-    
+    <resources:MeTLImageToolTip x:Key="ReturnCurrentConversationsToolTip" 
+                                        TitleText="Return to conversation"
+                                        ImageSource="\Resources\MagnifyingGlassShiny.png" 
+                                        ContentText="Return to the conversation I am currently in"/>
+    <resources:MeTLImageToolTip x:Key="SearchCurrentConversationsToolTip" 
+                                        TitleText="Current Conversation"
+                                        ImageSource="\Resources\MagnifyingGlassShiny.png" 
+                                        ContentText="List the conversation I am currently in"/>
     <resources:MeTLImageToolTip x:Key="SearchMyConversationsToolTip" 
                                         TitleText="Search My Conversation"
                                         ImageSource="\Resources\MagnifyingGlassShiny.png" 
@@ -151,11 +158,11 @@
                                         ImageSource="\Resources\Slide_Not_Loaded.png" 
                                         ContentText="Edit the current conversation.  You may only do this if you created the conversation."/>
     <resources:MeTLImageToolTip x:Key="CreateConversationToolTip" 
-                                        TitleText="Create Conversation"
+                                        TitleText="Create new conversation"
                                         ImageSource="\Resources\Whiteboard.png" 
                                         ContentText="Creates a blank conversation"/>
      <resources:MeTLImageToolTip x:Key="CreatePowerpointToolTip" 
-                                        TitleText="Create Conversation"
+                                        TitleText="Import PowerPoint"
                                         ImageSource="\Resources\ExactPowerpoint.png" 
                                         ContentText="Creates a conversation from a selected PowerPoint"/>
    
