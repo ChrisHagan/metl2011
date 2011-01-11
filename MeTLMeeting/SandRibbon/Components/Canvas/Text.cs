@@ -439,7 +439,9 @@ namespace SandRibbon.Components.Canvas
         }
         private void resetTextbox(object obj)
         {
-            if (myTextBox == null) return;
+            if (myTextBox == null && GetSelectedElements().Count != 1) return;
+            if(myTextBox == null)
+                myTextBox = (MeTLTextBox)GetSelectedElements().First();
             var currentTextBox = myTextBox;
             var undoInfo = getInfoOfBox(currentTextBox);
             Action undo = () =>
@@ -453,6 +455,7 @@ namespace SandRibbon.Components.Canvas
             };
             Action redo = () =>
                               {
+                                  ClearAdorners();
                                   resetText(currentTextBox);
                                   updateTools();
                               };
