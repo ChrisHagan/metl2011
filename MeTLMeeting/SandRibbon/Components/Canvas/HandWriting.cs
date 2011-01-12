@@ -167,6 +167,7 @@ namespace SandRibbon.Components.Canvas
 
         protected internal void addAdorners()
         {
+            ClearAdorners();
             var selectedStrokes = GetSelectedStrokes();
             if (selectedStrokes.Count == 0) return;
             var publicStrokes = selectedStrokes.Where(s => s.tag().privacy.ToLower() == "public").ToList();
