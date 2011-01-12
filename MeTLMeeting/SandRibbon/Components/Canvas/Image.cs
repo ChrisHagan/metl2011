@@ -199,7 +199,10 @@ namespace SandRibbon.Components.Canvas
             count++;
             var safeImages = images.Where(shouldDisplay).ToList();
             foreach (var image in safeImages)
-                ReceiveImage(image);
+            {
+                TargettedImage image1 = image;
+                Dispatcher.BeginInvoke((Action)(() => ReceiveImage(image1)));
+            }
             ensureAllImagesHaveCorrectPrivacy();
         }
         public void ReceiveVideos(IEnumerable<MeTLLib.DataTypes.TargettedVideo> videos)

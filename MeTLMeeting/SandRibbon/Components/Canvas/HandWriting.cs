@@ -524,6 +524,7 @@ namespace SandRibbon.Components.Canvas
         protected override void HandleCut()
         {
             var listToCut = GetSelectedStrokes().Select(stroke => new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, stroke.tag().privacy, stroke.sum().checksum.ToString())).ToList();
+            var strokesToCut = GetSelectedStrokes().Select(s => s.Clone());
             var topPoint = GetSelectionBounds().TopLeft;
             CutSelection();
             ClearAdorners();
@@ -534,8 +535,13 @@ namespace SandRibbon.Components.Canvas
             };
             Action undo = () =>
             {
-                Paste(topPoint); 
+                
                 ClearAdorners();
+                foreach (var s in strokesToCut)
+                {
+                    Strokes.Add(s);
+                    doMyStrokeAddedExceptHistory(s, s.tag().privacy);
+                }
                 addAdorners();
             };
             redo();

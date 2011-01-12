@@ -11,35 +11,38 @@
         <core:String x:Key="defaultPrivacy">public</core:String>
         <core:String x:Key="target">presentationSpace</core:String>
     </UserControl.Resources>
-    <Viewbox>
-        <ScrollViewer x:Name="scroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" CanContentScroll="True">
-            <ScrollViewer.Width>
-                <MultiBinding Converter="{x:Static components:Projector.WidthCorrector}">
-                    <Binding Path="ActualWidth" />    
-                    <Binding Path="ActualHeight" />    
-                    <Binding ElementName="parent"  Path="ActualWidth" />    
-                    <Binding ElementName="parent" Path="ActualHeight" />    
-                </MultiBinding> 
-            </ScrollViewer.Width>
-            <ScrollViewer.Height>
-                <MultiBinding Converter="{x:Static components:Projector.HeightCorrector}">
-                    <Binding Path="ActualWidth" />    
-                    <Binding Path="ActualHeight" />    
-                    <Binding ElementName="parent" Path="ActualWidth" />    
-                    <Binding ElementName="parent" Path="ActualHeight" />    
-                </MultiBinding> 
-            </ScrollViewer.Height>
-            <Grid>
-                <components:UserCanvasStack x:Name="stack"/>
-                <InkPresenter x:Name="liveInk" Width="{Binding ElementName=stack, Path=ActualWidth}"
-                                Height="{Binding ElementName=stack, Path=ActualHeight}" />
-                <AdornerDecorator VerticalAlignment="Top" HorizontalAlignment="Center" >
-                    <Grid Opacity="0.6">
-                        <quiz:GoldPlaque />
-                        <TextBlock x:Name="conversationLabel" Margin="10 0"/>
-                    </Grid>
-                </AdornerDecorator>
+    <Grid>
+        <Viewbox>
+            <ScrollViewer x:Name="scroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" CanContentScroll="True">
+                <ScrollViewer.Width>
+                    <MultiBinding Converter="{x:Static components:Projector.WidthCorrector}">
+                        <Binding Path="ActualWidth" />    
+                        <Binding Path="ActualHeight" />    
+                        <Binding ElementName="parent"  Path="ActualWidth" />    
+                        <Binding ElementName="parent" Path="ActualHeight" />    
+                    </MultiBinding> 
+                </ScrollViewer.Width>
+                <ScrollViewer.Height>
+                    <MultiBinding Converter="{x:Static components:Projector.HeightCorrector}">
+                        <Binding Path="ActualWidth" />    
+                        <Binding Path="ActualHeight" />    
+                        <Binding ElementName="parent" Path="ActualWidth" />    
+                        <Binding ElementName="parent" Path="ActualHeight" />    
+                    </MultiBinding> 
+                </ScrollViewer.Height>
+                <Grid>
+                    <components:UserCanvasStack x:Name="stack"/>
+                    <InkPresenter x:Name="liveInk" Width="{Binding ElementName=stack, Path=ActualWidth}"
+                                    Height="{Binding ElementName=stack, Path=ActualHeight}" />
+        
+                </Grid>
+            </ScrollViewer>
+        </Viewbox>
+        <AdornerDecorator VerticalAlignment="Top" HorizontalAlignment="Center" >
+            <Grid Opacity="0.6">
+                <quiz:GoldPlaque />
+                <TextBlock x:Name="conversationLabel" FontSize="24" Margin="10 0"/>
             </Grid>
-        </ScrollViewer>
-    </Viewbox>
+        </AdornerDecorator>
+    </Grid>
 </UserControl>
