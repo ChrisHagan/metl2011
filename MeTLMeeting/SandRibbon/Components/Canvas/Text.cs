@@ -61,6 +61,12 @@ namespace SandRibbon.Components.Canvas
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<object>(updateBoxesPrivacy));
+        }
+        private void updateBoxesPrivacy(object obj)
+        {
+            foreach(MeTLTextBox box in Children)
+                ApplyPrivacyStylingToElement(box, box.tag().privacy);    
         }
         private void updateStyling(TextInformation info)
         {
@@ -232,22 +238,26 @@ namespace SandRibbon.Components.Canvas
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
-            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == MeTLLib.DataTypes.Permissions.LECTURE_PERMISSIONS) return;
-            if (element.GetType() != typeof(MeTLTextBox)) return;
-            Dispatcher.adopt(delegate
+            if (!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor)
             {
-                updateSelectionAdorners();
-                if (privacy == "private")
-                    element.Effect = new DropShadowEffect
-                    {
-                        BlurRadius = 50,
-                        Color = Colors.Black,
-                        ShadowDepth = 0,
-                        Opacity = 1
-                    };
-                else
-                    RemovePrivacyStylingFromElement(element);
-            });
+                RemovePrivacyStylingFromElement(element);
+                return;
+            }
+            if (element.GetType() != typeof (MeTLTextBox)) return;
+            Dispatcher.adopt(delegate
+                                 {
+                                     updateSelectionAdorners();
+                                     if (privacy == "private")
+                                         element.Effect = new DropShadowEffect
+                                                              {
+                                                                  BlurRadius = 50,
+                                                                  Color = Colors.Black,
+                                                                  ShadowDepth = 0,
+                                                                  Opacity = 1
+                                                              };
+                                     else
+                                         RemovePrivacyStylingFromElement(element);
+                                 });
         }
         private void dirtyTextBoxWithoutHistory(MeTLTextBox box)
         {

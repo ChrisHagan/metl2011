@@ -42,7 +42,16 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<object>(updateStrokePrivacy));
         }
+
+        private void updateStrokePrivacy(object obj)
+        {
+            var newStrokes = new StrokeCollection(Strokes.Select(s => (Stroke)new PrivateAwareStroke(s, target)));
+            Strokes.Clear();
+            Strokes.Add(newStrokes);
+        }
+
         private void hideConversationSearchBox(object obj)
         {
             addAdorners();

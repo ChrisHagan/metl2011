@@ -71,6 +71,12 @@ namespace SandRibbon.Components.Canvas
             Commands.MirrorVideo.RegisterCommand(new DelegateCommand<VideoMirror.VideoMirrorInformation>(mirrorVideo));
             Commands.VideoMirrorRefreshRectangle.RegisterCommand(new DelegateCommand<string>(mirrorVideoRefresh));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<object>(updateImagePrivacy));
+        }
+        private void updateImagePrivacy(object obj)
+        {
+            foreach(System.Windows.Controls.Image image in Children)
+                ApplyPrivacyStylingToElement(image, image.tag().privacy);
         }
         private void imagedDropped(ImageDrop drop)
         {
@@ -265,7 +271,11 @@ namespace SandRibbon.Components.Canvas
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
-            if (!Globals.isAuthor || Globals.conversationDetails.Permissions == MeTLLib.DataTypes.Permissions.LECTURE_PERMISSIONS) return;
+            if (!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor)
+            {
+                RemovePrivacyStylingFromElement(element);
+                return;
+            }
             if (privacy != "private")
             {
                 RemovePrivacyStylingFromElement(element);
