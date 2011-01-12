@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
+using System.Windows.Media;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 using Ninject;
@@ -43,7 +44,10 @@ namespace MeTLLib.Providers.Connection
             foreach (var video in videos)
                 canvas.Children.Add(video.Value.video);
             foreach (var textbox in text)
+            {
+                textbox.Value.box.Background = new SolidColorBrush(Colors.Transparent);
                 canvas.Children.Add(textbox.Value.box);
+            }
             foreach (var stroke in ink)
                 canvas.Strokes.Add(stroke.stroke);
             return canvas;

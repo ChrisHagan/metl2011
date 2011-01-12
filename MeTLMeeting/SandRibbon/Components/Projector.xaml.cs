@@ -185,15 +185,7 @@ namespace SandRibbon.Components
                     stack.text.doText(text);
             }
         }
-        private bool IsParserNotEmpty(MeTLLib.Providers.Connection.PreParser parser)
-        {
-            return (parser.images.Count > 0
-                    || parser.ink.Count > 0
-                    || parser.text.Count > 0
-                    || parser.videos.Count > 0
-                    || parser.bubbleList.Count > 0
-                    || parser.autoshapes.Count > 0);
-        }
+
 
         private bool isPrivate(MeTLLib.Providers.Connection.PreParser parser)
         {

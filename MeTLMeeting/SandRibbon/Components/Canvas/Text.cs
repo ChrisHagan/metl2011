@@ -65,8 +65,15 @@ namespace SandRibbon.Components.Canvas
         }
         private void updateBoxesPrivacy(object obj)
         {
-            foreach(MeTLTextBox box in Children)
-                ApplyPrivacyStylingToElement(box, box.tag().privacy);    
+            foreach (var item in Children)
+            {
+                MeTLTextBox box;
+                if (item.GetType() == typeof(TextBox))
+                    box = ((TextBox)item).toMeTLTextBox();
+                else
+                    box = (MeTLTextBox)item;
+                ApplyPrivacyStylingToElement(box, box.tag().privacy);
+            }
         }
         private void updateStyling(TextInformation info)
         {

@@ -286,7 +286,7 @@ namespace SandRibbon.Utils
         {
             sendShapes(id, slide.Descendants("shape"));
             sendPublicTextBoxes(id, slide.Descendants("publicText"));
-            sendTextboxes(id, slide.Descendants("privateText"));
+            //sendTextboxes(id, slide.Descendants("privateText"));
         }
         private void sendPublicTextBoxes(int id, IEnumerable<XElement> shapes)
         {
@@ -370,7 +370,7 @@ namespace SandRibbon.Utils
                             id = string.Format("{0}:{1}{2}", me, DateTimeFactory.Now(), shapeCount++)
                         });
                 ;
-                wire.SendTextBox(new TargettedTextBox (id,me,"notepad","private",newText));
+                wire.SendTextBox(new TargettedTextBox (id,me,"presentationSpace","private",newText));
             }
         }
         private XElement uploadXmlUrls(int slide, XElement doc)

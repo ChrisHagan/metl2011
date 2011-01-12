@@ -45,7 +45,17 @@ namespace SandRibbon.Providers
         public void thumb(int[] ids)
         {
             foreach(var id in ids)
-                thumb(id);
+                Dispatcher.CurrentDispatcher.adoptAsync(() => thumb(id));
+        }
+        public void thumb(int[] ids, PreParser parser)
+        {
+            foreach(var id in ids)
+                Dispatcher.CurrentDispatcher.adoptAsync(() => thumb(id, parser));
+        }
+        public void thumb(int slideId, PreParser parser) {
+            var data = parserToInkCanvas(parser);
+            File.WriteAllBytes(ThumbnailPath(conversation, slideId), data);
+            return;
         }
         public void thumb(int slideId) { 
             var data = createImage(slideId);
