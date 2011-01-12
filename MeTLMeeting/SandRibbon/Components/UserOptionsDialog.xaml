@@ -11,45 +11,56 @@
         <Style TargetType="{x:Type StackPanel}" x:Key="option" />
         <core:Double x:Key="width">600</core:Double>
     </Window.Resources>
-    <Grid>
-        <StackPanel VerticalAlignment="Top">
-            <TextBlock Text="These settings will apply to you wherever you use MeTL." />
-            <TextBlock Text="Please take care modifying them as they may result in reduced performance." />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <StackPanel>
-                <TextBlock Text="Collaboration level"/>
-                <ComboBox SelectedValue="{Binding Path=pedagogyLevel}" SelectedValuePath="Tag">
-                    <ComboBoxItem Tag="2">Presentation</ComboBoxItem>                    
-                    <ComboBoxItem Tag="3">Collaboration</ComboBoxItem>                    
-                </ComboBox>
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Powerpoint slide import"></TextBlock>
-                <ComboBox SelectedValue="{Binding Path=powerpointImportScale}" SelectedValuePath="Tag">
-                    <ComboBoxItem Tag="1">Low resolution</ComboBoxItem>                    
-                    <ComboBoxItem Tag="2">High resolution</ComboBoxItem>                    
-                    <ComboBoxItem Tag="3">Flexible</ComboBoxItem>                    
-                </ComboBox>
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Print private notes"></TextBlock>
-                <CheckBox IsChecked="{Binding Path=includePrivateNotesOnPrint}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="Logging level"></TextBlock>
-                <ComboBox SelectedValue="{Binding Path=logLevel}" SelectedValuePath="Content">
-                    <ComboBoxItem>FINE</ComboBoxItem>                    
-                    <ComboBoxItem>ERROR</ComboBoxItem>                    
-                </ComboBox>
-            </StackPanel>
-        </StackPanel>
-        <Grid  VerticalAlignment="Bottom">
+    <DockPanel>
+        <Grid DockPanel.Dock="Bottom" Margin="20">
             <Button Click="Reset" HorizontalAlignment="Left">Reset to defaults</Button>
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Click="Apply">Apply</Button> 
-                <Button Click="Cancel">Cancel</Button> 
+                <Button Click="Apply">Apply</Button>
+                <Button Click="Cancel">Cancel</Button>
             </StackPanel>
         </Grid>
-    </Grid>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Grid Margin="30" Width="500">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Warning!" FontWeight="Bold" FontSize="14"/>
+                    <TextBlock Grid.Column="1" TextWrapping="WrapWithOverflow" Text="Changing these settings may affect system performance.  They remain your personal defaults irrespective of the computer you are using." />
+                </Grid>
+                <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="Collaboration mode option available:"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" Height="25" SelectedValue="{Binding Path=pedagogyLevel}" SelectedValuePath="Tag">
+                    <ComboBoxItem Tag="2">No</ComboBoxItem>
+                    <ComboBoxItem Tag="3">Yes</ComboBoxItem>
+                </ComboBox>
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="PowerPoint file import mode:"></TextBlock>
+                <ComboBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Height="25" SelectedValue="{Binding Path=powerpointImportScale}" SelectedValuePath="Tag">
+                    <ComboBoxItem Tag="1">Uneditable but identical to original (quick upload)</ComboBoxItem>
+                    <ComboBoxItem Tag="2">Uneditable but identical to original (high resolution)</ComboBoxItem>
+                    <ComboBoxItem Tag="3">Editable but layout may differ (quick upload)</ComboBoxItem>
+                </ComboBox>
+                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Include private notes when printing:"></TextBlock>
+                <CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding Path=includePrivateNotesOnPrint}" />
+                <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="Logging level:"></TextBlock>
+                <ComboBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Height="25" SelectedValue="{Binding Path=logLevel}" SelectedValuePath="Tag">
+                    <!--<ComboBoxItem>FINE</ComboBoxItem>
+                <ComboBoxItem>ERROR</ComboBoxItem>-->
+                    <ComboBoxItem Tag="FINE">Detailed</ComboBoxItem>
+                    <ComboBoxItem Tag="ERROR">Errors only (default)</ComboBoxItem>
+                </ComboBox>
+            </Grid>
+        </ScrollViewer>
+    </DockPanel>
 </Window>
