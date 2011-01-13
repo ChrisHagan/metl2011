@@ -262,8 +262,20 @@ namespace SandRibbon.Components
         {
             refreshTimer.Change(250, Timeout.Infinite);
         }
+        private void lostFocus(object sender, RoutedEventArgs e)
+        {
+            var a = ((FrameworkElement)sender).DataContext;
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (originalContext != null)
+            {
+                foreach (var result in SearchResults.ItemsSource)
+                    if (((ConversationDetails)result).Jid == originalContext.Jid)
+                        ((ConversationDetails)result).Title = originalContext.Title;
+                originalContext = null;
+            }
             var jid = ((FrameworkElement)sender).Tag;
             if(jid.Equals(Globals.location.activeConversation))
                 Commands.HideConversationSearchBox.Execute(null);
@@ -303,6 +315,11 @@ namespace SandRibbon.Components
         }
         private void renameConversation(object sender, RoutedEventArgs e)
         {
+            if (originalContext != null)
+            {
+                var item = SearchResults.ItemContainerGenerator.ContainerFromItem(originalContext);
+                cancelEdit(item, null);
+            }
             assignTemplate("rename", sender);
         }
         private void shareConversation(object sender, RoutedEventArgs e)
@@ -313,6 +330,7 @@ namespace SandRibbon.Components
         {
             var source = (FrameworkElement)sender;
             source.DataContext = originalContext;
+            originalContext = null;
             assignTemplate("viewing", sender);
         }
         private string errorsFor(ConversationDetails proposedDetails)
@@ -329,10 +347,6 @@ namespace SandRibbon.Components
             if (titleAlreadyUsed) { errorText += "Conversation title already used.  "; }
             return errorText;
         }
-        private void focusRenameField(object sender, RoutedEventArgs e){
-            var source = (TextBox)((FrameworkElement)sender).FindName("renameField");
-            source.Focus();
-        }
         private void saveEdit(object sender, RoutedEventArgs e)
         {
             var details = context(sender);
@@ -340,6 +354,7 @@ namespace SandRibbon.Components
             if (string.IsNullOrEmpty(errors))
             {
                 MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                originalContext = null;
                 assignTemplate("viewing", sender);
             }
             else {

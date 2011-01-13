@@ -107,18 +107,6 @@ namespace SandRibbon.Components
         {
             return new PrivacyToolsAutomationPeer(this);
         }
-
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            var thisButton = ((CheckBox)sender);
-            if (!canBecomePublic())
-            {
-                thisButton.IsChecked = (Globals.privacy == "private") ? false : true;
-                return;
-            }
-            Commands.SetPrivacy.ExecuteAsync(thisButton.IsChecked == true ? "public" : "private");
-        }
-
         private void privacyChange(object sender, RoutedEventArgs e)
         {
         
