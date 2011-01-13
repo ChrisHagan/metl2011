@@ -145,7 +145,7 @@ namespace SandRibbon.Utils
             foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
             {
                 int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
-                var slidePath = new ThumbnailCaptureHost().ThumbnailPath( conversation.Jid, thumbnailStartId++);
+                var slidePath = getThumbnailPath( conversation.Jid, thumbnailStartId++);
                 foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                 {
                     shape.Visible = MsoTriState.msoFalse;
@@ -212,6 +212,24 @@ namespace SandRibbon.Utils
                 sendSlide(slideId, slideXml);
                 progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES, slideId, xmlSlidesCount);
             }
+        }
+
+        public static string getThumbnailPath(string jid, int id)
+        {
+            string fullPath = createThumbnailFileStructure(jid);
+            var path = string.Format("{0}\\{1}.png", fullPath, id);
+            return path;
+        }
+        private static string createThumbnailFileStructure(string jid)
+        {
+            if (!Directory.Exists(string.Format("{0}\\thumbs\\", Directory.GetCurrentDirectory())))
+                Directory.CreateDirectory(string.Format("{0}\\thumbs\\", Directory.GetCurrentDirectory()));
+            if(!Directory.Exists(string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), Globals.me)))
+                Directory.CreateDirectory(string.Format("{0}\\thumbs\\{1}\\", Directory.GetCurrentDirectory(), Globals.me));
+            var fullPath = string.Format("{0}\\thumbs\\{1}\\{2}\\", Directory.GetCurrentDirectory(), Globals.me, jid);
+            if(!Directory.Exists(fullPath))
+                Directory.CreateDirectory(fullPath);
+            return fullPath;
         }
         private void waitForSlideToHaveContentThenJoin(int slideToWaitOn, string conversationToJoin) {
             waitHandler = (sender, args) =>

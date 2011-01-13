@@ -166,7 +166,7 @@ namespace SandRibbon
         {
             try
             {
-                Process.Start("http://penny-arcade.com");
+                Process.Start("http://monash.edu/eeducation/");
             }
             catch (Exception)
             {

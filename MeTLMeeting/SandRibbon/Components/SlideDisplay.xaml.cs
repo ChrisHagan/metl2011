@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -53,7 +54,6 @@ namespace SandRibbon.Components
         public ThumbnailCollection<Slide> thumbnailList = new ThumbnailCollection<Slide>();
         public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
         public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
-        private ThumbnailCaptureHost thumbnailer = new ThumbnailCaptureHost();
         public static SlideIndexConverter SlideIndex;
         private bool moveTo;
         public SlideDisplay()
@@ -67,30 +67,14 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(thumbnail));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
             Display(Globals.conversationDetails);
         }
 
-        private void thumbnail(PreParser parser)
-        {
-            if(IsParserNotEmpty(parser))
-            {
-                thumbnailer.thumb(Globals.location.currentSlide, parser);
-                thumbnailList.UpdateCollection();
-            }
-        }
-
-       private bool IsParserNotEmpty(MeTLLib.Providers.Connection.PreParser parser)
-        {
-            return (parser.images.Count > 0
-                    || parser.ink.Count > 0
-                    || parser.text.Count > 0);
-        }
         private void JoinConversation(string jid)
         {
-            Dispatcher.adoptAsync(delegate { thumbnailer = new ThumbnailCaptureHost(jid); });
             currentSlideIndex = 0;
+            ThumbnailProvider.getConversationThumbnails(jid); 
         }
         private bool canAddSlide(object _slide)
         {
@@ -204,11 +188,8 @@ namespace SandRibbon.Components
                   if (proposedId == currentSlideId) return;
                   currentSlideIndex = proposedIndex;
                   currentSlideId = proposedId;
-                  Dispatcher.adoptAsync(() =>
-                                            {
-                                                thumbnailer.thumb(Globals.location.currentSlide);
-                                                thumbnailList.UpdateCollection();
-                                            });
+                  ThumbnailProvider.getSlideThumbnails(Globals.location.activeConversation, new [] { Globals.location.currentSlide, currentSlideId } );
+                  thumbnailList.UpdateCollection();
                   Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                   Commands.MoveTo.ExecuteAsync(currentSlideId);
                   if (Globals.isAuthor && Globals.synched)

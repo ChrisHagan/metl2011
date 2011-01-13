@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Permissions;
 using System.Windows.Interop;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
@@ -12,56 +13,65 @@ namespace SandRibbon.Utils
 {
   public class CursorHelper
   {
-    private struct IconInfo
+    private static class NativeMethods
     {
-      public bool fIcon;
-      public int xHotspot;
-      public int yHotspot;
-      public IntPtr hbmMask;
-      public IntPtr hbmColor;
+      public struct IconInfo
+      {
+        public bool fIcon;
+        public int xHotspot;
+        public int yHotspot;
+        public IntPtr hbmMask;
+        public IntPtr hbmColor;
+      }
+
+      [DllImport("user32.dll")]
+      public static extern SafeIconHandle CreateIconIndirect(ref IconInfo icon);
+
+      [DllImport("user32.dll")]
+      public static extern bool DestroyIcon(IntPtr hIcon);
+
+      [DllImport("user32.dll")]
+      [return: MarshalAs(UnmanagedType.Bool)]
+      public static extern bool GetIconInfo(IntPtr hIcon, ref IconInfo pIconInfo);
     }
 
-    [DllImport("user32.dll")]
-    private static extern IntPtr CreateIconIndirect(
-        ref IconInfo icon);
+    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+    private class SafeIconHandle : SafeHandleZeroOrMinusOneIsInvalid
+    {
+      public SafeIconHandle()
+        : base(true)
+      {
+      }
 
-    [DllImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetIconInfo(IntPtr hIcon,
-        ref IconInfo pIconInfo);
-
+      override protected bool ReleaseHandle()
+      {
+        return NativeMethods.DestroyIcon(handle);
+      }
+    }
     
-    private static Cursor InternalCreateCursor(System.Drawing.Bitmap bmp,
-        int xHotSpot, int yHotSpot)
+    private static Cursor InternalCreateCursor(System.Drawing.Bitmap bmp, int xHotSpot, int yHotSpot)
     {
-      IconInfo tmp = new IconInfo();
-      GetIconInfo(bmp.GetHicon(), ref tmp);
-      tmp.xHotspot = xHotSpot;
-      tmp.yHotspot = yHotSpot;
-      tmp.fIcon = false;
+      var iconInfo = new NativeMethods.IconInfo();
+      NativeMethods.GetIconInfo(bmp.GetHicon(), ref iconInfo);
 
-      IntPtr ptr = CreateIconIndirect(ref tmp);
-      SafeFileHandle handle = new SafeFileHandle(ptr, true);
-      return CursorInteropHelper.Create(handle);
+      iconInfo.xHotspot = xHotSpot;
+      iconInfo.yHotspot = yHotSpot;
+      iconInfo.fIcon = false;
+
+      SafeIconHandle cursorHandle = NativeMethods.CreateIconIndirect(ref iconInfo);
+      return CursorInteropHelper.Create(cursorHandle);
     }
-
     public static Cursor CreateCursor(UIElement element, int xHotSpot, 
         int yHotSpot)
     {
-/*
-      element.Measure(new Size(double.PositiveInfinity, 
-        double.PositiveInfinity));
-      element.Arrange(new Rect(0, 0, element.DesiredSize.Width, 
-        element.DesiredSize.Height));
- */
-        int MIN_DIM = 5;
-        var width = Math.Max(MIN_DIM, (int)((FrameworkElement)element).Width);
-        var height = Math.Max(MIN_DIM,(int)((FrameworkElement)element).Height);
-        element.Measure(new Size(width, height));
-        element.Arrange(new Rect(0, 0, width, height));
+      int MIN_DIM = 5;
+      var width = Math.Max(MIN_DIM, (int)((FrameworkElement)element).Width);
+      var height = Math.Max(MIN_DIM,(int)((FrameworkElement)element).Height);
+      element.Measure(new Size(width, height));
+      element.Arrange(new Rect(0, 0, width, height));
 
-        RenderTargetBitmap rtb = 
-        new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+      RenderTargetBitmap rtb = 
+      new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
       rtb.Render(element);
 
       PngBitmapEncoder encoder = new PngBitmapEncoder();
@@ -74,17 +84,20 @@ namespace SandRibbon.Utils
 
       ms.Close();
       ms.Dispose();
-      Cursor cur;
-        try
-        {
-           cur = InternalCreateCursor(bmp, xHotSpot, yHotSpot);
-        }
-        catch (Exception)
-        {
-           cur = InternalCreateCursor(bmp, xHotSpot, yHotSpot);
-        }
-        
+      Cursor cur = null;
+      var attempts = 0;
+      while (cur == null && attempts < 10)
+      {
+          try
+          {
+              cur = InternalCreateCursor(bmp, xHotSpot, yHotSpot);
+          }
+          catch (Exception)
+          {
 
+          }
+
+      }
       bmp.Dispose();
 
       return cur;

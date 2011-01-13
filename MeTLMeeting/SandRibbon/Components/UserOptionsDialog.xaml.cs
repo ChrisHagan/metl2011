@@ -28,6 +28,7 @@ namespace SandRibbon.Components
         {
             Commands.SetUserOptions.Execute(DataContext);
             Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(((UserOptions)DataContext).pedagogyLevel));
+            Commands.UpdateConversationDetails.Execute(Globals.conversationDetails);
             Close();
         }
         private void Cancel(object sender, RoutedEventArgs e)

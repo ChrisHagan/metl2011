@@ -24,7 +24,8 @@
                         <DataTemplate>
                             <StackPanel>
                                 <Image Source="/Resources/Ribbon-Quiz.png" Height="100" Width="100"/>
-                                <TextBlock Text="{Binding Path=title, Converter={x:Static SandRibbon:Converters.stringTruncator}}"/>
+                                <!--TextBlock Text="{Binding Path=title, Converter={x:Static SandRibbon:Converters.stringTruncator}}"/-->
+                                <TextBlock Text="{Binding Path=title}" TextWrapping="WrapWithOverflow"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

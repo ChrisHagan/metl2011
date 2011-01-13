@@ -69,7 +69,12 @@ namespace MeTLLib.Providers.Connection
                 canvas.Children.Add(myImage);
             }
             foreach (var textbox in text)
-                canvas.Children.Add(textbox.Value.box);
+            {
+                var box = textbox.Value.box;
+                box.BorderBrush = new SolidColorBrush(Colors.Transparent);
+                box.Background = new SolidColorBrush(Colors.Transparent);
+                canvas.Children.Add(box);
+            }
             foreach (var stroke in ink)
                 canvas.Strokes.Add(stroke.stroke);
             return canvas;
