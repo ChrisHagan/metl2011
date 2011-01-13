@@ -180,6 +180,8 @@ namespace SandRibbon
         }
         private void SetUserOptions(UserOptions options) {
             ClientFactory.Connection().SaveUserOptions(Globals.me, options);
+            if (!ribbon.IsMinimized && currentConversationSearchBox.Visibility == Visibility.Visible)
+                    ribbon.ToggleMinimize();
         }
         void ribbon_Loaded(object sender, RoutedEventArgs e)
         {
@@ -1031,6 +1033,7 @@ namespace SandRibbon
             {
                 e.Cancel = true;
             }
+            else App.Current.Shutdown();
         }
         private void ApplicationPopup_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {

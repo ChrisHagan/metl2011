@@ -148,6 +148,7 @@ namespace SandRibbon
         void Current_Exit(object sender, ExitEventArgs e)
         {
             Commands.LeaveAllRooms.Execute(null);
+            MeTLLib.ClientFactory.Connection().Disconnect();
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e){
             Logger.Log(e.Exception.Message);

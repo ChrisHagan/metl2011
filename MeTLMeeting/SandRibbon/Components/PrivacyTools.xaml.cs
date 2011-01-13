@@ -98,9 +98,15 @@ namespace SandRibbon.Components
         private void settingSelectedMode(string p)
         {
             if (p == "public")
+            {
                 publicMode.IsChecked = true;
+                publicMode.Focus();
+            }
             else
+            {
                 privateMode.IsChecked = true;
+                privateMode.Focus();
+            }
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
@@ -109,7 +115,6 @@ namespace SandRibbon.Components
         }
         private void privacyChange(object sender, RoutedEventArgs e)
         {
-        
             Commands.SetPrivacy.Execute(((FrameworkElement)sender).Tag.ToString());
         }
     }
