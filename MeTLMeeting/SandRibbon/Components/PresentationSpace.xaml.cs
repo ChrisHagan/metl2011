@@ -155,23 +155,11 @@ namespace SandRibbon.Components
         {
             var dpi = 96;
             var size = 1024;
-            int dpiX;
-            int dpiY;
-            if (ActualWidth > ActualHeight)
-            {
-                dpiX = (int)(dpi * (ActualHeight / ActualWidth));
-                dpiY = 96;
-            }
-            else
-            {
-               dpiY = (int)(dpi * (ActualWidth / ActualHeight));
-               dpiX = dpi;
-            }
             var ratio = ActualWidth / ActualHeight;
-            string file = "";
+            var file = "";
             Dispatcher.adopt(() =>
             {
-                var bitmap = new RenderTargetBitmap((int)this.ActualWidth, (int)this.ActualHeight, dpiX, dpiY, PixelFormats.Default);
+                var bitmap = new RenderTargetBitmap(size ,(int)(size / ratio), dpi, dpi, PixelFormats.Default);
                 var dv = new DrawingVisual();
                 using (var context = dv.RenderOpen())
                 {
@@ -191,7 +179,7 @@ namespace SandRibbon.Components
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                file = string.Format("{1}{2}submission.png", Directory.GetCurrentDirectory(), DateTime.Now.Ticks, Globals.me);
+                file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
                 using (Stream stream = File.Create(file))
                 {
                     encoder.Save(stream);

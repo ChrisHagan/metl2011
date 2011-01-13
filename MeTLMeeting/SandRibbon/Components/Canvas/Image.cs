@@ -825,7 +825,7 @@ namespace SandRibbon.Components.Canvas
                 MessageBox.Show("Sorry, your filename is too long, must be less than 260 characters");
                 return;
             }
-            var info = new FileInfo(filename);
+            var info = new FileInfo(unMangledFilename);
             if (info.Length > 25 * MEGABYTE)
             {
                 MessageBox.Show("Sorry, your file is too large, must be less than 25mb");

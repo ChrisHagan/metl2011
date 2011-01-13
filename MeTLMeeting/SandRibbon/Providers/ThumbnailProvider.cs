@@ -23,21 +23,25 @@ namespace SandRibbon.Providers
     {
         public static void getConversationThumbnails(string jid)
         {
-            var details = MeTLLib.ClientFactory.Connection().DetailsOf(jid);
+            var details = ClientFactory.Connection().DetailsOf(jid);
             foreach (var slide in details.Slides)
                 getSlideThumbnail(details.Jid, slide.id);
         }
         public static void getSlideThumbnails(string jid, int[] ids)
         {
-            foreach(var id in ids)
-                getSlideThumbnail(jid, id);
+            foreach (var id in ids)
+            {
+                var id1 = id;
+                var thread = new Thread(() => getSlideThumbnail(jid, id1)) {IsBackground = true};
+                thread.Start();
+            }
         }
         public static void getSlideThumbnail(string jid, int id)
         {
-            var host = ClientFactory.Connection().server.host.Split('.').First();
-            var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}", host, id);
-            var sourceBytes = new WebClient {Credentials = new NetworkCredential("exampleUsername", "examplePassword")}.DownloadData(url);
-            File.WriteAllBytes(PowerPointLoader.getThumbnailPath(jid, id), sourceBytes); 
+            //var host = ClientFactory.Connection().server.host.Split('.').First();
+            //var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}", host, id);
+            //var sourceBytes = new WebClient {Credentials = new NetworkCredential("exampleUsername", "examplePassword")}.DownloadData(url);
+            //File.WriteAllBytes(PowerPointLoader.getThumbnailPath(jid, id), sourceBytes); 
         }
 
         public static SlideToThumbConverter SlideToThumb = new SlideToThumbConverter();
@@ -54,11 +58,13 @@ namespace SandRibbon.Providers
         }
         public static ImageBrush get(Slide slide)
         {
+            var host = ClientFactory.Connection().server.host.Split('.').First();
+            var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}", host, slide.id);
             var bitmap = new BitmapImage();
             try
             {
                 bitmap.BeginInit();
-                bitmap.UriSource = new Uri(PowerPointLoader.getThumbnailPath(Globals.location.activeConversation, slide.id));
+                bitmap.UriSource = new Uri(url);
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                 bitmap.EndInit();
