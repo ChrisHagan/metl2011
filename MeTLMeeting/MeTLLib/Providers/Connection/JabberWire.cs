@@ -36,7 +36,7 @@ namespace MeTLLib.Providers.Connection
         [Inject]
         public IWebClientFactory clientFactory { private get; set; }
         [Inject]
-        public HttpResourceProvider resourceProvider{private get;set;}
+        public HttpResourceProvider resourceProvider { private get; set; }
         public JabberWire wire()
         {
             if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a wire");
@@ -46,7 +46,7 @@ namespace MeTLLib.Providers.Connection
                 historyProvider,
                 cachedHistoryProvider,
                 metlServerAddress,
-                cache, 
+                cache,
                 receiveEvents,
                 clientFactory,
                 resourceProvider);
@@ -63,16 +63,17 @@ namespace MeTLLib.Providers.Connection
                 metlServerAddress,
                 cache, receiveEvents, clientFactory, resourceProvider);
         }
-        public T preParser<T>(int room) where T : PreParser{
-            return (T)Activator.CreateInstance(typeof(T), 
-                credentials, 
-                room, 
-                conversationDetailsProvider, 
-                historyProvider, 
-                cachedHistoryProvider, 
-                metlServerAddress, 
-                cache, 
-                receiveEvents, 
+        public T preParser<T>(int room) where T : PreParser
+        {
+            return (T)Activator.CreateInstance(typeof(T),
+                credentials,
+                room,
+                conversationDetailsProvider,
+                historyProvider,
+                cachedHistoryProvider,
+                metlServerAddress,
+                cache,
+                receiveEvents,
                 clientFactory,
                 resourceProvider);
         }
@@ -237,7 +238,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void OnMessage(object sender, Message message)
         {
-            if(message.To.Resource == jid.Resource)
+            if (message.To.Resource == jid.Resource)
                 ReceivedMessage(message);
         }
         private void HandlerError(object sender, Exception ex)
@@ -267,8 +268,37 @@ namespace MeTLLib.Providers.Connection
             AttemptReloginAfter(1000);
         }
         System.Threading.Timer timer;//So it doesn't get garbage collected before it can fire on long intervals
+        class DispatcherAction
+        {
+            public DispatcherAction(Thread owner, Action work)
+            {
+                this.Work = work;
+                this.Owner = owner;
+            }
+            public Thread Owner
+            {
+                private set;
+                get;
+            }
+            public Action Work
+            {
+                private set;
+                get;
+            }
+        }
+        private Queue<DispatcherAction> actionsAfterRelogin;
+        public void AddActionToReloginQueue(Action action)
+        {
+            if (actionsAfterRelogin == null)
+                actionsAfterRelogin = new Queue<DispatcherAction>();
+            actionsAfterRelogin.Enqueue(new DispatcherAction(Thread.CurrentThread, action));
+            if (timer == null)
+                AttemptReloginAfter(1000);
+        }
+        private bool closing = false;
         private void AttemptReloginAfter(int intervalInMilis)
         {
+            if (closing) return;
             Trace.TraceWarning("Attempting relogin in {0}", intervalInMilis);
             receiveEvents.statusChanged(false, this.credentials);
             timer = new System.Threading.Timer(_state =>
@@ -277,6 +307,22 @@ namespace MeTLLib.Providers.Connection
                 {
                     receiveEvents.statusChanged(true, this.credentials);
                     timer = null;
+                    while (IsConnected() && actionsAfterRelogin != null && actionsAfterRelogin.Count > 0)
+                    {
+                        var item = (DispatcherAction)actionsAfterRelogin.Dequeue();
+                        try
+                        {
+                            if (System.Windows.Threading.Dispatcher.CurrentDispatcher != null && 
+                                item.Owner == System.Windows.Threading.Dispatcher.CurrentDispatcher.Thread)
+                                System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(item.Work);
+                            else
+                            item.Work.Invoke();
+                        }
+                        catch (Exception)
+                        {
+                            item.Work.Invoke();
+                        }
+                    }
                 }
                 else
                 {
@@ -291,6 +337,7 @@ namespace MeTLLib.Providers.Connection
         }
         public void Logout()
         {
+            closing = true;
             unregisterHandlers();
             conn.Close();
         }
@@ -792,23 +839,23 @@ namespace MeTLLib.Providers.Connection
         {
             var muc = new MucManager(conn);
             joinRoom(new Jid(room + "@" + metlServerAddress.muc));
-/*
-            historyProvider.Retrieve<PreParser>(
-                onStart,
-                onProgress,
-                finishedParser =>
-                {
-                    Trace.TraceInformation(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
-                    receiveEvents.receivePreParser(finishedParser);
-                },
-                room);
-            historyProvider.RetrievePrivateContent<PreParser>(
-                onStart,
-                onProgress,
-                finishedParser => receiveEvents.receivePreParser(finishedParser),
-                credentials.name,
-                room);
- */
+            /*
+                        historyProvider.Retrieve<PreParser>(
+                            onStart,
+                            onProgress,
+                            finishedParser =>
+                            {
+                                Trace.TraceInformation(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
+                                receiveEvents.receivePreParser(finishedParser);
+                            },
+                            room);
+                        historyProvider.RetrievePrivateContent<PreParser>(
+                            onStart,
+                            onProgress,
+                            finishedParser => receiveEvents.receivePreParser(finishedParser),
+                            credentials.name,
+                            room);
+             */
         }
         public void SneakOutOf(string room)
         {

@@ -114,7 +114,7 @@ namespace MeTLLib
         [Inject]
         public JabberWireFactory jabberWireFactory { private get; set; }
         [Inject]
-        public IWebClientFactory downloaderFactory{ private get; set; }
+        public IWebClientFactory downloaderFactory { private get; set; }
         [Inject]
         public UserOptionsProvider userOptionsProvider { private get; set; }
         [Inject]
@@ -153,7 +153,8 @@ namespace MeTLLib
             }
         }
         #endregion
-        public HttpHistoryProvider getHistoryProvider() {
+        public HttpHistoryProvider getHistoryProvider()
+        {
             return historyProvider;
         }
         #region connection
@@ -261,11 +262,19 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
-                var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
-                Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
-                wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, newPath, DateTimeFactory.Now().Ticks));
-                if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
+                try
+                {
+                    Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
+                    var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
+                    Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
+                    wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, newPath, DateTimeFactory.Now().Ticks));
+                    if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.Message);
+                    uploadAndSendSubmission(lii);
+                }
             };
             tryIfConnected(work);
         }
@@ -301,7 +310,15 @@ namespace MeTLLib
             Trace.TraceInformation("Beginning File send: " + tf.url);
             Action work = delegate
             {
-                wire.sendFileResource(tf);
+                try
+                {
+                    wire.sendFileResource(tf);
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.Message);
+                    SendFile(tf);
+                }
             };
             tryIfConnected(work);
         }
@@ -309,13 +326,21 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
-                var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
-                Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
-                Image newImage = lii.image;
-                newImage.tag(lii.image.tag());
-                newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
-                wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newImage));
+                try
+                {
+                    Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
+                    var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
+                    Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
+                    Image newImage = lii.image;
+                    newImage.tag(lii.image.tag());
+                    newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
+                    wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newImage));
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.Message);
+                    UploadAndSendImage(lii);
+                }
             };
             tryIfConnected(work);
         }
@@ -332,27 +357,85 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                var newPath = new Uri(resourceUploader.uploadResource(videoInformation.slide.ToString(), videoInformation.file, false), UriKind.Absolute);
-                MeTLLib.DataTypes.Video newVideo = videoInformation.video;
-                newVideo.VideoSource = newPath;
-                newVideo.MediaElement = new MediaElement {Source = newPath};
-                wire.SendVideo(new TargettedVideo(videoInformation.slide, videoInformation.author, videoInformation.target, videoInformation.privacy, newVideo));
+                try
+                {
+                    var newPath = new Uri(resourceUploader.uploadResource(videoInformation.slide.ToString(), videoInformation.file, false), UriKind.Absolute);
+                    MeTLLib.DataTypes.Video newVideo = videoInformation.video;
+                    newVideo.VideoSource = newPath;
+                    newVideo.MediaElement = new MediaElement { Source = newPath };
+                    wire.SendVideo(new TargettedVideo(videoInformation.slide, videoInformation.author, videoInformation.target, videoInformation.privacy, newVideo));
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.Message);
+                    UploadAndSendVideo(videoInformation);
+                }
             };
             tryIfConnected(work);
         }
         public Uri UploadResource(Uri file, string muc)
         {
-            return new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, false));
+            System.Uri returnValue = server.uri;
+            bool hasBeenSet = false;
+            Action work = delegate
+            {
+                try
+                {
+                    returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, false));
+                    hasBeenSet = true;
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.Message);
+                    UploadResource(file, muc);
+                }
+            };
+            tryIfConnected(work);
+            return (System.Uri)waitForAsyncUpdate(hasBeenSet, returnValue);
         }
-        public Uri UploadResourceToPath(byte[] data,string file, string name, bool overwrite)
+        private object waitForAsyncUpdate(bool hasBeenSet, object returnValue)
         {
-            return new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
+            ManualResetEvent resetEvent = new ManualResetEvent(false);
+            var timer = new Timer(
+                new TimerCallback((timerObj) =>
+                {
+                    if (hasBeenSet)
+                        resetEvent.Set();
+                }), null, 0, 100);
+            resetEvent.WaitOne();
+            timer.Dispose();
+            return returnValue;
+        }
+        public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite)
+        {
+            System.Uri returnValue = server.uri;
+            bool hasBeenSet = false;
+            Action work = delegate
+            {
+                try
+                {
+                    returnValue = new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
+                    hasBeenSet = true;
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.Message);
+                    UploadResourceToPath(data, file, name, overwrite);
+                }
+            };
+            tryIfConnected(work);
+            return (System.Uri)waitForAsyncUpdate(hasBeenSet, returnValue);
         }
         #endregion
         #region conversationCommands
         public void SendSyncMove(int slide)
         {
-            wire.SendSyncMoveTo(slide);
+            Action work = delegate
+            {
+                if (slide == null) return;
+                wire.SendSyncMoveTo(slide);
+            };
+            tryIfConnected(work);
         }
         public void MoveTo(int slide)
         {
@@ -479,9 +562,9 @@ namespace MeTLLib
                 () => { },
                 (current, total) => { },
                 preParser =>
-                    {
-                        events.receivePreParser(preParser);
-                    },
+                {
+                    events.receivePreParser(preParser);
+                },
                 muc);
         }
         public List<PreParser> RetrieveHistoryOfRoom(int room)
@@ -551,12 +634,14 @@ namespace MeTLLib
         public ConversationDetails CreateConversation(ConversationDetails details)
         {
             ConversationDetails cd = null;
+            bool hasBeenSet = false;
             Action work = delegate
             {
                 cd = conversationDetailsProvider.Create(details);
+                hasBeenSet = true;
             };
             tryIfConnected(work);
-            return cd;
+            return (ConversationDetails)waitForAsyncUpdate(hasBeenSet,cd);
         }
         public ConversationDetails AppendSlide(string Jid)
         {
@@ -581,12 +666,14 @@ namespace MeTLLib
         public ConversationDetails AppendSlideAfter(int slide, String Jid, Slide.TYPE type)
         {
             ConversationDetails details = ConversationDetails.Empty;
+            bool hasBeenSet = false;
             Action work = delegate
             {
                 details = conversationDetailsProvider.AppendSlideAfter(slide, Jid, type);
+                hasBeenSet = true;
             };
             tryIfConnected(work);
-            return details;
+            return (ConversationDetails)waitForAsyncUpdate(hasBeenSet,details);
         }
         public List<ConversationDetails> CurrentConversations
         {
@@ -608,12 +695,14 @@ namespace MeTLLib
         {
             if (wire == null)
             {
-                Trace.TraceWarning("Wire is null at tryIfConnected");
+                Trace.TraceWarning("Wire is null at tryIfConnected - beginning relogin process with interval of 1s");
+                wire.AddActionToReloginQueue(action);
                 return;
             }
             if (wire.IsConnected() == false)
             {
-                Trace.TraceWarning("Wire is disconnected at tryIfConnected");
+                Trace.TraceWarning("Wire is disconnected at tryIfConnected - beginning relogin process with interval of 1s");
+                wire.AddActionToReloginQueue(action);
                 return;
             }
             action();
@@ -626,42 +715,52 @@ namespace MeTLLib
         #region noAuth
         public Uri NoAuthUploadResource(Uri file, int Room)
         {
-            return new System.Uri(resourceUploader.uploadResource(Room.ToString(),file.ToString(),false));
+            return new System.Uri(resourceUploader.uploadResource(Room.ToString(), file.ToString(), false));
         }
         public Uri NoAuthUploadResourceToPath(string fileToUpload, string pathToUploadTo, string nameToUpload)
         {
-            var resultantPathString = resourceUploader.uploadResourceToPath(fileToUpload, pathToUploadTo, nameToUpload); 
-            return new System.Uri(resultantPathString,UriKind.Absolute);
+            var resultantPathString = resourceUploader.uploadResourceToPath(fileToUpload, pathToUploadTo, nameToUpload);
+            return new System.Uri(resultantPathString, UriKind.Absolute);
         }
         public Uri NoAuthUploadResource(byte[] data, string filename, int Room)
         {
-            return new System.Uri(resourceUploader.uploadResourceToPath(data,Room.ToString(),filename,false));
+            return new System.Uri(resourceUploader.uploadResourceToPath(data, Room.ToString(), filename, false));
         }
         public List<ConversationDetails> AvailableConversations
         {
             get
             {
-                return conversationDetailsProvider.ListConversations().ToList();
-                /*var list = new List<ConversationDetails>();
-                if (wire.IsConnected() == false) return list;
+                List<ConversationDetails> returnValue = new List<ConversationDetails>();
+                bool hasBeenSet = false;
                 Action work = delegate
                 {
-                    list = conversationDetailsProvider.ListConversations().ToList();
+                    try
+                    {
+                        returnValue = conversationDetailsProvider.ListConversations().ToList();
+                        hasBeenSet = true;
+                    }
+                    catch (Exception e)
+                    {
+                        Trace.TraceError(e.Message);
+                        returnValue = AvailableConversations;
+                    }
                 };
                 tryIfConnected(work);
-                return list;*/
+                return (List<ConversationDetails>)waitForAsyncUpdate(hasBeenSet, returnValue);
             }
         }
         #endregion
         public void SaveUserOptions(string username, UserOptions options)
         {
-            userOptionsProvider.Set(username,options);
+            Action work = delegate
+            {
+                userOptionsProvider.Set(username, options);
+            };
+            tryIfConnected(work);
         }
         public UserOptions UserOptionsFor(string username)
         {
             return userOptionsProvider.Get(username);
         }
-
-        
     }
 }

@@ -1031,6 +1031,7 @@ namespace SandRibbon
             {
                 e.Cancel = true;
             }
+            else App.Current.Shutdown();
         }
         private void ApplicationPopup_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
