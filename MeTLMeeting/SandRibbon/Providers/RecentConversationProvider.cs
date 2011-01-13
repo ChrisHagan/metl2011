@@ -26,15 +26,19 @@ namespace SandRibbon.Providers
                 System.Threading.Thread.CurrentThread.CurrentCulture = current;
                 
                 var recentConversations = recentDocs.Descendants("conversation").Select(
-                    conversation => new ConversationDetails(conversation.Attribute("title").Value,conversation.Attribute("jid").Value,conversation.Attribute("author").Value,new List<Slide>(),new Permissions("",false,false,false),"",new DateTime(),SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value)))
+                    conversation => new ConversationDetails(
+                        conversation.Attribute("title").Value,
+                        conversation.Attribute("jid").Value,
+                        conversation.Attribute("author").Value,
+                        new List<Slide>(),
+                        new Permissions("",false,false,false),"",
+                        new DateTime(),
+                        SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value)))
                     .ToList();
-                var allConversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
-                var sortedConversations = allConversations
-                    .Where(ac => ac.Subject != "Deleted" && recentConversations.Select(c => c.Jid).Contains(ac.Jid))
-                    .OrderBy(conversation=>conversation.Created)
-                    //.Reverse()
-                    .ToList();
-                return sortedConversations;
+                var allConversations = MeTLLib.ClientFactory.Connection().AvailableConversations.Select(ac => ac).Where(recentConversations.Contains).ToList();
+                var sortedRecent = recentConversations.Where(rc => allConversations.Where(ac => ac.Jid == rc.Jid).First().Subject.ToLower() != "deleted").OrderByDescending(rc => rc.LastAccessed).ToList();
+                
+                return sortedRecent;
             }
             return new List<ConversationDetails>();
         }
