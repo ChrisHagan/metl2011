@@ -730,7 +730,8 @@ namespace MeTLLib
         {
             get
             {
-                List<ConversationDetails> returnValue = new List<ConversationDetails>();
+                return conversationDetailsProvider.ListConversations().ToList();
+                /*List<ConversationDetails> returnValue = new List<ConversationDetails>();
                 bool hasBeenSet = false;
                 Action work = delegate
                 {
@@ -747,6 +748,7 @@ namespace MeTLLib
                 };
                 tryIfConnected(work);
                 return (List<ConversationDetails>)waitForAsyncUpdate(hasBeenSet, returnValue);
+                */
             }
         }
         #endregion

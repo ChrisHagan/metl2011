@@ -30,7 +30,7 @@
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Button Click="saveFile">
+                        <Button Click="saveFile" PreviewMouseRightButtonUp="saveFile">
                             <Button.ToolTip>
                                 <dict:MeTLImageToolTip ImageSource="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" 
                                                                     TitleText="{Binding Path=filename}"

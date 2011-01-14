@@ -24,49 +24,51 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.conversations.ItemsSource = new List<ConversationDetails>();
-            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>((_details) => {}, doesConversationAlreadyExist));
+            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>((_details) => { }, doesConversationAlreadyExist));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(RedrawList));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateForeignConversationDetails, canUpdateForeignConversationDetails));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             RedrawList(null);
         }
-        private void UpdateConversationDetails(ConversationDetails details) { 
-            if(details.Subject == "Deleted")
+        private void UpdateConversationDetails(ConversationDetails details)
+        {
+            if (details.Subject == "Deleted")
                 RedrawList(null);
-        } 
+        }
         private void updateForeignConversationDetails(ConversationDetails _obj)
         {
             RedrawList(null);
         }
         private bool canUpdateForeignConversationDetails(ConversationDetails details)
         {
-            return rawConversationList.Where(c=>c.Title == details.Title || string.IsNullOrEmpty(details.Title)).Count() == 0;
+            return rawConversationList.Where(c => c.Title == details.Title || string.IsNullOrEmpty(details.Title)).Count() == 0;
         }
         private bool doesConversationAlreadyExist(object obj)
         {
             if (!(obj is ConversationDetails))
                 return true;
             var details = (ConversationDetails)obj;
-            if (details == null) 
+            if (details == null)
                 return true;
-            if(details.Subject.ToLower() == "deleted")
+            if (details.Subject.ToLower() == "deleted")
                 return true;
-            if (details.Title.Length == 0) 
+            if (details.Title.Length == 0)
                 return true;
             var currentConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
-            bool conversationExists = currentConversations.Any(c=> c.Title.Equals(details.Title));
-            Logger.Log(currentConversations.Aggregate("", (acc,item)=>acc+" "+item.Title));
+            bool conversationExists = currentConversations.Any(c => c.Title.Equals(details.Title));
+            Logger.Log(currentConversations.Aggregate("", (acc, item) => acc + " " + item.Title));
             Logger.Log(string.Format("[{0}] already exists: {1}", details.Title, conversationExists));
             return !conversationExists;
         }
         private void RedrawList(object _unused)
         {
-            Dispatcher.adopt(() =>
+            Dispatcher.adoptAsync(() =>
             {
-                this.conversations.ItemsSource =
-                    RecentConversationProvider.loadRecentConversations()
-                    .Where(c => c.IsValid && c.Subject != "Deleted")
-                    .Take(6);
+                var potentialConversations = RecentConversationProvider.loadRecentConversations();
+                if (potentialConversations != null && potentialConversations.Count() > 0)
+                    this.conversations.ItemsSource = potentialConversations
+                        .Where(c => c.IsValid && c.Subject != "Deleted")
+                        .Take(6);
             });
         }
         public void List(IEnumerable<ConversationDetails> conversations)
@@ -127,11 +129,13 @@ namespace SandRibbon.Components
     }
     public class SeparatorConversation : ConversationDetails
     {
-        public string Title { 
+        public string Title
+        {
             get { return base.Title; }
             set { base.Title = value; }
         }
-        public SeparatorConversation(string label) : base(label == null?"":label,"","",new List<Slide>(),new Permissions("",false,false,false),"")
+        public SeparatorConversation(string label)
+            : base(label == null ? "" : label, "", "", new List<Slide>(), new Permissions("", false, false, false), "")
         {
             if (label == null) label = String.Empty;
             Title = label;

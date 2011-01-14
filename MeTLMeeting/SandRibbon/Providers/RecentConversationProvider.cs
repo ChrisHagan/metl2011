@@ -36,9 +36,12 @@ namespace SandRibbon.Providers
                         SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value)))
                     .ToList();
                 var allConversations = MeTLLib.ClientFactory.Connection().AvailableConversations.Select(ac => ac).Where(recentConversations.Contains).ToList();
-                var sortedRecent = recentConversations.Where(rc => allConversations.Where(ac => ac.Jid == rc.Jid).First().Subject.ToLower() != "deleted").OrderByDescending(rc => rc.LastAccessed).ToList();
-                
-                return sortedRecent;
+                allConversations.RemoveAll(c => c.Subject.ToLower() == "deleted");
+                //var sortedRecent = recentConversations.Where(rc => allConversations.Where(ac => ac.Jid == rc.Jid).First().Subject.ToLower() != "deleted").ToList();
+                if (allConversations.Count > 0)
+                    return allConversations.OrderByDescending(c => c.LastAccessed).ToList();
+                else
+                    return new List<ConversationDetails>();
             }
             return new List<ConversationDetails>();
         }
