@@ -14,6 +14,7 @@ namespace SandRibbon.Components
             scroll.SizeChanged += scrollChanged;
             scroll.ScrollChanged += scroll_ScrollChanged;
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(ExtendBoth));
+            updateScrollBarButtonDistances();
             VScroll.SmallChange = 10;
             HScroll.SmallChange = 10;
         }
@@ -50,7 +51,7 @@ namespace SandRibbon.Components
         {
             if (scroll.VerticalOffset != VScroll.Value)
             {
-                
+
                 scroll.ScrollToVerticalOffset(VScroll.Value);
             }
         }
@@ -71,6 +72,15 @@ namespace SandRibbon.Components
                 HScroll.Maximum = scroll.ScrollableWidth;
             HScroll.ViewportSize = scroll.ActualWidth;
             VScroll.ViewportSize = scroll.ActualHeight;
+            updateScrollBarButtonDistances();
+        }
+        private void updateScrollBarButtonDistances()
+        {
+            if (scroll != null && scroll.ActualWidth != null && scroll.ActualHeight != null)
+            {
+                HScroll.LargeChange = scroll.ActualWidth;
+                VScroll.LargeChange = scroll.ActualHeight;
+            }
         }
     }
 }

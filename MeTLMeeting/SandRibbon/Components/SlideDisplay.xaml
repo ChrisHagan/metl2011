@@ -26,11 +26,11 @@
              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
              ScrollViewer.VerticalScrollBarVisibility="Visible"
              ScrollViewer.IsDeferredScrollingEnabled="False"
-             VirtualizingStackPanel.IsVirtualizing ="True"
              OverridesDefaultStyle="False"
              SelectionChanged="slides_SelectionChanged"
              Background="Transparent"
              HorizontalAlignment="Stretch" Width="Auto" >
+            <!--VirtualizingStackPanel.IsVirtualizing ="True"-->
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="Height">
