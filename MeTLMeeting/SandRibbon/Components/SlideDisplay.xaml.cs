@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Interfaces;
 using SandRibbon.Components.Utility;
@@ -47,18 +48,41 @@ namespace SandRibbon.Components
             return value;
         }
     }
+    public class SlideToThumbConverter : IValueConverter 
+          {
+              private ObservableCollection<ThumbnailProvider.Thumbnail> thumbs;
+              public SlideToThumbConverter(ObservableCollection<ThumbnailProvider.Thumbnail> thumbs)
+              {
+                  this.thumbs = thumbs;
+              }
+              public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+              {
+                  var id = ((Slide)value).id;
+                  if(thumbs.Where(t => t.id == id).Count() > 0)
+                      return thumbs.ToList().Where(t => t.id == id).First().thumb;
+                  return new ImageBrush();
+              }
+              public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+              {
+                  return value;
+              }
+          }
     public partial class SlideDisplay : UserControl, ISlideDisplay
     {
         public int currentSlideIndex = -1;
         public int currentSlideId = -1;
         public ThumbnailCollection<Slide> thumbnailList = new ThumbnailCollection<Slide>();
+        public ObservableCollection<ThumbnailProvider.Thumbnail> thumbs;
         public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
         public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
         public static SlideIndexConverter SlideIndex;
+        public static SlideToThumbConverter SlideToThumb;
         private bool moveTo;
         public SlideDisplay()
         {
+            thumbs = new ObservableCollection<ThumbnailProvider.Thumbnail>();
             SlideIndex = new SlideIndexConverter(thumbnailList); 
+            SlideToThumb = new SlideToThumbConverter(thumbs); 
             InitializeComponent();
             slides.ItemsSource = thumbnailList;
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher));
@@ -74,7 +98,15 @@ namespace SandRibbon.Components
         private void JoinConversation(string jid)
         {
             currentSlideIndex = 0;
-            ThumbnailProvider.getConversationThumbnails(jid); 
+            var details = ClientFactory.Connection().DetailsOf(jid);
+            foreach (var slide in details.Slides)
+            {
+                thumbs.Add(new ThumbnailProvider.Thumbnail
+                {
+                    id = slide.id,
+                    thumb = ThumbnailProvider.updateThumb(slide.id)
+                });
+            }
         }
         private bool canAddSlide(object _slide)
         {
@@ -188,7 +220,7 @@ namespace SandRibbon.Components
                   if (proposedId == currentSlideId) return;
                   currentSlideIndex = proposedIndex;
                   currentSlideId = proposedId;
-                  ThumbnailProvider.getSlideThumbnails(Globals.location.activeConversation, new [] { Globals.location.currentSlide, currentSlideId } );
+                  updateThumbs(new [] { Globals.location.currentSlide, currentSlideId } );
                   thumbnailList.UpdateCollection();
                   Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                   Commands.MoveTo.ExecuteAsync(currentSlideId);
@@ -197,6 +229,12 @@ namespace SandRibbon.Components
                   slides.ScrollIntoView(slides.SelectedItem);
               }
         }
-        
+
+        private void updateThumbs(IEnumerable<int> ids)
+        {
+            foreach (var id in ids)
+                if(thumbs.Where(t => t.id == id).Count() > 0)
+                    thumbs.Where(t => t.id == id).First().thumb = ThumbnailProvider.updateThumb(id);
+        }
     }
 }

@@ -52,13 +52,14 @@
                                     SnapsToDevicePixels="true" CornerRadius="2">
                                     <Grid>
                                         <Viewbox IsHitTestVisible="False">
-                                            <Rectangle Height="200" Width="320" Fill="{Binding Converter={x:Static providers:ThumbnailProvider.SlideToThumb}}"/>
+                                            <Rectangle Height="200" Width="320" Fill="{Binding Converter={x:Static components:SlideDisplay.SlideToThumb}}"/>
                                         </Viewbox>
                                         <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                 VerticalAlignment="Bottom" 
                                                 BorderThickness="1">
                                             <Label Content="{Binding Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
+                                            
                                         </Border>
                                     </Grid>
                                 </Border>

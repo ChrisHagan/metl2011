@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.IO;
 using System.Net;
@@ -14,6 +15,7 @@ using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
 using System.Windows.Data;
 using MeTLLib;
+using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Utils;
 using Size = System.Windows.Size;
 
@@ -21,45 +23,35 @@ namespace SandRibbon.Providers
 {
     public class ThumbnailProvider
     {
-        public static void getConversationThumbnails(string jid)
+        public class Thumbnail
         {
+            public int id;
+            public ImageBrush thumb { get; set; }
+
+        }
+        public static ObservableCollection<Thumbnail> getConversationThumbs(string jid)
+        {
+            var thumbnails = new ObservableCollection<Thumbnail>();
             var details = ClientFactory.Connection().DetailsOf(jid);
             foreach (var slide in details.Slides)
-                getSlideThumbnail(details.Jid, slide.id);
-        }
-        public static void getSlideThumbnails(string jid, int[] ids)
-        {
-            foreach (var id in ids)
             {
-                var id1 = id;
-                var thread = new Thread(() => getSlideThumbnail(jid, id1)) {IsBackground = true};
-                thread.Start();
+                thumbnails.Add(new Thumbnail
+                                    {   
+                                        id = slide.id,
+                                        thumb =  getThumbnail(slide.id)
+                                    });
             }
+            return thumbnails;
         }
-        public static void getSlideThumbnail(string jid, int id)
+        public static ImageBrush updateThumb(int slideId)
         {
-            //var host = ClientFactory.Connection().server.host.Split('.').First();
-            //var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}", host, id);
-            //var sourceBytes = new WebClient {Credentials = new NetworkCredential("exampleUsername", "examplePassword")}.DownloadData(url);
-            //File.WriteAllBytes(PowerPointLoader.getThumbnailPath(jid, id), sourceBytes); 
+           return getThumbnail(slideId);
         }
 
-        public static SlideToThumbConverter SlideToThumb = new SlideToThumbConverter();
-        public class SlideToThumbConverter : IValueConverter {
-            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                var val = get((Slide)value);
-                return val;
-            }
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                return value;
-            }
-        }
-        public static ImageBrush get(Slide slide)
+        private static ImageBrush getThumbnail(int slideId)
         {
             var host = ClientFactory.Connection().server.host.Split('.').First();
-            var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}", host, slide.id);
+            var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}", host, slideId);
             var bitmap = new BitmapImage();
             try
             {
@@ -74,9 +66,11 @@ namespace SandRibbon.Providers
             {
                 App.Now("Error in loading a thumbnail. boourns");
             }
-            var image = new ImageBrush(bitmap);
-            return image;
+            return new ImageBrush(bitmap);
         }
+
+      
+        
         
     }
 }
