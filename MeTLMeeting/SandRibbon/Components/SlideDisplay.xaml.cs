@@ -29,13 +29,6 @@ using System.Windows.Data;
 
 namespace SandRibbon.Components
 {
-    public class ThumbnailCollection<T> : ObservableCollection<T>
-    {
-        public void UpdateCollection()
-        {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        }
-    }
     public class SlideIndexConverter : IValueConverter
     {
         private ObservableCollection<Slide> collection;
@@ -70,7 +63,7 @@ namespace SandRibbon.Components
     {
         public int currentSlideIndex = -1;
         public int currentSlideId = -1;
-        public ThumbnailCollection<Slide> thumbnailList = new ThumbnailCollection<Slide>();
+        public ObservableCollection<Slide> thumbnailList = new ObservableCollection<Slide>();
         public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
         public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
         public static SlideIndexConverter SlideIndex;
@@ -208,7 +201,13 @@ namespace SandRibbon.Components
                 if (proposedId == currentSlideId) return;
                 currentSlideIndex = proposedIndex;
                 currentSlideId = proposedId;
-                thumbnailList.UpdateCollection();
+                Action<Slide> refreshSlide = s => {
+                    var i = thumbnailList.IndexOf(s);
+                    thumbnailList.RemoveAt(i);
+                    thumbnailList.Insert(i,s);
+                };
+                foreach(var slide in e.RemovedItems) refreshSlide((Slide)slide);
+                foreach(var slide in e.AddedItems) refreshSlide((Slide)slide);
                 Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                 Commands.MoveTo.ExecuteAsync(currentSlideId);
                 if (Globals.isAuthor && Globals.synched)

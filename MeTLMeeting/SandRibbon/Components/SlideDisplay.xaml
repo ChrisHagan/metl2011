@@ -52,7 +52,9 @@
                                     <Grid>
                                         <Viewbox IsHitTestVisible="False">
                                             <Image Height="200" Width="320">
-                                                <Image.Source>
+                                                <Image.Source><!-- This is ugly as stink.  You'll find that this value converter
+                                                    actually returns null, but schedules the image to have its source updated
+                                                    when the data comes asynchronously down from the web-->
                                                     <MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
                                                         <Binding RelativeSource="{RelativeSource Self}" />
                                                     </MultiBinding>
