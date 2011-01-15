@@ -18,6 +18,7 @@ using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Utils;
 using Size = System.Windows.Size;
+using System.ComponentModel;
 
 namespace SandRibbon.Providers
 {
@@ -26,51 +27,30 @@ namespace SandRibbon.Providers
         public class Thumbnail
         {
             public int id;
-            public ImageBrush thumb { get; set; }
+            public ImageSource thumb { get; set; }
 
         }
-        public static ObservableCollection<Thumbnail> getConversationThumbs(string jid)
+        public static void thumbnail(Image image, int slideId)
         {
-            var thumbnails = new ObservableCollection<Thumbnail>();
-            var details = ClientFactory.Connection().DetailsOf(jid);
-            foreach (var slide in details.Slides)
+            var worker = new BackgroundWorker();
+            BitmapImage bitmap = null;//Will build on other thread, freeze and hand back.
+            worker.DoWork += delegate
             {
-                thumbnails.Add(new Thumbnail
-                                    {   
-                                        id = slide.id,
-                                        thumb =  getThumbnail(slide.id)
-                                    });
-            }
-            return thumbnails;
+                var host = ClientFactory.Connection().server.host.Split('.').First();
+                using (var client = new WebClient())
+                {
+                    var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}&width={2}&height={3}", host, slideId, 320, 240);
+                    var stream = new MemoryStream(client.DownloadData(url));
+                    bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.StreamSource = stream;
+                    bitmap.EndInit();
+                    bitmap.Freeze();
+                    image.Dispatcher.adopt(delegate{image.Source = bitmap;});
+                    App.Now("Froze and returned thumbnail {0}", slideId);
+                }
+            };
+            worker.RunWorkerAsync();
         }
-        public static ImageBrush updateThumb(int slideId)
-        {
-           return getThumbnail(slideId);
-        }
-
-        private static ImageBrush getThumbnail(int slideId)
-        {
-            var host = ClientFactory.Connection().server.host.Split('.').First();
-            var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}", host, slideId);
-            var bitmap = new BitmapImage();
-            try
-            {
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(url);
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                bitmap.EndInit();
-                bitmap.Freeze();
-            }
-            catch (Exception)
-            {
-                App.Now("Error in loading a thumbnail. boourns");
-            }
-            return new ImageBrush(bitmap);
-        }
-
-      
-        
-        
     }
 }

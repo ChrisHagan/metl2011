@@ -7,7 +7,6 @@
     xmlns:my="clr-namespace:SandRibbon"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
-    xmlns:providers="clr-namespace:SandRibbon.Providers"
     x:Name="SlideMeasure" >
     <UserControl.Resources>
         <core:String x:Key="defaultPrivacy">public</core:String>
@@ -52,7 +51,13 @@
                                     SnapsToDevicePixels="true" CornerRadius="2">
                                     <Grid>
                                         <Viewbox IsHitTestVisible="False">
-                                            <Rectangle Height="200" Width="320" Fill="{Binding Converter={x:Static components:SlideDisplay.SlideToThumb}}"/>
+                                            <Image Height="200" Width="320">
+                                                <Image.Source>
+                                                    <MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
+                                                        <Binding RelativeSource="{RelativeSource Self}" />
+                                                    </MultiBinding>
+                                                </Image.Source> 
+                                            </Image>
                                         </Viewbox>
                                         <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
