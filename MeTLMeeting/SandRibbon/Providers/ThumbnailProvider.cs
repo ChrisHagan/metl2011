@@ -37,18 +37,27 @@ namespace SandRibbon.Providers
             worker.DoWork += delegate
             {
                 var host = ClientFactory.Connection().server.host.Split('.').First();
-                using (var client = new WebClient())
+                try
                 {
-                    var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}&width={2}&height={3}", host, slideId, 320, 240);
-                    var stream = new MemoryStream(client.DownloadData(url));
-                    bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.StreamSource = stream;
-                    bitmap.EndInit();
-                    bitmap.Freeze();
-                    image.Dispatcher.adopt(delegate{image.Source = bitmap;});
-                    App.Now("Froze and returned thumbnail {0}", slideId);
+                    using (var client = new WebClient())
+                    {
+                        var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}&width={2}&height={3}", host, slideId, 320, 240);
+                        var stream = new MemoryStream(client.DownloadData(url));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+                        image.Dispatcher.adopt(delegate{image.Source = bitmap;});
+                        App.Now("Froze and returned thumbnail {0}", slideId);
+                        stream.Close();
+                    }
                 }
+                catch (Exception e)
+                {
+                    Logger.Log(string.Format("Error loading thumbnail: {0}", e.Message)); 
+                }
+               
             };
             worker.RunWorkerAsync();
         }

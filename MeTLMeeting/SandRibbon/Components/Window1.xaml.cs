@@ -988,6 +988,8 @@ namespace SandRibbon
                 foreach (var tab in tabs)
                     ribbon.Tabs.Add((RibbonTab)tab);
                 ribbon.SelectedTab = home;
+                if (!ribbon.IsMinimized && currentConversationSearchBox.Visibility == Visibility.Visible)
+                    ribbon.ToggleMinimize();
             });
             CommandManager.InvalidateRequerySuggested();
             Commands.RequerySuggested();

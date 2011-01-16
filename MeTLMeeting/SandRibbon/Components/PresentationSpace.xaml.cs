@@ -166,7 +166,7 @@ namespace SandRibbon.Components
                     var visual = details.showPrivate ? cloneAll() : clonePublicOnly();
                     context.DrawRectangle(new VisualBrush(visual), null,
                                           new Rect(new Point(), new Size(ActualWidth, ActualHeight)));
-                    context.DrawText(new FormattedText(
+                  /*private *  context.DrawText(new FormattedText(
                                          details.message,
                                          CultureInfo.GetCultureInfo("en-us"),
                                          FlowDirection.LeftToRight,
@@ -174,7 +174,7 @@ namespace SandRibbon.Components
                                          24,
                                          Brushes.Black
                                          ),
-                                     new Point(5, 10));
+                                     new Point(5, 10));*/
                 }
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
@@ -508,6 +508,8 @@ namespace SandRibbon.Components
         }
         private FrameworkElement clonePublicOnly(){
             var clone = new InkCanvas();
+            clone.Height = ActualHeight;
+            clone.Width = ActualWidth;
             foreach(var stroke in stack.handwriting.Strokes.Where(s=>s.tag().privacy == "public"))
                 clone.Strokes.Add(stroke.Clone());
             foreach(var canvas in new AbstractCanvas[]{stack.images, stack.text})

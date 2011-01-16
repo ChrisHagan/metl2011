@@ -44,7 +44,6 @@ namespace SandRibbon.Components.Canvas
     }
     public class Image : AbstractCanvas
     {
-        private static readonly int PADDING = 5;
         public Image()
         {
             EditingMode = InkCanvasEditingMode.Select;
@@ -309,8 +308,8 @@ namespace SandRibbon.Components.Canvas
         }
         public static IEnumerable<Point> getImagePoints(System.Windows.Controls.Image image)
         {
-            var x = InkCanvas.GetLeft(image) + PADDING;
-            var y = InkCanvas.GetTop(image) + PADDING;
+            var x = InkCanvas.GetLeft(image);
+            var y = InkCanvas.GetTop(image);
             var width = image.Width;
             var height = image.Height;
 
@@ -569,7 +568,7 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             var selectedElements = GetSelectedClonedElements();
             var startingElements = elementsAtStartOfTheMove.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
-            abosoluteizeElements(selectedElements);
+            //abosoluteizeElements(selectedElements);
             Action undo = () =>
               {
                   ClearAdorners();
