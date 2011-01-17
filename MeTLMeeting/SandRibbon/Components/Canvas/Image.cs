@@ -190,18 +190,11 @@ namespace SandRibbon.Components.Canvas
             canEdit = base.canEdit;
             if (privacy == "private") canEdit = true;
         }
-        private int count = 0;
         public void ReceiveImages(IEnumerable<TargettedImage> images)
         {
-            if(images.Count() > 0 && images.First().author == me)
-                Console.WriteLine(string.Format("image received: {0}", count++));
-            count++;
             var safeImages = images.Where(shouldDisplay).ToList();
             foreach (var image in safeImages)
-            {
-                TargettedImage image1 = image;
-                Dispatcher.BeginInvoke((Action)(() => ReceiveImage(image1)));
-            }
+                ReceiveImage(image);
             ensureAllImagesHaveCorrectPrivacy();
         }
         public void ReceiveVideos(IEnumerable<MeTLLib.DataTypes.TargettedVideo> videos)
@@ -225,10 +218,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void ReceiveImage(MeTLLib.DataTypes.TargettedImage image)
         {
-            Dispatcher.adopt(delegate
-            {
-                AddImage(image.image);
-            });
+            Dispatcher.adoptAsync(() => AddImage(image.image));
         }
         public void ReceiveVideo(MeTLLib.DataTypes.TargettedVideo video)
         {
@@ -399,9 +389,7 @@ namespace SandRibbon.Components.Canvas
                 if (image.tag().isBackground)
                     Background = new VisualBrush(image);
                 else if (!imageExistsOnCanvas(image))
-                {
                     Children.Add(image);
-                }
             }
             catch (Exception e)
             {
