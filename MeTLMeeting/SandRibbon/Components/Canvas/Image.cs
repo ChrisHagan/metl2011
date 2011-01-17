@@ -194,7 +194,10 @@ namespace SandRibbon.Components.Canvas
         {
             var safeImages = images.Where(shouldDisplay).ToList();
             foreach (var image in safeImages)
-                ReceiveImage(image);
+            {
+                TargettedImage image1 = image;
+                Dispatcher.adoptAsync(() => AddImage(image1.image));
+            }
             ensureAllImagesHaveCorrectPrivacy();
         }
         public void ReceiveVideos(IEnumerable<MeTLLib.DataTypes.TargettedVideo> videos)
@@ -218,7 +221,6 @@ namespace SandRibbon.Components.Canvas
         }
         private void ReceiveImage(MeTLLib.DataTypes.TargettedImage image)
         {
-            Dispatcher.adoptAsync(() => AddImage(image.image));
         }
         public void ReceiveVideo(MeTLLib.DataTypes.TargettedVideo video)
         {
