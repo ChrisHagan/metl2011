@@ -695,9 +695,8 @@ namespace MeTLLib
         {
             if (wire == null)
             {
-                Trace.TraceWarning("Wire is null at tryIfConnected - beginning relogin process with interval of 1s");
-                wire.AddActionToReloginQueue(action);
-                return;
+                Trace.TraceError("Wire is null.");
+                throw new Exception("Wire is null.  Please restart MeTL.");
             }
             if (wire.IsConnected() == false)
             {
