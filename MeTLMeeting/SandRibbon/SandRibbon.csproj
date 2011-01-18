@@ -924,6 +924,7 @@
     <Resource Include="Resources\Back_arrow_black.png" />
     <Resource Include="Resources\Edit.png" />
     <Resource Include="Resources\Logout.png" />
+    <Resource Include="Resources\Collaborate.png" />
     <Content Include="Resources\MeTL.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -997,6 +998,10 @@
     <Content Include="Resources\MeTL Presenter.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\MeTLNewIcon.ico" />
+    <Content Include="Resources\MeTLNewIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\mimeTypes\audio.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1027,6 +1032,7 @@
     <Content Include="Resources\mimeTypes\web.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\NoCollaborate.png" />
     <Content Include="Resources\Pen.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

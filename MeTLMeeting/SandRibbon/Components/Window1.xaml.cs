@@ -58,7 +58,8 @@ namespace SandRibbon
             InitializeComponent();
             var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(level);
-            Title = Globals.MeTLType;
+            Title = "MeTL 2011";
+                //Globals.MeTLType;
             try {
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
@@ -452,7 +453,8 @@ namespace SandRibbon
         private string messageFor(ConversationDetails details)
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
-            return string.Format("{3} is in {0}'s \"{1}\", currently in {2} style", details.Author, details.Title, permissionLabel, Globals.userInformation.credentials.name);
+            return string.Format("Collaboration {0}  -  {1}'s \"{2}\" - MeTL", (permissionLabel == "tutorial") ? "ENABLED" : "DISABLED", details.Author, details.Title);
+            //return string.Format("{3} is in {0}'s \"{1}\", currently in {2} style", details.Author, details.Title, permissionLabel, Globals.userInformation.credentials.name);
         }
         private void MoveTo(int slide)
         {
@@ -573,14 +575,16 @@ namespace SandRibbon
         {
             try
             {
-                if(details.Subject.ToLower() != "deleted")
+                if (details.Subject.ToLower() != "deleted")
                     Title = messageFor(Globals.conversationDetails);
                 else
-                    Title = new ConfigurationProvider().getMeTLType();
+                    Title = "MeTL 2011";
+                //Title = new ConfigurationProvider().getMeTLType();
             }
             catch (NotSetException)
             {
-                Title = new ConfigurationProvider().getMeTLType();
+                Title = "MeTL 2011";
+                //Title = new ConfigurationProvider().getMeTLType();
             }
         }
         private DelegateCommand<object> canOpenFriendsOverride;

@@ -1391,7 +1391,7 @@ namespace MeTLLib.DataTypes
                 this.downloader = downloader;
                 return this;
             }
-            //private static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\Slide_Not_Loaded.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
+            private static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\Slide_Not_Loaded.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
             public System.Windows.Controls.Image forceEvaluation()
             {
                 System.Windows.Controls.Image image = new System.Windows.Controls.Image
@@ -1399,7 +1399,7 @@ namespace MeTLLib.DataTypes
                         Tag = this.tag,
                         Height = this.height,
                         Width = this.width,
-                        //Source = BackupSource
+                        Source = BackupSource
                         //Source = this.source
                     };
                 attachSourceToThisImage(image);

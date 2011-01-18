@@ -10,7 +10,7 @@
     xmlns:tabs="clr-namespace:SandRibbon.Tabs"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
     AllowDrop="True"
-    Title="MeTL Presenter"
+    Title="MeTL 2011"
     x:Name="ribbonWindow"
     Closing="ribbonWindow_Closing"
     WindowState="Maximized"
@@ -37,7 +37,7 @@
     <sr:RibbonWindow.Ribbon>
         <sr:Ribbon x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" 
                    PreviewMouseDoubleClick="ApplicationPopup_PreviewMouseDoubleClick"
-                   ApplicationButtonImage="\Resources\Ribbon-ApplicationButton.png">
+                   ApplicationButtonImage="\Resources\MeTLNewIcon.png">
             <sr:Ribbon.ToolBar>
                 <chrome:ToolBar />
             </sr:Ribbon.ToolBar>
