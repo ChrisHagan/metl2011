@@ -318,9 +318,10 @@ namespace MeTLLib.Providers.Connection
                             else
                             item.Work.Invoke();
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-                            item.Work.Invoke();
+                            Trace.TraceError("Failed to add item to relogin-queue.  Exception: " + e.Message);
+                            //item.Work.Invoke();
                         }
                     }
                 }
