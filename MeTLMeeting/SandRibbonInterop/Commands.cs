@@ -96,7 +96,7 @@ namespace SandRibbon
         public static CompositeCommand ReceiveLiveWindow = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyLiveWindow = new CompositeCommand();
         public static CompositeCommand DeleteSelectedItems = new CompositeCommand();
-        public static CompositeCommand Relogin = new CompositeCommand();
+        //public static CompositeCommand Relogin = new CompositeCommand();
         #region Quizzing
         public static CompositeCommand SendWormMove = new CompositeCommand(); 
         public static CompositeCommand ReceiveWormMove = new CompositeCommand(); 
@@ -185,7 +185,7 @@ namespace SandRibbon
         public static RoutedCommand CloseApplication = new RoutedCommand();
         public static CompositeCommand SetLayer = new CompositeCommand();
         public static CompositeCommand SetTutorialVisibility = new CompositeCommand();
-        public static CompositeCommand ThumbnailAvailable = new CompositeCommand();
+        //public static CompositeCommand ThumbnailAvailable = new CompositeCommand();
         public static CompositeCommand UpdateForeignConversationDetails = new CompositeCommand();
         public static CompositeCommand RememberMe = new CompositeCommand();
         #endregion

@@ -78,7 +78,7 @@ namespace SandRibbon.Quizzing
             if (missedHeartbeats >= HEARTBEAT_FAIL_THRESHOLD)
             {
                 ResetHeartbeat();
-                Commands.Relogin.ExecuteAsync(null);
+                //Commands.Relogin.ExecuteAsync(null);
             }
             while(movements.Count > POINTS)
                 movements = movements.Skip(1).ToList();

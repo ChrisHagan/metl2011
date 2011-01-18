@@ -1391,6 +1391,7 @@ namespace MeTLLib.DataTypes
                 this.downloader = downloader;
                 return this;
             }
+            //private static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\Slide_Not_Loaded.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
             public System.Windows.Controls.Image forceEvaluation()
             {
                 System.Windows.Controls.Image image = new System.Windows.Controls.Image
@@ -1398,11 +1399,23 @@ namespace MeTLLib.DataTypes
                         Tag = this.tag,
                         Height = this.height,
                         Width = this.width,
-                        Source = this.source
+                        //Source = BackupSource
+                        //Source = this.source
                     };
+                attachSourceToThisImage(image);
                 InkCanvas.SetLeft(image, this.x);
                 InkCanvas.SetTop(image, this.y);
                 return image;
+            }
+            private void attachSourceToThisImage(System.Windows.Controls.Image image)
+            {
+                Thread backgroundWorker = new Thread(new ThreadStart(() => {
+                    var newSource = this.source;
+                    if (image.Dispatcher.Thread != null)
+                        DispatcherExtensions.adoptAsync(image.Dispatcher,(Action)delegate{image.Source=newSource;});
+                    else image.Source = newSource;
+                }));
+                backgroundWorker.Start();
             }
             public TargettedImage Img
             {
@@ -1445,10 +1458,11 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
+                    System.Diagnostics.Trace.TraceInformation("Imagerequested at: " + DateTime.Now + DateTime.Now.Millisecond);
                     var stemmedRelativePath = INodeFix.StemBeneath("/Resource/",  GetTag(sourceTag));
                     var path = string.Format("https://{0}:1188{1}", server.host, stemmedRelativePath);
                     var stream =  new MemoryStream(provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute)));
-
+                    System.Diagnostics.Trace.TraceInformation("Image data provided at: " + DateTime.Now + DateTime.Now.Millisecond);
                     var image = new BitmapImage();
                     try
                     {
@@ -1456,10 +1470,13 @@ namespace MeTLLib.DataTypes
                         image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
                         image.StreamSource = stream;
                         image.EndInit();
+                        image.Freeze();
                     }
-                    catch (Exception e) { 
+                    catch (Exception e) {
+                        System.Diagnostics.Trace.TraceInformation("Image instantiation failed at: " + DateTime.Now + DateTime.Now.Millisecond);
                         //Who knows what sort of hell is lurking in our history
                     }
+                    System.Diagnostics.Trace.TraceInformation("Image created at: " + DateTime.Now + DateTime.Now.Millisecond);
                     return image;
                 }
                 set { SetTag(sourceTag, new ImageSourceConverter().ConvertToString(value)); }

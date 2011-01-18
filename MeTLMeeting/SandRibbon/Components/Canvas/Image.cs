@@ -388,9 +388,10 @@ namespace SandRibbon.Components.Canvas
         {
             try
             {
-                if (image.tag().isBackground)
-                    Background = new VisualBrush(image);
-                else if (!imageExistsOnCanvas(image))
+                //if (image.tag().isBackground)
+                //    Background = new VisualBrush(image);
+                //else 
+                if (!imageExistsOnCanvas(image))
                     Children.Add(image);
             }
             catch (Exception e)

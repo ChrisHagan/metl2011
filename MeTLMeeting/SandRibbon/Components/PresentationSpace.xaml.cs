@@ -210,6 +210,7 @@ namespace SandRibbon.Components
         }
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
+            App.Now("PresentationSpace begin Init");
             BeginInit();
             stack.handwriting.ReceiveStrokes(parser.ink);
             stack.images.ReceiveImages(parser.images.Values);
@@ -226,6 +227,7 @@ namespace SandRibbon.Components
             } foreach (var bubble in parser.bubbleList)
                 stack.ReceiveNewBubble(bubble);
             EndInit();
+            App.Now("PresentationSpace end Init");
         }
         private void MirrorPresentationSpace(Window1 parent)
         {
