@@ -696,7 +696,7 @@ namespace MeTLLib
             if (wire == null)
             {
                 Trace.TraceError("Wire is null.");
-                throw new Exception("Wire is null.  Please restart MeTL.");
+                //throw new Exception("Wire is null.  Please restart MeTL.");
             }
             if (wire.IsConnected() == false)
             {
