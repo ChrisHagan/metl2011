@@ -132,12 +132,17 @@ namespace SandRibbon.Components.Canvas
 
         protected static void abosoluteizeElements(List<UIElement> selectedElements)
         {
-            foreach (var element in selectedElements)
+            foreach (FrameworkElement element in selectedElements)
             {
                 if(GetLeft(element) < 0)
-                    SetLeft(element, 0);
+                    SetLeft(element, (element is TextBox) ? 0 : 0 + ((element.Width != element.ActualWidth) ? ((element.Width - element.ActualWidth)/2) : 0));
+                else
+                    SetLeft(element, (element is TextBox) ? GetLeft(element) : GetLeft(element) + ((element.Width != element.ActualWidth) ? ((element.Width - element.ActualWidth)/2) : 0));
                 if(GetTop(element) < 0)
-                    SetTop(element, 0);
+                    SetTop(element, (element is TextBox) ? 0 : 0 + ((element.Height != element.ActualHeight) ? ((element.Height - element.ActualHeight)/2) : 0));
+                else
+                    SetTop(element, (element is TextBox) ? GetTop(element) : GetTop(element) + ((element.Height != element.ActualHeight) ? ((element.Height - element.ActualHeight)/2) : 0));
+
             }
         }
         private void hideAdorners(object obj)

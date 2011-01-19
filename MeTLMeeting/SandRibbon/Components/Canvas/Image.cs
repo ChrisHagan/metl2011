@@ -558,7 +558,6 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             var selectedElements = GetSelectedClonedElements();
             var startingElements = elementsAtStartOfTheMove.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
-            //abosoluteizeElements(selectedElements);
             Action undo = () =>
               {
                   ClearAdorners();
@@ -566,18 +565,17 @@ namespace SandRibbon.Components.Canvas
                   var mySelectedElements = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
                   foreach (var element in mySelectedElements)
                   {
-                        if(Children.Contains(element))
-                            Children.Remove(element);
+                        if(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() > 0)
+                            Children.Remove(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).FirstOrDefault());
                         dirtyThisElement(element); 
                   }
                   foreach (var element in startingElements)
                   {
                       selection.Add(element);
-                      if (!Children.Contains(element))
+                     if(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() == 0)
                           Children.Add(element);
                       sendThisElement(element);
                   }
-                  Select(selection);
                   addAdorners();
               };
             Action redo = () =>
@@ -588,18 +586,17 @@ namespace SandRibbon.Components.Canvas
                   var mySelectedImages = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
                   foreach (var element in startingElements)
                   {
-                        if(Children.Contains(element))
-                            Children.Remove(element);
+                        if(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() > 0)
+                            Children.Remove(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).FirstOrDefault());
                         dirtyThisElement(element); 
                   }
                   foreach (var element in mySelectedImages)
                   {
                       selection.Add(element);
-                      if (!Children.Contains(element))
+                      if(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() == 0)
                           Children.Add(element);
                       sendThisElement(element);
                   }
-                  Select(selection);
                   addAdorners();
               };
             UndoHistory.Queue(undo, redo);
