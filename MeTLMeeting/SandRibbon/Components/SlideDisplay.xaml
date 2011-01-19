@@ -55,23 +55,23 @@
                                     SnapsToDevicePixels="true" CornerRadius="2">
                                     <Grid>
                                         <Viewbox IsHitTestVisible="False">
-                                            <ContentPresenter Content="{Binding image}" Height="200" Width="320" />
-                                            <!--<Image Height="200" Width="320">
-                                                <Image.Source>--><!-- This is ugly as stink.  You'll find that this value converter
+                                            <!--<ContentPresenter Content="{Binding image}" Height="200" Width="320" />-->
+                                            <Image Height="200" Width="320">
+                                                <Image.Source><!-- This is ugly as stink.  You'll find that this value converter
                                                     actually returns null, but schedules the image to have its source updated
                                                     when the data comes asynchronously down from the web-->
-                                                    <!--<MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
+                                                    <MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
                                                         <Binding RelativeSource="{RelativeSource Self}" />
                                                     </MultiBinding>
                                                 </Image.Source> 
-                                            </Image>-->
+                                            </Image>
                                         </Viewbox>
                                         <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                 VerticalAlignment="Bottom" 
                                                 BorderThickness="1">
-                                            <Label Content="{Binding index, Converter={x:Static components:SlideDisplay.SlideIndexConverter}}"/>
-                                            <!--{Binding Path=slide, Converter={x:Static components:SlideDisplay.SlideIndex}}"--> 
+                                            <!--<Label Content="{Binding index, Converter={x:Static components:SlideDisplay.SlideIndexConverter}}"/>-->
+                                            <Label Content="{Binding Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
                                         </Border>
                                     </Grid>
                                 </Border>

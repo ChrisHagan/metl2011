@@ -49,7 +49,7 @@ namespace SandRibbon.Providers
                         bitmap.EndInit();
                         bitmap.Freeze();
                         image.Dispatcher.adopt(delegate{image.Source = bitmap;});
-                        App.Now("Froze and returned thumbnail {0}, datalength {1}", slideId, stream.Length.ToString());
+                        //App.Now("Froze and returned thumbnail {0}", slideId);
                         stream.Close();
                     }
                 }

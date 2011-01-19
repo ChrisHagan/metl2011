@@ -47,7 +47,7 @@ namespace SandRibbon.Components
             ThumbnailProvider.thumbnail(image, id);
         }
     }
-    public class SlideIndexConverter : IValueConverter
+    /*public class SlideIndexConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -59,24 +59,23 @@ namespace SandRibbon.Components
         {
             return value;
         }
-    }
-    /*public class SlideIndexConverter : IValueConverter
+    }*/
+    public class SlideIndexConverter : IValueConverter
     {
-        private ObservableCollection<SlideThumbnail> collection;
-        public SlideIndexConverter(ObservableCollection<SlideThumbnail> collection)
+        private ObservableCollection<Slide> collection;
+        public SlideIndexConverter(ObservableCollection<Slide> collection)
         {
             this.collection = collection;
         }
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return ((Slide)value).index;
-            //collection.IndexOf((Slide)value) + 1;
+            return collection.IndexOf((Slide)value) + 1;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return value;
         }
-    }*/
+    }
     public class SlideToThumbConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -95,18 +94,18 @@ namespace SandRibbon.Components
     {
         public int currentSlideIndex = -1;
         public int currentSlideId = -1;
-        public ObservableCollection<SlideThumbnail> thumbnailList = new ObservableCollection<SlideThumbnail>();
+        public ObservableCollection<Slide> thumbnailList = new ObservableCollection<Slide>();
         public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
         public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
-        public static SlideIndexConverter SlideIndexConverter;
-        //public static SlideIndexConverter SlideIndex;
-        //public static SlideToThumbConverter SlideToThumb;
+        //public static SlideIndexConverter SlideIndexConverter;
+        public static SlideIndexConverter SlideIndex;
+        public static SlideToThumbConverter SlideToThumb;
         private bool moveTo;
         public SlideDisplay()
         {
-            SlideIndexConverter = new SlideIndexConverter();
-            //SlideIndex = new SlideIndexConverter(thumbnailList);
-            //SlideToThumb = new SlideToThumbConverter();
+            //SlideIndexConverter = new SlideIndexConverter();
+            SlideIndex = new SlideIndexConverter(thumbnailList);
+            SlideToThumb = new SlideToThumbConverter();
             InitializeComponent();
             slides.ItemsSource = thumbnailList;
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher));
@@ -142,7 +141,7 @@ namespace SandRibbon.Components
         }
         private bool isSlideInSlideDisplay(int slide)
         {
-            return thumbnailList.Any(t => t.slide.id == slide);
+            return thumbnailList.Any(t => t.id == slide);
         }
         private void MoveTo(int slide)
         {
@@ -150,11 +149,11 @@ namespace SandRibbon.Components
             {
                 if (isSlideInSlideDisplay(slide))
                 {
-                    var currentSlide = ((SlideThumbnail)slides.SelectedItem).slide;
+                    var currentSlide = (SlideThumbnail)slides.SelectedItem;
                     if (currentSlide == null || currentSlide.id != slide)
                     {
                         slides.SelectedIndex =
-                            thumbnailList.Select(s => s.slide.id).ToList().IndexOf(slide);
+                            thumbnailList.Select(s => s.id).ToList().IndexOf(slide);
                         slides.ScrollIntoView(slides.SelectedItem);
                     }
                 }
@@ -168,7 +167,7 @@ namespace SandRibbon.Components
             if (!Globals.synched) return;
             var action = (Action)(() => Dispatcher.adoptAsync((Action)delegate
                                          {
-                                             if (thumbnailList.Where(t => t.slide.id == where).Count() == 1)
+                                             if (thumbnailList.Where(t => t.id == where).Count() == 1)
                                                  Commands.InternalMoveTo.ExecuteAsync(where);
                                              Commands.MoveTo.ExecuteAsync(where);
                                          }));
@@ -211,7 +210,7 @@ namespace SandRibbon.Components
             {
                 if (slide.type == Slide.TYPE.SLIDE)
                 {
-                    thumbnailList.Add(new SlideThumbnail(slide));
+                    thumbnailList.Add(slide);
                 }
             }
             if (moveTo)
@@ -231,18 +230,18 @@ namespace SandRibbon.Components
             {
                 var proposedIndex = source.SelectedIndex;
                 var proposedId =
-                    ((SlideThumbnail)source.SelectedItem).slide.id;
+                    ((Slide)source.SelectedItem).id;
                 if (proposedId == currentSlideId) return;
                 currentSlideIndex = proposedIndex;
                 currentSlideId = proposedId;
-                Action<SlideThumbnail> refreshSlide = s => {
-                    s.Refresh();
-                    //var i = thumbnailList.IndexOf(s);
-                    //thumbnailList.RemoveAt(i);
-                    //thumbnailList.Insert(i,s);
+                Action<Slide> refreshSlide = s => {
+                    //s.Refresh();
+                    var i = thumbnailList.IndexOf(s);
+                    thumbnailList.RemoveAt(i);
+                    thumbnailList.Insert(i,s);
                 };
-                foreach(var slide in e.RemovedItems) refreshSlide((SlideThumbnail)slide);
-                foreach(var slide in e.AddedItems) refreshSlide((SlideThumbnail)slide);
+                foreach(var slide in e.RemovedItems) refreshSlide((Slide)slide);
+                foreach(var slide in e.AddedItems) refreshSlide((Slide)slide);
                 Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                 Commands.MoveTo.ExecuteAsync(currentSlideId);
                 if (Globals.isAuthor && Globals.synched)
