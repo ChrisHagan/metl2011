@@ -382,9 +382,6 @@
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter Property="Background" Value="{StaticResource CheckedGradient}"/>
-                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource CheckedBorderBrush}"/>
-                        </Trigger>
-                        <Trigger Property="IsFocused" Value="True">
                             <Setter TargetName="border" Property="BorderBrush" Value="Blue" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">

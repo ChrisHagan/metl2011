@@ -138,6 +138,8 @@
                                     <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://monash.edu/legals/">Caution</Hyperlink>
                                     -
                                     <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://monash.edu/legals/privacy.html">Privacy Policy</Hyperlink>
+                                    -
+                                    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://metl.adm.monash.edu.au/MeTL/docs/license.html">Licenses</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </Grid>
