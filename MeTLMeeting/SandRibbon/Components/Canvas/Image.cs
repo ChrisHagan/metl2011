@@ -396,7 +396,6 @@ namespace SandRibbon.Components.Canvas
             }
             catch (Exception e)
             {
-                MessageBox.Show("Sorry, your image could not be imported");
             }
         }
         public void FlushImages()
