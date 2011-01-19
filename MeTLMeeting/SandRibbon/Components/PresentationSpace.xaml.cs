@@ -541,13 +541,21 @@ namespace SandRibbon.Components
             return clone;
         }
         private FrameworkElement viewFor(FrameworkElement element) {
-            var rect = new Rectangle { 
+            var rect = new Rectangle {
                 Width = element.ActualWidth,
-                Height=element.ActualHeight,
+                Height = element.ActualHeight,
                 Fill=new VisualBrush(element)
             };
-            InkCanvas.SetTop(rect, InkCanvas.GetTop(element));
-            InkCanvas.SetLeft(rect, InkCanvas.GetLeft(element));
+            /* Okay, this bit is complicated.  The bounds of an image are the bounds of the element(x,y,height,width), 
+             * not the image, but the actualHeight of an image (which is calculated after drawing the image) which is 
+             * the pixels of the imageData.  So, when an image is drawn with correct aspect ratio, it may be smaller
+             * than the bounds, which means that the x and y will need to be adjusted by half the difference between the
+             * height and the actual height.  However, this doesn't happen for textboxes, and if you apply the difference
+             * one of them way a NaN, and adding a NaN to any number makes a NaN.  So, that's why these "SetTop" and "SetLeft"
+             * are so horrible.
+            */
+            InkCanvas.SetTop(rect, (element is TextBox)?InkCanvas.GetTop(element):InkCanvas.GetTop(element) + ((element.Height != element.ActualHeight)?((element.Height - element.ActualHeight) / 2):0));
+            InkCanvas.SetLeft(rect, (element is TextBox)?InkCanvas.GetLeft(element):InkCanvas.GetLeft(element) + ((element.Width != element.ActualWidth) ? ((element.Width - element.ActualWidth) / 2) : 0));
             return rect;
         }
         protected override AutomationPeer OnCreateAutomationPeer()
