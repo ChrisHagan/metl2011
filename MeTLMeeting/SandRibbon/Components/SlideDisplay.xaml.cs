@@ -29,22 +29,54 @@ using System.Windows.Data;
 
 namespace SandRibbon.Components
 {
+    public class SlideThumbnail : DependencyObject
+    {
+        public SlideThumbnail(Slide slide)
+        {
+            this.slide = slide;
+            Refresh();
+        }
+        public Slide slide { private set; get; }
+        public int index { get { return slide.index; } }
+        public int id { get { return slide.id; } }
+
+        public System.Windows.Controls.Image image { private set; get; }
+        public void Refresh()
+        {
+            if (image == null) image = new System.Windows.Controls.Image();
+            ThumbnailProvider.thumbnail(image, id);
+        }
+    }
     public class SlideIndexConverter : IValueConverter
     {
-        private ObservableCollection<Slide> collection;
-        public SlideIndexConverter(ObservableCollection<Slide> collection)
-        {
-            this.collection = collection;
-        }
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return collection.IndexOf((Slide)value) + 1;
+            if (!(value is int))
+                return 0;
+            else return (int)value + 1;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return value;
         }
     }
+    /*public class SlideIndexConverter : IValueConverter
+    {
+        private ObservableCollection<SlideThumbnail> collection;
+        public SlideIndexConverter(ObservableCollection<SlideThumbnail> collection)
+        {
+            this.collection = collection;
+        }
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return ((Slide)value).index;
+            //collection.IndexOf((Slide)value) + 1;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return value;
+        }
+    }*/
     public class SlideToThumbConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -63,16 +95,18 @@ namespace SandRibbon.Components
     {
         public int currentSlideIndex = -1;
         public int currentSlideId = -1;
-        public ObservableCollection<Slide> thumbnailList = new ObservableCollection<Slide>();
+        public ObservableCollection<SlideThumbnail> thumbnailList = new ObservableCollection<SlideThumbnail>();
         public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
         public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
-        public static SlideIndexConverter SlideIndex;
-        public static SlideToThumbConverter SlideToThumb;
+        public static SlideIndexConverter SlideIndexConverter;
+        //public static SlideIndexConverter SlideIndex;
+        //public static SlideToThumbConverter SlideToThumb;
         private bool moveTo;
         public SlideDisplay()
         {
-            SlideIndex = new SlideIndexConverter(thumbnailList);
-            SlideToThumb = new SlideToThumbConverter();
+            SlideIndexConverter = new SlideIndexConverter();
+            //SlideIndex = new SlideIndexConverter(thumbnailList);
+            //SlideToThumb = new SlideToThumbConverter();
             InitializeComponent();
             slides.ItemsSource = thumbnailList;
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher));
@@ -108,7 +142,7 @@ namespace SandRibbon.Components
         }
         private bool isSlideInSlideDisplay(int slide)
         {
-            return thumbnailList.Any(t => t.id == slide);
+            return thumbnailList.Any(t => t.slide.id == slide);
         }
         private void MoveTo(int slide)
         {
@@ -116,11 +150,11 @@ namespace SandRibbon.Components
             {
                 if (isSlideInSlideDisplay(slide))
                 {
-                    var currentSlide = (Slide)slides.SelectedItem;
+                    var currentSlide = ((SlideThumbnail)slides.SelectedItem).slide;
                     if (currentSlide == null || currentSlide.id != slide)
                     {
                         slides.SelectedIndex =
-                            thumbnailList.Select(s => s.id).ToList().IndexOf(slide);
+                            thumbnailList.Select(s => s.slide.id).ToList().IndexOf(slide);
                         slides.ScrollIntoView(slides.SelectedItem);
                     }
                 }
@@ -134,7 +168,7 @@ namespace SandRibbon.Components
             if (!Globals.synched) return;
             var action = (Action)(() => Dispatcher.adoptAsync((Action)delegate
                                          {
-                                             if (thumbnailList.Where(t => t.id == where).Count() == 1)
+                                             if (thumbnailList.Where(t => t.slide.id == where).Count() == 1)
                                                  Commands.InternalMoveTo.ExecuteAsync(where);
                                              Commands.MoveTo.ExecuteAsync(where);
                                          }));
@@ -177,7 +211,7 @@ namespace SandRibbon.Components
             {
                 if (slide.type == Slide.TYPE.SLIDE)
                 {
-                    thumbnailList.Add(slide);
+                    thumbnailList.Add(new SlideThumbnail(slide));
                 }
             }
             if (moveTo)
@@ -197,17 +231,18 @@ namespace SandRibbon.Components
             {
                 var proposedIndex = source.SelectedIndex;
                 var proposedId =
-                    ((Slide)source.SelectedItem).id;
+                    ((SlideThumbnail)source.SelectedItem).slide.id;
                 if (proposedId == currentSlideId) return;
                 currentSlideIndex = proposedIndex;
                 currentSlideId = proposedId;
-                Action<Slide> refreshSlide = s => {
-                    var i = thumbnailList.IndexOf(s);
-                    thumbnailList.RemoveAt(i);
-                    thumbnailList.Insert(i,s);
+                Action<SlideThumbnail> refreshSlide = s => {
+                    s.Refresh();
+                    //var i = thumbnailList.IndexOf(s);
+                    //thumbnailList.RemoveAt(i);
+                    //thumbnailList.Insert(i,s);
                 };
-                foreach(var slide in e.RemovedItems) refreshSlide((Slide)slide);
-                foreach(var slide in e.AddedItems) refreshSlide((Slide)slide);
+                foreach(var slide in e.RemovedItems) refreshSlide((SlideThumbnail)slide);
+                foreach(var slide in e.AddedItems) refreshSlide((SlideThumbnail)slide);
                 Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                 Commands.MoveTo.ExecuteAsync(currentSlideId);
                 if (Globals.isAuthor && Globals.synched)

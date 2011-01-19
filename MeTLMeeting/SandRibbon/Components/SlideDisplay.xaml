@@ -24,12 +24,16 @@
              Grid.Row="1"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
              ScrollViewer.VerticalScrollBarVisibility="Visible"
-             ScrollViewer.IsDeferredScrollingEnabled="False"
+             ScrollViewer.CanContentScroll="False"
              OverridesDefaultStyle="False"
              SelectionChanged="slides_SelectionChanged"
              Background="Transparent"
              HorizontalAlignment="Stretch" Width="Auto" >
-            <!--VirtualizingStackPanel.IsVirtualizing ="True"-->
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="Height">
@@ -51,22 +55,23 @@
                                     SnapsToDevicePixels="true" CornerRadius="2">
                                     <Grid>
                                         <Viewbox IsHitTestVisible="False">
-                                            <Image Height="200" Width="320">
-                                                <Image.Source><!-- This is ugly as stink.  You'll find that this value converter
+                                            <ContentPresenter Content="{Binding image}" Height="200" Width="320" />
+                                            <!--<Image Height="200" Width="320">
+                                                <Image.Source>--><!-- This is ugly as stink.  You'll find that this value converter
                                                     actually returns null, but schedules the image to have its source updated
                                                     when the data comes asynchronously down from the web-->
-                                                    <MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
+                                                    <!--<MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
                                                         <Binding RelativeSource="{RelativeSource Self}" />
                                                     </MultiBinding>
                                                 </Image.Source> 
-                                            </Image>
+                                            </Image>-->
                                         </Viewbox>
                                         <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
                                                 HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                 VerticalAlignment="Bottom" 
                                                 BorderThickness="1">
-                                            <Label Content="{Binding Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
-                                            
+                                            <Label Content="{Binding index, Converter={x:Static components:SlideDisplay.SlideIndexConverter}}"/>
+                                            <!--{Binding Path=slide, Converter={x:Static components:SlideDisplay.SlideIndex}}"--> 
                                         </Border>
                                     </Grid>
                                 </Border>
