@@ -33,6 +33,7 @@ namespace SandRibbon.Providers
         public static void thumbnail(Image image, int slideId)
         {
             var worker = new BackgroundWorker();
+            BitmapImage bitmap = null;//Will build on other thread, freeze and hand back.
             worker.DoWork += delegate
             {
                 var host = ClientFactory.Connection().server.host.Split('.').First();
@@ -41,23 +42,23 @@ namespace SandRibbon.Providers
                     using (var client = new WebClient())
                     {
                         var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}&width={2}&height={3}", host, slideId, 320, 240);
-                        var stream = new MemoryStream(client.DownloadData(url));
-                        BitmapImage bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        bitmap.Freeze();
-                        image.Dispatcher.adopt(delegate{image.Source = bitmap;});
-                        //App.Now("Froze and returned thumbnail {0}", slideId);
-                        stream.Close();
+                        using (var stream = new MemoryStream(client.DownloadData(url)))
+                        {
+                            bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.StreamSource = stream;
+                            bitmap.EndInit();
+                            bitmap.Freeze();
+                            image.Dispatcher.adopt(delegate { image.Source = bitmap; });
+                            App.Now("Froze and returned thumbnail {0}", slideId);
+                        }
                     }
                 }
                 catch (Exception e)
                 {
                     App.Now(string.Format("Error loading thumbnail: {0}", e.Message)); 
                 }
-               
             };
             worker.RunWorkerAsync();
         }
