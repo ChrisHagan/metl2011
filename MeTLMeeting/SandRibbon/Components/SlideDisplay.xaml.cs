@@ -29,7 +29,7 @@ using System.Windows.Data;
 
 namespace SandRibbon.Components
 {
-    public class SlideThumbnail : DependencyObject
+    /*public class SlideThumbnail : DependencyObject
     {
         public SlideThumbnail(Slide slide)
         {
@@ -46,7 +46,7 @@ namespace SandRibbon.Components
             if (image == null) image = new System.Windows.Controls.Image();
             ThumbnailProvider.thumbnail(image, id);
         }
-    }
+    }*/
     /*public class SlideIndexConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -149,7 +149,7 @@ namespace SandRibbon.Components
             {
                 if (isSlideInSlideDisplay(slide))
                 {
-                    var currentSlide = (SlideThumbnail)slides.SelectedItem;
+                    var currentSlide = (Slide)slides.SelectedItem;
                     if (currentSlide == null || currentSlide.id != slide)
                     {
                         slides.SelectedIndex =
