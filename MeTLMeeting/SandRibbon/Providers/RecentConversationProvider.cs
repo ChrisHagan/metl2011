@@ -37,9 +37,9 @@ namespace SandRibbon.Providers
                     .ToList();
                 var allConversations = MeTLLib.ClientFactory.Connection().AvailableConversations.Select(ac => ac).Where(recentConversations.Contains).ToList();
                 allConversations.RemoveAll(c => c.Subject.ToLower() == "deleted");
-                //var sortedRecent = recentConversations.Where(rc => allConversations.Where(ac => ac.Jid == rc.Jid).First().Subject.ToLower() != "deleted").ToList();
-                if (allConversations.Count > 0)
-                    return allConversations.OrderByDescending(c => c.LastAccessed).ToList();
+                var sortedRecent = recentConversations.Where(rc => allConversations.Where(ac => ac.Jid == rc.Jid).First().Subject.ToLower() != "deleted").ToList();
+                if (sortedRecent.Count > 0)
+                    return sortedRecent.OrderByDescending(c => c.LastAccessed).ToList();
                 else
                     return new List<ConversationDetails>();
             }
