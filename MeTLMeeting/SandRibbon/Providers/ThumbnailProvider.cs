@@ -40,7 +40,8 @@ namespace SandRibbon.Providers
                 {
                     using (var client = new WebClient())
                     {
-                        var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}&width={2}&height={3}", host, slideId, 320, 240);
+                        //var url = string.Format("http://radar.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}&width={2}&height={3}", host, slideId, 320, 240);
+                        var url = string.Format("http://civic.adm.monash.edu:9000/application/snapshot?server={0}&slide={1}&width={2}&height={3}", host, slideId, 320, 240);
                         var stream = new MemoryStream(client.DownloadData(url));
                         BitmapImage bitmap = new BitmapImage();
                         bitmap.BeginInit();

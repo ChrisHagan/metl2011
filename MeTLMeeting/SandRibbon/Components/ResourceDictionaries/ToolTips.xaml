@@ -112,11 +112,11 @@
     <resources:MeTLImageToolTip x:Key="CreateTutorialToolTip" 
                                         TitleText="Enable Collaboration"
                                         ImageSource="\Resources\Collaborate.png" 
-                                        ContentText="When collaboration is enabled, MeTL will allow your students to collaborate with each other directly on each page.  They will be free to navigate throughout the conversation and they will be able to manage their friends subscriptions."/>
+                                        ContentText="Allows all participants to contribute publicly to conversation pages."/>
     <resources:MeTLImageToolTip x:Key="CreateLectureToolTip" 
                                         TitleText="Disable Collaboration"
                                         ImageSource="\Resources\NoCollaborate.png" 
-                                        ContentText="When collaboration is disabled, MeTL will ensure that your students are always on the same page as you.  You will be able to write directly on each page, but your students will not.  They will be able to write only in their private note area."/>
+                                        ContentText="Disables public contribution for participants other than the conversation owner."/>
     <resources:MeTLImageToolTip x:Key="RemainTheSameToolTip" 
                                         TitleText="Remain the same"
                                         ImageSource="\Resources\Ribbon-Lecture.png" 

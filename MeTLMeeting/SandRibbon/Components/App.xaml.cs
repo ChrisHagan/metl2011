@@ -126,7 +126,6 @@ namespace SandRibbon
         }
         private void LogOut(object _Unused)
         {
-
             WorkspaceStateProvider.ClearSettings();
             Application.Current.Shutdown();
         }

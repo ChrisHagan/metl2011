@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!--This area is for defining colours and gradients for use on other controls-->
     <core:Int32 x:Key="ToolTipDelay">400</core:Int32>
+    <core:Int32 x:Key="ToolTipDuration">10000</core:Int32>
     <LinearGradientBrush x:Key="BackgroundGrayGradient" Opacity="1" StartPoint="0,0" EndPoint="1,.2">
         <GradientStop Color="#FFBABABA" Offset="0"/>
         <GradientStop Color="#FF848484" Offset="0.7"/>
