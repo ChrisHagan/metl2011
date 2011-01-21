@@ -27,6 +27,8 @@ namespace SandRibbon.Components
         private void Apply(object sender, RoutedEventArgs e)
         {
             Commands.SetUserOptions.Execute(DataContext);
+            //this should be wired to a new command - SaveUserOptions, which is commented out in SandRibbonInterop.Commands
+            //Commands.SaveUserOptions.Execute(DataContext);
             Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(((UserOptions)DataContext).pedagogyLevel));
             Close();
         }

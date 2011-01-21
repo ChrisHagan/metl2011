@@ -933,7 +933,7 @@ namespace MeTLLib.DataTypes
                     var slide = HasTag(slideTag) ? GetTag(slideTag) : "0";
                     var target = HasTag(targetTag) ? GetTag(targetTag) : "";
                     var privacy = HasTag(privacyTag) ? GetTag(privacyTag) : "public";
-                    var url = "https://"+server.host+":1188"+ INodeFix.StemBeneath("/Resource/",INodeFix.StripServer(GetTag(URL)));
+                    var url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     var file = new TargettedFile(Int32.Parse(slide), GetTag(authorTag), target, privacy, url, fileuploadTime, filesize, filename);
                     return file;
                 }
@@ -1072,7 +1072,7 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var url = "https://"+server.host +":1188"+INodeFix.StemBeneath("/Resource/",INodeFix.StripServer(GetTag(URL)));
+                    var url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL)));
                     return new TargettedSubmission(int.Parse(GetTag(SLIDE)), GetTag(AUTHOR), GetTag(targetTag), GetTag(privacyTag), url, long.Parse(GetTag(TIME)));
                 }
                 set
@@ -1192,7 +1192,7 @@ namespace MeTLLib.DataTypes
                 get
                 {
                     var quiz = new QuizQuestion(long.Parse(GetTag(ID)), GetTag(TITLE), GetTag(AUTHOR), GetTag(QUESTION), new List<Option>());
-                    quiz.url = HasTag(URL) ? "https://"+server.host+":1188"+INodeFix.StemBeneath("/Resource/",INodeFix.StripServer(GetTag(URL))) : "none";
+                    quiz.url = HasTag(URL) ? "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL))) : "none";
                     foreach (var node in ChildNodes)
                     {
                         if (node.GetType() == typeof(QuizOption))
@@ -1391,12 +1391,13 @@ namespace MeTLLib.DataTypes
                 this.downloader = downloader;
                 return this;
             }
-            private static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\Slide_Not_Loaded.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
+            private static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\empty.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
             public System.Windows.Controls.Image forceEvaluation()
             {
+                var sourceString = string.Format("https://{0}:1188{1}", server.host, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)));
                 System.Windows.Controls.Image image = new System.Windows.Controls.Image
                     {
-                        Tag = this.tag,
+                        Tag = "NOT_LOADED::::" + sourceString + "::::" + this.tag,
                         Height = this.height,
                         Width = this.width,
                         Source = BackupSource
@@ -1409,11 +1410,33 @@ namespace MeTLLib.DataTypes
             }
             private void attachSourceToThisImage(System.Windows.Controls.Image image)
             {
-                Thread backgroundWorker = new Thread(new ThreadStart(() => {
+                Thread backgroundWorker = new Thread(new ThreadStart(() =>
+                {
                     var newSource = this.source;
-                    if (image.Dispatcher.Thread != null)
-                        DispatcherExtensions.adoptAsync(image.Dispatcher,(Action)delegate{image.Source=newSource;});
-                    else image.Source = newSource;
+                    if (newSource == null) return;
+                    if (image != null && image.Dispatcher != null && image.Dispatcher.Thread != null)
+                        DispatcherExtensions.adoptAsync(image.Dispatcher, (Action)delegate
+                        {
+                            if (image == null) return;
+                            var oldTag = image.Tag;
+                            if (oldTag.ToString().StartsWith("NOT_LOADED"))
+                            {
+                                var newTag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
+                                image.Tag = newTag;
+                            }
+                            image.Source = newSource;
+                        });
+                    else
+                    {
+                        if (image == null) return;
+                        var oldTag = image.Tag;
+                        if (oldTag.ToString().StartsWith("NOT_LOADED"))
+                        {
+                            var newTag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
+                            image.Tag = newTag;
+                        }
+                        image.Source = newSource;
+                    }
                 }));
                 backgroundWorker.Start();
             }
@@ -1426,7 +1449,15 @@ namespace MeTLLib.DataTypes
                 }
                 set
                 {
+                    string newTag = value.imageProperty.Tag.ToString();
                     var absolutePath = value.imageProperty.Source.ToString();
+                    if (newTag.ToString().StartsWith("NOT_LOADED"))
+                    {
+                        var parts = newTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries);
+                        absolutePath = parts[1];
+                        newTag = parts[2];
+                    } 
+                    SetTag(tagTag, newTag);
                     var uri = new Uri(absolutePath, UriKind.RelativeOrAbsolute);
                     string relativePath;
                     if (uri.IsAbsoluteUri)
@@ -1454,14 +1485,23 @@ namespace MeTLLib.DataTypes
                 get { return GetTag(tagTag); }
                 set { SetTag(tagTag, value); }
             }
+            private string safetySourceTag(String tag)
+            {
+                if (tag.StartsWith("NOT_LOADED"))
+                    tag = tag.Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[1];
+                return tag;
+            }
             public ImageSource source
             {
                 get
                 {
                     //System.Diagnostics.Trace.TraceInformation("Imagerequested at: " + DateTime.Now + DateTime.Now.Millisecond);
-                    var stemmedRelativePath = INodeFix.StemBeneath("/Resource/",  GetTag(sourceTag));
+                    var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
+                    var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
                     var path = string.Format("https://{0}:1188{1}", server.host, stemmedRelativePath);
-                    var stream =  new MemoryStream(provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute)));
+                    var bytes = provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute));
+                    if (bytes.Length == 0) return null;
+                    var stream = new MemoryStream(bytes);
                     //System.Diagnostics.Trace.TraceInformation("Image data provided at: " + DateTime.Now + DateTime.Now.Millisecond);
                     var image = new BitmapImage();
                     try
@@ -1472,7 +1512,8 @@ namespace MeTLLib.DataTypes
                         image.EndInit();
                         image.Freeze();
                     }
-                    catch (Exception e) {
+                    catch (Exception e)
+                    {
                         System.Diagnostics.Trace.TraceInformation("Image instantiation failed at: " + DateTime.Now + DateTime.Now.Millisecond);
                         //Who knows what sort of hell is lurking in our history
                     }
@@ -1600,8 +1641,10 @@ namespace MeTLLib.DataTypes
             }
         }
     }
-    public static class TargettedElementExtensions {
-        public static T timestamp<T>(this TargettedElement elem, long timestamp) where T : TargettedElement {
+    public static class TargettedElementExtensions
+    {
+        public static T timestamp<T>(this TargettedElement elem, long timestamp) where T : TargettedElement
+        {
             elem.timestamp = timestamp;
             return (T)elem;
         }

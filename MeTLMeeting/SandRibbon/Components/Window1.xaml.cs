@@ -180,9 +180,26 @@ namespace SandRibbon
                 new Printer().PrintHandout(Globals.conversationDetails.Jid, Globals.me);
         }
         private void SetUserOptions(UserOptions options) {
-            ClientFactory.Connection().SaveUserOptions(Globals.me, options);
+            //this next line should be removed.
+            SaveUserOptions(options);
+
             if (!ribbon.IsMinimized && currentConversationSearchBox.Visibility == Visibility.Visible)
                     ribbon.ToggleMinimize();
+        }
+        private void SaveUserOptions(UserOptions options)
+        {
+            //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
+            ClientFactory.Connection().SaveUserOptions(Globals.me, options);
+        }
+        private void respondToConversationType(ConversationDetails details)
+        {
+            //this method should be wired into updateConversationDetails
+            var currentOptions = Globals.UserOptions;
+            if (currentOptions.pedagogyLevel < 3 && details.Permissions.studentCanPublish)
+            {
+                currentOptions.pedagogyLevel = 3;
+                Commands.SetUserOptions.Execute(currentOptions);
+            }
         }
         void ribbon_Loaded(object sender, RoutedEventArgs e)
         {
@@ -562,6 +579,8 @@ namespace SandRibbon
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
+            //uncomment this to allow the students to respond to their own lecture details.
+            //respondToConversationType(details);
             Dispatcher.adoptAsync(delegate
             {
                 if (details != null)
@@ -869,14 +888,14 @@ namespace SandRibbon
         private void SetConversationPermissions(object obj)
         {
             var style = (string)obj;
-            foreach (var s in new[]{
+            /*foreach (var s in new[]{
                 Permissions.LABORATORY_PERMISSIONS,
                 Permissions.TUTORIAL_PERMISSIONS,
                 Permissions.LECTURE_PERMISSIONS,
                 Permissions.MEETING_PERMISSIONS})
                 if (s.Label == style)
                     details.Permissions = s;
-            MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+            MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);*/
             try
             {
                 details = Globals.conversationDetails;
