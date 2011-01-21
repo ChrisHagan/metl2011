@@ -191,16 +191,6 @@ namespace SandRibbon
             //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
             ClientFactory.Connection().SaveUserOptions(Globals.me, options);
         }
-        private void respondToConversationType(ConversationDetails details)
-        {
-            //this method should be wired into updateConversationDetails
-            var currentOptions = Globals.UserOptions;
-            if (currentOptions.pedagogyLevel < 3 && details.Permissions.studentCanPublish)
-            {
-                currentOptions.pedagogyLevel = 3;
-                Commands.SetUserOptions.Execute(currentOptions);
-            }
-        }
         void ribbon_Loaded(object sender, RoutedEventArgs e)
         {
             DelegateCommand<object> hideRibbon = null;
@@ -462,16 +452,10 @@ namespace SandRibbon
             Commands.RequerySuggested(Commands.SetConversationPermissions);
             Commands.SetLayer.ExecuteAsync("Sketch");
         }
-        private bool automatedTest(string conversationName)
-        {
-            if (Globals.me.Contains("Admirable") && conversationName.ToLower().Contains("automated")) return true;
-            return false;
-        }
         private string messageFor(ConversationDetails details)
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
             return string.Format("Collaboration {0}  -  {1}'s \"{2}\" - MeTL", (permissionLabel == "tutorial") ? "ENABLED" : "DISABLED", details.Author, details.Title);
-            //return string.Format("{3} is in {0}'s \"{1}\", currently in {2} style", details.Author, details.Title, permissionLabel, Globals.userInformation.credentials.name);
         }
         private void MoveTo(int slide)
         {
@@ -515,9 +499,6 @@ namespace SandRibbon
             sp.Children.Add(minorHeading);
             ProgressDisplay.Children.Add(sp);
             InputBlocker.Visibility = Visibility.Visible;
-        }
-        private void moveToQuiz(MeTLLib.DataTypes.QuizQuestion quiz)
-        {
         }
         private void ShowTutorial()
         {
@@ -579,25 +560,12 @@ namespace SandRibbon
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            //uncomment this to allow the students to respond to their own lecture details.
-            //respondToConversationType(details);
             Dispatcher.adoptAsync(delegate
             {
                 if (details != null)
                     HideTutorial();
                 if (details.Jid == Globals.location.activeConversation)
-                {
-                    /*
-                    if (details.Permissions.studentCanPublish && Globals.UserOptions.pedagogyLevel == 2)
-                    {
-                        var options = Globals.UserOptions;
-                        options.pedagogyLevel = 3;
-                        Commands.SetUserOptions.Execute(options);
-                        Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(options.pedagogyLevel));
-                    }
-                    */
                     UpdateTitle(details);
-                }
                 this.details = details;
             });
         }
@@ -609,12 +577,10 @@ namespace SandRibbon
                     Title = messageFor(Globals.conversationDetails);
                 else
                     Title = "MeTL 2011";
-                //Title = new ConfigurationProvider().getMeTLType();
             }
             catch (NotSetException)
             {
                 Title = "MeTL 2011";
-                //Title = new ConfigurationProvider().getMeTLType();
             }
         }
         private DelegateCommand<object> canOpenFriendsOverride;
