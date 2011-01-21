@@ -566,8 +566,19 @@ namespace SandRibbon
             {
                 if (details != null)
                     HideTutorial();
-                if(details.Jid == Globals.location.activeConversation)
+                if (details.Jid == Globals.location.activeConversation)
+                {
+                    /*
+                    if (details.Permissions.studentCanPublish && Globals.UserOptions.pedagogyLevel == 2)
+                    {
+                        var options = Globals.UserOptions;
+                        options.pedagogyLevel = 3;
+                        Commands.SetUserOptions.Execute(options);
+                        Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(options.pedagogyLevel));
+                    }
+                    */
                     UpdateTitle(details);
+                }
                 this.details = details;
             });
         }
