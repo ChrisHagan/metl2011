@@ -17,6 +17,7 @@ using SandRibbon.Utils.Connection;
 using SandRibbonObjects;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
+using System.Diagnostics;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -97,7 +98,6 @@ namespace SandRibbon.Components.Submissions
         {
             submitSubmission.Visibility = Visibility.Visible;
             viewSubmission.Visibility = Visibility.Collapsed;
-
         }
         private void receiveSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
         {
@@ -105,7 +105,6 @@ namespace SandRibbon.Components.Submissions
             {
                 submissionList.Add(submission);
                 Commands.RequerySuggested(Commands.ViewSubmissions);
-                
             }
         }
         private bool IHaveThisSubmission(MeTLLib.DataTypes.TargettedSubmission submission)
@@ -116,6 +115,7 @@ namespace SandRibbon.Components.Submissions
         }
         private void generateScreenshot(object sender, RoutedEventArgs e)
         {
+            Trace.TraceInformation("SubmittedScreenshot");
             var time = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             DelegateCommand<string> sendScreenshot = null;
             sendScreenshot = new DelegateCommand<string>(hostedFileName =>

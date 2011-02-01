@@ -419,7 +419,6 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                if (slide == null) return;
                 wire.MoveTo(slide);
             };
             tryIfConnected(work);
@@ -451,6 +450,7 @@ namespace MeTLLib
             Action work = delegate
             {
                 if (String.IsNullOrEmpty(conversation)) return;
+                Trace.TraceInformation("JoinConversation {0}", conversation);
                 var cd = conversationDetailsProvider.DetailsOf(conversation);
                 location.activeConversation = cd.Jid;
                 location.availableSlides = cd.Slides.Select(s => s.id).ToList();

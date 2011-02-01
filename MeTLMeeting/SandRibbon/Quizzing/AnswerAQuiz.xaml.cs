@@ -6,6 +6,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbonInterop;
 using MeTLLib.DataTypes;
+using System.Diagnostics;
 
 namespace SandRibbon.Quizzing
 {
@@ -45,9 +46,8 @@ namespace SandRibbon.Quizzing
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selection = ((Option)e.AddedItems[0]);
-            if(selection.correct)
-                MessageBox.Show("Nice Shooting Tex");
             Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.id,Globals.me,selection.name));
+            Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.id);
             this.Close();
         }
     }

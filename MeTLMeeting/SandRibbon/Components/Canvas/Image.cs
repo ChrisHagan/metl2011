@@ -30,6 +30,7 @@ using Point = System.Windows.Point;
 using Rectangle = System.Windows.Shapes.Rectangle;
 using Size = System.Windows.Size;
 using MeTLLib.DataTypes;
+using System.Diagnostics;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -158,7 +159,7 @@ namespace SandRibbon.Components.Canvas
                                  {
                                      selectedElements = GetSelectedClonedElements();
                                  });
-
+            Trace.TraceInformation("DeletingImages");
             Action undo = () =>
                               {
                                   ClearAdorners();
@@ -562,6 +563,7 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             var selectedElements = GetSelectedClonedElements();
             var startingElements = elementsAtStartOfTheMove.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
+            Trace.TraceInformation("MovingImages {0}", string.Join(",", startingElements.Select(el => el.tag().ToString()).ToArray()));
             Action undo = () =>
               {
                   ClearAdorners();

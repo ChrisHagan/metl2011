@@ -18,6 +18,7 @@ using SandRibbon.Providers;
 using SandRibbon.Utils.Connection;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
+using System.Diagnostics;
 
 
 namespace SandRibbon.Quizzing
@@ -33,7 +34,6 @@ namespace SandRibbon.Quizzing
             InitializeComponent();
             Closing += new System.ComponentModel.CancelEventHandler(ViewQuizResults_Closing);
         }
-
         void ViewQuizResults_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Commands.UnblockInput.Execute(null);
@@ -49,6 +49,7 @@ namespace SandRibbon.Quizzing
             quizzes.ItemsSource = activeQuizes;
             if (quizzes.Items.Count > 0)
                 quizzes.SelectedIndex = 0;
+            Trace.TraceInformation("ViewingQuizResults");
         }
         private void QuizChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -73,6 +74,7 @@ namespace SandRibbon.Quizzing
             bitmap.Render(dv);
             quiz.TimestampLabel.Text = "";
             Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+            Trace.TraceInformation("DisplayingQuiz");
             this.Close();
         }
     }

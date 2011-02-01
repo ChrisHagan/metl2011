@@ -95,6 +95,7 @@ namespace SandRibbon
         }
         private void LogOut(object _Unused)
         {
+            Trace.TraceInformation("LoggingOut");
             WorkspaceStateProvider.ClearSettings();
             Application.Current.Shutdown();
         }
