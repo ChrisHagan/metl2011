@@ -229,7 +229,7 @@ namespace SandRibbon.Components
         }
         private bool isWhatWeWereLookingFor(object o)
         {
-            var conversation = (MeTLLib.DataTypes.ConversationDetails)o;
+            var conversation = (ConversationDetails)o;
             if (!shouldShowConversation(conversation)) 
                 return false;
             if (backstageNav.currentMode == "currentConversation")
@@ -241,13 +241,7 @@ namespace SandRibbon.Components
             var searchQuery = SearchInput.Text.ToLower().Trim();
             if (backstageNav.currentMode == "find" && searchQuery.Length == 0) return false;
             if (backstageNav.currentMode == "mine" && author != Globals.me) return false;
-            var target = searchQuery.Split(' ').Aggregate(false, (acc, token) =>
-            {
-                if (acc) return true;
-                if (String.IsNullOrEmpty(token)) return true;
-                return searchField.Any(field => field.Contains(token));
-            });
-            return target;
+            return searchField.Any(field => field.Contains(searchQuery));
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
@@ -260,13 +254,8 @@ namespace SandRibbon.Components
         }
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            refreshTimer.Change(250, Timeout.Infinite);
+            refreshTimer.Change(150, Timeout.Infinite);
         }
-        private void lostFocus(object sender, RoutedEventArgs e)
-        {
-            var a = ((FrameworkElement)sender).DataContext;
-        }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (originalContext != null)

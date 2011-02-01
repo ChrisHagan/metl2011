@@ -29,37 +29,6 @@ using System.Windows.Data;
 
 namespace SandRibbon.Components
 {
-    /*public class SlideThumbnail : DependencyObject
-    {
-        public SlideThumbnail(Slide slide)
-        {
-            this.slide = slide;
-            Refresh();
-        }
-        public Slide slide { private set; get; }
-        public int index { get { return slide.index; } }
-        public int id { get { return slide.id; } }
-
-        public System.Windows.Controls.Image image { private set; get; }
-        public void Refresh()
-        {
-            if (image == null) image = new System.Windows.Controls.Image();
-            ThumbnailProvider.thumbnail(image, id);
-        }
-    }*/
-    /*public class SlideIndexConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (!(value is int))
-                return 0;
-            else return (int)value + 1;
-        }
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value;
-        }
-    }*/
     public class SlideIndexConverter : IValueConverter
     {
         private ObservableCollection<Slide> collection;
@@ -97,13 +66,11 @@ namespace SandRibbon.Components
         public ObservableCollection<Slide> thumbnailList = new ObservableCollection<Slide>();
         public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
         public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
-        //public static SlideIndexConverter SlideIndexConverter;
         public static SlideIndexConverter SlideIndex;
         public static SlideToThumbConverter SlideToThumb;
         private bool moveTo;
         public SlideDisplay()
         {
-            //SlideIndexConverter = new SlideIndexConverter();
             SlideIndex = new SlideIndexConverter(thumbnailList);
             SlideToThumb = new SlideToThumbConverter();
             InitializeComponent();
