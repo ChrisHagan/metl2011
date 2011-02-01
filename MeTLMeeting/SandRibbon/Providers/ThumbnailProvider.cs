@@ -58,7 +58,6 @@ namespace SandRibbon.Providers
                 {
                     App.Now(string.Format("Error loading thumbnail: {0}", e.Message)); 
                 }
-               
             };
             worker.RunWorkerAsync();
         }

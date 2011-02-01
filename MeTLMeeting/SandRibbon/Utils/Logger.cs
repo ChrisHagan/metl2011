@@ -52,13 +52,16 @@ namespace SandRibbon.Utils
         private static CouchServer server = new CouchServer("madam.adm.monash.edu.au", 5984);
         private static readonly string DB_NAME = "metl_log";
         private static readonly ICouchDatabase db = server.GetDatabase(DB_NAME);
+        public static void Crash(Exception e) {
+            Log("CRASH: {0} @ {1}", e.Message, e.StackTrace);
+        }
         public static void Log(string appendThis)
         {/*Interesting quirk about the formatting: \n is the windows line ending but ruby assumes
           *nix endings, which are \r.  Safest to use both, I guess.*/
             var now = SandRibbonObjects.DateTimeFactory.Now();
             putCouch(appendThis, now);
         }
-        public static void Log(string format, params object[] args) {
+        private static void Log(string format, params object[] args) {
             var s = string.Format(format, args);
             Log(s);
         }

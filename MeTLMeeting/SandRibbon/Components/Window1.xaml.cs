@@ -49,7 +49,6 @@ namespace SandRibbon
         }
         public Window1()
         {
-            App.Now("Window 1 Constructor start");
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
         }
@@ -146,7 +145,6 @@ namespace SandRibbon
             ribbon.Loaded += ribbon_Loaded;
             WorkspaceStateProvider.RestorePreviousSettings();
             CommandManager.InvalidateRequerySuggested();
-            App.Now("Started MeTL");
         }
         private void ImportPowerpoint(object obj)
         {
