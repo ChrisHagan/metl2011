@@ -45,7 +45,7 @@
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>72</ApplicationRevision>
+    <ApplicationRevision>82</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -925,6 +925,9 @@
     <Resource Include="Resources\Edit.png" />
     <Resource Include="Resources\Logout.png" />
     <Resource Include="Resources\Collaborate.png" />
+    <Content Include="Resources\empty.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\MeTL.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

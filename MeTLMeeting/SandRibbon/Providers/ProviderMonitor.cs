@@ -10,6 +10,7 @@ using agsXMPP;
 using SandRibbon.Utils.Connection;
 using System.Timers;
 using System.Collections.Generic;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Components
 {
@@ -73,8 +74,7 @@ namespace SandRibbon.Components
             }
             catch (Exception e)
             {
-                App.Now("Sorry, might not be able to throw the current callstack");
-                //  throw new Exception(currentStack.ToString(), e);
+                Logger.Crash(e);
             }
         }
         private static void checkServers()
@@ -92,7 +92,6 @@ namespace SandRibbon.Components
         public void Ping(string uri)
         {
             var ping = new System.Net.NetworkInformation.Ping();
-            App.Now("pinged " + uri);
             ping.PingCompleted += (_sender, pingArgs) =>
             {
                 if (pingArgs.Reply != null && pingArgs.Reply.Status == IPStatus.Success)

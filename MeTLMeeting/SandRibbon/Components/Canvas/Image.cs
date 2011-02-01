@@ -74,7 +74,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void updateImagePrivacy(object obj)
         {
-            foreach(System.Windows.Controls.Image image in Children)
+            foreach (System.Windows.Controls.Image image in Children)
                 ApplyPrivacyStylingToElement(image, image.tag().privacy);
         }
         private void imagedDropped(ImageDrop drop)
@@ -96,7 +96,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void deleteSelectedImages(object obj)
         {
-            if(GetSelectedElements().Count == 0) return;
+            if (GetSelectedElements().Count == 0) return;
             deleteImages();
             ClearAdorners();
         }
@@ -164,7 +164,7 @@ namespace SandRibbon.Components.Canvas
                                   ClearAdorners();
                                   foreach (var element in selectedElements)
                                   {
-                                      
+
                                       if (!Children.Contains(element))
                                           Children.Add(element);
                                       sendThisElement(element);
@@ -177,9 +177,9 @@ namespace SandRibbon.Components.Canvas
                                  ClearAdorners();
                                  foreach (var element in selectedElements)
                                  {
-                                    if(Children.Contains(element))
-                                        Children.Remove(element);
-                                    dirtyThisElement(element); 
+                                     if (Children.Contains(element))
+                                         Children.Remove(element);
+                                     dirtyThisElement(element);
                                  }
                              };
             redo();
@@ -454,7 +454,7 @@ namespace SandRibbon.Components.Canvas
                 listToCut.Add(new TargettedDirtyElement(currentSlide, Globals.me, target, image.tag().privacy, image.tag().id));
             }
             var selectedImages = GetSelectedClonedElements();
-            Action redo = ()=>
+            Action redo = () =>
                             {
                                 ClearAdorners();
                                 foreach (var element in listToCut)
@@ -495,9 +495,13 @@ namespace SandRibbon.Components.Canvas
             {
                 if (image.GetType().ToString() == "System.Windows.Controls.Image")
                 {
-                    var imageInfo = JsonConvert.DeserializeObject<ImageInformation>(((System.Windows.Controls.Image)image).Tag.ToString());
-                    if (imageInfo.Author == Globals.me)
-                        myImages.Add((System.Windows.Controls.Image)image);
+                    if (!((System.Windows.Controls.Image)image).Tag.ToString().StartsWith("NOT_LOADED"))
+                    {
+                        var newImage = (System.Windows.Controls.Image)image;
+                        ImageInformation imageInfo = getImageInformation(newImage);
+                        if (imageInfo.Author == Globals.me)
+                            myImages.Add((System.Windows.Controls.Image)image);
+                    }
                 }
                 if (image.GetType() == typeof(MeTLLib.DataTypes.AutoShape))
                     myImages.Add((AutoShape)image);
@@ -520,7 +524,7 @@ namespace SandRibbon.Components.Canvas
         internal void addAdorners()
         {
             var selectedElements = GetSelectedElements();
-            if(selectedElements.Count == 0 ) return;
+            if (selectedElements.Count == 0) return;
             var publicElements = selectedElements.Where(i => (((i is System.Windows.Controls.Image) && ((System.Windows.Controls.Image)i).tag().privacy.ToLower() == "public")) || ((i is Video) && ((Video)i).tag().privacy.ToLower() == "public")).ToList();
             string privacyChoice;
             if (publicElements.Count == 0)
@@ -543,9 +547,9 @@ namespace SandRibbon.Components.Canvas
             var selectedElements = new List<UIElement>();
             foreach (var element in GetSelectedElements())
             {
-                if(element is System.Windows.Controls.Image)
+                if (element is System.Windows.Controls.Image)
                     selectedElements.Add(((System.Windows.Controls.Image)element).clone());
-                else if(element is Video)
+                else if (element is Video)
                     selectedElements.Add(((Video)element).clone());
                 SetLeft(selectedElements.Last(), GetLeft(element));
                 SetTop(selectedElements.Last(), GetTop(element));
@@ -565,47 +569,49 @@ namespace SandRibbon.Components.Canvas
                   var mySelectedElements = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
                   foreach (var element in mySelectedElements)
                   {
-                        if(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() > 0)
-                            Children.Remove(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).FirstOrDefault());
-                        dirtyThisElement(element); 
+                      if (Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() > 0)
+                          Children.Remove(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).FirstOrDefault());
+                      if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
+                          dirtyThisElement(element);
                   }
                   foreach (var element in startingElements)
                   {
                       selection.Add(element);
-                     if(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() == 0)
+                      if (Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() == 0)
                           Children.Add(element);
-                      sendThisElement(element);
+                      if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
+                          sendThisElement(element);
                   }
                   addAdorners();
               };
             Action redo = () =>
               {
-                  
+
                   ClearAdorners();
                   var selection = new List<UIElement>();
                   var mySelectedImages = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
                   foreach (var element in startingElements)
                   {
-                        if(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() > 0)
-                            Children.Remove(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).FirstOrDefault());
-                        dirtyThisElement(element); 
+                      if (Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() > 0)
+                          Children.Remove(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).FirstOrDefault());
+                      dirtyThisElement(element);
                   }
                   foreach (var element in mySelectedImages)
                   {
                       selection.Add(element);
-                      if(Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() == 0)
+                      if (Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id == element.tag().id).Count() == 0)
                           Children.Add(element);
                       sendThisElement(element);
                   }
                   addAdorners();
               };
             UndoHistory.Queue(undo, redo);
-            redo(); 
+            redo();
         }
 
         private void sendThisElement(UIElement element)
         {
-            
+
             switch (element.GetType().ToString())
             {
                 case "System.Windows.Controls.Image":
@@ -619,17 +625,27 @@ namespace SandRibbon.Components.Canvas
                     srVideo.X = GetLeft(srVideo);
                     srVideo.Y = GetTop(srVideo);
                     Commands.SendVideo.Execute(new TargettedVideo(currentSlide, Globals.me, target, srVideo.tag().privacy, srVideo));
-                break;
+                    break;
             }
         }
-
+        private ImageInformation getImageInformation(FrameworkElement newImage)
+        {
+            if (newImage.Tag == null || !(newImage is System.Windows.Controls.Image)) return null;
+            ImageInformation imageInfo = new ImageInformation();
+            if (newImage.Tag.ToString().StartsWith("NOT_LOADED"))
+                imageInfo = JsonConvert.DeserializeObject<ImageInformation>(newImage.Tag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2]);
+            else
+                imageInfo = JsonConvert.DeserializeObject<ImageInformation>(newImage.Tag.ToString());
+            return imageInfo;
+        }
         private void dirtyThisElement(UIElement element)
         {
             var elementTag = ((FrameworkElement)element).Tag;
-            var elementPrivacy =   elementTag == null ? "public" 
-                                    : JsonConvert.DeserializeObject<ImageInformation>(elementTag.ToString()).isPrivate 
+            ImageInformation imageInfo = getImageInformation((FrameworkElement)element);
+            var elementPrivacy = elementTag == null ? "public"
+                                    : imageInfo.isPrivate
                                     ? "private" : "public";
-            var dirtyElement = new TargettedDirtyElement(currentSlide, Globals.me, target, elementPrivacy, JsonConvert.DeserializeObject<ImageInformation>(elementTag.ToString()).Id);
+            var dirtyElement = new TargettedDirtyElement(currentSlide, Globals.me, target, elementPrivacy, imageInfo.Id);
             switch (element.GetType().ToString())
             {
                 case "System.Windows.Controls.Image":
@@ -640,7 +656,7 @@ namespace SandRibbon.Components.Canvas
                 case "MeTLLib.DataTypes.Video":
                     Commands.MirrorVideo.ExecuteAsync(new VideoMirror.VideoMirrorInformation(dirtyElement.identifier, null));
                     Commands.SendDirtyVideo.ExecuteAsync(dirtyElement);
-                break;
+                    break;
             }
 
         }
@@ -720,7 +736,7 @@ namespace SandRibbon.Components.Canvas
             addResourceFromDisk(filter, withResources);
         }
 
-        private void addResourceFromDisk(string filter ,Action<IEnumerable<string>> withResources)
+        private void addResourceFromDisk(string filter, Action<IEnumerable<string>> withResources)
         {
             if (target == "presentationSpace" && canEdit && me != "projector")
             {
@@ -737,7 +753,7 @@ namespace SandRibbon.Components.Canvas
                 var fileBrowser = new OpenFileDialog
                                              {
                                                  InitialDirectory = initialDirectory,
-                                                 Filter =filter ,
+                                                 Filter = filter,
                                                  FilterIndex = 1,
                                                  RestoreDirectory = true
                                              };
@@ -776,7 +792,7 @@ namespace SandRibbon.Components.Canvas
                     placeHolder.tag(new MeTLLib.DataTypes.ImageTag
                                       {
                                           author = Globals.me,
-                                          id = generateId(), 
+                                          id = generateId(),
                                           privacy = privacy,
                                           zIndex = -1
                                       });
@@ -838,7 +854,7 @@ namespace SandRibbon.Components.Canvas
                 if (image == null) return;
                 SetLeft(image, pos.X);
                 SetTop(image, pos.Y);
-                image.tag(new ImageTag(Globals.me, privacy,generateId() , false, 0));
+                image.tag(new ImageTag(Globals.me, privacy, generateId(), false, 0));
                 Console.WriteLine(string.Format("The image id is : {0}", image.tag().id));
                 if (!fileName.StartsWith("http"))
                     MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, target, privacy, image, fileName, false));
@@ -848,7 +864,7 @@ namespace SandRibbon.Components.Canvas
                 Action undo = () =>
                                   {
                                       ClearAdorners();
-                                      if(Children.Contains(myImage))
+                                      if (Children.Contains(myImage))
                                           Children.Remove(myImage);
                                       dirtyThisElement(myImage);
                                   };
@@ -861,7 +877,7 @@ namespace SandRibbon.Components.Canvas
                         Children.Add(myImage);
                     sendThisElement(myImage);
 
-                    Select(new [] {myImage});
+                    Select(new[] { myImage });
                     addAdorners();
                 };
                 UndoHistory.Queue(undo, redo);

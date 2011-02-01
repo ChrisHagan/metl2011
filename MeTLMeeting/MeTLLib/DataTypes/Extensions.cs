@@ -182,7 +182,11 @@ namespace MeTLLib.DataTypes
             ImageTag imagetag = new ImageTag();
             image.Dispatcher.adopt(delegate
             {
-                var imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
+                ImageTag imageInfo = new ImageTag();
+                if (image.Tag.ToString().StartsWith("NOT_LOADED"))
+                    imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString().Split(new[]{"::::"}, StringSplitOptions.RemoveEmptyEntries)[2]);
+                else
+                    imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
                 imagetag = new ImageTag
                 {
                     author = imageInfo.author,

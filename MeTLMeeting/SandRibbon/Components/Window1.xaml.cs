@@ -49,7 +49,6 @@ namespace SandRibbon
         }
         public Window1()
         {
-            App.Now("Window 1 Constructor start");
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
         }
@@ -133,7 +132,8 @@ namespace SandRibbon
             Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
-            
+            Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
+   
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
@@ -145,7 +145,6 @@ namespace SandRibbon
             ribbon.Loaded += ribbon_Loaded;
             WorkspaceStateProvider.RestorePreviousSettings();
             CommandManager.InvalidateRequerySuggested();
-            App.Now("Started MeTL");
         }
         private void ImportPowerpoint(object obj)
         {
@@ -180,9 +179,16 @@ namespace SandRibbon
                 new Printer().PrintHandout(Globals.conversationDetails.Jid, Globals.me);
         }
         private void SetUserOptions(UserOptions options) {
-            ClientFactory.Connection().SaveUserOptions(Globals.me, options);
+            //this next line should be removed.
+            SaveUserOptions(options);
+
             if (!ribbon.IsMinimized && currentConversationSearchBox.Visibility == Visibility.Visible)
                     ribbon.ToggleMinimize();
+        }
+        private void SaveUserOptions(UserOptions options)
+        {
+            //this should be wired to a new command, SaveUserOptions, which is commented out in SandRibbonInterop.Commands
+            ClientFactory.Connection().SaveUserOptions(Globals.me, options);
         }
         void ribbon_Loaded(object sender, RoutedEventArgs e)
         {
@@ -445,16 +451,10 @@ namespace SandRibbon
             Commands.RequerySuggested(Commands.SetConversationPermissions);
             Commands.SetLayer.ExecuteAsync("Sketch");
         }
-        private bool automatedTest(string conversationName)
-        {
-            if (Globals.me.Contains("Admirable") && conversationName.ToLower().Contains("automated")) return true;
-            return false;
-        }
         private string messageFor(ConversationDetails details)
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
             return string.Format("Collaboration {0}  -  {1}'s \"{2}\" - MeTL", (permissionLabel == "tutorial") ? "ENABLED" : "DISABLED", details.Author, details.Title);
-            //return string.Format("{3} is in {0}'s \"{1}\", currently in {2} style", details.Author, details.Title, permissionLabel, Globals.userInformation.credentials.name);
         }
         private void MoveTo(int slide)
         {
@@ -498,9 +498,6 @@ namespace SandRibbon
             sp.Children.Add(minorHeading);
             ProgressDisplay.Children.Add(sp);
             InputBlocker.Visibility = Visibility.Visible;
-        }
-        private void moveToQuiz(MeTLLib.DataTypes.QuizQuestion quiz)
-        {
         }
         private void ShowTutorial()
         {
@@ -566,7 +563,7 @@ namespace SandRibbon
             {
                 if (details != null)
                     HideTutorial();
-                if(details.Jid == Globals.location.activeConversation)
+                if (details.Jid == Globals.location.activeConversation)
                     UpdateTitle(details);
                 this.details = details;
             });
@@ -579,12 +576,10 @@ namespace SandRibbon
                     Title = messageFor(Globals.conversationDetails);
                 else
                     Title = "MeTL 2011";
-                //Title = new ConfigurationProvider().getMeTLType();
             }
             catch (NotSetException)
             {
                 Title = "MeTL 2011";
-                //Title = new ConfigurationProvider().getMeTLType();
             }
         }
         private DelegateCommand<object> canOpenFriendsOverride;
@@ -858,14 +853,14 @@ namespace SandRibbon
         private void SetConversationPermissions(object obj)
         {
             var style = (string)obj;
-            foreach (var s in new[]{
+            /*foreach (var s in new[]{
                 Permissions.LABORATORY_PERMISSIONS,
                 Permissions.TUTORIAL_PERMISSIONS,
                 Permissions.LECTURE_PERMISSIONS,
                 Permissions.MEETING_PERMISSIONS})
                 if (s.Label == style)
                     details.Permissions = s;
-            MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+            MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);*/
             try
             {
                 details = Globals.conversationDetails;

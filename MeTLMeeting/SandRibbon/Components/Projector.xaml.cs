@@ -100,9 +100,9 @@ namespace SandRibbon.Components
         private void setPedagogy(object obj)
         {
             //when you change pedagogy all the commands are deregistered this will restart the projector
-            Window.Close();
+            if(Window != null)
+                Window.Close();
         }
-
         private void moveTo(object obj)
         {
             stack.Flush();

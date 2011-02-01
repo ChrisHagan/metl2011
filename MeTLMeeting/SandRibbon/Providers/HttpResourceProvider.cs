@@ -437,7 +437,6 @@ namespace SandRibbon.Providers
         {
             return;
             var filenameDescriptor = string.IsNullOrEmpty(filename) ? "" : " : " + filename;
-            Logger.Log(status + "(" + type + " : " + uri + filenameDescriptor + ")");
         }
         private static void NotifyProgress(int attempts, string type, string resource, long recBytes, long size, int percentage, bool isPercentage)
         {
@@ -445,10 +444,7 @@ namespace SandRibbon.Providers
             if (isPercentage)
             {
                 percentage = (int)(recBytes / size);
-                Logger.Log("Attempt " + attempts + " waiting on " + type + ": " + percentage + "% (" + resource + ")");
             }
-            else
-                Logger.Log("Attempt " + attempts + " waiting on " + type + ": " + recBytes + "B (" + resource + ")");
         }
     }
 }

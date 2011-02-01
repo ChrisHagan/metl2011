@@ -126,7 +126,6 @@ namespace SandRibbon
         }
         private void LogOut(object _Unused)
         {
-
             WorkspaceStateProvider.ClearSettings();
             Application.Current.Shutdown();
         }
@@ -155,7 +154,7 @@ namespace SandRibbon
             catch (Exception) { }
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e){
-            Logger.Log(e.Exception.Message);
+            Logger.Crash(e.Exception);
             Commands.LeaveAllRooms.Execute(null);
             MessageBox.Show(string.Format("MeTL has encountered an unexpected error and has to close:{0}\n{1} ",
                 e.Exception.Message,
@@ -218,7 +217,7 @@ namespace SandRibbon
             }
             catch (Exception ex)
             {
-                Logger.Log(ex.Message);
+                Logger.Crash(ex);
             }
         }
     }
