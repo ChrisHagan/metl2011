@@ -26,13 +26,12 @@ namespace SandRibbon
     public class CouchTraceListener : TraceListener {
         public override void Write(string message)
         {
-            if(!message.Contains("vshost"))
+            if (message.Contains("vshost") || message.Contains("Method: POST")) return;
                 Logger.Log(message);
         }
         public override void WriteLine(string message)
-        {//Huh?  This seems incredibly specific.
-            if (message == "Request: http://madam.adm.monash.edu.au:5984/metl_log/ Method: POST") return;
-            if(!message.Contains("vshost"))
+        {
+            if (message.Contains("vshost") || message.Contains("Method: POST")) return;
                 Logger.Log(message);
         }
     }
