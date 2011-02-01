@@ -26,12 +26,14 @@ namespace SandRibbon
     public class CouchTraceListener : TraceListener {
         public override void Write(string message)
         {
-            Logger.Log(message);
+            if(!message.Contains("vshost"))
+                Logger.Log(message);
         }
         public override void WriteLine(string message)
-        {
+        {//Huh?  This seems incredibly specific.
             if (message == "Request: http://madam.adm.monash.edu.au:5984/metl_log/ Method: POST") return;
-            Logger.Log(message);
+            if(!message.Contains("vshost"))
+                Logger.Log(message);
         }
     }
     public partial class App : Application
