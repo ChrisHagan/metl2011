@@ -56,8 +56,6 @@ namespace SandRibbon.Components
                 return true;
             var currentConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
             bool conversationExists = currentConversations.Any(c => c.Title.Equals(details.Title));
-            Logger.Log(currentConversations.Aggregate("", (acc, item) => acc + " " + item.Title));
-            Logger.Log(string.Format("[{0}] already exists: {1}", details.Title, conversationExists));
             return !conversationExists;
         }
         private void RedrawList(object _unused)

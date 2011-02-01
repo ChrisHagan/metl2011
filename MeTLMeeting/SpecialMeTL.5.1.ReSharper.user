@@ -18,7 +18,7 @@
       <Item value="slides" priority="7" />
       <Item value="foreach" priority="46" />
       <Item value="Slider" priority="1" />
-      <Item value="var" priority="166" />
+      <Item value="var" priority="167" />
       <Item value="in" priority="38" />
       <Item value="slide" priority="12" />
       <Item value="slideList" priority="0" />
@@ -61,17 +61,17 @@
       <Item value="bubble" priority="5" />
       <Item value="thoughtSlide" priority="1" />
       <Item value="currentSlide" priority="7" />
-      <Item value="details" priority="21" />
+      <Item value="details" priority="22" />
       <Item value="thoughtBubble" priority="6" />
-      <Item value="if" priority="116" />
+      <Item value="if" priority="118" />
       <Item value="opened" priority="3" />
       <Item value="position" priority="5" />
       <Item value="PointCollectionExtension" priority="3" />
       <Item value="Width" priority="4" />
-      <Item value="Window" priority="8" />
+      <Item value="Window" priority="9" />
       <Item value="Parent" priority="2" />
       <Item value="Height" priority="3" />
-      <Item value="else" priority="24" />
+      <Item value="else" priority="25" />
       <Item value="relocate" priority="2" />
       <Item value="void" priority="30" />
       <Item value="adornerLayer" priority="10" />
@@ -86,7 +86,7 @@
       <Item value="Slide" priority="1" />
       <Item value="ThoughtBubbleSpace_MouseDown" priority="4" />
       <Item value="Ionic" priority="0" />
-      <Item value="return" priority="86" />
+      <Item value="return" priority="87" />
       <Item value="UIAdorner" priority="2" />
       <Item value="FrameworkElement" priority="2" />
       <Item value="Dispatcher" priority="24" />
@@ -96,8 +96,8 @@
       <Item value="List" priority="37" />
       <Item value="text" priority="2" />
       <Item value="elements" priority="4" />
-      <Item value="Windows" priority="6" />
-      <Item value="Controls" priority="4" />
+      <Item value="Windows" priority="9" />
+      <Item value="Controls" priority="7" />
       <Item value="thought" priority="13" />
       <Item value="true" priority="17" />
       <Item value="SystemParameters" priority="0" />
@@ -114,7 +114,7 @@
       <Item value="setThoughtAccess" priority="1" />
       <Item value="me" priority="3" />
       <Item value="delegate" priority="5" />
-      <Item value="null" priority="30" />
+      <Item value="null" priority="31" />
       <Item value="Visibility" priority="7" />
       <Item value="currentSlideId" priority="3" />
       <Item value="Console" priority="11" />
@@ -150,7 +150,7 @@
       <Item value="TextBox" priority="1" />
       <Item value="points" priority="3" />
       <Item value="Image" priority="2" />
-      <Item value="System" priority="5" />
+      <Item value="System" priority="8" />
       <Item value="Text" priority="1" />
       <Item value="geometry" priority="1" />
       <Item value="Brush" priority="0" />
@@ -177,7 +177,7 @@
       <Item value="author" priority="14" />
       <Item value="e" priority="13" />
       <Item value="TargettedDirtyElement" priority="0" />
-      <Item value="element" priority="7" />
+      <Item value="element" priority="10" />
       <Item value="dirtyStroke" priority="1" />
       <Item value="double" priority="10" />
       <Item value="STROKE_STARTING_GUID" priority="2" />
@@ -390,7 +390,7 @@
       <Item value="option" priority="5" />
       <Item value="name" priority="5" />
       <Item value="char" priority="2" />
-      <Item value="options" priority="17" />
+      <Item value="options" priority="19" />
       <Item value="last" priority="1" />
       <Item value="newList" priority="2" />
       <Item value="ObservableCollection&lt;Option&gt;" priority="0" />
@@ -494,7 +494,7 @@
       <Item value="teacherStrokes" priority="2" />
       <Item value="otherStrokes" priority="1" />
       <Item value="switch" priority="0" />
-      <Item value="Children" priority="8" />
+      <Item value="Children" priority="9" />
       <Item value="ReceiveStrokes" priority="5" />
       <Item value="break" priority="5" />
       <Item value="TargettedStroke" priority="10" />
@@ -556,8 +556,8 @@
       <Item value="UserVisibility`0" priority="1" />
       <Item value="username" priority="1" />
       <Item value="DivideByZeroException`0" priority="0" />
-      <Item value="Globals`0" priority="20" />
-      <Item value="selectedElements" priority="15" />
+      <Item value="Globals`0" priority="21" />
+      <Item value="selectedElements" priority="16" />
       <Item value="UIElement`0" priority="8" />
       <Item value="List&lt;UIElement&gt;" priority="3" />
       <Item value="GetTag`0" priority="2" />
@@ -640,7 +640,7 @@
       <Item value="Icon`0" priority="0" />
       <Item value="bitmap" priority="15" />
       <Item value="resultStream" priority="0" />
-      <Item value="FrameworkElement`0" priority="2" />
+      <Item value="FrameworkElement`0" priority="3" />
       <Item value="bitmapSource" priority="0" />
       <Item value="Cursor`0" priority="0" />
       <Item value="Console`0" priority="1" />
@@ -789,7 +789,7 @@
       <Item value="AllColors`0" priority="0" />
       <Item value="allConversations" priority="2" />
       <Item value="ac" priority="4" />
-      <Item value="sortedRecent" priority="0" />
+      <Item value="sortedRecent" priority="2" />
       <Item value="Thumbnail`0" priority="3" />
       <Item value="Thumbnails" priority="1" />
       <Item value="ObservableCollection&lt;Thumbnail&gt;" priority="1" />
@@ -807,6 +807,12 @@
       <Item value="DrawingAttributeIds`0" priority="0" />
       <Item value="clone" priority="0" />
       <Item value="SolidBrush`0" priority="0" />
+      <Item value="startingElements" priority="0" />
+      <Item value="Image`0" priority="2" />
+      <Item value="WindowStartupLocation`0" priority="0" />
+      <Item value="searchField" priority="0" />
+      <Item value="Any`1" priority="0" />
+      <Item value="searchQuery" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.FrameworkElement">
       <Item value="BeginAnimation" priority="0" />
@@ -874,7 +880,7 @@
       <Item value="Clear" priority="0" />
       <Item value="Clear`0" priority="0" />
       <Item value="Add`0" priority="1" />
-      <Item value="ToList`0" priority="2" />
+      <Item value="ToList`0" priority="4" />
       <Item value="Remove`0" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:SandRibbon.Components.Canvas.LiveInkCanvas">
@@ -927,7 +933,7 @@
       <Item value="Clear" priority="0" />
       <Item value="Remove" priority="3" />
       <Item value="RemoveAll" priority="0" />
-      <Item value="Where`1" priority="8" />
+      <Item value="Where`1" priority="10" />
       <Item value="Add`0" priority="1" />
       <Item value="Select`2" priority="2" />
       <Item value="Clear`0" priority="0" />
@@ -1041,8 +1047,9 @@
       <Item value="ToList`1" priority="6" />
       <Item value="Where`1" priority="0" />
       <Item value="Select`2" priority="1" />
-      <Item value="Count`1" priority="0" />
+      <Item value="Count`1" priority="2" />
       <Item value="Cast`1" priority="0" />
+      <Item value="FirstOrDefault`1" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:SandRibbon.Components.Sandpit.ThoughtBubble">
       <Item value="relocate" priority="1" />
@@ -1189,7 +1196,7 @@
       <Item value="ToUpper" priority="1" />
       <Item value="Length" priority="3" />
       <Item value="Split" priority="0" />
-      <Item value="Contains`0" priority="1" />
+      <Item value="Contains`0" priority="2" />
       <Item value="ElementAt`1" priority="0" />
       <Item value="Substring`0" priority="0" />
       <Item value="ToString`0" priority="0" />
@@ -1270,6 +1277,7 @@
       <Item value="privacy" priority="1" />
       <Item value="synched" priority="1" />
       <Item value="METLPRESENTER" priority="0" />
+      <Item value="UserOptions" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:SandRibbon.Utils.Connection.JabberWire+Credentials">
       <Item value="name" priority="0" />
@@ -1507,6 +1515,7 @@
       <Item value="Width" priority="0" />
       <Item value="Height" priority="0" />
       <Item value="Source" priority="1" />
+      <Item value="tag`0" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:SandRibbon.Components.Submissions.ScreenshotDetails">
       <Item value="message" priority="0" />
@@ -1780,7 +1789,7 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:MeTLLib.DataTypes.ConversationDetails">
       <Item value="Title" priority="2" />
-      <Item value="Permissions" priority="2" />
+      <Item value="Permissions" priority="3" />
       <Item value="Jid" priority="12" />
       <Item value="Slides" priority="2" />
       <Item value="Subject" priority="1" />
@@ -1806,7 +1815,7 @@
       <Item value="TUTORIAL_PERMISSIONS" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:MeTLLib.DataTypes.Permissions">
-      <Item value="studentCanPublish" priority="1" />
+      <Item value="studentCanPublish" priority="2" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Windows.Clipboard">
       <Item value="GetImage`0" priority="0" />
@@ -1874,71 +1883,44 @@
     <ItemStatistics item="Qualified:SandRibbon.Providers.ThumbnailProvider+SlideToThumbConverter">
       <Item value="thumbs" priority="0" />
     </ItemStatistics>
+    <ItemStatistics item="Qualified:MeTLLib.DataTypes.ImageTag">
+      <Item value="id" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:MeTLLib.DataTypes.UserOptions">
+      <Item value="pedagogyLevel" priority="1" />
+    </ItemStatistics>
   </CompletionStatisticsManager>
   <RecentFiles>
     <RecentFiles>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Submissions.xaml.cs" caret="836" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Submissions/f:ScreenshotSubmission.xaml.cs" caret="5973" fromTop="14" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/f:ResourceUploader.cs" caret="3030" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml" caret="4177" fromTop="16" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PrivacyTools.xaml" caret="1078" fromTop="14" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PrivacyTools.xaml.cs" caret="4132" fromTop="17" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml.cs" caret="3477" fromTop="6" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:SimpleImpl/f:SimpleConversationSelector.xaml.cs" caret="809" fromTop="11" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ApplicationPopup.xaml" caret="1046" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ApplicationPopup.xaml.cs" caret="2315" fromTop="35" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:RecentConversationProvider.cs" caret="1038" fromTop="15" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:UserOptionsDialog.xaml.cs" caret="682" fromTop="15" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:Globals.cs" caret="879" fromTop="22" />
       <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="1483" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Login.xaml.cs" caret="3564" fromTop="17" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:Client.cs" caret="29315" fromTop="12" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml" caret="3156" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="2455" fromTop="9" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="2261" fromTop="33" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:CreateAQuiz.xaml.cs" caret="8760" fromTop="10" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml" caret="569" fromTop="5" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="14193" fromTop="9" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="17985" fromTop="8" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="20530" fromTop="105" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:UserCanvasStack.xaml" caret="612" fromTop="9" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:UserCanvasStack.xaml.cs" caret="644" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="24359" fromTop="533" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml" caret="4474" fromTop="35" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="4256" fromTop="0" />
       <File id="FE0598CD-05CE-4EE9-9F93-D2260F504071/f:ResourceUploaderTest.cs" caret="5823" fromTop="14" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="13254" fromTop="33" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="12401" fromTop="5" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ColourInformationProvider.cs" caret="412" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="3238" fromTop="29" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml" caret="1600" fromTop="3" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="6055" fromTop="5" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="11186" fromTop="34" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml.cs" caret="10109" fromTop="10" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:ViewQuizResults.xaml.cs" caret="1253" fromTop="19" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:ViewQuizResults.xaml" caret="1592" fromTop="18" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Quizzes.xaml" caret="992" fromTop="17" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Quizzes.xaml.cs" caret="5056" fromTop="0" />
     </RecentFiles>
     <RecentEdits>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml" caret="3796" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml" caret="3157" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="10675" fromTop="9" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="10674" fromTop="8" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="2551" fromTop="6" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="2687" fromTop="34" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="2678" fromTop="33" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="1960" fromTop="20" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="3572" fromTop="25" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="3286" fromTop="19" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="4930" fromTop="16" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="4606" fromTop="8" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="2456" fromTop="9" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="46270" fromTop="33" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="1612" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="2262" fromTop="33" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="7190" fromTop="2" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="8519" fromTop="20" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="7996" fromTop="12" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:CreateAQuiz.xaml.cs" caret="8760" fromTop="10" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="23604" fromTop="9" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="24513" fromTop="31" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="24135" fromTop="21" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="23029" fromTop="9" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="1847" fromTop="14" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="1287" fromTop="10" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="13441" fromTop="19" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="24306" fromTop="23" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="20549" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml" caret="569" fromTop="5" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="14369" fromTop="22" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="13566" fromTop="38" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="13190" fromTop="24" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="884" fromTop="5" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="2612" fromTop="33" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="2802" fromTop="38" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="5530" fromTop="3" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml.cs" caret="11537" fromTop="24" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml.cs" caret="11549" fromTop="24" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml.cs" caret="10842" fromTop="6" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml.cs" caret="12154" fromTop="37" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>

@@ -72,7 +72,15 @@ namespace MeTLLib.Providers.Connection
         }
         public byte[] downloadData(Uri resource)
         {
-            return client.DownloadData(resource);
+            try
+            {
+                return client.DownloadData(resource);
+            }
+            catch (WebException e)
+            {
+                if (e.Message.Contains("404")) { return new byte[0]; }
+                throw e;
+            }
         }
         public String uploadData(Uri resource, byte[] data)
         {

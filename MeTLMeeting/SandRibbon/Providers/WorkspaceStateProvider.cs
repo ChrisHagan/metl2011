@@ -58,7 +58,6 @@ namespace SandRibbon.Providers
         }
         public static void RestorePreviousSettings()
         {
-            App.Now("Restoring settings");
             ensureWorkspaceDirectoryExists();
             var savedWorkspace = XElement.Load(WORKSPACE_SAVE_FILE);
             foreach (var element in savedWorkspace.Descendants(WORKSPACE_PREFERENCE_ELEMENT))
@@ -79,7 +78,6 @@ namespace SandRibbon.Providers
                     break;
                 }
             }
-            App.Now("Finished restoring settings");
         }
         public static void SaveCurrentSettings() {
             if (!Globals.rememberMe) return;
