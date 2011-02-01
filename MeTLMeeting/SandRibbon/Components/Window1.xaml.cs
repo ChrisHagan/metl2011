@@ -448,7 +448,7 @@ namespace SandRibbon
             RecentConversationProvider.addRecentConversation(thisDetails, Globals.me);
             Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
             applyPermissions(thisDetails.Permissions);
-            Logger.Log("Joined conversation " + title);
+            Trace.TraceInformation("Joined conversation {0}",title);
             Commands.RequerySuggested(Commands.SetConversationPermissions);
             Commands.SetLayer.ExecuteAsync("Sketch");
         }

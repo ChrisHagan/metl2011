@@ -28,12 +28,10 @@ namespace SandRibbon.Providers
         {
             public int id;
             public ImageSource thumb { get; set; }
-
         }
         public static void thumbnail(Image image, int slideId)
         {
             var worker = new BackgroundWorker();
-            BitmapImage bitmap = null;//Will build on other thread, freeze and hand back.
             worker.DoWork += delegate
             {
                 var host = ClientFactory.Connection().server.host.Split('.').First();
@@ -41,6 +39,7 @@ namespace SandRibbon.Providers
                 {
                     using (var client = new WebClient())
                     {
+                        BitmapImage bitmap = null;
                         var url = string.Format("http://metl.web.monash.edu:9000/application/snapshot?server={0}&slide={1}&width={2}&height={3}", host, slideId, 320, 240);
                         using (var stream = new MemoryStream(client.DownloadData(url)))
                         {
@@ -51,7 +50,7 @@ namespace SandRibbon.Providers
                             bitmap.EndInit();
                             bitmap.Freeze();
                             image.Dispatcher.adopt(delegate { image.Source = bitmap; });
-                            App.Now("Froze and returned thumbnail {0}", slideId);
+                            stream.Close();
                         }
                     }
                 }
@@ -59,6 +58,7 @@ namespace SandRibbon.Providers
                 {
                     App.Now(string.Format("Error loading thumbnail: {0}", e.Message)); 
                 }
+               
             };
             worker.RunWorkerAsync();
         }

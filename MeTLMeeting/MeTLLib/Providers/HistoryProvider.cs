@@ -110,7 +110,6 @@ namespace MeTLLib.Providers
                                          var zipData = resourceProvider.secureGetData(new System.Uri(zipUri));
                                          if (zipData.Count() == 0)
                                          {
-                                             Trace.TraceInformation("Empty zip for {0}", zipUri);
                                              return;
                                          }
                                          var zip = ZipFile.Read(zipData);
@@ -121,11 +120,6 @@ namespace MeTLLib.Providers
                                              {
                                                  days[i].Extract(stream);
                                                  parseHistoryItem(stream, accumulatingParser);
-                                                 Trace.TraceInformation("Parser {3} contains {0} {1} {2}",
-                                                     accumulatingParser.ink.Count,
-                                                     accumulatingParser.text.Count,
-                                                     accumulatingParser.images.Count,
-                                                     accumulatingParser.location.currentSlide);
                                              }
                                              if (retrievalProceeding != null) retrievalProceeding(i, days.Count());
                                          }
@@ -139,7 +133,6 @@ namespace MeTLLib.Providers
             if (retrievalComplete != null)
                 worker.RunWorkerCompleted += (_sender, _args) =>
                 {
-                    Trace.TraceInformation(string.Format("{0} retrieval complete at historyProvider", room));
                     try
                     {
                         retrievalComplete((T)accumulatingParser);
@@ -147,7 +140,7 @@ namespace MeTLLib.Providers
                     catch (Exception ex) {
                         Trace.TraceError("Exception on the retrievalComplete section: "+ex.Message.ToString()); 
                     }
-                    };
+                };
             worker.RunWorkerAsync(null);
         }
         protected readonly byte[] closeTag = Encoding.UTF8.GetBytes("</logCollection>");

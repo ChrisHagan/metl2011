@@ -329,7 +329,6 @@ namespace SandRibbon.Components
                 Commands.EndGrabZoom.ExecuteAsync(null);
                 if (marquee.Width > 10 && marquee.Height > 10)
                 {
-                    App.Now("GrabZoom changing zoomRect to X:{0},Y:{1},W:{2},H:{3}", InkCanvas.GetLeft(marquee), InkCanvas.GetTop(marquee), marquee.Width, marquee.Height);
                     Commands.SetZoomRect.ExecuteAsync(marquee);
                 }
             });
