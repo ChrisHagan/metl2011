@@ -23,6 +23,7 @@ using SandRibbon.Components.Interfaces;
 using System.ComponentModel;
 using Divelements.SandRibbon;
 using SandRibbon.Providers;
+using System.Diagnostics;
 using SandRibbon.Utils;
 using System.Diagnostics;
 
@@ -468,6 +469,7 @@ namespace SandRibbon.Tabs.Groups
 
         private void OpenColourSettingPopup(object sender, RoutedEventArgs e)
         {
+            Trace.TraceInformation("OpenedCustomColorDialog");
             var newBrush = new SolidColorBrush();
             var AttributeNumber = Int32.Parse(((System.Windows.Controls.Button)sender).Tag.ToString());
             InvokeAlteredPreset(AttributeNumber);

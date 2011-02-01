@@ -26,8 +26,6 @@ namespace SandRibbon.Tabs
         public Submissions()
         {
             InitializeComponent();
-
         }
-
     }
 }

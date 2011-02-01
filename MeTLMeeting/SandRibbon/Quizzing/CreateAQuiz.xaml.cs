@@ -19,6 +19,7 @@ using CheckBox = System.Windows.Controls.CheckBox;
 using System.Collections.ObjectModel;
 using WPFColors = System.Windows.Media.Colors;
 using MeTLLib.DataTypes;
+using System.Diagnostics;
 
 namespace SandRibbon.Quizzing
 {
@@ -47,7 +48,6 @@ namespace SandRibbon.Quizzing
             Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(joinConversation));
             Close();
         }
-
         private void Close(object sender, RoutedEventArgs e)
         {
             Commands.JoinConversation.UnregisterCommand(new DelegateCommand<object>(joinConversation));
@@ -71,6 +71,7 @@ namespace SandRibbon.Quizzing
                     quiz.options.Add(answer);
             }
             Commands.SendQuiz.ExecuteAsync(quiz);
+            Trace.TraceInformation("CreatedQuizQuestion {0}", quizTitle.Text);
             this.Close();
         }
         private void QuizButton_PreviewMouseUp(object sender, MouseButtonEventArgs e)

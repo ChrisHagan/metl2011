@@ -16,6 +16,7 @@ using SandRibbon.Providers;
 using SandRibbon.Utils;
 using MeTLLib.DataTypes;
 using SandRibbonObjects;
+using System.Diagnostics;
 
 
 namespace SandRibbon.Components.Canvas
@@ -241,7 +242,10 @@ namespace SandRibbon.Components.Canvas
         private void keyPressed(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
+            {
+                Trace.TraceInformation("DeleteText Delete Key");
                 deleteSelectedItems(null);
+            }
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
@@ -374,6 +378,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void textMovedorResized(object sender, EventArgs e)
         {
+            Trace.TraceInformation("MovedTextbox");
             var startingText = boxesAtTheStart.Select(Clone).ToList();
             List<UIElement> selectedElements =GetSelectedElements().Select(tb => (UIElement)Clone((MeTLTextBox)tb)).ToList();
             abosoluteizeElements(selectedElements);

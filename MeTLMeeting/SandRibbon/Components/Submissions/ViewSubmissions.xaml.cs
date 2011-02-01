@@ -16,6 +16,7 @@ using SandRibbon.Components.Canvas;
 using SandRibbon.Utils.Connection;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
+using System.Diagnostics;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -42,6 +43,7 @@ namespace SandRibbon.Components.Submissions
         }
         public ViewSubmissions(List<TargettedSubmission> userSubmissions):this()
         {
+            Trace.TraceInformation("ViewingSubmissions");
             foreach (var list in userSubmissions)
                 submissionList.Add(list);
             submissions.ItemsSource= submissionList;

@@ -16,6 +16,7 @@ using SandRibbonObjects;
 using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Components;
+using System.Diagnostics;
 
 namespace SandRibbon.Chrome
 {
@@ -29,10 +30,12 @@ namespace SandRibbon.Chrome
         }
         private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
         {
+            Trace.TraceInformation("ApplicationButtonPopup_Closed");
             Commands.SetTutorialVisibility.ExecuteAsync(Visibility.Collapsed);
         }
         private void ApplicationButtonPopup_Opened(object sender, EventArgs e)
         {
+            Trace.TraceInformation("ApplicationButtonPopup_Opened");
             Commands.SetTutorialVisibility.ExecuteAsync(Visibility.Visible);
         }
         #region helpLinks
@@ -55,6 +58,7 @@ namespace SandRibbon.Chrome
         #endregion
         private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
         {
+            Trace.TraceInformation("UserOptionsDialog_Show");
             new UserOptionsDialog().Show();
         }
     }

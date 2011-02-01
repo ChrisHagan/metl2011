@@ -15,6 +15,7 @@ using SandRibbonInterop;
 using System.Collections.ObjectModel;
 using SandRibbon.Components;
 using SandRibbon.Providers;
+using System.Diagnostics;
 
 namespace SandRibbon.Quizzing
 {
@@ -35,6 +36,7 @@ namespace SandRibbon.Quizzing
         }
         private void represent(IEnumerable<MeTLLib.DataTypes.QuizAnswer> answers, MeTLLib.DataTypes.QuizQuestion question)
         {
+            Trace.TraceInformation("AssessAQuiz {0}", question.id);
             Dispatcher.adoptAsync(delegate
             {
                 responseCount.Content = string.Format("({0} responses)", answers.Count());

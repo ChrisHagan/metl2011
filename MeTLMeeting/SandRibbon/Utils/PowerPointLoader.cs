@@ -87,12 +87,15 @@ namespace SandRibbon.Utils
                     switch (spec.Type)
                     {
                         case PowerpointImportType.HighDefImage:
+                            Trace.TraceInformation("ImportingPowerpoint HighDef {0}", spec.File);
                             LoadPowerpointAsFlatSlides(spec.File, spec.Details, spec.Magnification);
                             break;
                         case PowerpointImportType.Image:
+                            Trace.TraceInformation("ImportingPowerpoint NormalDef {0}", spec.File);
                             LoadPowerpointAsFlatSlides(spec.File, spec.Details, spec.Magnification);
                             break;
                         case PowerpointImportType.Shapes:
+                            Trace.TraceInformation("ImportingPowerpoint Flexible {0}", spec.File);
                             LoadPowerpoint(spec.File, spec.Details);
                             break;
                     }
