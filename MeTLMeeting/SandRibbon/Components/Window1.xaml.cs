@@ -450,7 +450,6 @@ namespace SandRibbon
                 ribbon.SelectedTab = ribbon.Tabs[0];
             var thisDetails = ClientFactory.Connection().DetailsOf(title);
             MeTLLib.ClientFactory.Connection().AsyncRetrieveHistoryOf(Int32.Parse(title));
-            RecentConversationProvider.addRecentConversation(thisDetails, Globals.me);
             Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
             applyPermissions(thisDetails.Permissions);
             Trace.TraceInformation("Joined conversation {0}",title);

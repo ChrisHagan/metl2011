@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
+using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Automation.AutomationPeers;
 using SandRibbon.Providers;
@@ -20,20 +21,40 @@ namespace SandRibbon.Components
     public partial class SimpleConversationSelector : UserControl, IConversationSelector, IConversationListing
     {
         public static IEnumerable<ConversationDetails> rawConversationList = new List<ConversationDetails>();
+        public static IEnumerable<ConversationDetails> recentConversations = new List<ConversationDetails>();
         public SimpleConversationSelector()
         {
             InitializeComponent();
             this.conversations.ItemsSource = new List<ConversationDetails>();
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>((_details) => { }, doesConversationAlreadyExist));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(RedrawList));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateForeignConversationDetails, canUpdateForeignConversationDetails));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             RedrawList(null);
+        }
+
+        private void joinConversation(string jid)
+        {
+            var details = ClientFactory.Connection().DetailsOf(jid);
+            details.LastAccessed = DateTime.Now;
+            if (recentConversations.Where(c => c.Jid == jid).Count() > 0)
+                recentConversations.Where(c => c.Jid == jid).First().LastAccessed = details.LastAccessed;
+            else
+            {
+                recentConversations = recentConversations.Concat(new[] {details});
+            }
+            RecentConversationProvider.addRecentConversation(details, Globals.me);
+            conversations.ItemsSource = recentConversations.OrderByDescending(c => c.LastAccessed).Take(6);
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
+            if (recentConversations.Where(c => c.Jid == details.Jid).Count() == 0) return;
             if (details.Subject == "Deleted")
-                RedrawList(null);
+            {
+                recentConversations.ToList().Remove(recentConversations.Where(c => c.Jid == details.Jid).First());
+            }
+            recentConversations.Where(c => c.Jid == details.Jid).First().Title = details.Title;
+            conversations.ItemsSource = recentConversations.Take(6);
         }
         private void updateForeignConversationDetails(ConversationDetails _obj)
         {
@@ -64,9 +85,10 @@ namespace SandRibbon.Components
             {
                 var potentialConversations = RecentConversationProvider.loadRecentConversations();
                 if (potentialConversations != null && potentialConversations.Count() > 0)
-                    this.conversations.ItemsSource = potentialConversations
-                        .Where(c => c.IsValid && c.Subject != "Deleted")
-                        .Take(6);
+                {
+                    recentConversations = potentialConversations.Where(c => c.IsValid && c.Subject != "Deleted");
+                    conversations.ItemsSource = recentConversations.Take(6);
+                }
             });
         }
         public void List(IEnumerable<ConversationDetails> conversations)
