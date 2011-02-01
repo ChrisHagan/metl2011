@@ -24,6 +24,7 @@ using System.ComponentModel;
 using Divelements.SandRibbon;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
+using System.Diagnostics;
 
 namespace SandRibbon.Tabs.Groups
 {
@@ -457,7 +458,7 @@ namespace SandRibbon.Tabs.Groups
             if (listBox.SelectedItem != null)
             {
                 var IndexNumber = listBox.Items.IndexOf(listBox.SelectedItem);
-                App.Now("Pen selected, Pen {0}", IndexNumber.ToString());
+                Trace.TraceInformation("Pen selected, Pen {0}", IndexNumber.ToString());
                 var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[IndexNumber])).Attributes);
                 Commands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
                 e.Handled = true;
@@ -495,7 +496,7 @@ namespace SandRibbon.Tabs.Groups
                 }
             }
             OpeningPopup = false;
-            App.Now("Pen modifier popup open, Pen {0}", AttributeNumber.ToString());
+            Trace.TraceInformation("Pen modifier popup open, Pen {0}", AttributeNumber.ToString());
         }
         private void ChangeColour(object sender, RoutedEventArgs e)
         {
@@ -507,7 +508,7 @@ namespace SandRibbon.Tabs.Groups
             ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).XAMLColorName = Color.ToString();
             defaultColours.Items.Refresh();
             InvokeAlteredPreset(PresetToUpdate);
-            App.Now("Pen changed colour, Pen {0}, newColour {1}", PresetToUpdate.ToString(), Color.ToString());
+            Trace.TraceInformation("Pen changed colour, Pen {0}, newColour {1}", PresetToUpdate.ToString(), Color.ToString());
         }
         private void InvokeAlteredPreset(int index)
         {
@@ -523,7 +524,7 @@ namespace SandRibbon.Tabs.Groups
             ((DrawingAttributesEntry)(defaultColours.Items[PresetToUpdate])).Attributes = DrawingAttributes;
             defaultColours.Items.Refresh();
             InvokeAlteredPreset(PresetToUpdate);
-            App.Now("Pen Reset to Default, Pen {0}",PresetToUpdate.ToString());
+            Trace.TraceInformation("Pen Reset to Default, Pen {0}",PresetToUpdate.ToString());
         }
         private void ChangeSize(object sender, RoutedEventArgs e)
         {
@@ -533,19 +534,19 @@ namespace SandRibbon.Tabs.Groups
             ((DrawingAttributesEntry)defaultColours.Items[PresetToUpdate]).PenSize = newSize;
             defaultColours.Items.Refresh();
             InvokeAlteredPreset(PresetToUpdate);
-            App.Now("Pen changed size, Pen {0}, newSize {1}", PresetToUpdate.ToString(), newSize.ToString());
+            Trace.TraceInformation("Pen changed size, Pen {0}, newSize {1}", PresetToUpdate.ToString(), newSize.ToString());
         }
         private void SizeUp(object sender, MouseButtonEventArgs e)
         {
             var CurrentPreset = Int32.Parse(ColourSettingPopup.Tag.ToString());
             InvokeAlteredPreset(CurrentPreset);
-            App.Now("Pen SizeUp, Pen {0}", CurrentPreset.ToString());
+            Trace.TraceInformation("Pen SizeUp, Pen {0}", CurrentPreset.ToString());
         }
         private void ColourUp(object sender, MouseButtonEventArgs e)
         {
             var CurrentPreset = Int32.Parse(ColourSettingPopup.Tag.ToString());
             InvokeAlteredPreset(CurrentPreset);
-            App.Now("Pen ColourUp, Pen {0}", CurrentPreset.ToString());
+            Trace.TraceInformation("Pen ColourUp, Pen {0}", CurrentPreset.ToString());
         }
 
         public class DrawingAttributesEntry

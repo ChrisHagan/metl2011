@@ -421,7 +421,6 @@ namespace MeTLLib
             {
                 if (slide == null) return;
                 wire.MoveTo(slide);
-            */
             };
             tryIfConnected(work);
         }

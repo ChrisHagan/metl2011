@@ -30,6 +30,7 @@ namespace SandRibbon
         }
         public override void WriteLine(string message)
         {
+            if (message == "Request: http://madam.adm.monash.edu.au:5984/metl_log/ Method: POST") return;
             Logger.Log(message);
         }
     }

@@ -411,7 +411,7 @@ namespace SandRibbon
             scroll.Height = viewbox.Height;
             scroll.ScrollToHorizontalOffset(topleft.X);
             scroll.ScrollToVerticalOffset(topleft.Y);
-            App.Now("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", topleft.X,topleft.Y,viewbox.Width,viewbox.Height);
+            Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", topleft.X, topleft.Y, viewbox.Width, viewbox.Height);
         }
         private bool SmartBoardMeTLAlreadyLoaded
         {
@@ -751,7 +751,7 @@ namespace SandRibbon
         }
         private void doZoomIn(object sender, ExecutedRoutedEventArgs e)
         {
-            Logger.Log("ZoomIn pressed");
+            Trace.TraceInformation("ZoomIn pressed");
             var ZoomValue = 0.9;
             var scrollHOffset = scroll.HorizontalOffset;
             var scrollVOffset = scroll.VerticalOffset;
@@ -801,7 +801,7 @@ namespace SandRibbon
         }
         private void doZoomOut(object sender, ExecutedRoutedEventArgs e)
         {
-            Logger.Log("ZoomOut pressed");
+            Trace.TraceInformation("ZoomOut pressed");
             var ZoomValue = 1.1;
             var scrollHOffset = scroll.HorizontalOffset;
             var scrollVOffset = scroll.VerticalOffset;
