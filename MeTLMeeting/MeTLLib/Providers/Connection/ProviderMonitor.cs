@@ -109,13 +109,11 @@ namespace MeTLLib.Providers.Connection
         public void Ping(System.Uri uri)
         {
             var ping = new System.Net.NetworkInformation.Ping();
-            Trace.TraceInformation("pinged " + uri.Host);
             ping.PingCompleted += (_sender, pingArgs) =>
             {
                 if (pingArgs.Reply != null && pingArgs.Reply.Status == IPStatus.Success)
                 {
                     ok = true;
-                    Trace.TraceWarning("ProviderMonitor: " + label + " up (pinged in " + pingArgs.Reply.RoundtripTime + ")");
                 }
                 else
                 {

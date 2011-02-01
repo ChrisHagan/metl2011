@@ -123,7 +123,6 @@ namespace MeTLLib
         public ClientConnection(MeTLServerAddress address)
         {
             server = address;
-            Trace.TraceInformation("MeTL client connection started.  Server set to:" + server.ToString(), "Connection");
         }
         #region fields
         private JabberWire wire;
@@ -160,33 +159,27 @@ namespace MeTLLib
         #region connection
         public Credentials Connect(string username, string password)
         {
-            Trace.TraceInformation("Attempting authentication with username:" + username);
             var credentials = authorisationProvider.attemptAuthentication(username, password);
             jabberWireFactory.credentials = credentials;
             wire = jabberWireFactory.wire();
             wire.Login(new Location("100", 101, new List<int> { 101, 102, 103, 104, 105, 106 }));
-            Trace.TraceInformation("set up jabberwire");
-            Trace.TraceInformation("Connection state: " + isConnected.ToString());
             return credentials;
         }
         public bool Disconnect()
         {
             Action work = delegate
             {
-                Trace.TraceInformation("Attempting to disconnect from MeTL");
                 wire.Logout();
             };
             tryIfConnected(work);
 
             wire = null;
-            Trace.TraceInformation("Connection state: " + isConnected.ToString());
             return isConnected;
         }
         #endregion
         #region sendStanzas
         public void SendTextBox(TargettedTextBox textbox)
         {
-            Trace.TraceInformation("Beginning TextBox send: " + textbox.identity);
             Action work = delegate
             {
                 wire.SendTextbox(textbox);
@@ -195,7 +188,6 @@ namespace MeTLLib
         }
         public void SendStroke(TargettedStroke stroke)
         {
-            Trace.TraceInformation("Beginning Stroke send: " + stroke.startingChecksum, "Sending data");
             Action work = delegate
             {
                 wire.SendStroke(stroke);
@@ -204,7 +196,6 @@ namespace MeTLLib
         }
         public void SendImage(TargettedImage image)
         {
-            Trace.TraceInformation("Beginning Image send: " + image.id);
             Action work = delegate
             {
                 image.injectDependencies(server, downloaderFactory.client(), resourceProvider);
@@ -214,7 +205,6 @@ namespace MeTLLib
         }
         public void SendVideo(TargettedVideo video)
         {
-            Trace.TraceInformation("Beginning Video send: " + video.id);
             Action work = delegate
             {
                 video.injectDependencies(server, resourceProvider);
@@ -224,7 +214,6 @@ namespace MeTLLib
         }
         public void SendDirtyTextBox(TargettedDirtyElement tde)
         {
-            Trace.TraceInformation("Beginning DirtyTextbox send: " + tde.identifier);
             Action work = delegate
             {
                 wire.SendDirtyText(tde);
@@ -233,7 +222,6 @@ namespace MeTLLib
         }
         public void SendDirtyStroke(TargettedDirtyElement tde)
         {
-            Trace.TraceInformation("Beginning DirtyStroke send: " + tde.identifier);
             Action work = delegate
             {
                 wire.sendDirtyStroke(tde);
@@ -242,7 +230,6 @@ namespace MeTLLib
         }
         public void SendDirtyImage(TargettedDirtyElement tde)
         {
-            Trace.TraceInformation("Beginning DirtyImage send: " + tde.identifier);
             Action work = delegate
             {
                 wire.SendDirtyImage(tde);
@@ -251,7 +238,6 @@ namespace MeTLLib
         }
         public void SendDirtyVideo(TargettedDirtyElement tde)
         {
-            Trace.TraceInformation("Beginning DirtyVideo send: " + tde.identifier);
             Action work = delegate
             {
                 wire.SendDirtyVideo(tde);
@@ -264,15 +250,13 @@ namespace MeTLLib
             {
                 try
                 {
-                    Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
-                    Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
                     wire.SendScreenshotSubmission(new TargettedSubmission(lii.slide, lii.author, lii.target, lii.privacy, newPath, DateTimeFactory.Now().Ticks));
                     if (System.IO.File.Exists(lii.file)) System.IO.File.Delete(lii.file);
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError(e.Message);
+                    Trace.TraceError("uploadAndSendSubmission error: {0}",e.Message);
                     uploadAndSendSubmission(lii);
                 }
             };
@@ -280,7 +264,6 @@ namespace MeTLLib
         }
         public void SendSubmission(TargettedSubmission ts)
         {
-            Trace.TraceInformation("Beginning Submission send: " + ts.url);
             Action work = delegate
             {
                 wire.SendScreenshotSubmission(ts);
@@ -289,7 +272,6 @@ namespace MeTLLib
         }
         public void SendQuizAnswer(QuizAnswer qa)
         {
-            Trace.TraceInformation("Beginning QuizAnswer send: " + qa.id);
             Action work = delegate
             {
                 wire.SendQuizAnswer(qa);
@@ -298,7 +280,6 @@ namespace MeTLLib
         }
         public void SendQuizQuestion(QuizQuestion qq)
         {
-            Trace.TraceInformation("Beginning QuizQuestion send: " + qq.id);
             Action work = delegate
             {
                 wire.SendQuiz(qq);
@@ -307,7 +288,6 @@ namespace MeTLLib
         }
         public void SendFile(TargettedFile tf)
         {
-            Trace.TraceInformation("Beginning File send: " + tf.url);
             Action work = delegate
             {
                 try
@@ -328,9 +308,7 @@ namespace MeTLLib
             {
                 try
                 {
-                    Trace.TraceInformation("Beginning ImageUpload: " + lii.file);
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
-                    Trace.TraceInformation("ImageUpload remoteUrl set to: " + newPath);
                     Image newImage = lii.image;
                     newImage.tag(lii.image.tag());
                     newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
@@ -443,10 +421,6 @@ namespace MeTLLib
             {
                 if (slide == null) return;
                 wire.MoveTo(slide);
-                Trace.TraceInformation(String.Format("Location: (conv:{0}),(slide:{1}),(slides:{2})",
-                    Globals.conversationDetails.Title + " : " + Globals.conversationDetails.Jid,
-                    Globals.slide,
-                    Globals.slides.Select(s => s.id.ToString()).Aggregate((total, item) => total += " " + item + "")));
             };
             tryIfConnected(work);
         }
@@ -537,18 +511,14 @@ namespace MeTLLib
                     }));
                     parserAggregator.Start();
                     historyProvider.Retrieve<PreParser>(
-                () =>
-                {
-                    Trace.TraceInformation("MUC History started (" + muc + ")");
-                },
-                (current, total) => Trace.TraceInformation("MUC History progress (" + muc + "): " + current + "/" + total),
-                preParser =>
-                {
-                    Trace.TraceInformation("MUC History completed (" + muc + ")");
-                    parserList.Add(preParser);
-                },
-                muc);
-                    parserAggregator.Join();
+                        null,
+                        null,
+                    preParser =>
+                    {
+                        parserList.Add(preParser);
+                    },
+                    muc);
+                        parserAggregator.Join();
                 }));
                 thread.Start();
                 thread.Join();
@@ -583,23 +553,17 @@ namespace MeTLLib
                     }));
                     parserAggregator.Start();
                     historyProvider.Retrieve<PreParser>(
-                () =>
-                {
-                    Trace.TraceInformation("History started (" + room + ")");
-                },
-                (current, total) => Trace.TraceInformation("History progress (" + room + "): " + current + "/" + total),
-                preParser =>
-                {
-                    Trace.TraceInformation("History completed (" + room + ")");
-                    parserList.Add(preParser);
-                },
-                room.ToString());
+                        null,null,
+                        preParser =>
+                        {
+                            parserList.Add(preParser);
+                        },
+                    room.ToString());
                     historyProvider.RetrievePrivateContent<PreParser>(
-                    () => Trace.TraceInformation("Private History started (" + room + ")"),
-                    (current, total) => Trace.TraceInformation("Private History progress (" + room + "): " + current + "/" + total),
+                    null,
+                    null,
                     preParser =>
                     {
-                        Trace.TraceInformation("Private History completed (" + room + ")");
                         parserList.Add(preParser);
                     },
                     username,
@@ -695,8 +659,7 @@ namespace MeTLLib
         {
             if (wire == null)
             {
-                Trace.TraceError("Wire is null.");
-                //throw new Exception("Wire is null.  Please restart MeTL.");
+                Trace.TraceError("Wire is null at tryIfConnected in MeTLLib.ClientConnection.");
             }
             if (wire.IsConnected() == false)
             {
@@ -730,24 +693,6 @@ namespace MeTLLib
             get
             {
                 return conversationDetailsProvider.ListConversations().ToList();
-                /*List<ConversationDetails> returnValue = new List<ConversationDetails>();
-                bool hasBeenSet = false;
-                Action work = delegate
-                {
-                    try
-                    {
-                        returnValue = conversationDetailsProvider.ListConversations().ToList();
-                        hasBeenSet = true;
-                    }
-                    catch (Exception e)
-                    {
-                        Trace.TraceError(e.Message);
-                        returnValue = AvailableConversations;
-                    }
-                };
-                tryIfConnected(work);
-                return (List<ConversationDetails>)waitForAsyncUpdate(hasBeenSet, returnValue);
-                */
             }
         }
         #endregion

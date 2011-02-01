@@ -264,7 +264,6 @@ namespace MeTLLib.Providers.Connection
         private void OnClose(object sender)
         {
             unregisterHandlers();
-            Trace.TraceWarning("Disconnected, unregistered handlers");
             AttemptReloginAfter(1000);
         }
         System.Threading.Timer timer;//So it doesn't get garbage collected before it can fire on long intervals
@@ -363,7 +362,6 @@ namespace MeTLLib.Providers.Connection
             conn.OnWriteXml += WriteXml;
 #endif
             openConnection(jid.User);
-            Trace.TraceInformation("Logged in");
         }
         private object resetLock = new object();
         protected IConversationDetailsProvider conversationDetailsProvider;

@@ -23,6 +23,16 @@ using System.Windows.Threading;
 
 namespace SandRibbon
 {
+    public class CouchTraceListener : TraceListener {
+        public override void Write(string message)
+        {
+            Logger.Log(message);
+        }
+        public override void WriteLine(string message)
+        {
+            Logger.Log(message);
+        }
+    }
     public partial class App : Application
     {
         public static NetworkController controller;
@@ -68,53 +78,11 @@ namespace SandRibbon
         {
             var now = SandRibbonObjects.DateTimeFactory.Now();
             var s = string.Format("{2} {0}:{1}", now, now.Millisecond, message);
-            //saveInformationToDatabase(message);
-            Logger.Log(message);
             Trace.TraceInformation(s);
             return s;
         }
-        private static bool failedLogging = false;
-        private static NpgsqlConnection conn = null;
-        private static void saveInformationToDatabase(string message)
-        {
-            if (failedLogging) return;
-            if (conn == null)
-            {
-                conn = createDatabaseConnection();
-                conn.Open();
-            }
-            try
-            {
-                if (Globals.me.Length == 0) return;
-                var insertionString = string.Format("INSERT INTO metl_log (username, message, server) VALUES('{0}', '{1}', '{2}');COMMIT",
-                                                    Globals.me, message, ClientFactory.Connection().server.host);
-                var insertCommand = conn.CreateCommand();
-                insertCommand.CommandText = insertionString;
-                insertCommand.ExecuteNonQuery();
-            }
-            catch (Exception e)
-            {
-                failedLogging = true;
-            }
-        }
-        private static string server = "madam.adm.monash.edu";
-        private static string port = "5432";
-        private static string databaseName = "postgres";
-        private static string databaseUsername = "ejabberd";
-        private static string databasePassword = "";
-        private static NpgsqlConnection createDatabaseConnection()
-        {
-            var connectionString = string.Format("Server={0};Port={1};User Id={2};Database={4}", server, port, databaseUsername, databasePassword, databaseName);
-            var conn = new NpgsqlConnection(connectionString);
-            return conn;
-        }
-
-        public static string Now(string format, params object[] args) { 
-            return Now(String.Format(format,args));
-        }
         static App()
         {
-            Now("Static App start");
             setDotNetPermissionState();
         }
         private static void setDotNetPermissionState()
@@ -137,6 +105,7 @@ namespace SandRibbon
 #else
             isStaging = false;
 #endif
+            Trace.Listeners.Add(new CouchTraceListener());
             base.OnStartup(e);
             new Worm();
             new CommandParameterProvider();
@@ -205,7 +174,6 @@ namespace SandRibbon
                 var parameters = GetQueryStringParameters();
                 foreach (var key in parameters.Keys)
                 {
-                    App.Now("Added uri query parameter(" + key + "): " + parameters.Get((String)key));
                     Application.Current.Properties.Add(key, parameters.Get((string)key));
                 }
                 /*int cmdLineArg = 0;
