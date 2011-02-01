@@ -20,6 +20,6 @@ xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInte
     <dict:RibbonPanel>
         <dict:Button Command="{x:Static api:Commands.OriginalView}" Text="Show slide" Icon="\Resources\ShowOriginal.png" ToolTip="{DynamicResource ShowSlideToolTip}"/>
         <dict:Button Command="{x:Static api:Commands.FitToView}" Icon="\Resources\ShowAll.png" Text="Show all" ToolTip="{DynamicResource FitToViewToolTip}"/>
-        <dict:Button Command="{x:Static api:Commands.ExtendCanvasBothWays}" Text="Extend Canvas" Icon="\Resources\ExtendCanvas.png" ToolTip="{DynamicResource ExtendCanvasToolTip}"/>
+        <dict:Button Command="{x:Static api:Commands.ExtendCanvasBothWays}" Text="Extend Page" Icon="\Resources\ExtendCanvas.png" ToolTip="{DynamicResource ExtendCanvasToolTip}"/>
     </dict:RibbonPanel>
 </sr:RibbonGroup>           

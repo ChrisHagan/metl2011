@@ -73,7 +73,6 @@ namespace SandRibbon.Utils
             };
             try
             {
-
                 db.SaveArbitraryDocument<LogMessage>(msg);
             }
             catch (Exception e)
