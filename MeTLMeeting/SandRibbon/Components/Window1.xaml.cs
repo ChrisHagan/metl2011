@@ -67,7 +67,7 @@ namespace SandRibbon
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
-            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, mustBeLoggedIn));
+            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
             Commands.ShowEditSlidesDialog.RegisterCommand(new DelegateCommand<object>(ShowEditSlidesDialog, mustBeInConversation));
             
@@ -512,6 +512,25 @@ namespace SandRibbon
         {
             if (Globals.userInformation.location != null && !String.IsNullOrEmpty(Globals.userInformation.location.activeConversation))
                 TutorialLayer.Visibility = Visibility.Collapsed;
+        }
+        private bool canCreateConversation(object obj)
+        {
+            return doesConversationAlreadyExist(obj) && mustBeLoggedIn(obj);
+        }
+        private bool doesConversationAlreadyExist(object obj)
+        {
+            if (!(obj is ConversationDetails))
+                return true;
+            var details = (ConversationDetails)obj;
+            if (details == null)
+                return true;
+            if (details.Subject.ToLower() == "deleted")
+                return true;
+            if (details.Title.Length == 0)
+                return true;
+            var currentConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
+            bool conversationExists = currentConversations.Any(c => c.Title.Equals(details.Title));
+            return !conversationExists;
         }
         private bool mustBeLoggedIn(object _arg)
         {
