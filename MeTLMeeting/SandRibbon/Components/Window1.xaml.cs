@@ -116,6 +116,7 @@ namespace SandRibbon
             //canvas stuff
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(SetLayer, conversationSearchMustBeClosed));
             Commands.UpdateCursorWithAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(UpdateCursorWithAttributes));
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustDrawingAttributesAccordingToZoom));
             Commands.SetZoomAdjustedDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(reportDrawingAttributes));
@@ -145,6 +146,9 @@ namespace SandRibbon
             ribbon.Loaded += ribbon_Loaded;
             WorkspaceStateProvider.RestorePreviousSettings();
             CommandManager.InvalidateRequerySuggested();
+        }
+        private void SetLayer(object layer) {
+            Trace.TraceInformation("SelectedMode {0}", layer);
         }
         private void ImportPowerpoint(object obj)
         {
@@ -382,6 +386,7 @@ namespace SandRibbon
         }
         private void CreateConversation(object _unused)
         {
+            Trace.TraceInformation("CreatedBlankConversation");
             Commands.CreateBlankConversation.ExecuteAsync(null);
         }
         private void EditConversation(object _unused)
@@ -635,6 +640,7 @@ namespace SandRibbon
         }
         private void OriginalView(object _unused)
         {
+            Trace.TraceInformation("ZoomToOriginalView");
             var currentSlide = Globals.conversationDetails.Slides.Where(s => s.id == Globals.slide).FirstOrDefault();
             if (currentSlide == null || currentSlide.defaultHeight == 0 || currentSlide.defaultWidth == 0) return;
             scroll.Width = currentSlide.defaultWidth;

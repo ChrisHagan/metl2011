@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using SandRibbon.Components.Sandpit;
+using System.Diagnostics;
 
 namespace SandRibbon.Components
 {
@@ -29,7 +30,9 @@ namespace SandRibbon.Components
             Commands.SetUserOptions.Execute(DataContext);
             //this should be wired to a new command - SaveUserOptions, which is commented out in SandRibbonInterop.Commands
             //Commands.SaveUserOptions.Execute(DataContext);
-            Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(((UserOptions)DataContext).pedagogyLevel));
+            var level = Pedagogicometer.level(((UserOptions)DataContext).pedagogyLevel);
+            Trace.TraceInformation("SetPedagogy {0}",level.label);
+            Commands.SetPedagogyLevel.Execute(level);
             Close();
         }
         private void Cancel(object sender, RoutedEventArgs e)

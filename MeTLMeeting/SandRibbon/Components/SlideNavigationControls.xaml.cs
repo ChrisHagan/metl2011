@@ -70,7 +70,9 @@ namespace SandRibbon.Components
         }
         private void toggleSync(object sender, RoutedEventArgs e)
         {
-            Commands.SetSync.Execute(!Globals.synched);
+            var synch = !Globals.synched;
+            System.Diagnostics.Trace.TraceInformation("ManuallySynched {0}", synch);
+            Commands.SetSync.Execute(synch);
         }
     }
 }

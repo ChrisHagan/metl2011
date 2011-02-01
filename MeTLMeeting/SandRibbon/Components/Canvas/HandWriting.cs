@@ -15,6 +15,7 @@ using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbonObjects;
 using MeTLLib.DataTypes;
+using System.Diagnostics;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -210,6 +211,7 @@ namespace SandRibbon.Components.Canvas
                     e.Cancel = true;
                     return;
                 }
+                Trace.TraceInformation("ErasingStroke {0}", e.Stroke.sum().checksum);
                 doMyStrokeRemoved(e.Stroke);
             }
             catch
@@ -317,6 +319,7 @@ namespace SandRibbon.Components.Canvas
         private void selectionMoved(object sender, EventArgs e)
         {
             var selectedStrokes = GetSelectedStrokes().Select(stroke => stroke.Clone()).ToList();
+            Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
             var undoStrokes = strokesAtTheStart.Select(stroke => stroke.Clone()).ToList();
             abosoluteizeStrokes(selectedStrokes);
             Action redo = () =>
@@ -341,9 +344,7 @@ namespace SandRibbon.Components.Canvas
             addStrokes(selectedStrokes);
             addAdorners();
             UndoHistory.Queue(undo, redo);
-        
         }
-
         private void removeStrokes(IEnumerable<Stroke> undoStrokes)
         {
             foreach (var stroke in undoStrokes)
