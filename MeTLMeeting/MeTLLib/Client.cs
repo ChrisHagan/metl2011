@@ -443,10 +443,11 @@ namespace MeTLLib
             {
                 if (slide == null) return;
                 wire.MoveTo(slide);
-                Trace.TraceInformation(String.Format("Location: (conv:{0}),(slide:{1}),(slides:{2})",
+                /*Trace.TraceInformation(String.Format("Location: (conv:{0}),(slide:{1}),(slides:{2})",
                     Globals.conversationDetails.Title + " : " + Globals.conversationDetails.Jid,
                     Globals.slide,
                     Globals.slides.Select(s => s.id.ToString()).Aggregate((total, item) => total += " " + item + "")));
+            */
             };
             tryIfConnected(work);
         }
