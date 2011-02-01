@@ -26,7 +26,7 @@ namespace SandRibbon.Tabs
     public partial class Quizzes : Divelements.SandRibbon.RibbonTab
     {
         public static RoutedCommand openQuizResults = new RoutedCommand();
-        public ObservableCollection<MeTLLib.DataTypes.QuizQuestion> activeQuizzes = new ObservableCollection<MeTLLib.DataTypes.QuizQuestion>();
+        public ObservableCollection<QuizQuestion> activeQuizzes = new ObservableCollection<MeTLLib.DataTypes.QuizQuestion>();
         public Dictionary<long, ObservableCollection<MeTLLib.DataTypes.QuizAnswer>> answers = new Dictionary<long, ObservableCollection<MeTLLib.DataTypes.QuizAnswer>>();
         public Quizzes()
         {
@@ -97,19 +97,18 @@ namespace SandRibbon.Tabs
                 }
                 else
                 {
-                    var newList = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>();
-                    newList.Add(answer);
+                    var newList = new ObservableCollection<QuizAnswer> {answer};
                     answers.Add(answer.id, newList);
                 }
             });
         }
-        private void ReceiveQuiz(MeTLLib.DataTypes.QuizQuestion quiz)
+        private void ReceiveQuiz(QuizQuestion quiz)
         {
             Dispatcher.adoptAsync(() =>
             {
                 if (activeQuizzes.Any(q => q.id == quiz.id)) return;
                 if (!answers.ContainsKey(quiz.id))
-                    answers[quiz.id] = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>();
+                    answers[quiz.id] = new ObservableCollection<QuizAnswer>();
                 activeQuizzes.Add(quiz);
                 quizzes.ScrollToEnd();
             });
