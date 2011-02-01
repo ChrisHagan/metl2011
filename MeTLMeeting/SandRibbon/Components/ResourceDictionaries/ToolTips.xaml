@@ -98,11 +98,11 @@
                                         ImageSource="\Resources\SendSubmission.png" 
                                         ContentText="Submit a snapshot of your screen to the teacher."/>
     <resources:MeTLImageToolTip x:Key="RestoreCanvasToolTip" 
-                                        TitleText="Restore Canvas"
+                                        TitleText="Restore Page"
                                         ImageSource="\Resources\Ribbon-FitCanvas.png" 
-                                        ContentText="This will zoom all the way out, allowing you to see the entire canvas at once."/>
+                                        ContentText="This will zoom all the way out, allowing you to see the entire page at once."/>
     <resources:MeTLImageToolTip x:Key="ExtendCanvasToolTip" 
-                                        TitleText="Extend Canvas"
+                                        TitleText="Extend Page"
                                         ImageSource="\Resources\ExtendCanvas.png" 
                                         ContentText="Add extra blank space to the page."/>
     <resources:MeTLImageToolTip x:Key="CreateMeetingToolTip" 
@@ -239,7 +239,7 @@
     <resources:MeTLImageToolTip x:Key="WorkPubliclyToolTip" 
                                         TitleText="Work Publicly"
                                         ImageSource="\Resources\Ribbon-Public.png" 
-                                        ContentText="When enabled, new changes will be displayed to other participants."/>
+                                        ContentText="When enabled, new content will be displayed to other participants."/>
     <resources:MeTLImageToolTip x:Key="EditingFindToolTip" 
                                         TitleText="Find text"
                                         ImageSource="..\..\Resources\MagnifyingGlassShiny.png" 
