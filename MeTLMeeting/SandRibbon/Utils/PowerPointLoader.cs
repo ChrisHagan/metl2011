@@ -77,16 +77,7 @@ namespace SandRibbon.Utils
         {
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(EditConversation));
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
-            Commands.UpdatePowerpointProgress.RegisterCommand(new DelegateCommand<PowerpointImportProgress>(ReportPowerpointProgress));
             wire = MeTLLib.ClientFactory.Connection();
-        }
-        private void ReportPowerpointProgress(PowerpointImportProgress progress)
-        {
-            App.Now(String.Format("pptStage({0}),slideId({1}/{2}){3}",
-                progress.stage.ToString(),
-                progress.slideId,
-                progress.totalSlides,
-                String.IsNullOrEmpty(progress.slideThumbnailSource) ? "" : ", (uri:" + progress.slideThumbnailSource + ")"));
         }
         private void UploadPowerpoint(PowerpointSpec spec)
         {
