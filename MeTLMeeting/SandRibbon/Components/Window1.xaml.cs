@@ -170,7 +170,7 @@ namespace SandRibbon
         {
             try
             {
-                Process.Start("http://monash.edu/eeducation/");
+                Process.Start("http://monash.edu/eeducation/myls2010/metlhelp.html");
             }
             catch (Exception)
             {
