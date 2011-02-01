@@ -109,13 +109,9 @@ namespace SandRibbon.Tabs
             {
                 if (activeQuizzes.Any(q => q.id == quiz.id)) return;
                 if (!answers.ContainsKey(quiz.id))
-                    Dispatcher.adoptAsync(() =>
-                         answers[quiz.id] = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>());
-                Dispatcher.adoptAsync(() =>
-                {
-                    activeQuizzes.Add(quiz);
-                    quizzes.ScrollToEnd();
-                });
+                    answers[quiz.id] = new ObservableCollection<MeTLLib.DataTypes.QuizAnswer>();
+                activeQuizzes.Add(quiz);
+                quizzes.ScrollToEnd();
             });
         }
         private void CreateQuiz(object sender, RoutedEventArgs e)
