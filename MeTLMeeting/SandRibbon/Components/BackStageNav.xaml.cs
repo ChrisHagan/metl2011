@@ -101,26 +101,5 @@ namespace SandRibbon.Components
         private void current_Click(object sender, RoutedEventArgs e){
             Commands.HideConversationSearchBox.Execute(null);
         }
-
-        private void deleteConversations(object sender, RoutedEventArgs e)
-        {
-            if (Globals.me.ToLower() != "sajames")
-            {
-                MessageBox.Show("sorry this functionality is only for stupid people");
-                return;
-            }
-            var result = MessageBox.Show("Are you sure you want to delete all your conversations Stuart?!?", "Delete Conversations", MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes)
-            {
-                foreach (var conversation in MeTLLib.ClientFactory.Connection().AvailableConversations.Where(c => c.Author == Globals.me))
-                {
-                    if (conversation.Author == Globals.me)
-                    {
-                        conversation.Subject = "Deleted";
-                        MeTLLib.ClientFactory.Connection().UpdateConversationDetails(conversation);
-                    }
-                }
-            }
-        }
     }
 }
