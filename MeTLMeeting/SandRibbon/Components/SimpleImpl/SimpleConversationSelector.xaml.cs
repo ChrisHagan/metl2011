@@ -49,7 +49,7 @@ namespace SandRibbon.Components
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (recentConversations.Where(c => c.Jid == details.Jid).Count() == 0) return;
-            if (details.Subject == "Deleted")
+            if (details.Subject.ToLower() == "deleted")
                 recentConversations = recentConversations.Where(c => c.Jid != details.Jid);
             else
                 recentConversations.Where(c => c.Jid == details.Jid).First().Title = details.Title;

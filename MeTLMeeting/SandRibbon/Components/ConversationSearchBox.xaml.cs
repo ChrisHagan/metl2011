@@ -199,23 +199,24 @@ namespace SandRibbon.Components
         }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
-            if (details == null) return;
-            foreach (var result in searchResults.Where(c => c.Jid == details.Jid).ToList())
-                searchResults.Remove(result);
-            if (details.Subject.ToLower() != "deleted")
-                searchResults.Add(details);
-            else
-                if (details.Jid == Globals.location.activeConversation)
-                    currentConversation.Visibility = Visibility.Collapsed;
-            if (!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid)
-            {
-                Commands.RequerySuggested();
-                this.Visibility = Visibility.Visible;
-            }
-            GetListCollectionView().Refresh();
-            setMyConversationVisibility();
+               if (details == null) return;
+               foreach (
+                   var result in searchResults.Where(c => c.Jid == details.Jid).ToList())
+                   searchResults.Remove(result);
+               if (details.Subject.ToLower() != "deleted")
+                   searchResults.Add(details);
+               else if (details.Jid == Globals.location.activeConversation)
+                   currentConversation.Visibility = Visibility.Collapsed;
+               if (!(shouldShowConversation(details)) &&
+                   details.Jid == Globals.conversationDetails.Jid)
+               {
+                   Commands.RequerySuggested();
+                   this.Visibility = Visibility.Visible;
+               }
+               GetListCollectionView().Refresh();
+               setMyConversationVisibility();
         }
-        private bool shouldShowConversation(ConversationDetails conversation)
+        private static bool shouldShowConversation(ConversationDetails conversation)
         {
             if (!(Globals.credentials.authorizedGroups.Select(g => g.groupKey).Contains(conversation.Subject))
                 && conversation.Subject != "Unrestricted"
