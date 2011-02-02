@@ -26,9 +26,8 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.conversations.ItemsSource = new List<ConversationDetails>();
-            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>((_details) => { }, doesConversationAlreadyExist));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
-            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateForeignConversationDetails, canUpdateForeignConversationDetails));
+            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             RedrawList(null);
         }
@@ -54,29 +53,6 @@ namespace SandRibbon.Components
             else
                 recentConversations.Where(c => c.Jid == details.Jid).First().Title = details.Title;
             conversations.ItemsSource = recentConversations.Take(6);
-        }
-        private void updateForeignConversationDetails(ConversationDetails _obj)
-        {
-            RedrawList(null);
-        }
-        private bool canUpdateForeignConversationDetails(ConversationDetails details)
-        {
-            return rawConversationList.Where(c => c.Title == details.Title || string.IsNullOrEmpty(details.Title)).Count() == 0;
-        }
-        private bool doesConversationAlreadyExist(object obj)
-        {
-            if (!(obj is ConversationDetails))
-                return true;
-            var details = (ConversationDetails)obj;
-            if (details == null)
-                return true;
-            if (details.Subject.ToLower() == "deleted")
-                return true;
-            if (details.Title.Length == 0)
-                return true;
-            var currentConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
-            bool conversationExists = currentConversations.Any(c => c.Title.Equals(details.Title));
-            return !conversationExists;
         }
         private void RedrawList(object _unused)
         {
