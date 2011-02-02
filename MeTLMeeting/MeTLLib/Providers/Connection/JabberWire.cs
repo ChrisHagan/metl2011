@@ -444,7 +444,7 @@ namespace MeTLLib.Providers.Connection
         {
             var alias = credentials.name + conn.Resource;
             new MucManager(conn).JoinRoom(room, alias, true);
-            Trace.TraceInformation(string.Format("Joined room {0}", room));
+            Trace.TraceInformation(string.Format("JoinRoom {0}", room));
         }
         private void send(string target, string message)
         {

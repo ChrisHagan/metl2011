@@ -26,8 +26,9 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.conversations.ItemsSource = new List<ConversationDetails>();
+            Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>((_details) => { }, doesConversationAlreadyExist));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
-            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateForeignConversationDetails, canUpdateForeignConversationDetails));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             RedrawList(null);
         }
@@ -49,13 +50,34 @@ namespace SandRibbon.Components
         {
             if (recentConversations.Where(c => c.Jid == details.Jid).Count() == 0) return;
             if (details.Subject == "Deleted")
-            {
-                recentConversations.ToList().Remove(recentConversations.Where(c => c.Jid == details.Jid).First());
-            }
-            recentConversations.Where(c => c.Jid == details.Jid).First().Title = details.Title;
+                recentConversations = recentConversations.Where(c => c.Jid != details.Jid);
+            else
+                recentConversations.Where(c => c.Jid == details.Jid).First().Title = details.Title;
             conversations.ItemsSource = recentConversations.Take(6);
         }
-
+        private void updateForeignConversationDetails(ConversationDetails _obj)
+        {
+            RedrawList(null);
+        }
+        private bool canUpdateForeignConversationDetails(ConversationDetails details)
+        {
+            return rawConversationList.Where(c => c.Title == details.Title || string.IsNullOrEmpty(details.Title)).Count() == 0;
+        }
+        private bool doesConversationAlreadyExist(object obj)
+        {
+            if (!(obj is ConversationDetails))
+                return true;
+            var details = (ConversationDetails)obj;
+            if (details == null)
+                return true;
+            if (details.Subject.ToLower() == "deleted")
+                return true;
+            if (details.Title.Length == 0)
+                return true;
+            var currentConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
+            bool conversationExists = currentConversations.Any(c => c.Title.Equals(details.Title));
+            return !conversationExists;
+        }
         private void RedrawList(object _unused)
         {
             Dispatcher.adoptAsync(() =>
@@ -68,6 +90,38 @@ namespace SandRibbon.Components
                 }
             });
         }
+        public void List(IEnumerable<ConversationDetails> conversations)
+        {
+            Dispatcher.adopt((Action)delegate
+            {
+                rawConversationList = conversations.ToList();
+                var list = new List<ConversationDetails>();
+                var myConversations = conversations.Where(c => c.Author == Globals.me).OrderBy(c => c.LastAccessed.Date).Reverse().Take(2).ToList();
+                if (myConversations.Count() > 0)
+                {
+                    list.Add(new SeparatorConversation("My Conversations"));
+                    list.AddRange(myConversations);
+                }
+                list.Add(new SeparatorConversation("Conversations I've worked in"));
+                var recentConversations = RecentConversationProvider.loadRecentConversations().Where(c => c.IsValid && conversations.Contains(c)).Reverse().Take(2);
+                list.AddRange(recentConversations);
+                var recentAuthors = list.Select(c => c.Author).Where(c => c != Globals.me).Distinct().ToList();
+                foreach (var author in recentAuthors)
+                {
+                    var otherConversationsByThisAuthor = conversations.Where(c => c.IsValid && !list.Contains(c) && c.Author == author).Reverse();
+                    if (otherConversationsByThisAuthor.Count() > 0)
+                    {
+                        list.Add(new SeparatorConversation(string.Format("{0}'s other conversations:", author)));
+                        list.AddRange(otherConversationsByThisAuthor.Take(2));
+                    }
+                }
+                this.conversations.ItemsSource = list;
+            });
+        }
+        public IEnumerable<string> List()
+        {
+            return rawConversationList.Select(c => c.Title).ToList();
+        }
         private void doJoinConversation(object sender, ExecutedRoutedEventArgs e)
         {
             Commands.JoinConversation.ExecuteAsync((string)e.Parameter);
@@ -79,15 +133,6 @@ namespace SandRibbon.Components
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new ConversationListingAutomationPeer(this, "selector");
-        }
-
-        public void List(IEnumerable<ConversationDetails> conversations)
-        {
-        }
-
-        public IEnumerable<string> List()
-        {
-            return new List<string>();
         }
     }
     public class SeparatorStyleSelector : StyleSelector

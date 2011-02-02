@@ -98,7 +98,6 @@ namespace MeTLLib.Providers
     {
         public override void Retrieve<T>(Action retrievalBeginning, Action<int,int> retrievalProceeding, Action<T> retrievalComplete, string room)
         {
-            Trace.TraceInformation(string.Format("HttpHistoryProvider.Retrieve: Beginning retrieve for {0}", room));
             var accumulatingParser = jabberWireFactory.create<T>(PreParser.ParentRoom(room));
             if (retrievalBeginning != null) retrievalBeginning();
             var worker = new BackgroundWorker();

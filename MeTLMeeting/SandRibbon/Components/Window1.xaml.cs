@@ -452,7 +452,6 @@ namespace SandRibbon
             MeTLLib.ClientFactory.Connection().AsyncRetrieveHistoryOf(Int32.Parse(title));
             Commands.SetPrivacy.Execute(thisDetails.Author == Globals.me ? "public" : "private");
             applyPermissions(thisDetails.Permissions);
-            Trace.TraceInformation("Joined conversation {0}",title);
             Commands.RequerySuggested(Commands.SetConversationPermissions);
             Commands.SetLayer.ExecuteAsync("Sketch");
         }
