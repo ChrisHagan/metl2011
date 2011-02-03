@@ -141,7 +141,7 @@ namespace SandRibbon.Tabs
         }
         private void canOpenResults(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = activeQuizzes.Count > 0;
+            e.CanExecute = (activeQuizzes != null && activeQuizzes.Count > 0)? true: false;
         }
         private void OpenResults(object sender, ExecutedRoutedEventArgs e)
         {

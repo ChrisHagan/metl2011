@@ -821,6 +821,16 @@ namespace SandRibbon.Components.Canvas
         }
         private const int KILOBYTE = 1024;
         private const int MEGABYTE = 1024 * KILOBYTE;
+        private bool isFileLessThanXMB(string filename, int size)
+        {
+            var info = new FileInfo(filename);
+            if (size != null && info.Length > size * MEGABYTE)
+            {
+                return false;
+            }
+            return true;
+        }
+        private int fileSizeLimit = 50;
         private void uploadFileForUse(string unMangledFilename)
         {
             string filename = unMangledFilename + ".MeTLFileUpload";
@@ -829,18 +839,25 @@ namespace SandRibbon.Components.Canvas
                 MessageBox.Show("Sorry, your filename is too long, must be less than 260 characters");
                 return;
             }
-            var info = new FileInfo(unMangledFilename);
-            if (info.Length > 25 * MEGABYTE)
+            if (isFileLessThanXMB(unMangledFilename, fileSizeLimit))
             {
-                MessageBox.Show("Sorry, your file is too large, must be less than 25mb");
+                File.Copy(unMangledFilename, filename);
+                MeTLLib.ClientFactory.Connection().UploadAndSendFile(new MeTLStanzas.LocalFileInformation(currentSlide, Globals.me, target, "public", filename, Path.GetFileNameWithoutExtension(filename), false, new System.IO.FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString()));
+                File.Delete(filename);
+            }
+            else
+            {
+                MessageBox.Show(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
                 return;
             }
-            File.Copy(unMangledFilename, filename);
-            MeTLLib.ClientFactory.Connection().UploadAndSendFile(new MeTLStanzas.LocalFileInformation(currentSlide, Globals.me, target, "public", filename, Path.GetFileNameWithoutExtension(filename), false, new System.IO.FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString()));
-            File.Delete(filename);
         }
         public void dropImageOnCanvas(string fileName, Point pos, int count)
         {
+            if (!isFileLessThanXMB(fileName, fileSizeLimit))
+            {
+                MessageBox.Show(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
+                return;
+            }
             Dispatcher.adopt(() =>
             {
                 System.Windows.Controls.Image image = null;
@@ -853,7 +870,8 @@ namespace SandRibbon.Components.Canvas
                     MessageBox.Show("Sorry could not create an image from this file :" + fileName + "\n Error: " + e.Message);
                     return;
                 }
-                if (image == null) return;
+                if (image == null)
+                    return;
                 SetLeft(image, pos.X);
                 SetTop(image, pos.Y);
                 image.tag(new ImageTag(Globals.me, privacy, generateId(), false, 0));

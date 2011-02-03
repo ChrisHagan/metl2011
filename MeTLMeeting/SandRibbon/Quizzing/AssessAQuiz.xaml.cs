@@ -42,15 +42,22 @@ namespace SandRibbon.Quizzing
                 responseCount.Content = string.Format("({0} responses)", answers.Count());
                 resultDisplay.ItemsSource = question.options.Select(o =>
                 {
-                    var relevant = answers.Where(a => a.answer == o.name);
-                    return new DisplayableResultSet
+                    if (answers != null && answers.Count() > 0)
                     {
-                        color = o.color,
-                        count = relevant.Count(),
-                        proportion = answers.Count() == 0 ? 0 :
-                            (double)relevant.Count() / answers.Count(),
-                        tooltip = o.optionText,
-                        name = o.name
+                        var relevant = answers.Where(a => a.answer == o.name);
+                        return new DisplayableResultSet
+                        {
+                            color = o.color,
+                            count = relevant.Count(),
+                            proportion = answers.Count() == 0 ? 0 :
+                                (double)relevant.Count() / answers.Count(),
+                            tooltip = o.optionText,
+                            name = o.name
+                        };
+                    }
+                    else return new DisplayableResultSet
+                    {
+
                     };
                 });
             });
