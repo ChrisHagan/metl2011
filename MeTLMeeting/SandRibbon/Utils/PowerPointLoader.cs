@@ -352,7 +352,7 @@ namespace SandRibbon.Utils
                                         id = string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now(), shapeCount++),
                                         author = me,
                                         privacy = shape.Attribute("privacy").Value,
-                                        isBackground = false
+                                        isBackground = shape.Attribute("background").Value.ToLower() == "true"
                                     });
                 wire.SendImage(new TargettedImage(id,me,"presentationSpace",shape.Attribute("privacy").Value,hostedImage));
             }
@@ -442,7 +442,8 @@ namespace SandRibbon.Utils
                     new XAttribute("x", 0),
                     new XAttribute("y", 0),
                     new XAttribute("privacy", "public"),
-                    new XAttribute("snapshot", Backgroundfile)));
+                    new XAttribute("snapshot", Backgroundfile),
+                    new XAttribute("background", true)));
             }
             catch (Exception ex)
             {
@@ -505,7 +506,8 @@ namespace SandRibbon.Utils
                                 new XAttribute("height", shape.Height * Magnification),
                                 new XAttribute("width", shape.Width * Magnification),
                                 new XAttribute("privacy", "private"),
-                                new XAttribute("snapshot", file)));
+                                new XAttribute("snapshot", file),
+                                new XAttribute("background", false)));
                         }
                         catch (COMException)
                         {
@@ -534,6 +536,7 @@ namespace SandRibbon.Utils
                             new XAttribute("height", shape.Height * Magnification),
                             new XAttribute("width", shape.Width * Magnification),
                             new XAttribute("privacy", "public"),
+                            new XAttribute("background", false),
                             new XAttribute("snapshot", file)));
                     }
                 }
@@ -552,6 +555,7 @@ namespace SandRibbon.Utils
                             new XAttribute("height", shape.Height * Magnification),
                             new XAttribute("width", shape.Width * Magnification),
                             new XAttribute("privacy", "public"),
+                            new XAttribute("background", false),
                             new XAttribute("snapshot", file)));
                     }
                 }

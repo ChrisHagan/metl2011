@@ -244,7 +244,7 @@ namespace MeTLLib.DataTypes
                         id = string.Format("{0}:{1}", author, DateTimeFactory.Now());
                     }
                 }
-                value.tag(new ImageTag { author = author, id = id, privacy = privacy });
+                value.tag(new ImageTag { author = author, id = id, privacy = privacy, isBackground =  value.tag().isBackground});
                 imageProperty = value;
             }
         }

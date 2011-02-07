@@ -84,6 +84,7 @@ namespace SandRibbon.Components.Canvas
             {
                 if (drop.target.Equals(target) && me != "projector")
                     handleDrop(drop.filename, drop.point, drop.position);
+                
             }
             catch (NotSetException e)
             {
@@ -165,7 +166,6 @@ namespace SandRibbon.Components.Canvas
                                   ClearAdorners();
                                   foreach (var element in selectedElements)
                                   {
-
                                       if (!Children.Contains(element))
                                           Children.Add(element);
                                       sendThisElement(element);
@@ -197,6 +197,7 @@ namespace SandRibbon.Components.Canvas
             foreach (var image in safeImages)
             {
                 TargettedImage image1 = image;
+                
                 Dispatcher.adoptAsync(() => AddImage(image1.image));
             }
             ensureAllImagesHaveCorrectPrivacy();
@@ -389,11 +390,14 @@ namespace SandRibbon.Components.Canvas
         {
             try
             {
-                //if (image.tag().isBackground)
-                //    Background = new VisualBrush(image);
-                //else 
                 if (!imageExistsOnCanvas(image))
+                {
+                    if (image.tag().isBackground)
+                        Panel.SetZIndex(image, 1);
+                    else
+                        Panel.SetZIndex(image, 2);
                     Children.Add(image);
+                }
             }
             catch (Exception e)
             {
