@@ -10,11 +10,8 @@ using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Automation.AutomationPeers;
 using SandRibbon.Providers;
-using SandRibbon.Providers.Structure;
 using SandRibbonInterop.Interfaces;
-//using SandRibbonObjects;
 using MeTLLib.DataTypes;
-using SandRibbon.Utils;
 
 namespace SandRibbon.Components
 {
@@ -26,7 +23,7 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.conversations.ItemsSource = new List<ConversationDetails>();
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(joinConversation));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(joinConversation));
             Commands.UpdateForeignConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             RedrawList(null);
@@ -52,7 +49,7 @@ namespace SandRibbon.Components
                 recentConversations = recentConversations.Where(c => c.Jid != details.Jid);
             else
                 recentConversations.Where(c => c.Jid == details.Jid).First().Title = details.Title;
-            conversations.ItemsSource = recentConversations.Take(6);
+            conversations.ItemsSource = recentConversations.OrderByDescending(c => c.LastAccessed).Take(6);
         }
         private void RedrawList(object _unused)
         {
