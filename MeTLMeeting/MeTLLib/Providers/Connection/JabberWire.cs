@@ -537,7 +537,8 @@ namespace MeTLLib.Providers.Connection
         {
             new MucManager(conn).LeaveRoom(
                 new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
-            location.activeConversation = (Slide.conversationFor(where)).ToString();
+            if(location.activeConversation == null)
+                location.activeConversation = (Slide.conversationFor(where)).ToString();
             var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
             location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
             location.currentSlide = where;
