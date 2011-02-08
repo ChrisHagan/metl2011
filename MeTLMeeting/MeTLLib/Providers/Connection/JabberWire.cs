@@ -537,8 +537,7 @@ namespace MeTLLib.Providers.Connection
         {
             new MucManager(conn).LeaveRoom(
                 new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
-            if(location.activeConversation == null)
-                location.activeConversation = (Slide.conversationFor(where)).ToString();
+            //location.activeConversation = (Slide.conversationFor(where)).ToString();
             var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
             location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
             location.currentSlide = where;
@@ -732,9 +731,6 @@ namespace MeTLLib.Providers.Connection
         }
         public void ActOnUntypedMessage(Element message)
         {
-            if (location != null && location.activeConversation != null && 
-                message.HasAttribute("to") &&
-                !message.Attribute("to").StartsWith(location.activeConversation)) return;
             foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
                 actOnStrokeReceived(ink.Stroke);
             foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))

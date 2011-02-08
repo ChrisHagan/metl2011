@@ -299,7 +299,7 @@ namespace MeTLLib.DataTypes
         public static int conversationFor(int id)
         {
             var sId = id.ToString();
-            return Int32.Parse(string.Format("{0}00", sId.Substring(0, sId.Length - 2)));
+            return Int32.Parse(string.Format("{0}400", sId.Substring(0, sId.Length - 3)));
         }
         public enum TYPE { SLIDE, POLL, THOUGHT };
 

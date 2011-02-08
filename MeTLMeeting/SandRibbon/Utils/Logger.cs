@@ -78,7 +78,7 @@ namespace SandRibbon.Utils
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);    
+                //what should we do if we cannot save too couch?
             }
         }
         public static void query() {
