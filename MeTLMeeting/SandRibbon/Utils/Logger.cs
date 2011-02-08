@@ -53,7 +53,11 @@ namespace SandRibbon.Utils
         private static readonly string DB_NAME = "metl_log";
         private static readonly ICouchDatabase db = server.GetDatabase(DB_NAME);
         public static void Crash(Exception e) {
-            Log(string.Format("CRASH: {0} @ {1}", e.Message, e.StackTrace));
+            var crashMessage = string.Format("CRASH: {0} @ {1} INNER: {2}", 
+                e.Message, 
+                e.StackTrace, 
+                e.InnerException == null? "NONE":e.InnerException.StackTrace);            
+            Log(crashMessage);
         }
         public static void Log(string appendThis)
         {/*Interesting quirk about the formatting: \n is the windows line ending but ruby assumes
