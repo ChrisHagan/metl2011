@@ -28,7 +28,6 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             RedrawList(null);
         }
-
         private void joinConversation(string jid)
         {
             var details = ClientFactory.Connection().DetailsOf(jid);

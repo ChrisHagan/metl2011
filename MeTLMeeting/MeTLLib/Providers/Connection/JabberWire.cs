@@ -732,6 +732,9 @@ namespace MeTLLib.Providers.Connection
         }
         public void ActOnUntypedMessage(Element message)
         {
+            if (location != null && location.activeConversation != null && 
+                message.HasAttribute("to") &&
+                !message.Attribute("to").StartsWith(location.activeConversation)) return;
             foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
                 actOnStrokeReceived(ink.Stroke);
             foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
