@@ -82,7 +82,8 @@ namespace SandRibbon.Utils
             }
             catch (Exception e)
             {
-                //what should we do if we cannot save too couch?
+                //what should we do if we cannot save to couch?
+                //ALL IS LOST
             }
         }
         public static void query() {
