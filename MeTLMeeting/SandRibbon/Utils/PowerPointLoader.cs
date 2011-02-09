@@ -347,12 +347,15 @@ namespace SandRibbon.Utils
                     hostedImage.Height = Double.Parse(shape.Attribute("height").Value);
                 if (shape.Attributes("width").Count() > 0)
                     hostedImage.Width = Double.Parse(shape.Attribute("width").Value);
+                bool isBackgroundImage = false;
+                if (shape.Attribute("background") != null && shape.Attribute("background").Value.ToLower() == "true")
+                    isBackgroundImage = true;
                 hostedImage.tag(new ImageTag
                                     {
                                         id = string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now(), shapeCount++),
                                         author = me,
                                         privacy = shape.Attribute("privacy").Value,
-                                        isBackground = shape.Attribute("background").Value.ToLower() == "true"
+                                        isBackground = isBackgroundImage
                                     });
                 wire.SendImage(new TargettedImage(id,me,"presentationSpace",shape.Attribute("privacy").Value,hostedImage));
             }
