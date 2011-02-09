@@ -827,6 +827,7 @@ namespace SandRibbon.Components.Canvas
         private const int MEGABYTE = 1024 * KILOBYTE;
         private bool isFileLessThanXMB(string filename, int size)
         {
+            if (filename.StartsWith("http")) return true;
             var info = new FileInfo(filename);
             if (size != null && info.Length > size * MEGABYTE)
             {
