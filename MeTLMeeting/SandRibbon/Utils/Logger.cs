@@ -10,6 +10,7 @@ using Divan;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace SandRibbon.Utils
 {
@@ -77,8 +78,11 @@ namespace SandRibbon.Utils
             };
             try
             {
-                if(db != null)
-                    db.SaveArbitraryDocument<LogMessage>(msg);
+                if (db != null)
+                    ThreadPool.QueueUserWorkItem(delegate
+                    {
+                        db.SaveArbitraryDocument<LogMessage>(msg);
+                    });
             }
             catch (Exception e)
             {
