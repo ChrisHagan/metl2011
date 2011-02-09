@@ -68,27 +68,27 @@ namespace SandRibbon.Utils
         }
         private static void putCouch(string message, DateTime now) {
             if (String.IsNullOrEmpty(Globals.me)) return;
-            var msg = new LogMessage
-            {
-                content = message,
-                timestamp = now.Ticks,
-                user = Globals.me,
-                slide = Globals.location.currentSlide,
-                server = ClientFactory.Connection().server.host
-            };
-            try
-            {
-                if (db != null)
-                    ThreadPool.QueueUserWorkItem(delegate
+            if (db != null)
+                ThreadPool.QueueUserWorkItem(delegate
+                {
+                    try
                     {
+                        var msg = new LogMessage
+                        {
+                            content = message,
+                            timestamp = now.Ticks,
+                            user = Globals.me,
+                            slide = Globals.location.currentSlide,
+                            server = ClientFactory.Connection().server.host
+                        };
                         db.SaveArbitraryDocument<LogMessage>(msg);
-                    });
-            }
-            catch (Exception e)
-            {
-                //what should we do if we cannot save to couch?
-                //ALL IS LOST
-            }
+                    }
+                    catch (Exception e)
+                    {
+                        //what should we do if we cannot save to couch?
+                        //ALL IS LOST
+                    }
+                });
         }
         public static void query() {
             var time = DateTime.Now.Ticks - 1000;
