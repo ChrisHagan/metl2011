@@ -838,23 +838,6 @@ namespace MeTLLib.Providers.Connection
         {
             var muc = new MucManager(conn);
             joinRoom(new Jid(room + "@" + metlServerAddress.muc));
-            /*
-                        historyProvider.Retrieve<PreParser>(
-                            onStart,
-                            onProgress,
-                            finishedParser =>
-                            {
-                                Trace.TraceInformation(string.Format("JabberWire retrievalComplete action invoked for {0}", location.currentSlide));
-                                receiveEvents.receivePreParser(finishedParser);
-                            },
-                            room);
-                        historyProvider.RetrievePrivateContent<PreParser>(
-                            onStart,
-                            onProgress,
-                            finishedParser => receiveEvents.receivePreParser(finishedParser),
-                            credentials.name,
-                            room);
-             */
         }
         public void SneakOutOf(string room)
         {

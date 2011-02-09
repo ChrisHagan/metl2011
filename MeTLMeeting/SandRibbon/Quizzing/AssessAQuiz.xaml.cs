@@ -37,6 +37,7 @@ namespace SandRibbon.Quizzing
         private void represent(IEnumerable<MeTLLib.DataTypes.QuizAnswer> answers, MeTLLib.DataTypes.QuizQuestion question)
         {
             Trace.TraceInformation("AssessAQuiz {0}", question.id);
+            if (answers == null || question == null) return;
             Dispatcher.adoptAsync(delegate
             {
                 responseCount.Content = string.Format("({0} responses)", answers.Count());
