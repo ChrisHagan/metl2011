@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Specialized;
 using System.Deployment.Application;
 using System.Web;
@@ -24,14 +25,18 @@ using System.Windows.Threading;
 namespace SandRibbon
 {
     public class CouchTraceListener : TraceListener {
+        private string[] blacklist = new[] { "vshost", "Method: POST", "MeTL Presenter.exe Warning: 0 :", "MeTL Presenter.exe Info: 0 :" }; 
+        private bool messageIsInteresting(string message) {
+            return !blacklist.Any(s=>message.Contains(s));
+        }
         public override void Write(string message)
         {
-            if (message.Contains("vshost") || message.Contains("Method: POST")) return;
+            if(messageIsInteresting(message))
                 Logger.Log(message);
         }
         public override void WriteLine(string message)
         {
-            if (message.Contains("vshost") || message.Contains("Method: POST")) return;
+            if(messageIsInteresting(message))
                 Logger.Log(message);
         }
     }
