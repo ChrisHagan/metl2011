@@ -132,12 +132,13 @@ namespace SandRibbon
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e){
             Logger.Crash(e.Exception);
-            Commands.LeaveAllRooms.Execute(null);
+            //Commands.LeaveAllRooms.Execute(null);
             MessageBox.Show(string.Format("MeTL has encountered an unexpected error and has to close:{0}\n{1} ",
                 e.Exception.Message,
                 e.Exception.InnerException == null ?
                     "No inner exception" : e.Exception.InnerException.Message));
-            this.Shutdown();
+            //Both of these calls have been commented out in the hope of disposing of the UIPermissions bugs.
+            //this.Shutdown();
         }
         private void AncilliaryButton_Click(object sender, RoutedEventArgs e)
         {
