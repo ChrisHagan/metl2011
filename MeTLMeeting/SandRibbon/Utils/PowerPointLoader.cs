@@ -468,11 +468,7 @@ namespace SandRibbon.Utils
             }
             xml.Add(xSlide);
         }
-        private static void ExportShape(
-            Microsoft.Office.Interop.PowerPoint.Shape shapeObj,
-            XElement xSlide,
-            string currentWorkingDirectory,
-            PpShapeFormat exportFormat,
+        private static void ExportShape( Microsoft.Office.Interop.PowerPoint.Shape shapeObj, XElement xSlide, string currentWorkingDirectory, PpShapeFormat exportFormat,
             PpExportMode exportMode,
             int backgroundWidth,
             int backgroundHeight,

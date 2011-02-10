@@ -456,6 +456,10 @@ namespace MeTLLib
                 location.availableSlides = cd.Slides.Select(s => s.id).ToList();
                 if(location.availableSlides.Count > 0)
                     location.currentSlide = location.availableSlides[0];
+                else
+                {
+                    Trace.TraceError("I would have crashed here in JoinConversation due to location.AvailableSlides not having any elements");
+                }
                 events.receiveConversationDetails(cd);
             };
             tryIfConnected(work);
