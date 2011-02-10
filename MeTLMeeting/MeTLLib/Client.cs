@@ -454,7 +454,8 @@ namespace MeTLLib
                 var cd = conversationDetailsProvider.DetailsOf(conversation);
                 location.activeConversation = cd.Jid;
                 location.availableSlides = cd.Slides.Select(s => s.id).ToList();
-                location.currentSlide = location.availableSlides[0];
+                if(location.availableSlides.Count > 0)
+                    location.currentSlide = location.availableSlides[0];
                 events.receiveConversationDetails(cd);
             };
             tryIfConnected(work);
