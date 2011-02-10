@@ -661,6 +661,7 @@ namespace MeTLLib
             if (wire == null)
             {
                 Trace.TraceError("Wire is null at tryIfConnected in MeTLLib.ClientConnection.");
+                return;
             }
             if (wire.IsConnected() == false)
             {
