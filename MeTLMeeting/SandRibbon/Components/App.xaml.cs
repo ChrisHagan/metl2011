@@ -119,7 +119,12 @@ namespace SandRibbon
             new CommandParameterProvider();
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.Current.Exit += new ExitEventHandler(Current_Exit);
+        }
+        void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            doCrash((Exception)e.ExceptionObject);
         }
         void Current_Exit(object sender, ExitEventArgs e)
         {
@@ -131,14 +136,15 @@ namespace SandRibbon
             catch (Exception) { }
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e){
-            Logger.Crash(e.Exception);
-            //Commands.LeaveAllRooms.Execute(null);
+            doCrash(e.Exception); 
+        }
+        private void doCrash(Exception e)
+        {
+            Logger.Crash(e);
             MessageBox.Show(string.Format("MeTL has encountered an unexpected error and has to close:{0}\n{1} ",
-                e.Exception.Message,
-                e.Exception.InnerException == null ?
-                    "No inner exception" : e.Exception.InnerException.Message));
-            //Both of these calls have been commented out in the hope of disposing of the UIPermissions bugs.
-            //this.Shutdown();
+                e.Message,
+                e.InnerException == null ?
+                    "No inner exception" : e.InnerException.Message));
         }
         private void AncilliaryButton_Click(object sender, RoutedEventArgs e)
         {
