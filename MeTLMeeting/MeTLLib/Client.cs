@@ -458,7 +458,7 @@ namespace MeTLLib
                     location.currentSlide = location.availableSlides[0];
                 else
                 {
-                    Trace.TraceError("I would have crashed here in JoinConversation due to location.AvailableSlides not having any elements");
+                    Trace.TraceError("FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
                 }
                 events.receiveConversationDetails(cd);
             };
