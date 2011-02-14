@@ -308,19 +308,19 @@ namespace MeTLLib.Providers.Connection
                     timer = null;
                     while (IsConnected() && actionsAfterRelogin != null && actionsAfterRelogin.Count > 0)
                     {
-                        var item = (DispatcherAction)actionsAfterRelogin.Dequeue();
+                        var item = (DispatcherAction)actionsAfterRelogin.Peek();//Do not alter the queue, we might be back here any second
                         try
                         {
                             if (System.Windows.Threading.Dispatcher.CurrentDispatcher != null && 
                                 item.Owner == System.Windows.Threading.Dispatcher.CurrentDispatcher.Thread)
                                 System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(item.Work);
                             else
-                            item.Work.Invoke();
+                                item.Work.Invoke();
+                            actionsAfterRelogin.Dequeue();//We only lift it off the top after successful execution.
                         }
                         catch (Exception e)
                         {
                             Trace.TraceError("Failed to add item to relogin-queue.  Exception: " + e.Message);
-                            //item.Work.Invoke();
                         }
                     }
                 }
