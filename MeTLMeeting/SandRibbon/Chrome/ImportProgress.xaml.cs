@@ -40,22 +40,27 @@ namespace SandRibbon
         private void HideProgressBlocker(object _arg) {
             Visibility = Visibility.Collapsed;
         }
+        private void setContent(string content) {
+            goldLabel.Content = content; 
+        }
         private void reset()
         {
-            fromStack.Clear();
-            toStack.Clear();
+            Dispatcher.adopt(delegate
+            {
+                fromStack.Clear();
+                toStack.Clear();
+            });
         }
         private void PrintConversation(object _arg) {
             reset();
             Visibility = Visibility.Visible;
-            goldLabel.Content = "Printing";
+            setContent("Printing");
         }
         private void JoinConversation(object _arg) {
             reset();
             Visibility = Visibility.Visible;
-            goldLabel.Content = "Joining";
+            setContent("Joining");
         }
-        
         private void PreParserAvailable(object _arg) {
             Commands.RequerySuggested();
             Visibility = Visibility.Collapsed;
@@ -65,7 +70,7 @@ namespace SandRibbon
                 case PowerpointImportProgress.IMPORT_STAGE.DESCRIBED:
                     reset();
                     Visibility = Visibility.Visible;
-                    goldLabel.Content = "Importing";
+                    setContent("Importing");
                     break;
                 case PowerpointImportProgress.IMPORT_STAGE.ANALYSED:
                    fromStack.Insert(0,progress);

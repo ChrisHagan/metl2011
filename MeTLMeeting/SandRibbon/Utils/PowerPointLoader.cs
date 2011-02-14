@@ -594,6 +594,8 @@ namespace SandRibbon.Utils
                         new XAttribute("content", textFrame.TextRange.Text.Replace('\v', '\n')),
                         new XAttribute("x", shape.Left * Magnification),
                         new XAttribute("y", shape.Top * Magnification),
+                        new XAttribute("width", shape.Width * Magnification),
+                        new XAttribute("height", shape.Height * Magnification),
                         new XElement("font",
                             new XAttribute("family", "Arial"),
                             new XAttribute("size", "12"),
