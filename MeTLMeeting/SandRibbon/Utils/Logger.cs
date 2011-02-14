@@ -60,8 +60,14 @@ namespace SandRibbon.Utils
                 e.InnerException == null? "NONE":e.InnerException.StackTrace);            
             Log(crashMessage);
         }
-        public static void Fixed(string message) { 
-            Log(string.Format("FIXED: {0} {1}",Globals.me,message));
+        public static void Fixed(string message) {
+            try
+            {
+                Log(string.Format("FIXED: {0} {1}", Globals.me, message));
+            }
+            catch (NotSetException e) { 
+                Log(string.Format("FIXED: {0} {1}", "USERNAME_NOT_SET", message));
+            }
         }
         public static void Log(string appendThis)
         {/*Interesting quirk about the formatting: \n is the windows line ending but ruby assumes
