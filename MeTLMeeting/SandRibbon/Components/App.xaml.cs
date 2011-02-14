@@ -125,6 +125,7 @@ namespace SandRibbon
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             doCrash((Exception)e.ExceptionObject);
+            MessageBox.Show(string.Format("We're sorry.  MeTL has encountered an unexpected error and has to close.  We are now aware of this problem and we will be fixing it."));
         }
         void Current_Exit(object sender, ExitEventArgs e)
         {
@@ -136,15 +137,12 @@ namespace SandRibbon
             catch (Exception) { }
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e){
-            doCrash(e.Exception); 
+            doCrash(e.Exception);
+            e.Handled = true;//Don't smash the app.  We'd prefer to just keep on muddling.
         }
         private void doCrash(Exception e)
         {
             Logger.Crash(e);
-            MessageBox.Show(string.Format("MeTL has encountered an unexpected error and has to close:{0}\n{1} ",
-                e.Message,
-                e.InnerException == null ?
-                    "No inner exception" : e.InnerException.Message));
         }
         private void AncilliaryButton_Click(object sender, RoutedEventArgs e)
         {
@@ -180,7 +178,6 @@ namespace SandRibbon
         }
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-
             EventManager.RegisterClassHandler(typeof(TextBox),
             TextBox.GotKeyboardFocusEvent,
             new RoutedEventHandler(AnyTextBoxGetsFocus));
@@ -191,12 +188,6 @@ namespace SandRibbon
                 {
                     Application.Current.Properties.Add(key, parameters.Get((string)key));
                 }
-                /*int cmdLineArg = 0;
-                foreach (string arg in Environment.GetCommandLineArgs())
-                {
-                    Application.Current.Properties.Add("commandLineArgument" + cmdLineArg++, arg);
-                    App.Now("Added commandline argument(" + cmdLineArg + "): " + arg);
-                }*/
             }
             catch (Exception ex)
             {

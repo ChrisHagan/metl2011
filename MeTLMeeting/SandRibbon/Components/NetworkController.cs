@@ -62,12 +62,10 @@ namespace SandRibbon.Components
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
         }
-
         private void sendSyncMove(int slide)
         {
             client.SendSyncMove(slide);
         }
-
         private void leaveAllRooms(object _obj)
         {
             client.LeaveAllRooms();
