@@ -1054,6 +1054,8 @@ namespace SandRibbon.Components.Canvas
             box.FontSize = OldBox.FontSize;
             box.Foreground = OldBox.Foreground;
             box.Text = OldBox.Text;
+            box.Width = OldBox.Width;
+            //box.Height = OldBox.Height;
             InkCanvas.SetLeft(box, InkCanvas.GetLeft(OldBox));
             InkCanvas.SetTop(box, InkCanvas.GetTop(OldBox));
             return box;
