@@ -125,7 +125,7 @@ namespace SandRibbon
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             doCrash((Exception)e.ExceptionObject);
-            MessageBox.Show(string.Format("We're sorry.  MeTL has encountered an unexpected error and has to close.  We are now aware of this problem and we will be fixing it."));
+            MessageBox.Show(string.Format("We're sorry.  MeTL has encountered an unexpected error and has to close."));
         }
         void Current_Exit(object sender, ExitEventArgs e)
         {
