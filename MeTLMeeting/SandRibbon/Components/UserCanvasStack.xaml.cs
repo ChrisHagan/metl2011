@@ -125,6 +125,7 @@ namespace SandRibbon.Components
         }
         private void SetLayer(string newLayer)
         {
+            if (handwriting.me.ToLower() == "projector") return;
             UIElement currentCanvas;
             switch (newLayer)
             {
