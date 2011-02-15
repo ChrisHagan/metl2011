@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -846,9 +848,17 @@ namespace SandRibbon.Components.Canvas
             }
             if (isFileLessThanXMB(unMangledFilename, fileSizeLimit))
             {
-                File.Copy(unMangledFilename, filename);
-                MeTLLib.ClientFactory.Connection().UploadAndSendFile(new MeTLStanzas.LocalFileInformation(currentSlide, Globals.me, target, "public", filename, Path.GetFileNameWithoutExtension(filename), false, new System.IO.FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString()));
-                File.Delete(filename);
+                var worker = new BackgroundWorker();
+                worker.DoWork += (s, e) =>
+                 {
+                     File.Copy(unMangledFilename, filename);
+                     MeTLLib.ClientFactory.Connection().UploadAndSendFile(
+                         new MeTLStanzas.LocalFileInformation(currentSlide, Globals.me, target, "public", filename, Path.GetFileNameWithoutExtension(filename), false, new FileInfo(filename).Length, DateTimeFactory.Now().Ticks.ToString()));
+                     File.Delete(filename);
+                 };
+                worker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
+                                                                                   (Action)(() => MessageBox.Show(string.Format("Finished uploading {0}.", unMangledFilename))));
+                worker.RunWorkerAsync();
             }
             else
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Divelements.SandRibbon;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
@@ -22,6 +24,7 @@ using SandRibbon.Providers;
 using SandRibbon.Utils.Connection;
 using Button=System.Windows.Controls.Button;
 using MeTLLib.Providers.Connection;
+using MessageBox = System.Windows.MessageBox;
 
 namespace SandRibbon.Tabs
 {
@@ -81,7 +84,6 @@ namespace SandRibbon.Tabs
                                                          tooltip = string.Format("Type: {0}\nAuthor: {1}\nUpload Time:{2}\nSize {3:0.00}mb", getFileType(unMangledFileUri), fileInfo.author, new DateTime(long.Parse(fileInfo.uploadTime)), fileInfo.size / 1048576.0) 
                                                      }));
         }
-
         private void saveFile(object sender, RoutedEventArgs e)
         {
             var file = (FileInfo)((Button) sender).DataContext;
@@ -93,12 +95,19 @@ namespace SandRibbon.Tabs
             saveFile.RestoreDirectory = true;
             if(saveFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                var stream = saveFile.OpenFile();
-                var sourceBytes =
-                    new WebClient {Credentials = new NetworkCredential("exampleUsername", "examplePassword")}.DownloadData(file.url);
-                stream.Write(sourceBytes, 0, sourceBytes.Count());
-                stream.Close();
+                var backgroundWorker = new BackgroundWorker();
+                backgroundWorker.DoWork += (s, a) =>
+                                               {
+                                                   var stream = saveFile.OpenFile();
+                                                   var sourceBytes = new WebClient { Credentials = new NetworkCredential("exampleUsername", "examplePassword") }.DownloadData(file.url);
+                                                   stream.Write(sourceBytes, 0, sourceBytes.Count());
+                                                   stream.Close();
+                                               
 
+                                               };
+                backgroundWorker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
+                                                                                   (Action)(() => MessageBox.Show(string.Format("Finished downloading {0}.", saveFile.FileName))));
+                backgroundWorker.RunWorkerAsync();
             }
         }
         //utility methods

@@ -777,6 +777,8 @@ namespace SandRibbon.Components.Canvas
             box.Background = new SolidColorBrush(Colors.Transparent);
             box.Focusable = canEdit && canFocus;
             box.tag(OldBox.tag());
+            box.Height = OldBox.Height;
+            box.Width = OldBox.Width;
             box.FontFamily = OldBox.FontFamily;
             box.FontWeight = OldBox.FontWeight;
             box.FontStyle = OldBox.FontStyle;
