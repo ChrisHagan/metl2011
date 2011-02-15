@@ -43,7 +43,7 @@ namespace SandRibbon.Quizzing
                 responseCount.Content = string.Format("({0} responses)", answers.Count());
                 resultDisplay.ItemsSource = question.options.Select(o =>
                 {
-                    if (answers != null && answers.Count() > 0)
+                    if (answers != null)
                     {
                         var relevant = answers.Where(a => a.answer == o.name);
                         return new DisplayableResultSet
