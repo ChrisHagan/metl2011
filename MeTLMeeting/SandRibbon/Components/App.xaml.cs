@@ -25,19 +25,13 @@ using System.Windows.Threading;
 namespace SandRibbon
 {
     public class CouchTraceListener : TraceListener {
-        private string[] blacklist = new[] { "vshost", "Method: POST", "MeTL Presenter.exe Warning: 0 :", "MeTL Presenter.exe Info: 0 :" }; 
-        private bool messageIsInteresting(string message) {
-            return !blacklist.Any(s=>message.Contains(s));
-        }
         public override void Write(string message)
         {
-            if(messageIsInteresting(message))
-                Logger.Log(message);
+            Logger.Log(message);
         }
         public override void WriteLine(string message)
         {
-            if(messageIsInteresting(message))
-                Logger.Log(message);
+            Logger.Log(message);
         }
     }
     public partial class App : Application

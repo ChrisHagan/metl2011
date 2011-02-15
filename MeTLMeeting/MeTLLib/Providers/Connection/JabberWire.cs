@@ -311,11 +311,7 @@ namespace MeTLLib.Providers.Connection
                         var item = (DispatcherAction)actionsAfterRelogin.Peek();//Do not alter the queue, we might be back here any second
                         try
                         {
-                            if (System.Windows.Threading.Dispatcher.CurrentDispatcher != null && 
-                                item.Owner == System.Windows.Threading.Dispatcher.CurrentDispatcher.Thread)
-                                System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(item.Work);
-                            else
-                                item.Work.Invoke();
+                            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(item.Work);
                             actionsAfterRelogin.Dequeue();//We only lift it off the top after successful execution.
                         }
                         catch (Exception e)

@@ -15,6 +15,7 @@ using System.Threading;
 namespace SandRibbon.Utils
 {
     class LogMessage : CouchDocument{
+        public string version;
         public string content;
         public long timestamp;
         public string user;
@@ -23,6 +24,8 @@ namespace SandRibbon.Utils
         public override void WriteJson(JsonWriter writer)
         {
             base.WriteJson(writer);
+            writer.WritePropertyName("version");
+            writer.WriteValue(ConfigurationProvider.instance.getMetlVersion());
             writer.WritePropertyName("docType");
             writer.WriteValue("log");
             writer.WritePropertyName("content");
@@ -40,6 +43,7 @@ namespace SandRibbon.Utils
         {
             base.ReadJson(obj);
             content = obj["message"].Value<string>();
+            version = obj["version"].Value<string>();
             timestamp = obj["timestamp"].Value<long>();
             user = obj["user"].Value<string>();
             server = obj["server"].Value<string>();
@@ -77,6 +81,8 @@ namespace SandRibbon.Utils
         }
         private static void putCouch(string message, DateTime now) {
             if (String.IsNullOrEmpty(Globals.me)) return;
+            if(String.IsNullOrEmpty(message)) return;
+            if (new[] { "MeTL Presenter.exe ", "Failed to add item to relogin-queue.", "vshost", "Method: POST", "MeTL Presenter.exe Warning: 0 :", "MeTL Presenter.exe Info: 0 :", "Error loading thumbnail:"}.Any(prefix => message.StartsWith(prefix))) return;
             if (db != null)
                 ThreadPool.QueueUserWorkItem(delegate
                 {
