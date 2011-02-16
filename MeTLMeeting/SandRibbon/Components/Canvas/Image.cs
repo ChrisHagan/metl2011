@@ -168,7 +168,8 @@ namespace SandRibbon.Components.Canvas
                                   ClearAdorners();
                                   foreach (var element in selectedElements)
                                   {
-                                      if (!Children.Contains(element))
+                                     if (Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id ==
+                                         ((System.Windows.Controls.Image)element).tag().id).Count() == 0)
                                           Children.Add(element);
                                       sendThisElement(element);
                                   }
@@ -180,8 +181,10 @@ namespace SandRibbon.Components.Canvas
                                  ClearAdorners();
                                  foreach (var element in selectedElements)
                                  {
-                                     if (Children.Contains(element))
-                                         Children.Remove(element);
+                                     if (Children.ToList().Where(i => ((System.Windows.Controls.Image)i).tag().id ==
+                                         ((System.Windows.Controls.Image)element).tag().id).Count() > 0)
+                                         Children.Remove(Children.ToList().Where(i =>((System.Windows.Controls.Image)i).tag().id 
+                                             == ((System.Windows.Controls.Image)element).tag().id ).First());
                                      dirtyThisElement(element);
                                  }
                              };
