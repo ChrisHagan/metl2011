@@ -832,6 +832,8 @@
       <Item value="DoWorkEventHandler" priority="0" />
       <Item value="saveFile" priority="0" />
       <Item value="MessageBox`0" priority="0" />
+      <Item value="worker" priority="0" />
+      <Item value="Environment`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.FrameworkElement">
       <Item value="BeginAnimation" priority="0" />
@@ -1939,13 +1941,12 @@
     <ItemStatistics item="Qualified:System.Windows.Forms.SaveFileDialog">
       <Item value="FileName" priority="0" />
     </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Environment">
+      <Item value="Exit`0" priority="0" />
+    </ItemStatistics>
   </CompletionStatisticsManager>
   <RecentFiles>
     <RecentFiles>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ApplicationPopup.xaml.cs" caret="735" fromTop="9" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ApplicationPopup.xaml" caret="1311" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:RecentConversationProvider.cs" caret="4151" fromTop="27" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/f:Converters.cs" caret="24538" fromTop="70" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:FileConversationDetailsProvider.cs" caret="7003" fromTop="8" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:ReceiveEvents.cs" caret="5321" fromTop="10" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:IConversationDetailsProvider.cs" caret="731" fromTop="10" />
@@ -1961,25 +1962,23 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Attachments.xaml" caret="994" fromTop="14" />
       <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="9121" fromTop="22" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Attachments.xaml.cs" caret="5400" fromTop="35" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="37218" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="195" fromTop="7" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Projector.xaml.cs" caret="617" fromTop="21" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:Worm.xaml.cs" caret="2783" fromTop="29" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="31129" fromTop="9" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="31834" fromTop="23" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:UserCanvasStack.xaml.cs" caret="5457" fromTop="29" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:ViewQuizResults.xaml" caret="937" fromTop="7" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AssessAQuiz.xaml" caret="2930" fromTop="15" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:ViewQuizResults.xaml.cs" caret="2607" fromTop="8" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AssessAQuiz.xaml.cs" caret="1448" fromTop="5" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AssessAQuiz.xaml.cs" caret="1105" fromTop="16" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AssessAQuiz.xaml" caret="0" fromTop="0" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:ViewQuizResults.xaml.cs" caret="2700" fromTop="17" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="7702" fromTop="24" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:CreateAQuiz.xaml.cs" caret="9274" fromTop="12" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="37761" fromTop="32" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml" caret="511" fromTop="8" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml" caret="745" fromTop="5" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="49393" fromTop="5" />
     </RecentFiles>
     <RecentEdits>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:SimpleImpl/f:SimpleConversationSelector.xaml.cs" caret="2308" fromTop="11" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:SimpleImpl/f:SimpleConversationSelector.xaml.cs" caret="2760" fromTop="24" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="26904" fromTop="26" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="2664" fromTop="34" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:SimpleImpl/f:SimpleConversationSelector.xaml.cs" caret="3336" fromTop="6" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:SimpleImpl/f:SimpleConversationSelector.xaml.cs" caret="661" fromTop="20" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:SimpleImpl/f:SimpleConversationSelector.xaml.cs" caret="4004" fromTop="22" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:SimpleImpl/f:SimpleConversationSelector.xaml.cs" caret="4100" fromTop="7" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:SimpleImpl/f:SimpleConversationSelector.xaml.cs" caret="2448" fromTop="10" />
@@ -2004,6 +2003,12 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="30659" fromTop="5" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:UserCanvasStack.xaml.cs" caret="5718" fromTop="24" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AssessAQuiz.xaml.cs" caret="1656" fromTop="8" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="7986" fromTop="16" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="7157" fromTop="29" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="37761" fromTop="32" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml" caret="511" fromTop="8" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml" caret="648" fromTop="11" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="49428" fromTop="7" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>

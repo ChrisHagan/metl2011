@@ -149,7 +149,7 @@ namespace SandRibbon.Components
         }
         private void SendScreenShot(ScreenshotDetails details)
         {
-            Commands.ScreenshotGenerated.ExecuteAsync(generateScreenshot(details));
+            Commands.ScreenshotGenerated.Execute(generateScreenshot(details));
         }
         private string generateScreenshot(ScreenshotDetails details)
         {
@@ -165,16 +165,7 @@ namespace SandRibbon.Components
                 {
                     var visual = details.showPrivate ? cloneAll() : clonePublicOnly();
                     context.DrawRectangle(new VisualBrush(visual), null,
-                                          new Rect(new Point(), new Size(ActualWidth, ActualHeight)));
-                  /*private *  context.DrawText(new FormattedText(
-                                         details.message,
-                                         CultureInfo.GetCultureInfo("en-us"),
-                                         FlowDirection.LeftToRight,
-                                         new Typeface("Arial"),
-                                         24,
-                                         Brushes.Black
-                                         ),
-                                     new Point(5, 10));*/
+                                          new Rect(new Point(), new Size(size, (int)(size / ratio))));
                 }
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();
