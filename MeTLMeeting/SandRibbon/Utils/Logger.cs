@@ -83,7 +83,13 @@ namespace SandRibbon.Utils
             if (String.IsNullOrEmpty(Globals.me)) return;
             if(String.IsNullOrEmpty(message)) return;
             if (message.Contains(POST_LOG)) return;
-            if (new[] {"MeTL Presenter.exe ", "Failed to add item to relogin-queue.", "vshost", "MeTL Presenter.exe Warning: 0 :", "MeTL Presenter.exe Info: 0 :", "Error loading thumbnail:"}.Any(prefix => message.StartsWith(prefix))) return;
+            if (new[] {
+                "MeTL Presenter.exe ", 
+                "MeTL Presenter.vshost.exe ", 
+                "Failed to add item to relogin-queue.", 
+                "MeTL Presenter.exe Warning: 0 :", 
+                "MeTL Presenter.exe Info: 0 :", 
+                "Error loading thumbnail:"}.Any(prefix => message.StartsWith(prefix))) return;
             if (db != null)
                 ThreadPool.QueueUserWorkItem(delegate
                 {
