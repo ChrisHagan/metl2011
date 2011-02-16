@@ -82,7 +82,7 @@ namespace SandRibbon.Utils
         private static void putCouch(string message, DateTime now) {
             if (String.IsNullOrEmpty(Globals.me)) return;
             if(String.IsNullOrEmpty(message)) return;
-            if (new[] { "MeTL Presenter.exe ", "Failed to add item to relogin-queue.", "vshost", "Method: POST", "MeTL Presenter.exe Warning: 0 :", "MeTL Presenter.exe Info: 0 :", "Error loading thumbnail:"}.Any(prefix => message.StartsWith(prefix))) return;
+            if (new[] {"Request: http://madam.adm.monash.edu.au:5984/metl_log/ Method:POST", "MeTL Presenter.exe ", "Failed to add item to relogin-queue.", "vshost", "Method: POST", "MeTL Presenter.exe Warning: 0 :", "MeTL Presenter.exe Info: 0 :", "Error loading thumbnail:"}.Any(prefix => message.StartsWith(prefix))) return;
             if (db != null)
                 ThreadPool.QueueUserWorkItem(delegate
                 {
@@ -104,12 +104,6 @@ namespace SandRibbon.Utils
                         //ALL IS LOST
                     }
                 });
-        }
-        public static void query() {
-            var time = DateTime.Now.Ticks - 1000;
-            var tempView = db.NewTempView("e", "e", String.Format("if(doc.timestamp > {0})emit(null,doc)", time));
-            var messages = tempView.LinqQuery<LogMessage>();
-            var a = (from c in messages select c).ToList();
         }
     }
 }
