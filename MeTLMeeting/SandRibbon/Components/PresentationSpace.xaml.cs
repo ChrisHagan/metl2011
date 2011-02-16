@@ -154,18 +154,19 @@ namespace SandRibbon.Components
         private string generateScreenshot(ScreenshotDetails details)
         {
             var dpi = 96;
-            var size = 1024;
             var ratio = ActualWidth / ActualHeight;
+            int targetWidth = 1024;
+            int targetHeight = (int)(targetWidth / ratio);
             var file = "";
             Dispatcher.adopt(() =>
             {
-                var bitmap = new RenderTargetBitmap(size ,(int)(size / ratio), dpi, dpi, PixelFormats.Default);
+                var bitmap = new RenderTargetBitmap(targetWidth ,targetHeight, dpi, dpi, PixelFormats.Default);
                 var dv = new DrawingVisual();
                 using (var context = dv.RenderOpen())
                 {
                     var visual = details.showPrivate ? cloneAll() : clonePublicOnly();
                     context.DrawRectangle(new VisualBrush(visual), null,
-                                          new Rect(new Point(), new Size(size, (int)(size / ratio))));
+                                          new Rect(new Point(), new Size(targetWidth, targetHeight)));
                 }
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();

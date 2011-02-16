@@ -355,7 +355,10 @@ namespace SandRibbon.Components.Canvas
         private void SendTextBoxes(object sender, EventArgs e)
         {
             ClearAdorners();
-            foreach (MeTLTextBox box in GetSelectedElements())
+            var clonedCollection = new List<MeTLTextBox>();
+            foreach(MeTLTextBox box in GetSelectedElements())
+                clonedCollection.Add(box.clone());
+            foreach (MeTLTextBox box in clonedCollection)
             {
                 myTextBox = box;
                 sendTextWithoutHistory(box, box.tag().privacy);
