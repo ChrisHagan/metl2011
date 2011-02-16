@@ -718,19 +718,25 @@ namespace MeTLLib.DataTypes
             }
             public static Color stringToColor(string s)
             {
-                if (s.StartsWith("#"))
+                try
                 {
-                    return (Color)ColorConverter.ConvertFromString(s);
+                    if (s.StartsWith("#"))
+                    {
+                        return (Color)ColorConverter.ConvertFromString(s);
+                    }
+                    var colorInfo = s.Split(' ');
+                    if (colorInfo.Count() % 4 != 0) throw new InvalidDataException("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.");
+                    return new Color
+                    {
+                        R = Byte.Parse(colorInfo[0]),
+                        G = Byte.Parse(colorInfo[1]),
+                        B = Byte.Parse(colorInfo[2]),
+                        A = Byte.Parse(colorInfo[3])
+                    };
                 }
-                var colorInfo = s.Split(' ');
-                if (colorInfo.Count() % 4 != 0) throw new InvalidDataException("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.");
-                return new Color
-                {
-                    R = Byte.Parse(colorInfo[0]),
-                    G = Byte.Parse(colorInfo[1]),
-                    B = Byte.Parse(colorInfo[2]),
-                    A = Byte.Parse(colorInfo[3])
-                };
+                catch (Exception) {
+                    return Colors.Black;
+                }
             }
         }
         public class TextBox : Element
