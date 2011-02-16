@@ -82,7 +82,8 @@ namespace SandRibbon.Utils
         private static void putCouch(string message, DateTime now) {
             if (String.IsNullOrEmpty(Globals.me)) return;
             if(String.IsNullOrEmpty(message)) return;
-            if (new[] {"Request: http://madam.adm.monash.edu.au:5984/metl_log/ Method:POST", "MeTL Presenter.exe ", "Failed to add item to relogin-queue.", "vshost", "Method: POST", "MeTL Presenter.exe Warning: 0 :", "MeTL Presenter.exe Info: 0 :", "Error loading thumbnail:"}.Any(prefix => message.StartsWith(prefix))) return;
+            if (message.Contains(POST_LOG)) return;
+            if (new[] {"MeTL Presenter.exe ", "Failed to add item to relogin-queue.", "vshost", "MeTL Presenter.exe Warning: 0 :", "MeTL Presenter.exe Info: 0 :", "Error loading thumbnail:"}.Any(prefix => message.StartsWith(prefix))) return;
             if (db != null)
                 ThreadPool.QueueUserWorkItem(delegate
                 {

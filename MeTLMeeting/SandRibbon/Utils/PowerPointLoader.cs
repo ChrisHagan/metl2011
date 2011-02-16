@@ -287,7 +287,7 @@ namespace SandRibbon.Utils
                     powerpointThread.SetApartmentState(ApartmentState.STA);
                     powerpointThread.Start();
                 }
-                Commands.JoinConversation.ExecuteAsync(conversation.Jid);
+                Commands.JoinConversation.Execute(conversation.Jid);
             }
             finally
             {
