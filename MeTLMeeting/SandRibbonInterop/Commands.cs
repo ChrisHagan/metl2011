@@ -323,8 +323,8 @@ namespace SandRibbon
                 command.Execute(arg);
         }
         public static void RegisterCommandToDispatcher<T>(this CompositeCommand command, DelegateCommand<T> handler) {
+            var dispatcher = Application.Current.Dispatcher; 
             command.RegisterCommand(new DelegateCommand<T>(arg=>{
-                var dispatcher = Application.Current.Dispatcher; 
                 if (!dispatcher.CheckAccess())
                     dispatcher.Invoke((Action)delegate
                     {
