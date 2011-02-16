@@ -132,7 +132,6 @@ namespace SandRibbon
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e){
             doCrash(e.Exception);
-            e.Handled = true;//Don't smash the app.  We'd prefer to just keep on muddling.
         }
         private void doCrash(Exception e)
         {
