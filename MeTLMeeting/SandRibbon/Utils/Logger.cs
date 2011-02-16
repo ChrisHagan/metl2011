@@ -89,6 +89,7 @@ namespace SandRibbon.Utils
                 "Failed to add item to relogin-queue.", 
                 "MeTL Presenter.exe Warning: 0 :", 
                 "MeTL Presenter.exe Info: 0 :", 
+                "MeTL Presenter.exe Information: 0 :", 
                 "Error loading thumbnail:"}.Any(prefix => message.StartsWith(prefix))) return;
             if (db != null)
                 ThreadPool.QueueUserWorkItem(delegate

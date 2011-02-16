@@ -139,7 +139,6 @@ namespace SandRibbon.Components
             }
             catch (Exception e)
             {
-                var a = 1;
             }
             stack.handwriting.me = "projector";
             stack.images.me = "projector";
