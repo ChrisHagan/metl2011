@@ -234,7 +234,7 @@ namespace MeTLLib.Providers.Connection
         {
             this.LoggedIn = true;
             receiveEvents.statusChanged(this.LoggedIn, this.credentials);
-            joinRoom(metlServerAddress.global);
+            joinRooms();
         }
         private void OnMessage(object sender, Message message)
         {
@@ -413,26 +413,33 @@ namespace MeTLLib.Providers.Connection
                 new MucManager(conn).LeaveRoom(room, alias);
             }
         }
+        private bool isLocationValid()
+        {
+            return (location != null && !String.IsNullOrEmpty(location.activeConversation) && location.availableSlides.Count > 0 && location.currentSlide > 0);
+        }
         private void joinRooms()
         {
             leaveRooms();
-            var rooms = new[]
+            joinRoom(metlServerAddress.global);
+            if (isLocationValid())
             {
-                metlServerAddress.global,
+                var rooms = new[]
+            {
                 new Jid(credentials.name, metlServerAddress.muc, jid.Resource),
                 new Jid(location.activeConversation,metlServerAddress.muc,jid.Resource),
                 new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
                 new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
             };
-            foreach (var room in rooms.Where(r => r.User != null && r.User != "0"))
-            {
-                try
+                foreach (var room in rooms.Where(r => r.User != null && r.User != "0"))
                 {
-                    joinRoom(room);
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError(string.Format("Couldn't join room {0}: {1}", room, e.Message));
+                    try
+                    {
+                        joinRoom(room);
+                    }
+                    catch (Exception e)
+                    {
+                        Trace.TraceError(string.Format("Couldn't join room {0}: {1}", room, e.Message));
+                    }
                 }
             }
         }
