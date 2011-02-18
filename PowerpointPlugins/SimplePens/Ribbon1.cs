@@ -53,16 +53,27 @@ namespace PowerpointJabber
         {
             this.ribbon = ribbonUI;
         }
-        public bool getSSPlusEnabled(Office.IRibbonControl control)
+        public bool getSSPlusEnabledForDefault(Office.IRibbonControl control)
         {
-            return ThisAddIn.instance.customPresenterIsEnabled;
+            return ThisAddIn.instance.customPresenterIsEnabledForDefaultMode;
         }
-        public void DisplayPresentation(Office.IRibbonControl control, bool pressed)
+        public void DisplayPresentationForDefault(Office.IRibbonControl control, bool pressed)
         {
-            if (ThisAddIn.instance.customPresenterIsEnabled)
-                ThisAddIn.instance.customPresenterIsEnabled = false;
+            if (ThisAddIn.instance.customPresenterIsEnabledForDefaultMode)
+                ThisAddIn.instance.customPresenterIsEnabledForDefaultMode = false;
             else
-                ThisAddIn.instance.customPresenterIsEnabled = true;
+                ThisAddIn.instance.customPresenterIsEnabledForDefaultMode = true;
+        }
+        public bool getSSPlusEnabledForPresenter(Office.IRibbonControl control)
+        {
+            return ThisAddIn.instance.customPresenterIsEnabledForPresenterMode;
+        }
+        public void DisplayPresentationForPresenter(Office.IRibbonControl control, bool pressed)
+        {
+            if (ThisAddIn.instance.customPresenterIsEnabledForPresenterMode)
+                ThisAddIn.instance.customPresenterIsEnabledForPresenterMode = false;
+            else
+                ThisAddIn.instance.customPresenterIsEnabledForPresenterMode = true;
         }
         #endregion
 

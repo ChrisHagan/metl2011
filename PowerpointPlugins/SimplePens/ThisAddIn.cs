@@ -16,16 +16,29 @@ namespace PowerpointJabber
     {
         public static ThisAddIn instance;
         public SimplePenWindow SSSW;
-        public bool customPresenterIsEnabled
+        public bool customPresenterIsEnabledForPresenterMode
         {
             get
             {
                 Properties.Settings.Default.Reload();
-                return Properties.Settings.Default.SimplePensEnabled;
+                return Properties.Settings.Default.SimplePensEnabledForPresenterMode;
             }
             set
             {
-                Properties.Settings.Default.SimplePensEnabled = value;
+                Properties.Settings.Default.SimplePensEnabledForPresenterMode = value;
+                Properties.Settings.Default.Save();
+            }
+        }
+        public bool customPresenterIsEnabledForDefaultMode
+        {
+            get
+            {
+                Properties.Settings.Default.Reload();
+                return Properties.Settings.Default.SimplePensEnabledForDefaultMode;
+            }
+            set
+            {
+                Properties.Settings.Default.SimplePensEnabledForDefaultMode = value;
                 Properties.Settings.Default.Save();
             }
         }
@@ -38,7 +51,7 @@ namespace PowerpointJabber
         }
         private void onSlideShowBegin(object sender)
         {
-            if (customPresenterIsEnabled)
+            if (customPresenterIsEnabledForDefaultMode || customPresenterIsEnabledForPresenterMode)
             {
                 SSSW = new SimplePenWindow();
                 SSSW.Show();

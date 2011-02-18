@@ -25,13 +25,25 @@ namespace PowerpointJabber.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SimplePensEnabled {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SimplePensEnabledForPresenterMode {
             get {
-                return ((bool)(this["SimplePensEnabled"]));
+                return ((bool)(this["SimplePensEnabledForPresenterMode"]));
             }
             set {
-                this["SimplePensEnabled"] = value;
+                this["SimplePensEnabledForPresenterMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SimplePensEnabledForDefaultMode {
+            get {
+                return ((bool)(this["SimplePensEnabledForDefaultMode"]));
+            }
+            set {
+                this["SimplePensEnabledForDefaultMode"] = value;
             }
         }
     }

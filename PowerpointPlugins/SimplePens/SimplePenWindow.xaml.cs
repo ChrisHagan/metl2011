@@ -19,6 +19,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Ink;
 using Point = System.Windows.Point;
+using System.Threading;
+using System.Windows.Interop;
 
 namespace PowerpointJabber
 {
@@ -37,6 +39,9 @@ namespace PowerpointJabber
         public List<UbiquitousPen> pens;
         private List<slideIndicator> slides = new List<slideIndicator>();
         private UbiquitousPen currentPen;
+        private Dictionary<int, bool> clickAdvanceStates = new Dictionary<int, bool>();
+        Timer backgroundPolling;
+        public IntPtr HWND;
         public SimplePenWindow()
         {
             InitializeComponent();
@@ -54,9 +59,62 @@ namespace PowerpointJabber
             currentPen = pens[0];
             PensControl.Items.Clear();
             PensControl.ItemsSource = pens;
+            foreach (var slide in slides)
+                clickAdvanceStates.Add(slide.slideId, slide.clickAdvance);
             if (shouldWorkaroundClickAdvance)
-                foreach (var slide in slides)
-                    slide.setClickAdvance(false);
+                setClickAdvanceOnAllSlides(false);
+            if (backgroundPolling == null)
+                backgroundPolling = backgroundPollingTimer();
+        }
+        private Timer backgroundPollingTimer()
+        {
+            Timer timer = new Timer(delegate
+            {
+                try
+                {
+                    if (this == null || ThisAddIn.instance.Application == null || ThisAddIn.instance.Application.SlideShowWindows.Count < 1)
+                        return;
+                    var state = WindowsInteropFunctions.getAppropriateViewData();
+                    Dispatcher.Invoke((Action)delegate
+                    {
+                        if (HWND == null || !((int)HWND > 0))
+                        {
+                            HwndSource source = (HwndSource)HwndSource.FromVisual(this);
+                            HWND = source.Handle;
+                        }
+                        if ((this.WindowState != WindowState.Minimized) != state.isVisible)
+                            this.WindowState = state.isVisible ? WindowState.Normal : WindowState.Minimized;
+                        if (this.Left != state.X)
+                            this.Left = state.X;
+                        if (this.Left != state.Y)
+                            this.Top = state.Y + 43;
+                        if (ThisAddIn.instance != null 
+                            && ThisAddIn.instance.Application != null 
+                            && ThisAddIn.instance.Application.ActivePresentation != null 
+                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow != null 
+                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View != null 
+                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor != null 
+                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB != null)
+                        {
+                            var currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
+                            foreach (var pen in pens)
+                            {
+                                {
+                                    if (currentColour != currentPen.RGBAasInt)
+                                    {
+                                        if (pen.RGBAasInt == currentColour)
+                                            currentPen = pen;
+                                            PensControl.SelectedIndex = PensControl.Items.IndexOf(pen);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                catch (Exception) { }
+            });
+            timer.Change(250, 250);
+            return timer;
         }
         private void whatever()
         {
@@ -92,21 +150,22 @@ namespace PowerpointJabber
         }
         private void Pen(object sender, RoutedEventArgs e)
         {
-            setClickAdvanceOnAllSlides(false);
-            currentPen = pens.Where(c => c.penName.Equals(((FrameworkElement)sender).Tag.ToString())).First();
-            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB = currentPen.RGBAasInt;
+            //setClickAdvanceOnAllSlides(false);
+            var internalCurrentPen = pens.Where(c => c == (PensControl.SelectedItem)).FirstOrDefault();
+            //c.penName.Equals(((FrameworkElement)PensControl.SelectedItem).Tag.ToString())).First();
+            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB = internalCurrentPen.RGBAasInt;
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerPen;
             ReFocusPresenter();
         }
         private void Eraser(object sender, RoutedEventArgs e)
         {
-            setClickAdvanceOnAllSlides(false);
+            //setClickAdvanceOnAllSlides(false);
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerEraser;
             ReFocusPresenter();
         }
         private void Selector(object sender, RoutedEventArgs e)
         {
-            setClickAdvanceOnAllSlides(true);
+            //setClickAdvanceOnAllSlides(true);
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerAutoArrow;
             ReFocusPresenter();
         }
@@ -127,13 +186,36 @@ namespace PowerpointJabber
         {
             try
             {
+                backgroundPolling = null;
+                foreach (var slide in slides)
+                {
+                    slide.clickAdvance = clickAdvanceStates[slide.slideId];
+                }
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Exit();
             }
             catch (Exception ex)
             {
             }
         }
-
+        private void AddPage(object sender, RoutedEventArgs e)
+        {
+            CustomLayout newSlide;
+            if (ThisAddIn.instance.Application.ActivePresentation.SlideMaster.CustomLayouts.Count > 0)
+                newSlide = ThisAddIn.instance.Application.ActivePresentation.SlideMaster.CustomLayouts[1];
+            else
+                newSlide = ThisAddIn.instance.Application.ActivePresentation.Slides[0].CustomLayout;
+            if (newSlide != null)
+            {
+                var newSlideIndex = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition + 1;
+                ThisAddIn.instance.Application.ActivePresentation.Slides.AddSlide(newSlideIndex, newSlide);
+                ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Activate();
+                ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(newSlideIndex);
+            }
+        }
+        private void SwitchToMeTL(object sender, RoutedEventArgs e)
+        {
+            WindowsInteropFunctions.switchToMeTL();
+        }
         private void pageUp(object sender, ExecutedRoutedEventArgs e)
         {
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Next();
@@ -146,6 +228,7 @@ namespace PowerpointJabber
         {
             try
             {
+                backgroundPolling = null;
                 Close();
             }
             catch (Exception ex) { }
@@ -265,7 +348,16 @@ namespace PowerpointJabber
             public int G { get { return penColour.Color.G; } }
             public int B { get { return penColour.Color.B; } }
             public int A { get { return penColour.Color.A; } }
-            public int RGBAasInt { get { return ColorTranslator.ToOle(System.Drawing.Color.FromArgb(A, R, G, B)); } }
+            private int cachedRGBAsInt;
+            public int RGBAasInt
+            {
+                get
+                {
+                    if (!(cachedRGBAsInt > 0))
+                        cachedRGBAsInt = ColorTranslator.ToOle(System.Drawing.Color.FromArgb(A, R, G, B));
+                    return cachedRGBAsInt;
+                }
+            }
 
             public StrokeCollection DrawnPenPreviewStroke
             {
@@ -586,7 +678,8 @@ namespace PowerpointJabber
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Selector(SelectionButton, new RoutedEventArgs());
+            PensControl.SelectedIndex = 0;
+            //Selector(SelectionButton, new RoutedEventArgs());
         }
     }
     class slideIndicator
@@ -604,7 +697,11 @@ namespace PowerpointJabber
             }
         }
         public bool isCurrentSlide { get { return slide.SlideIndex == ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition; } }
-        public bool clickAdvance { get { return slide.SlideShowTransition.AdvanceOnClick == Microsoft.Office.Core.MsoTriState.msoTrue; } }
+        public bool clickAdvance
+        {
+            get { return slide.SlideShowTransition.AdvanceOnClick == Microsoft.Office.Core.MsoTriState.msoTrue; }
+            set { slide.SlideShowTransition.AdvanceOnClick = value ? Microsoft.Office.Core.MsoTriState.msoTrue : Microsoft.Office.Core.MsoTriState.msoFalse; }
+        }
         public void setClickAdvance(bool state)
         {
             if (clickAdvance != state)
