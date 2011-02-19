@@ -100,13 +100,10 @@ namespace PowerpointJabber
                                     var currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
                                     foreach (var pen in pens)
                                     {
-                                        if (currentColour != currentPen.RGBAasInt)
+                                        if (pen.RGBAasInt == currentColour)
                                         {
-                                            if (pen.RGBAasInt == currentColour)
-                                            {
-                                                currentPen = pen;
-                                                selectPen(pen);
-                                            }
+                                            currentPen = pen;
+                                            selectPen(pen);
                                         }
                                     }
                                     break;
