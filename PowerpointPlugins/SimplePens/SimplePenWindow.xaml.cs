@@ -460,6 +460,7 @@ namespace PowerpointJabber
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (pens == null || pens.Count == 0) return;
             selectPen(pens[0]);
         }
     }
