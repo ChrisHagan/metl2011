@@ -12,6 +12,33 @@ namespace PowerpointJabber
     {
         public static BoolToVisibilityConverter boolToVisibilityConverter = new BoolToVisibilityConverter();
         public static ReverseBoolToVisibilityConverter reverseBoolToVisibilityConverter = new ReverseBoolToVisibilityConverter();
+        public static PenVisibilityConverter penVisibilityConverter = new PenVisibilityConverter();
+        public static EraserVisibilityConverter eraserVisibilityConverter = new EraserVisibilityConverter();
+
+        public class PenVisibilityConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (!(value is PowerpointJabber.SimplePenWindow.EditingButton.EditingType)) return false;
+                return (PowerpointJabber.SimplePenWindow.EditingButton.EditingType)value == SimplePenWindow.EditingButton.EditingType.Pen ? Visibility.Visible : Visibility.Collapsed;
+            }
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public class EraserVisibilityConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (!(value is PowerpointJabber.SimplePenWindow.EditingButton.EditingType)) return false;
+                return (PowerpointJabber.SimplePenWindow.EditingButton.EditingType)value == SimplePenWindow.EditingButton.EditingType.Eraser ? Visibility.Visible : Visibility.Collapsed;
+            }
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public class BoolToVisibilityConverter : IValueConverter
         {

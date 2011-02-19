@@ -30,30 +30,29 @@ namespace PowerpointJabber
         {
             get
             {
-                //This is soluable in ppt2010.
-                //bool isPresenter = ThisAddIn.instance.Application.ActivePresentation.SlideShowSettings.ShowPresenterView = Microsoft.Office.Core.MsoTriState.mso.True;
                 bool isPresenter = WindowsInteropFunctions.presenterActive;
                 return isPresenter;
             }
         }
-        public List<UbiquitousPen> pens;
+        public List<EditingButton> pens;
         private List<slideIndicator> slides = new List<slideIndicator>();
-        private UbiquitousPen currentPen;
+        private EditingButton currentPen;
         private Dictionary<int, bool> clickAdvanceStates = new Dictionary<int, bool>();
         Timer backgroundPolling;
         public IntPtr HWND;
         public SimplePenWindow()
         {
             InitializeComponent();
-            pens = new List<UbiquitousPen> 
+            pens = new List<EditingButton>
                 {
-                    new UbiquitousPen{penName="Black",penColour=System.Windows.Media.Brushes.Black,penWeight=1.5f},
-                    new UbiquitousPen{penName="Blue",penColour=System.Windows.Media.Brushes.Blue,penWeight=1.5f},
-                    new UbiquitousPen{penName="Red",penColour=System.Windows.Media.Brushes.Red,penWeight=3f},
-                    new UbiquitousPen{penName="Green",penColour=System.Windows.Media.Brushes.Green,penWeight=3f},
-                    new UbiquitousPen{penName="Yellow",penColour=System.Windows.Media.Brushes.Yellow,penWeight=3f},
-                    new UbiquitousPen{penName="Orange",penColour=System.Windows.Media.Brushes.Orange,penWeight=5f},
-                    new UbiquitousPen{penName="White",penColour=System.Windows.Media.Brushes.White,penWeight=5f}
+                    new EditingButton(EditingButton.EditingType.Pen,"Black",System.Windows.Media.Brushes.Black),
+                    new EditingButton(EditingButton.EditingType.Pen,"Blue",System.Windows.Media.Brushes.Blue),
+                    new EditingButton(EditingButton.EditingType.Pen,"Red",System.Windows.Media.Brushes.Red),
+                    new EditingButton(EditingButton.EditingType.Pen,"Green",System.Windows.Media.Brushes.Green),
+                    new EditingButton(EditingButton.EditingType.Pen,"Yellow",System.Windows.Media.Brushes.Yellow),
+                    new EditingButton(EditingButton.EditingType.Pen,"Orange",System.Windows.Media.Brushes.Orange),
+                    new EditingButton(EditingButton.EditingType.Pen,"White",System.Windows.Media.Brushes.White),
+                    new EditingButton(EditingButton.EditingType.Eraser,"Eraser",System.Windows.Media.Brushes.Transparent)
                 };
             populateSlidesAdvanceDictionary();
             currentPen = pens[0];
@@ -88,13 +87,12 @@ namespace PowerpointJabber
                             this.Left = state.X;
                         if (this.Left != state.Y)
                             this.Top = state.Y + 43;
-                        if (ThisAddIn.instance != null 
-                            && ThisAddIn.instance.Application != null 
-                            && ThisAddIn.instance.Application.ActivePresentation != null 
-                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow != null 
-                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View != null 
-                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor != null 
-                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB != null)
+                        if (ThisAddIn.instance != null
+                            && ThisAddIn.instance.Application != null
+                            && ThisAddIn.instance.Application.ActivePresentation != null
+                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow != null
+                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View != null
+                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor != null)
                         {
                             var currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
                             foreach (var pen in pens)
@@ -103,8 +101,11 @@ namespace PowerpointJabber
                                     if (currentColour != currentPen.RGBAasInt)
                                     {
                                         if (pen.RGBAasInt == currentColour)
+                                        {
                                             currentPen = pen;
-                                            PensControl.SelectedIndex = PensControl.Items.IndexOf(pen);
+                                            pen.isSelected = true;
+                                            //PensControl.SelectedIndex = PensControl.Items.IndexOf(pen);
+                                        }
                                     }
                                 }
                             }
@@ -139,7 +140,6 @@ namespace PowerpointJabber
         }
         private void setClickAdvanceOnAllSlides(bool state)
         {
-            //This is where we decide whether to try to workaround the ppt2007 presenter mode bug.
             if (shouldWorkaroundClickAdvance)
                 foreach (var slide in slides)
                     slide.setClickAdvance(state);
@@ -148,24 +148,43 @@ namespace PowerpointJabber
         {
             WindowsInteropFunctions.BringAppropriateViewToFront();
         }
+        private void selectPen(EditingButton button)
+        {
+            foreach (var pen in pens)
+            {
+                if (pen == button)
+                    pen.isSelected = true;
+                else pen.isSelected = false;
+            }
+        }
         private void Pen(object sender, RoutedEventArgs e)
         {
-            //setClickAdvanceOnAllSlides(false);
-            var internalCurrentPen = pens.Where(c => c == (PensControl.SelectedItem)).FirstOrDefault();
-            //c.penName.Equals(((FrameworkElement)PensControl.SelectedItem).Tag.ToString())).First();
-            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB = internalCurrentPen.RGBAasInt;
-            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerPen;
+            var internalCurrentPen = pens.Where(c => c.name == ((FrameworkElement)sender).Tag.ToString()).FirstOrDefault();
+            switch (internalCurrentPen.type)
+            {
+                case EditingButton.EditingType.Eraser:
+                    ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerEraser;
+                    break;
+                case EditingButton.EditingType.Pen:
+                    ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB = internalCurrentPen.RGBAasInt;
+                    ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerPen;
+                    break;
+                case EditingButton.EditingType.Selector:
+                    ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerArrow;
+                    break;
+                default:
+                    ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerNone;
+                    break;
+            }
             ReFocusPresenter();
         }
         private void Eraser(object sender, RoutedEventArgs e)
         {
-            //setClickAdvanceOnAllSlides(false);
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerEraser;
             ReFocusPresenter();
         }
         private void Selector(object sender, RoutedEventArgs e)
         {
-            //setClickAdvanceOnAllSlides(true);
             ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerAutoArrow;
             ReFocusPresenter();
         }
@@ -234,120 +253,46 @@ namespace PowerpointJabber
             catch (Exception ex) { }
         }
 
-
-        public class UbiquitousPen
+        
+        public class EditingButton : DependencyObject
         {
-            public UbiquitousPen()
+            public EditingButton(EditingType Type, string Name, System.Windows.Media.SolidColorBrush Color)
             {
-            }
-            private bool internalupdate = false;
-            private DrawingAttributes generatedAttributes { get { return new DrawingAttributes { Color = penColour.Color, Height = (double)penWeight, Width = (double)penWeight, IsHighlighter = false }; } }
-            private DrawingAttributes attributes;
-            public DrawingAttributes Attributes
-            {
-                get { return attributes; }
-                set
-                {
-                    attributes = value;
-                    internalupdate = true;
-                    IsHighlighter = value.IsHighlighter;
-                    PenSize = value.Height;
-                    ColorValue = value.Color;
-                    XAMLColorName = value.Color.ToString();
-                    ColorName = value.Color.ToString() + ":" + value.Height.ToString() + ":" + value.IsHighlighter.ToString();
-                    internalupdate = false;
-                }
-            }
-            private string colorname;
-            public string ColorName
-            {
-                get { return colorname; }
-                set
-                {
-                    colorname = value;
-                    if (internalupdate)
-                        return;
-                    internalupdate = true;
-                    attributes = new DrawingAttributes()
-                    {
-                        Color = ColorValue,
-                        Height = PenSize,
-                        IsHighlighter = ishighlighter,
-                        Width = PenSize
-                    };
-                    internalupdate = false;
-                }
-            }
-            private string xamlcolorname;
-            public string XAMLColorName { get; set; }
-            private System.Windows.Media.Color colorvalue { get; set; }
-            public System.Windows.Media.Color ColorValue
-            {
-                get { return colorvalue; }
-                set
-                {
-                    colorvalue = value;
-                    if (internalupdate)
-                        return;
-                    internalupdate = true;
-                    attributes = new DrawingAttributes()
-                    {
-                        Color = value,
-                        Height = PenSize,
-                        IsHighlighter = ishighlighter,
-                        Width = PenSize
-                    };
-                    internalupdate = false;
-                }
-            }
-            private double pensize { get; set; }
-            public double PenSize
-            {
-                get { return pensize; }
-                set
-                {
-                    pensize = value;
-                    if (internalupdate)
-                        return;
-                    internalupdate = true;
-                    attributes = new DrawingAttributes()
-                    {
-                        Color = ColorValue,
-                        Height = value,
-                        IsHighlighter = ishighlighter,
-                        Width = value
-                    };
-                    internalupdate = false;
-                }
-            }
-            private bool ishighlighter;
-            public bool IsHighlighter
-            {
-                get { return ishighlighter; }
-                set
-                {
-                    ishighlighter = value;
-                    if (internalupdate)
-                        return;
-                    internalupdate = true;
-                    attributes = new DrawingAttributes()
-                    {
-                        Color = ColorValue,
-                        Height = PenSize,
-                        IsHighlighter = value,
-                        Width = PenSize
-                    };
-                    internalupdate = false;
-                }
+                penColour = Color;
+                name = Name;
+                type = Type;
             }
 
-            public string penName { get; set; }
-            public float penWeight { get; set; }
-            public SolidColorBrush penColour { get; set; }
-            public int R { get { return penColour.Color.R; } }
-            public int G { get { return penColour.Color.G; } }
-            public int B { get { return penColour.Color.B; } }
-            public int A { get { return penColour.Color.A; } }
+
+            public bool Selected
+            {
+                get { return (bool)GetValue(SelectedProperty); }
+                set { SetValue(SelectedProperty, value); }
+            }
+            public static readonly DependencyProperty SelectedProperty =
+                DependencyProperty.Register("Selected", typeof(bool), typeof(EditingButton), new UIPropertyMetadata(false));
+
+            private bool _isSelected;
+            public bool isSelected
+            {
+                get { return _isSelected; }
+                set
+                {
+                    if (value) HighlightColour = new SolidColorBrush(System.Windows.Media.Colors.Orange);
+                    else HighlightColour = new SolidColorBrush(System.Windows.Media.Colors.Transparent);
+                    Selected = value;
+                    _isSelected = value;
+                }
+            }
+            public System.Windows.Media.Brush HighlightColour { get; private set; }
+            public enum EditingType { Pen, Eraser, Selector }
+            public string name { get; private set; }
+            public EditingType type { get; private set; }
+            public System.Windows.Media.SolidColorBrush penColour { get; private set; }
+            private int R { get { return penColour.Color.R; } }
+            private int G { get { return penColour.Color.G; } }
+            private int B { get { return penColour.Color.B; } }
+            private int A { get { return penColour.Color.A; } }
             private int cachedRGBAsInt;
             public int RGBAasInt
             {
@@ -358,7 +303,29 @@ namespace PowerpointJabber
                     return cachedRGBAsInt;
                 }
             }
-
+            public string tooltip
+            {
+                get
+                {
+                    string result = "";
+                    switch (type)
+                    {
+                        case EditingType.Pen:
+                            result = "Draw with a " + penColour.ToString() + " pen.";
+                            break;
+                        case EditingType.Eraser:
+                            result = "Erase";
+                            break;
+                        case EditingType.Selector:
+                            result = "Arrow";
+                            break;
+                        default:
+                            result = "";
+                            break;
+                    }
+                    return result;
+                }
+            }
             public StrokeCollection DrawnPenPreviewStroke
             {
                 get
@@ -463,7 +430,7 @@ namespace PowerpointJabber
                                         new StylusPoint(17,57.3333333333333,0.5f),
                                     }
                                 ),
-                                (attributes!=null)?attributes:new DrawingAttributes
+                                (penColour!=null)?new DrawingAttributes{Color = penColour.Color, Height=2, Width=2, IsHighlighter=false}:new DrawingAttributes
                                 {
                                     Color=Colors.Black,
                                     Height=2,
@@ -473,179 +440,6 @@ namespace PowerpointJabber
                             )
                         }
                     );
-                }
-            }
-            public StrokeCollection DrawnHighlighterPreviewStroke
-            {
-                get
-                {
-                    return new StrokeCollection(
-                        new[]{
-                            new Stroke(
-                                new StylusPointCollection(
-                                    new StylusPoint[]{
-                                        new StylusPoint(17.6666666666667,86,0.5f),
-                                        new StylusPoint(18,87.3333333333333,0.5f),
-                                        new StylusPoint(18,87.6666666666667,0.5f),
-                                        new StylusPoint(18.3333333333333,87.6666666666667,0.5f),
-                                        new StylusPoint(18.6666666666667,87.6666666666667,0.5f),
-                                        new StylusPoint(19.3333333333333,88.3333333333333,0.5f),
-                                        new StylusPoint(19.6666666666667,88.3333333333333,0.5f),
-                                        new StylusPoint(20,88.6666666666667,0.5f),
-                                        new StylusPoint(20.3333333333333,89,0.5f),
-                                        new StylusPoint(21,89.3333333333333,0.5f),
-                                        new StylusPoint(21.6666666666667,89.6666666666667,0.5f),
-                                        new StylusPoint(22.3333333333333,90,0.5f),
-                                        new StylusPoint(23,90.6666666666667,0.5f),
-                                        new StylusPoint(23.6666666666667,91,0.5f),
-                                        new StylusPoint(24.6666666666667,91.3333333333333,0.5f),
-                                        new StylusPoint(25.6666666666667,91.6666666666667,0.5f),
-                                        new StylusPoint(26.6666666666667,92,0.5f),
-                                        new StylusPoint(27.6666666666667,92.6666666666667,0.5f),
-                                        new StylusPoint(28.6666666666667,93,0.5f),
-                                        new StylusPoint(30,93.6666666666667,0.5f),
-                                        new StylusPoint(31.3333333333333,94,0.5f),
-                                        new StylusPoint(32.3333333333333,94.6666666666667,0.5f),
-                                        new StylusPoint(33.6666666666667,95,0.5f),
-                                        new StylusPoint(35.3333333333333,95.6666666666667,0.5f),
-                                        new StylusPoint(36.6666666666667,96,0.5f),
-                                        new StylusPoint(38.3333333333333,96.3333333333333,0.5f),
-                                        new StylusPoint(39.6666666666667,96.6666666666667,0.5f),
-                                        new StylusPoint(41.3333333333333,97,0.5f),
-                                        new StylusPoint(43,97.3333333333333,0.5f),
-                                        new StylusPoint(44.6666666666667,97.6666666666667,0.5f),
-                                        new StylusPoint(46.6666666666667,97.6666666666667,0.5f),
-                                        new StylusPoint(48.3333333333333,97.6666666666667,0.5f),
-                                        new StylusPoint(50.3333333333333,98,0.5f),
-                                        new StylusPoint(52,98,0.5f),
-                                        new StylusPoint(54,97.6666666666667,0.5f),
-                                        new StylusPoint(56,97.6666666666667,0.5f),
-                                        new StylusPoint(57.6666666666667,97.3333333333333,0.5f),
-                                        new StylusPoint(59.6666666666667,97,0.5f),
-                                        new StylusPoint(61.3333333333333,96.6666666666667,0.5f),
-                                        new StylusPoint(69,94.3333333333333,0.5f),
-                                        new StylusPoint(70.6666666666667,93.3333333333333,0.5f),
-                                        new StylusPoint(74,91.6666666666667,0.5f),
-                                        new StylusPoint(75.6666666666667,90.6666666666667,0.5f),
-                                        new StylusPoint(77,89.3333333333333,0.5f),
-                                        new StylusPoint(78.3333333333333,88,0.5f),
-                                        new StylusPoint(79.6666666666667,86.6666666666667,0.5f),
-                                        new StylusPoint(81,85.3333333333333,0.5f),
-                                        new StylusPoint(82,84,0.5f),
-                                        new StylusPoint(83.3333333333333,82.3333333333333,0.5f),
-                                        new StylusPoint(84,80.6666666666667,0.5f),
-                                        new StylusPoint(85,79,0.5f),
-                                        new StylusPoint(85.6666666666667,77.3333333333333,0.5f),
-                                        new StylusPoint(86.3333333333333,75.6666666666667,0.5f),
-                                        new StylusPoint(87,73.6666666666667,0.5f),
-                                        new StylusPoint(87.3333333333333,72,0.5f),
-                                        new StylusPoint(87.3333333333333,70,0.5f),
-                                        new StylusPoint(87.3333333333333,68,0.5f),
-                                        new StylusPoint(87.3333333333333,66,0.5f),
-                                        new StylusPoint(87.3333333333333,64.3333333333333,0.5f),
-                                        new StylusPoint(86.6666666666667,62.3333333333333,0.5f),
-                                        new StylusPoint(86.3333333333333,60.3333333333333,0.5f),
-                                        new StylusPoint(85.6666666666667,58.6666666666667,0.5f),
-                                        new StylusPoint(85,57,0.5f),
-                                        new StylusPoint(84,55.3333333333333,0.5f),
-                                        new StylusPoint(83,53.6666666666667,0.5f),
-                                        new StylusPoint(82,52,0.5f),
-                                        new StylusPoint(81,50.6666666666667,0.5f),
-                                        new StylusPoint(79.6666666666667,49,0.5f),
-                                        new StylusPoint(78.3333333333333,47.6666666666667,0.5f),
-                                        new StylusPoint(76.6666666666667,46.3333333333333,0.5f),
-                                        new StylusPoint(75,45,0.5f),
-                                        new StylusPoint(73.3333333333333,43.6666666666667,0.5f),
-                                        new StylusPoint(71.6666666666667,42.3333333333333,0.5f),
-                                        new StylusPoint(69.6666666666667,41.3333333333333,0.5f),
-                                        new StylusPoint(67.6666666666667,40.3333333333333,0.5f),
-                                        new StylusPoint(65.6666666666667,39.3333333333333,0.5f),
-                                        new StylusPoint(63.6666666666667,38.6666666666667,0.5f),
-                                        new StylusPoint(61.6666666666667,37.6666666666667,0.5f),
-                                        new StylusPoint(59.6666666666667,37,0.5f),
-                                        new StylusPoint(57.3333333333333,36.6666666666667,0.5f),
-                                        new StylusPoint(55.3333333333333,36,0.5f),
-                                        new StylusPoint(53,35.6666666666667,0.5f),
-                                        new StylusPoint(51,35.3333333333333,0.5f),
-                                        new StylusPoint(48.6666666666667,35.3333333333333,0.5f),
-                                        new StylusPoint(46.6666666666667,35,0.5f),
-                                        new StylusPoint(44.3333333333333,35,0.5f),
-                                        new StylusPoint(42.3333333333333,35,0.5f),
-                                        new StylusPoint(40,35,0.5f),
-                                        new StylusPoint(38,35.3333333333333,0.5f),
-                                        new StylusPoint(35.6666666666667,35.6666666666667,0.5f),
-                                        new StylusPoint(33.6666666666667,36,0.5f),
-                                        new StylusPoint(31.3333333333333,36.6666666666667,0.5f),
-                                        new StylusPoint(29.3333333333333,37.3333333333333,0.5f),
-                                        new StylusPoint(27.3333333333333,38,0.5f),
-                                        new StylusPoint(25.3333333333333,38.6666666666667,0.5f),
-                                        new StylusPoint(23.6666666666667,39.6666666666667,0.5f),
-                                        new StylusPoint(21.6666666666667,40.6666666666667,0.5f),
-                                        new StylusPoint(19.6666666666667,42,0.5f),
-                                        new StylusPoint(18,43.3333333333333,0.5f),
-                                        new StylusPoint(16.3333333333333,44.6666666666667,0.5f),
-                                        new StylusPoint(14.6666666666667,46,0.5f),
-                                        new StylusPoint(13,47.3333333333333,0.5f),
-                                        new StylusPoint(11.6666666666667,48.6666666666667,0.5f),
-                                    }
-                                ),
-                                (attributes!=null)?attributes:new DrawingAttributes
-                                {
-                                    Color=Colors.Black,
-                                    Height=2,
-                                    Width=2,
-                                    IsHighlighter=false
-                                }
-                            )
-                        }
-                    );
-                }
-            }
-            public PointCollection HighlighterPreviewPoints
-            {
-                get
-                {
-                    return new PointCollection{
-                        new Point(400,0),
-                        new Point(222,0),
-                        new Point(167,70),
-                        new Point(167,74),
-                        new Point(158,74),
-                        new Point(154,79),
-                        new Point(130,108),
-                        new Point(127,106),
-                        new Point(115,123),
-                        new Point(119,130),
-                        new Point(125,155),
-                        new Point(125,178),
-                        new Point(122,210),
-                        new Point(112,239),
-                        new Point(98,261),
-                        new Point(74,292),
-                        new Point(73,296),
-                        new Point(74,306),
-                        new Point(60,321),
-                        new Point(49,341),
-                        new Point(48,345),
-                        new Point(50,347),
-                        new Point(86,362),
-                        new Point(106,342),
-                        new Point(114,336),
-                        new Point(125,335),
-                        new Point(163,295),
-                        new Point(204,271),
-                        new Point(252,261),
-                        new Point(274,262),
-                        new Point(282,266),
-                        new Point(297,250),
-                        new Point(296,249),
-                        new Point(323,217),
-                        new Point(322,215),
-                        new Point(326,210),
-                        new Point(330,209),
-                        new Point(300,121),
-                        new Point(400,0)
-                    };
                 }
             }
             public PointCollection BrushPreviewPoints
@@ -674,12 +468,10 @@ namespace PowerpointJabber
                     };
                 }
             }
-
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            PensControl.SelectedIndex = 0;
-            //Selector(SelectionButton, new RoutedEventArgs());
+            selectPen(pens[0]);
         }
     }
     class slideIndicator

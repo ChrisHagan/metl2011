@@ -42,7 +42,6 @@ namespace PowerpointJabber
                 Properties.Settings.Default.Save();
             }
         }
-
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
             instance = this;
@@ -51,10 +50,21 @@ namespace PowerpointJabber
         }
         private void onSlideShowBegin(object sender)
         {
-            if (customPresenterIsEnabledForDefaultMode || customPresenterIsEnabledForPresenterMode)
+            if (WindowsInteropFunctions.presenterActive)
             {
-                SSSW = new SimplePenWindow();
-                SSSW.Show();
+                if (customPresenterIsEnabledForPresenterMode)
+                {
+                    SSSW = new SimplePenWindow();
+                    SSSW.Show();
+                }
+            }
+            else
+            {
+                if (customPresenterIsEnabledForDefaultMode)
+                {
+                    SSSW = new SimplePenWindow();
+                    SSSW.Show();
+                }
             }
         }
         private void onSlideShowEnd(object sender)
@@ -80,7 +90,6 @@ namespace PowerpointJabber
         }
 
         #region VSTO generated code
-
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
