@@ -130,10 +130,6 @@ namespace PowerpointJabber
             timer.Change(250, 250);
             return timer;
         }
-        private void whatever()
-        {
-            Selector(null, new RoutedEventArgs());
-        }
 
         private bool shouldWorkaroundClickAdvance { get { return presenterView && !pptVersionIs2010; } }
         private bool pptVersionIs2010
@@ -165,7 +161,7 @@ namespace PowerpointJabber
         {
             if (pens == null || pens.Count == 0) return;
             if (button == null)
-                foreach (var pen in pens) 
+                foreach (var pen in pens)
                     pen.Selected = false;
             foreach (var pen in pens)
             {
@@ -193,16 +189,6 @@ namespace PowerpointJabber
                     ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerNone;
                     break;
             }
-            ReFocusPresenter();
-        }
-        private void Eraser(object sender, RoutedEventArgs e)
-        {
-            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerEraser;
-            ReFocusPresenter();
-        }
-        private void Selector(object sender, RoutedEventArgs e)
-        {
-            ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = PpSlideShowPointerType.ppSlideShowPointerAutoArrow;
             ReFocusPresenter();
         }
         private void EndSlideShow(object sender, RoutedEventArgs e)
