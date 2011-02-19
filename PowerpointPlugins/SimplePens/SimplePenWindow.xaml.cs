@@ -163,7 +163,7 @@ namespace PowerpointJabber
         }
         private void selectPen(EditingButton button)
         {
-            if (pens == null || pens.Count == null) return;
+            if (pens == null || pens.Count == 0) return;
             if (button == null)
                 foreach (var pen in pens) 
                     pen.Selected = false;
