@@ -5,15 +5,31 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Globalization;
+using System.Windows.Media;
 
 namespace PowerpointJabber
 {
     class Converters
     {
+        public static BoolToSelectedColourConverter boolToSelectedColourConverter = new BoolToSelectedColourConverter();
         public static BoolToVisibilityConverter boolToVisibilityConverter = new BoolToVisibilityConverter();
         public static ReverseBoolToVisibilityConverter reverseBoolToVisibilityConverter = new ReverseBoolToVisibilityConverter();
         public static PenVisibilityConverter penVisibilityConverter = new PenVisibilityConverter();
         public static EraserVisibilityConverter eraserVisibilityConverter = new EraserVisibilityConverter();
+
+        public class BoolToSelectedColourConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (!(value is bool)) return Brushes.Transparent;
+                return (bool)value ? Brushes.Blue : Brushes.Transparent;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public class PenVisibilityConverter : IValueConverter
         {

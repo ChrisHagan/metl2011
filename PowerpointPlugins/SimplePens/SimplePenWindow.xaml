@@ -28,7 +28,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button Click="Pen" Tag="{Binding Path=name}" Height="50" Width="50" ToolTip="{Binding Path=toolTip}">
-                            <Grid Width="40" Height="40">
+                            <Grid Width="40" Height="40" Background="{Binding Path=Selected, Converter={x:Static plugin:Converters.boolToSelectedColourConverter}}">
                                 <Grid Visibility="{Binding Path=type,Converter={x:Static plugin:Converters.penVisibilityConverter}}">
                                     <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
                                     <Rectangle Fill="{StaticResource BrushGradientBackground}"/>

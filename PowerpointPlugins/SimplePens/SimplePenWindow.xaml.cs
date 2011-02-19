@@ -94,20 +94,33 @@ namespace PowerpointJabber
                             && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View != null
                             && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor != null)
                         {
-                            var currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
-                            foreach (var pen in pens)
+                            switch (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType)
                             {
-                                {
-                                    if (currentColour != currentPen.RGBAasInt)
+                                case PpSlideShowPointerType.ppSlideShowPointerPen:
+                                    var currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
+                                    foreach (var pen in pens)
                                     {
-                                        if (pen.RGBAasInt == currentColour)
+                                        if (currentColour != currentPen.RGBAasInt)
                                         {
-                                            currentPen = pen;
-                                            pen.isSelected = true;
-                                            //PensControl.SelectedIndex = PensControl.Items.IndexOf(pen);
+                                            if (pen.RGBAasInt == currentColour)
+                                            {
+                                                currentPen = pen;
+                                                selectPen(pen);
+                                            }
                                         }
                                     }
-                                }
+                                    break;
+                                case PpSlideShowPointerType.ppSlideShowPointerEraser:
+                                    foreach (var pen in pens)
+                                    {
+                                        if (pen.type == EditingButton.EditingType.Eraser)
+                                            selectPen(pen);
+                                    }
+                                    break;
+                                default:
+                                    foreach (var pen in pens)
+                                        selectPen(null);
+                                    break;
                             }
                         }
                     });
@@ -150,11 +163,15 @@ namespace PowerpointJabber
         }
         private void selectPen(EditingButton button)
         {
+            if (pens == null || pens.Count == null) return;
+            if (button == null)
+                foreach (var pen in pens) 
+                    pen.Selected = false;
             foreach (var pen in pens)
             {
                 if (pen == button)
-                    pen.isSelected = true;
-                else pen.isSelected = false;
+                    pen.Selected = true;
+                else pen.Selected = false;
             }
         }
         private void Pen(object sender, RoutedEventArgs e)
@@ -250,10 +267,10 @@ namespace PowerpointJabber
                 backgroundPolling = null;
                 Close();
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
         }
 
-        
+
         public class EditingButton : DependencyObject
         {
             public EditingButton(EditingType Type, string Name, System.Windows.Media.SolidColorBrush Color)
@@ -262,8 +279,6 @@ namespace PowerpointJabber
                 name = Name;
                 type = Type;
             }
-
-
             public bool Selected
             {
                 get { return (bool)GetValue(SelectedProperty); }
@@ -272,18 +287,6 @@ namespace PowerpointJabber
             public static readonly DependencyProperty SelectedProperty =
                 DependencyProperty.Register("Selected", typeof(bool), typeof(EditingButton), new UIPropertyMetadata(false));
 
-            private bool _isSelected;
-            public bool isSelected
-            {
-                get { return _isSelected; }
-                set
-                {
-                    if (value) HighlightColour = new SolidColorBrush(System.Windows.Media.Colors.Orange);
-                    else HighlightColour = new SolidColorBrush(System.Windows.Media.Colors.Transparent);
-                    Selected = value;
-                    _isSelected = value;
-                }
-            }
             public System.Windows.Media.Brush HighlightColour { get; private set; }
             public enum EditingType { Pen, Eraser, Selector }
             public string name { get; private set; }
