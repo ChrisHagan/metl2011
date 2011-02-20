@@ -32,11 +32,14 @@ namespace PowerpointJabber
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
         {
-            public int Left;        // x position of upper-left corner
-            public int Top;         // y position of upper-left corner
-            public int Right;       // x position of lower-right corner
-            public int Bottom;      // y position of lower-right corner
+            public int left;
+            public int top;
+            public int right;
+            public int bottom;
         }
+        [DllImport("user32.dll")]
+        public static extern int
+          GetWindowRect(int hwnd, ref RECT rc);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern bool IsWindowVisible(IntPtr hWnd);
@@ -190,6 +193,8 @@ namespace PowerpointJabber
             public bool isVisible;
             public double X;
             public double Y;
+            public double Height;
+            public double Width;
         }
         private static IntPtr currentWindow()
         {
@@ -204,8 +209,13 @@ namespace PowerpointJabber
             var window = currentWindow();
             var stateData = new WindowStateData();
             stateData.isVisible = (isWindowFocused(window) || (ThisAddIn.instance != null && ThisAddIn.instance.SSSW != null && ThisAddIn.instance.SSSW.HWND != null && isWindowFocused(ThisAddIn.instance.SSSW.HWND)));
-            stateData.X = windowTopLeft(window).X;
-            stateData.Y = windowTopLeft(window).Y;
+            RECT rect = new RECT();
+            GetWindowRect((int)window, ref rect);
+            stateData.X = rect.left;
+            stateData.Y = rect.top;
+            stateData.Height = rect.bottom - rect.top;
+            //stateData.X = windowTopLeft(window).X;
+            //stateData.Y = windowTopLeft(window).Y;
             return stateData;
         }
         public static void BringAppropriateViewToFront()
@@ -224,29 +234,30 @@ namespace PowerpointJabber
             //SystemParametersInfo((uint)0x2001, 200000, 200000, 0x0002 | 0x0001);
             SetActiveWindow((int)windowHandle);
         }
-        private static Point windowTopLeft(IntPtr windowHandle)
+
+
+        /*private static Rect getWindowInformation(IntPtr windowHandle)
         {
             WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
             GetWindowPlacement(windowHandle, ref placement);
-            Point res = new Point();
+            Rect res = new Rect();
             switch (placement.showCmd)
             {
                 case SW_SHOWMAXIMIZED:
-                    res = new Point(0, 0);
-                    //res = new Point(placement.ptMaxPosition.x, placement.ptMaxPosition.y);
+                    res = new Rect(new Point(0, 0), new Point());
                     break;
                 case SW_RESTORE:
                 case SW_SHOW:
                 case SW_SHOWNA:
                 case SW_SHOWNORMAL:
-                    res = new Point(placement.rcNormalPosition.Left, placement.rcNormalPosition.Top);
+                    res = new Rect(new Point(placement.rcNormalPosition.Left, placement.rcNormalPosition.Top), new Point());
                     break;
                 default:
-                    res = new Point();
+                    res = new Rect();
                     break;
             }
             return res;
-        }
+        }*/
         private static bool isWindowFocused(IntPtr windowHandle)
         {
             return (GetForegroundWindow() == windowHandle);

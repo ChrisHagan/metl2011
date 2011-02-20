@@ -83,10 +83,12 @@ namespace PowerpointJabber
                         }
                         if ((this.WindowState != WindowState.Minimized) != state.isVisible)
                             this.WindowState = state.isVisible ? WindowState.Normal : WindowState.Minimized;
-                        if (this.Left != state.X)
+                        if (!Double.IsNaN(state.X) && this.Left != state.X)
                             this.Left = state.X;
-                        if (this.Left != state.Y)
-                            this.Top = state.Y + 43;
+                        if (!Double.IsNaN(state.Y) && !Double.IsNaN(state.Height) && this.Left != state.Y)
+                            this.Top = state.Y + (state.Height * 0.06);
+                        if (!Double.IsNaN(state.Height) && state.Height > 0 && ViewboxContainer.ActualHeight != state.Height)
+                            ViewboxContainer.Height = state.Height * 0.6;
                         if (ThisAddIn.instance != null
                             && ThisAddIn.instance.Application != null
                             && ThisAddIn.instance.Application.ActivePresentation != null
