@@ -243,6 +243,11 @@ namespace PowerpointJabber
                 ThisAddIn.instance.Application.ActivePresentation.Slides.AddSlide(newSlideIndex, newSlide);
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Activate();
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(newSlideIndex);
+                var slideIndicator = new slideIndicator(ThisAddIn.instance.Application.ActivePresentation.Slides[newSlideIndex].SlideID); 
+                slides.Add(slideIndicator);
+                slideIndicator.clickAdvance = false;
+                clickAdvanceStates.Add(slideIndicator.slideId, false);
+                ReFocusPresenter();
             }
         }
         private void SwitchToMeTL(object sender, RoutedEventArgs e)
