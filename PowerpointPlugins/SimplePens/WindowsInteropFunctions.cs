@@ -27,6 +27,31 @@ namespace PowerpointJabber
             SW_RESTORE = 9,
             SW_SHOWDEFAULT = 10,
             SW_MAX = 10;
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+
+            public POINT(int x, int y)
+            {
+                this.X = x;
+                this.Y = y;
+            }
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WINDOWPLACEMENT
+        {
+            public int length;
+            public int flags;
+            public int showCmd;
+            public POINT minPosition;
+            public POINT maxPosition;
+            public RECT normalPosition;
+        }
+
+        [DllImport("user32.dll")]
+        private static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
@@ -37,39 +62,37 @@ namespace PowerpointJabber
             public int bottom;
         }
 
-
         [DllImport("user32.dll", EntryPoint = "EnumDesktopWindows", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
         private static extern bool _EnumDesktopWindows(IntPtr hDesktop, EnumDelegate lpEnumCallbackFunction, IntPtr lParam);
-        
+
         [DllImport("user32.dll", EntryPoint = "GetWindowText", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int _GetWindowText(IntPtr hWnd,StringBuilder lpWindowText, int nMaxCount);
-       
-        
+        private static extern int _GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
+
         [DllImport("user32.dll")]
-        public static extern int GetWindowRect(int hwnd, ref RECT rc);
-        
+        private static extern int GetWindowRect(int hwnd, ref RECT rc);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern bool IsWindowVisible(IntPtr hWnd);
+        private static extern bool IsWindowVisible(IntPtr hWnd);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetWindowRect(HandleRef hwnd, out RECT lpRect);
-        
+        private static extern bool GetWindowRect(HandleRef hwnd, out RECT lpRect);
+
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
-        
+
         [DllImport("user32.dll", EntryPoint = "SystemParametersInfo")]
-        public static extern bool SystemParametersInfo(System.UInt32 uiAction, System.UInt32 uiParam, System.UInt32 pvParam, System.UInt32 fWinIni);
+        private static extern bool SystemParametersInfo(System.UInt32 uiAction, System.UInt32 uiParam, System.UInt32 pvParam, System.UInt32 fWinIni);
 
         [DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("User32.dll", EntryPoint = "SetActiveWindow")]
         private static extern void SetActiveWindow(int hWnd);
 
         // Find window by Caption only. Note you must pass IntPtr.Zero as the first parameter.
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
-        static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+        private static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
         private static IntPtr FindWindowByCaption(string lpWindowName)
         {
@@ -155,12 +178,23 @@ namespace PowerpointJabber
         {
             var window = currentWindow();
             var stateData = new WindowStateData();
+            var placementData = new WINDOWPLACEMENT();
+            GetWindowPlacement(window, out placementData);
             stateData.isVisible = (isWindowFocused(window) || (ThisAddIn.instance != null && ThisAddIn.instance.SSSW != null && ThisAddIn.instance.SSSW.HWND != null && isWindowFocused(ThisAddIn.instance.SSSW.HWND)));
             RECT rect = new RECT();
-            GetWindowRect((int)window, ref rect);
-            stateData.X = rect.left;
-            stateData.Y = rect.top;
-            stateData.Height = rect.bottom - rect.top;
+            if (placementData.showCmd != SW_SHOWMAXIMIZED)
+            {
+                GetWindowRect((int)window, ref rect);
+                stateData.X = rect.left;
+                stateData.Y = rect.top;
+                stateData.Height = rect.bottom - rect.top;
+            }
+            else
+            {
+                stateData.X = 0;
+                stateData.Y = 0;
+                stateData.Height = System.Windows.Forms.Screen.FromHandle(window).WorkingArea.Height;  
+            }
             return stateData;
         }
         public static void BringAppropriateViewToFront()

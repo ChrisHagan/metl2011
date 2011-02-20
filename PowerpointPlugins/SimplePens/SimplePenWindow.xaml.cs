@@ -87,8 +87,12 @@ namespace PowerpointJabber
                             this.Left = state.X;
                         if (presenterView)
                         {
-                            if (!Double.IsNaN(state.Y) && !Double.IsNaN(state.Height) && this.Left != state.Y)
-                                this.Top = state.Y + (state.Height * 0.06);
+                            if (!Double.IsNaN(state.Y) && !Double.IsNaN(state.Height))
+                            {
+                                var newY = (state.Y + (state.Height * 0.06));
+                                if (this.Top != newY)
+                                    this.Top = newY;
+                            }
                         }
                         else this.Top = 0;
                         if (!Double.IsNaN(state.Height) && state.Height > 0 && ViewboxContainer.ActualHeight != state.Height)
@@ -292,7 +296,8 @@ namespace PowerpointJabber
             private int A { get { return penColour.Color.A; } }
             private int cachedRGBAsInt;
             private bool RGBAsIntHasBeenCached = false;
-            private void generateRGBAsInt(){
+            private void generateRGBAsInt()
+            {
                 cachedRGBAsInt = ColorTranslator.ToOle(System.Drawing.Color.FromArgb(A, R, G, B));
                 RGBAsIntHasBeenCached = true;
             }
