@@ -130,7 +130,7 @@ namespace PowerpointJabber
                 {
                     return FindWindowByCaption("PowerPoint Presenter View - [" + ThisAddIn.instance.Application.ActivePresentation.Windows[1].Caption + "]");
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return (IntPtr)0;
                 }
@@ -142,7 +142,6 @@ namespace PowerpointJabber
             public double X;
             public double Y;
             public double Height;
-            public double Width;
         }
         private static IntPtr currentWindow()
         {
@@ -162,7 +161,6 @@ namespace PowerpointJabber
             stateData.X = rect.left;
             stateData.Y = rect.top;
             stateData.Height = rect.bottom - rect.top;
-            //stateData.Width = rect.right - rect.left;
             return stateData;
         }
         public static void BringAppropriateViewToFront()
