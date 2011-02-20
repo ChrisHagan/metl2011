@@ -45,14 +45,14 @@ namespace PowerpointJabber
             InitializeComponent();
             pens = new List<EditingButton>
                 {
-                    new EditingButton(EditingButton.EditingType.Pen,"Black",System.Windows.Media.Brushes.Black),
-                    new EditingButton(EditingButton.EditingType.Pen,"Blue",System.Windows.Media.Brushes.Blue),
-                    new EditingButton(EditingButton.EditingType.Pen,"Red",System.Windows.Media.Brushes.Red),
-                    new EditingButton(EditingButton.EditingType.Pen,"Green",System.Windows.Media.Brushes.Green),
-                    new EditingButton(EditingButton.EditingType.Pen,"Yellow",System.Windows.Media.Brushes.Yellow),
-                    new EditingButton(EditingButton.EditingType.Pen,"Orange",System.Windows.Media.Brushes.Orange),
-                    new EditingButton(EditingButton.EditingType.Pen,"White",System.Windows.Media.Brushes.White),
-                    new EditingButton(EditingButton.EditingType.Eraser,"Eraser",System.Windows.Media.Brushes.Transparent)
+                    new EditingButton(EditingButton.EditingType.Pen,"black",System.Windows.Media.Brushes.Black),
+                    new EditingButton(EditingButton.EditingType.Pen,"blue",System.Windows.Media.Brushes.Blue),
+                    new EditingButton(EditingButton.EditingType.Pen,"red",System.Windows.Media.Brushes.Red),
+                    new EditingButton(EditingButton.EditingType.Pen,"green",System.Windows.Media.Brushes.Green),
+                    new EditingButton(EditingButton.EditingType.Pen,"yellow",System.Windows.Media.Brushes.Yellow),
+                    new EditingButton(EditingButton.EditingType.Pen,"orange",System.Windows.Media.Brushes.Orange),
+                    new EditingButton(EditingButton.EditingType.Pen,"white",System.Windows.Media.Brushes.White),
+                    new EditingButton(EditingButton.EditingType.Eraser,"eraser",System.Windows.Media.Brushes.Transparent)
                 };
             populateSlidesAdvanceDictionary();
             currentPen = pens[0];
@@ -325,7 +325,7 @@ namespace PowerpointJabber
                     switch (type)
                     {
                         case EditingType.Pen:
-                            result = "Draw with a " + penColour.ToString() + " pen.";
+                            result = "Draw with a " + name + " pen.";
                             break;
                         case EditingType.Eraser:
                             result = "Erase";

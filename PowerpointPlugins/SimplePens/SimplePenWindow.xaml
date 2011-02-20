@@ -28,7 +28,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid>
-                            <Button Click="Pen" Tag="{Binding Path=name}" Height="50" Width="50" ToolTip="{Binding Path=toolTip}"/>
+                            <Button Click="Pen" Tag="{Binding Path=name}" Height="50" Width="50" ToolTip="{Binding Path=tooltip}"/>
                             <Border BorderThickness="1" BorderBrush="Transparent" CornerRadius="2" Padding="5" Height="50" Width="50" IsHitTestVisible="False" Background="{Binding Path=Selected, Converter={x:Static plugin:Converters.boolToSelectedColourConverter}}">
                                 <Grid Width="40" Height="40">
                                     <Grid Visibility="{Binding Path=type,Converter={x:Static plugin:Converters.penVisibilityConverter}}">

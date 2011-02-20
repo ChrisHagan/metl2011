@@ -177,6 +177,7 @@ namespace PowerpointJabber
         public static WindowStateData getAppropriateViewData()
         {
             var window = currentWindow();
+           //
             var stateData = new WindowStateData();
             var placementData = new WINDOWPLACEMENT();
             GetWindowPlacement(window, out placementData);
