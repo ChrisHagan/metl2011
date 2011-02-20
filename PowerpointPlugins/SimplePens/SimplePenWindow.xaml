@@ -27,24 +27,27 @@
                 </ItemsControl.Resources>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Click="Pen" Tag="{Binding Path=name}" Height="50" Width="50" ToolTip="{Binding Path=toolTip}">
-                            <Grid Width="40" Height="40" Background="{Binding Path=Selected, Converter={x:Static plugin:Converters.boolToSelectedColourConverter}}">
-                                <Grid Visibility="{Binding Path=type,Converter={x:Static plugin:Converters.penVisibilityConverter}}">
-                                    <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
-                                    <Rectangle Fill="{StaticResource BrushGradientBackground}"/>
-                                    <Border BorderThickness="0" Padding="0" ClipToBounds="True" >
-                                        <Viewbox Height="40" Width="40">
-                                            <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static plugin:Converters.reverseBoolToVisibilityConverter}}">
-                                                <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPenPreviewStroke}" Height="100" Width="100"/>
-                                                <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=penColour}" />
-                                                <Image Height="100" Width="100" Source="Resources\MeTLPenOverlay.png"/>
-                                            </Grid>
-                                        </Viewbox>
-                                    </Border>
+                        <Grid>
+                            <Button Click="Pen" Tag="{Binding Path=name}" Height="50" Width="50" ToolTip="{Binding Path=toolTip}"/>
+                            <Border BorderThickness="1" BorderBrush="Transparent" CornerRadius="2" Padding="5" Height="50" Width="50" IsHitTestVisible="False" Background="{Binding Path=Selected, Converter={x:Static plugin:Converters.boolToSelectedColourConverter}}">
+                                <Grid Width="40" Height="40">
+                                    <Grid Visibility="{Binding Path=type,Converter={x:Static plugin:Converters.penVisibilityConverter}}">
+                                        <Rectangle Fill="{StaticResource CheckerboardBackground}"/>
+                                        <Rectangle Fill="{StaticResource BrushGradientBackground}"/>
+                                        <Border BorderThickness="0" Padding="0" ClipToBounds="True" >
+                                            <Viewbox Height="40" Width="40">
+                                                <Grid Visibility="{Binding Path=IsHighlighter, Converter={x:Static plugin:Converters.reverseBoolToVisibilityConverter}}">
+                                                    <InkCanvas Background="Transparent" Strokes="{Binding Path=DrawnPenPreviewStroke}" Height="100" Width="100"/>
+                                                    <Polygon Height="100" Width="100" Points="{Binding Path=BrushPreviewPoints}" Fill="{Binding Path=penColour}" />
+                                                    <Image Height="100" Width="100" Source="Resources\MeTLPenOverlay.png"/>
+                                                </Grid>
+                                            </Viewbox>
+                                        </Border>
+                                    </Grid>
+                                    <Image Visibility="{Binding Path=type, Converter={x:Static plugin:Converters.eraserVisibilityConverter}}" Source="Resources\ShinyEraser.png"/>
                                 </Grid>
-                                <Image Visibility="{Binding Path=type, Converter={x:Static plugin:Converters.eraserVisibilityConverter}}" Source="Resources\ShinyEraser.png"/>
-                            </Grid>
-                        </Button>
+                            </Border>
+                        </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
                 <ItemsControl.ItemsPanel>
