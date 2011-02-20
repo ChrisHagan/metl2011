@@ -103,10 +103,10 @@ namespace PowerpointJabber
                             switch (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType)
                             {
                                 case PpSlideShowPointerType.ppSlideShowPointerPen:
-                                    var currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
+                                    int currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
                                     foreach (var pen in pens)
                                     {
-                                        if (pen.RGBAasInt == currentColour)
+                                        if (pen.type == EditingButton.EditingType.Pen && pen.RGBAasInt == currentColour)
                                         {
                                             currentPen = pen;
                                             selectPen(pen);
@@ -286,12 +286,16 @@ namespace PowerpointJabber
             private int B { get { return penColour.Color.B; } }
             private int A { get { return penColour.Color.A; } }
             private int cachedRGBAsInt;
+            private bool RGBAsIntHasBeenCached = false;
             public int RGBAasInt
             {
                 get
                 {
-                    if (!(cachedRGBAsInt > 0))
+                    if (!RGBAsIntHasBeenCached)
+                    {
                         cachedRGBAsInt = ColorTranslator.ToOle(System.Drawing.Color.FromArgb(A, R, G, B));
+                        RGBAsIntHasBeenCached = true;
+                    }
                     return cachedRGBAsInt;
                 }
             }
