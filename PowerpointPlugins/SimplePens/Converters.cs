@@ -19,10 +19,23 @@ namespace PowerpointJabber
 
         public class BoolToSelectedColourConverter : IValueConverter
         {
+            private LinearGradientBrush selectedColourBrush = new LinearGradientBrush
+            {
+                GradientStops = new GradientStopCollection(new List<GradientStop> {
+            new GradientStop(new Color{A=255,R=254,G=215,B=169},0.0),
+            new GradientStop(new Color{A=255,R=251,G=181,B=101},0.39),
+            new GradientStop(new Color{A=255,R=250,G=152,B=49},0.4),
+            new GradientStop(new Color{A=255,R=253,G=236,B=166},1.0),
+            }),
+            StartPoint = new Point(0,0),
+            EndPoint = new Point(0,1)
+            };
+            private SolidColorBrush unselectedColourBrush = Brushes.Transparent;
+
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
                 if (!(value is bool)) return Brushes.Transparent;
-                return (bool)value ? Brushes.Blue : Brushes.Transparent;
+                return (bool)value ? (Brush)selectedColourBrush : (Brush)unselectedColourBrush;
             }
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             {
@@ -83,6 +96,6 @@ namespace PowerpointJabber
                 return true;
             }
         }
-    
+
     }
 }
