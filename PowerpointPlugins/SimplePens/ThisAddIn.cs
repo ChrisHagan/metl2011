@@ -88,7 +88,6 @@ namespace PowerpointJabber
         {
             return new Ribbon1();
         }
-
         #region VSTO generated code
         /// <summary>
         /// Required method for Designer support - do not modify

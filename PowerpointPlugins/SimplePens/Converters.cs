@@ -24,13 +24,11 @@ namespace PowerpointJabber
                 if (!(value is bool)) return Brushes.Transparent;
                 return (bool)value ? Brushes.Blue : Brushes.Transparent;
             }
-
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             {
                 throw new NotImplementedException();
             }
         }
-
         public class PenVisibilityConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -55,7 +53,6 @@ namespace PowerpointJabber
                 throw new NotImplementedException();
             }
         }
-
         public class BoolToVisibilityConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -77,7 +74,6 @@ namespace PowerpointJabber
                 }
                 return Visibility.Visible;
             }
-
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
                 if ((Visibility)value == Visibility.Visible)
