@@ -104,13 +104,17 @@ namespace PowerpointJabber
                             {
                                 case PpSlideShowPointerType.ppSlideShowPointerPen:
                                     int currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
+                                    bool penHasBeenFound = false;
                                     foreach (var pen in pens)
                                     {
                                         if (pen.type == EditingButton.EditingType.Pen && pen.RGBAasInt == currentColour)
                                         {
                                             currentPen = pen;
                                             selectPen(pen);
+                                            penHasBeenFound = true;
                                         }
+                                        if (!penHasBeenFound)
+                                            selectPen(null);
                                     }
                                     break;
                                 case PpSlideShowPointerType.ppSlideShowPointerEraser:
@@ -267,6 +271,7 @@ namespace PowerpointJabber
                 penColour = Color;
                 name = Name;
                 type = Type;
+                generateRGBAsInt();
             }
             public bool Selected
             {
@@ -287,14 +292,17 @@ namespace PowerpointJabber
             private int A { get { return penColour.Color.A; } }
             private int cachedRGBAsInt;
             private bool RGBAsIntHasBeenCached = false;
+            private void generateRGBAsInt(){
+                cachedRGBAsInt = ColorTranslator.ToOle(System.Drawing.Color.FromArgb(A, R, G, B));
+                RGBAsIntHasBeenCached = true;
+            }
             public int RGBAasInt
             {
                 get
                 {
                     if (!RGBAsIntHasBeenCached)
                     {
-                        cachedRGBAsInt = ColorTranslator.ToOle(System.Drawing.Color.FromArgb(A, R, G, B));
-                        RGBAsIntHasBeenCached = true;
+                        generateRGBAsInt();
                     }
                     return cachedRGBAsInt;
                 }
