@@ -229,6 +229,8 @@ namespace PowerpointJabber
         }
         private void AddPage(object sender, RoutedEventArgs e)
         {
+            var currentPen = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType;
+            var currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor;
             CustomLayout newSlide;
             if (ThisAddIn.instance.Application.ActivePresentation.SlideMaster.CustomLayouts.Count > 0)
                 newSlide = ThisAddIn.instance.Application.ActivePresentation.SlideMaster.CustomLayouts[1];
@@ -244,6 +246,8 @@ namespace PowerpointJabber
                 slides.Add(slideIndicator);
                 slideIndicator.clickAdvance = false;
                 clickAdvanceStates.Add(slideIndicator.slideId, false);
+                ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType = currentPen;
+                ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB = currentColour.RGB;
                 ReFocusPresenter();
             }
         }

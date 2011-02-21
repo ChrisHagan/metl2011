@@ -41,7 +41,7 @@
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.9</ApplicationVersion>
+    <ApplicationVersion>1.0.0.11</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>
@@ -50,7 +50,7 @@
     <PublisherName>eEducation Centre</PublisherName>
     <SupportUrl />
     <FriendlyName>SimplePens</FriendlyName>
-    <OfficeApplicationDescription>This Add-in adds additional pen buttons to the slideshow windows, allowing for easier inking.</OfficeApplicationDescription>
+    <OfficeApplicationDescription>This Add-in adds additional pen buttons to the slideshow windows, allowing for easier inking during Slide Shows.</OfficeApplicationDescription>
     <LoadBehavior>3</LoadBehavior>
   </PropertyGroup>
   <ItemGroup>
@@ -272,34 +272,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\pptBlackScreen.png">
-    </Resource>
-    <Resource Include="Resources\pptBuildNext.png">
-    </Resource>
-    <Resource Include="Resources\pptBuildPrevious.png">
-    </Resource>
-    <Resource Include="Resources\pptNormalScreen.png">
-    </Resource>
-    <Resource Include="Resources\pptPaintbrush.png">
-    </Resource>
     <Resource Include="Resources\pptWhiteScreen.png">
     </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\pptCloseSlideshow.png" />
-    <Resource Include="Resources\pptEraser.png" />
-    <Resource Include="Resources\pptSelect.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\pptSwitchDisplay.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\MeTLHighlighterOverlay.png" />
     <Resource Include="Resources\MeTLPenOverlay.png" />
     <Resource Include="Resources\ShinyEraser.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ArrowCursor.png" />
   </ItemGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
