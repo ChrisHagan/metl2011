@@ -21,6 +21,7 @@ using System.Windows.Ink;
 using Point = System.Windows.Point;
 using System.Threading;
 using System.Windows.Interop;
+using System.Windows.Threading;
 
 namespace PowerpointJabber
 {
@@ -35,10 +36,10 @@ namespace PowerpointJabber
             }
         }
         public List<EditingButton> pens;
-        private List<slideIndicator> slides = new List<slideIndicator>();
+        private List<SlideIndicator> slides = new List<SlideIndicator>();
         private EditingButton currentPen;
         private Dictionary<int, bool> clickAdvanceStates = new Dictionary<int, bool>();
-        Timer backgroundPolling;
+        DispatcherTimer backgroundPolling;
         public IntPtr HWND;
         public SimplePenWindow()
         {
@@ -65,81 +66,76 @@ namespace PowerpointJabber
             if (backgroundPolling == null)
                 backgroundPolling = backgroundPollingTimer();
         }
-        private Timer backgroundPollingTimer()
+        private DispatcherTimer backgroundPollingTimer()
         {
-            Timer timer = new Timer(delegate
+            return new DispatcherTimer(TimeSpan.FromMilliseconds(250),DispatcherPriority.Background,delegate
             {
                 try
                 {
                     if (this == null || ThisAddIn.instance.Application == null || ThisAddIn.instance.Application.SlideShowWindows.Count < 1)
                         return;
                     var state = WindowsInteropFunctions.getAppropriateViewData();
-                    Dispatcher.Invoke((Action)delegate
+                    if (HWND == null || !((int)HWND > 0))
                     {
-                        if (HWND == null || !((int)HWND > 0))
+                        HwndSource source = (HwndSource)HwndSource.FromVisual(this);
+                        HWND = source.Handle;
+                    }
+                    if ((this.WindowState != WindowState.Minimized) != state.isVisible)
+                        this.WindowState = state.isVisible ? WindowState.Normal : WindowState.Minimized;
+                    if (!Double.IsNaN(state.X) && this.Left != state.X)
+                        this.Left = state.X;
+                    if (presenterView)
+                    {
+                        if (!Double.IsNaN(state.Y) && !Double.IsNaN(state.Height))
                         {
-                            HwndSource source = (HwndSource)HwndSource.FromVisual(this);
-                            HWND = source.Handle;
+                            var newY = (state.Y + (state.Height * 0.06));
+                            if (this.Top != newY)
+                                this.Top = newY;
                         }
-                        if ((this.WindowState != WindowState.Minimized) != state.isVisible)
-                            this.WindowState = state.isVisible ? WindowState.Normal : WindowState.Minimized;
-                        if (!Double.IsNaN(state.X) && this.Left != state.X)
-                            this.Left = state.X;
-                        if (presenterView)
+                    }
+                    else this.Top = 0;
+                    if (!Double.IsNaN(state.Height) && state.Height > 0 && ViewboxContainer.ActualHeight != state.Height)
+                        ViewboxContainer.Height = state.Height * 0.6;
+                    if (ThisAddIn.instance != null
+                        && ThisAddIn.instance.Application != null
+                        && ThisAddIn.instance.Application.ActivePresentation != null
+                        && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow != null
+                        && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View != null
+                        && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor != null)
+                    {
+                        switch (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType)
                         {
-                            if (!Double.IsNaN(state.Y) && !Double.IsNaN(state.Height))
-                            {
-                                var newY = (state.Y + (state.Height * 0.06));
-                                if (this.Top != newY)
-                                    this.Top = newY;
-                            }
-                        }
-                        else this.Top = 0;
-                        if (!Double.IsNaN(state.Height) && state.Height > 0 && ViewboxContainer.ActualHeight != state.Height)
-                            ViewboxContainer.Height = state.Height * 0.6;
-                        if (ThisAddIn.instance != null
-                            && ThisAddIn.instance.Application != null
-                            && ThisAddIn.instance.Application.ActivePresentation != null
-                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow != null
-                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View != null
-                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor != null)
-                        {
-                            switch (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType)
-                            {
-                                case PpSlideShowPointerType.ppSlideShowPointerPen:
-                                    int currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
-                                    bool penHasBeenFound = false;
-                                    foreach (var pen in pens)
+                            case PpSlideShowPointerType.ppSlideShowPointerPen:
+                                int currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
+                                bool penHasBeenFound = false;
+                                foreach (var pen in pens)
+                                {
+                                    if (pen.type == EditingButton.EditingType.Pen && pen.RGBAasInt == currentColour)
                                     {
-                                        if (pen.type == EditingButton.EditingType.Pen && pen.RGBAasInt == currentColour)
-                                        {
-                                            currentPen = pen;
-                                            selectPen(pen);
-                                            penHasBeenFound = true;
-                                        }
-                                        if (!penHasBeenFound)
-                                            selectPen(null);
+                                        currentPen = pen;
+                                        selectPen(pen);
+                                        penHasBeenFound = true;
                                     }
-                                    break;
-                                case PpSlideShowPointerType.ppSlideShowPointerEraser:
-                                    foreach (var pen in pens)
-                                    {
-                                        if (pen.type == EditingButton.EditingType.Eraser)
-                                            selectPen(pen);
-                                    }
-                                    break;
-                                default:
-                                    foreach (var pen in pens)
+                                    if (!penHasBeenFound)
                                         selectPen(null);
-                                    break;
-                            }
+                                }
+                                break;
+                            case PpSlideShowPointerType.ppSlideShowPointerEraser:
+                                foreach (var pen in pens)
+                                {
+                                    if (pen.type == EditingButton.EditingType.Eraser)
+                                        selectPen(pen);
+                                }
+                                break;
+                            default:
+                                foreach (var pen in pens)
+                                    selectPen(null);
+                                break;
                         }
-                    });
+                    }
                 }
                 catch (Exception) { }
-            });
-            timer.Change(250, 250);
-            return timer;
+            },this.Dispatcher);
         }
 
         private bool shouldWorkaroundClickAdvance { get { return presenterView && !pptVersionIs2010; } }
@@ -155,7 +151,7 @@ namespace PowerpointJabber
             slides.Clear();
             foreach (Slide slide in ThisAddIn.instance.Application.ActivePresentation.Slides)
             {
-                slides.Add(new slideIndicator(slide.SlideID));
+                slides.Add(new SlideIndicator(slide.SlideID));
             }
         }
         private void setClickAdvanceOnAllSlides(bool state)
@@ -243,7 +239,7 @@ namespace PowerpointJabber
                 ThisAddIn.instance.Application.ActivePresentation.Slides.AddSlide(newSlideIndex, newSlide);
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Activate();
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(newSlideIndex);
-                var slideIndicator = new slideIndicator(ThisAddIn.instance.Application.ActivePresentation.Slides[newSlideIndex].SlideID);
+                var slideIndicator = new SlideIndicator(ThisAddIn.instance.Application.ActivePresentation.Slides[newSlideIndex].SlideID);
                 slides.Add(slideIndicator);
                 slideIndicator.clickAdvance = false;
                 clickAdvanceStates.Add(slideIndicator.slideId, false);
@@ -466,11 +462,15 @@ namespace PowerpointJabber
                     );
             }
             private PointCollection cachedBrushPreviewPoints;
-            public PointCollection BrushPreviewPoints { get {
-                if (cachedBrushPreviewPoints == null)
-                    generateBrushPreviewPoints();
-                return cachedBrushPreviewPoints;
-            } }
+            public PointCollection BrushPreviewPoints
+            {
+                get
+                {
+                    if (cachedBrushPreviewPoints == null)
+                        generateBrushPreviewPoints();
+                    return cachedBrushPreviewPoints;
+                }
+            }
             private void generateBrushPreviewPoints()
             {
                 cachedBrushPreviewPoints = new PointCollection{
@@ -501,9 +501,9 @@ namespace PowerpointJabber
             selectPen(pens[0]);
         }
     }
-    class slideIndicator
+    class SlideIndicator
     {
-        public slideIndicator(int Id)
+        public SlideIndicator(int Id)
         {
             slideId = Id;
         }
