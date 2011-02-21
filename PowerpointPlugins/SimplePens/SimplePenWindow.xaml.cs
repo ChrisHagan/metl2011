@@ -243,7 +243,7 @@ namespace PowerpointJabber
                 ThisAddIn.instance.Application.ActivePresentation.Slides.AddSlide(newSlideIndex, newSlide);
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Activate();
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(newSlideIndex);
-                var slideIndicator = new slideIndicator(ThisAddIn.instance.Application.ActivePresentation.Slides[newSlideIndex].SlideID); 
+                var slideIndicator = new slideIndicator(ThisAddIn.instance.Application.ActivePresentation.Slides[newSlideIndex].SlideID);
                 slides.Add(slideIndicator);
                 slideIndicator.clickAdvance = false;
                 clickAdvanceStates.Add(slideIndicator.slideId, false);
@@ -272,7 +272,6 @@ namespace PowerpointJabber
             catch (Exception) { }
         }
 
-
         public class EditingButton : DependencyObject
         {
             public EditingButton(EditingType Type, string Name, System.Windows.Media.SolidColorBrush Color)
@@ -281,6 +280,8 @@ namespace PowerpointJabber
                 name = Name;
                 type = Type;
                 generateRGBAsInt();
+                generateDrawnPenPreview();
+                generateBrushPreviewPoints();
             }
             public bool Selected
             {
@@ -340,11 +341,20 @@ namespace PowerpointJabber
                     return result;
                 }
             }
+            private StrokeCollection cachedDrawnPenPreviewStroke;
             public StrokeCollection DrawnPenPreviewStroke
             {
                 get
                 {
-                    return new StrokeCollection(
+                    if (cachedDrawnPenPreviewStroke == null)
+                        generateDrawnPenPreview();
+                    return cachedDrawnPenPreviewStroke;
+                }
+            }
+
+            private void generateDrawnPenPreview()
+            {
+                cachedDrawnPenPreviewStroke = new StrokeCollection(
                         new[]{
                             new Stroke(
                                 new StylusPointCollection(
@@ -454,13 +464,16 @@ namespace PowerpointJabber
                             )
                         }
                     );
-                }
             }
-            public PointCollection BrushPreviewPoints
+            private PointCollection cachedBrushPreviewPoints;
+            public PointCollection BrushPreviewPoints { get {
+                if (cachedBrushPreviewPoints == null)
+                    generateBrushPreviewPoints();
+                return cachedBrushPreviewPoints;
+            } }
+            private void generateBrushPreviewPoints()
             {
-                get
-                {
-                    return new PointCollection{
+                cachedBrushPreviewPoints = new PointCollection{
                         new Point(100,0),
                         new Point(71,0),
                         new Point(62,12),
@@ -480,7 +493,6 @@ namespace PowerpointJabber
                         new Point(100,21),
                         new Point(100,0)
                     };
-                }
             }
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
