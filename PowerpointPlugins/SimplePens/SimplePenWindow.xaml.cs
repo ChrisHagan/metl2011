@@ -101,6 +101,7 @@ namespace PowerpointJabber
                         && ThisAddIn.instance.Application.ActivePresentation != null
                         && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow != null
                         && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View != null
+                        && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType != null
                         && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor != null)
                     {
                         switch (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType)

@@ -112,20 +112,19 @@ namespace PowerpointJabber
         public static string GetWindowText(IntPtr hWnd)
         {
             StringBuilder title = new StringBuilder(255);
-            int titleLength = _GetWindowText(hWnd, title,
-            title.Capacity + 1);
+            int titleLength = _GetWindowText(hWnd, title, title.Capacity + 1);
             title.Length = titleLength;
             return title.ToString();
         }
         public static void switchToMeTL()
         {
             Dictionary<IntPtr, string> mTitlesList = new Dictionary<IntPtr, string>();
-            EnumDelegate enumfunc = new EnumDelegate((EnumDelegate)delegate(IntPtr hWnd, int lParam)
+            EnumDelegate enumfunc = (EnumDelegate)delegate(IntPtr hWnd, int lParam)
             {
                 string title = GetWindowText(hWnd);
                 mTitlesList.Add(hWnd, title);
                 return true;
-            });
+            };
             IntPtr hDesktop = IntPtr.Zero; // current desktop
             bool success = _EnumDesktopWindows(hDesktop, enumfunc, IntPtr.Zero);
             int successFrequency = 0;
