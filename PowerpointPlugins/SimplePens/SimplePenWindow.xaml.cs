@@ -68,7 +68,7 @@ namespace PowerpointJabber
         }
         private DispatcherTimer backgroundPollingTimer()
         {
-            return new DispatcherTimer(TimeSpan.FromMilliseconds(250),DispatcherPriority.Background,delegate
+            return new DispatcherTimer(TimeSpan.FromMilliseconds(250), DispatcherPriority.Background, delegate
             {
                 try
                 {
@@ -136,7 +136,7 @@ namespace PowerpointJabber
                     }
                 }
                 catch (Exception) { }
-            },this.Dispatcher);
+            }, this.Dispatcher);
         }
 
         private bool shouldWorkaroundClickAdvance { get { return presenterView && !pptVersionIs2010; } }
@@ -201,12 +201,18 @@ namespace PowerpointJabber
         }
         private void EndSlideShow(object sender, RoutedEventArgs e)
         {
-            if (ThisAddIn.instance.Application.SlideShowWindows.Count > 0)
-                ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Exit();
+            if (ThisAddIn.instance != null && ThisAddIn.instance.Application != null && ThisAddIn.instance.Application.SlideShowWindows != null && ThisAddIn.instance.Application.SlideShowWindows.Count > 0)
+                try
+                {
+                    ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.Exit();
+                }
+                catch (Exception) { }
             if (this != null)
             {
                 try
                 {
+                    backgroundPolling.Stop();
+                    backgroundPolling = null;
                     this.Close();
                 }
                 catch (Exception) { }
@@ -216,6 +222,7 @@ namespace PowerpointJabber
         {
             try
             {
+                backgroundPolling.Stop();
                 backgroundPolling = null;
                 foreach (var slide in slides)
                 {
@@ -267,6 +274,7 @@ namespace PowerpointJabber
         {
             try
             {
+                backgroundPolling.Stop();
                 backgroundPolling = null;
                 Close();
             }
