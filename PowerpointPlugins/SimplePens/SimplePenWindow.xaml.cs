@@ -21,6 +21,7 @@ using System.Windows.Ink;
 using Point = System.Windows.Point;
 using System.Threading;
 using System.Windows.Interop;
+using System.Windows.Threading;
 
 namespace PowerpointJabber
 {
@@ -35,24 +36,24 @@ namespace PowerpointJabber
             }
         }
         public List<EditingButton> pens;
-        private List<slideIndicator> slides = new List<slideIndicator>();
+        private List<SlideIndicator> slides = new List<SlideIndicator>();
         private EditingButton currentPen;
         private Dictionary<int, bool> clickAdvanceStates = new Dictionary<int, bool>();
-        Timer backgroundPolling;
+        DispatcherTimer backgroundPolling;
         public IntPtr HWND;
         public SimplePenWindow()
         {
             InitializeComponent();
             pens = new List<EditingButton>
                 {
-                    new EditingButton(EditingButton.EditingType.Pen,"Black",System.Windows.Media.Brushes.Black),
-                    new EditingButton(EditingButton.EditingType.Pen,"Blue",System.Windows.Media.Brushes.Blue),
-                    new EditingButton(EditingButton.EditingType.Pen,"Red",System.Windows.Media.Brushes.Red),
-                    new EditingButton(EditingButton.EditingType.Pen,"Green",System.Windows.Media.Brushes.Green),
-                    new EditingButton(EditingButton.EditingType.Pen,"Yellow",System.Windows.Media.Brushes.Yellow),
-                    new EditingButton(EditingButton.EditingType.Pen,"Orange",System.Windows.Media.Brushes.Orange),
-                    new EditingButton(EditingButton.EditingType.Pen,"White",System.Windows.Media.Brushes.White),
-                    new EditingButton(EditingButton.EditingType.Eraser,"Eraser",System.Windows.Media.Brushes.Transparent)
+                    new EditingButton(EditingButton.EditingType.Pen,"black",System.Windows.Media.Brushes.Black),
+                    new EditingButton(EditingButton.EditingType.Pen,"blue",System.Windows.Media.Brushes.Blue),
+                    new EditingButton(EditingButton.EditingType.Pen,"red",System.Windows.Media.Brushes.Red),
+                    new EditingButton(EditingButton.EditingType.Pen,"green",System.Windows.Media.Brushes.Green),
+                    new EditingButton(EditingButton.EditingType.Pen,"yellow",System.Windows.Media.Brushes.Yellow),
+                    new EditingButton(EditingButton.EditingType.Pen,"orange",System.Windows.Media.Brushes.Orange),
+                    new EditingButton(EditingButton.EditingType.Pen,"white",System.Windows.Media.Brushes.White),
+                    new EditingButton(EditingButton.EditingType.Eraser,"eraser",System.Windows.Media.Brushes.Transparent)
                 };
             populateSlidesAdvanceDictionary();
             currentPen = pens[0];
@@ -65,77 +66,77 @@ namespace PowerpointJabber
             if (backgroundPolling == null)
                 backgroundPolling = backgroundPollingTimer();
         }
-        private Timer backgroundPollingTimer()
+        private DispatcherTimer backgroundPollingTimer()
         {
-            Timer timer = new Timer(delegate
+            return new DispatcherTimer(TimeSpan.FromMilliseconds(250),DispatcherPriority.Background,delegate
             {
                 try
                 {
                     if (this == null || ThisAddIn.instance.Application == null || ThisAddIn.instance.Application.SlideShowWindows.Count < 1)
                         return;
                     var state = WindowsInteropFunctions.getAppropriateViewData();
-                    Dispatcher.Invoke((Action)delegate
+                    if (HWND == null || !((int)HWND > 0))
                     {
-                        if (HWND == null || !((int)HWND > 0))
+                        HwndSource source = (HwndSource)HwndSource.FromVisual(this);
+                        HWND = source.Handle;
+                    }
+                    if ((this.WindowState != WindowState.Minimized) != state.isVisible)
+                        this.WindowState = state.isVisible ? WindowState.Normal : WindowState.Minimized;
+                    if (!Double.IsNaN(state.X) && this.Left != state.X)
+                        this.Left = state.X;
+                    if (presenterView)
+                    {
+                        if (!Double.IsNaN(state.Y) && !Double.IsNaN(state.Height))
                         {
-                            HwndSource source = (HwndSource)HwndSource.FromVisual(this);
-                            HWND = source.Handle;
+                            var newY = (state.Y + (state.Height * 0.06));
+                            if (this.Top != newY)
+                                this.Top = newY;
                         }
-                        if ((this.WindowState != WindowState.Minimized) != state.isVisible)
-                            this.WindowState = state.isVisible ? WindowState.Normal : WindowState.Minimized;
-                        if (!Double.IsNaN(state.X) && this.Left != state.X)
-                            this.Left = state.X;
-                        if (presenterView)
+                    }
+                    else this.Top = 0;
+                    if (!Double.IsNaN(state.Height) && state.Height > 0 && ViewboxContainer.ActualHeight != state.Height)
+                        ViewboxContainer.Height = state.Height * 0.6;
+                    if (ThisAddIn.instance != null
+                        && ThisAddIn.instance.Application != null
+                        && ThisAddIn.instance.Application.ActivePresentation != null
+                        && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow != null
+                        && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View != null
+                        && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType != null
+                        && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor != null)
+                    {
+                        switch (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType)
                         {
-                            if (!Double.IsNaN(state.Y) && !Double.IsNaN(state.Height) && this.Left != state.Y)
-                                this.Top = state.Y + (state.Height * 0.06);
-                        }
-                        else this.Top = 0;
-                        if (!Double.IsNaN(state.Height) && state.Height > 0 && ViewboxContainer.ActualHeight != state.Height)
-                            ViewboxContainer.Height = state.Height * 0.6;
-                        if (ThisAddIn.instance != null
-                            && ThisAddIn.instance.Application != null
-                            && ThisAddIn.instance.Application.ActivePresentation != null
-                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow != null
-                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View != null
-                            && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor != null)
-                        {
-                            switch (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType)
-                            {
-                                case PpSlideShowPointerType.ppSlideShowPointerPen:
-                                    int currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
-                                    bool penHasBeenFound = false;
-                                    foreach (var pen in pens)
+                            case PpSlideShowPointerType.ppSlideShowPointerPen:
+                                int currentColour = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor.RGB;
+                                bool penHasBeenFound = false;
+                                foreach (var pen in pens)
+                                {
+                                    if (pen.type == EditingButton.EditingType.Pen && pen.RGBAasInt == currentColour)
                                     {
-                                        if (pen.type == EditingButton.EditingType.Pen && pen.RGBAasInt == currentColour)
-                                        {
-                                            currentPen = pen;
-                                            selectPen(pen);
-                                            penHasBeenFound = true;
-                                        }
-                                        if (!penHasBeenFound)
-                                            selectPen(null);
+                                        currentPen = pen;
+                                        selectPen(pen);
+                                        penHasBeenFound = true;
                                     }
-                                    break;
-                                case PpSlideShowPointerType.ppSlideShowPointerEraser:
-                                    foreach (var pen in pens)
-                                    {
-                                        if (pen.type == EditingButton.EditingType.Eraser)
-                                            selectPen(pen);
-                                    }
-                                    break;
-                                default:
-                                    foreach (var pen in pens)
+                                    if (!penHasBeenFound)
                                         selectPen(null);
-                                    break;
-                            }
+                                }
+                                break;
+                            case PpSlideShowPointerType.ppSlideShowPointerEraser:
+                                foreach (var pen in pens)
+                                {
+                                    if (pen.type == EditingButton.EditingType.Eraser)
+                                        selectPen(pen);
+                                }
+                                break;
+                            default:
+                                foreach (var pen in pens)
+                                    selectPen(null);
+                                break;
                         }
-                    });
+                    }
                 }
                 catch (Exception) { }
-            });
-            timer.Change(250, 250);
-            return timer;
+            },this.Dispatcher);
         }
 
         private bool shouldWorkaroundClickAdvance { get { return presenterView && !pptVersionIs2010; } }
@@ -151,7 +152,7 @@ namespace PowerpointJabber
             slides.Clear();
             foreach (Slide slide in ThisAddIn.instance.Application.ActivePresentation.Slides)
             {
-                slides.Add(new slideIndicator(slide.SlideID));
+                slides.Add(new SlideIndicator(slide.SlideID));
             }
         }
         private void setClickAdvanceOnAllSlides(bool state)
@@ -239,6 +240,11 @@ namespace PowerpointJabber
                 ThisAddIn.instance.Application.ActivePresentation.Slides.AddSlide(newSlideIndex, newSlide);
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Activate();
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(newSlideIndex);
+                var slideIndicator = new SlideIndicator(ThisAddIn.instance.Application.ActivePresentation.Slides[newSlideIndex].SlideID);
+                slides.Add(slideIndicator);
+                slideIndicator.clickAdvance = false;
+                clickAdvanceStates.Add(slideIndicator.slideId, false);
+                ReFocusPresenter();
             }
         }
         private void SwitchToMeTL(object sender, RoutedEventArgs e)
@@ -263,7 +269,6 @@ namespace PowerpointJabber
             catch (Exception) { }
         }
 
-
         public class EditingButton : DependencyObject
         {
             public EditingButton(EditingType Type, string Name, System.Windows.Media.SolidColorBrush Color)
@@ -272,6 +277,8 @@ namespace PowerpointJabber
                 name = Name;
                 type = Type;
                 generateRGBAsInt();
+                generateDrawnPenPreview();
+                generateBrushPreviewPoints();
             }
             public bool Selected
             {
@@ -292,7 +299,8 @@ namespace PowerpointJabber
             private int A { get { return penColour.Color.A; } }
             private int cachedRGBAsInt;
             private bool RGBAsIntHasBeenCached = false;
-            private void generateRGBAsInt(){
+            private void generateRGBAsInt()
+            {
                 cachedRGBAsInt = ColorTranslator.ToOle(System.Drawing.Color.FromArgb(A, R, G, B));
                 RGBAsIntHasBeenCached = true;
             }
@@ -315,7 +323,7 @@ namespace PowerpointJabber
                     switch (type)
                     {
                         case EditingType.Pen:
-                            result = "Draw with a " + penColour.ToString() + " pen.";
+                            result = "Draw with a " + name + " pen.";
                             break;
                         case EditingType.Eraser:
                             result = "Erase";
@@ -330,11 +338,20 @@ namespace PowerpointJabber
                     return result;
                 }
             }
+            private StrokeCollection cachedDrawnPenPreviewStroke;
             public StrokeCollection DrawnPenPreviewStroke
             {
                 get
                 {
-                    return new StrokeCollection(
+                    if (cachedDrawnPenPreviewStroke == null)
+                        generateDrawnPenPreview();
+                    return cachedDrawnPenPreviewStroke;
+                }
+            }
+
+            private void generateDrawnPenPreview()
+            {
+                cachedDrawnPenPreviewStroke = new StrokeCollection(
                         new[]{
                             new Stroke(
                                 new StylusPointCollection(
@@ -444,13 +461,20 @@ namespace PowerpointJabber
                             )
                         }
                     );
-                }
             }
+            private PointCollection cachedBrushPreviewPoints;
             public PointCollection BrushPreviewPoints
             {
                 get
                 {
-                    return new PointCollection{
+                    if (cachedBrushPreviewPoints == null)
+                        generateBrushPreviewPoints();
+                    return cachedBrushPreviewPoints;
+                }
+            }
+            private void generateBrushPreviewPoints()
+            {
+                cachedBrushPreviewPoints = new PointCollection{
                         new Point(100,0),
                         new Point(71,0),
                         new Point(62,12),
@@ -470,7 +494,6 @@ namespace PowerpointJabber
                         new Point(100,21),
                         new Point(100,0)
                     };
-                }
             }
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -479,9 +502,9 @@ namespace PowerpointJabber
             selectPen(pens[0]);
         }
     }
-    class slideIndicator
+    class SlideIndicator
     {
-        public slideIndicator(int Id)
+        public SlideIndicator(int Id)
         {
             slideId = Id;
         }

@@ -25,7 +25,6 @@ using Office = Microsoft.Office.Core;
 
 // For more information, see the Ribbon XML documentation in the Visual Studio Tools for Office Help.
 
-
 namespace PowerpointJabber
 {
     [ComVisible(true)]

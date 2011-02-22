@@ -41,16 +41,16 @@
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.6</ApplicationVersion>
+    <ApplicationVersion>1.0.0.9</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>days</UpdateIntervalUnits>
     <ProductName>SimplePens</ProductName>
-    <PublisherName />
+    <PublisherName>eEducation Centre</PublisherName>
     <SupportUrl />
     <FriendlyName>SimplePens</FriendlyName>
-    <OfficeApplicationDescription />
+    <OfficeApplicationDescription>This Add-in adds additional pen buttons to the slideshow windows, allowing for easier inking.</OfficeApplicationDescription>
     <LoadBehavior>3</LoadBehavior>
   </PropertyGroup>
   <ItemGroup>
@@ -310,7 +310,7 @@
       <FlavorProperties GUID="{BAA0C2D2-18E2-41B9-852F-F413020CAA33}">
         <ProjectProperties HostName="PowerPoint" HostPackage="{D2B20FF5-A6E5-47E1-90E8-463C6860CB05}" OfficeVersion="12.0" VstxVersion="4.0" ApplicationType="PowerPoint" Language="cs" TemplatesPath="VSTOTemplates" DebugInfoExeName="#Software\Microsoft\Office\12.0\PowerPoint\InstallRoot\Path#powerpnt.exe" AddItemTemplatesGuid="{147FB6A7-F239-4523-AE65-B6A4E49B361F}" />
         <Host Name="PowerPoint" GeneratedCodeNamespace="PowerpointJabber" PublishedHash="69C324AB27932AA2FBF2B7EA72250886FF164DE6" IconIndex="0">
-          <HostItem Name="ThisAddIn" Code="ThisAddIn.cs" CanonicalName="AddIn" PublishedHash="BA59258584F57A2FA72F64931D6E05F8EC0CAC2F" CanActivate="false" IconIndex="1" Blueprint="ThisAddIn.Designer.xml" GeneratedCode="ThisAddIn.Designer.cs" />
+          <HostItem Name="ThisAddIn" Code="ThisAddIn.cs" CanonicalName="AddIn" PublishedHash="50EA92EC717AD569BD932AFE2676404FB1C59CFD" CanActivate="false" IconIndex="1" Blueprint="ThisAddIn.Designer.xml" GeneratedCode="ThisAddIn.Designer.cs" />
         </Host>
       </FlavorProperties>
     </VisualStudio>
