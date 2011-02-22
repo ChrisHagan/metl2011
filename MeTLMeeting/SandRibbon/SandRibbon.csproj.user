@@ -4,7 +4,7 @@
     <PublishUrlHistory>publish\</PublishUrlHistory>
     <InstallUrlHistory>http://metl.adm.monash.edu.au/MeTL2011/|http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu.au/SpecialMeTL/|http://metl.adm.monash.edu.au/specialMeTL/|http://drawkward.adm.monash.edu/MeTLStaging/</InstallUrlHistory>
     <SupportUrlHistory>http://drawkward.adm.monash.edu/MeTL</SupportUrlHistory>
-    <UpdateUrlHistory>http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu/SpecialMeTL/|http://drawkward.adm.monash.edu/MeTLStaging/|http://drawkward.adm.monash.edu/MeTL/|http://drawkward.adm.monash.edu/MeTLDev/</UpdateUrlHistory>
+    <UpdateUrlHistory>http://metl.adm.monash.edu.au/MeTL2011/|http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu/SpecialMeTL/|http://drawkward.adm.monash.edu/MeTLStaging/|http://drawkward.adm.monash.edu/MeTL/</UpdateUrlHistory>
     <BootstrapperUrlHistory>
     </BootstrapperUrlHistory>
     <ErrorReportUrlHistory>

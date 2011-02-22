@@ -15,9 +15,9 @@
             <Grid MaxHeight="450">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition MaxWidth="325"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition MinWidth="500"/>
                 </Grid.ColumnDefinitions>
-                <ListBox x:Name="submissions" SelectionMode="Single" Background ="Transparent" 
+                <ListBox Grid.Column="0" x:Name="submissions" SelectionMode="Single" Background ="Transparent" 
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -32,15 +32,15 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <Grid Grid.Column="1">
+                <Grid x:Name="GridContainer" Grid.Column="1" Width="Auto" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                     <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Content="{Binding 
                                         ElementName=submissions, 
                                         Path=SelectedItem,
                                         Converter={x:Static SandRibbon:Converters.ExtractSubmissionAuthor}}"/>
-                    <Viewbox Margin="0,35,0,0" Stretch="Fill" MaxWidth ="600" VerticalAlignment="Top" HorizontalAlignment="Left" >
+                    <Viewbox Margin="0,35,0,0" Height="Auto" Width="{Binding ElementName=GridContainer, Path=ActualWidth}" VerticalAlignment="Top" HorizontalAlignment="Left" >
                         <Image x:Name="previewImage" Source="{Binding ElementName=submissions, Path=SelectedItem, 
-                        Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" Width="300"/>
+                        Converter={x:Static SandRibbon:Converters.ExtractUrlAndConvertConverter}}" Stretch="UniformToFill"/>
                     </Viewbox>
                 </Grid>
             </Grid>

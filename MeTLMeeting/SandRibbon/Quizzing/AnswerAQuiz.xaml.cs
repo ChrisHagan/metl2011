@@ -23,9 +23,9 @@ namespace SandRibbon.Quizzing
         public AnswerAQuiz()
         {
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
-            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(closeMe));
-            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(closeMe));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
+            Commands.PreEditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
+            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
             Closing += AnswerAQuiz_Closing;
         }
 

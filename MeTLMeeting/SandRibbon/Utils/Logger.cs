@@ -77,6 +77,7 @@ namespace SandRibbon.Utils
         {/*Interesting quirk about the formatting: \n is the windows line ending but ruby assumes
           *nix endings, which are \r.  Safest to use both, I guess.*/
             var now = SandRibbonObjects.DateTimeFactory.Now();
+            
             putCouch(appendThis, now);
         }
         private static void putCouch(string message, DateTime now) {
@@ -96,9 +97,28 @@ namespace SandRibbon.Utils
                 {
                     try
                     {
+                        string collaborationLevel;
+                        string versionNumber;
+                        try
+                        {
+                            collaborationLevel = Globals.conversationDetails.Permissions.studentCanPublish ? "Enabled" : "Disabled";
+                        }
+                        catch (Exception e)
+                        {
+                            collaborationLevel = "None";
+                        }
+                        try
+                        {
+                            versionNumber = ConfigurationProvider.instance.getMetlVersion();
+                        }
+                        catch (Exception e)
+                        {
+                            versionNumber = "Unknown";
+                        }
+                        var finalMessage = string.Format("{2} VERSION:{0}_CONVERSATIONCOLLABORATION:{1}", versionNumber, collaborationLevel, message);
                         var msg = new LogMessage
                         {
-                            content = message,
+                            content = finalMessage,
                             timestamp = now.Ticks,
                             user = Globals.me,
                             slide = Globals.location.currentSlide,

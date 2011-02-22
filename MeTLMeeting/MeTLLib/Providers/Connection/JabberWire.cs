@@ -425,6 +425,7 @@ namespace MeTLLib.Providers.Connection
             {
                 var rooms = new[]
             {
+                //may want to move name up to where global is
                 new Jid(credentials.name, metlServerAddress.muc, jid.Resource),
                 new Jid(location.activeConversation,metlServerAddress.muc,jid.Resource),
                 new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
