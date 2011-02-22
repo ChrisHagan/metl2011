@@ -143,14 +143,6 @@ namespace PowerpointJabber
             return finalList;
         }
 
-        public static void switchToMeTL()
-        {
-            var PotentialMeTLWindows = FindWindowsByCaptionWithTest((s) => s.StartsWith("MeTL") || s.EndsWith("- MeTL"));
-            if (PotentialMeTLWindows.Count > 0)
-                BringWindowToFront(PotentialMeTLWindows.FirstOrDefault().Key);
-            else
-                System.Diagnostics.Process.Start("iexplore.exe", "-extoff http://metl.adm.monash.edu.au/MeTL2011/MeTL%20Presenter.application");
-        }
         public static IntPtr presenterWindow
         {
             get
