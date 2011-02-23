@@ -167,13 +167,16 @@ namespace PowerpointJabber
             foreach (var pen in pens)
             {
                 if (pen == button)
+                {
                     pen.Selected = true;
+                }
                 else pen.Selected = false;
             }
         }
         private void Pen(object sender, RoutedEventArgs e)
         {
             var internalCurrentPen = pens.Where(c => c.name == ((FrameworkElement)sender).Tag.ToString()).FirstOrDefault();
+            Logger.Info("Pen selected by SimplePens: {0}", internalCurrentPen.name);
             switch (internalCurrentPen.type)
             {
                 case EditingButton.EditingType.Eraser:
@@ -253,6 +256,7 @@ namespace PowerpointJabber
 
         private void AddPage(object sender, RoutedEventArgs e)
         {
+            Logger.Info("Page added by SimplePens");
             CustomLayout newSlide;
             if (ThisAddIn.instance.Application.ActivePresentation.SlideMaster.CustomLayouts.Count > 0)
                 newSlide = ThisAddIn.instance.Application.ActivePresentation.SlideMaster.CustomLayouts[1];
