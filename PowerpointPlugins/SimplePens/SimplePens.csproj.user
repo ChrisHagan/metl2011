@@ -2,8 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <PublishUrlHistory>publish\</PublishUrlHistory>
-    <InstallUrlHistory>
-    </InstallUrlHistory>
+    <InstallUrlHistory>http://metl.adm.monash.edu/SimplePens/</InstallUrlHistory>
     <SupportUrlHistory />
   </PropertyGroup>
   <ProjectExtensions />
