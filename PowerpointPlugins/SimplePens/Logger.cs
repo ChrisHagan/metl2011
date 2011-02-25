@@ -3,9 +3,6 @@ using System.IO;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
-using Newtonsoft.Json;
-//using Divan;
-using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
@@ -27,59 +24,55 @@ namespace PowerpointJabber
             Logger.Log(message);
         }
     }
-    public class LogMessage //: CouchDocument
+    public class LogMessage 
     {
-        public string version;
-        public string content;
-        public long timestamp;
-        public string user;
-        public string server;
-        public int slide;
-        /*public override void WriteJson(JsonWriter writer)
+        public LogMessage()
         {
-            base.WriteJson(writer);
-            writer.WritePropertyName("version");
-            writer.WriteValue(ThisAddIn.version);
-            writer.WritePropertyName("docType");
-            writer.WriteValue("log");
-            writer.WritePropertyName("content");
-            writer.WriteValue(content);
-            writer.WritePropertyName("timestamp");
-            writer.WriteValue(timestamp);
-            writer.WritePropertyName("user");
-            writer.WriteValue(user);
-            writer.WritePropertyName("server");
-            writer.WriteValue(server);
-            writer.WritePropertyName("slide");
-            writer.WriteValue(slide);
         }
-        public override void ReadJson(JObject obj)
+        public LogMessage(string content, long timestamp, int slide, string user, string server, string version)
         {
-            base.ReadJson(obj);
-            content = obj["message"].Value<string>();
-            version = obj["version"].Value<string>();
-            timestamp = obj["timestamp"].Value<long>();
-            user = obj["user"].Value<string>();
-            server = obj["server"].Value<string>();
-            slide = obj["slide"].Value<int>();
-        }*/
+            Content = content;
+            Timestamp = timestamp;
+            Slide = slide;
+            User = user;
+            Server = server;
+            Version = version;
+        }
+        public string Version;
+        public string Content; 
+        public long Timestamp; 
+        public string User; 
+        public string Server; 
+        public int Slide;
+        public string JSON
+        {
+            get
+            {
+                return "{\"version\" : \"" + Version + "\""
+                    + ", \"content\" : \"" + Content + "\""
+                    + ", \"Timestamp\" : " + Timestamp
+                    + ", \"User\" : \"" + User + "\""
+                    + ", \"Server\" : \"" + Server + "\""
+                    + ", \"Slide\" : " + Slide +"}";
+            }
+        }
     }
     public class Logger
     {
-        public static string log = "SimplePens Log\r\n";
         public static readonly string POST_LOG = "http://madam.adm.monash.edu.au:5984/simplepens_log";
-    //    private static CouchServer server = new CouchServer("madam.adm.monash.edu.au", 5984);
-        private static readonly string DB_NAME = "simplepens_log";
-    //    private static ICouchDatabase db;
+        private static WebClient client()
+        {
+            var client = new WebClient();
+            client.Encoding = Encoding.UTF8;
+            client.Headers = new WebHeaderCollection();
+            client.Headers.Add("Content-Type: application/json");
+            return client;
+        }
+        private static Uri couchServer = new Uri(POST_LOG);
         private static string[] LogExceptions = new[] {
                 "powerpnt.exe Information: 0 :"};
         public static void StartLogger()
         {
-            try
-            {
-                checkDb();
-            }
-            catch (Exception) { }
             safetyQueue();
             Trace.Listeners.Add(new CouchTraceListener());
         }
@@ -92,11 +85,6 @@ namespace PowerpointJabber
                         safetyQueue();
                     });
             backgroundUploadTimer.Change(60000, 60000);
-        }
-        private static void checkDb()
-        {
-//            if (db == null)
-  //              db = server.GetDatabase(DB_NAME);
         }
         public static void Info(string message)
         {
@@ -129,21 +117,20 @@ namespace PowerpointJabber
         }
         private static void putCouch(LogMessage message)
         {
-            ThreadPool.QueueUserWorkItem(delegate
+            try
             {
-                try
-                {
-                    checkDb();
-    //                db.SaveArbitraryDocument<LogMessage>(message);
-                }
-                catch (Exception e)
-                {
-                    saveToQueue(message);
-                }
-            });
+                client().UploadStringAsync(couchServer, message.JSON);
+            }
+            catch (Exception)
+            {
+                saveToQueue(message);
+            }
         }
         private static void putCouch(string message, DateTime now)
         {
+            if (String.IsNullOrEmpty(message)) return;
+            if (message.Contains(POST_LOG)) return;
+            if (LogExceptions.Any(prefix => message.StartsWith(prefix))) return;
             var name = (ThisAddIn.instance == null
                 || ThisAddIn.instance.Application == null
                 || String.IsNullOrEmpty(ThisAddIn.instance.Application.Name)) ? "unknown" : ThisAddIn.instance.Application.Name;
@@ -153,17 +140,11 @@ namespace PowerpointJabber
                 || ThisAddIn.instance.Application.ActivePresentation == null
                 || ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow == null
                 || ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View == null) ? 0 : ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition;
-            if (String.IsNullOrEmpty(message)) return;
-            if (message.Contains(POST_LOG)) return;
-            if (LogExceptions.Any(prefix => message.StartsWith(prefix))) return;
-            var msg = new LogMessage
-            {
-                content = message,
-                timestamp = now.Ticks,
-                user = name,
-                slide = currentPosition,
-                server = "noServer - SimplePens"
-            };
+            string pptVersion = (ThisAddIn.instance == null
+                || ThisAddIn.instance.Application == null
+                || String.IsNullOrEmpty(ThisAddIn.instance.Application.Version)) ? "unknown PowerPoint version" : ThisAddIn.instance.Application.Version;
+            string version = ThisAddIn.version;
+            var msg = new LogMessage(message,now.Ticks,currentPosition,name,pptVersion,version);
             putCouch(msg);
         }
         private static List<LogMessage> MessageQueue = new List<LogMessage>();
@@ -197,17 +178,14 @@ namespace PowerpointJabber
         }
         private static void tryToResendMessageQueue()
         {
-//            if (db != null)
-//            {
-                List<LogMessage> tempQueue = new List<LogMessage>();
-                while (MessageQueue.Count > 0)
-                {
-                    tempQueue.Add((LogMessage)MessageQueue[0]);
-                    MessageQueue.RemoveAt(0);
-                }
-                foreach (LogMessage msg in tempQueue)
-                    putCouch(msg);
-//            }
+            List<LogMessage> tempQueue = new List<LogMessage>();
+            while (MessageQueue.Count > 0)
+            {
+                tempQueue.Add((LogMessage)MessageQueue[0]);
+                MessageQueue.RemoveAt(0);
+            }
+            foreach (LogMessage msg in tempQueue)
+                putCouch(msg);
         }
         private static void saveRemainingMessageQueueToDisk()
         {

@@ -94,7 +94,6 @@ namespace PowerpointJabber
                         && ThisAddIn.instance.Application.ActivePresentation != null
                         && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow != null
                         && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View != null
-                        && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType != null
                         && ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerColor != null)
                     {
                         switch (ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.PointerType)
@@ -176,7 +175,7 @@ namespace PowerpointJabber
         private void Pen(object sender, RoutedEventArgs e)
         {
             var internalCurrentPen = pens.Where(c => c.name == ((FrameworkElement)sender).Tag.ToString()).FirstOrDefault();
-            Logger.Info("Pen selected by SimplePens: {0}", internalCurrentPen.name);
+            Logger.Info("{0} pen selected by SimplePens", internalCurrentPen.name);
             switch (internalCurrentPen.type)
             {
                 case EditingButton.EditingType.Eraser:
