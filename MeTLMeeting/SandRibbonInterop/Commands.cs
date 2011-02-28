@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
@@ -323,18 +324,25 @@ namespace SandRibbon
                 command.Execute(arg);
         }
         public static void RegisterCommandToDispatcher<T>(this CompositeCommand command, DelegateCommand<T> handler) {
-            var dispatcher = Application.Current.Dispatcher; 
-            command.RegisterCommand(new DelegateCommand<T>(arg=>{
-                if (!dispatcher.CheckAccess())
-                    dispatcher.Invoke((Action)delegate
-                    {
-                        if (handler.CanExecute(arg))
-                            handler.Execute(arg);
-                    });
-                else
-                    if (handler.CanExecute(arg))
-                        handler.Execute(arg);
-                }, handler.CanExecute));
+            var dispatcher = Application.Current.Dispatcher;
+            command.RegisterCommand(new DelegateCommand<T>(arg =>
+                                   {
+                                       try
+                                       {
+                                           if (!dispatcher.CheckAccess())
+                                               dispatcher.Invoke((Action)delegate
+                                                                              {
+                                                                                  if ( handler.CanExecute(arg)) handler.Execute (arg);
+                                                                              });
+                                           else if (handler.CanExecute(arg))
+                                               handler.Execute(arg);
+                                       }
+                                       catch (Exception e)
+                                       {
+                                           Trace.TraceError("CRASH: fixed EXCEPTION:{0} INNER:{1}", e, e.InnerException);
+                                       }
+                                   }
+                               , handler.CanExecute));
         } 
     }
 }

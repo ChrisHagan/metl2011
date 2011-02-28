@@ -528,15 +528,23 @@ namespace SandRibbon.Utils
                         addPublicText(xSlide, shape, "public", Magnification);
                     else
                     {
-                        shape.Export(file, PpShapeFormat.ppShapeFormatPNG, backgroundWidth, backgroundHeight, exportMode);
-                        xSlide.Add(new XElement("shape",
-                            new XAttribute("x", x * Magnification),
-                            new XAttribute("y", y * Magnification),
-                            new XAttribute("height", shape.Height * Magnification),
-                            new XAttribute("width", shape.Width * Magnification),
-                            new XAttribute("privacy", "public"),
-                            new XAttribute("background", false),
-                            new XAttribute("snapshot", file)));
+                        try
+                        {
+                            shape.Export(file, PpShapeFormat.ppShapeFormatPNG, backgroundWidth, backgroundHeight,
+                                         exportMode);
+                            xSlide.Add(new XElement("shape",
+                                                    new XAttribute("x", x * Magnification),
+                                                    new XAttribute("y", y * Magnification),
+                                                    new XAttribute("height", shape.Height * Magnification),
+                                                    new XAttribute("width", shape.Width * Magnification),
+                                                    new XAttribute("privacy", "public"),
+                                                    new XAttribute("background", false),
+                                                    new XAttribute("snapshot", file)));
+                        }
+                        catch (COMException e)
+                        {
+                           //such a bad shape, didn't export gracefully, Continue looping through others. 
+                        }
                     }
                 }
                 else
@@ -547,15 +555,22 @@ namespace SandRibbon.Utils
                         addPublicText(xSlide, shape, "public", Magnification);
                     else
                     {
-                        shape.Export(file, exportFormat, backgroundWidth, backgroundHeight, exportMode);
-                        xSlide.Add(new XElement("shape",
-                            new XAttribute("x", x * Magnification),
-                            new XAttribute("y", y * Magnification),
-                            new XAttribute("height", shape.Height * Magnification),
-                            new XAttribute("width", shape.Width * Magnification),
-                            new XAttribute("privacy", "public"),
-                            new XAttribute("background", false),
-                            new XAttribute("snapshot", file)));
+                        try
+                        {
+                            shape.Export(file, exportFormat, backgroundWidth, backgroundHeight, exportMode);
+                            xSlide.Add(new XElement("shape",
+                                                    new XAttribute("x", x * Magnification),
+                                                    new XAttribute("y", y * Magnification),
+                                                    new XAttribute("height", shape.Height * Magnification),
+                                                    new XAttribute("width", shape.Width * Magnification),
+                                                    new XAttribute("privacy", "public"),
+                                                    new XAttribute("background", false),
+                                                    new XAttribute("snapshot", file)));
+                        }
+                        catch (COMException)
+                        {
+
+                        }
                     }
                 }
         }

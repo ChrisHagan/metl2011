@@ -78,77 +78,94 @@ namespace SandRibbon.Components.Canvas
         }
         private void updateStyling(TextInformation info)
         {
-            currentColor = info.color;
-            currentFamily = info.family;
-            currentSize = info.size;
-            if (myTextBox != null)
+            try
             {
-                var caret = myTextBox.CaretIndex;
-                var currentTextBox = Clone(myTextBox);
-                var oldInfo = getInfoOfBox(currentTextBox);
 
-                Action undo = () =>
-                                  {
-                                      ClearAdorners();
-                                      var currentInfo = oldInfo;
-                                      var activeTextbox = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
-                                      activeTextbox.TextChanged -= SendNewText;
-                                      applyStylingTo(activeTextbox, currentInfo);
-                                      Commands.TextboxFocused.ExecuteAsync(currentInfo);
-                                      addAdorners();
-                                      sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
-                                      activeTextbox.TextChanged += SendNewText;
-                                  };
-                Action redo = () =>
-                                  {
-                                      ClearAdorners();
-                                      var currentInfo = info;
-                                      var activeTextbox = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
-                                      activeTextbox.TextChanged -= SendNewText;
-                                      applyStylingTo(activeTextbox, currentInfo);
-                                      Commands.TextboxFocused.ExecuteAsync(currentInfo);
-                                      addAdorners();
-                                      sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
-                                      activeTextbox.TextChanged += SendNewText;
-                                     
-                                  };
-                UndoHistory.Queue(undo, redo);
-                redo();
-                myTextBox.GotFocus -= textboxGotFocus;
-                myTextBox.CaretIndex = caret;
-                myTextBox.Focus();
-                myTextBox.GotFocus += textboxGotFocus;
+                currentColor = info.color;
+                currentFamily = info.family;
+                currentSize = info.size;
+                if (myTextBox != null)
+                {
+                    var caret = myTextBox.CaretIndex;
+                    var currentTextBox = Clone(myTextBox);
+                    var oldInfo = getInfoOfBox(currentTextBox);
+
+                    Action undo = () =>
+                                      {
+                                          ClearAdorners();
+                                          var currentInfo = oldInfo;
+                                          var activeTextbox =
+                                              ((MeTLTextBox)
+                                               Children.ToList().Where(
+                                                   c => ((MeTLTextBox)c).tag().id == currentTextBox.tag().id).
+                                                   FirstOrDefault());
+                                          activeTextbox.TextChanged -= SendNewText;
+                                          applyStylingTo(activeTextbox, currentInfo);
+                                          Commands.TextboxFocused.ExecuteAsync(currentInfo);
+                                          addAdorners();
+                                          sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
+                                          activeTextbox.TextChanged += SendNewText;
+                                      };
+                    Action redo = () =>
+                                      {
+                                          ClearAdorners();
+                                          var currentInfo = info;
+                                          var activeTextbox =
+                                              ((MeTLTextBox)
+                                               Children.ToList().Where(
+                                                   c => ((MeTLTextBox)c).tag().id == currentTextBox.tag().id).
+                                                   FirstOrDefault());
+                                          activeTextbox.TextChanged -= SendNewText;
+                                          applyStylingTo(activeTextbox, currentInfo);
+                                          Commands.TextboxFocused.ExecuteAsync(currentInfo);
+                                          addAdorners();
+                                          sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
+                                          activeTextbox.TextChanged += SendNewText;
+
+                                      };
+                    UndoHistory.Queue(undo, redo);
+                    redo();
+                    myTextBox.GotFocus -= textboxGotFocus;
+                    myTextBox.CaretIndex = caret;
+                    myTextBox.Focus();
+                    myTextBox.GotFocus += textboxGotFocus;
+                }
+                else if (GetSelectedElements().Count > 0)
+                {
+                    var originalElements = GetSelectedElements().ToList().Select(tb => Clone((MeTLTextBox)tb));
+                    Action undo = () =>
+                                      {
+                                          ClearAdorners();
+                                          foreach (var originalElement in originalElements)
+                                          {
+                                              dirtyTextBoxWithoutHistory(originalElement);
+                                              sendTextWithoutHistory(originalElement, originalElement.tag().privacy);
+                                          }
+                                          addAdorners();
+                                      };
+                    Action redo = () =>
+                                      {
+                                          ClearAdorners();
+                                          var ids = originalElements.Select(b => b.tag().id);
+                                          var selection =
+                                              Children.ToList().Where(b => ids.Contains(((MeTLTextBox)b).tag().id));
+                                          foreach (MeTLTextBox currentTextBox in selection)
+                                          {
+                                              applyStylingTo(currentTextBox, info);
+                                              sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
+                                          }
+                                          addAdorners();
+                                      };
+                    UndoHistory.Queue(undo, redo);
+                    redo();
+
+                }
             }
-            else if(GetSelectedElements().Count > 0)
+            catch (Exception e)
             {
-                var originalElements = GetSelectedElements().ToList().Select(tb => Clone((MeTLTextBox)tb));
-                Action undo = () =>
-                                  {
-                                      ClearAdorners();
-                                      foreach (var originalElement in originalElements)
-                                      {
-                                         dirtyTextBoxWithoutHistory(originalElement);
-                                         sendTextWithoutHistory(originalElement, originalElement.tag().privacy);
-                                      }
-                                      addAdorners();
-                                  };
-                Action redo = () =>
-                                  {
-                                      ClearAdorners();
-                                      var ids = originalElements.Select(b => b.tag().id);
-                                      var selection = Children.ToList().Where(b => ids.Contains(((MeTLTextBox)b).tag().id));
-                                      foreach (MeTLTextBox currentTextBox in selection)
-                                      {
-                                          applyStylingTo(currentTextBox, info);
-                                          sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
-                                      }
-                                      addAdorners();
-                                  };
-                UndoHistory.Queue(undo, redo);
-                redo();
-
+                Logger.Fixed(string.Format("There was an ERROR:{0} INNER:{1}, it is now fixed", e, e.InnerException));
             }
-        
+
         }
         private static void applyStylingTo(MeTLTextBox currentTextBox, TextInformation info)
         {

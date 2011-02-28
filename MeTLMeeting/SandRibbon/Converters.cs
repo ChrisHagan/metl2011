@@ -506,8 +506,15 @@ namespace SandRibbon
 
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var list = ((ObservableCollection<MeTLLib.DataTypes.QuizQuestion>)values[1]);
-            return string.Format("Quiz: {0}", list.IndexOf((MeTLLib.DataTypes.QuizQuestion)values[0]) + 1);
+            try
+            {
+                var list = ((ObservableCollection<MeTLLib.DataTypes.QuizQuestion>)values[1]);
+                return string.Format("Quiz: {0}", list.IndexOf((MeTLLib.DataTypes.QuizQuestion)values[0]) + 1);
+            }
+            catch (Exception e)
+            {
+                return "Unknown";
+            }
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
