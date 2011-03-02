@@ -15,7 +15,8 @@
     Closing="ribbonWindow_Closing"
     WindowState="Maximized"
     MinHeight="240"
-    MinWidth="320">
+    MinWidth="320"
+    Appearance="Office2007Blue">
     <sr:RibbonWindow.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ZoomIn}" CanExecute="canZoomIn" Executed="doZoomIn" />
         <CommandBinding Command="{x:Static api:Commands.ZoomOut}" CanExecute="canZoomOut" Executed="doZoomOut" />
