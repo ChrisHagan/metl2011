@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PublishUrlHistory>publish\</PublishUrlHistory>
     <InstallUrlHistory>http://metl.adm.monash.edu/SimplePens/</InstallUrlHistory>
-    <SupportUrlHistory />
+    <SupportUrlHistory>http://monash.edu/eeducation</SupportUrlHistory>
   </PropertyGroup>
   <ProjectExtensions />
 </Project>

@@ -39,10 +39,11 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <VSTO_TrustAssembliesLocation>true</VSTO_TrustAssembliesLocation>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <BootstrapperComponentsLocation>Relative</BootstrapperComponentsLocation>
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl>http://metl.adm.monash.edu/SimplePens/</InstallUrl>
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.16</ApplicationVersion>
+    <ApplicationVersion>1.0.0.24</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
@@ -161,7 +162,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>SimplePens.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>eEducation.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <!--
     This section specifies references for the project.
@@ -242,6 +243,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="eEducation.pfx" />
     <None Include="ms_auth.cer" />
     <None Include="PowerpointJabber_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
