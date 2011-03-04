@@ -1,13 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{68C42447-99FE-4477-A2AF-CC46212F85AA}"
-	ProjectSection(SolutionItems) = preProject
-		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
-		SandRibbon1.vsmdi = SandRibbon1.vsmdi
-		SandRibbon2.vsmdi = SandRibbon2.vsmdi
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbon", "SandRibbon\SandRibbon.csproj", "{0213D150-6485-4F40-AF80-5AC5E8BB10CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbonInterop", "SandRibbonInterop\SandRibbonInterop.csproj", "{936C46AC-5A2F-4476-A89C-52537260DBE4}"

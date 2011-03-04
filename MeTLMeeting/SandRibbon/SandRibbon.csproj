@@ -28,6 +28,7 @@
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -53,7 +54,6 @@
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -80,7 +80,7 @@
     <Reference Include="Divan">
       <HintPath>lib\Divan.dll</HintPath>
     </Reference>
-    <Reference Include="Divelements.SandRibbon, Version=1.1.7.2, Culture=neutral, PublicKeyToken=75b7ec17dd7c14c3, processorArchitecture=MSIL">
+    <Reference Include="Divelements.SandRibbon, Version=2.0.1.2, Culture=neutral, PublicKeyToken=75b7ec17dd7c14c3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Divelements.SandRibbon.dll</HintPath>
     </Reference>
@@ -335,6 +335,14 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tabs\Participate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tabs\Groups\Live.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -684,11 +692,17 @@
     <Compile Include="Tabs\Attachments.xaml.cs">
       <DependentUpon>Attachments.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Groups\Live.xaml.cs">
+      <DependentUpon>Live.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\Groups\PrivacyToolsHost.xaml.cs">
       <DependentUpon>PrivacyToolsHost.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Groups\EditingOptions.xaml.cs">
       <DependentUpon>EditingOptions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Participate.xaml.cs">
+      <DependentUpon>Participate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Submissions.xaml.cs">
       <DependentUpon>Submissions.xaml</DependentUpon>

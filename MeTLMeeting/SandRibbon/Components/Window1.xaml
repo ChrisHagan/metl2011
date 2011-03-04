@@ -48,6 +48,7 @@
         <chrome:StatusBar Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}"/>
     </sr:RibbonWindow.StatusBar>
     <Grid>
+        <MediaElement x:Name="player" Height="1" Width="1" Visibility="Hidden"/>
         <Grid x:Name="EffectRoot">
             <Grid x:Name="columns">
                 <Grid.ColumnDefinitions>

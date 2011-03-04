@@ -134,6 +134,8 @@ namespace SandRibbon
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
+
+            Commands.ListenToAudio.RegisterCommand(new DelegateCommand<int>(ListenToAudio));
    
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
@@ -146,6 +148,16 @@ namespace SandRibbon
             ribbon.Loaded += ribbon_Loaded;
             WorkspaceStateProvider.RestorePreviousSettings();
             CommandManager.InvalidateRequerySuggested();
+            player.LoadedBehavior = MediaState.Manual;
+            player.Loaded += playMedia;
+        }
+        private void playMedia(object sender, EventArgs e)
+        {
+            player.Position = new TimeSpan(0, 0, 0);
+            player.Play();
+        }
+        private void ListenToAudio(int jid) { 
+            player.Source = new Uri("http://radar.adm.monash.edu:8500/stream.m3u");
         }
         private void SetLayer(object layer) {
             Trace.TraceInformation("SelectedMode {0}", layer);
@@ -982,6 +994,7 @@ namespace SandRibbon
                             tabs.Add(new Tabs.Quizzes());
                             tabs.Add(new Tabs.Submissions());
                             tabs.Add(new Tabs.Attachments());
+                            tabs.Add(new Participate());
                             homeGroups.Add(new EditingModes());
                             break;
                         case 2:
@@ -991,8 +1004,6 @@ namespace SandRibbon
                             homeGroups.Add(new MiniMap());
                             break;
                         case 3:
-                            //homeGroups.Add(new SandRibbon.Tabs.Groups.Friends());
-                            //homeGroups.Add(new Notes());
                             homeGroups.Add(new PrivacyToolsHost());
                             break;
                         case 4:
