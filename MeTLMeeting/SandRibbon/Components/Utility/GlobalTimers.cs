@@ -17,7 +17,8 @@ namespace SandRibbon.Components.Utility
             if(SyncTimer == null)
                 SyncTimer = new Timer(delegate
                                           {
-                                              timedActions.Last()();
+                                              if(timedActions.Count() > 0)
+                                                  timedActions.Last()();
                                               timedActions = new List<Action>();
                                               SyncTimer = null;
                                           },null, 500, Timeout.Infinite );
