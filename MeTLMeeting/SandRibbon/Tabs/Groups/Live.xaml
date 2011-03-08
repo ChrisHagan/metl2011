@@ -8,5 +8,6 @@
     x:Class="SandRibbon.Tabs.Groups.Live">
     <dict:RibbonPanel>
         <dict:Button x:Name="live" ToolTip="{StaticResource FriendsToolTip}" Text="Listen" Icon="\Resources\friendsplaceholder.png" Click="Participate_Click"/>
+        <dict:CheckBox x:Name="send" Text="Talk" Click="send_Checked"/>
     </dict:RibbonPanel>
 </UserControl>    

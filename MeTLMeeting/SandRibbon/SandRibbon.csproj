@@ -145,6 +145,7 @@
     <Reference Include="System.ServiceModel">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Speech" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -816,6 +817,18 @@
     <Compile Include="Utils\CursorExtensions.cs" />
     <Compile Include="Utils\CursorHelper.cs" />
     <Compile Include="Utils\Logger.cs" />
+    <Compile Include="Utils\MicrophoneSender.cs" />
+    <Compile Include="Utils\Microphone\Native\MMSYSERR.cs" />
+    <Compile Include="Utils\Microphone\Native\WavConstants.cs" />
+    <Compile Include="Utils\Microphone\Native\WAVEFORMATEX.cs" />
+    <Compile Include="Utils\Microphone\Native\WAVEHDR.cs" />
+    <Compile Include="Utils\Microphone\Native\WAVEOUTCAPS.cs" />
+    <Compile Include="Utils\Microphone\Native\WavFormat.cs" />
+    <Compile Include="Utils\Microphone\Native\WavMethods.cs" />
+    <Compile Include="Utils\Microphone\WaveIn.cs" />
+    <Compile Include="Utils\Microphone\WaveOut.cs" />
+    <Compile Include="Utils\Microphone\WavInDevice.cs" />
+    <Compile Include="Utils\Microphone\WavOutDevice.cs" />
     <Compile Include="Utils\OverlayAdorner.cs" />
     <Compile Include="Utils\PowerPointLoader.cs" />
     <Compile Include="Providers\ResourceUploader.cs" />
@@ -1133,6 +1146,26 @@
       <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="SpeechLib">
+      <Guid>{C866CA3A-32F7-11D2-9602-00C04F8EE628}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>4</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Media;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Tabs.Groups
 {
@@ -27,6 +28,18 @@ namespace SandRibbon.Tabs.Groups
         {
             if(Globals.location.currentSlide != 0)
                 Commands.ListenToAudio.Execute(Slide.ConversationFor(Globals.location.currentSlide));
+        }
+
+        private void send_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox && ((CheckBox)sender).IsChecked == true)
+            {
+                MicrophoneSender.startSending();
+            }
+            else
+            {
+                MicrophoneSender.stopSending();
+            }
         }
     }
 }
