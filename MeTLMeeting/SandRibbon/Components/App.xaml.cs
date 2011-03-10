@@ -38,6 +38,7 @@ namespace SandRibbon
     {
         public static NetworkController controller;
         public static bool isStaging = false;
+        public static bool isExternal = false; 
         public static DateTime AccidentallyClosing = DateTime.Now;
         public static Credentials Login(String username, String password)
         {
@@ -63,6 +64,8 @@ namespace SandRibbon
                     }
                 }
             }
+            if (username.ToLower().StartsWith("ext-"))
+                isExternal = true;
             if (controller == null)
                 controller = new NetworkController();
             else

@@ -26,10 +26,15 @@ namespace SandRibbon.Components
         }
         public void switchServer()
         {
-            if (App.isStaging)
-                client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
+            if (App.isExternal)
+                client = MeTLLib.ClientFactory.Connection(new CivicServerAddress());
             else
-                client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
+            {
+                if (App.isStaging)
+                    client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
+                else
+                    client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
+            }
             Constants.JabberWire.SERVER = client.server.host;
         }
         #region commands
