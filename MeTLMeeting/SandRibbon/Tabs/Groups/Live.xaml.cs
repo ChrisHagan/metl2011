@@ -34,11 +34,14 @@ namespace SandRibbon.Tabs.Groups
         {
             if (sender is CheckBox && ((CheckBox)sender).IsChecked == true)
             {
-                MicrophoneSender.startSending();
+                var isSending = MicrophoneSender.startSending();
+                if (!isSending) ((CheckBox)sender).IsChecked = false;
+                else ((CheckBox)sender).IsChecked = true;
             }
             else
             {
                 MicrophoneSender.stopSending();
+                ((CheckBox)sender).IsChecked = false;
             }
         }
     }
