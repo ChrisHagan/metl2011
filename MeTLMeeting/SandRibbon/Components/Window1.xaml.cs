@@ -150,14 +150,15 @@ namespace SandRibbon
             CommandManager.InvalidateRequerySuggested();
             player.LoadedBehavior = MediaState.Manual;
             player.Loaded += playMedia;
+            //player.MediaOpened += playMedia;
         }
         private void playMedia(object sender, EventArgs e)
         {
             player.Position = new TimeSpan(0, 0, 0);
             player.Play();
         }
-        private void ListenToAudio(int jid) { 
-            player.Source = new Uri("http://radar.adm.monash.edu:8500/stream.m3u");
+        private void ListenToAudio(int jid) {
+            player.Source = new Uri("http://radar.adm.monash.edu:8500/MeTLStream1.m3u");
         }
         private void SetLayer(object layer) {
             Trace.TraceInformation("SelectedMode {0}", layer);

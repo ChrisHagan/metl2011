@@ -966,6 +966,9 @@
     <Resource Include="Resources\Edit.png" />
     <Resource Include="Resources\Logout.png" />
     <Resource Include="Resources\Collaborate.png" />
+    <Content Include="lame_enc.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\empty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
