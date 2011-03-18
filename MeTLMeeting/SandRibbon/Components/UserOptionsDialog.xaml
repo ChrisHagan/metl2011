@@ -15,6 +15,7 @@
         <Grid DockPanel.Dock="Bottom" Margin="20">
             <Button Click="Reset" HorizontalAlignment="Left">Reset to defaults</Button>
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button Click="CycleRibbonAppearance">CycleRibbonAppearance</Button>
                 <Button Click="Apply">Apply</Button>
                 <Button Click="Cancel">Cancel</Button>
             </StackPanel>

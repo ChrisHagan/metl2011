@@ -39,6 +39,37 @@
         <sr:Ribbon x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" 
                    PreviewMouseDoubleClick="ApplicationPopup_PreviewMouseDoubleClick"
                    ApplicationButtonImage="\Resources\MeTLNewIcon.png">
+            <sr:Ribbon.ApplicationPopup>
+                <sr:ApplicationPopup 
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="clr-namespace:System;assembly=mscorlib"
+    OptionsText="Options" ExitText="Quit MeTL" ShowOptions="ApplicationPopup_ShowOptions"
+    x:Name="RibbonApplicationPopup"
+                    >
+                    <sr:ApplicationPopup.Resources>
+                        <core:Double x:Key="imageSide">100</core:Double>
+                    </sr:ApplicationPopup.Resources>
+                    <sr:ApplicationPopup.RecentDocumentsControl>
+                        <StackPanel Width="350">
+                            <Grid>
+                                <quiz:GoldPlaque/>
+                                <TextBlock Margin="20,4,4,4" FontSize="14" FontFamily="Verdana" FontWeight="Bold" Text="Recent conversations" />
+                            </Grid>
+                            <components:SimpleConversationSelector x:Name="recentDocuments" />
+                        </StackPanel>
+                    </sr:ApplicationPopup.RecentDocumentsControl>
+                    <sr:MenuItem Text="Create new" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.CreateBlankConversation}"/>
+                    <sr:MenuItem Text="Import PowerPoint" ToolTip="{StaticResource CreatePowerpointToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
+                    <sr:MenuItem Text="Search" ToolTip="{StaticResource SearchConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
+                    <sr:MenuItem Text="My Conversations" ToolTip="{StaticResource SearchMyConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
+                    <sr:MenuItem Text="Print" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{StaticResource PrintConversationToolTip}" />
+                    <sr:MenuItem Text="Logout and Exit" ToolTip="{StaticResource LogoutMeTLToolTip}" Command="{x:Static api:Commands.LogOut}"/>
+                </sr:ApplicationPopup>
+            </sr:Ribbon.ApplicationPopup>
             <sr:Ribbon.ToolBar>
                 <chrome:ToolBar />
             </sr:Ribbon.ToolBar>
@@ -80,22 +111,22 @@
                     </AdornerDecorator>
                 </Grid>
                 <GridSplitter x:Name="slidesGridsplitter" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="10" />
-                    <Grid Grid.Column="4" x:Name="rightDrawer">
-                        <!--components:Drawer/-->
-                        <components:SlideDisplay x:Name="slides" />
-                    </Grid>
+                <Grid Grid.Column="4" x:Name="rightDrawer">
+                    <!--components:Drawer/-->
+                    <components:SlideDisplay x:Name="slides" />
                 </Grid>
+            </Grid>
             <Grid x:Name="TutorialLayer" Visibility="Collapsed" IsHitTestVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-90,0,0" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" >
-                    <components:Tutorial />
-                </Grid>
+                <components:Tutorial />
             </Grid>
-            <Grid x:Name="loginParent">
-                <components:ConversationSearchBox x:Name="currentConversationSearchBox" Visibility="Collapsed"/>
-                <my:ProgressDialog Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" />
-                <components:Login x:Name="login"/>
-            </Grid>
-            <Canvas Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">
-                <StackPanel x:Name="ProgressDisplay" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Canvas>
         </Grid>
+        <Grid x:Name="loginParent">
+            <components:ConversationSearchBox x:Name="currentConversationSearchBox" Visibility="Collapsed"/>
+            <my:ProgressDialog Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" />
+            <components:Login x:Name="login"/>
+        </Grid>
+        <Canvas Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">
+            <StackPanel x:Name="ProgressDisplay" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Canvas>
+    </Grid>
 </sr:RibbonWindow>

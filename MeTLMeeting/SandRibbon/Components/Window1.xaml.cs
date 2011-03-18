@@ -139,6 +139,7 @@ namespace SandRibbon
    
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
+            Commands.SetRibbonAppearance.RegisterCommandToDispatcher(new DelegateCommand<RibbonAppearance>(SetRibbonAppearance));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding));
             adornerScroll.scroll = scroll;
@@ -151,6 +152,43 @@ namespace SandRibbon
             player.LoadedBehavior = MediaState.Manual;
             player.Loaded += playMedia;
             //player.MediaOpened += playMedia;
+            RibbonApplicationPopup.Opened += ApplicationButtonPopup_Opened;
+            RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
+        }
+        private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
+        {
+            Trace.TraceInformation("ApplicationButtonPopup_Closed");
+            Commands.SetTutorialVisibility.ExecuteAsync(Visibility.Collapsed);
+        }
+        private void ApplicationButtonPopup_Opened(object sender, EventArgs e)
+        {
+            if (ribbon.Tabs.Count < 1)
+                    RibbonApplicationPopup.IsOpen = false;
+            Trace.TraceInformation("ApplicationButtonPopup_Opened");
+            Commands.SetTutorialVisibility.ExecuteAsync(Visibility.Visible);
+        }
+        #region helpLinks
+        private void OpenEULABrowser(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://metl.adm.monash.edu.au/MeTL/docs/tabletSupport/MLS_UserAgreement.html");
+        }
+        private void OpenTutorialBrowser(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://metl.adm.monash.edu.au/MeTL/docs/tabletSupport/MLS_Tutorials.html");
+        }
+        private void OpenReportBugBrowser(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://metl.adm.monash.edu.au/MeTL/docs/report_a_bug.html");
+        }
+        private void OpenAboutMeTLBrowser(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://www.monash.edu.au/eeducation/myls2010/students/resources/software/metl/");
+        }
+        #endregion
+        private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
+        {
+            Trace.TraceInformation("UserOptionsDialog_Show");
+            new UserOptionsDialog().Show();
         }
         private void playMedia(object sender, EventArgs e)
         {
@@ -167,6 +205,10 @@ namespace SandRibbon
         {
             if(loader == null) loader = new PowerPointLoader();
             loader.ImportPowerpoint();
+        }
+        private void SetRibbonAppearance(RibbonAppearance appearance)
+        {
+            Appearance = appearance;
         }
         private void createBlankConversation(object obj)
         {
@@ -999,7 +1041,7 @@ namespace SandRibbon
                             homeGroups.Add(new EditingModes());
                             break;
                         case 2:
-                            ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
+                            //ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
                             RHSDrawerDefinition.Width = new GridLength(180);
                             homeGroups.Add(new ZoomControlsHost());
                             homeGroups.Add(new MiniMap());

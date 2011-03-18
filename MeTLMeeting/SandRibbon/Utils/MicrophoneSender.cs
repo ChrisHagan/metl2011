@@ -18,7 +18,7 @@ namespace SandRibbon.Utils
         //This is where we decide upon the microphone.  We may need to find a better way of finding a microphone than just choosing the first to contain "Mic".
         private static WaveIn microphoneDevice;
         private static readonly Microphone.Native.WavInDevice RawMicrophoneDevice = WaveIn.Devices.Where(s => s.Name.Contains("Mic")).FirstOrDefault();
-        
+
         //We support streaming over two different protocols.  We prefer icecast - it allows us to dynamically set mountpoints.  If we have to use shoutcast, we'll have to build a mount-pool, and perform pool-management, on the server side.
         private enum Protocols { Shoutcast, Icecast };
         private static Protocols Protocol = Protocols.Icecast;
@@ -184,9 +184,16 @@ namespace SandRibbon.Utils
         private static byte[] transcode(byte[] buffer)
         {
             MemoryStream outputStream = new MemoryStream();
-            var writer = new Yeti.MMedia.Mp3.Mp3Writer(outputStream, inputFormat, mp3Format);
-            writer.Write(buffer);
-            writer.Flush();
+            try
+            {
+                var writer = new Yeti.MMedia.Mp3.Mp3Writer(outputStream, inputFormat, mp3Format);
+                writer.Write(buffer);
+                writer.Flush();
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Exception in MP3 encoding of Microphone input: " + e.Message);
+            }
             return outputStream.ToArray();
         }
     }
