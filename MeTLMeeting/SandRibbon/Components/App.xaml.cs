@@ -36,6 +36,7 @@ namespace SandRibbon
     }
     public partial class App : Application
     {
+        public static Divelements.SandRibbon.RibbonAppearance colorScheme = 0;
         public static NetworkController controller;
         public static bool isStaging = false;
         public static bool isExternal = false; 

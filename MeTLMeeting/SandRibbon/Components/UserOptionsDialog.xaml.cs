@@ -15,6 +15,7 @@ using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using SandRibbon.Components.Sandpit;
 using System.Diagnostics;
+using Divelements.SandRibbon;
 
 namespace SandRibbon.Components
 {
@@ -24,6 +25,14 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             DataContext = Globals.UserOptions;
+        }
+        private void CycleRibbonAppearance(object sender, RoutedEventArgs e)
+        {
+            App.colorScheme = (RibbonAppearance)((int)App.colorScheme + 1);
+            if (!Enum.IsDefined(typeof(RibbonAppearance), App.colorScheme))
+                App.colorScheme = (RibbonAppearance)0;
+
+            Commands.SetRibbonAppearance.Execute(App.colorScheme);
         }
         private void Apply(object sender, RoutedEventArgs e)
         {

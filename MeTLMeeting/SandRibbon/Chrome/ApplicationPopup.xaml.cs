@@ -17,6 +17,7 @@ using SandRibbon.Providers;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Components;
 using System.Diagnostics;
+using Divelements.SandRibbon;
 
 namespace SandRibbon.Chrome
 {

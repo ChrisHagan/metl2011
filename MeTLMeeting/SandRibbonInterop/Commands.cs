@@ -196,6 +196,7 @@ namespace SandRibbon
         public static CompositeCommand Redo = new CompositeCommand();
         public static RoutedCommand ProxyJoinConversation = new RoutedCommand();
         public static CompositeCommand ChangeTab = new CompositeCommand();
+        public static CompositeCommand SetRibbonAppearance = new CompositeCommand();
         #region ConversationLevel
         public static CompositeCommand SyncedMoveRequested = new CompositeCommand();
         public static CompositeCommand SendSyncMove = new CompositeCommand();

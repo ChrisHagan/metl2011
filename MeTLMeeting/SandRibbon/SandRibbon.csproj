@@ -72,6 +72,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="agsXMPP, Version=1.1.0.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
@@ -193,12 +194,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Automation\StrokeHarvester.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Chrome\ApplicationPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -620,9 +615,6 @@
     </Compile>
     <Compile Include="Automation\StrokeHarvester.xaml.cs">
       <DependentUpon>StrokeHarvester.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Chrome\ApplicationPopup.xaml.cs">
-      <DependentUpon>ApplicationPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Chrome\StatusBar.xaml.cs">
       <DependentUpon>StatusBar.xaml</DependentUpon>
