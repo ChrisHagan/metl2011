@@ -132,13 +132,14 @@ namespace SandRibbon.Components
         {
             if (Globals.isAuthor) return;
             if (!Globals.synched) return;
+            var slide = Globals.slide;
             var action = (Action)(() => Dispatcher.adoptAsync((Action)delegate
                                          {
                                              if (thumbnailList.Where(t => t.id == where).Count() == 1)
                                                  Commands.InternalMoveTo.ExecuteAsync(where);
                                              Commands.MoveTo.ExecuteAsync(where);
                                          }));
-            GlobalTimers.SetSyncTimer(action);
+            GlobalTimers.SetSyncTimer(action, slide);
         }
         private bool slideInConversation(int slide)
         {

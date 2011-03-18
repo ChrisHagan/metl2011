@@ -11,11 +11,13 @@ namespace SandRibbon.Components.Utility
     {
         public static Timer SyncTimer = null;
         private static Action currentAction;
+        private static int currentSlide = 0;
         private static object locker = new object();
-        public static void SetSyncTimer(Action timedAction)
+        public static void SetSyncTimer(Action timedAction, int slide)
         {
             lock (locker)
             {
+                currentSlide = slide;
                 currentAction = timedAction;
             }
             if(SyncTimer == null)
@@ -27,6 +29,7 @@ namespace SandRibbon.Components.Utility
                                                   {
                                                       if(currentAction != null)
                                                           currentAction();
+                                                      currentSlide = 0;
                                                   }
                                               }
                                               catch (Exception e)
@@ -35,6 +38,10 @@ namespace SandRibbon.Components.Utility
                                               }
                                               SyncTimer = null;
                                           },null, 500, Timeout.Infinite );
+        }
+        public static int getSlide()
+        {
+            return currentSlide;
         }
         public static void resetSyncTimer()
         {

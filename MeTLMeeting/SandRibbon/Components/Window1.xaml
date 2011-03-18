@@ -15,7 +15,8 @@
     Closing="ribbonWindow_Closing"
     WindowState="Maximized"
     MinHeight="240"
-    MinWidth="320">
+    MinWidth="320"
+    Appearance="Office2007Blue">
     <sr:RibbonWindow.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ZoomIn}" CanExecute="canZoomIn" Executed="doZoomIn" />
         <CommandBinding Command="{x:Static api:Commands.ZoomOut}" CanExecute="canZoomOut" Executed="doZoomOut" />
@@ -47,6 +48,7 @@
         <chrome:StatusBar Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}"/>
     </sr:RibbonWindow.StatusBar>
     <Grid>
+        <MediaElement x:Name="player" Height="1" Width="1" Visibility="Hidden"/>
         <Grid x:Name="EffectRoot">
             <Grid x:Name="columns">
                 <Grid.ColumnDefinitions>

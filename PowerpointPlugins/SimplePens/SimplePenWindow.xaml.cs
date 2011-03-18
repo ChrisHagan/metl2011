@@ -238,6 +238,7 @@ namespace PowerpointJabber
             {
                 var newSlideIndex = ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.CurrentShowPosition + 1;
                 ThisAddIn.instance.Application.ActivePresentation.Slides.AddSlide(newSlideIndex, newSlide);
+                ThisAddIn.instance.Application.ActivePresentation.Slides[newSlideIndex].Layout = PpSlideLayout.ppLayoutBlank;
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.Activate();
                 ThisAddIn.instance.Application.ActivePresentation.SlideShowWindow.View.GotoSlide(newSlideIndex);
                 var slideIndicator = new SlideIndicator(ThisAddIn.instance.Application.ActivePresentation.Slides[newSlideIndex].SlideID);

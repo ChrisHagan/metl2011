@@ -21,7 +21,7 @@
                FontFamily="Verdana"
                Visibility="{Binding ElementName=attachments, Path=ItemsSource.Count, Converter={x:Static SandRibbon:Converters.reverseQuizzesToVisibilityConverter}}"
                Content="There are currently no attachments for this conversation"/>
-        <ListBox x:Name="attachments" Background="Transparent" MaxWidth="600"
+        <ListBox x:Name="attachments" Background="Transparent" 
                       ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>

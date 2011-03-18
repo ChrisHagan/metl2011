@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -241,6 +242,11 @@ namespace SandRibbon.Components.Canvas
 
         private void MoveTo(int _slide)
         {
+            if (myTextBox != null)
+            {
+                var textBox = myTextBox;
+                textBox.Focusable = false;
+            }
             myTextBox = null;
         }
         private bool focusable = true;
@@ -645,7 +651,6 @@ namespace SandRibbon.Components.Canvas
 
 
             var box = (MeTLTextBox)sender;
-            Console.WriteLine(string.Format("Text.cs Line 592 => undo => {0} redp => {1}", originalText, box.Text ));
             var undoText = originalText.Clone().ToString();
             var redoText = box.Text.Clone().ToString();
             ApplyPrivacyStylingToElement(box, box.tag().privacy);
@@ -676,7 +681,8 @@ namespace SandRibbon.Components.Canvas
                 {
                     Dispatcher.adoptAsync(delegate
                                                     {
-                                                        sendTextWithoutHistory((MeTLTextBox)sender, privacy);
+                                                        var slide = GlobalTimers.getSlide() == 0 ? currentSlide : GlobalTimers.getSlide(); 
+                                                        sendTextWithoutHistory((MeTLTextBox)sender, privacy, slide);
                                                         typingTimer = null;
                                                     });
                 }, null, 600, Timeout.Infinite);
@@ -689,15 +695,18 @@ namespace SandRibbon.Components.Canvas
         }
         public void sendTextWithoutHistory(MeTLTextBox box, string thisPrivacy)
         {
+            sendTextWithoutHistory(box, thisPrivacy, currentSlide);
+        }
+        public void sendTextWithoutHistory(MeTLTextBox box, string thisPrivacy, int slide)
+        {
             RemovePrivacyStylingFromElement(box);
             if (box.tag().privacy != Globals.privacy)
                 dirtyTextBoxWithoutHistory(box);
             var oldTextTag = box.tag();
             var newTextTag = new MeTLLib.DataTypes.TextTag(oldTextTag.author, thisPrivacy, oldTextTag.id);
             box.tag(newTextTag);
-            Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(currentSlide, Globals.me, target, thisPrivacy, box));
+            Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(slide, Globals.me, target, thisPrivacy, box));
         }
-
         private void setAppropriatePrivacyHalo(MeTLTextBox box)
         {
             if (!Children.Contains(box)) return;

@@ -11,6 +11,7 @@ using MeTLLib.Providers.Connection;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
+using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
 using System.Collections.Generic;
 using SandRibbonInterop;
@@ -105,6 +106,7 @@ namespace SandRibbon.Components
         }
         private void moveTo(object obj)
         {
+            Logger.Log(string.Format("Commands registered to MoveTo: {0}", Commands.MoveTo.RegisteredCommands.Count));
             stack.Flush();
             startProjector(null);
         }

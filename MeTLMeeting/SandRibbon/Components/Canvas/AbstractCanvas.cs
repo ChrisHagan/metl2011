@@ -99,7 +99,7 @@ namespace SandRibbon.Components.Canvas
         public AbstractCanvas()
             : base()
         {
-
+            
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             DragOver += ImageDragOver;
             Drop += ImagesDrop;

@@ -152,7 +152,7 @@ namespace MeTLLib.Providers.Connection
                         int dummy;
                         var conversationJids = currentRooms.Where(r => Int32.TryParse(r, out dummy))
                             .Select(r => Int32.Parse(r))
-                            .Where(r => Slide.conversationFor(r) == r).Distinct().Select(r => r.ToString());
+                            .Where(r => Slide.ConversationFor(r) == r).Distinct().Select(r => r.ToString());
                         foreach (ConversationDetails conversation in conversations.Where(c => conversationJids.Contains(c.Jid)))
                         {
                             var discoOccupants = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
@@ -695,7 +695,7 @@ namespace MeTLLib.Providers.Connection
         public virtual void handleGoToSlide(string[] parts)
         {
             var id = Int32.Parse(parts[1]);
-            var desiredConversation = Slide.conversationFor(id).ToString();
+            var desiredConversation = Slide.ConversationFor(id).ToString();
             MoveTo(id);
         }
         public virtual void handleWakeUp(string[] parts)

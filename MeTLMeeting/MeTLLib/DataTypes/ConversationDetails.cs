@@ -296,7 +296,7 @@ namespace MeTLLib.DataTypes
                 return new Slide(0, "", TYPE.SLIDE, 0, 0f, 0f);
             }
         }
-        public static int conversationFor(int id)
+        public static int ConversationFor(int id)
         {
             var sId = id.ToString();
             return Int32.Parse(string.Format("{0}400", sId.Substring(0, sId.Length - 3)));

@@ -74,7 +74,14 @@ namespace SandRibbon.Components.Canvas
             Commands.VideoMirrorRefreshRectangle.RegisterCommand(new DelegateCommand<string>(mirrorVideoRefresh));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<object>(updateImagePrivacy));
+            var undoHandler = new CommandBinding(ApplicationCommands.Undo, null, justNo);
+            this.CommandBindings.Add(undoHandler);
         }
+        private void justNo(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = false;
+        }
+
         private void updateImagePrivacy(object obj)
         {
             foreach (System.Windows.Controls.Image image in Children)

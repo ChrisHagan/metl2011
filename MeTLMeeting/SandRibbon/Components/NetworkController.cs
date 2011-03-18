@@ -292,14 +292,16 @@ namespace SandRibbon.Components
                 {
                     if (WorkspaceStateProvider.savedStateExists())
                     {
-                        System.Windows.MessageBox.Show( "MeTL was unable to connect as your auto login details were corrupted. Relaunch MeTL to try again."); 
+                        System.Windows.MessageBox.Show("MeTL was unable to connect as your auto login details were corrupted. Relaunch MeTL to try again.");
                         Commands.LogOut.Execute(null);
                     }
                     else
-                        System.Windows.MessageBox.Show( "MeTL was unable to connect.  Please verify your details and try again.");
+                        System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
                 }
             else//Reconnecting
+            {
                 Commands.Reconnecting.Execute(e.isConnected);
+            }
         }
         private void strokeAvailable(object sender, StrokeAvailableEventArgs e)
         {
