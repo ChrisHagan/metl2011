@@ -79,17 +79,6 @@ namespace SandRibbon.Providers
                 }
             }
         }
-        public static DrawingAttributes drawingAttributes
-        {
-            get
-            {
-                try { return ((DrawingAttributes)Commands.UpdateCursorWithAttributes.lastValue()); }
-                catch (NotSetException)
-                {
-                }
-                return new DrawingAttributes();
-            }
-        }
         public static List<Slide> slides
         {
             get

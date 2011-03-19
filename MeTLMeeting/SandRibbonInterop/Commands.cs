@@ -41,11 +41,10 @@ namespace SandRibbon
         public static CompositeCommand ShowOptionsDialog = new CompositeCommand();
         public static CompositeCommand SetUserOptions = new CompositeCommand();
         //public static CompositeCommand SaveUserOptions = new CompositeCommand();
+        public static CompositeCommand ZoomChanged = new CompositeCommand();
 
         public static CompositeCommand AddPrivacyToggleButton = new CompositeCommand();
         public static CompositeCommand RemovePrivacyAdorners = new CompositeCommand();
-        public static CompositeCommand UpdateCursor = new CompositeCommand();
-        public static CompositeCommand UpdateCursorWithAttributes = new CompositeCommand();
         public static CompositeCommand MirrorVideo = new CompositeCommand();
         public static CompositeCommand VideoMirrorRefreshRectangle = new CompositeCommand();
 
@@ -119,7 +118,6 @@ namespace SandRibbon
         public static CompositeCommand SetPrivacyOfItems = new CompositeCommand();
         public static CompositeCommand GotoThread = new CompositeCommand();
         public static CompositeCommand SetDrawingAttributes = new CompositeCommand();
-        public static CompositeCommand SetZoomAdjustedDrawingAttributes = new CompositeCommand();
         public static CompositeCommand SendStroke = new CompositeCommand();
         public static CompositeCommand ReceiveStroke = new CompositeCommand();
         public static CompositeCommand ReceiveStrokes = new CompositeCommand();

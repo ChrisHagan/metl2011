@@ -61,46 +61,48 @@ namespace SandRibbon.Utils
       SafeIconHandle cursorHandle = NativeMethods.CreateIconIndirect(ref iconInfo);
       return CursorInteropHelper.Create(cursorHandle);
     }
-    public static Cursor CreateCursor(UIElement element, int xHotSpot, 
-        int yHotSpot)
+    public static Cursor CreateCursor(int width, int height, System.Drawing.Color color, int xHotSpot, int yHotSpot){
+        if (width < 1) width = 1;
+        if (height < 1) height = 1;
+        var bmp = new System.Drawing.Bitmap(width, height);
+        var graphics = System.Drawing.Graphics.FromImage(bmp);
+        graphics.FillEllipse(new System.Drawing.SolidBrush(color), 0, 0, width, height);
+        return InternalCreateCursor(bmp, xHotSpot, yHotSpot);
+    }
+    public static Cursor CreateCursor(UIElement element, int xHotSpot, int yHotSpot)
     {
-      int MIN_DIM = 5;
-      var width = Math.Max(MIN_DIM, (int)((FrameworkElement)element).Width);
-      var height = Math.Max(MIN_DIM,(int)((FrameworkElement)element).Height);
-      element.Measure(new Size(width, height));
-      element.Arrange(new Rect(0, 0, width, height));
-
-      RenderTargetBitmap rtb = 
-      new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-      rtb.Render(element);
-
-      PngBitmapEncoder encoder = new PngBitmapEncoder();
-      encoder.Frames.Add(BitmapFrame.Create(rtb));
-
+      System.Drawing.Bitmap bmp;
+      RenderTargetBitmap rtb;
       MemoryStream ms = new MemoryStream();
-      encoder.Save(ms);
-
-      System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(ms);
-
-      ms.Close();
-      ms.Dispose();
-      Cursor cur = null;
-      var attempts = 0;
-      while (cur == null && attempts < 10)
+      try
       {
-          try
-          {
-              cur = InternalCreateCursor(bmp, xHotSpot, yHotSpot);
-          }
-          catch (Exception)
-          {
+          int MIN_DIM = 5;
+          var width = Math.Max(MIN_DIM, (int)((FrameworkElement)element).Width);
+          var height = Math.Max(MIN_DIM, (int)((FrameworkElement)element).Height);
+          element.Measure(new Size(width, height));
+          element.Arrange(new Rect(0, 0, width, height));
 
-          }
+          rtb = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+          rtb.Render(element);
 
+          PngBitmapEncoder encoder = new PngBitmapEncoder();
+          encoder.Frames.Add(BitmapFrame.Create(rtb));
+          encoder.Save(ms);
+
+          bmp = new System.Drawing.Bitmap(ms);
+
+          return InternalCreateCursor(bmp, xHotSpot, yHotSpot);
       }
-      bmp.Dispose();
-
-      return cur;
+      catch (Exception)
+      {
+          App.Now("Could not generate a custom cursor.  Returning current.");
+          return Application.Current.MainWindow.Cursor;
+      }
+      finally
+      {
+          ms.Close();
+          ms.Dispose();
+      }
     }
   }
 }

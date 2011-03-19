@@ -88,7 +88,6 @@ namespace SandRibbon
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rectangle>(SetZoomRect));
-           
  
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
             
@@ -117,9 +116,6 @@ namespace SandRibbon
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(SetLayer, conversationSearchMustBeClosed));
-            Commands.UpdateCursorWithAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(UpdateCursorWithAttributes));
-            Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<object>(AdjustDrawingAttributesAccordingToZoom));
-            Commands.SetZoomAdjustedDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(reportDrawingAttributes));
             Commands.MoveCanvasByDelta.RegisterCommandToDispatcher(new DelegateCommand<Point>(GrabMove));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
@@ -347,7 +343,6 @@ namespace SandRibbon
                     foreach (var adorner in adorners)
                         adornerLayer.Remove(adorner);
             });
-
         }
         private void ProxyMirrorPresentationSpace(object unused)
         {
@@ -382,52 +377,12 @@ namespace SandRibbon
                 if (((RibbonTab)tab).Text == which)
                     ribbon.SelectedTab = (RibbonTab)tab;
         }
-        private void reportDrawingAttributes(DrawingAttributes attributes)
+        private void BroadcastZoom()
         {
-            var zoomIndependentAttributes = attributes.Clone();
-            if (zoomIndependentAttributes.Height == Double.NaN || zoomIndependentAttributes.Width == Double.NaN)
-                return;
             var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
             var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
-            var desiredZoom = zoomIndependentAttributes.Height / currentZoom;
-            zoomIndependentAttributes.Height = correctZoom(desiredZoom);
-            zoomIndependentAttributes.Width = correctZoom(desiredZoom);
-            Commands.UpdateCursorWithAttributes.ExecuteAsync(zoomIndependentAttributes);
-        }
-        private void UpdateCursorWithAttributes(DrawingAttributes attributes)
-        {
-            Commands.UpdateCursor.ExecuteAsync(CursorExtensions.generateCursor(attributes));
-        }
-        private double correctZoom(double desiredZoom)
-        {
-            double finalZoomWidth;
-            double finalZoomHeight;
-            if ((desiredZoom > DrawingAttributes.MinHeight) && (desiredZoom < DrawingAttributes.MaxHeight))
-                finalZoomHeight = desiredZoom;
-            else if (desiredZoom < DrawingAttributes.MaxHeight)
-                finalZoomHeight = DrawingAttributes.MinHeight;
-            else finalZoomHeight = DrawingAttributes.MaxHeight;
-            if (desiredZoom > DrawingAttributes.MinWidth && desiredZoom < DrawingAttributes.MaxWidth)
-                finalZoomWidth = desiredZoom;
-            else if (desiredZoom < DrawingAttributes.MaxWidth)
-                finalZoomWidth = DrawingAttributes.MinWidth;
-            else finalZoomWidth = DrawingAttributes.MaxWidth;
-            if (Math.Max(finalZoomHeight, finalZoomWidth) == Math.Max(DrawingAttributes.MaxHeight, DrawingAttributes.MaxWidth))
-                return Math.Min(finalZoomHeight, finalZoomWidth);
-            else return Math.Max(finalZoomHeight, finalZoomWidth);
-        }
-        private void AdjustDrawingAttributesAccordingToZoom(object attributes)
-        {
-            var zoomCorrectAttributes = ((DrawingAttributes)attributes).Clone();
-            var currentZoomHeight = scroll.ActualHeight / canvasViewBox.ActualHeight;
-            var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
-            var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
-            var desiredZoom = zoomCorrectAttributes.Height * currentZoom;
-            zoomCorrectAttributes.Width = correctZoom(desiredZoom);
-            zoomCorrectAttributes.Height = correctZoom(desiredZoom);
-            Commands.UpdateCursorWithAttributes.ExecuteAsync(zoomCorrectAttributes);
-            Commands.SetZoomAdjustedDrawingAttributes.ExecuteAsync(zoomCorrectAttributes);
+            Commands.ZoomChanged.Execute(currentZoom);
         }
         private void SetTutorialVisibility(object visibilityObject)
         {
@@ -1093,23 +1048,15 @@ namespace SandRibbon
                 }
             }
         }
-        private void updateCurrentPenAfterZoomChanged()
-        {
-            try
-            {
-                AdjustDrawingAttributesAccordingToZoom(Globals.drawingAttributes);
-            }
-            catch (NotSetException) { }
-        }
         private void zoomConcernedControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdatePrivacyAdorners();
-            updateCurrentPenAfterZoomChanged();
+            BroadcastZoom();
         }
         private void scroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             UpdatePrivacyAdorners();
-            updateCurrentPenAfterZoomChanged();
+            BroadcastZoom();
         }
         private void ribbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {

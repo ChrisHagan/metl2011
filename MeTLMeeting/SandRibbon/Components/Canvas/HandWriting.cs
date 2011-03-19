@@ -35,8 +35,6 @@ namespace SandRibbon.Components.Canvas
             Background = Brushes.Transparent;
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedStrokes));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode, canChangeMode));
-            Commands.SetZoomAdjustedDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(attributes => Dispatcher.adoptAsync(()=> DefaultDrawingAttributes = attributes)));
-            Commands.UpdateCursor.RegisterCommand(new DelegateCommand<Cursor>(UpdateCursor));
             Commands.ReceiveStroke.RegisterCommand(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.ReceiveStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
@@ -44,29 +42,58 @@ namespace SandRibbon.Components.Canvas
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<object>(updateStrokePrivacy));
+            Commands.ZoomChanged.RegisterCommand(new DelegateCommand<Double>(ZoomChanged));
+            Commands.SetDrawingAttributes.RegisterCommandToDispatcher(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
         }
-
         private void updateStrokePrivacy(object obj)
         {
             var newStrokes = new StrokeCollection(Strokes.Select(s => (Stroke)new PrivateAwareStroke(s, target)));
             Strokes.Clear();
             Strokes.Add(newStrokes);
         }
-
         private void hideConversationSearchBox(object obj)
         {
             addAdorners();
         }
-        private void UpdateCursor(object obj)
+        private double correctZoom(double desiredZoom)
         {
-            if (obj is Cursor)
+            double finalZoomWidth;
+            double finalZoomHeight;
+            if ((desiredZoom > DrawingAttributes.MinHeight) && (desiredZoom < DrawingAttributes.MaxHeight))
+                finalZoomHeight = desiredZoom;
+            else if (desiredZoom < DrawingAttributes.MaxHeight)
+                finalZoomHeight = DrawingAttributes.MinHeight;
+            else finalZoomHeight = DrawingAttributes.MaxHeight;
+            if (desiredZoom > DrawingAttributes.MinWidth && desiredZoom < DrawingAttributes.MaxWidth)
+                finalZoomWidth = desiredZoom;
+            else if (desiredZoom < DrawingAttributes.MaxWidth)
+                finalZoomWidth = DrawingAttributes.MinWidth;
+            else finalZoomWidth = DrawingAttributes.MaxWidth;
+            if (Math.Max(finalZoomHeight, finalZoomWidth) == Math.Max(DrawingAttributes.MaxHeight, DrawingAttributes.MaxWidth))
+                return Math.Min(finalZoomHeight, finalZoomWidth);
+            else return Math.Max(finalZoomHeight, finalZoomWidth);
+        }
+        private Double zoom = 1;
+        private void ZoomChanged(Double zoom)
+        {
+            this.zoom = zoom;
+            try
             {
-                Dispatcher.adoptAsync(() =>
-                {
-                    UseCustomCursor = true;
-                    Cursor = (Cursor)obj;
-                });
+                SetDrawingAttributes((DrawingAttributes)Commands.SetDrawingAttributes.lastValue());
             }
+            catch (NotSetException) { }
+        }
+        private void SetDrawingAttributes(DrawingAttributes logicalAttributes)
+        {
+            UseCustomCursor = true;
+            var zoomCompensatedAttributes = logicalAttributes.Clone();
+            zoomCompensatedAttributes.Width = logicalAttributes.Width * zoom;
+            zoomCompensatedAttributes.Height = logicalAttributes.Height * zoom;
+            var visualAttributes = logicalAttributes.Clone();
+            visualAttributes.Width = logicalAttributes.Width * 2;
+            visualAttributes.Height = logicalAttributes.Height * 2;
+            Cursor = CursorExtensions.generateCursor(visualAttributes);
+            DefaultDrawingAttributes = zoomCompensatedAttributes;
         }
         private void deleteSelectedItems(object obj)
         {
