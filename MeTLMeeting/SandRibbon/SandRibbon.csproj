@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SandRibbon</RootNamespace>
     <AssemblyName>MeTL Presenter</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -39,16 +39,16 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://metl.adm.monash.edu.au/MeTLStaging/</InstallUrl>
-    <UpdateUrl>http://metl.adm.monash.edu.au/MeTLStaging/</UpdateUrl>
+    <InstallUrl>http://metl.adm.monash.edu.au/MeTL2011/</InstallUrl>
+    <UpdateUrl>http://metl.adm.monash.edu.au/MeTL2011/</UpdateUrl>
     <ProductName>MeTL 2011</ProductName>
     <PublisherName>Monash University eEducation Centre</PublisherName>
-    <MinimumRequiredVersion>1.0.0.114</MinimumRequiredVersion>
+    <MinimumRequiredVersion>1.0.0.121</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>116</ApplicationRevision>
+    <ApplicationRevision>122</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -72,7 +72,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="agsXMPP, Version=1.1.0.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
@@ -340,14 +340,6 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Tabs\Participate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Tabs\Groups\Live.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -694,17 +686,11 @@
     <Compile Include="Tabs\Attachments.xaml.cs">
       <DependentUpon>Attachments.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Groups\Live.xaml.cs">
-      <DependentUpon>Live.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Tabs\Groups\PrivacyToolsHost.xaml.cs">
       <DependentUpon>PrivacyToolsHost.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Groups\EditingOptions.xaml.cs">
       <DependentUpon>EditingOptions.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Participate.xaml.cs">
-      <DependentUpon>Participate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Submissions.xaml.cs">
       <DependentUpon>Submissions.xaml</DependentUpon>
@@ -818,18 +804,6 @@
     <Compile Include="Utils\CursorExtensions.cs" />
     <Compile Include="Utils\CursorHelper.cs" />
     <Compile Include="Utils\Logger.cs" />
-    <Compile Include="Utils\MicrophoneSender.cs" />
-    <Compile Include="Utils\Microphone\Native\MMSYSERR.cs" />
-    <Compile Include="Utils\Microphone\Native\WavConstants.cs" />
-    <Compile Include="Utils\Microphone\Native\WAVEFORMATEX.cs" />
-    <Compile Include="Utils\Microphone\Native\WAVEHDR.cs" />
-    <Compile Include="Utils\Microphone\Native\WAVEOUTCAPS.cs" />
-    <Compile Include="Utils\Microphone\Native\WavFormat.cs" />
-    <Compile Include="Utils\Microphone\Native\WavMethods.cs" />
-    <Compile Include="Utils\Microphone\WaveIn.cs" />
-    <Compile Include="Utils\Microphone\WaveOut.cs" />
-    <Compile Include="Utils\Microphone\WavInDevice.cs" />
-    <Compile Include="Utils\Microphone\WavOutDevice.cs" />
     <Compile Include="Utils\OverlayAdorner.cs" />
     <Compile Include="Utils\PowerPointLoader.cs" />
     <Compile Include="Providers\ResourceUploader.cs" />

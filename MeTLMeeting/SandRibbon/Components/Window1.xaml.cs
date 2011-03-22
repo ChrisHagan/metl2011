@@ -995,7 +995,6 @@ namespace SandRibbon
                             tabs.Add(new Tabs.Quizzes());
                             tabs.Add(new Tabs.Submissions());
                             tabs.Add(new Tabs.Attachments());
-                            tabs.Add(new Participate());
                             homeGroups.Add(new EditingModes());
                             break;
                         case 2:

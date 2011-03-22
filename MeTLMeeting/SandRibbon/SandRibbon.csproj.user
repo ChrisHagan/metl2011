@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <PublishUrlHistory>publish\</PublishUrlHistory>
-    <InstallUrlHistory>http://metl.adm.monash.edu.au/MeTLStaging/|http://metl.adm.monash.edu.au/MeTL2011/|http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu.au/SpecialMeTL/|http://metl.adm.monash.edu.au/specialMeTL/</InstallUrlHistory>
+    <InstallUrlHistory>http://metl.adm.monash.edu.au/MeTL2011/|http://metl.adm.monash.edu.au/MeTLStaging/|http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu.au/SpecialMeTL/|http://metl.adm.monash.edu.au/specialMeTL/</InstallUrlHistory>
     <SupportUrlHistory>http://drawkward.adm.monash.edu/MeTL</SupportUrlHistory>
     <UpdateUrlHistory>http://metl.adm.monash.edu.au/MeTL2011/|http://metl.adm.monash.edu.au/MeTLStaging/|http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu/SpecialMeTL/|http://drawkward.adm.monash.edu/MeTLStaging/</UpdateUrlHistory>
     <BootstrapperUrlHistory>
