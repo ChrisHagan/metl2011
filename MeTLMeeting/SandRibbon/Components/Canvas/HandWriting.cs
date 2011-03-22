@@ -704,6 +704,7 @@ namespace SandRibbon.Components.Canvas
             }
         }
     }
+    /*
     public class LiveInkCanvas : HandWriting
     {//Warning!  This one is the biggest message hog in the universe!  But it's live transmitting ink
         public LiveInkCanvas()
@@ -754,4 +755,5 @@ namespace SandRibbon.Components.Canvas
                 Projector.PenUp();
         }
     }
+     * */
 }

@@ -48,7 +48,6 @@ namespace SandRibbon.Utils
         return NativeMethods.DestroyIcon(handle);
       }
     }
-    
     private static Cursor InternalCreateCursor(System.Drawing.Bitmap bmp, int xHotSpot, int yHotSpot)
     {
       var iconInfo = new NativeMethods.IconInfo();

@@ -10,6 +10,6 @@
         <canvas:ViewCanvas x:Name="viewCanvas"/>
         <canvas:Image x:Name="images"/>
         <canvas:Text x:Name="text"/>
-        <canvas:LiveInkCanvas x:Name="handwriting"/>
+        <canvas:HandWriting x:Name="handwriting"/>
     </Grid>
 </UserControl>

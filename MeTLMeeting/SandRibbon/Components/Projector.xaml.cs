@@ -69,7 +69,6 @@ namespace SandRibbon.Components
                 room = theRoom;
                 action = theAction;
             }
-
         }
         public Projector()
         {
@@ -77,7 +76,6 @@ namespace SandRibbon.Components
             instance = this;
             Loaded += Projector_Loaded;
             stack.SetEditable(false);
-            this.MouseLeave += Projector_MouseLeave;
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
@@ -106,11 +104,6 @@ namespace SandRibbon.Components
         private void moveTo(object obj)
         {
             stack.Flush();
-            startProjector(null);
-        }
-        private void Projector_MouseLeave(object sender, MouseEventArgs e)
-        {
-            PenUp();
         }
         void modeChanged(object sender, RoutedEventArgs e)
         {
@@ -216,6 +209,7 @@ namespace SandRibbon.Components
             Projector.privacy = privacy;
             //setProjectionLayers();
         }
+        /*
         public static void PenMoving(StylusPointCollection points)
         {
             GlobalTimers.resetSyncTimer();
@@ -237,6 +231,7 @@ namespace SandRibbon.Components
                 instance.liveInk.Strokes.Remove(strokeInProgress);
             strokeInProgress = null;
         }
+         * */
     }
     public class WidthCorrector : IMultiValueConverter
     {

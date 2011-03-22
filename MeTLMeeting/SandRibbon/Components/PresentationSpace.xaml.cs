@@ -37,7 +37,7 @@ namespace SandRibbon.Components
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
             Commands.InternalMoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
-            Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
+            Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
@@ -221,26 +221,20 @@ namespace SandRibbon.Components
         }
         private void MirrorPresentationSpace(Window1 parent)
         {
-            Dispatcher.adoptAsync(() =>
+            try
             {
-                try
-                {
-                    var currentAttributes = stack.handwriting.DefaultDrawingAttributes;
-                    var mirror = new Window { Content = new Projector { viewConstraint = parent.scroll } };
-                    Projector.Window = mirror;
-                    parent.Closed += (_sender, _args) => mirror.Close();
-                    mirror.WindowStyle = WindowStyle.None;
-                    mirror.AllowsTransparency = true;
-                    setSecondaryWindowBounds(mirror);
-                    mirror.Show();
-                    Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
-                    Commands.SetPrivacy.ExecuteAsync(stack.handwriting.privacy);
-                }
-                catch (NotSetException)
-                {
-                    //Fine it's not time yet anyway.  I don't care.
-                }
-            });
+                var mirror = new Window { Content = new Projector { viewConstraint = parent.scroll } };
+                Projector.Window = mirror;
+                parent.Closed += (_sender, _args) => mirror.Close();
+                mirror.WindowStyle = WindowStyle.None;
+                mirror.AllowsTransparency = true;
+                setSecondaryWindowBounds(mirror);
+                mirror.Show();
+            }
+            catch (NotSetException)
+            {
+                //Fine it's not time yet anyway.  I don't care.
+            }
         }
         private static bool CanMirrorPresentationSpace(object _param)
         {
