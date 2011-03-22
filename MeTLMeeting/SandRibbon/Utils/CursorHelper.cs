@@ -69,40 +69,5 @@ namespace SandRibbon.Utils
         graphics.FillEllipse(new System.Drawing.SolidBrush(color), 0, 0, width, height);
         return InternalCreateCursor(bmp, xHotSpot, yHotSpot);
     }
-    public static Cursor CreateCursor(UIElement element, int xHotSpot, int yHotSpot)
-    {
-      System.Drawing.Bitmap bmp;
-      RenderTargetBitmap rtb;
-      MemoryStream ms = new MemoryStream();
-      try
-      {
-          int MIN_DIM = 5;
-          var width = Math.Max(MIN_DIM, (int)((FrameworkElement)element).Width);
-          var height = Math.Max(MIN_DIM, (int)((FrameworkElement)element).Height);
-          element.Measure(new Size(width, height));
-          element.Arrange(new Rect(0, 0, width, height));
-
-          rtb = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-          rtb.Render(element);
-
-          PngBitmapEncoder encoder = new PngBitmapEncoder();
-          encoder.Frames.Add(BitmapFrame.Create(rtb));
-          encoder.Save(ms);
-
-          bmp = new System.Drawing.Bitmap(ms);
-
-          return InternalCreateCursor(bmp, xHotSpot, yHotSpot);
-      }
-      catch (Exception)
-      {
-          App.Now("Could not generate a custom cursor.  Returning current.");
-          return Application.Current.MainWindow.Cursor;
-      }
-      finally
-      {
-          ms.Close();
-          ms.Dispose();
-      }
-    }
   }
 }

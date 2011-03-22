@@ -85,14 +85,20 @@ namespace SandRibbon.Components.Canvas
         }
         private void SetDrawingAttributes(DrawingAttributes logicalAttributes)
         {
-            UseCustomCursor = true;
             var zoomCompensatedAttributes = logicalAttributes.Clone();
-            zoomCompensatedAttributes.Width = logicalAttributes.Width * zoom;
-            zoomCompensatedAttributes.Height = logicalAttributes.Height * zoom;
-            var visualAttributes = logicalAttributes.Clone();
-            visualAttributes.Width = logicalAttributes.Width * 2;
-            visualAttributes.Height = logicalAttributes.Height * 2;
-            Cursor = CursorExtensions.generateCursor(visualAttributes);
+            try
+            {
+                zoomCompensatedAttributes.Width = logicalAttributes.Width * zoom;
+                zoomCompensatedAttributes.Height = logicalAttributes.Height * zoom;
+                var visualAttributes = logicalAttributes.Clone();
+                visualAttributes.Width = logicalAttributes.Width * 2;
+                visualAttributes.Height = logicalAttributes.Height * 2;
+                UseCustomCursor = true;
+                Cursor = CursorExtensions.generateCursor(visualAttributes);
+            }
+            catch (Exception e) {
+                Trace.TraceInformation("Cursor failed (no crash):", e.Message);
+            }
             DefaultDrawingAttributes = zoomCompensatedAttributes;
         }
         private void deleteSelectedItems(object obj)
