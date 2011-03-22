@@ -413,6 +413,7 @@ namespace SandRibbon.Components.Canvas
             }
             catch (Exception e)
             {
+                Trace.TraceError(string.Format("I could not add this image because {0}", e));
             }
         }
         public void FlushImages()

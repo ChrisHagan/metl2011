@@ -85,6 +85,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void SetDrawingAttributes(DrawingAttributes logicalAttributes)
         {
+            if (me.ToLower() == "projector") return;
             var zoomCompensatedAttributes = logicalAttributes.Clone();
             try
             {

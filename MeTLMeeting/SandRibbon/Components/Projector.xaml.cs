@@ -89,7 +89,6 @@ namespace SandRibbon.Components
             stack.handwriting.EditingModeChanged += modeChanged;
             stack.images.EditingModeChanged += modeChanged;
             stack.text.EditingModeChanged += modeChanged;
-            startProjector(null);
         }
 
         private void shutdown(object obj)
@@ -106,7 +105,6 @@ namespace SandRibbon.Components
         }
         private void moveTo(object obj)
         {
-            Logger.Log(string.Format("Commands registered to MoveTo: {0}", Commands.MoveTo.RegisteredCommands.Count));
             stack.Flush();
             startProjector(null);
         }
