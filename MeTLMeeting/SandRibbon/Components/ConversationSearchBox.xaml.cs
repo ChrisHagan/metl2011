@@ -115,7 +115,6 @@ namespace SandRibbon.Components
         {
             return this.Visibility == Visibility.Collapsed;
         }
-
         private void BackstageModeChanged(string mode)
         {
             Dispatcher.adoptAsync(() =>
@@ -260,7 +259,7 @@ namespace SandRibbon.Components
         }
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            refreshTimer.Change(150, Timeout.Infinite);
+            refreshTimer.Change(500, Timeout.Infinite);
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
