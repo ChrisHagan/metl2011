@@ -99,7 +99,6 @@ namespace SandRibbon.Components
                 });
             });
         }
-
         private void setMyConversationVisibility()
         {
             Dispatcher.adoptAsync(()=>

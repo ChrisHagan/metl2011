@@ -67,10 +67,10 @@ namespace SandRibbon.Utils
         public static void Fixed(string message) {
             try
             {
-                Log(string.Format("FIXED: {0} {1}", Globals.me, message));
+                Log(string.Format("CRASH: (fixed): {0} {1}", Globals.me, message));
             }
             catch (NotSetException e) { 
-                Log(string.Format("FIXED: {0} {1}", "USERNAME_NOT_SET", message));
+                Log(string.Format("CRASH: (fixed): {0} {1}", "USERNAME_NOT_SET", message));
             }
         }
         public static void Log(string appendThis)
