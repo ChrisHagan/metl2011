@@ -93,20 +93,19 @@ namespace SandRibbon.Providers
         {
             get
             {
-                ConversationDetails cd = null;
-
-                try
-                {
-                    cd = (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
+                try{
+                    return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
                 }
                 catch (NotSetException e)
                 {
-                    //this needs to be fixed.  I think the MeTLLib can solve this by caching the current conversationDetails.
-                    //var client = MeTLLib.ClientFactory.Connection();
-                    //cd = client.DetailsOf(client.location.activeConversation);
+                    try
+                    {
+                        return MeTLLib.ClientFactory.Connection().DetailsOf((String)Commands.JoinConversation.lastValue());
+                    }
+                    catch (NotSetException) { 
+                        return ConversationDetails.Empty;
+                    }
                 }
-                if (cd == null) return ConversationDetails.Empty;
-                return cd;
             }
         }
         public static MeTLLib.DataTypes.Credentials credentials
