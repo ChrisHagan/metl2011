@@ -135,9 +135,13 @@ namespace SandRibbon
             catch (Exception) { }
         }
         void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e){
-            var resumeCrashMessage = "Index was out of range. Must be non-negative and less than the size of the collection.\r\nParameter name: index";
-            if(e.Exception.Message == resumeCrashMessage){
-                Logger.Fixed(resumeCrashMessage);
+            var falseAlarms = new[]{
+                "Index was out of range. Must be non-negative and less than the size of the collection.",
+                "The operation completed successfully"
+            };
+            var msg = e.Exception.Message;
+            if(msg != null && falseAlarms.Any(m=>msg.StartsWith(m))){
+                Logger.Fixed(msg);
                 e.Handled = true;
             }
             else
