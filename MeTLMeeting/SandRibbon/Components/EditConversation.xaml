@@ -16,7 +16,7 @@
             <StackPanel>
                 <Image Height="50" Width="50">
                     <Image.Source>
-                        <MultiBinding Converter="{x:Static components:EditConversation.SlideToThumb}">
+                        <MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
                             <Binding RelativeSource="{RelativeSource Self}" />
                         </MultiBinding>
                     </Image.Source> 
