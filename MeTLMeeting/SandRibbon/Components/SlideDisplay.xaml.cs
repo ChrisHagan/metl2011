@@ -174,7 +174,7 @@ namespace SandRibbon.Components
                 return;
             }
             thumbnailList.Clear();
-            foreach (var slide in details.Slides)
+            foreach (var slide in details.Slides.OrderBy(s => s.index))
             {
                 if (slide.type == Slide.TYPE.SLIDE)
                 {

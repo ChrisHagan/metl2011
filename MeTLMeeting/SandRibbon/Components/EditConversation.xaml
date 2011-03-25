@@ -1,0 +1,143 @@
+﻿<Window x:Class="SandRibbon.Components.EditConversation"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:components="clr-namespace:SandRibbon.Components" 
+        xmlns:core="clr-namespace:System;assembly=mscorlib" xmlns:local="clr-namespace:SandRibbon.Components.Utility.DragDrop" Title="EditConversation" Height="300" Width="600">
+    <Window.Resources>
+
+        <DataTemplate x:Key="slideDragTemplate">
+            <DataTemplate.Resources>
+                <Style TargetType="Image">
+                    <Setter Property="Width" Value="90" />
+                    <Setter Property="Height" Value="90" />
+                    <Setter Property="Margin" Value="5" />
+                </Style>
+            </DataTemplate.Resources>
+            <StackPanel>
+                <Image Height="50" Width="50">
+                    <Image.Source>
+                        <MultiBinding Converter="{x:Static components:EditConversation.SlideToThumb}">
+                            <Binding RelativeSource="{RelativeSource Self}" />
+                        </MultiBinding>
+                    </Image.Source> 
+                </Image>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <StackPanel Background="{StaticResource BackgroundBlueGradient}">
+        <ListBox Background="AliceBlue"
+        Height="100"
+        Width="Auto"
+        ScrollViewer.HorizontalScrollBarVisibility="Visible" 
+        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+		x:Name="activeSlides"   
+		local:DragDropHelper.IsDragSource="true" local:DragDropHelper.IsDropTarget="true" local:DragDropHelper.DragDropTemplate="{StaticResource slideDragTemplate}">
+            
+             <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border
+                                    Name="Border" Margin="1" 
+                                    Padding="5" Background="{StaticResource BackgroundBlueGradient}"
+                                    SnapsToDevicePixels="true" CornerRadius="2">
+                                    <Grid>
+                                        <Image Height="90" Width="90">
+                                            <Image.Source>
+                                                <MultiBinding Converter="{x:Static components:EditConversation.SlideToThumb}">
+                                                    <Binding RelativeSource="{RelativeSource Self}" />
+                                                </MultiBinding>
+                                            </Image.Source> 
+                                        </Image>
+                                        <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
+                                                HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
+                                                VerticalAlignment="Bottom" 
+                                                BorderThickness="1">
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedGradient}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource MouseOverGradient}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+        <StackPanel Orientation="Horizontal">
+            <Button Click="save">Save changes</Button>
+            <Button Click="first">Move to the start</Button>
+            <Button Click="last">Move to the end</Button>
+        </StackPanel>
+    </StackPanel>
+    <!--Window.Resources>
+        <core:Int32  x:Key="imageHeight">200</core:Int32>
+        <core:Int32  x:Key="imageWidth">350</core:Int32>
+    </Window.Resources>
+    <StackPanel Orientation="Vertical" x:Name="editConversation">
+        <Label Content="Active Slides"/>
+        <ListBox
+            x:Name="activeSlides"
+             ScrollViewer.HorizontalScrollBarVisibility="Visible" 
+             ScrollViewer.VerticalScrollBarVisibility="Disabled"
+             OverridesDefaultStyle="False"
+             Background="Transparent"
+             HorizontalAlignment="Stretch" Width="500" Height="Auto">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border
+                                    Name="Border" Margin="1" 
+                                    Padding="5" Background="{StaticResource BackgroundBlueGradient}"
+                                    SnapsToDevicePixels="true" CornerRadius="2">
+                                    <Grid>
+                                        <Image Height="50" Width="50">
+                                            <Image.Source>
+                                                <MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
+                                                    <Binding RelativeSource="{RelativeSource Self}" />
+                                                </MultiBinding>
+                                            </Image.Source> 
+                                        </Image>
+                                        <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
+                                                HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
+                                                VerticalAlignment="Bottom" 
+                                                BorderThickness="1">
+                                            <Label Content="{Binding Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedGradient}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource MouseOverGradient}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+    </StackPanel-->
+    </Window>

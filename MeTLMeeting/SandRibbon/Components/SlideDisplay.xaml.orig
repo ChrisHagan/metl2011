@@ -12,29 +12,42 @@
         <core:String x:Key="defaultPrivacy">public</core:String>
         <core:String x:Key="target">presentationSpace</core:String>
         <core:Double x:Key="thumbAspect">0.75</core:Double>
+        <core:Int32  x:Key="imageHeight">200</core:Int32>
+        <core:Int32  x:Key="imageWidth">350</core:Int32>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="{Binding ElementName=NavigationControls, Path=Height}"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+        <StackPanel></StackPanel>
         <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
-        <ListBox
+        <components:SlideSorter 
+            x:Name="slides"
+             Grid.Row="1"
+             />
+        <!--ListBox
              x:Name="slides"
              Grid.Row="1"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
              ScrollViewer.VerticalScrollBarVisibility="Visible"
+             ScrollViewer.CanContentScroll="False"
              OverridesDefaultStyle="False"
              SelectionChanged="slides_SelectionChanged"
              Background="Transparent"
              HorizontalAlignment="Stretch" Width="Auto" >
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
                     <Setter Property="Height">
                         <Setter.Value>
                             <MultiBinding Converter="{x:Static my:Converters.multiply}">
                                 <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
-                                <Binding Source="{StaticResource thumbAspect}"/>
+                            <Binding Source="{StaticResource thumbAspect}"/>
                             </MultiBinding>
                         </Setter.Value>
                     </Setter>
@@ -50,9 +63,7 @@
                                     <Grid>
                                         <Viewbox IsHitTestVisible="False">
                                             <Image Height="200" Width="320">
-                                                <Image.Source><!-- This is ugly as stink.  You'll find that this value converter
-                                                    actually returns null, but schedules the image to have its source updated
-                                                    when the data comes asynchronously down from the web-->
+                                                <Image.Source>
                                                     <MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
                                                         <Binding RelativeSource="{RelativeSource Self}" />
                                                     </MultiBinding>
@@ -64,7 +75,6 @@
                                                 VerticalAlignment="Bottom" 
                                                 BorderThickness="1">
                                             <Label Content="{Binding Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
-                                            
                                         </Border>
                                     </Grid>
                                 </Border>
@@ -81,6 +91,6 @@
                     </Setter>
                 </Style>
             </ListBox.ItemContainerStyle>
-        </ListBox>
+        </ListBox-->
     </Grid>
 </UserControl>

@@ -38,10 +38,12 @@ namespace SandRibbon.Components
                     Commands.SetSync.Execute(true);
                     addSlideButton.Visibility = Visibility.Visible;
                     syncButton.Visibility = Visibility.Collapsed;
+                    editConversation.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     addSlideButton.Visibility = Visibility.Collapsed;
+                    editConversation.Visibility = Visibility.Collapsed;
                     syncButton.Visibility = Visibility.Visible;
                 }
             });
@@ -73,6 +75,11 @@ namespace SandRibbon.Components
             var synch = !Globals.synched;
             System.Diagnostics.Trace.TraceInformation("ManuallySynched {0}", synch);
             Commands.SetSync.Execute(synch);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            new EditConversation().ShowDialog();
         }
     }
 }
