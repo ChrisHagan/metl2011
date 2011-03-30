@@ -84,17 +84,21 @@ namespace SandRibbon.Components
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(shutdown));
             Commands.InternalMoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateTitle));
             stack.handwriting.EditingModeChanged += modeChanged;
             stack.images.EditingModeChanged += modeChanged;
             stack.text.EditingModeChanged += modeChanged;
         }
-
+        private void updateTitle(ConversationDetails details)
+        {
+            if(conversationLabel.Text != details.Title)
+                conversationLabel.Text = details.Title;
+        }
         private void shutdown(object obj)
         {
             if(Window != null)
                 Window.Close();
         }
-
         private void setPedagogy(object obj)
         {
             //when you change pedagogy all the commands are deregistered this will restart the projector

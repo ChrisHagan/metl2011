@@ -200,18 +200,15 @@ namespace SandRibbon.Utils
             waitForSlideToHaveContentThenJoin(conversation.Slides.Last().id, conversation.Jid);
             for (int i = 0; i < xmlSlidesCount; i++)
             {
-                App.Current.Dispatcher.adoptAsync((System.Action)delegate
-                                                     {
-                                                         var slideXml = xmlSlides.ElementAt(i);
-                                                         var slideId = conversation.Slides[i].id;
-                                                         uploadXmlUrls(slideId, slideXml);
-                                                         progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML,
-                                                                  slideId, xmlSlidesCount);
-                                                         sendSlide(slideId, slideXml);
-                                                         progress(
-                                                             PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES,
-                                                             slideId, xmlSlidesCount);
-                                                     });
+                     var slideXml = xmlSlides.ElementAt(i);
+                     var slideId = conversation.Slides[i].id;
+                     uploadXmlUrls(slideId, slideXml);
+                     progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML,
+                              slideId, xmlSlidesCount);
+                     sendSlide(slideId, slideXml);
+                     progress(
+                         PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES,
+                         slideId, xmlSlidesCount);
             }
         }
 
