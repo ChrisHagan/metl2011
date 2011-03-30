@@ -27,6 +27,7 @@ using MeTLLib;
 using System.ComponentModel;
 using System.Diagnostics;
 using MeTLLib.Providers.Connection;
+using Application = System.Windows.Application;
 
 namespace SandRibbon.Utils
 {
@@ -199,12 +200,18 @@ namespace SandRibbon.Utils
             waitForSlideToHaveContentThenJoin(conversation.Slides.Last().id, conversation.Jid);
             for (int i = 0; i < xmlSlidesCount; i++)
             {
-                var slideXml = xmlSlides.ElementAt(i);
-                var slideId = conversation.Slides[i].id;
-                uploadXmlUrls(slideId, slideXml);
-                progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML, slideId, xmlSlidesCount);
-                sendSlide(slideId, slideXml);
-                progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES, slideId, xmlSlidesCount);
+                App.Current.Dispatcher.adoptAsync((System.Action)delegate
+                                                     {
+                                                         var slideXml = xmlSlides.ElementAt(i);
+                                                         var slideId = conversation.Slides[i].id;
+                                                         uploadXmlUrls(slideId, slideXml);
+                                                         progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML,
+                                                                  slideId, xmlSlidesCount);
+                                                         sendSlide(slideId, slideXml);
+                                                         progress(
+                                                             PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES,
+                                                             slideId, xmlSlidesCount);
+                                                     });
             }
         }
 
@@ -581,7 +588,11 @@ namespace SandRibbon.Utils
             var textFrame = (Microsoft.Office.Interop.PowerPoint.TextFrame)shape.TextFrame;
             if (check(textFrame.HasText))
             {
-                var pptcolour = textFrame.TextRange.Font.Color.RGB;
+                int pptcolour;
+                if (textFrame.TextRange.Text.Length > 0)
+                    pptcolour = textFrame.TextRange.Runs(0, 1).Font.Color.RGB;
+                else
+                     pptcolour = textFrame.TextRange.Font.Color.RGB;
                 var SystemDrawingColor = System.Drawing.ColorTranslator.FromOle(Int32.Parse((pptcolour.ToString())));
                 var safeColour = (new Color { A = SystemDrawingColor.A, R = SystemDrawingColor.R, G = SystemDrawingColor.G, B = SystemDrawingColor.B }).ToString();
                 string safeFont = "arial";

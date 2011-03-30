@@ -10,6 +10,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Input.StylusPlugIns;
 using System.Windows.Media;
+using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
@@ -40,6 +41,7 @@ namespace SandRibbon.Components.Canvas
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
+            Commands.BanhammerSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(banhammerSelectedItems));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<object>(updateStrokePrivacy));
             Commands.ZoomChanged.RegisterCommand(new DelegateCommand<Double>(ZoomChanged));
@@ -102,6 +104,16 @@ namespace SandRibbon.Components.Canvas
             }
             DefaultDrawingAttributes = zoomCompensatedAttributes;
         }
+        private void banhammerSelectedItems(object _obj)
+        {
+            var authors = GetSelectedStrokes().Select(s => s.tag().author).ToList();
+            var details = Globals.conversationDetails;
+            foreach(var author in authors)
+                details.blacklist.Add(author);
+            ClientFactory.Connection().UpdateConversationDetails(details);
+            //deleteSelectedItems(_obj);
+        }
+
         private void deleteSelectedItems(object obj)
         {
             if(GetSelectedStrokes().Count == 0) return;
@@ -500,7 +512,7 @@ namespace SandRibbon.Components.Canvas
         #region utilityFunctions
         private StrokeCollection filter(IEnumerable<Stroke> from, string author)
         {
-            if (inMeeting()) return new StrokeCollection(from);
+            if (inMeeting() || Globals.conversationDetails.Author == Globals.me) return new StrokeCollection(from);
             return new StrokeCollection(from.Where(s => s.tag().author == author));
         }
         

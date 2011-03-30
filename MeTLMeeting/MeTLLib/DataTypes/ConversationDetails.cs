@@ -37,6 +37,12 @@ namespace MeTLLib.DataTypes
         {
             this.Tag = tag;
         }
+        public ConversationDetails(String title, String jid, String author, String tag, List<Slide> slides, Permissions permissions, String subject, DateTime created, DateTime lastAccessed, List<string> blacklist)
+            : this(title, jid, author, slides, permissions, subject, created, lastAccessed)
+        {
+            this.blacklist = blacklist;
+            this.Tag = tag;
+        }
         public ConversationDetails(String title, String jid, String author, String tag, List<Slide> slides, Permissions permissions, String subject)
             : this(title, jid, author, slides, permissions, subject)
         {
@@ -64,6 +70,7 @@ namespace MeTLLib.DataTypes
         public string Tag { get; set; }
         public string Subject { get; set; }
         public List<Slide> Slides = new List<Slide>();
+        public List<string> blacklist = new List<string>();
         public byte[] GetBytes()
         {
             return Encoding.UTF8.GetBytes(WriteXml().ToString(SaveOptions.DisableFormatting));
@@ -123,7 +130,7 @@ namespace MeTLLib.DataTypes
         private static readonly string EXPOSED_TAG = "exposed";
         private static readonly string DEFAULT_WIDTH = "defaultWidth";
         private static readonly string DEFAULT_HEIGHT = "defaultHeight";
-
+        private static readonly string BLACKLIST_TAG = "blacklist";
         public static ConversationDetails ReadXml(XElement doc)
         {
             var Title = doc.Element(TITLE_TAG).Value;
@@ -147,7 +154,12 @@ namespace MeTLLib.DataTypes
                 d.Element(DEFAULT_HEIGHT) != null ? float.Parse(d.Element(DEFAULT_HEIGHT).Value) : 540,
                 d.Element(EXPOSED_TAG) != null ? Boolean.Parse(d.Element(EXPOSED_TAG).Value) : true
             )).ToList();
-            return new ConversationDetails(Title, Jid, Author, Tag, Slides, internalPermissions, Subject, Created, LastAccessed);
+            var blacklistElements = doc.Elements(BLACKLIST_TAG);
+            var blacklist = new List<string>();
+            /*
+            if(blacklistElements.Count() > 0)
+                blacklist = blacklistElements.Select(d => d.Value).ToList();*/
+            return new ConversationDetails(Title, Jid, Author, Tag, Slides, internalPermissions, Subject, Created, LastAccessed); //, blacklist.ToList())
         }
         public XElement WriteXml()
         {
@@ -169,6 +181,7 @@ namespace MeTLLib.DataTypes
                     new XElement(DEFAULT_WIDTH, s.defaultWidth),
                     new XElement(EXPOSED_TAG, s.exposed.ToString()),
                     new XElement(TYPE_TAG, (s.type == null ? Slide.TYPE.SLIDE : s.type).ToString()))));
+                    //, blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
         }
         public event PropertyChangedEventHandler PropertyChanged;
     }

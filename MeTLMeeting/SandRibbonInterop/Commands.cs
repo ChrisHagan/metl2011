@@ -99,6 +99,7 @@ namespace SandRibbon
         public static CompositeCommand ReceiveLiveWindow = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyLiveWindow = new CompositeCommand();
         public static CompositeCommand DeleteSelectedItems = new CompositeCommand();
+        public static CompositeCommand BanhammerSelectedItems= new CompositeCommand();
         //public static CompositeCommand Relogin = new CompositeCommand();
         #region Quizzing
         public static CompositeCommand SendWormMove = new CompositeCommand(); 
