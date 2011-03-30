@@ -156,10 +156,9 @@ namespace MeTLLib.DataTypes
             )).ToList();
             var blacklistElements = doc.Elements(BLACKLIST_TAG);
             var blacklist = new List<string>();
-            /*
             if(blacklistElements.Count() > 0)
-                blacklist = blacklistElements.Select(d => d.Value).ToList();*/
-            return new ConversationDetails(Title, Jid, Author, Tag, Slides, internalPermissions, Subject, Created, LastAccessed); //, blacklist.ToList())
+                blacklist = blacklistElements.Select(d => d.Value).ToList();
+            return new ConversationDetails(Title, Jid, Author, Tag, Slides, internalPermissions, Subject, Created, LastAccessed, blacklist.ToList());
         }
         public XElement WriteXml()
         {
@@ -180,8 +179,8 @@ namespace MeTLLib.DataTypes
                     new XElement(DEFAULT_HEIGHT, s.defaultHeight),
                     new XElement(DEFAULT_WIDTH, s.defaultWidth),
                     new XElement(EXPOSED_TAG, s.exposed.ToString()),
-                    new XElement(TYPE_TAG, (s.type == null ? Slide.TYPE.SLIDE : s.type).ToString()))));
-                    //, blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
+                    new XElement(TYPE_TAG, (s.type == null ? Slide.TYPE.SLIDE : s.type).ToString())))
+                    , blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
         }
         public event PropertyChangedEventHandler PropertyChanged;
     }
