@@ -200,7 +200,7 @@ namespace SandRibbon.Components
                if (details == null) return;
                foreach ( var result in searchResults.Where(c => c.Jid == details.Jid).ToList())
                    searchResults.Remove(result);
-               if (details.Subject.ToLower() != "deleted" || details != ConversationDetails.Empty)
+               if (details.Subject.ToLower() != "deleted" && details != ConversationDetails.Empty)
                    searchResults.Add(details);
                else if (details.Jid == Globals.location.activeConversation)
                    currentConversation.Visibility = Visibility.Collapsed;

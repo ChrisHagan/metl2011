@@ -512,7 +512,7 @@ namespace SandRibbon.Components.Canvas
         #region utilityFunctions
         private StrokeCollection filter(IEnumerable<Stroke> from, string author)
         {
-            if (inMeeting() || Globals.conversationDetails.Author == Globals.me) return new StrokeCollection(from);
+            if (inMeeting() /*|| Globals.conversationDetails.Author == Globals.me*/) return new StrokeCollection(from);
             return new StrokeCollection(from.Where(s => s.tag().author == author));
         }
         
