@@ -198,15 +198,13 @@ namespace SandRibbon.Components
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
                if (details == null) return;
-               foreach (
-                   var result in searchResults.Where(c => c.Jid == details.Jid).ToList())
+               foreach ( var result in searchResults.Where(c => c.Jid == details.Jid).ToList())
                    searchResults.Remove(result);
-               if (details.Subject.ToLower() != "deleted")
+               if (details.Subject.ToLower() != "deleted" || details != ConversationDetails.Empty)
                    searchResults.Add(details);
                else if (details.Jid == Globals.location.activeConversation)
                    currentConversation.Visibility = Visibility.Collapsed;
-               if (!(shouldShowConversation(details)) &&
-                   details.Jid == Globals.conversationDetails.Jid)
+               if ((!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid) || details == ConversationDetails.Empty)
                {
                    Commands.RequerySuggested();
                    this.Visibility = Visibility.Visible;
