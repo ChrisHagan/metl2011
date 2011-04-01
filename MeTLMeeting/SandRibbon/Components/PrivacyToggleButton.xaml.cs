@@ -46,12 +46,10 @@ namespace SandRibbon.Components
                 showButton.Visibility = Visibility.Visible;
                 hideButton.Visibility = Visibility.Visible;
             }
-            /*
             if (Globals.conversationDetails.Author == Globals.me)
                 banhammerButton.Visibility = Visibility.Visible;
             else
                 banhammerButton.Visibility = Visibility.Collapsed;
-             * */
         }
         private void showContent(object sender, RoutedEventArgs e)
         {
@@ -68,7 +66,6 @@ namespace SandRibbon.Components
         private void banhammerContent(object sender, RoutedEventArgs e)
         {
             Commands.BanhammerSelectedItems.Execute(null);
-            //Commands.DeleteSelectedItems.ExecuteAsync(null);
         }
         public class PrivacyToggleButtonInfo
         {

@@ -999,6 +999,7 @@ namespace SandRibbon
                             break;
                         case 2:
                             //ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
+                            tabs.Add(new Tabs.AdvancedTools());
                             RHSDrawerDefinition.Width = new GridLength(180);
                             homeGroups.Add(new ZoomControlsHost());
                             homeGroups.Add(new MiniMap());
@@ -1009,7 +1010,6 @@ namespace SandRibbon
                         case 4:
                             homeGroups.Add(new Notes());
                             tabs.Add(new Tabs.Analytics());
-                            tabs.Add(new Tabs.Plugins());
                             break;
                         default:
                             break;

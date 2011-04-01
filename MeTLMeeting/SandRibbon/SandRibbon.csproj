@@ -219,6 +219,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\blacklistController.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConversationSearchBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -573,7 +577,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Plugins.xaml">
+    <Page Include="Tabs\AdvancedTools.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -594,6 +598,9 @@
     </Compile>
     <Compile Include="Components\BackStageNav.xaml.cs">
       <DependentUpon>BackStageNav.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\blacklistController.xaml.cs">
+      <DependentUpon>blacklistController.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\EditConversation.xaml.cs">
       <DependentUpon>EditConversation.xaml</DependentUpon>
@@ -800,8 +807,8 @@
     <Compile Include="Tabs\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Plugins.xaml.cs">
-      <DependentUpon>Plugins.xaml</DependentUpon>
+    <Compile Include="Tabs\AdvancedTools.xaml.cs">
+      <DependentUpon>AdvancedTools.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Quizzes.xaml.cs">
       <DependentUpon>Quizzes.xaml</DependentUpon>

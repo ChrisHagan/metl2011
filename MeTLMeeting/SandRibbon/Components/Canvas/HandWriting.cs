@@ -106,10 +106,14 @@ namespace SandRibbon.Components.Canvas
         }
         private void banhammerSelectedItems(object _obj)
         {
-            var authors = GetSelectedStrokes().Select(s => s.tag().author).ToList();
+            var authors = GetSelectedStrokes().Where(s => s.tag().author != me).Select(s => s.tag().author).Distinct().ToList();
             var details = Globals.conversationDetails;
-            foreach(var author in authors)
-                details.blacklist.Add(author);
+            foreach (var author in authors)
+            {
+                if(!details.blacklist.Contains(author))
+                    details.blacklist.Add(author);
+            }
+
             ClientFactory.Connection().UpdateConversationDetails(details);
             //deleteSelectedItems(_obj);
         }

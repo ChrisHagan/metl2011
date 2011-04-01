@@ -49,7 +49,7 @@ namespace SandRibbon.Components
         {
             Dispatcher.adopt(() =>
                                   {
-                                      if (details.Permissions.studentCanPublish || Globals.isAuthor)
+                                      if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(Globals.me))|| Globals.isAuthor)
                                           publicMode.IsEnabled = true;
                                       else
                                           publicMode.IsEnabled = false;
