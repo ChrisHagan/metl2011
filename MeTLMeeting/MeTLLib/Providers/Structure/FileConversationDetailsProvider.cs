@@ -55,7 +55,11 @@ namespace MeTLLib.Providers.Structure
         {
             //So, from a design perspective, conversationJid must be a string, which must be non-empty, non-null.  But it might be a string that isn't currently a conversation Jid.
             //Expected behaviour is return a valid conversationDetails, or return an empty conversationDetails to reflect that the conversation doesn't exist.
-            if (String.IsNullOrEmpty(conversationJid)) throw new ArgumentNullException("conversationJid", "Argument cannot be null or empty");
+            if (String.IsNullOrEmpty(conversationJid))
+            {
+                Trace.TraceError("Fixed: Argument cannot be null or empty - Reconnecting error that Happens all the time");
+                return ConversationDetails.Empty;
+            }
             try
             {
                 var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
