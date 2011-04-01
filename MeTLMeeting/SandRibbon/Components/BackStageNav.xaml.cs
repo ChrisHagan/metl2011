@@ -36,7 +36,7 @@ namespace SandRibbon.Components
         }
         private void updateDetails(ConversationDetails details)
         {
-            if (details.Subject.ToLower() == "deleted" && details.Jid == Globals.location.activeConversation)
+            if ((details.Subject.ToLower() == "deleted" || details != ConversationDetails.Empty) && details.Jid == Globals.location.activeConversation)
             {
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -67,17 +68,21 @@ namespace MeTLLib.Providers.Structure
             }
             catch (UriFormatException e)
             {
-                throw new Exception(string.Format("Could not create valid Uri for DetailsOf, using conversationJid: {0}", conversationJid), e);
+                Trace.TraceError(string.Format("CRASH: Could not create valid Uri for DetailsOf, using conversationJid: {0}", conversationJid), e);
             }
             catch (XmlException e)
             {
-                throw new Exception(string.Format("Could not parse retrieved details of {0}", conversationJid), e);
+                Trace.TraceError(string.Format("Crash: Could not parse retrieved details of {0}", conversationJid), e);
             }
             catch (WebException e)
             {
                 providerMonitor.HealthCheck(() => { });
-                return ConversationDetails.Empty;
             }
+            catch (Exception e)
+            {
+                Trace.TraceError(string.Format("Unknown Exception in retreiving the conversation details: {0}", e.Message));
+            }
+            return ConversationDetails.Empty;
         }
         public ConversationDetails AppendSlideAfter(int currentSlide, string title)
         {

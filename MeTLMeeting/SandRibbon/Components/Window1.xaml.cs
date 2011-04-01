@@ -577,7 +577,7 @@ namespace SandRibbon
             {
                 return false;
             }
-            if (details == null) return false;
+            if (details == null || details == ConversationDetails.Empty) return false;
             if(details.Subject != "Deleted" && details.Jid != "")
                     return true;
             return false;
