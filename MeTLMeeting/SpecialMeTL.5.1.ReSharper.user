@@ -86,7 +86,7 @@
       <Item value="Slide" priority="1" />
       <Item value="ThoughtBubbleSpace_MouseDown" priority="4" />
       <Item value="Ionic" priority="0" />
-      <Item value="return" priority="97" />
+      <Item value="return" priority="98" />
       <Item value="UIAdorner" priority="2" />
       <Item value="FrameworkElement" priority="2" />
       <Item value="Dispatcher" priority="27" />
@@ -774,7 +774,7 @@
       <Item value="unMangledFilename" priority="1" />
       <Item value="SearchResults" priority="0" />
       <Item value="originalContext" priority="8" />
-      <Item value="ConversationDetails`0" priority="5" />
+      <Item value="ConversationDetails`0" priority="6" />
       <Item value="result" priority="1" />
       <Item value="RoutedEvent`0" priority="0" />
       <Item value="RoutedEventArgs`0" priority="2" />
@@ -891,6 +891,7 @@
       <Item value="targetItemsControl" priority="0" />
       <Item value="itemsSource" priority="0" />
       <Item value="Close`0" priority="0" />
+      <Item value="Trace`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.FrameworkElement">
       <Item value="BeginAnimation" priority="0" />
@@ -2057,6 +2058,12 @@
     <ItemStatistics item="Qualified:SandRibbon.Components.ResourceDictionaries.Button">
       <Item value="Visibility" priority="0" />
     </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Diagnostics.Trace">
+      <Item value="TraceError`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@MeTLLib.DataTypes.ConversationDetails">
+      <Item value="Empty" priority="0" />
+    </ItemStatistics>
   </CompletionStatisticsManager>
   <RecentFiles>
     <RecentFiles>
@@ -2074,7 +2081,6 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Utility/d:DragDrop/f:Utilities.cs" caret="1250" fromTop="28" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Utility/d:DragDrop/f:DragDropHelper.cs" caret="8635" fromTop="18" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:IConversationDetailsProvider.cs" caret="249" fromTop="8" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:FileConversationDetailsProvider.cs" caret="6631" fromTop="16" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:Client.cs" caret="21352" fromTop="19" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="7544" fromTop="31" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml" caret="1564" fromTop="15" />
@@ -2087,9 +2093,9 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="29068" fromTop="22" />
       <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="19606" fromTop="15" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="10254" fromTop="20" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:FileConversationDetailsProvider.cs" caret="3047" fromTop="14" />
     </RecentFiles>
     <RecentEdits>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml" caret="465" fromTop="2" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml" caret="1296" fromTop="15" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Utility/d:DragDrop/f:Utilities.cs" caret="2009" fromTop="32" />
       <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="1094" fromTop="22" />
@@ -2119,6 +2125,7 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="3408" fromTop="25" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="10544" fromTop="26" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="10105" fromTop="18" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:FileConversationDetailsProvider.cs" caret="2554" fromTop="4" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>

@@ -203,6 +203,7 @@ namespace SandRibbon.Utils
                  var slideXml = xmlSlides.ElementAt(i);
                  var slideId = conversation.Slides[i].id;
                  uploadXmlUrls(slideId, slideXml);
+
                  progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML,
                           slideId, xmlSlidesCount);
                  sendSlide(slideId, slideXml);
