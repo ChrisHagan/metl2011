@@ -15,10 +15,10 @@ echo Suite name:
 echo {leave blank}
 echo
 echo Don't use this command unless you're ready to overwrite 
-echo the currently deployed Clickonce on the server (drawkward.adm) 
+echo the currently deployed Clickonce on the server (metl.adm) 
 echo Press Ctrl+C to exit this.  Any other keypress will continue
 pause
-pscp.exe -r -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\Application Files" deploy@reviver.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
-pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\index.html" deploy@reviver.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
-pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\MeTL Presenter.application" deploy@reviver.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
-pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\setup.exe" deploy@reviver.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
+pscp.exe -r -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\Application Files" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
+pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\index.html" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
+pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\MeTL Presenter.application" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
+pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\setup.exe" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
