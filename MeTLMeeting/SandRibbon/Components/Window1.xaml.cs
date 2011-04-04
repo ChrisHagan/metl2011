@@ -269,7 +269,7 @@ namespace SandRibbon
         private void Reconnecting(bool success) {
             if (success)
             {
-                Commands.UpdateConversationDetails.Execute(ClientFactory.Connection().DetailsOf(Globals.conversationDetails.Jid)); 
+                Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty); 
                 hideReconnectingDialog();
             }
             else
@@ -577,7 +577,7 @@ namespace SandRibbon
             {
                 return false;
             }
-            if (details == null || details == ConversationDetails.Empty) return false;
+            if (details == null || details.Equals(ConversationDetails.Empty)) return false;
             if(details.Subject != "Deleted" && details.Jid != "")
                     return true;
             return false;

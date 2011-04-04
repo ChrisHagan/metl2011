@@ -200,11 +200,12 @@ namespace SandRibbon.Components
                if (details == null) return;
                foreach ( var result in searchResults.Where(c => c.Jid == details.Jid).ToList())
                    searchResults.Remove(result);
-               if (details.Subject.ToLower() != "deleted" && details != ConversationDetails.Empty)
+               if (details.Subject.ToLower() != "deleted" && !details.Equals(ConversationDetails.Empty))
                    searchResults.Add(details);
                else if (details.Jid == Globals.location.activeConversation)
                    currentConversation.Visibility = Visibility.Collapsed;
-               if ((!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid) || details == ConversationDetails.Empty)
+               if ((!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid) || details.Equals(ConversationDetails.Empty))
+
                {
                    Commands.RequerySuggested();
                    this.Visibility = Visibility.Visible;
@@ -268,7 +269,7 @@ namespace SandRibbon.Components
                 originalContext = null;
             }
             var jid = ((FrameworkElement)sender).Tag;
-            if(jid.Equals(Globals.location.activeConversation))
+            if(jid.Equals(Globals.location.activeConversation) && !Globals.conversationDetails.Equals(ConversationDetails.Empty))
                 Commands.HideConversationSearchBox.Execute(null);
             else
                 Commands.JoinConversation.ExecuteAsync(jid);
