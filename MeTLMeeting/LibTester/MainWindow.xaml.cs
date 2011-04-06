@@ -195,7 +195,6 @@ namespace LibTester
         {
             ConversationListingSource = getAllConversations();
             ConversationListing.ItemsSource = ConversationListingSource;
-            //doMoveTo(101);
         }
         private void getConversations(object sender, RoutedEventArgs e)
         {

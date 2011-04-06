@@ -5,6 +5,8 @@ using System.Text;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using MeTLLib;
+using Microsoft.Practices.Composite.Presentation.Commands;
+using System.Diagnostics;
 
 namespace MeTLLib
 {
@@ -133,6 +135,11 @@ namespace MeTLLib
             this.TextBoxAvailable+= (sender, args) => { };
             this.VideoAvailable+= (sender, args) => { };
             this.SyncMoveRequested += (sender, SyncMoveRequestedEventArgs) => { };
+            Commands.ServersDown.RegisterCommand(new DelegateCommand<String>(ServersDown));
+        }
+        private void ServersDown(string url){
+            Trace.TraceError("CRASH: (Fixed) MeTLLib::ProductionReceiveEvents:ServersDown {0}", url);
+            statusChanged(false, null);
         }
         void IReceiveEvents.receiveSubmission(TargettedSubmission ts)
         {

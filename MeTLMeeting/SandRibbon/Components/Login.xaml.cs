@@ -62,7 +62,6 @@ namespace SandRibbon.Components
         {
             username.Focus();
         }
-        
         private void checkAuthenticationAttemptIsPlausible(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = username != null && username.Text.Length > 0 && password != null && password.Password.Length > 0;

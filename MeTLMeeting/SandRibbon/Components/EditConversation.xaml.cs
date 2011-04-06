@@ -37,7 +37,6 @@ namespace SandRibbon.Components
             InitializeComponent();
             activeSlides.ItemsSource = activeSlideList;
             loadConversation(Globals.conversationDetails.Slides);
-
         }
         private void loadConversation(List<Slide> slides)
         {

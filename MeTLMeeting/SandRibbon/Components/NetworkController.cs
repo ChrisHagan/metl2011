@@ -282,8 +282,8 @@ namespace SandRibbon.Components
         { Commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }
         private void statusChanged(object sender, StatusChangedEventArgs e)
         {
-            if (String.IsNullOrEmpty(Globals.me))//Connecting for the first time
-                if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
+            if (String.IsNullOrEmpty(Globals.me)){//Connecting for the first time
+                if (e.isConnected && e.credentials != null && e.credentials.authorizedGroups.Count > 0)
                 {
                     Commands.AllStaticCommandsAreRegistered();
                     Commands.SetIdentity.ExecuteAsync(e.credentials);
@@ -292,13 +292,14 @@ namespace SandRibbon.Components
                 {
                     if (WorkspaceStateProvider.savedStateExists())
                     {
-                        System.Windows.MessageBox.Show("MeTL was unable to connect as your auto login details were corrupted. Relaunch MeTL to try again.");
+                        System.Windows.MessageBox.Show("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
                         Commands.LogOut.Execute(null);
                     }
                     else
                         System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
                 }
-            else//Reconnecting
+            }
+            else
             {
                 Commands.Reconnecting.Execute(e.isConnected);
             }
