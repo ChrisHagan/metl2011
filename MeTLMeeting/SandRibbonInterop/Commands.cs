@@ -20,7 +20,7 @@ namespace SandRibbon
         {
             if (CommandParameterProvider.parameters.ContainsKey(command))
                 return CommandParameterProvider.parameters[command];
-            throw new NotSetException(Commands.which(command));
+            throw new NotSetException(string.Format("Could not get the lastValue of command {0}", Commands.which(command)));
         }
     }
     public class NotSetException : Exception {
