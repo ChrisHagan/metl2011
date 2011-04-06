@@ -582,7 +582,7 @@ namespace MeTLLib
         }
         public ConversationDetails UpdateConversationDetails(ConversationDetails details)
         {
-            ConversationDetails cd = null;
+            ConversationDetails cd = ConversationDetails.Empty;
             Action work = delegate
             {
                 cd = conversationDetailsProvider.Update(details);
@@ -592,7 +592,7 @@ namespace MeTLLib
         }
         public ConversationDetails DetailsOf(string room)
         {
-            ConversationDetails cd = null;
+            ConversationDetails cd = ConversationDetails.Empty;
             Action work = delegate
             {
                 cd = conversationDetailsProvider.DetailsOf(room);
@@ -602,7 +602,7 @@ namespace MeTLLib
         }
         public ConversationDetails CreateConversation(ConversationDetails details)
         {
-            ConversationDetails cd = null;
+            ConversationDetails cd = ConversationDetails.Empty;
             bool hasBeenSet = false;
             Action work = delegate
             {
@@ -648,7 +648,6 @@ namespace MeTLLib
         {
             get
             {
-                if (wire == null) return null;
                 var list = new List<ConversationDetails>();
                 Action work = delegate
                 {
@@ -712,7 +711,13 @@ namespace MeTLLib
         }
         public UserOptions UserOptionsFor(string username)
         {
-            return userOptionsProvider.Get(username);
+            var res = UserOptions.DEFAULT;
+            Action work = delegate
+            {
+                res = userOptionsProvider.Get(username);
+            };
+            tryIfConnected(work);
+            return res;
         }
     }
 }

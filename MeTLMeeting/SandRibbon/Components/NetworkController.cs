@@ -6,6 +6,7 @@ using MeTLLib;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Components
 {
@@ -120,10 +121,7 @@ namespace SandRibbon.Components
         }
         private void SendImage(TargettedImage ti)
         {
-            App.Current.Dispatcher.adoptAsync(delegate
-            {
-                client.SendImage(ti);
-            });
+            client.SendImage(ti);
         }
         private void SendLiveWindow(LiveWindowSetup lws)
         {
@@ -149,17 +147,11 @@ namespace SandRibbon.Components
         }
         private void SendTextBox(TargettedTextBox ttb)
         {
-            App.Current.Dispatcher.adoptAsync(delegate
-            {
-                client.SendTextBox(ttb);
-            });
+            client.SendTextBox(ttb);
         }
         private void SendVideo(TargettedVideo tv)
         {
-            App.Current.Dispatcher.adoptAsync(delegate
-            {
-                client.SendVideo(tv);
-            });
+            client.SendVideo(tv);
         }
         
         private void SneakInto(string room)
@@ -219,13 +211,10 @@ namespace SandRibbon.Components
         }
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
-            App.Current.Dispatcher.adopt(delegate
-            {
-                if (e.conversationDetails != null && e.conversationDetails.Jid == ClientFactory.Connection().location.activeConversation)
-                    Commands.UpdateConversationDetails.Execute(e.conversationDetails);
-                else
-                    Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
-            });
+            if (e.conversationDetails != null && e.conversationDetails.Jid == ClientFactory.Connection().location.activeConversation)
+                Commands.UpdateConversationDetails.Execute(e.conversationDetails);
+            else
+                Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
@@ -295,6 +284,8 @@ namespace SandRibbon.Components
                         System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
                 }
             }
+            if(!e.isConnected)
+                Logger.Log("CRASH: NetworkController::statusChanged:Diagnostic (Fixed)" + new System.Diagnostics.StackTrace().ToString());
             Commands.Reconnecting.Execute(e.isConnected);
         }
         private void strokeAvailable(object sender, StrokeAvailableEventArgs e)

@@ -213,7 +213,7 @@ namespace MeTLLib.Providers.Structure
                     return conversationsCache;
                 }
             }
-            catch (NotSetException e)
+            catch (Exception e)
             {
                 return new List<ConversationDetails>();
             }

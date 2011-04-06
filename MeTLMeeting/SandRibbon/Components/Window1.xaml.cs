@@ -115,8 +115,7 @@ namespace SandRibbon
             
             //canvas stuff
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(SetLayer, conversationSearchMustBeClosed));
+            Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<String>(SetLayer, conversationSearchMustBeClosed));
             Commands.MoveCanvasByDelta.RegisterCommandToDispatcher(new DelegateCommand<Point>(GrabMove));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
@@ -195,7 +194,7 @@ namespace SandRibbon
         private void ListenToAudio(int jid) {
             player.Source = new Uri("http://radar.adm.monash.edu:8500/MeTLStream1.m3u");
         }
-        private void SetLayer(object layer) {
+        private void SetLayer(string layer) {
             Trace.TraceInformation("SelectedMode {0}", layer);
         }
         private void ImportPowerpoint(object obj)
@@ -272,14 +271,26 @@ namespace SandRibbon
             {
                 try
                 {
-                    var jid = Commands.JoinConversation.lastValue().ToString();
-                    Commands.UpdateConversationDetails.Execute(ClientFactory.Connection().DetailsOf(jid));
-                    Commands.MoveTo.Execute(Globals.location.currentSlide);
-                    ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
-                                null,
-                                null,
-                                (parser) => Commands.PreParserAvailable.Execute(parser),
-                                jid);
+                    var details = Globals.conversationDetails;
+                    if (details.Equals(ConversationDetails.Empty))
+                    {
+                        Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                    }
+                    else
+                    {
+                        var jid = Globals.conversationDetails.Jid;
+                        Commands.UpdateConversationDetails.Execute(ClientFactory.Connection().DetailsOf(jid));
+                        Commands.MoveTo.Execute(Globals.location.currentSlide);
+                        ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
+                                    null,
+                                    null,
+                                    (parser) => Commands.PreParserAvailable.Execute(parser),
+                                    jid);
+                    }
+                }
+                catch (NotSetException e) {
+                    Logger.Crash(e);
+                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
                 catch (Exception e)
                 {

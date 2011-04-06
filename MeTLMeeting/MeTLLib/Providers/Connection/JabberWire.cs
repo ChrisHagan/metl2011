@@ -106,7 +106,6 @@ namespace MeTLLib.Providers.Connection
         private void registerCommands()
         {
             Commands.SendDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(SendDirtyConversationDetails));
-            Commands.SendWormMove.RegisterCommand(new DelegateCommand<WormMove>(SendWormMove));
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
             Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
             Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
@@ -195,10 +194,6 @@ namespace MeTLLib.Providers.Connection
         private Jid createJid(string username)
         {
             return new Jid(username + "@" + metlServerAddress.host);
-        }
-        private void SendWormMove(WormMove move)
-        {
-            send(credentials.name, string.Format("{0} {1}", WORM, move.direction));
         }
         public void SendLiveWindow(LiveWindowSetup window)
         {
@@ -298,13 +293,12 @@ namespace MeTLLib.Providers.Connection
         private void AttemptReloginAfter(int intervalInMilis)
         {
             if (closing) return;
-            Trace.TraceWarning("Attempting relogin in {0}", intervalInMilis);
+            Trace.TraceWarning("CRASH: (Fixed)MeTLLib::Providers:JabberWire Attempting relogin in {0}", intervalInMilis);
             receiveEvents.statusChanged(false, this.credentials);
             timer = new System.Threading.Timer(_state =>
             {
                 if (IsConnected())
                 {
-                    receiveEvents.statusChanged(true, this.credentials);
                     timer = null;
                     while (IsConnected() && actionsAfterRelogin != null && actionsAfterRelogin.Count > 0)
                     {
@@ -316,20 +310,23 @@ namespace MeTLLib.Providers.Connection
                         }
                         catch (Exception e)
                         {
-                            Trace.TraceError("Failed to add item to relogin-queue.  Exception: " + e.Message);
+                            Trace.TraceError("CRASH: MeTLLib::Providers:JabberWire:AttemptReloginAfter Failed to execute item on relogin-queue.  Exception: " + e.Message);
+                        }
+                        finally{
+                            if (actionsAfterRelogin.Count == 0)
+                            {
+                                Trace.TraceError("CRASH: MeTLLib::Providers:JabberWire:AttemptReloginAfter: REMOVING BLOCKER");
+                                receiveEvents.statusChanged(true, this.credentials);
+                            }
                         }
                     }
                 }
                 else
                 {
                     Login(location);
-                    AttemptReloginAfter(Math.Min(32000, intervalInMilis * 2));
+                    AttemptReloginAfter(Math.Min(8000, intervalInMilis + 1000));
                 }
             }, null, intervalInMilis, Timeout.Infinite);
-        }
-        private void OnPresence(object sender, Element element)
-        {
-            Commands.ReceiveWormMove.Execute("=");
         }
         public void Logout()
         {
@@ -351,7 +348,6 @@ namespace MeTLLib.Providers.Connection
             conn.OnError += HandlerError;
             conn.OnRegisterError += ElementError;
             conn.OnStreamError += ElementError;
-            conn.OnPresence += OnPresence;
             conn.OnClose += OnClose;
 #if DEBUG
             conn.OnReadXml += ReadXml;
@@ -373,7 +369,6 @@ namespace MeTLLib.Providers.Connection
             conn.OnError -= HandlerError;
             conn.OnRegisterError -= ElementError;
             conn.OnStreamError -= ElementError;
-            conn.OnPresence -= OnPresence;
             conn.OnReadXml -= ReadXml;
             conn.OnWriteXml -= WriteXml;
             conn.OnClose -= OnClose;
@@ -497,7 +492,6 @@ namespace MeTLLib.Providers.Connection
         }
         private void onStart()
         {
-            //Commands.UpdateWormInterval.Execute(TimeSpan.FromMilliseconds(15000));
         }
         private void onProgress(int upTo, int outOf)
         {
@@ -539,26 +533,31 @@ namespace MeTLLib.Providers.Connection
         }
         public void MoveTo(int where)
         {
-            new MucManager(conn).LeaveRoom(
-                new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
-            //location.activeConversation = (Slide.conversationFor(where)).ToString();
-            var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
-            location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
-            location.currentSlide = where;
-            Globals.conversationDetails = currentDetails;
-            Globals.slide = where;
-            joinRooms();
-            historyProvider.Retrieve<PreParser>(
-                onStart,
-                onProgress,
-                finishedParser => receiveEvents.receivePreParser(finishedParser),
-                location.currentSlide.ToString());
-            historyProvider.RetrievePrivateContent<PreParser>(
-                onStart,
-                onProgress,
-                finishedParser => receiveEvents.receivePreParser(finishedParser),
-                credentials.name,
-                location.currentSlide.ToString());
+            try
+            {
+                new MucManager(conn).LeaveRoom(
+                    new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
+                var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
+                location.availableSlides = currentDetails.Slides.Select(s => s.id).ToList();
+                location.currentSlide = where;
+                Globals.conversationDetails = currentDetails;
+                Globals.slide = where;
+                joinRooms();
+                historyProvider.Retrieve<PreParser>(
+                    onStart,
+                    onProgress,
+                    finishedParser => receiveEvents.receivePreParser(finishedParser),
+                    location.currentSlide.ToString());
+                historyProvider.RetrievePrivateContent<PreParser>(
+                    onStart,
+                    onProgress,
+                    finishedParser => receiveEvents.receivePreParser(finishedParser),
+                    credentials.name,
+                    location.currentSlide.ToString());
+            }
+            catch (Exception e) {
+                Trace.TraceInformation("CRASH: MeTLLib::JabberWire:MoveTo {0}", e.Message);
+            }
         }
         public void SendStroke(TargettedStroke stroke)
         {
@@ -652,9 +651,6 @@ namespace MeTLLib.Providers.Connection
                     case UPDATE_CONVERSATION_DETAILS:
                         handleConversationDetailsUpdated(parts);
                         break;
-                    case WORM:
-                        handleWormMoved(parts);
-                        break;
                     case GO_TO_SLIDE:
                         handleGoToSlide(parts);
                         break;
@@ -705,10 +701,6 @@ namespace MeTLLib.Providers.Connection
         public virtual void handleSleep(string[] parts)
         {
             Commands.ReceiveSleep.Execute(null);
-        }
-        public virtual void handleWormMoved(string[] parts)
-        {
-            Commands.ReceiveWormMove.Execute(parts[1]);
         }
         public virtual void ReceivedMessage(object obj)
         {

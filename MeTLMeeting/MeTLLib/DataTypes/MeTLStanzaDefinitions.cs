@@ -1501,17 +1501,15 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    //System.Diagnostics.Trace.TraceInformation("Imagerequested at: " + DateTime.Now + DateTime.Now.Millisecond);
-                    var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
-                    var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
-                    var path = string.Format("https://{0}:1188{1}", server.host, stemmedRelativePath);
-                    var bytes = provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute));
-                    if (bytes.Length == 0) return null;
-                    var stream = new MemoryStream(bytes);
-                    //System.Diagnostics.Trace.TraceInformation("Image data provided at: " + DateTime.Now + DateTime.Now.Millisecond);
                     var image = new BitmapImage();
                     try
                     {
+                        var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
+                        var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
+                        var path = string.Format("https://{0}:1188{1}", server.host, stemmedRelativePath);
+                        var bytes = provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute));
+                        if (bytes.Length == 0) return null;
+                        var stream = new MemoryStream(bytes);
                         image.BeginInit();
                         image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
                         image.StreamSource = stream;
@@ -1520,10 +1518,9 @@ namespace MeTLLib.DataTypes
                     }
                     catch (Exception e)
                     {
-                        System.Diagnostics.Trace.TraceInformation("Image instantiation failed at: " + DateTime.Now + DateTime.Now.Millisecond);
+                        System.Diagnostics.Trace.TraceInformation("CRASH: MeTLLib::MeTLStanzaDefinitions:Image:source Image instantiation failed at: {0} {1} with {2}",DateTime.Now,DateTime.Now.Millisecond,e.Message);
                         //Who knows what sort of hell is lurking in our history
                     }
-                    //System.Diagnostics.Trace.TraceInformation("Image created at: " + DateTime.Now + DateTime.Now.Millisecond);
                     return image;
                 }
                 set { SetTag(sourceTag, new ImageSourceConverter().ConvertToString(value)); }

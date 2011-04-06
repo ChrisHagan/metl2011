@@ -24,9 +24,12 @@ namespace MeTLLib.Providers.Connection
         public MeTLServerAddress metlServerAddress { private get; set; }
         [Inject]
         public ITimerFactory timerFactory { private get; set; }
-        
-        public void HealthCheck(Action healthyBehaviour)
+        public void HealthCheck (Action healthyBehaviour){
+            HealthCheck(healthyBehaviour,0);
+        }
+        private void HealthCheck(Action healthyBehaviour,int attempts)
         {
+            var maximum = 3;
             try
             {
                 if (healthyBehaviour == null)
@@ -44,7 +47,10 @@ namespace MeTLLib.Providers.Connection
                 else
                 {
                     Trace.TraceError("CRASH: (Fixed)MeTLLib::ProviderMonitor::HealthCheck threw could not ping {0}", uri);
-                    Commands.ServersDown.Execute(uri.Host);
+                    if (attempts >= maximum)
+                        Commands.ServersDown.Execute(uri.Host);
+                    else
+                        HealthCheck(healthyBehaviour, attempts++);
                 }
             }
             catch (Exception e) { 

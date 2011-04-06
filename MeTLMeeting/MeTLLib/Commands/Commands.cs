@@ -16,7 +16,7 @@ namespace MeTLLib
         {
             if (CommandParameterProvider.parameters.ContainsKey(command))
                 return CommandParameterProvider.parameters[command];
-            throw new NotSetException(Commands.which(command));
+            throw new NotSetException(string.Format("MeTLLib::CompositeCommandExtensions:lastValue Could not find value of {0}", Commands.which(command)));
         }
     }
     class NotSetException : Exception
