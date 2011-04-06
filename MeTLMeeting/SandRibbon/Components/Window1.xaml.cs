@@ -269,7 +269,7 @@ namespace SandRibbon
         private void Reconnecting(bool success) {
             if (success)
             {
-                Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty); 
+                Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 hideReconnectingDialog();
             }
             else
