@@ -273,7 +273,10 @@ namespace SandRibbon
                 hideReconnectingDialog();
             }
             else
+            {
+                Trace.TraceInformation("Reconnected");
                 showReconnectingDialog();
+            }
         }
         private void ToggleFriendsVisibility(object unused)
         {
@@ -577,7 +580,7 @@ namespace SandRibbon
             {
                 return false;
             }
-            if (details == null || details.Equals(ConversationDetails.Empty)) return false;
+            if (details == null) return false;
             if(details.Subject != "Deleted" && details.Jid != "")
                     return true;
             return false;

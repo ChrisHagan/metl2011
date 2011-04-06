@@ -674,7 +674,6 @@
     <Compile Include="DispatcherExtensions.cs" />
     <Compile Include="Providers\Colors.cs" />
     <Compile Include="Providers\ColourInformationProvider.cs" />
-    <Compile Include="Providers\ProviderMonitor.cs" />
     <Compile Include="Providers\ThumbnailProvider.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
     <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">
@@ -942,7 +941,6 @@
     <Content Include="lame_enc.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Resources\banhammer.jpg" />
     <Content Include="Resources\empty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
