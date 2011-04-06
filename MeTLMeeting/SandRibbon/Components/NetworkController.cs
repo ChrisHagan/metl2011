@@ -62,7 +62,6 @@ namespace SandRibbon.Components
             Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendTextBox));
             Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(SendVideo));
             Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
-            Commands.SneakIntoAndDo.RegisterCommand(new DelegateCommand<Projector.RoomAndAction>(SneakIntoAndDo));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
@@ -162,10 +161,7 @@ namespace SandRibbon.Components
                 client.SendVideo(tv);
             });
         }
-        private void SneakIntoAndDo(Projector.RoomAndAction roomAndAction)
-        {
-            client.SneakIntoAndDo(roomAndAction.room, roomAndAction.action);
-        }
+        
         private void SneakInto(string room)
         {
             client.SneakInto(room);

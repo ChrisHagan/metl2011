@@ -7,6 +7,7 @@ using System.Windows.Data;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
+using MeTLLib;
 using MeTLLib.Providers.Connection;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Utility;
@@ -60,16 +61,7 @@ namespace SandRibbon.Components
                         return acc;
                     });
         }
-        public class RoomAndAction
-        {
-            public string room;
-            public Action<PreParser> action;
-            public RoomAndAction(string theRoom, Action<PreParser> theAction)
-            {
-                room = theRoom;
-                action = theAction;
-            }
-        }
+        
         public Projector()
         {
             InitializeComponent();
@@ -103,6 +95,7 @@ namespace SandRibbon.Components
         }
         private void moveTo(object obj)
         {
+            conversationLabel.Text = Globals.conversationDetails.Title;
             stack.Flush();
         }
         void modeChanged(object sender, RoutedEventArgs e)
@@ -128,7 +121,7 @@ namespace SandRibbon.Components
             setProjectionLayers();
             try
             {
-                Commands.SneakIntoAndDo.ExecuteAsync(new RoomAndAction(Globals.location.currentSlide.ToString(), PreParserAvailable));
+                ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(null, null, PreParserAvailable, Globals.location.currentSlide.ToString());
             }
             catch (Exception e)
             {
