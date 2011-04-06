@@ -34,7 +34,7 @@ namespace MeTLLib.Providers.Connection
             {
                 if (healthyBehaviour == null)
                 {
-                    Trace.TraceError("CRASH: HealthCheck managed to get a null healthyBehaviour.  This is NOT healthy behaviour.");
+                    Trace.TraceError("CRASH: MeTLLib::ProviderMonitor::HealthCheck managed to get a null healthyBehaviour.  This is NOT healthy behaviour.");
                     return;
                 }
                 var uri = metlServerAddress.uri;
@@ -46,11 +46,16 @@ namespace MeTLLib.Providers.Connection
                 }
                 else
                 {
-                    Trace.TraceError("CRASH: (Fixed)MeTLLib::ProviderMonitor::HealthCheck threw could not ping {0}", uri);
+                    Trace.TraceError("CRASH: (Fixed)MeTLLib::ProviderMonitor::HealthCheck could not ping {0}", uri);
                     if (attempts >= maximum)
+                    {
                         Commands.ServersDown.Execute(uri.Host);
+                    }
                     else
+                    {/*Should we throw a bit of a thread sleep here?  We can't fire up a timer, people are waiting synchronously...  
+                         * And this might be on dispatcher...  I want to know how this behaves remotely.*/
                         HealthCheck(healthyBehaviour, attempts++);
+                    }
                 }
             }
             catch (Exception e) { 
