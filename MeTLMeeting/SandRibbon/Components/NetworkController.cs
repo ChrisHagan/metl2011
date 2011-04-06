@@ -295,10 +295,7 @@ namespace SandRibbon.Components
                         System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
                 }
             }
-            else
-            {
-                Commands.Reconnecting.Execute(e.isConnected);
-            }
+            Commands.Reconnecting.Execute(e.isConnected);
         }
         private void strokeAvailable(object sender, StrokeAvailableEventArgs e)
         {

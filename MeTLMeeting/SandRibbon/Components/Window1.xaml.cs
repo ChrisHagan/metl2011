@@ -290,7 +290,6 @@ namespace SandRibbon
             }
             else
             {
-                Trace.TraceInformation("Reconnected");
                 showReconnectingDialog();
             }
         }
