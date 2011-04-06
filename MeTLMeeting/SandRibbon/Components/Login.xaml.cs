@@ -50,7 +50,6 @@ namespace SandRibbon.Components
             Commands.AddWindowEffect.ExecuteAsync(null);
             Version = ConfigurationProvider.instance.getMetlVersion();
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
-            Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
             if (WorkspaceStateProvider.savedStateExists())
             {
                 rememberMe.IsChecked = true;
@@ -63,13 +62,7 @@ namespace SandRibbon.Components
         {
             username.Focus();
         }
-        private void ServersDown(IEnumerable<ServerStatus> servers)
-        {
-            Dispatcher.adopt((Action)delegate
-            {
-                this.servers.ItemsSource = servers;
-            });
-        }
+        
         private void checkAuthenticationAttemptIsPlausible(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = username != null && username.Text.Length > 0 && password != null && password.Password.Length > 0;
