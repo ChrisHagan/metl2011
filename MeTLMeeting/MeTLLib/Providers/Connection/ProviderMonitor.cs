@@ -32,7 +32,7 @@ namespace MeTLLib.Providers.Connection
                 if (healthyBehaviour == null)
                 {
                     Trace.TraceError("CRASH: HealthCheck managed to get a null healthyBehaviour.  This is NOT healthy behaviour.");
-                    throw new ArgumentNullException("healthyBehaviour", "Argument cannot be null.");
+                    return;
                 }
                 var uri = metlServerAddress.uri;
                 var ping = new System.Net.NetworkInformation.Ping();
@@ -44,7 +44,7 @@ namespace MeTLLib.Providers.Connection
                 else
                 {
                     Trace.TraceError("CRASH: (Fixed)MeTLLib::ProviderMonitor::HealthCheck threw could not ping {0}", uri);
-                    Commands.ServersDown.Execute(uri);
+                    Commands.ServersDown.Execute(uri.Host);
                 }
             }
             catch (Exception e) { 
