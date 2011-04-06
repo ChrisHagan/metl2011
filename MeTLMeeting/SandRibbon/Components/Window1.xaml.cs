@@ -30,6 +30,7 @@ using System.Collections.ObjectModel;
 using SandRibbon.Components.Utility;
 using System.Windows.Documents;
 using MeTLLib;
+using MeTLLib.Providers.Connection;
 
 namespace SandRibbon
 {
@@ -269,7 +270,22 @@ namespace SandRibbon
         private void Reconnecting(bool success) {
             if (success)
             {
-                Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                try
+                {
+                    var jid = Commands.JoinConversation.lastValue().ToString();
+                    Commands.UpdateConversationDetails.Execute(ClientFactory.Connection().DetailsOf(jid));
+                    Commands.MoveTo.Execute(Globals.location.currentSlide);
+                    ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
+                                null,
+                                null,
+                                (parser) => Commands.PreParserAvailable.Execute(parser),
+                                jid);
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(string.Format("CRASH(FIXED) Window1::Reconnecting crashed {0}", e.Message));
+                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                }
                 hideReconnectingDialog();
             }
             else
