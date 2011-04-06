@@ -283,10 +283,13 @@ namespace SandRibbon
                 }
                 catch (Exception e)
                 {
-                    Logger.Log(string.Format("CRASH(FIXED) Window1::Reconnecting crashed {0}", e.Message));
+                    Logger.Log(string.Format("CRASH: (Fixed) Window1::Reconnecting crashed {0}", e.Message));
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                 }
-                hideReconnectingDialog();
+                finally
+                {
+                    hideReconnectingDialog();
+                }
             }
             else
             {
