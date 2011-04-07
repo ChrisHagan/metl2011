@@ -75,7 +75,7 @@ namespace SandRibbon
             }
             catch (TriedToStartMeTLWithNoInternetException e)
             {
-                MessageBox.Show("MeTL cannot connect to the server.");
+                MessageBox.Show("MeTL cannot connect to the server.  Please ensure that you have an active network connection.");
             }
         }
         public static void noop(object _arg)
