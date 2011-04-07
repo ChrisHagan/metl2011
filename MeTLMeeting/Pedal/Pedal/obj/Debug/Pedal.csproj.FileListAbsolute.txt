@@ -24,3 +24,14 @@ C:\sandRibbon\Pedal\Pedal\obj\Debug\Pedal.exe.manifest
 C:\sandRibbon\Pedal\Pedal\obj\Debug\Pedal.application
 C:\sandRibbon\Pedal\Pedal\obj\Debug\Pedal.exe
 C:\sandRibbon\Pedal\Pedal\obj\Debug\Pedal.pdb
+C:\specialMeTL\MeTLMeeting\Pedal\Pedal\obj\Debug\Pedal.exe
+C:\specialMeTL\MeTLMeeting\Pedal\Pedal\obj\Debug\Pedal.pdb
+C:\specialMeTL\MeTLMeeting\Pedal\Pedal\obj\Debug\ResolveAssemblyReference.cache
+C:\specialMeTL\MeTLMeeting\Pedal\Pedal\obj\Debug\Window1.baml
+C:\specialMeTL\MeTLMeeting\Pedal\Pedal\obj\Debug\Window1.g.cs
+C:\specialMeTL\MeTLMeeting\Pedal\Pedal\obj\Debug\App.g.cs
+C:\specialMeTL\MeTLMeeting\Pedal\Pedal\obj\Debug\Pedal_Content.g.cs
+C:\specialMeTL\MeTLMeeting\Pedal\Pedal\obj\Debug\Pedal_MarkupCompile.cache
+C:\specialMeTL\MeTLMeeting\Pedal\Pedal\obj\Debug\Pedal.g.resources
+C:\specialMeTL\MeTLMeeting\Pedal\Pedal\obj\Debug\Pedal.Properties.Resources.resources
+C:\specialMeTL\MeTLMeeting\Pedal\Pedal\obj\Debug\Pedal.csproj.GenerateResource.Cache

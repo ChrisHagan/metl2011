@@ -14,7 +14,8 @@ using System.Threading;
 
 namespace SandRibbon.Utils
 {
-    class LogMessage : CouchDocument{
+    class LogMessage : CouchDocument
+    {
         public string version;
         public string content;
         public long timestamp;
@@ -54,22 +55,53 @@ namespace SandRibbon.Utils
     {
         public static string log = "MeTL Log\r\n";
         public static readonly string POST_LOG = "http://madam.adm.monash.edu.au:5984/metl_log";
-        private static CouchServer server = new CouchServer("madam.adm.monash.edu.au", 5984);
+        private static CouchServer establishedServer = null;
+        private static CouchServer server
+        {
+            get
+            {
+                return establishedServer;
+            }
+            set
+            {
+                try
+                {
+                    establishedServer = new CouchServer("madam.adm.monash.edu.au", 5984);
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
         private static readonly string DB_NAME = "metl_log";
-        private static readonly ICouchDatabase db = server.GetDatabase(DB_NAME);
-        public static void Crash(Exception e) {
-            var crashMessage = string.Format("CRASH: {0} @ {1} INNER: {2}", 
-                e.Message, 
-                e.StackTrace, 
-                e.InnerException == null? "NONE":e.InnerException.StackTrace);            
+        private static ICouchDatabase db
+        {
+            get
+            {
+                if (server == null) return null;
+                try
+                {
+                    return server.GetDatabase(DB_NAME);
+                }
+                catch (Exception) { return null; }
+            }
+        }
+        public static void Crash(Exception e)
+        {
+            var crashMessage = string.Format("CRASH: {0} @ {1} INNER: {2}",
+                e.Message,
+                e.StackTrace,
+                e.InnerException == null ? "NONE" : e.InnerException.StackTrace);
             Log(crashMessage);
         }
-        public static void Fixed(string message) {
+        public static void Fixed(string message)
+        {
             try
             {
                 Log(string.Format("CRASH: (fixed): {0} {1}", Globals.me, message));
             }
-            catch (NotSetException e) { 
+            catch (NotSetException e)
+            {
                 Log(string.Format("CRASH: (fixed): {0} {1}", "USERNAME_NOT_SET", message));
             }
         }
@@ -77,12 +109,14 @@ namespace SandRibbon.Utils
         {/*Interesting quirk about the formatting: \n is the windows line ending but ruby assumes
           *nix endings, which are \r.  Safest to use both, I guess.*/
             var now = SandRibbonObjects.DateTimeFactory.Now();
-            
+
             putCouch(appendThis, now);
         }
-        private static void putCouch(string message, DateTime now) {
+        private static void putCouch(string message, DateTime now)
+        {
+            if (server == null || db == null) return;
             if (String.IsNullOrEmpty(Globals.me)) return;
-            if(String.IsNullOrEmpty(message)) return;
+            if (String.IsNullOrEmpty(message)) return;
             if (message.Contains(POST_LOG)) return;
             if (new[] {
                 "MeTL Presenter.exe ", 
