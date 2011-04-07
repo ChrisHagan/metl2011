@@ -25,7 +25,6 @@ namespace SandRibbon.Components
         public NetworkController()
         {
             switchServer();
-            if (client == null) return;
             registerCommands();
             attachToClient();
         }
