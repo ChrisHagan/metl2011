@@ -103,7 +103,8 @@ namespace SandRibbon.Providers
                 {
                     try
                     {
-                        return MeTLLib.ClientFactory.Connection().DetailsOf((String)Commands.JoinConversation.lastValue());
+                        var lastJoined = (String)Commands.JoinConversation.lastValue();
+                        return MeTLLib.ClientFactory.Connection().DetailsOf(lastJoined);
                     }
                     catch (NotSetException) { 
                         return ConversationDetails.Empty;

@@ -24,7 +24,8 @@ using System.Windows.Threading;
 
 namespace SandRibbon
 {
-    public class CouchTraceListener : TraceListener {
+    public class CouchTraceListener : TraceListener
+    {
         public override void Write(string message)
         {
             Logger.Log(message);
@@ -39,9 +40,9 @@ namespace SandRibbon
         public static Divelements.SandRibbon.RibbonAppearance colorScheme = 0;
         public static NetworkController controller;
         public static bool isStaging = false;
-        public static bool isExternal = false; 
+        public static bool isExternal = false;
         public static DateTime AccidentallyClosing = DateTime.Now;
-        public static Credentials Login(String username, String password)
+        public static void Login(String username, String password)
         {
             string finalUsername = username;
             if (username.Contains("_"))
@@ -67,11 +68,15 @@ namespace SandRibbon
             }
             if (username.ToLower().StartsWith("ext-"))
                 isExternal = true;
-            if (controller == null)
+            try
+            {
                 controller = new NetworkController();
-            else
-                controller.switchServer();
-            return MeTLLib.ClientFactory.Connection().Connect(finalUsername, password);
+                MeTLLib.ClientFactory.Connection().Connect(finalUsername, password);
+            }
+            catch (TriedToStartMeTLWithNoInternetException e)
+            {
+                MessageBox.Show("MeTL cannot connect to the server.");
+            }
         }
         public static void noop(object _arg)
         {
@@ -134,13 +139,15 @@ namespace SandRibbon
             }
             catch (Exception) { }
         }
-        void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e){
+        void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
             var falseAlarms = new[]{
                 "Index was out of range. Must be non-negative and less than the size of the collection.",
                 "The operation completed successfully"
             };
             var msg = e.Exception.Message;
-            if(msg != null && falseAlarms.Any(m=>msg.StartsWith(m))){
+            if (msg != null && falseAlarms.Any(m => msg.StartsWith(m)))
+            {
                 Logger.Fixed(msg);
                 e.Handled = true;
             }

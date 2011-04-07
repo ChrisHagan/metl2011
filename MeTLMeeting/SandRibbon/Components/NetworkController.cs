@@ -7,11 +7,14 @@ using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
+using System.Windows.Forms;
 
 namespace SandRibbon.Components
 {
-    public class CivicServerAddress : MeTLServerAddress{
-        public CivicServerAddress() { 
+    public class CivicServerAddress : MeTLServerAddress
+    {
+        public CivicServerAddress()
+        {
             stagingUri = new Uri("http://civic.adm.monash.edu.au", UriKind.Absolute);
             productionUri = new Uri("http://civic.adm.monash.edu.au", UriKind.Absolute);
         }
@@ -22,6 +25,7 @@ namespace SandRibbon.Components
         public NetworkController()
         {
             switchServer();
+            if (client == null) return;
             registerCommands();
             attachToClient();
         }
@@ -153,7 +157,7 @@ namespace SandRibbon.Components
         {
             client.SendVideo(tv);
         }
-        
+
         private void SneakInto(string room)
         {
             client.SneakInto(room);
@@ -267,7 +271,8 @@ namespace SandRibbon.Components
         { Commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }
         private void statusChanged(object sender, StatusChangedEventArgs e)
         {
-            if (String.IsNullOrEmpty(Globals.me)){//Connecting for the first time
+            if (String.IsNullOrEmpty(Globals.me))
+            {//Connecting for the first time
                 if (e.isConnected && e.credentials != null && e.credentials.authorizedGroups.Count > 0)
                 {
                     Commands.AllStaticCommandsAreRegistered();
@@ -284,7 +289,7 @@ namespace SandRibbon.Components
                         System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
                 }
             }
-            if(!e.isConnected)
+            if (!e.isConnected)
                 Logger.Log("CRASH: NetworkController::statusChanged:Diagnostic (Fixed)" + new System.Diagnostics.StackTrace().ToString());
             Commands.Reconnecting.Execute(e.isConnected);
         }
