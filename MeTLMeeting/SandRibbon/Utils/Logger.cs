@@ -55,35 +55,38 @@ namespace SandRibbon.Utils
     {
         public static string log = "MeTL Log\r\n";
         public static readonly string POST_LOG = "http://madam.adm.monash.edu.au:5984/metl_log";
-        private static CouchServer establishedServer = null;
-        private static CouchServer server
-        {
-            get
-            {
-                return establishedServer;
-            }
-            set
-            {
-                try
-                {
-                    establishedServer = new CouchServer("madam.adm.monash.edu.au", 5984);
-                }
-                catch (Exception)
-                {
-                }
-            }
-        }
         private static readonly string DB_NAME = "metl_log";
+        private static CouchServer establishedServer = null;
+        private static ICouchDatabase establishedDB = null;
+        private static bool connectionFailed = false;
         private static ICouchDatabase db
         {
             get
             {
-                if (server == null) return null;
-                try
+                if (connectionFailed)
+                    return null;
+                if (establishedDB == null)
                 {
-                    return server.GetDatabase(DB_NAME);
+                    if (establishedServer == null)
+                    {
+                        try
+                        {
+                            establishedServer = new CouchServer("madam.adm.monash.edu.au", 5984);
+                        }
+                        catch (Exception) { }
+                    }
+                    if (establishedServer != null)
+                        try
+                        {
+                            establishedDB = establishedServer.GetDatabase(DB_NAME);
+                        }
+                        catch (Exception)
+                        {
+                            connectionFailed = true;
+                        }
+                    else connectionFailed = true;
                 }
-                catch (Exception) { return null; }
+                return establishedDB;
             }
         }
         public static void Crash(Exception e)
@@ -114,11 +117,11 @@ namespace SandRibbon.Utils
         }
         private static void putCouch(string message, DateTime now)
         {
-            if (server == null || db == null) return;
             if (String.IsNullOrEmpty(Globals.me)) return;
             if (String.IsNullOrEmpty(message)) return;
             if (message.Contains(POST_LOG)) return;
             if (new[] {
+                "CouchServer(madam.adm.monash.edu.au:5984)",
                 "MeTL Presenter.exe ", 
                 "MeTL Presenter.vshost.exe ", 
                 "Failed to add item to relogin-queue.", 
