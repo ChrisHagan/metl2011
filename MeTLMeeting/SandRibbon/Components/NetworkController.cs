@@ -29,6 +29,7 @@ namespace SandRibbon.Components
             attachToClient();
         }
         public void switchServer()
+        //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
             if (App.isExternal)
                 client = MeTLLib.ClientFactory.Connection(new CivicServerAddress());

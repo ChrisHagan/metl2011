@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
+using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace SandRibbon.Utils
 {
@@ -59,6 +60,12 @@ namespace SandRibbon.Utils
         private static CouchServer establishedServer = null;
         private static ICouchDatabase establishedDB = null;
         private static bool connectionFailed = false;
+        static Logger()
+        {
+            Commands.Reconnecting.RegisterCommand(new DelegateCommand<object>(delegate { 
+                connectionFailed = false; 
+            }));
+        }
         private static ICouchDatabase db
         {
             get
@@ -73,7 +80,9 @@ namespace SandRibbon.Utils
                         {
                             establishedServer = new CouchServer("madam.adm.monash.edu.au", 5984);
                         }
-                        catch (Exception) { }
+                        catch (Exception) {
+                        //Can't create a server object to represent madam.  This can't be logged.
+                        }
                     }
                     if (establishedServer != null)
                         try
@@ -82,6 +91,7 @@ namespace SandRibbon.Utils
                         }
                         catch (Exception)
                         {
+                            //Can't create a connection to the db on madam.  This can't be logged.
                             connectionFailed = true;
                         }
                     else connectionFailed = true;
