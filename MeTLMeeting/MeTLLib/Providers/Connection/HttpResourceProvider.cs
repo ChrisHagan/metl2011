@@ -96,7 +96,13 @@ namespace MeTLLib.Providers.Connection
         }
         byte[] IWebClient.uploadFile(Uri resource, string filename)
         {
-            return client.UploadFile(resource.ToString(), filename); 
+            try
+            {
+                return client.UploadFile(resource.ToString(), filename);
+            }
+            catch (Exception e) {
+                throw e;
+            }
         }
         private string decode(byte[] bytes)
         {

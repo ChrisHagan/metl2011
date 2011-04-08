@@ -18,7 +18,7 @@
         <DataTemplate x:Key="slideTemplate">
             <Image Width="{StaticResource slideWidth}" Height="{StaticResource slideHeight}" Source="{Binding Path=slideThumbnailSource, Converter={x:Static my:Converters.nonCachedImage}}" Margin="0 5 0 0"/>
         </DataTemplate>
-    <ItemsPanelTemplate x:Key="panelTemplate">
+        <ItemsPanelTemplate x:Key="panelTemplate">
             <StackPanel /> 
         </ItemsPanelTemplate>
         <Storyboard x:Key="transition">
@@ -55,12 +55,6 @@
                          Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"  VerticalAlignment="Bottom"                             
                           ItemTemplate="{StaticResource slideTemplate}"
                           ItemsPanel="{StaticResource panelTemplate}" />
-            <Viewbox  Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" >
-                <ItemsControl x:Name="to"
-                              Margin="0,50,0,0"
-                              ItemTemplate="{StaticResource slideTemplate}"
-                              ItemsPanel="{StaticResource panelTemplate}" />
-            </Viewbox>
             <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="20">
                 <quiz:GoldPlaque />
                 <Label x:Name="goldLabel" Content="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="32"/>

@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Threading;
 using System.Diagnostics;
 using Ninject;
+using agsXMPP.Xml.Dom;
 
 namespace MeTLLib
 {
@@ -243,6 +244,11 @@ namespace MeTLLib
                 wire.SendDirtyVideo(tde);
             };
             tryIfConnected(work);
+        }
+        public void SendStanza(string where, Element stanza) {
+            tryIfConnected(delegate {
+                wire.SendStanza(where, stanza);
+            });
         }
         public void uploadAndSendSubmission(MeTLStanzas.LocalSubmissionInformation lii)
         {

@@ -1397,7 +1397,7 @@ namespace MeTLLib.DataTypes
                 this.downloader = downloader;
                 return this;
             }
-            private static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\empty.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
+            protected static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\empty.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
             public System.Windows.Controls.Image forceEvaluation()
             {
                 var sourceString = string.Format("https://{0}:1188{1}", server.host, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)));
@@ -1414,37 +1414,49 @@ namespace MeTLLib.DataTypes
                 InkCanvas.SetTop(image, this.y);
                 return image;
             }
+            public ImageSource asynchronouslyLoadImageData()
+            {
+                var image = new BitmapImage();
+                try
+                {
+                    var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
+                    var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
+                    var path = string.Format("https://{0}:1188{1}", server.host, stemmedRelativePath);
+                    var bytes = provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute));
+                    if (bytes.Length == 0) return null;
+                    var stream = new MemoryStream(bytes);
+                    image.BeginInit();
+                    image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
+                    image.StreamSource = stream;
+                    image.EndInit();
+                    image.Freeze();//Going to be handed back to the dispatcher
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Trace.TraceInformation("CRASH: MeTLLib::MeTLStanzaDefinitions:Image:source Image instantiation failed at: {0} {1} with {2}",DateTime.Now,DateTime.Now.Millisecond,e.Message);
+                    //Who knows what sort of hell is lurking in our history
+                }
+                return image;
+            }
             private void attachSourceToThisImage(System.Windows.Controls.Image image)
             {
-                Thread backgroundWorker = new Thread(new ThreadStart(() =>
+                ThreadPool.QueueUserWorkItem(delegate
                 {
-                    var newSource = this.source;
-                    if (newSource == null) return;
+                    if (image == null) return;//This might have been GCed if they moved conversations
+                    var newSource = asynchronouslyLoadImageData();
+                    System.Windows.Threading.Dispatcher dispatcher;
                     if (image != null && image.Dispatcher != null && image.Dispatcher.Thread != null)
-                        DispatcherExtensions.adoptAsync(image.Dispatcher, (Action)delegate
-                        {
-                            if (image == null) return;
-                            var oldTag = image.Tag;
-                            if (oldTag.ToString().StartsWith("NOT_LOADED"))
-                            {
-                                var newTag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
-                                image.Tag = newTag;
-                            }
-                            image.Source = newSource;
-                        });
+                        dispatcher = image.Dispatcher;
                     else
+                        dispatcher = Application.Current.Dispatcher;
+                    DispatcherExtensions.adoptAsync(dispatcher, delegate
                     {
-                        if (image == null) return;
                         var oldTag = image.Tag;
                         if (oldTag.ToString().StartsWith("NOT_LOADED"))
-                        {
-                            var newTag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
-                            image.Tag = newTag;
-                        }
+                            image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
                         image.Source = newSource;
-                    }
-                }));
-                backgroundWorker.Start();
+                    });
+                });
             }
             public TargettedImage Img
             {
@@ -1483,48 +1495,21 @@ namespace MeTLLib.DataTypes
                     SetTag(identityTag, value.id);
                 }
             }
-            private static readonly string sourceTag = "source";
-            private static readonly string heightTag = "height";
-            private static readonly string widthTag = "width";
+            protected static readonly string sourceTag = "source";
+            protected static readonly string heightTag = "height";
+            protected static readonly string widthTag = "width";
             public string tag
             {
                 get { return GetTag(tagTag); }
                 set { SetTag(tagTag, value); }
             }
-            private string safetySourceTag(String tag)
+            protected string safetySourceTag(String tag)
             {
                 if (tag.StartsWith("NOT_LOADED"))
                     tag = tag.Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[1];
                 return tag;
             }
-            public ImageSource source
-            {
-                get
-                {
-                    var image = new BitmapImage();
-                    try
-                    {
-                        var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
-                        var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
-                        var path = string.Format("https://{0}:1188{1}", server.host, stemmedRelativePath);
-                        var bytes = provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute));
-                        if (bytes.Length == 0) return null;
-                        var stream = new MemoryStream(bytes);
-                        image.BeginInit();
-                        image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
-                        image.StreamSource = stream;
-                        image.EndInit();
-                        image.Freeze();
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Trace.TraceInformation("CRASH: MeTLLib::MeTLStanzaDefinitions:Image:source Image instantiation failed at: {0} {1} with {2}",DateTime.Now,DateTime.Now.Millisecond,e.Message);
-                        //Who knows what sort of hell is lurking in our history
-                    }
-                    return image;
-                }
-                set { SetTag(sourceTag, new ImageSourceConverter().ConvertToString(value)); }
-            }
+            
             public double x
             {
                 get { return Double.Parse(GetTag(xTag)); }

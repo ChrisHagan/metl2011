@@ -52,33 +52,6 @@ namespace MeTLLib.Providers.Connection
                 canvas.Strokes.Add(stroke.stroke);
             return canvas;
         }
-        public InkCanvas Populate(InkCanvas canvas)
-        {
-            foreach (var shape in autoshapes)
-                canvas.Children.Add(shape.Value.autoshape);
-            foreach (var video in videos)
-                canvas.Children.Add(video.Value.video);
-            foreach (var image in images)
-            {
-                var myImage = new Image
-                {
-                    Height = image.Value.imageSpecification.height,
-                    Width= image.Value.imageSpecification.height,
-                    Source = image.Value.imageSpecification.source
-                };
-                canvas.Children.Add(myImage);
-            }
-            foreach (var textbox in text)
-            {
-                var box = textbox.Value.box;
-                box.BorderBrush = new SolidColorBrush(Colors.Transparent);
-                box.Background = new SolidColorBrush(Colors.Transparent);
-                canvas.Children.Add(box);
-            }
-            foreach (var stroke in ink)
-                canvas.Strokes.Add(stroke.stroke);
-            return canvas;
-        }
         public T merge<T>(T otherParser) where T : PreParser
         {
             var returnParser = (T)Activator.CreateInstance(typeof(T), 

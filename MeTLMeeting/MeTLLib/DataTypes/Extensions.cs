@@ -277,7 +277,7 @@ namespace MeTLLib.DataTypes
             return startingSum;
         }
         public static StrokeChecksum sum(this Stroke stroke)
-        {//Removed memoization because it makes moved strokes still think they are in the same place.
+        {
             var checksum = new StrokeChecksum
             {
                 checksum = stroke.StylusPoints.Aggregate(0.0, (acc, item) =>

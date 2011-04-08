@@ -23,13 +23,11 @@ namespace SandRibbon
         public static SubtractionConverter subtract = new SubtractionConverter();
         public static SlideDisplacementConverter SlideDisplacement = new SlideDisplacementConverter();
         public ObservableCollection<PowerpointImportProgress> fromStack = new ObservableCollection<PowerpointImportProgress>();
-        public ObservableCollection<PowerpointImportProgress> toStack = new ObservableCollection<PowerpointImportProgress>();
 
         public ProgressDialog()
         {
             InitializeComponent();
             from.ItemsSource = fromStack;
-            to.ItemsSource = toStack;
             Commands.UpdatePowerpointProgress.RegisterCommandToDispatcher(new DelegateCommand<PowerpointImportProgress>(UpdatePowerpointProgress));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.PrintConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(PrintConversation));
@@ -45,10 +43,10 @@ namespace SandRibbon
         }
         private void reset()
         {
+            slidesAnalyzed = 0;
             Dispatcher.adopt(delegate
             {
                 fromStack.Clear();
-                toStack.Clear();
             });
         }
         private void PrintConversation(object _arg) {
@@ -65,6 +63,7 @@ namespace SandRibbon
             Commands.RequerySuggested();
             Visibility = Visibility.Collapsed;
         }
+        private int slidesAnalyzed = 0;
         private void UpdatePowerpointProgress(PowerpointImportProgress progress) {
             switch (progress.stage) { 
                 case PowerpointImportProgress.IMPORT_STAGE.DESCRIBED:
@@ -73,8 +72,11 @@ namespace SandRibbon
                     setContent("Importing");
                     break;
                 case PowerpointImportProgress.IMPORT_STAGE.ANALYSED:
-                   fromStack.Insert(0,progress);
-                    break;
+                   slidesAnalyzed++;
+                   setContent(string.Format("{0}/{1}",slidesAnalyzed,progress.totalSlides));
+                   if(progress.slideThumbnailSource != null)//Flexible doesn't show pictures
+                       fromStack.Insert(0,progress);
+                   break;
             }
         }
     }

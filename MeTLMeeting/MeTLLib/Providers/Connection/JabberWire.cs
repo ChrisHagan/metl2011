@@ -13,6 +13,7 @@ using MeTLLib.Providers.Structure;
 using System.Diagnostics;
 using Ninject;
 using System.Threading;
+using System.Windows;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -305,7 +306,7 @@ namespace MeTLLib.Providers.Connection
                         var item = (DispatcherAction)actionsAfterRelogin.Peek();//Do not alter the queue, we might be back here any second
                         try
                         {
-                            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(item.Work);
+                            System.Windows.Threading.Dispatcher.CurrentDispatcher.adopt(item.Work);
                             actionsAfterRelogin.Dequeue();//We only lift it off the top after successful execution.
                         }
                         catch (Exception e)
@@ -582,6 +583,9 @@ namespace MeTLLib.Providers.Connection
         public void SendVideo(TargettedVideo video)
         {
             stanza(video.slide.ToString(), new MeTLStanzas.Video(video));
+        }
+        public void SendStanza(string where, Element what) {
+            stanza(where, what);
         }
         public void SendAutoShape(TargettedAutoShape autoshape)
         {
