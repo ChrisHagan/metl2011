@@ -35,7 +35,7 @@ namespace SandRibbon.Components
         {
             get
             {
-                var releaseNotes = "Unable to retrieve announcements.  MeTL may not be able to connect to the server.";
+                var releaseNotes = "MeTL is unable to retrieve announcements.  Please check your internet connection.";
                 try
                 {
                     releaseNotes = HttpResourceProvider.insecureGetString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
