@@ -207,7 +207,6 @@ namespace SandRibbon.Utils
             var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
             var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
             var thumbnailStartId = conversation.Slides.First().id;
-            var slideCount = conversation.Slides.Count();
             foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
             {
                 int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
@@ -258,6 +257,7 @@ namespace SandRibbon.Utils
                 {
                     ExportShape(shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
                 }
+                progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, conversationSlideNumber, ppt.Slides.Count);
             }
             ppt.Close();
             var startingId = conversation.Slides.First().id;
@@ -333,6 +333,7 @@ namespace SandRibbon.Utils
                 foreach (var slide in ppt.Slides)
                 {
                     importSlide(details, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
+                    progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, -1, ppt.Slides.Count);//All the consumers count for themselves
                 }
                 var startingId = conversation.Slides.First().id;
                 var index = 0;

@@ -38,12 +38,16 @@ namespace SandRibbon
         private void HideProgressBlocker(object _arg) {
             Visibility = Visibility.Collapsed;
         }
+        private void setProgress(double percentage) {
+            progress.Value = percentage;
+        }
         private void setContent(string content) {
             goldLabel.Content = content; 
         }
         private void reset()
         {
             slidesAnalyzed = 0;
+            slidesExtracted = 0;
             Dispatcher.adopt(delegate
             {
                 fromStack.Clear();
@@ -63,6 +67,7 @@ namespace SandRibbon
             Commands.RequerySuggested();
             Visibility = Visibility.Collapsed;
         }
+        private int slidesExtracted = 0;
         private int slidesAnalyzed = 0;
         private void UpdatePowerpointProgress(PowerpointImportProgress progress) {
             switch (progress.stage) { 
@@ -71,11 +76,15 @@ namespace SandRibbon
                     Visibility = Visibility.Visible;
                     setContent("Importing");
                     break;
+                case PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES:
+                    slidesExtracted++;
+                    setContent("Processing");
+                    setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                    break;
                 case PowerpointImportProgress.IMPORT_STAGE.ANALYSED:
                    slidesAnalyzed++;
-                   setContent(string.Format("{0}/{1}",slidesAnalyzed,progress.totalSlides));
-                   if(progress.slideThumbnailSource != null)//Flexible doesn't show pictures
-                       fromStack.Insert(0,progress);
+                   setContent("Loading");
+                   setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
                    break;
             }
         }
