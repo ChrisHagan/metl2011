@@ -277,13 +277,13 @@ namespace SandRibbon.Utils
                 var slideXml = xmlSlides.ElementAt(i);
                 var slideId = conversation.Slides[i].id;
                 var slideIndex = i;
-                ThreadPool.QueueUserWorkItem(delegate
+                ThreadPool.UnsafeQueueUserWorkItem(delegate
                 {
                     uploadXmlUrls(slideId, slideXml);
                     sendSlide(slideId, slideXml);
                     progress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, slideIndex, slideCount);
                     tracker.increment();
-                });
+                },null);
             }
         }
         public static string getThumbnailPath(string jid, int id)

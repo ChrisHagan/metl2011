@@ -140,7 +140,7 @@ namespace SandRibbon.Utils
                 "MeTL Presenter.exe Information: 0 :", 
                 "Error loading thumbnail:"}.Any(prefix => message.StartsWith(prefix))) return;
             if (db != null)
-                ThreadPool.QueueUserWorkItem(delegate
+                ThreadPool.UnsafeQueueUserWorkItem(delegate
                 {
                     try
                     {
@@ -178,7 +178,7 @@ namespace SandRibbon.Utils
                         //what should we do if we cannot save to couch?
                         //ALL IS LOST
                     }
-                });
+                },null);
         }
     }
 }

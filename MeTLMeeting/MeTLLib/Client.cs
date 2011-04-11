@@ -80,8 +80,6 @@ namespace MeTLLib
         void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation videoInformation);
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
         void AsyncRetrieveHistoryOf(int room);
-        PreParser RetrieveHistoryOfMUC(string muc);
-        List<PreParser> RetrieveHistoryOfRoom(int room);
         void MoveTo(int slide);
         void JoinConversation(string conversation);
         ConversationDetails AppendSlide(string Jid);
@@ -506,36 +504,6 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
-        public PreParser RetrieveHistoryOfMUC(string muc)
-        {
-            var parserList = new List<PreParser>();
-            tryIfConnected(() =>
-            {
-                if (String.IsNullOrEmpty(muc)) return;
-                Thread thread = new Thread(new ParameterizedThreadStart(delegate
-                {
-                    Thread parserAggregator = new Thread(new ParameterizedThreadStart(delegate
-                    {
-                        while (parserList.Count == 0)
-                        {
-                        }
-                    }));
-                    parserAggregator.Start();
-                    historyProvider.Retrieve<PreParser>(
-                        null,
-                        null,
-                    preParser =>
-                    {
-                        parserList.Add(preParser);
-                    },
-                    muc);
-                        parserAggregator.Join();
-                }));
-                thread.Start();
-                thread.Join();
-            });
-            return parserList[0];
-        }
         public void NoAuthAsyncRetrieveHistoryOfRoom(int room)
         {
             string muc = room.ToString();
@@ -547,44 +515,6 @@ namespace MeTLLib
                     events.receivePreParser(preParser);
                 },
                 muc);
-        }
-        public List<PreParser> RetrieveHistoryOfRoom(int room)
-        {
-            var parserList = new List<PreParser>();
-            tryIfConnected(() =>
-            {
-                if (room == null) return;
-                Thread thread = new Thread(new ParameterizedThreadStart(delegate
-                {
-                    Thread parserAggregator = new Thread(new ParameterizedThreadStart(delegate
-                    {
-                        while (parserList.Count < 3)
-                        {
-                        }
-                    }));
-                    parserAggregator.Start();
-                    historyProvider.Retrieve<PreParser>(
-                        null,null,
-                        preParser =>
-                        {
-                            parserList.Add(preParser);
-                        },
-                    room.ToString());
-                    historyProvider.RetrievePrivateContent<PreParser>(
-                    null,
-                    null,
-                    preParser =>
-                    {
-                        parserList.Add(preParser);
-                    },
-                    username,
-                    room.ToString());
-                    parserAggregator.Join();
-                }));
-                thread.Start();
-                thread.Join();
-            });
-            return parserList;
         }
         public ConversationDetails UpdateConversationDetails(ConversationDetails details)
         {

@@ -1440,7 +1440,7 @@ namespace MeTLLib.DataTypes
             }
             private void attachSourceToThisImage(System.Windows.Controls.Image image)
             {
-                ThreadPool.QueueUserWorkItem(delegate
+                ThreadPool.UnsafeQueueUserWorkItem(delegate
                 {
                     if (image == null) return;//This might have been GCed if they moved conversations
                     var newSource = asynchronouslyLoadImageData();
@@ -1456,7 +1456,7 @@ namespace MeTLLib.DataTypes
                             image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
                         image.Source = newSource;
                     });
-                });
+                },null);
             }
             public TargettedImage Img
             {

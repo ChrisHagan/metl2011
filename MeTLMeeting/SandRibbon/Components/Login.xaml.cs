@@ -38,7 +38,7 @@ namespace SandRibbon.Components
                 var releaseNotes = "MeTL is unable to retrieve announcements.  Please check your internet connection.";
                 try
                 {
-                    releaseNotes = HttpResourceProvider.insecureGetString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
+                    releaseNotes = new WebClient().DownloadString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
                 }
                 catch (Exception e)
                 {

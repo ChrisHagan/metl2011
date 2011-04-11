@@ -300,10 +300,7 @@ namespace SandRibbon
         }
         public static void RequerySuggested()
         {
-            ThreadPool.QueueUserWorkItem(delegate
-            {
-                RequerySuggested(all.ToArray());
-            });
+            RequerySuggested(all.ToArray());
         }
         public static void RequerySuggested(params CompositeCommand[] commands)
         {

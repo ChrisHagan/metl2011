@@ -14,6 +14,7 @@ using System.Diagnostics;
 using Ninject;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -240,12 +241,12 @@ namespace MeTLLib.Providers.Connection
         private void HandlerError(object sender, Exception ex)
         {
             Trace.TraceError(string.Format("Handler error: {0}", ex.Message));
-            Reset("Handler");
+            Reset("JabberWire::HandlerError");
         }
         private void ElementError(object sender, Element element)
         {
             Trace.TraceError(string.Format("Element error: {0}", element.ToString()));
-            Reset("Element");
+            Reset("JabberWire::ElementError");
         }
         protected virtual void ReadXml(object sender, string xml)
         {
@@ -263,30 +264,12 @@ namespace MeTLLib.Providers.Connection
             AttemptReloginAfter(1000);
         }
         System.Threading.Timer timer;//So it doesn't get garbage collected before it can fire on long intervals
-        class DispatcherAction
-        {
-            public DispatcherAction(Thread owner, Action work)
-            {
-                this.Work = work;
-                this.Owner = owner;
-            }
-            public Thread Owner
-            {
-                private set;
-                get;
-            }
-            public Action Work
-            {
-                private set;
-                get;
-            }
-        }
-        private Queue<DispatcherAction> actionsAfterRelogin;
+        private Queue<Action> actionsAfterRelogin;
         public void AddActionToReloginQueue(Action action)
         {
             if (actionsAfterRelogin == null)
-                actionsAfterRelogin = new Queue<DispatcherAction>();
-            actionsAfterRelogin.Enqueue(new DispatcherAction(Thread.CurrentThread, action));
+                actionsAfterRelogin = new Queue<Action>();
+            actionsAfterRelogin.Enqueue(action);
             if (timer == null)
                 AttemptReloginAfter(1000);
         }
@@ -303,10 +286,10 @@ namespace MeTLLib.Providers.Connection
                     timer = null;
                     while (IsConnected() && actionsAfterRelogin != null && actionsAfterRelogin.Count > 0)
                     {
-                        var item = (DispatcherAction)actionsAfterRelogin.Peek();//Do not alter the queue, we might be back here any second
+                        var item = (Action)actionsAfterRelogin.Peek();//Do not alter the queue, we might be back here any second
                         try
                         {
-                            System.Windows.Threading.Dispatcher.CurrentDispatcher.adopt(item.Work);
+                            System.Windows.Threading.Dispatcher.CurrentDispatcher.adopt(item);
                             actionsAfterRelogin.Dequeue();//We only lift it off the top after successful execution.
                         }
                         catch (Exception e)
@@ -382,7 +365,7 @@ namespace MeTLLib.Providers.Connection
                 {
                     if (conn.XmppConnectionState == XmppConnectionState.Disconnected)
                     {
-                        Trace.TraceWarning(string.Format("Resetting.  Blame {0}", caller));
+                        Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Resetting.  {0}", caller));
                         conn.Close();
                         Login(location);
                     }
