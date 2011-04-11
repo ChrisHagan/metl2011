@@ -154,6 +154,7 @@ namespace SandRibbon.Utils
             var worker = new Thread(new ParameterizedThreadStart(
                 delegate
                 {
+                    progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0);
                     switch (spec.Type)
                     {
                         case PowerpointImportType.HighDefImage:
@@ -203,7 +204,6 @@ namespace SandRibbon.Utils
             var conversation = provider.CreateConversation(details);
             currentConversation = conversation.Jid;
             conversation.Author = Globals.me;
-            progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0);
             var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
             var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
             var thumbnailStartId = conversation.Slides.First().id;
@@ -329,7 +329,6 @@ namespace SandRibbon.Utils
                 var conversation = provider.CreateConversation(details);
                 currentConversation = conversation.Jid;
                 conversation.Author = Globals.me;
-                progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, ppt.Slides.Count);
                 foreach (var slide in ppt.Slides)
                 {
                     importSlide(details, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
@@ -492,7 +491,6 @@ namespace SandRibbon.Utils
         }
         private static void importSlide(ConversationDetails details, XElement xml, Microsoft.Office.Interop.PowerPoint.Slide slide)
         {
-            int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
             var xSlide = new XElement("slide");
             xSlide.Add(new XAttribute("index", slide.SlideIndex));
             var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
