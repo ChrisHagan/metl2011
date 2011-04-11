@@ -170,15 +170,6 @@ namespace SandRibbon.Components
             clearState();
             Dispatcher.queueFocus(SearchInput);
         }
-        private void slidePropertyOut(DependencyProperty property, double limit)
-        {
-            DoubleAnimation anim = new DoubleAnimation();
-            anim.From = 150;
-            anim.To = limit;
-            anim.Duration = new Duration(TimeSpan.FromSeconds(0.8));
-            anim.AutoReverse = false;
-            BeginAnimation(property, anim);
-        }
         private void HideConversationSearchBox(object o)
         {
             this.Visibility = Visibility.Collapsed;

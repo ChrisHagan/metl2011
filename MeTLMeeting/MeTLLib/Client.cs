@@ -171,7 +171,6 @@ namespace MeTLLib
                 wire.Logout();
             };
             tryIfConnected(work);
-
             wire = null;
             return isConnected;
         }
@@ -260,7 +259,7 @@ namespace MeTLLib
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError("uploadAndSendSubmission error: {0}",e.Message);
+                    Trace.TraceError("MeTLLib::ClientConnection:uploadAndSendSubmission {0}",e.Message);
                     uploadAndSendSubmission(lii);
                 }
             };
@@ -320,7 +319,7 @@ namespace MeTLLib
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError(e.Message);
+                    Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendImage: {0}",e.Message);
                     UploadAndSendImage(lii);
                 }
             };
@@ -358,55 +357,23 @@ namespace MeTLLib
         public Uri UploadResource(Uri file, string muc)
         {
             System.Uri returnValue = server.uri;
-            bool hasBeenSet = false;
             Action work = delegate
             {
-                try
-                {
-                    returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, false));
-                    hasBeenSet = true;
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError(e.Message);
-                    UploadResource(file, muc);
-                }
+                returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, false));
             };
             tryIfConnected(work);
-            return (System.Uri)waitForAsyncUpdate(hasBeenSet, returnValue);
-        }
-        private object waitForAsyncUpdate(bool hasBeenSet, object returnValue)
-        {
-            ManualResetEvent resetEvent = new ManualResetEvent(false);
-            var timer = new Timer(
-                new TimerCallback((timerObj) =>
-                {
-                    if (hasBeenSet)
-                        resetEvent.Set();
-                }), null, 0, 100);
-            resetEvent.WaitOne();
-            timer.Dispose();
             return returnValue;
         }
+        
         public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite)
         {
             System.Uri returnValue = server.uri;
-            bool hasBeenSet = false;
             Action work = delegate
             {
-                try
-                {
-                    returnValue = new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
-                    hasBeenSet = true;
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError(e.Message);
-                    UploadResourceToPath(data, file, name, overwrite);
-                }
+                returnValue = new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
             };
             tryIfConnected(work);
-            return (System.Uri)waitForAsyncUpdate(hasBeenSet, returnValue);
+            return returnValue;
         }
         #endregion
         #region conversationCommands
@@ -462,18 +429,9 @@ namespace MeTLLib
                     location.currentSlide = location.availableSlides[0];
                 else
                 {
-                    Trace.TraceError("FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
+                    Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
                 }
                 events.receiveConversationDetails(cd);
-            };
-            tryIfConnected(work);
-        }
-        public void SneakIntoAndDo(string room, Action<PreParser> doAction)
-        {
-            Action work = delegate
-            {
-                if (String.IsNullOrEmpty(room)) return;
-                wire.SneakIntoAndDo(room, doAction);
             };
             tryIfConnected(work);
         }
@@ -499,7 +457,6 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                if (room == null) return;
                 wire.GetHistory(room);
             };
             tryIfConnected(work);
@@ -538,15 +495,7 @@ namespace MeTLLib
         }
         public ConversationDetails CreateConversation(ConversationDetails details)
         {
-            ConversationDetails cd = ConversationDetails.Empty;
-            bool hasBeenSet = false;
-            Action work = delegate
-            {
-                cd = conversationDetailsProvider.Create(details);
-                hasBeenSet = true;
-            };
-            tryIfConnected(work);
-            return (ConversationDetails)waitForAsyncUpdate(hasBeenSet,cd);
+            return tryUntilConnected<ConversationDetails>(()=>conversationDetailsProvider.Create(details));
         }
         public ConversationDetails AppendSlide(string Jid)
         {
@@ -571,14 +520,12 @@ namespace MeTLLib
         public ConversationDetails AppendSlideAfter(int slide, String Jid, Slide.TYPE type)
         {
             ConversationDetails details = ConversationDetails.Empty;
-            bool hasBeenSet = false;
             Action work = delegate
             {
                 details = conversationDetailsProvider.AppendSlideAfter(slide, Jid, type);
-                hasBeenSet = true;
             };
             tryIfConnected(work);
-            return (ConversationDetails)waitForAsyncUpdate(hasBeenSet,details);
+            return details;
         }
         public List<ConversationDetails> CurrentConversations
         {
@@ -597,18 +544,34 @@ namespace MeTLLib
         #region HelperMethods
         private void tryIfConnected(Action action)
         {
-            if (wire == null)
+            try
             {
-                Trace.TraceError("Wire is null at tryIfConnected in MeTLLib.ClientConnection.");
-                return;
+                action();
             }
-            if (wire.IsConnected() == false)
+            catch(Exception e)
             {
-                Trace.TraceWarning("Wire is disconnected at tryIfConnected - beginning relogin process with interval of 1s");
-                wire.AddActionToReloginQueue(action);
-                return;
+                Trace.TraceInformation("CRASH: MeTLLib::ClientConnection:tryIfConnected threw {0}", e.Message);
             }
-            action();
+            finally
+            {
+                if (wire == null)
+                    Trace.TraceError("Wire is null at tryIfConnected in MeTLLib.ClientConnection.");
+                else if (wire.IsConnected() == false)
+                {
+                    Trace.TraceWarning("Wire is disconnected at tryIfConnected - beginning relogin process with interval of 1s");
+                    wire.AddActionToReloginQueue(action);
+                }
+            }
+        }
+        private T tryUntilConnected<T>(Func<T> function) {
+            var wait = new ManualResetEvent(false);
+            T result = default(T);
+            tryIfConnected(delegate {
+                result = function();
+                wait.Set();
+            });  
+            wait.WaitOne();
+            return result;
         }
         private string decodeUri(Uri uri)
         {

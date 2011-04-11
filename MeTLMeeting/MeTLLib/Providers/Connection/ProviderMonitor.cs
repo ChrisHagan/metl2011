@@ -52,8 +52,7 @@ namespace MeTLLib.Providers.Connection
                         Commands.ServersDown.Execute(uri.Host);
                     }
                     else
-                    {/*Should we throw a bit of a thread sleep here?  We can't fire up a timer, people are waiting synchronously...  
-                         * And this might be on dispatcher...  I want to know how this behaves remotely.*/
+                    {
                         HealthCheck(healthyBehaviour, attempts++);
                     }
                 }

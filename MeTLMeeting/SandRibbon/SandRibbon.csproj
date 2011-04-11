@@ -134,6 +134,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Org.TechA.Wpf.UserControls.dll</HintPath>
     </Reference>
+    <Reference Include="SmartThreadPool">
+      <HintPath>lib\SmartThreadPool.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -776,9 +779,6 @@
     </Compile>
     <Compile Include="Providers\ConfigurationProvider.cs" />
     <Compile Include="Providers\Globals.cs" />
-    <Compile Include="Providers\HttpResourceProvider.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Providers\RecentConversationProvider.cs" />
     <Compile Include="Providers\Structure\ConversationDetailsProviderFactory.cs" />
     <Compile Include="Tabs\Analytics.xaml.cs">
@@ -810,7 +810,6 @@
     <Compile Include="Quizzing\Worm.xaml.cs">
       <DependentUpon>Worm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\Connection\PreParser.cs" />
     <Compile Include="Utils\Connection\Printer.cs" />
     <Compile Include="Utils\CursorExtensions.cs" />
     <Compile Include="Utils\CursorHelper.cs" />

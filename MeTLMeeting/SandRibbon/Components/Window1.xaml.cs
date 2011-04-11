@@ -509,7 +509,6 @@ namespace SandRibbon
         }
         private void MoveTo(int slide)
         {
-            
             Dispatcher.adoptAsync(delegate
                                      {
                                          if (canvas.Visibility == Visibility.Collapsed)

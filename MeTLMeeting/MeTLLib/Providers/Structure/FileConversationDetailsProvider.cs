@@ -59,30 +59,27 @@ namespace MeTLLib.Providers.Structure
                 Trace.TraceError("CRASH: Fixed: Argument cannot be null or empty - Reconnecting error that happens all the time");
                 return result;
             }
-            providerMonitor.HealthCheck(() =>
+            try
             {
-                try
-                {
-                    var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
-                    result = ConversationDetails.ReadXml(XElement.Parse(secureGetString(url)));
-                }
-                catch (UriFormatException e)
-                {
-                    Trace.TraceError("CRASH: Could not create valid Uri for DetailsOf, using conversationJid: {0}: {1}", conversationJid, e.Message);
-                }
-                catch (XmlException e)
-                {
-                    Trace.TraceError("CRASH: Could not parse retrieved details of {0}: {1}", conversationJid, e.Message);
-                }
-                catch (WebException e)
-                {
-                    Trace.TraceError("CRASH: FileConversationDetailsProvider::DetailsOf: {0}", e.Message);
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError("CRASH: Unknown Exception in retrieving the conversation details: {0}", e.Message);
-                }
-            });
+                var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
+                result = ConversationDetails.ReadXml(XElement.Parse(secureGetString(url)));
+            }
+            catch (UriFormatException e)
+            {
+                Trace.TraceError("CRASH: Could not create valid Uri for DetailsOf, using conversationJid: {0}: {1}", conversationJid, e.Message);
+            }
+            catch (XmlException e)
+            {
+                Trace.TraceError("CRASH: Could not parse retrieved details of {0}: {1}", conversationJid, e.Message);
+            }
+            catch (WebException e)
+            {
+                Trace.TraceError("CRASH: FileConversationDetailsProvider::DetailsOf: {0}", e.Message);
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError("CRASH: Unknown Exception in retrieving the conversation details: {0}", e.Message);
+            }
             return result;
         }
         public ConversationDetails AppendSlideAfter(int currentSlide, string title)
@@ -91,19 +88,16 @@ namespace MeTLLib.Providers.Structure
         }
         public ConversationDetails AppendSlideAfter(int currentSlide, string title, Slide.TYPE type)
         {
-            var details = ConversationDetails.Empty;
-            providerMonitor.HealthCheck(()=>{
-                details = DetailsOf(title);
-                var slideId = details.Slides.Select(s => s.id).Max() + 1;
-                var position = getPosition(currentSlide, details.Slides);
-                if (position == -1) return;
-                var slide = new Slide(slideId, details.Author, type, position + 1, 720, 540);
-                foreach (var existingSlide in details.Slides)
-                    if (existingSlide.index >= slide.index)
-                        existingSlide.index++;
-                details.Slides.Insert(slide.index, slide);
-                Update(details);
-            });
+            var details = DetailsOf(title);
+            var slideId = details.Slides.Select(s => s.id).Max() + 1;
+            var position = getPosition(currentSlide, details.Slides);
+            if (position == -1) return details;
+            var slide = new Slide(slideId, details.Author, type, position + 1, 720, 540);
+            foreach (var existingSlide in details.Slides)
+                if (existingSlide.index >= slide.index)
+                    existingSlide.index++;
+            details.Slides.Insert(slide.index, slide);
+            Update(details);
             return details;
         }
         private int getPosition(int slide, List<Slide> slides)
@@ -115,14 +109,10 @@ namespace MeTLLib.Providers.Structure
         }
         public ConversationDetails AppendSlide(string title)
         {
-            var details = ConversationDetails.Empty;
-            providerMonitor.HealthCheck(()=>{
-                details = DetailsOf(title);
-                var slideId = details.Slides.Select(s => s.id).Max() + 1;
-                details.Slides.Add(new Slide(slideId, details.Author, Slide.TYPE.SLIDE, details.Slides.Count, 720, 540));
-                Update(details);
-            });
-            return details;
+            var details = DetailsOf(title);
+            var slideId = details.Slides.Select(s => s.id).Max() + 1;
+            details.Slides.Add(new Slide(slideId, details.Author, Slide.TYPE.SLIDE, details.Slides.Count, 720, 540));
+            return Update(details);
         }
         public void ReceiveDirtyConversationDetails(string jid)
         {
@@ -138,7 +128,7 @@ namespace MeTLLib.Providers.Structure
         }
         private bool DetailsAreAccurate(ConversationDetails details)
         {
-            var url = string.Format("{0}/{1}/{2}/{3}", ROOT_ADDRESS, STRUCTURE, details.Jid, DETAILS);
+            var url = string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
             var currentServerString = secureGetString(new System.Uri(url));
             var currentServerCD = ConversationDetails.ReadXml(XElement.Parse(currentServerString));
             if (details.ValueEquals(currentServerCD))
@@ -148,17 +138,12 @@ namespace MeTLLib.Providers.Structure
         }
         public ConversationDetails Update(ConversationDetails details)
         {
-            var result = ConversationDetails.Empty;
-            providerMonitor.HealthCheck(()=>{
-                var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", ROOT_ADDRESS, UPLOAD, STRUCTURE, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
-                securePutData(new System.Uri(url), details.GetBytes());
-                Commands.SendDirtyConversationDetails.Execute(details.Jid);
-                if (DetailsAreAccurate(details))
-                    result = details;
-                else
-                    Trace.TraceInformation("CRASH: ConversationDetails not successfully uploaded");
-            });
-            return result;
+            var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", ROOT_ADDRESS, UPLOAD, STRUCTURE, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
+            securePutData(new System.Uri(url), details.GetBytes());
+            Commands.SendDirtyConversationDetails.Execute(details.Jid);
+            if (!DetailsAreAccurate(details))
+                Trace.TraceInformation("CRASH: ConversationDetails not successfully uploaded");
+            return details;
         }
         class UniqueConversationComparator : IEqualityComparer<ConversationDetails>
         {

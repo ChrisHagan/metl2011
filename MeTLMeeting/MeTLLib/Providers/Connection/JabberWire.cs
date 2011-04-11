@@ -15,6 +15,7 @@ using Ninject;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using System.Net.NetworkInformation;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -125,6 +126,7 @@ namespace MeTLLib.Providers.Connection
             this.receiveEvents = events;
             this.webClientFactory = webClientFactory;
             this.resourceProvider = resourceProvider;
+            buildTimer();
         }
         internal List<ConversationDetails> CurrentClasses
         {
@@ -261,56 +263,64 @@ namespace MeTLLib.Providers.Connection
         private void OnClose(object sender)
         {
             unregisterHandlers();
-            AttemptReloginAfter(1000);
+            QueueRelogin();
         }
-        System.Threading.Timer timer;//So it doesn't get garbage collected before it can fire on long intervals
-        private Queue<Action> actionsAfterRelogin;
-        public void AddActionToReloginQueue(Action action)
+        static System.Threading.Timer timer;
+        private static object lockObject = new object();
+        private void buildTimer() 
         {
-            if (actionsAfterRelogin == null)
-                actionsAfterRelogin = new Queue<Action>();
-            actionsAfterRelogin.Enqueue(action);
-            if (timer == null)
-                AttemptReloginAfter(1000);
-        }
-        private bool closing = false;
-        private void AttemptReloginAfter(int intervalInMilis)
-        {
-            if (closing) return;
-            Trace.TraceWarning("CRASH: (Fixed)MeTLLib::Providers:JabberWire Attempting relogin in {0}", intervalInMilis);
-            receiveEvents.statusChanged(false, this.credentials);
-            timer = new System.Threading.Timer(_state =>
+            lock (lockObject)
             {
-                if (IsConnected())
+                if(timer == null)
+                timer = new System.Threading.Timer(_state =>
                 {
-                    timer = null;
-                    while (IsConnected() && actionsAfterRelogin != null && actionsAfterRelogin.Count > 0)
+                    if (IsConnected())
                     {
-                        var item = (Action)actionsAfterRelogin.Peek();//Do not alter the queue, we might be back here any second
-                        try
+                        timer.Change(Timeout.Infinite, Timeout.Infinite);
+                        while (IsConnected() && actionsAfterRelogin != null && actionsAfterRelogin.Count > 0)
                         {
-                            System.Windows.Threading.Dispatcher.CurrentDispatcher.adopt(item);
-                            actionsAfterRelogin.Dequeue();//We only lift it off the top after successful execution.
-                        }
-                        catch (Exception e)
-                        {
-                            Trace.TraceError("CRASH: MeTLLib::Providers:JabberWire:AttemptReloginAfter Failed to execute item on relogin-queue.  Exception: " + e.Message);
-                        }
-                        finally{
-                            if (actionsAfterRelogin.Count == 0)
+                            var item = (Action)actionsAfterRelogin.Peek();//Do not alter the queue, we might be back here any second
+                            try
                             {
-                                Trace.TraceError("CRASH: MeTLLib::Providers:JabberWire:AttemptReloginAfter: REMOVING BLOCKER");
-                                receiveEvents.statusChanged(true, this.credentials);
+                                System.Windows.Threading.Dispatcher.CurrentDispatcher.adopt(item);
+                                actionsAfterRelogin.Dequeue();//We only lift it off the top after successful execution.
+                                receiveEvents.statusChanged(true, this.credentials);//We're alive again
+                            }
+                            catch (Exception e)
+                            {
+                                Trace.TraceError("CRASH: MeTLLib::Providers:JabberWire:AttemptReloginAfter Failed to execute item on relogin-queue.  Exception: " + e.Message);
+                                timer.Change(0, 1000);
+                                break;
+                            }
+                            finally
+                            {
+                                if (actionsAfterRelogin.Count == 0)
+                                    Trace.TraceError("CRASH: MeTLLib::Providers:JabberWire:AttemptReloginAfter: REMOVING BLOCKER");
                             }
                         }
                     }
-                }
-                else
-                {
-                    Login(location);
-                    AttemptReloginAfter(Math.Min(8000, intervalInMilis + 1000));
-                }
-            }, null, intervalInMilis, Timeout.Infinite);
+                    else
+                    {
+                        Login(location);
+                    }
+                }, null, Timeout.Infinite, Timeout.Infinite);
+            }
+        }
+        private static Queue<Action> actionsAfterRelogin = new Queue<Action>();
+        public void AddActionToReloginQueue(Action action)
+        {
+            lock (lockObject)
+            {
+                QueueRelogin();
+                actionsAfterRelogin.Enqueue(action);
+            }
+        }
+        private bool closing = false;
+        private void QueueRelogin()
+        {
+            if (closing) return;
+            receiveEvents.statusChanged(false, this.credentials);
+            timer.Change(0, 1000);
         }
         public void Logout()
         {
@@ -427,7 +437,7 @@ namespace MeTLLib.Providers.Connection
         {
             var alias = credentials.name + conn.Resource;
             new MucManager(conn).JoinRoom(room, alias, true);
-            Trace.TraceInformation(string.Format("JoinRoom {0}", room));
+            Trace.TraceInformation(string.Format("MeTLLib::Providers::Connection::JabberWire:JoinRoom {0}", room));
         }
         private void send(string target, string message)
         {
@@ -499,7 +509,26 @@ namespace MeTLLib.Providers.Connection
         }
         public bool IsConnected()
         {
-            return conn != null && conn.Authenticated;
+            Func<Boolean> checkPing = delegate
+            {
+                try
+                {
+                    var healthy = false;
+                    var uri = metlServerAddress.uri;
+                    var ping = new System.Net.NetworkInformation.Ping();
+                    var reply = ping.Send(uri.Host, 2000);
+                    if (reply != null && reply.Status == IPStatus.Success)
+                    {
+                        healthy = true;
+                    }
+                    return healthy;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            };
+            return conn != null && conn.Authenticated && checkPing();
         }
         public void GetHistory(int where)
         {
@@ -805,17 +834,6 @@ namespace MeTLLib.Providers.Connection
         public virtual void actOnDirtyLiveWindowReceived(TargettedDirtyElement element)
         {
             receiveEvents.receiveDirtyLiveWindow(element);
-        }
-        public void SneakIntoAndDo(string room, Action<PreParser> action)
-        {
-            var muc = new MucManager(conn);
-            joinRoom(new Jid(room + "@" + metlServerAddress.muc));
-
-            historyProvider.Retrieve<PreParser>(
-                onStart,
-                onProgress,
-                action,
-                room);
         }
         public void SneakInto(string room)
         {

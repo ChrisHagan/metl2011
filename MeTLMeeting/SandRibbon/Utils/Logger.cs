@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using System.Windows.Threading;
 
 namespace SandRibbon.Utils
 {
@@ -55,16 +56,30 @@ namespace SandRibbon.Utils
     public class Logger
     {
         public static string log = "MeTL Log\r\n";
+        private static string[] blacklist = new[] {
+                "CouchServer(madam.adm.monash.edu.au:5984)",
+                "MeTL Presenter.exe ", 
+                "MeTL Presenter.vshost.exe ", 
+                "Failed to add item to relogin-queue.", 
+                "MeTL Presenter.exe Warning: 0 :", 
+                "MeTL Presenter.exe Info: 0 :", 
+                "MeTL Presenter.exe Information: 0 :", 
+                "Error loading thumbnail:"};
         public static readonly string POST_LOG = "http://madam.adm.monash.edu.au:5984/metl_log";
         private static readonly string DB_NAME = "metl_log";
         private static CouchServer establishedServer = null;
         private static ICouchDatabase establishedDB = null;
         private static bool connectionFailed = false;
+        private static int slide = -1;
         static Logger()
         {
             Commands.Reconnecting.RegisterCommand(new DelegateCommand<object>(delegate { 
                 connectionFailed = false; 
             }));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+        }
+        private static void MoveTo(int where){
+            slide = where;
         }
         private static ICouchDatabase db
         {
@@ -127,20 +142,13 @@ namespace SandRibbon.Utils
         }
         private static void putCouch(string message, DateTime now)
         {
+            
             if (String.IsNullOrEmpty(Globals.me)) return;
             if (String.IsNullOrEmpty(message)) return;
             if (message.Contains(POST_LOG)) return;
-            if (new[] {
-                "CouchServer(madam.adm.monash.edu.au:5984)",
-                "MeTL Presenter.exe ", 
-                "MeTL Presenter.vshost.exe ", 
-                "Failed to add item to relogin-queue.", 
-                "MeTL Presenter.exe Warning: 0 :", 
-                "MeTL Presenter.exe Info: 0 :", 
-                "MeTL Presenter.exe Information: 0 :", 
-                "Error loading thumbnail:"}.Any(prefix => message.StartsWith(prefix))) return;
+            if (blacklist.Any(prefix => message.StartsWith(prefix))) return;
             if (db != null)
-                ThreadPool.UnsafeQueueUserWorkItem(delegate
+                WebThreadPool.QueueUserWorkItem(delegate
                 {
                     try
                     {
@@ -168,7 +176,7 @@ namespace SandRibbon.Utils
                             content = finalMessage,
                             timestamp = now.Ticks,
                             user = Globals.me,
-                            slide = Globals.location.currentSlide,
+                            slide = slide,
                             server = ClientFactory.Connection().server.host
                         };
                         db.SaveArbitraryDocument<LogMessage>(msg);
@@ -178,7 +186,7 @@ namespace SandRibbon.Utils
                         //what should we do if we cannot save to couch?
                         //ALL IS LOST
                     }
-                },null);
+                });
         }
     }
 }
