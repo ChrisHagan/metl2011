@@ -96,13 +96,7 @@ namespace MeTLLib.Providers.Connection
         }
         byte[] IWebClient.uploadFile(Uri resource, string filename)
         {
-            try
-            {
-                return client.UploadFile(resource.ToString(), filename);
-            }
-            catch (Exception e) {
-                throw e;
-            }
+            return client.UploadFile(resource.ToString(), filename);
         }
         private string decode(byte[] bytes)
         {
@@ -184,10 +178,6 @@ namespace MeTLLib.Providers.Connection
         public long getSize(System.Uri resource)
         {
             return client().getSize(resource);
-        }
-        public bool exists(System.Uri resource)
-        {
-            return client().exists(resource);
         }
         public string secureGetString(System.Uri resource)
         {

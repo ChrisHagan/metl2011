@@ -36,7 +36,7 @@ namespace MeTLLib.Providers.Connection
         {
             var canvas = new InkCanvas();
             foreach (var image in images)
-                canvas.Children.Add(image.Value.image);
+                canvas.Children.Add(image.Value.imageSpecification.curryEvaluation(metlServerAddress)());
             foreach (var shape in autoshapes)
                 canvas.Children.Add(shape.Value.autoshape);
             foreach (var video in videos)

@@ -200,16 +200,6 @@ namespace MeTLLib.DataTypes
             imageSpecification = ImageSpecification;
             id = Identity;
         }
-        public bool ValueEquals(object obj)
-        {
-            if (obj == null || !(obj is TargettedImage)) return false;
-            var foreign = (TargettedImage)obj;
-            return (((TargettedElement)this).ValueEquals((TargettedElement)obj)
-                && foreign.id == id
-                && foreign.imageProperty.Equals(imageProperty)
-                && foreign.imageSpecification == imageSpecification
-                && foreign.image.Equals(image));
-        }
         public System.Windows.Controls.Image imageProperty;
         public MeTLStanzas.Image imageSpecification;
         public MeTLServerAddress server;
@@ -1398,6 +1388,9 @@ namespace MeTLLib.DataTypes
                 return this;
             }
             protected static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\empty.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
+            public Func<System.Windows.Controls.Image> curryEvaluation(MeTLServerAddress server) {
+                return ()=> forceEvaluation();
+            }
             public System.Windows.Controls.Image forceEvaluation()
             {
                 var sourceString = string.Format("https://{0}:1188{1}", server.host, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)));
@@ -1407,7 +1400,6 @@ namespace MeTLLib.DataTypes
                         Height = this.height,
                         Width = this.width,
                         Source = BackupSource
-                        //Source = this.source
                     };
                 attachSourceToThisImage(image);
                 InkCanvas.SetLeft(image, this.x);

@@ -368,22 +368,15 @@ namespace MeTLLib.Providers.Connection
         }
         public void Reset(string caller)
         {
-            try
+            lock (resetLock)
             {
-                lock (resetLock)
+                if (conn.XmppConnectionState == XmppConnectionState.Disconnected)
                 {
-                    if (conn.XmppConnectionState == XmppConnectionState.Disconnected)
-                    {
-                        Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Resetting.  {0}", caller));
-                        conn.Close();
-                        Login(location);
-                    }
+                    Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Resetting.  {0}", caller));
+                    conn.Close();
+                    setUpWire();
+                    Login(location);
                 }
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError(string.Format("Xmpp error: {0}\nReconnecting", e.Message));
-                Reset("Reset exception handling (recursive)");
             }
         }
         public void leaveRooms()

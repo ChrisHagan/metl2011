@@ -15,6 +15,7 @@ using System.Threading;
 using System.Diagnostics;
 using Ninject;
 using agsXMPP.Xml.Dom;
+using System.Net;
 
 namespace MeTLLib
 {
@@ -499,33 +500,15 @@ namespace MeTLLib
         }
         public ConversationDetails AppendSlide(string Jid)
         {
-            ConversationDetails details = ConversationDetails.Empty;
-            Action work = delegate
-            {
-                details = conversationDetailsProvider.AppendSlide(Jid);
-            };
-            tryIfConnected(work);
-            return details;
+            return tryUntilConnected<ConversationDetails>(() => conversationDetailsProvider.AppendSlide(Jid));
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid)
         {
-            ConversationDetails details = ConversationDetails.Empty;
-            Action work = delegate
-            {
-                details = conversationDetailsProvider.AppendSlideAfter(slide, Jid);
-            };
-            tryIfConnected(work);
-            return details;
+            return tryUntilConnected<ConversationDetails>(() => conversationDetailsProvider.AppendSlideAfter(slide,Jid));
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid, Slide.TYPE type)
         {
-            ConversationDetails details = ConversationDetails.Empty;
-            Action work = delegate
-            {
-                details = conversationDetailsProvider.AppendSlideAfter(slide, Jid, type);
-            };
-            tryIfConnected(work);
-            return details;
+            return tryUntilConnected<ConversationDetails>(() => conversationDetailsProvider.AppendSlideAfter(slide,Jid,type));
         }
         public List<ConversationDetails> CurrentConversations
         {
@@ -542,21 +525,22 @@ namespace MeTLLib
         }
         #endregion
         #region HelperMethods
+        private void requeue(Action action)
+        {
+            if (wire.IsConnected() == false)
+                wire.AddActionToReloginQueue(action);
+        }
         private void tryIfConnected(Action action)
         {
             try
             {
                 action();
             }
-            catch(Exception e)
+            catch (WebException) {
+                requeue(action);
+            }
+            catch (Exception e)
             {
-                if (wire == null)
-                    Trace.TraceError("Wire is null at tryIfConnected in MeTLLib.ClientConnection.");
-                else if (wire.IsConnected() == false)
-                {
-                    Trace.TraceWarning("Wire is disconnected at tryIfConnected - beginning relogin process with interval of 1s");
-                    wire.AddActionToReloginQueue(action);
-                }
                 throw e;
             }
         }
