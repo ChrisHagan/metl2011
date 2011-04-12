@@ -39,6 +39,8 @@ namespace SandRibbon
             Visibility = Visibility.Collapsed;
         }
         private void setProgress(double percentage) {
+            if(Visibility == Visibility.Collapsed)
+                Visibility = Visibility.Visible;
             progress.Value = percentage;
         }
         private void setContent(string content) {

@@ -30,20 +30,19 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
+            if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adopt(delegate
             {
                 nav.Visibility = Visibility.Visible;
-                if (details != null && details.Author == Globals.me)
+                if (details.Author == Globals.me)
                 {
                     Commands.SetSync.Execute(true);
                     addSlideButton.Visibility = Visibility.Visible;
                     syncButton.Visibility = Visibility.Collapsed;
-                    //editConversation.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     addSlideButton.Visibility = Visibility.Collapsed;
-                    //editConversation.Visibility = Visibility.Collapsed;
                     syncButton.Visibility = Visibility.Visible;
                 }
             });

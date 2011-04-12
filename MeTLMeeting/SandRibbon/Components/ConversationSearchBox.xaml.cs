@@ -188,7 +188,7 @@ namespace SandRibbon.Components
         }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
-               if (details == null) return;
+               if (ConversationDetails.Empty.Equals(details)) return;
                foreach ( var result in searchResults.Where(c => c.Jid == details.Jid).ToList())
                    searchResults.Remove(result);
                if (details.Subject.ToLower() != "deleted" && !details.Equals(ConversationDetails.Empty))

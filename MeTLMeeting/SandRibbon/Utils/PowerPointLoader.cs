@@ -33,7 +33,9 @@ using Newtonsoft.Json;
 namespace SandRibbon.Utils
 {
     public class WebThreadPool {
-        private static Amib.Threading.SmartThreadPool pool = new Amib.Threading.SmartThreadPool();
+        private static Amib.Threading.SmartThreadPool pool = new Amib.Threading.SmartThreadPool { 
+            MaxThreads=4
+        };
         public static void QueueUserWorkItem(Amib.Threading.Action action){
             pool.QueueWorkItem(action);
         }

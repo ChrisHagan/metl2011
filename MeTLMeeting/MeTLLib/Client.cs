@@ -550,10 +550,6 @@ namespace MeTLLib
             }
             catch(Exception e)
             {
-                Trace.TraceInformation("CRASH: MeTLLib::ClientConnection:tryIfConnected threw {0}", e.Message);
-            }
-            finally
-            {
                 if (wire == null)
                     Trace.TraceError("Wire is null at tryIfConnected in MeTLLib.ClientConnection.");
                 else if (wire.IsConnected() == false)
@@ -561,6 +557,7 @@ namespace MeTLLib
                     Trace.TraceWarning("Wire is disconnected at tryIfConnected - beginning relogin process with interval of 1s");
                     wire.AddActionToReloginQueue(action);
                 }
+                throw e;
             }
         }
         private T tryUntilConnected<T>(Func<T> function) {

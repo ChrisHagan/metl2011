@@ -36,8 +36,9 @@ namespace SandRibbon.Chrome
         {
             showDetails();
         }
-        private void UpdateConversationDetails(ConversationDetails _details) 
-        { 
+        private void UpdateConversationDetails(ConversationDetails details) 
+        {
+            if (ConversationDetails.Empty.Equals(details)) return;
             showDetails();
         }
         private void showDetails()
@@ -49,8 +50,8 @@ namespace SandRibbon.Chrome
                                              {
                                                  try
                                                  {
-                                                     if (details == null)
-                                                         StatusLabel.Text = "not in a conversation";
+                                                     if (ConversationDetails.Empty.Equals(details))
+                                                         StatusLabel.Text = "MeTL 2011";
                                                      else
                                                          string.Format(
                                                              "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",

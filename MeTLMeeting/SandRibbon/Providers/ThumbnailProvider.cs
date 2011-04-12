@@ -31,8 +31,7 @@ namespace SandRibbon.Providers
         }
         public static void thumbnail(Image image, int slideId)
         {
-            var worker = new BackgroundWorker();
-            worker.DoWork += delegate
+            WebThreadPool.QueueUserWorkItem(delegate
             {
                 var host = ClientFactory.Connection().server.host.Split('.').First();
                 try
@@ -59,8 +58,7 @@ namespace SandRibbon.Providers
                     App.Now(string.Format("Error loading thumbnail: {0}", e.Message)); 
                 }
                
-            };
-            worker.RunWorkerAsync();
+            });
         }
     }
 }

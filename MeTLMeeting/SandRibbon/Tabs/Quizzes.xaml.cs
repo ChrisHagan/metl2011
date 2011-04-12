@@ -45,32 +45,33 @@ namespace SandRibbon.Tabs
         }
         private void updateConversationDetails(ConversationDetails details)
         {
-          try
-          {
-              if (Globals.isAuthor)
-              {
-                  quizResultsRibbonGroup.Header = "Quizzes";
-                  quizRibbonGroup.Visibility = Visibility.Visible;
-                  createQuiz.Visibility = Visibility.Visible;
-                  createQuiz.IsEnabled = true;
-                  results.Visibility = Visibility.Visible;
-              }
-              else
-              {
-                  quizResultsRibbonGroup.Header = "Respond";
-                  quizRibbonGroup.Visibility = Visibility.Collapsed;
-                  createQuiz.Visibility = Visibility.Collapsed;
-                  results.Visibility = Visibility.Collapsed;
-              }
-          }
-          catch (NotSetException)
-          {
-          }
-          if (details.Jid == Globals.location.activeConversation && details.Subject.ToLower() == "deleted")
-          {
-              answers.Clear();
-              activeQuizzes.Clear();
-          }
+            if (ConversationDetails.Empty.Equals(details)) return;
+            try
+            {
+                if (Globals.isAuthor)
+                {
+                    quizResultsRibbonGroup.Header = "Quizzes";
+                    quizRibbonGroup.Visibility = Visibility.Visible;
+                    createQuiz.Visibility = Visibility.Visible;
+                    createQuiz.IsEnabled = true;
+                    results.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    quizResultsRibbonGroup.Header = "Respond";
+                    quizRibbonGroup.Visibility = Visibility.Collapsed;
+                    createQuiz.Visibility = Visibility.Collapsed;
+                    results.Visibility = Visibility.Collapsed;
+                }
+            }
+            catch (NotSetException)
+            {
+            }
+            if (details.Jid == Globals.location.activeConversation && details.Subject.ToLower() == "deleted")
+            {
+                answers.Clear();
+                activeQuizzes.Clear();
+            }
         }
         private void preparserAvailable(PreParser preParser)
         {
@@ -96,7 +97,7 @@ namespace SandRibbon.Tabs
                 }
                 else
                 {
-                    var newList = new ObservableCollection<QuizAnswer> {answer};
+                    var newList = new ObservableCollection<QuizAnswer> { answer };
                     answers.Add(answer.id, newList);
                 }
             });
@@ -141,7 +142,7 @@ namespace SandRibbon.Tabs
         }
         private void canOpenResults(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (activeQuizzes != null && activeQuizzes.Count > 0)? true: false;
+            e.CanExecute = (activeQuizzes != null && activeQuizzes.Count > 0) ? true : false;
         }
         private void OpenResults(object sender, ExecutedRoutedEventArgs e)
         {

@@ -71,15 +71,20 @@ namespace SandRibbon.Utils
         private static ICouchDatabase establishedDB = null;
         private static bool connectionFailed = false;
         private static int slide = -1;
+        private static string privacy = "Not set";
         static Logger()
         {
             Commands.Reconnecting.RegisterCommand(new DelegateCommand<object>(delegate { 
                 connectionFailed = false; 
             }));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
         }
         private static void MoveTo(int where){
             slide = where;
+        }
+        private static void SetPrivacy(string what) {
+            privacy = what;
         }
         private static ICouchDatabase db
         {

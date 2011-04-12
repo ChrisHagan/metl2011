@@ -25,8 +25,8 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
-            Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(updateDetails));
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(updateDetails));
+            Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
         }
         private void setMyConversationVisibility()
         {
@@ -34,9 +34,10 @@ namespace SandRibbon.Components
             if (mine.Visibility == Visibility.Collapsed)
                 find.IsChecked = true;
         }
-        private void updateDetails(ConversationDetails details)
+        private void UpdateConversationDetails(ConversationDetails details)
         {
-            if ((details.Subject.ToLower() == "deleted" || !details.Equals(ConversationDetails.Empty)) && details.Jid == Globals.location.activeConversation)
+            if(ConversationDetails.Empty.Equals(details)) return;
+            if (details.Subject.ToLower() == "deleted" && details.Jid == Globals.location.activeConversation)
             {
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;

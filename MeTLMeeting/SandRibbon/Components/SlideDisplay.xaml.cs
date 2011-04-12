@@ -168,8 +168,9 @@ namespace SandRibbon.Components
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
-            if (details.Equals(ConversationDetails.Empty)) currentSlideId = 0;
-            if (details == null || details.Jid == "" || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject)))
+            if (details.Equals(ConversationDetails.Empty))
+                return;    
+            if (details.Jid == "" || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject)))
             {
                 thumbnailList.Clear();
                 return;

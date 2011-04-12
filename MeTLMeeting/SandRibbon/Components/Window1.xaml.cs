@@ -103,7 +103,6 @@ namespace SandRibbon
 
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
-            Commands.SetTutorialVisibility.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
@@ -154,14 +153,12 @@ namespace SandRibbon
         private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
         {
             Trace.TraceInformation("ApplicationButtonPopup_Closed");
-            Commands.SetTutorialVisibility.ExecuteAsync(Visibility.Collapsed);
         }
         private void ApplicationButtonPopup_Opened(object sender, EventArgs e)
         {
             if (ribbon.Tabs.Count < 1)
                     RibbonApplicationPopup.IsOpen = false;
             Trace.TraceInformation("ApplicationButtonPopup_Opened");
-            Commands.SetTutorialVisibility.ExecuteAsync(Visibility.Visible);
         }
         #region helpLinks
         private void OpenEULABrowser(object sender, RoutedEventArgs e)
@@ -416,19 +413,6 @@ namespace SandRibbon
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
             Commands.ZoomChanged.Execute(currentZoom);
         }
-        private void SetTutorialVisibility(object visibilityObject)
-        {
-            var newVisibility = (Visibility)visibilityObject;
-            switch (newVisibility)
-            {
-                case Visibility.Visible:
-                    ShowTutorial();
-                    break;
-                default:
-                    HideTutorial();
-                    break;
-            }
-        }
         private void CreateConversation(object _unused)
         {
             Trace.TraceInformation("CreatedBlankConversation");
@@ -549,15 +533,6 @@ namespace SandRibbon
             ProgressDisplay.Children.Add(sp);
             InputBlocker.Visibility = Visibility.Visible;
         }
-        private void ShowTutorial()
-        {
-            TutorialLayer.Visibility = Visibility.Visible;
-        }
-        private void HideTutorial()
-        {
-            if (Globals.userInformation.location != null && !String.IsNullOrEmpty(Globals.userInformation.location.activeConversation))
-                TutorialLayer.Visibility = Visibility.Collapsed;
-        }
         private bool canCreateConversation(object obj)
         {
             return doesConversationAlreadyExist(obj) && mustBeLoggedIn(obj);
@@ -628,10 +603,9 @@ namespace SandRibbon
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            Dispatcher.adoptAsync(delegate
+            if (ConversationDetails.Empty.Equals(details)) return;
+            Dispatcher.adopt(delegate
             {
-                if (details != null)
-                    HideTutorial();
                 if (details.Jid == Globals.location.activeConversation)
                     UpdateTitle(details);
                 this.details = details;

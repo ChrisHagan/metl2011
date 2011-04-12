@@ -20,6 +20,7 @@ namespace SandRibbon
         {
             if (CommandParameterProvider.parameters.ContainsKey(command))
                 return CommandParameterProvider.parameters[command];
+            Console.WriteLine(string.Format("CompositeCommandExtensions::lastValue Could not get the lastValue of command {0}", Commands.which(command)));
             throw new NotSetException(string.Format("CompositeCommandExtensions::lastValue Could not get the lastValue of command {0}", Commands.which(command)));
         }
     }
@@ -187,8 +188,6 @@ namespace SandRibbon
         public static CompositeCommand EstablishPrivileges = new CompositeCommand();
         public static RoutedCommand CloseApplication = new RoutedCommand();
         public static CompositeCommand SetLayer = new CompositeCommand();
-        public static CompositeCommand SetTutorialVisibility = new CompositeCommand();
-        //public static CompositeCommand ThumbnailAvailable = new CompositeCommand();
         public static CompositeCommand UpdateForeignConversationDetails = new CompositeCommand();
         public static CompositeCommand RememberMe = new CompositeCommand();
         #endregion

@@ -21,9 +21,21 @@ namespace MeTLLib.Providers.Structure
     class FileConversationDetailsProvider : HttpResourceProvider, IConversationDetailsProvider
     {
         [Inject]
-        public IProviderMonitor providerMonitor { private get; set; }
-        [Inject]
         public MeTLServerAddress server { private get; set; }
+        [Inject]
+        public JabberWireFactory jabberWireFactory { private get; set; }
+        private JabberWire _wire;
+        private object wireLock = new object();
+        private JabberWire wire{
+            get {
+                lock (wireLock)
+                {
+                    if (_wire == null)
+                        _wire = jabberWireFactory.wire();
+                    return _wire;
+                }
+            }
+        }
         private IResourceUploader resourceUploader;
         public FileConversationDetailsProvider(IWebClientFactory factory, IResourceUploader uploader)
             : base(factory)
@@ -140,7 +152,7 @@ namespace MeTLLib.Providers.Structure
         {
             var url = string.Format("{0}/{1}?overwrite=true&path={2}/{3}/{4}&filename={5}", ROOT_ADDRESS, UPLOAD, STRUCTURE, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
             securePutData(new System.Uri(url), details.GetBytes());
-            Commands.SendDirtyConversationDetails.Execute(details.Jid);
+            wire.SendDirtyConversationDetails(details.Jid);
             if (!DetailsAreAccurate(details))
                 Trace.TraceInformation("CRASH: ConversationDetails not successfully uploaded");
             return details;

@@ -108,7 +108,6 @@ namespace MeTLLib.Providers.Connection
 
         private void registerCommands()
         {
-            Commands.SendDirtyConversationDetails.RegisterCommand(new DelegateCommand<string>(SendDirtyConversationDetails));
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<string>(WakeUp, CanWakeUp));
             Commands.SendSleep.RegisterCommand(new DelegateCommand<string>(GoToSleep));
             Commands.SendMoveBoardToSlide.RegisterCommand(new DelegateCommand<BoardMove>(SendMoveBoardToSlide));
@@ -242,12 +241,12 @@ namespace MeTLLib.Providers.Connection
         }
         private void HandlerError(object sender, Exception ex)
         {
-            Trace.TraceError(string.Format("Handler error: {0}", ex.Message));
+            Trace.TraceError(string.Format("MeTLLib::Providers::Connection:JabberWire:Handler error: {0}", ex.Message));
             Reset("JabberWire::HandlerError");
         }
         private void ElementError(object sender, Element element)
         {
-            Trace.TraceError(string.Format("Element error: {0}", element.ToString()));
+            Trace.TraceError(string.Format("MeTLLib::Providers::Connection:JabberWire:Element error: {0}", element.ToString()));
             Reset("JabberWire::ElementError");
         }
         protected virtual void ReadXml(object sender, string xml)
@@ -266,10 +265,10 @@ namespace MeTLLib.Providers.Connection
             QueueRelogin();
         }
         static System.Threading.Timer timer;
-        private static object lockObject = new object();
+        private static object timerLock = new object();
         private void buildTimer() 
         {
-            lock (lockObject)
+            lock (timerLock)
             {
                 if(timer == null)
                 timer = new System.Threading.Timer(_state =>
@@ -307,9 +306,10 @@ namespace MeTLLib.Providers.Connection
             }
         }
         private static Queue<Action> actionsAfterRelogin = new Queue<Action>();
+        private object reloginLock = new object();
         public void AddActionToReloginQueue(Action action)
         {
-            lock (lockObject)
+            lock (reloginLock)
             {
                 QueueRelogin();
                 actionsAfterRelogin.Enqueue(action);
@@ -333,7 +333,6 @@ namespace MeTLLib.Providers.Connection
             if (this.location == null)
                 this.location = location;
             setUpWire();
-            registerCommands();
             unregisterHandlers();
             conn.OnAuthError += OnAuthError;
             conn.OnLogin += OnLogin;
@@ -452,9 +451,11 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceError(string.Format("Exception in send: {0}", e.Message));
             }
         }
+        private object socketLock = new object();
         protected virtual void send(Message message)
         {
-            conn.Send(message);
+            lock(socketLock)
+                conn.Send(message);
         }
         public void stanza(string target, Element stanza)
         {
@@ -482,7 +483,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void directCommand(string target, string message)
         {
-            conn.Send(new Message(new Jid(target + "@" + metlServerAddress.host), jid, MessageType.chat, message));
+            send(new Message(new Jid(target + "@" + metlServerAddress.host), jid, MessageType.chat, message));
         }
         private void onStart()
         {
