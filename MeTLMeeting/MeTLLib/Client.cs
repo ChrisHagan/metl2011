@@ -172,7 +172,6 @@ namespace MeTLLib
                 wire.Logout();
             };
             tryIfConnected(work);
-            wire = null;
             return isConnected;
         }
         #endregion
@@ -382,7 +381,6 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                if (slide == null) return;
                 wire.SendSyncMoveTo(slide);
             };
             tryIfConnected(work);
@@ -496,32 +494,23 @@ namespace MeTLLib
         }
         public ConversationDetails CreateConversation(ConversationDetails details)
         {
-            return tryUntilConnected<ConversationDetails>(()=>conversationDetailsProvider.Create(details));
+            return tryUntilConnected<ConversationDetails>(()=>
+                conversationDetailsProvider.Create(details));
         }
         public ConversationDetails AppendSlide(string Jid)
         {
-            return tryUntilConnected<ConversationDetails>(() => conversationDetailsProvider.AppendSlide(Jid));
+            return tryUntilConnected<ConversationDetails>(() => 
+                conversationDetailsProvider.AppendSlide(Jid));
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid)
         {
-            return tryUntilConnected<ConversationDetails>(() => conversationDetailsProvider.AppendSlideAfter(slide,Jid));
+            return tryUntilConnected<ConversationDetails>(() => 
+                conversationDetailsProvider.AppendSlideAfter(slide,Jid));
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid, Slide.TYPE type)
         {
-            return tryUntilConnected<ConversationDetails>(() => conversationDetailsProvider.AppendSlideAfter(slide,Jid,type));
-        }
-        public List<ConversationDetails> CurrentConversations
-        {
-            get
-            {
-                var list = new List<ConversationDetails>();
-                Action work = delegate
-                {
-                    list = wire.CurrentClasses;
-                };
-                tryIfConnected(work);
-                return list;
-            }
+            return tryUntilConnected<ConversationDetails>(() => 
+                conversationDetailsProvider.AppendSlideAfter(slide,Jid,type));
         }
         #endregion
         #region HelperMethods
@@ -547,11 +536,14 @@ namespace MeTLLib
         private T tryUntilConnected<T>(Func<T> function) {
             var wait = new ManualResetEvent(false);
             T result = default(T);
+            bool complete = false;
             tryIfConnected(delegate {
                 result = function();
+                complete = true;
                 wait.Set();
             });  
-            wait.WaitOne();
+            if(!complete)
+                wait.WaitOne();
             return result;
         }
         private string decodeUri(Uri uri)

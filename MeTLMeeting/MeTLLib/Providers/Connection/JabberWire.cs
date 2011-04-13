@@ -40,19 +40,26 @@ namespace MeTLLib.Providers.Connection
         public IWebClientFactory clientFactory { private get; set; }
         [Inject]
         public HttpResourceProvider resourceProvider { private get; set; }
+        private JabberWire instance;
+        private object instanceLock = new object();
         public JabberWire wire()
         {
-            if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a wire");
-            return new JabberWire(
-                credentials,
-                conversationDetailsProvider,
-                historyProvider,
-                cachedHistoryProvider,
-                metlServerAddress,
-                cache,
-                receiveEvents,
-                clientFactory,
-                resourceProvider);
+            lock (instanceLock)
+            {
+                if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a wire");
+                if(instance == null)
+                    instance = new JabberWire(
+                        credentials,
+                        conversationDetailsProvider,
+                        historyProvider,
+                        cachedHistoryProvider,
+                        metlServerAddress,
+                        cache,
+                        receiveEvents,
+                        clientFactory,
+                        resourceProvider);
+            };
+            return instance;
         }
         public PreParser preParser(int room)
         {
@@ -102,7 +109,7 @@ namespace MeTLLib.Providers.Connection
         protected IWebClientFactory webClientFactory;
         protected HttpResourceProvider resourceProvider;
         protected static string privacy = "PUBLIC";
-        protected XmppClientConnection conn;
+        private XmppClientConnection conn;
         protected Jid jid;
         public bool LoggedIn = false;
 
@@ -134,7 +141,7 @@ namespace MeTLLib.Providers.Connection
                 try
                 {
                     var currentRooms = new List<string>();
-                    if (conn != null && conn.Username == Globals.me)
+                    if (conn.Username == Globals.me)
                     {
                         var discoIq = new agsXMPP.protocol.iq.disco.DiscoItemsIq(IqType.get);
                         discoIq.To = new Jid(metlServerAddress.muc);
@@ -374,7 +381,6 @@ namespace MeTLLib.Providers.Connection
                 {
                     Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Resetting.  {0}", caller));
                     conn.Close();
-                    setUpWire();
                     Login(location);
                 }
             }
@@ -433,16 +439,7 @@ namespace MeTLLib.Providers.Connection
         }
         private void send(string target, string message)
         {
-            try
-            {
-                if (target.ToLower() == "global")
-                    Trace.TraceInformation(string.Format("{0} fired on the global thread", message));
-                send(new Message(new Jid(target + "@" + metlServerAddress.muc), jid, MessageType.groupchat, message));
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError(string.Format("Exception in send: {0}", e.Message));
-            }
+            send(new Message(new Jid(target + "@" + metlServerAddress.muc), jid, MessageType.groupchat, message));
         }
         private object socketLock = new object();
         protected virtual void send(Message message)
@@ -522,7 +519,7 @@ namespace MeTLLib.Providers.Connection
                     return false;
                 }
             };
-            return conn != null && conn.Authenticated && checkPing();
+            return conn.Authenticated && checkPing();
         }
         public void GetHistory(int where)
         {
