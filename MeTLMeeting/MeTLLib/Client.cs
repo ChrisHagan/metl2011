@@ -130,8 +130,7 @@ namespace MeTLLib
         {
             get
             {
-                if (wire != null && wire.location != null) return wire.location;
-                else return new Location("0", 1, new List<int> { 1 });
+                return wire.location;
             }
         }
         public string username
@@ -162,17 +161,12 @@ namespace MeTLLib
             var credentials = authorisationProvider.attemptAuthentication(username, password);
             jabberWireFactory.credentials = credentials;
             wire = jabberWireFactory.wire();
-            wire.Login(new Location("100", 101, new List<int> { 101, 102, 103, 104, 105, 106 }));
             return credentials;
         }
         public bool Disconnect()
         {
-            Action work = delegate
-            {
-                wire.Logout();
-            };
-            tryIfConnected(work);
-            return isConnected;
+            wire.Logout();
+            return true;
         }
         #endregion
         #region sendStanzas

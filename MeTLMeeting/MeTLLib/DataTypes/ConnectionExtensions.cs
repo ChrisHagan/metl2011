@@ -66,6 +66,7 @@ namespace MeTLLib.DataTypes
         public string activeConversation;
         public int currentSlide;
         public List<int> availableSlides = new List<int>();
+        public static Location Empty = new Location("0", 1, new List<int>{1});
     }
     public class Policy
     {

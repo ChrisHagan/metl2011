@@ -1441,7 +1441,7 @@ namespace MeTLLib.DataTypes
                         dispatcher = image.Dispatcher;
                     else
                         dispatcher = Application.Current.Dispatcher;
-                    DispatcherExtensions.adoptAsync(dispatcher, delegate
+                    dispatcher.Invoke((Action)delegate
                     {
                         var oldTag = image.Tag;
                         if (oldTag.ToString().StartsWith("NOT_LOADED"))

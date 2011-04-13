@@ -10,6 +10,11 @@ namespace MeTLLib.Providers
 {
     class Globals
     {
+        public static ConversationDetails conversationDetails
+        {
+            get;
+            set;
+        }
         public static bool isAuthor
         {
             get
@@ -23,7 +28,7 @@ namespace MeTLLib.Providers
             {
                 try
                 {
-                    if (conversationDetails == null) return null;
+                    if (conversationDetails == null) throw new NotSetException("ConversationDetails not set in Globals::Location");
                     return new Location(conversationDetails.Jid, slide, conversationDetails.Slides.Select(s => s.id).ToList());
                 }
                 catch (NotSetException e)
@@ -40,11 +45,6 @@ namespace MeTLLib.Providers
                 if (conversationDetails == null) return new List<Slide>();
                 return conversationDetails.Slides;
             }
-        }
-        public static ConversationDetails conversationDetails
-        {
-            get;
-            set;
         }
         public static Credentials credentials
         {

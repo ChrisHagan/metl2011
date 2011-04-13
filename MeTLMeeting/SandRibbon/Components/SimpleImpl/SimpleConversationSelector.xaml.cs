@@ -59,7 +59,7 @@ namespace SandRibbon.Components
         }
         private void RedrawList(object _unused)
         {
-            Dispatcher.adoptAsync(() =>
+            Dispatcher.adopt(() =>
             {
                 var potentialConversations = RecentConversationProvider.loadRecentConversations();
                 if (potentialConversations != null && potentialConversations.Count() > 0)
