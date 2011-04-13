@@ -240,9 +240,9 @@ namespace LibTester
         private void getHistory(object sender, RoutedEventArgs e)
         {
             if (client == null) return;
-            var parser = client.RetrieveHistoryOfMUC(location.Text);
+            /*var parser = client.RetrieveHistoryOfMUC(location.Text);
             //foreach (PreParser parser in parsers)
-                MessageBox.Show(describeParser(parser));
+                MessageBox.Show(describeParser(parser));*/
         }
         private void getDisco(object sender, RoutedEventArgs e)
         {

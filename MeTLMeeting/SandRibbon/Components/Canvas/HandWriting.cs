@@ -12,6 +12,7 @@ using System.Windows.Input.StylusPlugIns;
 using System.Windows.Media;
 using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using SandRibbonObjects;
@@ -241,6 +242,7 @@ namespace SandRibbon.Components.Canvas
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
             e.Stroke.tag(new StrokeTag { author = Globals.me, privacy = Globals.privacy, isHighlighter = e.Stroke.DrawingAttributes.IsHighlighter });
+            GlobalTimers.resetSyncTimer();
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, target);
             Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(privateAwareStroke.sum().checksum);

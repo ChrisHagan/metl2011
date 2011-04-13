@@ -645,6 +645,7 @@ namespace SandRibbon.Components.Canvas
         }
         public static Timer typingTimer = null;
         private string originalText;
+        private int thisSlide = -1;
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
             if (originalText == null) return; 
@@ -677,18 +678,19 @@ namespace SandRibbon.Components.Canvas
             UndoHistory.Queue(undo, redo) ;
             if (typingTimer == null)
             {
+                if (thisSlide == -1) thisSlide = currentSlide;
                 typingTimer = new Timer(delegate
                 {
                     Dispatcher.adoptAsync(delegate
                                                     {
-                                                        var slide = GlobalTimers.getSlide() == 0 ? currentSlide : GlobalTimers.getSlide(); 
-                                                        sendTextWithoutHistory((MeTLTextBox)sender, privacy, slide);
+                                                        sendTextWithoutHistory((MeTLTextBox)sender, privacy, thisSlide);
                                                         typingTimer = null;
                                                     });
                 }, null, 600, Timeout.Infinite);
             }
             else
             {
+                thisSlide = currentSlide;
                 GlobalTimers.resetSyncTimer();
                 typingTimer.Change(600, Timeout.Infinite);
             }
