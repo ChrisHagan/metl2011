@@ -69,6 +69,7 @@ namespace SandRibbon.Components
             Loaded += Projector_Loaded;
             stack.SetEditable(false);
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(SetInkCanvasMode));
@@ -79,6 +80,11 @@ namespace SandRibbon.Components
             stack.handwriting.EditingModeChanged += modeChanged;
             stack.images.EditingModeChanged += modeChanged;
             stack.text.EditingModeChanged += modeChanged;
+        }
+
+        private void UpdateConversationDetails(ConversationDetails details)
+        {
+            conversationLabel.Text = details.Title;
         }
 
         private void shutdown(object obj)
