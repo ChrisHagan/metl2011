@@ -81,8 +81,15 @@ namespace SandRibbon.Components
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Display(Globals.conversationDetails);
         }
+
+        private void JoinConversation(object obj)
+        {
+            thumbnailList.Clear();
+        }
+
         private bool canAddSlide(object _slide)
         {
             try
@@ -170,14 +177,24 @@ namespace SandRibbon.Components
                 thumbnailList.Clear();
                 return;
             }
-            thumbnailList.Clear();
-            foreach (var slide in details.Slides.OrderBy(s => s.index))
+            if(thumbnailList.Count == 0)
             {
-                if (slide.type == Slide.TYPE.SLIDE)
+                foreach (var slide in details.Slides.OrderBy(s => s.index))
                 {
-                    thumbnailList.Add(slide);
+                    if (slide.type == Slide.TYPE.SLIDE)
+                    {
+                        thumbnailList.Add(slide);
+                    }
                 }
             }
+            else if(thumbnailList.Count < details.Slides.Count)
+            {
+                var newSlides = details.Slides.Where(s => !thumbnailList.Contains(s)).ToList();
+                foreach(var newSlide in newSlides)
+                    thumbnailList.Insert(newSlide.index, newSlide);
+
+            }
+
             var currentSlideIndex = indexOf(currentSlideId);
             if (moveTo)
             {
@@ -194,13 +211,11 @@ namespace SandRibbon.Components
             var source = (ListBox)sender;
             if (source.SelectedItem != null)
             {
-                var proposedIndex = source.SelectedIndex;
                 var proposedId =
                     ((Slide)source.SelectedItem).id;
                 if (proposedId == currentSlideId) return;
                 currentSlideId = proposedId;
                 Action<Slide> refreshSlide = s => {
-                    //s.Refresh();
                     var i = thumbnailList.IndexOf(s);
                     thumbnailList.RemoveAt(i);
                     thumbnailList.Insert(i,s);
