@@ -75,7 +75,7 @@ namespace SandRibbon.Components
             SlideToThumb = new SlideToThumbConverter();
             InitializeComponent();
             slides.ItemsSource = thumbnailList;
-            Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(moveToTeacher));
+            Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(MoveToTeacher));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(Display));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
@@ -119,8 +119,9 @@ namespace SandRibbon.Components
                     var currentSlide = (Slide)slides.SelectedItem;
                     if (currentSlide == null || currentSlide.id != slide)
                     {
-                        slides.SelectedIndex =
-                            thumbnailList.Select(s => s.id).ToList().IndexOf(slide);
+                        currentSlideId = slide;
+                        currentSlideIndex = thumbnailList.Select(s => s.id).ToList().IndexOf(slide);
+                        slides.SelectedIndex = currentSlideIndex;
                         slides.ScrollIntoView(slides.SelectedItem);
                     }
                 }
@@ -128,17 +129,12 @@ namespace SandRibbon.Components
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
         }
-        private void moveToTeacher(int where)
+        private void MoveToTeacher(int where)
         {
             if (Globals.isAuthor) return;
             if (!Globals.synched) return;
             var slide = Globals.slide;
-            var action = (Action)(() => Dispatcher.adoptAsync((Action)delegate
-                                         {
-                                             if (thumbnailList.Where(t => t.id == where).Count() == 1)
-                                                 Commands.InternalMoveTo.ExecuteAsync(where);
-                                             Commands.MoveTo.ExecuteAsync(where);
-                                         }));
+            var action = (Action)(() => Dispatcher.adoptAsync(() => Commands.MoveTo.ExecuteAsync(where)));
             GlobalTimers.SetSyncTimer(action, slide);
         }
         private bool slideInConversation(int slide)
@@ -212,7 +208,6 @@ namespace SandRibbon.Components
                 };
                 foreach(var slide in e.RemovedItems) refreshSlide((Slide)slide);
                 foreach(var slide in e.AddedItems) refreshSlide((Slide)slide);
-                Commands.InternalMoveTo.ExecuteAsync(currentSlideId);
                 Commands.MoveTo.ExecuteAsync(currentSlideId);
                 if (Globals.isAuthor && Globals.synched)
                     Commands.SendSyncMove.ExecuteAsync(currentSlideId);

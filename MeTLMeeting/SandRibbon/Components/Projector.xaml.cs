@@ -76,7 +76,7 @@ namespace SandRibbon.Components
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(setLayer));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(shutdown));
-            Commands.InternalMoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
+            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
             stack.handwriting.EditingModeChanged += modeChanged;
             stack.images.EditingModeChanged += modeChanged;
             stack.text.EditingModeChanged += modeChanged;

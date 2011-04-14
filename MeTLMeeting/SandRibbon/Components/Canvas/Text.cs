@@ -613,6 +613,7 @@ namespace SandRibbon.Components.Canvas
             updateTools();
             requeryTextCommands();
             Select(new List<UIElement>());
+            originalText = myTextBox.Text;
             Commands.ChangeTextMode.Execute("None");
         }
         private void updateTools()

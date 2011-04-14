@@ -34,7 +34,7 @@
       <Item value="strokes" priority="7" />
       <Item value="listX" priority="0" />
       <Item value="child" priority="3" />
-      <Item value="new" priority="151" />
+      <Item value="new" priority="152" />
       <Item value="InkCanvas" priority="6" />
       <Item value="children" priority="0" />
       <Item value="bounds" priority="0" />
@@ -55,7 +55,7 @@
       <Item value="Commands" priority="73" />
       <Item value="static" priority="34" />
       <Item value="CompositeCommand" priority="12" />
-      <Item value="DelegateCommand" priority="51" />
+      <Item value="DelegateCommand" priority="52" />
       <Item value="SneakInto" priority="1" />
       <Item value="TargettedBubbleContext" priority="1" />
       <Item value="bubble" priority="5" />
@@ -540,7 +540,7 @@
       <Item value="Dock`0" priority="0" />
       <Item value="WrapPanel`0" priority="2" />
       <Item value="level" priority="0" />
-      <Item value="Commands`0" priority="36" />
+      <Item value="Commands`0" priority="37" />
       <Item value="CompositeCommand`0" priority="2" />
       <Item value="NotFiniteNumberException`0" priority="0" />
       <Item value="NotSetException`0" priority="1" />
@@ -774,7 +774,7 @@
       <Item value="unMangledFilename" priority="1" />
       <Item value="SearchResults" priority="0" />
       <Item value="originalContext" priority="8" />
-      <Item value="ConversationDetails`0" priority="6" />
+      <Item value="ConversationDetails`0" priority="7" />
       <Item value="result" priority="1" />
       <Item value="RoutedEvent`0" priority="0" />
       <Item value="RoutedEventArgs`0" priority="2" />
@@ -1025,7 +1025,7 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:@SandRibbon.Commands">
       <Item value="SneakInto" priority="6" />
-      <Item value="UpdateConversationDetails" priority="11" />
+      <Item value="UpdateConversationDetails" priority="12" />
       <Item value="ExploreBubble" priority="1" />
       <Item value="ThoughtLiveWindow" priority="0" />
       <Item value="MoveTo" priority="6" />
@@ -1097,7 +1097,7 @@
       <Item value="RegisterCommandToDispatcher`1" priority="3" />
       <Item value="ExecuteAsync`0" priority="0" />
       <Item value="Execute`0" priority="7" />
-      <Item value="RegisterCommand`0" priority="9" />
+      <Item value="RegisterCommand`0" priority="10" />
       <Item value="UnregisterCommand`0" priority="0" />
       <Item value="RegisteredCommands" priority="0" />
     </ItemStatistics>
@@ -2082,30 +2082,27 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Utility/d:DragDrop/f:DragDropHelper.cs" caret="8635" fromTop="18" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:IConversationDetailsProvider.cs" caret="249" fromTop="8" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:Client.cs" caret="21352" fromTop="19" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="7544" fromTop="31" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml" caret="1564" fromTop="15" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml.cs" caret="1071" fromTop="18" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml" caret="1265" fromTop="23" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml.cs" caret="2084" fromTop="4" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:ConversationDetails.cs" caret="706" fromTop="22" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="558" fromTop="0" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml.cs" caret="8917" fromTop="6" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="29068" fromTop="22" />
       <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="19606" fromTop="15" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:FileConversationDetailsProvider.cs" caret="605" fromTop="0" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="10256" fromTop="21" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SyncDisplay.xaml.cs" caret="481" fromTop="18" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="15070" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml.cs" caret="2388" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Projector.xaml.cs" caret="3254" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="9514" fromTop="21" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="12836" fromTop="13" />
     </RecentFiles>
     <RecentEdits>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml" caret="1296" fromTop="15" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Utility/d:DragDrop/f:Utilities.cs" caret="2009" fromTop="32" />
-      <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="1094" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml.cs" caret="1298" fromTop="28" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml" caret="3576" fromTop="28" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml" caret="1459" fromTop="29" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml.cs" caret="2489" fromTop="32" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Utility/d:DragDrop/f:DragDropHelper.cs" caret="8635" fromTop="18" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml" caret="4580" fromTop="20" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="7626" fromTop="32" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="7630" fromTop="32" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml" caret="2668" fromTop="22" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml" caret="712" fromTop="11" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml" caret="1565" fromTop="15" />
@@ -2126,6 +2123,12 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="10546" fromTop="26" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:FileConversationDetailsProvider.cs" caret="2554" fromTop="4" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="10256" fromTop="21" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Projector.xaml.cs" caret="3596" fromTop="23" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Projector.xaml.cs" caret="2547" fromTop="10" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Projector.xaml.cs" caret="3255" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="1236" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="5969" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="9170" fromTop="7" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>

@@ -35,7 +35,7 @@ namespace SandRibbon.Components
             privacyOverlay.Freeze();
             InitializeComponent();
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
-            Commands.InternalMoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
+            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
             Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
