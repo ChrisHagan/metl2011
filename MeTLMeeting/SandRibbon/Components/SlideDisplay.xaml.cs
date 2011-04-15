@@ -187,6 +187,7 @@ namespace SandRibbon.Components
                     }
                 }
             }
+
             else if(thumbnailList.Count < details.Slides.Count)
             {
                 var newSlides = details.Slides.Where(s => !thumbnailList.Contains(s)).ToList();
