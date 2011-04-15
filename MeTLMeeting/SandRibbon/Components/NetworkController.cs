@@ -24,23 +24,46 @@ namespace SandRibbon.Components
         private ClientConnection client;
         public NetworkController()
         {
-            switchServer();
-            registerCommands();
-            attachToClient();
+            client = buildServerSpecificClient();
+            MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
+            checkValidity = (sender,e)=>{
+                if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
+                {
+                    registerCommands();
+                    attachToClient();
+                    Commands.AllStaticCommandsAreRegistered();
+                    Commands.SetIdentity.ExecuteAsync(e.credentials);
+                }
+                else
+                {
+                    if (WorkspaceStateProvider.savedStateExists())
+                    {
+                        System.Windows.MessageBox.Show("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
+                        Commands.LogOut.Execute(null);
+                    }
+                    else
+                        System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
+                }
+                client.events.StatusChanged -= checkValidity;
+            };
+            client.events.StatusChanged += checkValidity;
         }
-        public void switchServer()
+
+        private ClientConnection buildServerSpecificClient()
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
+            ClientConnection result;
             if (App.isExternal)
-                client = MeTLLib.ClientFactory.Connection(new CivicServerAddress());
+                result = MeTLLib.ClientFactory.Connection(new CivicServerAddress());
             else
             {
                 if (App.isStaging)
-                    client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
+                    result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
                 else
-                    client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
+                    result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
             }
-            Constants.JabberWire.SERVER = client.server.host;
+            Constants.JabberWire.SERVER = result.server.host;
+            return result;
         }
         #region commands
         private void registerCommands()
@@ -189,12 +212,12 @@ namespace SandRibbon.Components
             client.events.PreParserAvailable += preParserAvailable;
             client.events.QuizAnswerAvailable += quizAnswerAvailable;
             client.events.QuizQuestionAvailable += quizQuestionAvailable;
-            client.events.StatusChanged += statusChanged;
             client.events.StrokeAvailable += strokeAvailable;
             client.events.SubmissionAvailable += submissionAvailable;
             client.events.TextBoxAvailable += textBoxAvailable;
             client.events.VideoAvailable += videoAvailable;
             client.events.SyncMoveRequested += syncMoveRequested;
+            client.events.StatusChanged += statusChanged;
         }
         private void syncMoveRequested(object sender, SyncMoveRequestedEventArgs e)
         {
@@ -271,26 +294,7 @@ namespace SandRibbon.Components
         { Commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }
         private void statusChanged(object sender, StatusChangedEventArgs e)
         {
-            if (String.IsNullOrEmpty(Globals.me))
-            {//Connecting for the first time
-                if (e.isConnected && e.credentials != null && e.credentials.authorizedGroups.Count > 0)
-                {
-                    Commands.AllStaticCommandsAreRegistered();
-                    Commands.SetIdentity.ExecuteAsync(e.credentials);
-                }
-                else
-                {
-                    if (WorkspaceStateProvider.savedStateExists())
-                    {
-                        System.Windows.MessageBox.Show("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
-                        Commands.LogOut.Execute(null);
-                    }
-                    else
-                        System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
-                }
-            }
-            if (!e.isConnected)
-                Logger.Log("CRASH: NetworkController::statusChanged:Diagnostic (Fixed)" + new System.Diagnostics.StackTrace().ToString());
+            
             Commands.Reconnecting.Execute(e.isConnected);
         }
         private void strokeAvailable(object sender, StrokeAvailableEventArgs e)

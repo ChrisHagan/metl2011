@@ -17,6 +17,11 @@ namespace MeTLLib.DataTypes
                 && (foreignCredentials.password == password)
                 && (foreignCredentials.authorizedGroups.TrueForAll(s => s.ValueEquals(authorizedGroups[foreignCredentials.authorizedGroups.IndexOf(s)]))));
         }
+        public bool isValid {
+            get {
+                return authorizedGroups != null && authorizedGroups.Count > 0;
+            }
+        }
         public string name;
         public string password;
         public List<AuthorizedGroup> authorizedGroups;

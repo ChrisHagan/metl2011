@@ -63,7 +63,7 @@ namespace MeTLLib
     }
     public interface IClientBehaviour
     {
-        Credentials Connect(string username, string password);
+        void Connect(string username, string password);
         bool Disconnect();
         void SendTextBox(TargettedTextBox textbox);
         void SendStroke(TargettedStroke stroke);
@@ -156,12 +156,17 @@ namespace MeTLLib
             return historyProvider;
         }
         #region connection
-        public Credentials Connect(string username, string password)
+        public void Connect(string username, string password)
         {
             var credentials = authorisationProvider.attemptAuthentication(username, password);
-            jabberWireFactory.credentials = credentials;
-            wire = jabberWireFactory.wire();
-            return credentials;
+            if (credentials.isValid)
+            {
+                jabberWireFactory.credentials = credentials;
+                wire = jabberWireFactory.wire();
+            }
+            else {
+                events.statusChanged(false,credentials);
+            }
         }
         public bool Disconnect()
         {

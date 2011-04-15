@@ -6,7 +6,6 @@ using System.Web;
 using System.Windows;
 using System.Windows.Controls;
 using MeTLLib;
-using Npgsql;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Utils;
 using System.Security.Permissions;

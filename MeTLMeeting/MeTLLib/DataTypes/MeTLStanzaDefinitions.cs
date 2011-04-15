@@ -19,6 +19,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using Ninject;
 using System.Threading;
 using MeTLLib.Providers.Connection;
+using System.Diagnostics;
 
 
 namespace MeTLLib.DataTypes
@@ -1434,20 +1435,26 @@ namespace MeTLLib.DataTypes
             {
                 ThreadPool.UnsafeQueueUserWorkItem(delegate
                 {
-                    if (image == null) return;//This might have been GCed if they moved conversations
-                    var newSource = asynchronouslyLoadImageData();
-                    System.Windows.Threading.Dispatcher dispatcher;
-                    if (image != null && image.Dispatcher != null && image.Dispatcher.Thread != null)
-                        dispatcher = image.Dispatcher;
-                    else
-                        dispatcher = Application.Current.Dispatcher;
-                    dispatcher.Invoke((Action)delegate
+                    try
                     {
-                        var oldTag = image.Tag;
-                        if (oldTag.ToString().StartsWith("NOT_LOADED"))
-                            image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
-                        image.Source = newSource;
-                    });
+                        if (image == null) return;//This might have been GCed if they moved conversations
+                        var newSource = asynchronouslyLoadImageData();
+                        System.Windows.Threading.Dispatcher dispatcher;
+                        if (image != null && image.Dispatcher != null && image.Dispatcher.Thread != null)
+                            dispatcher = image.Dispatcher;
+                        else
+                            dispatcher = Application.Current.Dispatcher;
+                        dispatcher.Invoke((Action)delegate
+                        {
+                            var oldTag = image.Tag;
+                            if (oldTag.ToString().StartsWith("NOT_LOADED"))
+                                image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
+                            image.Source = newSource;
+                        });
+                    }
+                    catch (InvalidOperationException) {
+                        Trace.TraceInformation("CRASH: (Fixed) MeTLStanzaDefinitions::Image::attachSourceToThisImage - couldn't find a dispatcher"); 
+                    }
                 },null);
             }
             public TargettedImage Img
