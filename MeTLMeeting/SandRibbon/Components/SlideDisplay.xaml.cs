@@ -170,13 +170,23 @@ namespace SandRibbon.Components
                 thumbnailList.Clear();
                 return;
             }
-            thumbnailList.Clear();
-            foreach (var slide in details.Slides.OrderBy(s => s.index))
+            
+            if(thumbnailList.Count == 0)
             {
-                if (slide.type == Slide.TYPE.SLIDE)
+                foreach (var slide in details.Slides.OrderBy(s => s.index))
                 {
-                    thumbnailList.Add(slide);
+                    if (slide.type == Slide.TYPE.SLIDE)
+                    {
+                        thumbnailList.Add(slide);
+                    }
                 }
+            }
+            else if(thumbnailList.Count < details.Slides.Count)
+            {
+                var newSlides = details.Slides.Where(s => !thumbnailList.Contains(s)).ToList();
+                foreach(var newSlide in newSlides)
+                    thumbnailList.Insert(newSlide.index, newSlide);
+
             }
             var currentSlideIndex = indexOf(currentSlideId);
             if (moveTo)
