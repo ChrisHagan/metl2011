@@ -81,8 +81,15 @@ namespace SandRibbon.Components
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(JoinConversation));
             Display(Globals.conversationDetails);
         }
+
+        private void JoinConversation(object obj)
+        {
+            thumbnailList.Clear();
+        }
+
         private bool canAddSlide(object _slide)
         {
             try
