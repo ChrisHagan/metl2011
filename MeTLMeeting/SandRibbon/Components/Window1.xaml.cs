@@ -265,7 +265,6 @@ namespace SandRibbon
         }
         private void Reconnecting(bool success) {
 
-            Trace.TraceError(string.Format("CRASH: XXXXXXXXXXXXXXXXXX  Window1::Reconnecting {0} received a connected value of {1}", Globals.me, success));
             if (success)
             {
                 try

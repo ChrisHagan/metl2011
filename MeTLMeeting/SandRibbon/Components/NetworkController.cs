@@ -295,8 +295,6 @@ namespace SandRibbon.Components
         { Commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }
         private void statusChanged(object sender, StatusChangedEventArgs e)
         {
-            
-            Trace.TraceError(string.Format("CRASH: XXXXXXXXXXXXXXXX  NetworkController::StatusChanged {0} received a connected value of {1}", Globals.me, e.isConnected));
             Commands.Reconnecting.Execute(e.isConnected);
         }
         private void strokeAvailable(object sender, StrokeAvailableEventArgs e)
