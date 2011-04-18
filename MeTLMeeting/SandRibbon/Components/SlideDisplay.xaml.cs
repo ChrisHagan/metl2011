@@ -199,9 +199,8 @@ namespace SandRibbon.Components
             }
             foreach (var slide in thumbnailList)
             {
-                if (slide != null)
+                foreach (var relatedSlide in details.Slides.Where(s => s.id == slide.id))
                 {
-                    var relatedSlide = details.Slides.Where(s => s.id == slide.id).FirstOrDefault();
                     if (slide.index != relatedSlide.index)
                     {
                         slide.index = relatedSlide.index;
