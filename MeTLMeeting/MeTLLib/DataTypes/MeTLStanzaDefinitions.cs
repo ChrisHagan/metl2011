@@ -1402,7 +1402,31 @@ namespace MeTLLib.DataTypes
                         Width = this.width,
                         Source = BackupSource
                     };
-                attachSourceToThisImage(image);
+                RoutedEventHandler handler = null;
+                handler = delegate
+                {
+                    image.Loaded -= handler;
+                    ThreadPool.UnsafeQueueUserWorkItem(delegate
+                    {
+                            if (image == null) return;//This might have been GCed if they moved conversations
+                            var newSource = asynchronouslyLoadImageData();
+                            image.Dispatcher.Invoke((Action)delegate
+                            {
+                                try
+                                {
+                                    var oldTag = image.Tag;
+                                    if (oldTag.ToString().StartsWith("NOT_LOADED"))
+                                        image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
+                                    image.Source = newSource;
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                    Trace.TraceInformation("CRASH: (Fixed) MeTLStanzaDefinitions::Image::forceEvaluation - couldn't find a dispatcher");
+                                }
+                            });
+                    }, null);
+                };
+                image.Loaded += handler;
                 InkCanvas.SetLeft(image, this.x);
                 InkCanvas.SetTop(image, this.y);
                 return image;
@@ -1430,32 +1454,6 @@ namespace MeTLLib.DataTypes
                     //Who knows what sort of hell is lurking in our history
                 }
                 return image;
-            }
-            private void attachSourceToThisImage(System.Windows.Controls.Image image)
-            {
-                ThreadPool.UnsafeQueueUserWorkItem(delegate
-                {
-                    try
-                    {
-                        if (image == null) return;//This might have been GCed if they moved conversations
-                        var newSource = asynchronouslyLoadImageData();
-                        System.Windows.Threading.Dispatcher dispatcher;
-                        if (image != null && image.Dispatcher != null && image.Dispatcher.Thread != null)
-                            dispatcher = image.Dispatcher;
-                        else
-                            dispatcher = Application.Current.Dispatcher;
-                        dispatcher.Invoke((Action)delegate
-                        {
-                            var oldTag = image.Tag;
-                            if (oldTag.ToString().StartsWith("NOT_LOADED"))
-                                image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
-                            image.Source = newSource;
-                        });
-                    }
-                    catch (InvalidOperationException) {
-                        Trace.TraceInformation("CRASH: (Fixed) MeTLStanzaDefinitions::Image::attachSourceToThisImage - couldn't find a dispatcher"); 
-                    }
-                },null);
             }
             public TargettedImage Img
             {
