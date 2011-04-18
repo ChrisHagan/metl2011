@@ -156,16 +156,16 @@ namespace SandRibbon.Utils.Connection
         private void ReceiveParser(PrintParser parser, Action<IEnumerable<PrintParser>> ShowPrintDialog, int room)
         {
             parsers++;
-            Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, parsers, targetParserCount));
+            Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
             if (PrinterInfo.parsers.ContainsKey(room.ToString()))
             {
                 var Merged = PrinterInfo.parsers[room.ToString()].merge(parser);
-                Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, parsers, targetParserCount));
+                Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
                 PrinterInfo.parsers[room.ToString()] = Merged;
             }
             else
             {
-                Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, parsers, targetParserCount));
+                Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
                 PrinterInfo.parsers.Add(room.ToString(), parser);
             }
             if (PrinterInfo.parsers.Count() == targetPageCount && parsers == targetParserCount)

@@ -117,7 +117,7 @@ namespace SandRibbon.Utils
         }
         public int slideId;
         public int totalSlides;
-        public enum IMPORT_STAGE { DESCRIBED, ANALYSED, EXTRACTED_IMAGES, UPLOADED_XML, UPLOADED_RESOURCES, FINISHED };
+        public enum IMPORT_STAGE { DESCRIBED, ANALYSED, EXTRACTED_IMAGES, UPLOADED_XML, UPLOADED_RESOURCES, FINISHED, PRINTING };
         public IMPORT_STAGE stage;
         public string slideThumbnailSource{get;set;}
     }

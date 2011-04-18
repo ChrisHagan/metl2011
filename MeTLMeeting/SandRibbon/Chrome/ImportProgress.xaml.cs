@@ -88,6 +88,11 @@ namespace SandRibbon
                    setContent("Loading");
                    setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
                    break;
+                case PowerpointImportProgress.IMPORT_STAGE.PRINTING:
+                   slidesAnalyzed++;
+                   setContent("Printing");
+                   setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                   break;
             }
         }
     }

@@ -230,12 +230,7 @@ namespace SandRibbon.Components
             var searchQuery = SearchInput.Text.ToLower().Trim();
             if (backstageNav.currentMode == "find" && searchQuery.Length == 0) return false;
             if (backstageNav.currentMode == "mine" && author != Globals.me) return false;
-            foreach (var token in searchQuery.Split(' '))
-            {
-                if(!searchField.Any(field => field.Contains(token)))
-                    return false;
-            }
-            return true; 
+            return searchQuery.Split(' ').All(token => searchField.Any(field => field.Contains(token)));
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
