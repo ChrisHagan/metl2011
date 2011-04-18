@@ -306,6 +306,9 @@ namespace MeTLLib.DataTypes
         public void refresh() {
             PropertyChanged(this,new PropertyChangedEventArgs("id"));
         }
+        public void refreshIndex() {
+            PropertyChanged(this,new PropertyChangedEventArgs("index"));
+        }
         public static Slide Empty
         {
             get
@@ -326,7 +329,7 @@ namespace MeTLLib.DataTypes
         public int id{
             get;set;
         }
-        public int index;
+        public int index{get;set;}
         public TYPE type;
         public bool exposed;
 

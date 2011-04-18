@@ -38,7 +38,10 @@ namespace SandRibbon.Components
         }
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return collection.IndexOf((Slide)value) + 1;
+            if (value is int)
+                return ((int)value) + 1;
+            else return "?";
+            //return collection.IndexOf((Slide)value) + 1;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -177,8 +180,8 @@ namespace SandRibbon.Components
                 thumbnailList.Clear();
                 return;
             }
-            
-            if(thumbnailList.Count == 0)
+
+            if (thumbnailList.Count == 0)
             {
                 foreach (var slide in details.Slides.OrderBy(s => s.index))
                 {
@@ -188,12 +191,23 @@ namespace SandRibbon.Components
                     }
                 }
             }
-            else if(thumbnailList.Count < details.Slides.Count)
+            else if (thumbnailList.Count < details.Slides.Count)
             {
                 var newSlides = details.Slides.Where(s => !thumbnailList.Contains(s)).ToList();
-                foreach(var newSlide in newSlides)
+                foreach (var newSlide in newSlides)
                     thumbnailList.Insert(newSlide.index, newSlide);
-
+            }
+            foreach (var slide in thumbnailList)
+            {
+                if (slide != null)
+                {
+                    var relatedSlide = details.Slides.Where(s => s.id == slide.id).FirstOrDefault();
+                    if (slide.index != relatedSlide.index)
+                    {
+                        slide.index = relatedSlide.index;
+                        slide.refreshIndex();
+                    }
+                }
             }
             var currentSlideIndex = indexOf(currentSlideId);
             if (moveTo)
