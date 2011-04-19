@@ -34,7 +34,8 @@ namespace SandRibbon
     {
         public static CompositeCommand ListenToAudio = new CompositeCommand();
         public static CompositeCommand ReorderDragDone = new CompositeCommand();
-
+        public static CompositeCommand ConnectToSmartboard = new CompositeCommand();
+        public static CompositeCommand DisconnectFromSmartboard = new CompositeCommand();
         public static CompositeCommand ViewSubmissions = new CompositeCommand();
         public static CompositeCommand Reconnecting = new CompositeCommand();
         public static CompositeCommand LeaveAllRooms = new CompositeCommand();

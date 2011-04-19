@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Divelements.SandRibbon;
 using SandRibbon.Components;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Tabs
 {

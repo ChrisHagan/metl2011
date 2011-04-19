@@ -40,6 +40,7 @@ namespace SandRibbon
         #region SurroundingServers
         #endregion
         private PowerPointLoader loader;
+        private SmartboardConnector smartboard;
         private UndoHistory history = new UndoHistory();
         public ConversationDetails details = null;
         public string CurrentProgress { get; set; }
@@ -71,7 +72,8 @@ namespace SandRibbon
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
             Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
             Commands.ShowEditSlidesDialog.RegisterCommand(new DelegateCommand<object>(ShowEditSlidesDialog, mustBeInConversation));
-            
+            Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             //conversation movement
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));

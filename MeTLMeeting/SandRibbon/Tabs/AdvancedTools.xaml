@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     sr:KeyboardAccess.Keys="P" Text="Advanced Tools" x:Name="advancedRoot">
@@ -11,6 +12,8 @@
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup>
         <Button Content="Manage Blacklist" Click="manageBlacklist"/>
+        <Button Content="Connect to Smartboard" Command="{x:Static api:Commands.ConnectToSmartboard}"/>
+        <Button Content="Disconnect from Smartboard" Command="{x:Static api:Commands.DisconnectFromSmartboard}"/>
     </sr:RibbonGroup>
 
 </sr:RibbonTab>

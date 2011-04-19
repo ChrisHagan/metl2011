@@ -814,6 +814,7 @@
       <DependentUpon>Quizzes.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\BackDoor.cs" />
+    <Compile Include="Utils\SmartboardConnector.cs" />
     <Compile Include="Utils\Crypto.cs" />
     <Compile Include="Quizzing\Worm.xaml.cs">
       <DependentUpon>Worm.xaml</DependentUpon>
