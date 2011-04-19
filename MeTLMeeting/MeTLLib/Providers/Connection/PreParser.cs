@@ -24,8 +24,6 @@ namespace MeTLLib.Providers.Connection
         public List<TargettedBubbleContext> bubbleList = new List<TargettedBubbleContext>();
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
-        public IReceiveEvents receiveEvents;
-        public HttpResourceProvider resourceProvider;
         public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider) 
             : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory, resourceProvider)
         {
@@ -38,7 +36,7 @@ namespace MeTLLib.Providers.Connection
         {
             var canvas = new InkCanvas();
             foreach (var image in images)
-                canvas.Children.Add(image.Value.image);
+                canvas.Children.Add(image.Value.imageSpecification.curryEvaluation(metlServerAddress)());
             foreach (var shape in autoshapes)
                 canvas.Children.Add(shape.Value.autoshape);
             foreach (var video in videos)
@@ -47,33 +45,6 @@ namespace MeTLLib.Providers.Connection
             {
                 textbox.Value.box.Background = new SolidColorBrush(Colors.Transparent);
                 canvas.Children.Add(textbox.Value.box);
-            }
-            foreach (var stroke in ink)
-                canvas.Strokes.Add(stroke.stroke);
-            return canvas;
-        }
-        public InkCanvas Populate(InkCanvas canvas)
-        {
-            foreach (var shape in autoshapes)
-                canvas.Children.Add(shape.Value.autoshape);
-            foreach (var video in videos)
-                canvas.Children.Add(video.Value.video);
-            foreach (var image in images)
-            {
-                var myImage = new Image
-                {
-                    Height = image.Value.imageSpecification.height,
-                    Width= image.Value.imageSpecification.height,
-                    Source = image.Value.imageSpecification.source
-                };
-                canvas.Children.Add(myImage);
-            }
-            foreach (var textbox in text)
-            {
-                var box = textbox.Value.box;
-                box.BorderBrush = new SolidColorBrush(Colors.Transparent);
-                box.Background = new SolidColorBrush(Colors.Transparent);
-                canvas.Children.Add(box);
             }
             foreach (var stroke in ink)
                 canvas.Strokes.Add(stroke.stroke);

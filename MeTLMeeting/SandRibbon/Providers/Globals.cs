@@ -6,6 +6,8 @@ using MeTLLib.DataTypes;
 using System.Windows.Ink;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Pedagogicometry;
+using SandRibbon.Utils;
+using System.Diagnostics;
 
 namespace SandRibbon.Providers
 {
@@ -75,6 +77,7 @@ namespace SandRibbon.Providers
                 }
                 catch (NotSetException e)
                 {
+                    Trace.TraceInformation("CRASH: SandRibbon::Providers:Globals:location threw ex: {0}", e.Message);
                     throw e;
                 }
             }
@@ -100,7 +103,8 @@ namespace SandRibbon.Providers
                 {
                     try
                     {
-                        return MeTLLib.ClientFactory.Connection().DetailsOf((String)Commands.JoinConversation.lastValue());
+                        var lastJoined = (String)Commands.JoinConversation.lastValue();
+                        return MeTLLib.ClientFactory.Connection().DetailsOf(lastJoined);
                     }
                     catch (NotSetException) { 
                         return ConversationDetails.Empty;

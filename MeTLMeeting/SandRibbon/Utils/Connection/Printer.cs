@@ -119,7 +119,7 @@ namespace SandRibbon.Utils.Connection
                 ClientFactory.Connection().getHistoryProvider().Retrieve<PrintParser>(
                                 null,
                                 null,
-                                (parser)=> ReceiveParser(parser, printDocument ),
+                                (parser)=> ReceiveParser(parser, printDocument, room),
                                 room.ToString());
             }
         }
@@ -142,27 +142,32 @@ namespace SandRibbon.Utils.Connection
                 ClientFactory.Connection().getHistoryProvider().Retrieve<PrintParser>(
                                 null,
                                 null,
-                                (parser) => ReceiveParser(parser, printDocument),
+                                (parser) => ReceiveParser(parser, printDocument,room),
                                 room.ToString());
                 ClientFactory.Connection().getHistoryProvider().RetrievePrivateContent<PrintParser>(
                                 null,
                                 null,
-                                (parser) => ReceiveParser(parser, printDocument),
+                                (parser) => ReceiveParser(parser, printDocument,room),
                                 user,
                                 room.ToString());
             }
         }
         int parsers = 0;
-        private void ReceiveParser(PrintParser parser, Action<IEnumerable<PrintParser>> ShowPrintDialog)
+        private void ReceiveParser(PrintParser parser, Action<IEnumerable<PrintParser>> ShowPrintDialog, int room)
         {
             parsers++;
-            if (PrinterInfo.parsers.ContainsKey(parser.location.currentSlide.ToString()))
+            Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
+            if (PrinterInfo.parsers.ContainsKey(room.ToString()))
             {
-                var Merged = PrinterInfo.parsers[parser.location.currentSlide.ToString()].merge(parser);
-                PrinterInfo.parsers[parser.location.currentSlide.ToString()] = Merged;
+                var Merged = PrinterInfo.parsers[room.ToString()].merge(parser);
+                Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
+                PrinterInfo.parsers[room.ToString()] = Merged;
             }
             else
-                PrinterInfo.parsers.Add(parser.location.currentSlide.ToString(), parser);
+            {
+                Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(PowerpointImportProgress.IMPORT_STAGE.PRINTING, parsers, targetParserCount));
+                PrinterInfo.parsers.Add(room.ToString(), parser);
+            }
             if (PrinterInfo.parsers.Count() == targetPageCount && parsers == targetParserCount)
             {
                 var indicesByJid = PrinterInfo.slides.Aggregate(new Dictionary<string,int>(),
@@ -171,7 +176,8 @@ namespace SandRibbon.Utils.Connection
                             acc.Add(item.id.ToString(), item.index);
                             return acc;
                         });
-                ShowPrintDialog(from p in PrinterInfo.parsers orderby indicesByJid[p.Value.location.currentSlide.ToString()] select p.Value);
+                ShowPrintDialog(from p in PrinterInfo.parsers orderby indicesByJid[p.Key] select p.Value);
+
             }
         }
         private void ShowPrintDialogWithNotes(IEnumerable<PrintParser> parsers)

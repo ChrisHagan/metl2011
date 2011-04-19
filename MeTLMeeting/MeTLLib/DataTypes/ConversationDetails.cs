@@ -263,7 +263,7 @@ namespace MeTLLib.DataTypes
                 new XElement(ALLSYNC, usersAreCompulsorilySynced));
         }
     }
-    public class Slide
+    public class Slide : INotifyPropertyChanged
     {
         public override bool Equals(object obj)
         {
@@ -301,6 +301,13 @@ namespace MeTLLib.DataTypes
             defaultHeight = newDefaultHeight;
             exposed = newExposed;
         }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void refresh() {
+            PropertyChanged(this,new PropertyChangedEventArgs("id"));
+        }
+        public void refreshIndex() {
+            PropertyChanged(this,new PropertyChangedEventArgs("index"));
+        }
         public static Slide Empty
         {
             get
@@ -318,10 +325,13 @@ namespace MeTLLib.DataTypes
         public float defaultWidth;
         public float defaultHeight;
         public string author;
-        public int id;
-        public int index;
+        public int id{
+            get;set;
+        }
+        public int index{get;set;}
         public TYPE type;
         public bool exposed;
+
     }
     public class ApplicationLevelInformation
     {

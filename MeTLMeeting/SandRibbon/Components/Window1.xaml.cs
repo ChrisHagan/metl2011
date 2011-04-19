@@ -30,6 +30,7 @@ using System.Collections.ObjectModel;
 using SandRibbon.Components.Utility;
 using System.Windows.Documents;
 using MeTLLib;
+using MeTLLib.Providers.Connection;
 
 namespace SandRibbon
 {
@@ -102,7 +103,6 @@ namespace SandRibbon
 
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
-            Commands.SetTutorialVisibility.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SetTutorialVisibility, mustBeInConversation));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
@@ -114,8 +114,7 @@ namespace SandRibbon
             
             //canvas stuff
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(SetLayer, conversationSearchMustBeClosed));
+            Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<String>(SetLayer, conversationSearchMustBeClosed));
             Commands.MoveCanvasByDelta.RegisterCommandToDispatcher(new DelegateCommand<Point>(GrabMove));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
@@ -154,14 +153,12 @@ namespace SandRibbon
         private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
         {
             Trace.TraceInformation("ApplicationButtonPopup_Closed");
-            Commands.SetTutorialVisibility.ExecuteAsync(Visibility.Collapsed);
         }
         private void ApplicationButtonPopup_Opened(object sender, EventArgs e)
         {
             if (ribbon.Tabs.Count < 1)
                     RibbonApplicationPopup.IsOpen = false;
             Trace.TraceInformation("ApplicationButtonPopup_Opened");
-            Commands.SetTutorialVisibility.ExecuteAsync(Visibility.Visible);
         }
         #region helpLinks
         private void OpenEULABrowser(object sender, RoutedEventArgs e)
@@ -194,7 +191,7 @@ namespace SandRibbon
         private void ListenToAudio(int jid) {
             player.Source = new Uri("http://radar.adm.monash.edu:8500/MeTLStream1.m3u");
         }
-        private void SetLayer(object layer) {
+        private void SetLayer(string layer) {
             Trace.TraceInformation("SelectedMode {0}", layer);
         }
         private void ImportPowerpoint(object obj)
@@ -267,13 +264,46 @@ namespace SandRibbon
                 ribbon.ToggleMinimize();
         }
         private void Reconnecting(bool success) {
+
             if (success)
             {
-                Commands.UpdateConversationDetails.Execute(ClientFactory.Connection().DetailsOf(Globals.conversationDetails.Jid)); 
-                hideReconnectingDialog();
+                try
+                {
+                    var details = Globals.conversationDetails;
+                    if (details.Equals(ConversationDetails.Empty))
+                    {
+                        Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                    }
+                    else
+                    {
+                        var jid = Globals.conversationDetails.Jid;
+                        Commands.UpdateConversationDetails.Execute(ClientFactory.Connection().DetailsOf(jid));
+                        Commands.MoveTo.Execute(Globals.location.currentSlide);
+                        ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
+                                    null,
+                                    null,
+                                    (parser) => Commands.PreParserAvailable.Execute(parser),
+                                    jid);
+                    }
+                }
+                catch (NotSetException e) {
+                    Logger.Crash(e);
+                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(string.Format("CRASH: (Fixed) Window1::Reconnecting crashed {0}", e.Message));
+                    Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+                }
+                finally
+                {
+                    hideReconnectingDialog();
+                }
             }
             else
+            {
                 showReconnectingDialog();
+            }
         }
         private void ToggleFriendsVisibility(object unused)
         {
@@ -384,19 +414,6 @@ namespace SandRibbon
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
             Commands.ZoomChanged.Execute(currentZoom);
         }
-        private void SetTutorialVisibility(object visibilityObject)
-        {
-            var newVisibility = (Visibility)visibilityObject;
-            switch (newVisibility)
-            {
-                case Visibility.Visible:
-                    ShowTutorial();
-                    break;
-                default:
-                    HideTutorial();
-                    break;
-            }
-        }
         private void CreateConversation(object _unused)
         {
             Trace.TraceInformation("CreatedBlankConversation");
@@ -471,11 +488,12 @@ namespace SandRibbon
         private string messageFor(ConversationDetails details)
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
+            if (details.Equals(ConversationDetails.Empty))
+                return "MeTL 2011";
             return string.Format("Collaboration {0}  -  {1}'s \"{2}\" - MeTL", (permissionLabel == "tutorial") ? "ENABLED" : "DISABLED", details.Author, details.Title);
         }
         private void MoveTo(int slide)
         {
-            
             Dispatcher.adoptAsync(delegate
                                      {
                                          if (canvas.Visibility == Visibility.Collapsed)
@@ -515,15 +533,6 @@ namespace SandRibbon
             sp.Children.Add(minorHeading);
             ProgressDisplay.Children.Add(sp);
             InputBlocker.Visibility = Visibility.Visible;
-        }
-        private void ShowTutorial()
-        {
-            TutorialLayer.Visibility = Visibility.Visible;
-        }
-        private void HideTutorial()
-        {
-            if (Globals.userInformation.location != null && !String.IsNullOrEmpty(Globals.userInformation.location.activeConversation))
-                TutorialLayer.Visibility = Visibility.Collapsed;
         }
         private bool canCreateConversation(object obj)
         {
@@ -577,7 +586,7 @@ namespace SandRibbon
             {
                 return false;
             }
-            if (details == null || details == ConversationDetails.Empty) return false;
+            if (details == null) return false;
             if(details.Subject != "Deleted" && details.Jid != "")
                     return true;
             return false;
@@ -595,10 +604,9 @@ namespace SandRibbon
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            Dispatcher.adoptAsync(delegate
+            if (ConversationDetails.Empty.Equals(details)) return;
+            Dispatcher.adopt(delegate
             {
-                if (details != null)
-                    HideTutorial();
                 if (details.Jid == Globals.location.activeConversation)
                     UpdateTitle(details);
                 this.details = details;

@@ -170,15 +170,6 @@ namespace SandRibbon.Components
             clearState();
             Dispatcher.queueFocus(SearchInput);
         }
-        private void slidePropertyOut(DependencyProperty property, double limit)
-        {
-            DoubleAnimation anim = new DoubleAnimation();
-            anim.From = 150;
-            anim.To = limit;
-            anim.Duration = new Duration(TimeSpan.FromSeconds(0.8));
-            anim.AutoReverse = false;
-            BeginAnimation(property, anim);
-        }
         private void HideConversationSearchBox(object o)
         {
             this.Visibility = Visibility.Collapsed;
@@ -197,14 +188,15 @@ namespace SandRibbon.Components
         }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
-               if (details == null) return;
+               if (ConversationDetails.Empty.Equals(details)) return;
                foreach ( var result in searchResults.Where(c => c.Jid == details.Jid).ToList())
                    searchResults.Remove(result);
-               if (details.Subject.ToLower() != "deleted" || details != ConversationDetails.Empty)
+               if (details.Subject.ToLower() != "deleted" && !details.Equals(ConversationDetails.Empty))
                    searchResults.Add(details);
                else if (details.Jid == Globals.location.activeConversation)
                    currentConversation.Visibility = Visibility.Collapsed;
-               if ((!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid) || details == ConversationDetails.Empty)
+               if ((!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid) || details.Equals(ConversationDetails.Empty))
+
                {
                    Commands.RequerySuggested();
                    this.Visibility = Visibility.Visible;
@@ -238,12 +230,7 @@ namespace SandRibbon.Components
             var searchQuery = SearchInput.Text.ToLower().Trim();
             if (backstageNav.currentMode == "find" && searchQuery.Length == 0) return false;
             if (backstageNav.currentMode == "mine" && author != Globals.me) return false;
-            foreach (var token in searchQuery.Split(' '))
-            {
-                if(!searchField.Any(field => field.Contains(token)))
-                    return false;
-            }
-            return true; 
+            return searchQuery.Split(' ').All(token => searchField.Any(field => field.Contains(token)));
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
@@ -268,7 +255,7 @@ namespace SandRibbon.Components
                 originalContext = null;
             }
             var jid = ((FrameworkElement)sender).Tag;
-            if(jid.Equals(Globals.location.activeConversation))
+            if(jid.Equals(Globals.location.activeConversation) && !Globals.conversationDetails.Equals(ConversationDetails.Empty))
                 Commands.HideConversationSearchBox.Execute(null);
             else
                 Commands.JoinConversation.ExecuteAsync(jid);

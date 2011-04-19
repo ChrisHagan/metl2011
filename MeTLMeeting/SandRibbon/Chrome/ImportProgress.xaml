@@ -18,23 +18,9 @@
         <DataTemplate x:Key="slideTemplate">
             <Image Width="{StaticResource slideWidth}" Height="{StaticResource slideHeight}" Source="{Binding Path=slideThumbnailSource, Converter={x:Static my:Converters.nonCachedImage}}" Margin="0 5 0 0"/>
         </DataTemplate>
-    <ItemsPanelTemplate x:Key="panelTemplate">
+        <ItemsPanelTemplate x:Key="panelTemplate">
             <StackPanel /> 
         </ItemsPanelTemplate>
-        <Storyboard x:Key="transition">
-            <DoubleAnimation 
-                Duration="0:0:0.5"
-                Storyboard.TargetName="transit"
-                Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)"
-                From="{StaticResource lowX}"
-                To="{StaticResource highX}"/>
-            <DoubleAnimation 
-                Duration="0:0:0.5"
-                Storyboard.TargetName="transit"
-                Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                From="{StaticResource lowY}"
-                To="{StaticResource highY}" />
-        </Storyboard>
     </UserControl.Resources>
     <Border CornerRadius="15" Padding="15" Background="#92806F" Width="450" Height="450" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid>
@@ -55,15 +41,12 @@
                          Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"  VerticalAlignment="Bottom"                             
                           ItemTemplate="{StaticResource slideTemplate}"
                           ItemsPanel="{StaticResource panelTemplate}" />
-            <Viewbox  Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" >
-                <ItemsControl x:Name="to"
-                              Margin="0,50,0,0"
-                              ItemTemplate="{StaticResource slideTemplate}"
-                              ItemsPanel="{StaticResource panelTemplate}" />
-            </Viewbox>
             <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="20">
                 <quiz:GoldPlaque />
-                <Label x:Name="goldLabel" Content="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="32"/>
+                <StackPanel>
+                    <Label x:Name="goldLabel" Content="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="32"/>
+                    <ProgressBar Height="25" IsIndeterminate="False" Minimum="0" Maximum="100" x:Name="progress" Margin="10 0"/>
+                </StackPanel>
             </Grid>
         </Grid>
     </Border>

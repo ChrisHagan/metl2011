@@ -42,6 +42,7 @@ namespace SandRibbon.Components
 
         private void updateConversationDetails(ConversationDetails details)
         {
+            if (ConversationDetails.Empty.Equals(details)) return;
             settingEnabledModes(details);
         }
 

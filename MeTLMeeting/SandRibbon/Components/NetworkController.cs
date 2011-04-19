@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using MeTLLib;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
+using SandRibbon.Utils;
+using System.Windows.Forms;
 
 namespace SandRibbon.Components
 {
-    public class CivicServerAddress : MeTLServerAddress{
-        public CivicServerAddress() { 
+    public class CivicServerAddress : MeTLServerAddress
+    {
+        public CivicServerAddress()
+        {
             stagingUri = new Uri("http://civic.adm.monash.edu.au", UriKind.Absolute);
             productionUri = new Uri("http://civic.adm.monash.edu.au", UriKind.Absolute);
         }
@@ -20,22 +25,46 @@ namespace SandRibbon.Components
         private ClientConnection client;
         public NetworkController()
         {
-            switchServer();
-            registerCommands();
-            attachToClient();
+            client = buildServerSpecificClient();
+            MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
+            checkValidity = (sender,e)=>{
+                if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
+                {
+                    registerCommands();
+                    attachToClient();
+                    Commands.AllStaticCommandsAreRegistered();
+                    Commands.SetIdentity.ExecuteAsync(e.credentials);
+                }
+                else
+                {
+                    if (WorkspaceStateProvider.savedStateExists())
+                    {
+                        System.Windows.MessageBox.Show("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
+                        Commands.LogOut.Execute(null);
+                    }
+                    else
+                        System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
+                }
+                client.events.StatusChanged -= checkValidity;
+            };
+            client.events.StatusChanged += checkValidity;
         }
-        public void switchServer()
+
+        private ClientConnection buildServerSpecificClient()
+        //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
+            ClientConnection result;
             if (App.isExternal)
-                client = MeTLLib.ClientFactory.Connection(new CivicServerAddress());
+                result = MeTLLib.ClientFactory.Connection(new CivicServerAddress());
             else
             {
                 if (App.isStaging)
-                    client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
+                    result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
                 else
-                    client = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
+                    result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
             }
-            Constants.JabberWire.SERVER = client.server.host;
+            Constants.JabberWire.SERVER = result.server.host;
+            return result;
         }
         #region commands
         private void registerCommands()
@@ -62,7 +91,6 @@ namespace SandRibbon.Components
             Commands.SendTextBox.RegisterCommand(new DelegateCommand<TargettedTextBox>(SendTextBox));
             Commands.SendVideo.RegisterCommand(new DelegateCommand<TargettedVideo>(SendVideo));
             Commands.SneakInto.RegisterCommand(new DelegateCommand<string>(SneakInto));
-            Commands.SneakIntoAndDo.RegisterCommand(new DelegateCommand<Projector.RoomAndAction>(SneakIntoAndDo));
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
@@ -121,10 +149,7 @@ namespace SandRibbon.Components
         }
         private void SendImage(TargettedImage ti)
         {
-            App.Current.Dispatcher.adoptAsync(delegate
-            {
-                client.SendImage(ti);
-            });
+            client.SendImage(ti);
         }
         private void SendLiveWindow(LiveWindowSetup lws)
         {
@@ -150,22 +175,13 @@ namespace SandRibbon.Components
         }
         private void SendTextBox(TargettedTextBox ttb)
         {
-            App.Current.Dispatcher.adoptAsync(delegate
-            {
-                client.SendTextBox(ttb);
-            });
+            client.SendTextBox(ttb);
         }
         private void SendVideo(TargettedVideo tv)
         {
-            App.Current.Dispatcher.adoptAsync(delegate
-            {
-                client.SendVideo(tv);
-            });
+            client.SendVideo(tv);
         }
-        private void SneakIntoAndDo(Projector.RoomAndAction roomAndAction)
-        {
-            client.SneakIntoAndDo(roomAndAction.room, roomAndAction.action);
-        }
+
         private void SneakInto(string room)
         {
             client.SneakInto(room);
@@ -197,12 +213,12 @@ namespace SandRibbon.Components
             client.events.PreParserAvailable += preParserAvailable;
             client.events.QuizAnswerAvailable += quizAnswerAvailable;
             client.events.QuizQuestionAvailable += quizQuestionAvailable;
-            client.events.StatusChanged += statusChanged;
             client.events.StrokeAvailable += strokeAvailable;
             client.events.SubmissionAvailable += submissionAvailable;
             client.events.TextBoxAvailable += textBoxAvailable;
             client.events.VideoAvailable += videoAvailable;
             client.events.SyncMoveRequested += syncMoveRequested;
+            client.events.StatusChanged += statusChanged;
         }
         private void syncMoveRequested(object sender, SyncMoveRequestedEventArgs e)
         {
@@ -223,13 +239,10 @@ namespace SandRibbon.Components
         }
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
-            App.Current.Dispatcher.adopt(delegate
-            {
-                if (e.conversationDetails != null && e.conversationDetails.Jid == ClientFactory.Connection().location.activeConversation)
-                    Commands.UpdateConversationDetails.Execute(e.conversationDetails);
-                else
-                    Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
-            });
+            if (e.conversationDetails != null && e.conversationDetails.Jid == ClientFactory.Connection().location.activeConversation)
+                Commands.UpdateConversationDetails.Execute(e.conversationDetails);
+            else
+                Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
@@ -282,26 +295,7 @@ namespace SandRibbon.Components
         { Commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }
         private void statusChanged(object sender, StatusChangedEventArgs e)
         {
-            if (String.IsNullOrEmpty(Globals.me))//Connecting for the first time
-                if (e.isConnected && e.credentials.authorizedGroups.Count > 0)
-                {
-                    Commands.AllStaticCommandsAreRegistered();
-                    Commands.SetIdentity.ExecuteAsync(e.credentials);
-                }
-                else
-                {
-                    if (WorkspaceStateProvider.savedStateExists())
-                    {
-                        System.Windows.MessageBox.Show("MeTL was unable to connect as your auto login details were corrupted. Relaunch MeTL to try again.");
-                        Commands.LogOut.Execute(null);
-                    }
-                    else
-                        System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
-                }
-            else//Reconnecting
-            {
-                Commands.Reconnecting.Execute(e.isConnected);
-            }
+            Commands.Reconnecting.Execute(e.isConnected);
         }
         private void strokeAvailable(object sender, StrokeAvailableEventArgs e)
         {

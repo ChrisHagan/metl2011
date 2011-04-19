@@ -20,7 +20,8 @@ namespace SandRibbon
         {
             if (CommandParameterProvider.parameters.ContainsKey(command))
                 return CommandParameterProvider.parameters[command];
-            throw new NotSetException(Commands.which(command));
+            Console.WriteLine(string.Format("CompositeCommandExtensions::lastValue Could not get the lastValue of command {0}", Commands.which(command)));
+            throw new NotSetException(string.Format("CompositeCommandExtensions::lastValue Could not get the lastValue of command {0}", Commands.which(command)));
         }
     }
     public class NotSetException : Exception {
@@ -187,8 +188,6 @@ namespace SandRibbon
         public static CompositeCommand EstablishPrivileges = new CompositeCommand();
         public static RoutedCommand CloseApplication = new RoutedCommand();
         public static CompositeCommand SetLayer = new CompositeCommand();
-        public static CompositeCommand SetTutorialVisibility = new CompositeCommand();
-        //public static CompositeCommand ThumbnailAvailable = new CompositeCommand();
         public static CompositeCommand UpdateForeignConversationDetails = new CompositeCommand();
         public static CompositeCommand RememberMe = new CompositeCommand();
         #endregion
@@ -201,7 +200,6 @@ namespace SandRibbon
         public static CompositeCommand SyncedMoveRequested = new CompositeCommand();
         public static CompositeCommand SendSyncMove = new CompositeCommand();
         public static CompositeCommand MoveTo = new CompositeCommand();
-        public static CompositeCommand InternalMoveTo = new CompositeCommand();
         public static CompositeCommand SneakInto = new CompositeCommand();
         public static CompositeCommand SneakIntoAndDo = new CompositeCommand();
         public static CompositeCommand SneakOutOf = new CompositeCommand();
@@ -300,10 +298,7 @@ namespace SandRibbon
         }
         public static void RequerySuggested()
         {
-            ThreadPool.QueueUserWorkItem(delegate
-            {
-                RequerySuggested(all.ToArray());
-            });
+            RequerySuggested(all.ToArray());
         }
         public static void RequerySuggested(params CompositeCommand[] commands)
         {

@@ -28,9 +28,63 @@ using System.ComponentModel;
 using System.Diagnostics;
 using MeTLLib.Providers.Connection;
 using Application = System.Windows.Application;
+using Newtonsoft.Json;
 
 namespace SandRibbon.Utils
 {
+    public class WebThreadPool {
+        private static Amib.Threading.SmartThreadPool pool = new Amib.Threading.SmartThreadPool { 
+            MaxThreads=4
+        };
+        public static void QueueUserWorkItem(Amib.Threading.Action action){
+            pool.QueueWorkItem(action);
+        }
+    }
+    public class SneakyImage : MeTLStanzas.Image{
+        public SneakyImage(String target,ImageTag tag,Uri src,double x, double y, int slide) : base(){ 
+            SetTag(MeTLStanzas.tagTag, JsonConvert.SerializeObject(tag));
+            SetTag(sourceTag, src.LocalPath);
+            SetTag(MeTLStanzas.xTag, x);
+            SetTag(MeTLStanzas.yTag, y);
+            SetTag(MeTLStanzas.authorTag, tag.author);
+            SetTag(MeTLStanzas.targetTag, target);
+            SetTag(MeTLStanzas.privacyTag, tag.privacy);
+            SetTag(MeTLStanzas.slideTag, slide);
+            SetTag(MeTLStanzas.identityTag, tag.id);
+        }
+        public void SetWidth(double width) {
+            SetTag(widthTag, width);
+        }
+        public void SetHeight(double height) {
+            SetTag(heightTag, height);
+        }
+    }
+    public class SneakyText : MeTLStanzas.TextBox {
+        public SneakyText(String target, String text, String family, double size,
+            String color, TextTag tag, double x,double y,int slide) { 
+            SetTag(MeTLStanzas.xTag, x);
+            SetTag(MeTLStanzas.yTag, y);
+            this.SetTag(MeTLStanzas.TextBox.textTag, text);
+            this.SetTag(MeTLStanzas.TextBox.familyTag, family);
+            this.SetTag(MeTLStanzas.TextBox.sizeTag, size);
+            this.SetTag(MeTLStanzas.TextBox.colorTag, color);
+            this.SetTag(MeTLStanzas.tagTag, JsonConvert.SerializeObject(tag));
+            this.SetTag(MeTLStanzas.authorTag, tag.author);
+            this.SetTag(MeTLStanzas.identityTag, tag.id);
+            this.SetTag(MeTLStanzas.targetTag, target);
+            this.SetTag(MeTLStanzas.privacyTag, tag.privacy);
+            this.SetTag(MeTLStanzas.slideTag, slide);
+            this.SetTag(MeTLStanzas.TextBox.decorationTag, "None");
+            this.SetTag(MeTLStanzas.TextBox.weightTag, "Normal");
+            this.SetTag(MeTLStanzas.TextBox.styleTag, "Normal");
+        }
+        public void SetWidth(double width) {
+            SetTag(widthTag, width);
+        }
+        public void SetHeight(double height) {
+            SetTag(heightTag, height);
+        }
+    }
     public class PowerpointSpec
     {
         public string File;
@@ -55,9 +109,15 @@ namespace SandRibbon.Utils
         {
             slideThumbnailSource = thumbnail;
         }
+        public PowerpointImportProgress(IMPORT_STAGE Stage, int CurrentSlide, int TotalSlides,string thumbnail)
+            :this(Stage,CurrentSlide)
+        {
+            totalSlides = TotalSlides;
+            slideThumbnailSource = thumbnail;
+        }
         public int slideId;
         public int totalSlides;
-        public enum IMPORT_STAGE { DESCRIBED, ANALYSED, EXTRACTED_IMAGES, UPLOADED_XML, UPLOADED_RESOURCES, FINISHED };
+        public enum IMPORT_STAGE { DESCRIBED, ANALYSED, EXTRACTED_IMAGES, UPLOADED_XML, UPLOADED_RESOURCES, FINISHED, PRINTING };
         public IMPORT_STAGE stage;
         public string slideThumbnailSource{get;set;}
     }
@@ -66,8 +126,8 @@ namespace SandRibbon.Utils
         private static MsoTriState FALSE = MsoTriState.msoFalse;
         private static MsoTriState TRUE = MsoTriState.msoTrue;
         private static int resource = 1;
-        private MeTLLib.ClientConnection wire;
-        private MeTLLib.MeTLLibEventHandlers.ImageAvailableEventHandler waitHandler;
+        private MeTLLib.ClientConnection clientConnection;
+        private string currentConversation = null;
         public enum PowerpointImportType
         {
             HighDefImage,
@@ -78,26 +138,49 @@ namespace SandRibbon.Utils
         {
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(EditConversation));
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
-            wire = MeTLLib.ClientFactory.Connection();
+            clientConnection = MeTLLib.ClientFactory.Connection();
+        }
+        private class PowerpointLoadTracker {
+            private int slidesUploaded = 0;
+            private int target;
+            private String conversation;
+            private DelegateCommand<object> cancel = new DelegateCommand<object>(delegate { }, _unused => false);
+            public PowerpointLoadTracker(int _target, String _conversation) {
+                target = _target;
+                conversation = _conversation;
+                Commands.ReceiveImage.RegisterCommand(cancel);
+                Commands.ReceiveTextBox.RegisterCommand(cancel);
+            }
+            public void increment() {
+                Interlocked.Increment(ref slidesUploaded);
+                if (slidesUploaded == target)
+                {
+                    Commands.ReceiveImage.UnregisterCommand(cancel);
+                    Commands.ReceiveTextBox.UnregisterCommand(cancel);
+                    Commands.JoinConversation.Execute(conversation);
+                }
+            }
         }
         private void UploadPowerpoint(PowerpointSpec spec)
         {
+            var conversation = ClientFactory.Connection().CreateConversation(spec.Details);
             var worker = new Thread(new ParameterizedThreadStart(
                 delegate
                 {
+                    progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0);
                     switch (spec.Type)
                     {
                         case PowerpointImportType.HighDefImage:
                             Trace.TraceInformation("ImportingPowerpoint HighDef {0}", spec.File);
-                            LoadPowerpointAsFlatSlides(spec.File, spec.Details, spec.Magnification);
+                            LoadPowerpointAsFlatSlides(spec.File, conversation, spec.Magnification);
                             break;
                         case PowerpointImportType.Image:
                             Trace.TraceInformation("ImportingPowerpoint NormalDef {0}", spec.File);
-                            LoadPowerpointAsFlatSlides(spec.File, spec.Details, spec.Magnification);
+                            LoadPowerpointAsFlatSlides(spec.File, conversation, spec.Magnification);
                             break;
                         case PowerpointImportType.Shapes:
                             Trace.TraceInformation("ImportingPowerpoint Flexible {0}", spec.File);
-                            LoadPowerpoint(spec.File, spec.Details);
+                            LoadPowerpoint(spec.File, conversation);
                             break;
                     }
                 }));
@@ -120,26 +203,23 @@ namespace SandRibbon.Utils
             if (spec == null) return;
             UploadPowerpoint(spec);
         }
-        public void LoadPowerpointAsFlatSlides(string file, ConversationDetails details, int MagnificationRating)
+        public void LoadPowerpointAsFlatSlides(string file, ConversationDetails conversation, int MagnificationRating)
         {
-            progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0);
             var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
             var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
             if (!Directory.Exists(currentWorkingDirectory))
                 Directory.CreateDirectory(currentWorkingDirectory);
-            var provider = ClientFactory.Connection();
             var xml = new XElement("presentation");
-            xml.Add(new XAttribute("name", details.Title));
-            if (details.Tag == null)
-                details.Tag = "unTagged";
-            var conversation = provider.CreateConversation(details);
+            xml.Add(new XAttribute("name", conversation.Title));
+            if (conversation.Tag == null)
+                conversation.Tag = "unTagged";
+            currentConversation = conversation.Jid;
             conversation.Author = Globals.me;
             var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
             var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
             var thumbnailStartId = conversation.Slides.First().id;
             foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
             {
-                int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
                 var slidePath = getThumbnailPath( conversation.Jid, thumbnailStartId++);
                 foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                 {
@@ -156,7 +236,6 @@ namespace SandRibbon.Utils
                     else shape.Visible = MsoTriState.msoTrue;
                 }
                 slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
-                progress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, conversationSlideNumber, slidePath);
                 var xSlide = new XElement("slide");
                 xSlide.Add(new XAttribute("index", slide.SlideIndex));
                 xSlide.Add(new XAttribute("defaultHeight", backgroundHeight));
@@ -188,30 +267,35 @@ namespace SandRibbon.Utils
                 {
                     ExportShape(shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
                 }
-                progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, conversationSlideNumber);
+                progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, 0, ppt.Slides.Count);
             }
             ppt.Close();
             var startingId = conversation.Slides.First().id;
             var index = 0;
             conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
-            provider.UpdateConversationDetails(conversation);
-            var xmlSlides = xml.Descendants("slide");
-            int xmlSlidesCount = xmlSlides.Count();
-            waitForSlideToHaveContentThenJoin(conversation.Slides.Last().id, conversation.Jid);
-            for (int i = 0; i < xmlSlidesCount; i++)
-            {
-                     var slideXml = xmlSlides.ElementAt(i);
-                     var slideId = conversation.Slides[i].id;
-                     uploadXmlUrls(slideId, slideXml);
-                     progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML,
-                              slideId, xmlSlidesCount);
-                     sendSlide(slideId, slideXml);
-                     progress(
-                         PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES,
-                         slideId, xmlSlidesCount);
-            }
+            ClientFactory.Connection().UpdateConversationDetails(conversation);
+            UploadFromXml(xml, conversation); 
         }
 
+        private void UploadFromXml(XElement xml, ConversationDetails conversation)
+        {
+            var xmlSlides = xml.Descendants("slide");
+            var slideCount = xmlSlides.Count();
+            var tracker = new PowerpointLoadTracker(slideCount, conversation.Jid);
+            for (var i = 0; i < slideCount; i++)
+            {
+                var slideXml = xmlSlides.ElementAt(i);
+                var slideId = conversation.Slides[i].id;
+                var slideIndex = i;
+                WebThreadPool.QueueUserWorkItem(delegate
+                {
+                    uploadXmlUrls(slideId, slideXml);
+                    sendSlide(slideId, slideXml);
+                    progress(PowerpointImportProgress.IMPORT_STAGE.ANALYSED, slideIndex, slideCount);
+                    tracker.increment();
+                });
+            }
+        }
         public static string getThumbnailPath(string jid, int id)
         {
             string fullPath = createThumbnailFileStructure(jid);
@@ -229,114 +313,123 @@ namespace SandRibbon.Utils
                 Directory.CreateDirectory(fullPath);
             return fullPath;
         }
-        private void waitForSlideToHaveContentThenJoin(int slideToWaitOn, string conversationToJoin) {
-            waitHandler = (sender, args) =>
-            {
-                if (args.image.slide == slideToWaitOn)
-                {
-                    progress(PowerpointImportProgress.IMPORT_STAGE.FINISHED, 0);
-                    Commands.JoinConversation.Execute(conversationToJoin);
-                    wire.events.ImageAvailable -= waitHandler;
-                }
-            };
-            wire.events.ImageAvailable += waitHandler;
-        }
         private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId)
         {
             Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId));
-        }
-        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, string imageSource)
-        {
-            Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, imageSource));
         }
         private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalNumberOfSlides) 
         {
             Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalNumberOfSlides));
         }
-        public void LoadPowerpoint(string file, ConversationDetails details)
+        private static void progress(PowerpointImportProgress.IMPORT_STAGE action, int currentSlideId, int totalSlides, string imageSource)
         {
-            var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
+            Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalSlides, imageSource));
+        }
+        public void LoadPowerpoint(string file, ConversationDetails conversation)
+        {
+            Presentation ppt = null;
             try
             {
-                progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, ppt.Slides.Count);
+                ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
                 var provider = ClientFactory.Connection();
                 var xml = new XElement("presentation");
-                xml.Add(new XAttribute("name", details.Title));
-                if (details.Tag == null)
-                    details.Tag = "unTagged";
-                var conversation = provider.CreateConversation(details);
+                xml.Add(new XAttribute("name", conversation.Title));
+                if (conversation.Tag == null)
+                    conversation.Tag = "unTagged";
+                currentConversation = conversation.Jid;
                 conversation.Author = Globals.me;
-                progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, ppt.Slides.Count);
                 foreach (var slide in ppt.Slides)
                 {
-                    importSlide(details, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
+                    importSlide(conversation, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
+                    progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, -1, ppt.Slides.Count);//All the consumers count for themselves
                 }
                 var startingId = conversation.Slides.First().id;
                 var index = 0;
-                conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide 
-                (startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
+                conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide
+                (startingId++, Globals.me, MeTLLib.DataTypes.Slide.TYPE.SLIDE, index++, float.Parse(d.Attribute("defaultWidth").Value), float.Parse(d.Attribute("defaultHeight").Value))).ToList();
                 provider.UpdateConversationDetails(conversation);
-                var xmlSlides = xml.Descendants("slide");
-                for (var i = 0; i < xmlSlides.Count(); i++)
-                {
-                    var slideXml = xmlSlides.ElementAt(i);
-                    var slideId = conversation.Slides[i].id;
-                    var powerpointThread = new Thread(() =>
-                    {
-                        uploadXmlUrls(slideId, slideXml);
-                        progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_XML, slideId);
-                        sendSlide(slideId, slideXml);
-                        progress(PowerpointImportProgress.IMPORT_STAGE.UPLOADED_RESOURCES, slideId);
-                    });
-                    powerpointThread.SetApartmentState(ApartmentState.STA);
-                    powerpointThread.Start();
-                }
-                Commands.JoinConversation.Execute(conversation.Jid);
+                UploadFromXml(xml, conversation);
+            }
+            catch (Exception e) {
+                Logger.Crash(e);
             }
             finally
             {
-                ppt.Close();
+                if(ppt != null)
+                    ppt.Close();
             }
         }
+        
         private void sendSlide(int id, XElement slide)
         {
-            sendShapes(id, slide.Descendants("shape"));
-            sendPublicTextBoxes(id, slide.Descendants("publicText"));
-            //sendTextboxes(id, slide.Descendants("privateText"));
+            var hasPrivate = slide.Element("privateText") != null;
+            var privateRoom = string.Format("{0}{1}", id, Globals.me);
+            if(hasPrivate) 
+                clientConnection.SneakInto(privateRoom);
+            clientConnection.SneakInto(id.ToString());
+            sneakilySendShapes(id, slide.Descendants("shape"));
+            sneakilySendPublicTextBoxes(id, slide.Descendants("publicText"));
+            if (hasPrivate)
+                clientConnection.SneakOutOf(privateRoom);
+            clientConnection.SneakOutOf(id.ToString());
         }
-        private void sendPublicTextBoxes(int id, IEnumerable<XElement> shapes)
+        private void sneakilySendPublicTextBoxes(int id, IEnumerable<XElement> shapes)
         {
-            wire.SneakInto(id.ToString());
             int shapeCount = 0;
             foreach (var text in shapes)
             {
-                var newText = new TextBox();
-                newText.Text = text.Attribute("content").Value;
-                InkCanvas.SetLeft(newText, Double.Parse(text.Attribute("x").Value));
-                InkCanvas.SetTop(newText, Double.Parse(text.Attribute("y").Value));
-                if (text.Attributes("height").Count() > 0)
-                    newText.Height = Double.Parse(text.Attribute("height").Value);
-                if (text.Attributes("width").Count() > 0)
-                    newText.Width = Double.Parse(text.Attribute("width").Value);
+                var target = "presentationSpace";
+                var content = text.Attribute("content").Value;
+                var x = Double.Parse(text.Attribute("x").Value);
+                var y = Double.Parse(text.Attribute("y").Value);
                 var textBoxIdentity = DateTimeFactory.Now() + text.Attribute("x").Value + text.Attribute("x").Value + Globals.me + shapeCount++;
                 var font = text.Descendants("font").ElementAt(0);
                 var privacy = text.Attribute("privacy").Value.ToString();
-                newText.FontFamily = new FontFamily(font.Attribute("family").Value);
-                newText.FontSize = Double.Parse(font.Attribute("size").Value);
-                newText.Foreground = (Brush)(new BrushConverter().ConvertFromString((font.Attribute("color").Value).ToString()));
-                newText.tag(
-                    new TextTag
+                var family = font.Attribute("family").Value;
+                var size = Double.Parse(font.Attribute("size").Value);
+                var color = (font.Attribute("color").Value).ToString();
+                var tag = new TextTag
                     {
                         author = Globals.me,
                         id = textBoxIdentity,
                         privacy = privacy
-                    });
-                wire.SendTextBox(new TargettedTextBox(id,Globals.me,"presentationSpace",privacy,newText));
+                    };
+                var stanza = new SneakyText(target,content,family,size,color,tag,x,y,id);
+                if (text.Attributes("height").Count() > 0)
+                    stanza.SetHeight(Double.Parse(text.Attribute("height").Value));
+                if (text.Attributes("width").Count() > 0)
+                    stanza.SetWidth(Double.Parse(text.Attribute("width").Value));
+                clientConnection.SendStanza(id.ToString(),stanza);
+            }
+        }
+        private void sneakilySendShapes(int id, IEnumerable<XElement> shapes) { 
+            int shapeCount = 0;
+            var me = Globals.me;
+            var target = "presentationSpace";
+            foreach (var shape in shapes)
+            {
+                bool isBackgroundImage = false;
+                if (shape.Attribute("background") != null && shape.Attribute("background").Value.ToLower() == "true")
+                    isBackgroundImage = true;
+                var tag = new ImageTag {
+                    id = string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now().Ticks, shapeCount++),
+                    author = me,
+                    privacy = shape.Attribute("privacy").Value,
+                    isBackground = isBackgroundImage
+                };
+                var uri = new Uri(shape.Attribute("uri").Value);
+                var x = Double.Parse(shape.Attribute("x").Value);
+                var y = Double.Parse(shape.Attribute("y").Value);
+                var stanza = new SneakyImage(target,tag,uri,x,y,id);
+                if (shape.Attributes("width").Count() > 0)
+                    stanza.SetWidth( Double.Parse(shape.Attribute("width").Value));
+                if (shape.Attributes("height").Count() > 0)
+                    stanza.SetHeight( Double.Parse(shape.Attribute("height").Value));
+                clientConnection.SendStanza(id.ToString(), stanza);
             }
         }
         private void sendShapes(int id, IEnumerable<XElement> shapes)
         {
-            wire.SneakInto(id.ToString());
             int shapeCount = 0;
             var me = Globals.me;
             foreach (var shape in shapes)
@@ -361,16 +454,14 @@ namespace SandRibbon.Utils
                                         privacy = shape.Attribute("privacy").Value,
                                         isBackground = isBackgroundImage
                                     });
-                wire.SendImage(new TargettedImage(id,me,"presentationSpace",shape.Attribute("privacy").Value,hostedImage));
+                clientConnection.SendImage(new TargettedImage(id,me,"presentationSpace",shape.Attribute("privacy").Value,hostedImage));
             }
         }
         private void sendTextboxes(int id, IEnumerable<XElement> shapes)
         {
-            var me = Globals.me;
-            var privateRoom = id + me;
-            wire.SneakInto(privateRoom);
             var shapeCount = 0;
             var height = 0;
+            var me = Globals.me;
             foreach (var text in shapes)
             {
                 var newText = new TextBox();
@@ -389,17 +480,18 @@ namespace SandRibbon.Utils
                             id = string.Format("{0}:{1}{2}", me, DateTimeFactory.Now(), shapeCount++)
                         });
                 ;
-                wire.SendTextBox(new TargettedTextBox (id,me,"presentationSpace","private",newText));
+                clientConnection.SendTextBox(new TargettedTextBox (id,me,"presentationSpace","private",newText));
             }
         }
         private XElement uploadXmlUrls(int slide, XElement doc)
         {
+            var conn = MeTLLib.ClientFactory.Connection();
             var shapeCount = doc.Descendants("shape").Count();
             for (var i = 0; i < shapeCount; i++)
             {
                 var shape = doc.Descendants("shape").ElementAt(i);
                 var file = shape.Attribute("snapshot").Value;
-                var hostedFileUri = MeTLLib.ClientFactory.Connection().UploadResource(new Uri(file, UriKind.RelativeOrAbsolute), slide.ToString());
+                var hostedFileUri = conn.UploadResource(new Uri(file, UriKind.RelativeOrAbsolute), slide.ToString());
                 var uri = hostedFileUri;
                 if (shape.Attribute("uri") == null)
                     shape.Add(new XAttribute("uri", uri));
@@ -414,7 +506,6 @@ namespace SandRibbon.Utils
         }
         private static void importSlide(ConversationDetails details, XElement xml, Microsoft.Office.Interop.PowerPoint.Slide slide)
         {
-            int conversationSlideNumber = (Int32.Parse(details.Jid) + slide.SlideNumber);
             var xSlide = new XElement("slide");
             xSlide.Add(new XAttribute("index", slide.SlideIndex));
             var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
@@ -448,13 +539,15 @@ namespace SandRibbon.Utils
                 xSlide.Add(new XElement("shape",
                     new XAttribute("x", 0),
                     new XAttribute("y", 0),
+                    new XAttribute("height", backgroundHeight * Magnification),
+                    new XAttribute("width", backgroundWidth * Magnification),
                     new XAttribute("privacy", "public"),
                     new XAttribute("snapshot", Backgroundfile),
                     new XAttribute("background", true)));
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Exception: " + ex);
+                Trace.TraceError("SandRibbon::Utils::PowerpointLoader:Exception: " + ex);
             }
             var SortedShapes = new List<Microsoft.Office.Interop.PowerPoint.Shape>();
             foreach (var shapeObj in slide.Shapes)
@@ -464,11 +557,10 @@ namespace SandRibbon.Utils
                 I have no idea why it has to be this way, it just looks right when it is.*/
                 ExportShape(shapeObj, xSlide, currentWorkingDirectory, exportFormat, exportMode, backgroundWidth, backgroundHeight, Magnification);
             }
-            progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, conversationSlideNumber);
             foreach (var notes in slide.NotesPage.Shapes)
             {
                 var shape = (Microsoft.Office.Interop.PowerPoint.Shape)notes;
-                addText(xSlide, shape, Magnification);
+                addPrivateText(xSlide, shape, Magnification);
             }
             xml.Add(xSlide);
         }
@@ -520,7 +612,7 @@ namespace SandRibbon.Utils
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception parsing private content: " + ex);
+                    Trace.TraceInformation("PowerpointLoader::LoadShape: Exception parsing private content: " + ex);
                 }
             }
             else if (shape.Visible == MsoTriState.msoTrue)
@@ -608,7 +700,7 @@ namespace SandRibbon.Utils
                             new XAttribute("color", safeColour))));
             }
         }
-        private static void addText(XElement xSlide, Microsoft.Office.Interop.PowerPoint.Shape shape, double Magnification)
+        private static void addPrivateText(XElement xSlide, Microsoft.Office.Interop.PowerPoint.Shape shape, double Magnification)
         {
             var textFrame = (Microsoft.Office.Interop.PowerPoint.TextFrame)shape.TextFrame;
             if (check(textFrame.HasText))

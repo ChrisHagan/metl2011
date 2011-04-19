@@ -49,6 +49,7 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
+            if (ConversationDetails.Empty.Equals(details)) return;
             if (recentConversations.Where(c => c.Jid == details.Jid).Count() == 0) return;
             if (details.Subject.ToLower() == "deleted")
                 recentConversations = recentConversations.Where(c => c.Jid != details.Jid);
@@ -58,7 +59,7 @@ namespace SandRibbon.Components
         }
         private void RedrawList(object _unused)
         {
-            Dispatcher.adoptAsync(() =>
+            Dispatcher.adopt(() =>
             {
                 var potentialConversations = RecentConversationProvider.loadRecentConversations();
                 if (potentialConversations != null && potentialConversations.Count() > 0)

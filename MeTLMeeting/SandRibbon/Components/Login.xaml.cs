@@ -35,7 +35,14 @@ namespace SandRibbon.Components
         {
             get
             {
-                var releaseNotes = HttpResourceProvider.insecureGetString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
+                var releaseNotes = "MeTL is unable to retrieve announcements.  Please check your internet connection.";
+                try
+                {
+                    releaseNotes = new WebClient().DownloadString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
+                }
+                catch (Exception e)
+                {
+                }
                 if (!string.IsNullOrEmpty(releaseNotes))
                     releaseNotesViewer.Visibility = Visibility.Visible;
                 else
@@ -50,7 +57,6 @@ namespace SandRibbon.Components
             Commands.AddWindowEffect.ExecuteAsync(null);
             Version = ConfigurationProvider.instance.getMetlVersion();
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
-            Commands.ServersDown.RegisterCommand(new DelegateCommand<IEnumerable<ServerStatus>>(ServersDown));
             if (WorkspaceStateProvider.savedStateExists())
             {
                 rememberMe.IsChecked = true;
@@ -62,13 +68,6 @@ namespace SandRibbon.Components
         private void loaded(object sender, RoutedEventArgs e)
         {
             username.Focus();
-        }
-        private void ServersDown(IEnumerable<ServerStatus> servers)
-        {
-            Dispatcher.adopt((Action)delegate
-            {
-                this.servers.ItemsSource = servers;
-            });
         }
         private void checkAuthenticationAttemptIsPlausible(object sender, CanExecuteRoutedEventArgs e)
         {

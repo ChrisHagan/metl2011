@@ -19,6 +19,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using Ninject;
 using System.Threading;
 using MeTLLib.Providers.Connection;
+using System.Diagnostics;
 
 
 namespace MeTLLib.DataTypes
@@ -199,16 +200,6 @@ namespace MeTLLib.DataTypes
         {
             imageSpecification = ImageSpecification;
             id = Identity;
-        }
-        public bool ValueEquals(object obj)
-        {
-            if (obj == null || !(obj is TargettedImage)) return false;
-            var foreign = (TargettedImage)obj;
-            return (((TargettedElement)this).ValueEquals((TargettedElement)obj)
-                && foreign.id == id
-                && foreign.imageProperty.Equals(imageProperty)
-                && foreign.imageSpecification == imageSpecification
-                && foreign.image.Equals(image));
         }
         public System.Windows.Controls.Image imageProperty;
         public MeTLStanzas.Image imageSpecification;
@@ -1397,7 +1388,10 @@ namespace MeTLLib.DataTypes
                 this.downloader = downloader;
                 return this;
             }
-            private static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\empty.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
+            protected static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\empty.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
+            public Func<System.Windows.Controls.Image> curryEvaluation(MeTLServerAddress server) {
+                return ()=> forceEvaluation();
+            }
             public System.Windows.Controls.Image forceEvaluation()
             {
                 var sourceString = string.Format("https://{0}:1188{1}", server.host, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)));
@@ -1407,44 +1401,59 @@ namespace MeTLLib.DataTypes
                         Height = this.height,
                         Width = this.width,
                         Source = BackupSource
-                        //Source = this.source
                     };
-                attachSourceToThisImage(image);
+                RoutedEventHandler handler = null;
+                handler = delegate
+                {
+                    image.Loaded -= handler;
+                    ThreadPool.UnsafeQueueUserWorkItem(delegate
+                    {
+                            if (image == null) return;//This might have been GCed if they moved conversations
+                            var newSource = asynchronouslyLoadImageData();
+                            image.Dispatcher.Invoke((Action)delegate
+                            {
+                                try
+                                {
+                                    var oldTag = image.Tag;
+                                    if (oldTag.ToString().StartsWith("NOT_LOADED"))
+                                        image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
+                                    image.Source = newSource;
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                    Trace.TraceInformation("CRASH: (Fixed) MeTLStanzaDefinitions::Image::forceEvaluation - couldn't find a dispatcher");
+                                }
+                            });
+                    }, null);
+                };
+                image.Loaded += handler;
                 InkCanvas.SetLeft(image, this.x);
                 InkCanvas.SetTop(image, this.y);
                 return image;
             }
-            private void attachSourceToThisImage(System.Windows.Controls.Image image)
+            public ImageSource asynchronouslyLoadImageData()
             {
-                Thread backgroundWorker = new Thread(new ThreadStart(() =>
+                var image = new BitmapImage();
+                try
                 {
-                    var newSource = this.source;
-                    if (newSource == null) return;
-                    if (image != null && image.Dispatcher != null && image.Dispatcher.Thread != null)
-                        DispatcherExtensions.adoptAsync(image.Dispatcher, (Action)delegate
-                        {
-                            if (image == null) return;
-                            var oldTag = image.Tag;
-                            if (oldTag.ToString().StartsWith("NOT_LOADED"))
-                            {
-                                var newTag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
-                                image.Tag = newTag;
-                            }
-                            image.Source = newSource;
-                        });
-                    else
-                    {
-                        if (image == null) return;
-                        var oldTag = image.Tag;
-                        if (oldTag.ToString().StartsWith("NOT_LOADED"))
-                        {
-                            var newTag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
-                            image.Tag = newTag;
-                        }
-                        image.Source = newSource;
-                    }
-                }));
-                backgroundWorker.Start();
+                    var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
+                    var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
+                    var path = string.Format("https://{0}:1188{1}", server.host, stemmedRelativePath);
+                    var bytes = provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute));
+                    if (bytes.Length == 0) return null;
+                    var stream = new MemoryStream(bytes);
+                    image.BeginInit();
+                    image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
+                    image.StreamSource = stream;
+                    image.EndInit();
+                    image.Freeze();//Going to be handed back to the dispatcher
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Trace.TraceInformation("CRASH: MeTLLib::MeTLStanzaDefinitions:Image:source Image instantiation failed at: {0} {1} with {2}",DateTime.Now,DateTime.Now.Millisecond,e.Message);
+                    //Who knows what sort of hell is lurking in our history
+                }
+                return image;
             }
             public TargettedImage Img
             {
@@ -1483,51 +1492,21 @@ namespace MeTLLib.DataTypes
                     SetTag(identityTag, value.id);
                 }
             }
-            private static readonly string sourceTag = "source";
-            private static readonly string heightTag = "height";
-            private static readonly string widthTag = "width";
+            protected static readonly string sourceTag = "source";
+            protected static readonly string heightTag = "height";
+            protected static readonly string widthTag = "width";
             public string tag
             {
                 get { return GetTag(tagTag); }
                 set { SetTag(tagTag, value); }
             }
-            private string safetySourceTag(String tag)
+            protected string safetySourceTag(String tag)
             {
                 if (tag.StartsWith("NOT_LOADED"))
                     tag = tag.Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[1];
                 return tag;
             }
-            public ImageSource source
-            {
-                get
-                {
-                    //System.Diagnostics.Trace.TraceInformation("Imagerequested at: " + DateTime.Now + DateTime.Now.Millisecond);
-                    var safetiedSourceTag = safetySourceTag(GetTag(sourceTag));
-                    var stemmedRelativePath = INodeFix.StemBeneath("/Resource/", safetiedSourceTag);
-                    var path = string.Format("https://{0}:1188{1}", server.host, stemmedRelativePath);
-                    var bytes = provider.secureGetData(new Uri(path, UriKind.RelativeOrAbsolute));
-                    if (bytes.Length == 0) return null;
-                    var stream = new MemoryStream(bytes);
-                    //System.Diagnostics.Trace.TraceInformation("Image data provided at: " + DateTime.Now + DateTime.Now.Millisecond);
-                    var image = new BitmapImage();
-                    try
-                    {
-                        image.BeginInit();
-                        image.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
-                        image.StreamSource = stream;
-                        image.EndInit();
-                        image.Freeze();
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Trace.TraceInformation("Image instantiation failed at: " + DateTime.Now + DateTime.Now.Millisecond);
-                        //Who knows what sort of hell is lurking in our history
-                    }
-                    //System.Diagnostics.Trace.TraceInformation("Image created at: " + DateTime.Now + DateTime.Now.Millisecond);
-                    return image;
-                }
-                set { SetTag(sourceTag, new ImageSourceConverter().ConvertToString(value)); }
-            }
+            
             public double x
             {
                 get { return Double.Parse(GetTag(xTag)); }

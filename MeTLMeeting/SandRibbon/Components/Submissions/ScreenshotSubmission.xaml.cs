@@ -34,7 +34,7 @@ namespace SandRibbon.Components.Submissions
         {
             InitializeComponent();
             Commands.ReceiveScreenshotSubmission.RegisterCommand(new DelegateCommand<TargettedSubmission>(receiveSubmission));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<object>(detailsChanged));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(detailsChanged));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(conversationChanged));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
             Commands.ViewSubmissions.RegisterCommand(new DelegateCommand<object>(viewSubmissions, canViewSubmissions));
@@ -53,8 +53,9 @@ namespace SandRibbon.Components.Submissions
             foreach(var submission in parser.submissions)
                 receiveSubmission(submission);
         }
-        private void detailsChanged(object obj)
+        private void detailsChanged(ConversationDetails details)
         {
+            if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adoptAsync( delegate
                                                 {
                                                     try

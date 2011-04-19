@@ -11,10 +11,13 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
+using Microsoft.Practices.Composite.Presentation.Commands;
+using System.Windows.Threading;
 
 namespace SandRibbon.Utils
 {
-    class LogMessage : CouchDocument{
+    class LogMessage : CouchDocument
+    {
         public string version;
         public string content;
         public long timestamp;
@@ -53,23 +56,85 @@ namespace SandRibbon.Utils
     public class Logger
     {
         public static string log = "MeTL Log\r\n";
+        private static string[] blacklist = new[] {
+                "CouchServer(madam.adm.monash.edu.au:5984)",
+                "MeTL Presenter.exe ", 
+                "MeTL Presenter.vshost.exe ", 
+                "Failed to add item to relogin-queue.", 
+                "MeTL Presenter.exe Warning: 0 :", 
+                "MeTL Presenter.exe Info: 0 :", 
+                "MeTL Presenter.exe Information: 0 :", 
+                "Error loading thumbnail:"};
         public static readonly string POST_LOG = "http://madam.adm.monash.edu.au:5984/metl_log";
-        private static CouchServer server = new CouchServer("madam.adm.monash.edu.au", 5984);
         private static readonly string DB_NAME = "metl_log";
-        private static readonly ICouchDatabase db = server.GetDatabase(DB_NAME);
-        public static void Crash(Exception e) {
-            var crashMessage = string.Format("CRASH: {0} @ {1} INNER: {2}", 
-                e.Message, 
-                e.StackTrace, 
-                e.InnerException == null? "NONE":e.InnerException.StackTrace);            
+        private static CouchServer establishedServer = null;
+        private static ICouchDatabase establishedDB = null;
+        private static bool connectionFailed = false;
+        private static int slide = -1;
+        private static string privacy = "Not set";
+        static Logger()
+        {
+            Commands.Reconnecting.RegisterCommand(new DelegateCommand<object>(delegate { 
+                connectionFailed = false; 
+            }));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
+            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
+        }
+        private static void MoveTo(int where){
+            slide = where;
+        }
+        private static void SetPrivacy(string what) {
+            privacy = what;
+        }
+        private static ICouchDatabase db
+        {
+            get
+            {
+                if (connectionFailed)
+                    return null;
+                if (establishedDB == null)
+                {
+                    if (establishedServer == null)
+                    {
+                        try
+                        {
+                            establishedServer = new CouchServer("madam.adm.monash.edu.au", 5984);
+                        }
+                        catch (Exception) {
+                        //Can't create a server object to represent madam.  This can't be logged.
+                        }
+                    }
+                    if (establishedServer != null)
+                        try
+                        {
+                            establishedDB = establishedServer.GetDatabase(DB_NAME);
+                        }
+                        catch (Exception)
+                        {
+                            //Can't create a connection to the db on madam.  This can't be logged.
+                            connectionFailed = true;
+                        }
+                    else connectionFailed = true;
+                }
+                return establishedDB;
+            }
+        }
+        public static void Crash(Exception e)
+        {
+            var crashMessage = string.Format("CRASH: {0} @ {1} INNER: {2}",
+                e.Message,
+                e.StackTrace,
+                e.InnerException == null ? "NONE" : e.InnerException.StackTrace);
             Log(crashMessage);
         }
-        public static void Fixed(string message) {
+        public static void Fixed(string message)
+        {
             try
             {
                 Log(string.Format("CRASH: (fixed): {0} {1}", Globals.me, message));
             }
-            catch (NotSetException e) { 
+            catch (NotSetException e)
+            {
                 Log(string.Format("CRASH: (fixed): {0} {1}", "USERNAME_NOT_SET", message));
             }
         }
@@ -77,23 +142,18 @@ namespace SandRibbon.Utils
         {/*Interesting quirk about the formatting: \n is the windows line ending but ruby assumes
           *nix endings, which are \r.  Safest to use both, I guess.*/
             var now = SandRibbonObjects.DateTimeFactory.Now();
-            
+
             putCouch(appendThis, now);
         }
-        private static void putCouch(string message, DateTime now) {
+        private static void putCouch(string message, DateTime now)
+        {
+            
             if (String.IsNullOrEmpty(Globals.me)) return;
-            if(String.IsNullOrEmpty(message)) return;
+            if (String.IsNullOrEmpty(message)) return;
             if (message.Contains(POST_LOG)) return;
-            if (new[] {
-                "MeTL Presenter.exe ", 
-                "MeTL Presenter.vshost.exe ", 
-                "Failed to add item to relogin-queue.", 
-                "MeTL Presenter.exe Warning: 0 :", 
-                "MeTL Presenter.exe Info: 0 :", 
-                "MeTL Presenter.exe Information: 0 :", 
-                "Error loading thumbnail:"}.Any(prefix => message.StartsWith(prefix))) return;
+            if (blacklist.Any(prefix => message.StartsWith(prefix))) return;
             if (db != null)
-                ThreadPool.QueueUserWorkItem(delegate
+                WebThreadPool.QueueUserWorkItem(delegate
                 {
                     try
                     {
@@ -121,7 +181,7 @@ namespace SandRibbon.Utils
                             content = finalMessage,
                             timestamp = now.Ticks,
                             user = Globals.me,
-                            slide = Globals.location.currentSlide,
+                            slide = slide,
                             server = ClientFactory.Connection().server.host
                         };
                         db.SaveArbitraryDocument<LogMessage>(msg);

@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Threading;
 using System.Diagnostics;
 using Ninject;
+using agsXMPP.Xml.Dom;
+using System.Net;
 
 namespace MeTLLib
 {
@@ -61,7 +63,7 @@ namespace MeTLLib
     }
     public interface IClientBehaviour
     {
-        Credentials Connect(string username, string password);
+        void Connect(string username, string password);
         bool Disconnect();
         void SendTextBox(TargettedTextBox textbox);
         void SendStroke(TargettedStroke stroke);
@@ -79,8 +81,6 @@ namespace MeTLLib
         void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation videoInformation);
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);
         void AsyncRetrieveHistoryOf(int room);
-        PreParser RetrieveHistoryOfMUC(string muc);
-        List<PreParser> RetrieveHistoryOfRoom(int room);
         void MoveTo(int slide);
         void JoinConversation(string conversation);
         ConversationDetails AppendSlide(string Jid);
@@ -130,8 +130,7 @@ namespace MeTLLib
         {
             get
             {
-                if (wire != null && wire.location != null) return wire.location;
-                else return new Location("0", 1, new List<int> { 1 });
+                return wire.location;
             }
         }
         public string username
@@ -157,24 +156,22 @@ namespace MeTLLib
             return historyProvider;
         }
         #region connection
-        public Credentials Connect(string username, string password)
+        public void Connect(string username, string password)
         {
             var credentials = authorisationProvider.attemptAuthentication(username, password);
-            jabberWireFactory.credentials = credentials;
-            wire = jabberWireFactory.wire();
-            wire.Login(new Location("100", 101, new List<int> { 101, 102, 103, 104, 105, 106 }));
-            return credentials;
+            if (credentials.isValid)
+            {
+                jabberWireFactory.credentials = credentials;
+                wire = jabberWireFactory.wire();
+            }
+            else {
+                events.statusChanged(false,credentials);
+            }
         }
         public bool Disconnect()
         {
-            Action work = delegate
-            {
-                wire.Logout();
-            };
-            tryIfConnected(work);
-
-            wire = null;
-            return isConnected;
+            wire.Logout();
+            return true;
         }
         #endregion
         #region sendStanzas
@@ -244,6 +241,11 @@ namespace MeTLLib
             };
             tryIfConnected(work);
         }
+        public void SendStanza(string where, Element stanza) {
+            tryIfConnected(delegate {
+                wire.SendStanza(where, stanza);
+            });
+        }
         public void uploadAndSendSubmission(MeTLStanzas.LocalSubmissionInformation lii)
         {
             Action work = delegate
@@ -256,7 +258,7 @@ namespace MeTLLib
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError("uploadAndSendSubmission error: {0}",e.Message);
+                    Trace.TraceError("MeTLLib::ClientConnection:uploadAndSendSubmission {0}",e.Message);
                     uploadAndSendSubmission(lii);
                 }
             };
@@ -316,7 +318,7 @@ namespace MeTLLib
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError(e.Message);
+                    Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendImage: {0}",e.Message);
                     UploadAndSendImage(lii);
                 }
             };
@@ -354,55 +356,23 @@ namespace MeTLLib
         public Uri UploadResource(Uri file, string muc)
         {
             System.Uri returnValue = server.uri;
-            bool hasBeenSet = false;
             Action work = delegate
             {
-                try
-                {
-                    returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, false));
-                    hasBeenSet = true;
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError(e.Message);
-                    UploadResource(file, muc);
-                }
+                returnValue = new System.Uri(resourceUploader.uploadResource(muc, file.OriginalString, false));
             };
             tryIfConnected(work);
-            return (System.Uri)waitForAsyncUpdate(hasBeenSet, returnValue);
-        }
-        private object waitForAsyncUpdate(bool hasBeenSet, object returnValue)
-        {
-            ManualResetEvent resetEvent = new ManualResetEvent(false);
-            var timer = new Timer(
-                new TimerCallback((timerObj) =>
-                {
-                    if (hasBeenSet)
-                        resetEvent.Set();
-                }), null, 0, 100);
-            resetEvent.WaitOne();
-            timer.Dispose();
             return returnValue;
         }
+        
         public Uri UploadResourceToPath(byte[] data, string file, string name, bool overwrite)
         {
             System.Uri returnValue = server.uri;
-            bool hasBeenSet = false;
             Action work = delegate
             {
-                try
-                {
-                    returnValue = new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
-                    hasBeenSet = true;
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError(e.Message);
-                    UploadResourceToPath(data, file, name, overwrite);
-                }
+                returnValue = new System.Uri(resourceUploader.uploadResourceToPath(data, file, name, overwrite));
             };
             tryIfConnected(work);
-            return (System.Uri)waitForAsyncUpdate(hasBeenSet, returnValue);
+            return returnValue;
         }
         #endregion
         #region conversationCommands
@@ -410,7 +380,6 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                if (slide == null) return;
                 wire.SendSyncMoveTo(slide);
             };
             tryIfConnected(work);
@@ -458,18 +427,9 @@ namespace MeTLLib
                     location.currentSlide = location.availableSlides[0];
                 else
                 {
-                    Trace.TraceError("FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
+                    Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
                 }
                 events.receiveConversationDetails(cd);
-            };
-            tryIfConnected(work);
-        }
-        public void SneakIntoAndDo(string room, Action<PreParser> doAction)
-        {
-            Action work = delegate
-            {
-                if (String.IsNullOrEmpty(room)) return;
-                wire.SneakIntoAndDo(room, doAction);
             };
             tryIfConnected(work);
         }
@@ -495,40 +455,9 @@ namespace MeTLLib
         {
             Action work = delegate
             {
-                if (room == null) return;
                 wire.GetHistory(room);
             };
             tryIfConnected(work);
-        }
-        public PreParser RetrieveHistoryOfMUC(string muc)
-        {
-            var parserList = new List<PreParser>();
-            tryIfConnected(() =>
-            {
-                if (String.IsNullOrEmpty(muc)) return;
-                Thread thread = new Thread(new ParameterizedThreadStart(delegate
-                {
-                    Thread parserAggregator = new Thread(new ParameterizedThreadStart(delegate
-                    {
-                        while (parserList.Count == 0)
-                        {
-                        }
-                    }));
-                    parserAggregator.Start();
-                    historyProvider.Retrieve<PreParser>(
-                        null,
-                        null,
-                    preParser =>
-                    {
-                        parserList.Add(preParser);
-                    },
-                    muc);
-                        parserAggregator.Join();
-                }));
-                thread.Start();
-                thread.Join();
-            });
-            return parserList[0];
         }
         public void NoAuthAsyncRetrieveHistoryOfRoom(int room)
         {
@@ -542,47 +471,9 @@ namespace MeTLLib
                 },
                 muc);
         }
-        public List<PreParser> RetrieveHistoryOfRoom(int room)
-        {
-            var parserList = new List<PreParser>();
-            tryIfConnected(() =>
-            {
-                if (room == null) return;
-                Thread thread = new Thread(new ParameterizedThreadStart(delegate
-                {
-                    Thread parserAggregator = new Thread(new ParameterizedThreadStart(delegate
-                    {
-                        while (parserList.Count < 3)
-                        {
-                        }
-                    }));
-                    parserAggregator.Start();
-                    historyProvider.Retrieve<PreParser>(
-                        null,null,
-                        preParser =>
-                        {
-                            parserList.Add(preParser);
-                        },
-                    room.ToString());
-                    historyProvider.RetrievePrivateContent<PreParser>(
-                    null,
-                    null,
-                    preParser =>
-                    {
-                        parserList.Add(preParser);
-                    },
-                    username,
-                    room.ToString());
-                    parserAggregator.Join();
-                }));
-                thread.Start();
-                thread.Join();
-            });
-            return parserList;
-        }
         public ConversationDetails UpdateConversationDetails(ConversationDetails details)
         {
-            ConversationDetails cd = null;
+            ConversationDetails cd = ConversationDetails.Empty;
             Action work = delegate
             {
                 cd = conversationDetailsProvider.Update(details);
@@ -592,7 +483,7 @@ namespace MeTLLib
         }
         public ConversationDetails DetailsOf(string room)
         {
-            ConversationDetails cd = null;
+            ConversationDetails cd = ConversationDetails.Empty;
             Action work = delegate
             {
                 cd = conversationDetailsProvider.DetailsOf(room);
@@ -602,78 +493,57 @@ namespace MeTLLib
         }
         public ConversationDetails CreateConversation(ConversationDetails details)
         {
-            ConversationDetails cd = null;
-            bool hasBeenSet = false;
-            Action work = delegate
-            {
-                cd = conversationDetailsProvider.Create(details);
-                hasBeenSet = true;
-            };
-            tryIfConnected(work);
-            return (ConversationDetails)waitForAsyncUpdate(hasBeenSet,cd);
+            return tryUntilConnected<ConversationDetails>(()=>
+                conversationDetailsProvider.Create(details));
         }
         public ConversationDetails AppendSlide(string Jid)
         {
-            ConversationDetails details = ConversationDetails.Empty;
-            Action work = delegate
-            {
-                details = conversationDetailsProvider.AppendSlide(Jid);
-            };
-            tryIfConnected(work);
-            return details;
+            return tryUntilConnected<ConversationDetails>(() => 
+                conversationDetailsProvider.AppendSlide(Jid));
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid)
         {
-            ConversationDetails details = ConversationDetails.Empty;
-            Action work = delegate
-            {
-                details = conversationDetailsProvider.AppendSlideAfter(slide, Jid);
-            };
-            tryIfConnected(work);
-            return details;
+            return tryUntilConnected<ConversationDetails>(() => 
+                conversationDetailsProvider.AppendSlideAfter(slide,Jid));
         }
         public ConversationDetails AppendSlideAfter(int slide, String Jid, Slide.TYPE type)
         {
-            ConversationDetails details = ConversationDetails.Empty;
-            bool hasBeenSet = false;
-            Action work = delegate
-            {
-                details = conversationDetailsProvider.AppendSlideAfter(slide, Jid, type);
-                hasBeenSet = true;
-            };
-            tryIfConnected(work);
-            return (ConversationDetails)waitForAsyncUpdate(hasBeenSet,details);
-        }
-        public List<ConversationDetails> CurrentConversations
-        {
-            get
-            {
-                if (wire == null) return null;
-                var list = new List<ConversationDetails>();
-                Action work = delegate
-                {
-                    list = wire.CurrentClasses;
-                };
-                tryIfConnected(work);
-                return list;
-            }
+            return tryUntilConnected<ConversationDetails>(() => 
+                conversationDetailsProvider.AppendSlideAfter(slide,Jid,type));
         }
         #endregion
         #region HelperMethods
+        private void requeue(Action action)
+        {
+            if (wire.IsConnected() == false)
+                wire.AddActionToReloginQueue(action);
+        }
         private void tryIfConnected(Action action)
         {
-            if (wire == null)
+            try
             {
-                Trace.TraceError("Wire is null at tryIfConnected in MeTLLib.ClientConnection.");
-                return;
+                action();
             }
-            if (wire.IsConnected() == false)
+            catch (WebException) {
+                requeue(action);
+            }
+            catch (Exception e)
             {
-                Trace.TraceWarning("Wire is disconnected at tryIfConnected - beginning relogin process with interval of 1s");
-                wire.AddActionToReloginQueue(action);
-                return;
+                throw e;
             }
-            action();
+        }
+        private T tryUntilConnected<T>(Func<T> function) {
+            var wait = new ManualResetEvent(false);
+            T result = default(T);
+            bool complete = false;
+            tryIfConnected(delegate {
+                result = function();
+                complete = true;
+                wait.Set();
+            });  
+            if(!complete)
+                wait.WaitOne();
+            return result;
         }
         private string decodeUri(Uri uri)
         {
@@ -712,7 +582,13 @@ namespace MeTLLib
         }
         public UserOptions UserOptionsFor(string username)
         {
-            return userOptionsProvider.Get(username);
+            var res = UserOptions.DEFAULT;
+            Action work = delegate
+            {
+                res = userOptionsProvider.Get(username);
+            };
+            tryIfConnected(work);
+            return res;
         }
     }
 }

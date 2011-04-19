@@ -43,12 +43,15 @@ namespace SandRibbon.Components.Utility
         {
             return currentSlide;
         }
+        private static object resetLocker = new object();
         public static void resetSyncTimer()
         {
             if(SyncTimer != null)
             {
-                SyncTimer.Change(500, Timeout.Infinite);
+                lock(resetLocker)
+                    SyncTimer.Change(500, Timeout.Infinite);
             }
         }
+
     }
 }

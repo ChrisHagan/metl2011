@@ -51,10 +51,11 @@ namespace SandRibbon.Tabs
             Commands.ReceiveFileResource.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedFile>(receiveFile));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(clearOutAttachments));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateDetails));
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
         }
-        private void updateDetails(ConversationDetails details)
+        private void UpdateConversationDetails(ConversationDetails details)
         {
+            if (ConversationDetails.Empty.Equals(details)) return;
             if(details.Jid == Globals.location.activeConversation && details.Subject.ToLower() == "deleted")
                 clearOutAttachments(null);
         }

@@ -96,11 +96,10 @@ namespace SandRibbon.Components
         private void loggedIn(MeTLLib.DataTypes.Credentials identity)
         {
             handwriting.Enable();
-            Commands.SetTutorialVisibility.ExecuteAsync(System.Windows.Visibility.Visible);
         }
         private void UpdateConversationDetails(MeTLLib.DataTypes.ConversationDetails details)
         {
-            if (details == null) return;
+            if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adoptAsync(delegate
             {
                 var editingMode = isAuthor(details) || canStudentPublish(details);

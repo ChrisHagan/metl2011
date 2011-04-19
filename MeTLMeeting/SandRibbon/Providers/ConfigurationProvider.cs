@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 
 namespace SandRibbon.Providers
 {
-    public class ConfigurationProvider : HttpResourceProvider
+    public class ConfigurationProvider
     {
         private static object instanceLock = new object();
         private static ConfigurationProvider instanceProperty;

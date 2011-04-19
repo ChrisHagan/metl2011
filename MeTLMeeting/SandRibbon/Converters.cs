@@ -345,7 +345,7 @@ namespace SandRibbon
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return "Preview";
-            return string.Format("Preview {0}'s submission ", ((TargettedSubmission)value).author);
+            return string.Format("{0}", (new DateTime(((TargettedSubmission)value).time)));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

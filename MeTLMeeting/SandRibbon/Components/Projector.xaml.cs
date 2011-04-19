@@ -7,6 +7,7 @@ using System.Windows.Data;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
+using MeTLLib;
 using MeTLLib.Providers.Connection;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Utility;
@@ -60,16 +61,7 @@ namespace SandRibbon.Components
                         return acc;
                     });
         }
-        public class RoomAndAction
-        {
-            public string room;
-            public Action<PreParser> action;
-            public RoomAndAction(string theRoom, Action<PreParser> theAction)
-            {
-                room = theRoom;
-                action = theAction;
-            }
-        }
+        
         public Projector()
         {
             InitializeComponent();
@@ -77,23 +69,26 @@ namespace SandRibbon.Components
             Loaded += Projector_Loaded;
             stack.SetEditable(false);
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(setLayer));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(shutdown));
-            Commands.InternalMoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
+            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateTitle));
             stack.handwriting.EditingModeChanged += modeChanged;
             stack.images.EditingModeChanged += modeChanged;
             stack.text.EditingModeChanged += modeChanged;
         }
         private void updateTitle(ConversationDetails details)
+        private void UpdateConversationDetails(ConversationDetails details)
         {
             if(conversationLabel.Text != details.Title)
-                conversationLabel.Text = details.Title;
+            conversationLabel.Text = details.Title;
         }
+
         private void shutdown(object obj)
         {
             if(Window != null)
@@ -107,6 +102,7 @@ namespace SandRibbon.Components
         }
         private void moveTo(object obj)
         {
+            conversationLabel.Text = Globals.conversationDetails.Title;
             stack.Flush();
         }
         void modeChanged(object sender, RoutedEventArgs e)
@@ -132,7 +128,7 @@ namespace SandRibbon.Components
             setProjectionLayers();
             try
             {
-                Commands.SneakIntoAndDo.ExecuteAsync(new RoomAndAction(Globals.location.currentSlide.ToString(), PreParserAvailable));
+                ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(null, null, PreParserAvailable, Globals.location.currentSlide.ToString());
             }
             catch (Exception e)
             {

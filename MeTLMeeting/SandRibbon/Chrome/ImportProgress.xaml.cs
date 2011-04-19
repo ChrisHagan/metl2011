@@ -23,13 +23,11 @@ namespace SandRibbon
         public static SubtractionConverter subtract = new SubtractionConverter();
         public static SlideDisplacementConverter SlideDisplacement = new SlideDisplacementConverter();
         public ObservableCollection<PowerpointImportProgress> fromStack = new ObservableCollection<PowerpointImportProgress>();
-        public ObservableCollection<PowerpointImportProgress> toStack = new ObservableCollection<PowerpointImportProgress>();
 
         public ProgressDialog()
         {
             InitializeComponent();
             from.ItemsSource = fromStack;
-            to.ItemsSource = toStack;
             Commands.UpdatePowerpointProgress.RegisterCommandToDispatcher(new DelegateCommand<PowerpointImportProgress>(UpdatePowerpointProgress));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.PrintConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(PrintConversation));
@@ -40,15 +38,21 @@ namespace SandRibbon
         private void HideProgressBlocker(object _arg) {
             Visibility = Visibility.Collapsed;
         }
+        private void setProgress(double percentage) {
+            if(Visibility == Visibility.Collapsed)
+                Visibility = Visibility.Visible;
+            progress.Value = percentage;
+        }
         private void setContent(string content) {
             goldLabel.Content = content; 
         }
         private void reset()
         {
+            slidesAnalyzed = 0;
+            slidesExtracted = 0;
             Dispatcher.adopt(delegate
             {
                 fromStack.Clear();
-                toStack.Clear();
             });
         }
         private void PrintConversation(object _arg) {
@@ -65,6 +69,8 @@ namespace SandRibbon
             Commands.RequerySuggested();
             Visibility = Visibility.Collapsed;
         }
+        private int slidesExtracted = 0;
+        private int slidesAnalyzed = 0;
         private void UpdatePowerpointProgress(PowerpointImportProgress progress) {
             switch (progress.stage) { 
                 case PowerpointImportProgress.IMPORT_STAGE.DESCRIBED:
@@ -72,9 +78,21 @@ namespace SandRibbon
                     Visibility = Visibility.Visible;
                     setContent("Importing");
                     break;
-                case PowerpointImportProgress.IMPORT_STAGE.ANALYSED:
-                   fromStack.Insert(0,progress);
+                case PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES:
+                    slidesExtracted++;
+                    setContent("Processing");
+                    setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
                     break;
+                case PowerpointImportProgress.IMPORT_STAGE.ANALYSED:
+                   slidesAnalyzed++;
+                   setContent("Loading");
+                   setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                   break;
+                case PowerpointImportProgress.IMPORT_STAGE.PRINTING:
+                   slidesAnalyzed++;
+                   setContent("Printing");
+                   setProgress((slidesAnalyzed + slidesExtracted) / Convert.ToDouble(progress.totalSlides * 2) * 100);
+                   break;
             }
         }
     }

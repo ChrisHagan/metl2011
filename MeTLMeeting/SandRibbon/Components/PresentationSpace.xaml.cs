@@ -35,7 +35,7 @@ namespace SandRibbon.Components
             privacyOverlay.Freeze();
             InitializeComponent();
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
-            Commands.InternalMoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
+            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
             Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
@@ -109,7 +109,8 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (details == null || details.Jid == "" || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject)))
+            if (ConversationDetails.Empty.Equals(details)) return;
+            if (details.Jid == "" || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject)))
             {
                 Dispatcher.adoptAsync(delegate
                 {
@@ -167,6 +168,18 @@ namespace SandRibbon.Components
                     var visual = details.showPrivate ? cloneAll() : clonePublicOnly();
                     context.DrawRectangle(new VisualBrush(visual), null,
                                           new Rect(new Point(), new Size(targetWidth, targetHeight)));
+                    context.DrawText(new FormattedText(
+                                            details.message, 
+                                            CultureInfo.CurrentCulture, 
+                                            FlowDirection.LeftToRight, 
+                                            new Typeface(
+                                                new FontFamily("Arial"),
+                                                FontStyles.Normal,
+                                                FontWeights.Normal,
+                                                FontStretches.Normal),
+                                            12,
+                                            Brushes.Black),
+                                        new Point(10, 10));
                 }
                 bitmap.Render(dv);
                 var encoder = new PngBitmapEncoder();

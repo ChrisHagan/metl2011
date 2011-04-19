@@ -3,8 +3,9 @@
   <PropertyGroup>
     <PublishUrlHistory>publish\</PublishUrlHistory>
     <InstallUrlHistory>http://metl.adm.monash.edu.au/MeTL2011/|http://metl.adm.monash.edu.au/MeTLStaging/|http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu.au/SpecialMeTL/|http://metl.adm.monash.edu.au/specialMeTL/</InstallUrlHistory>
+    <InstallUrlHistory>http://metl.adm.monash.edu.au/MeTLStaging/|http://metl.adm.monash.edu.au/MeTL2011/|http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu.au/SpecialMeTL/|http://metl.adm.monash.edu.au/specialMeTL/</InstallUrlHistory>
     <SupportUrlHistory>http://drawkward.adm.monash.edu/MeTL</SupportUrlHistory>
-    <UpdateUrlHistory>http://metl.adm.monash.edu.au/MeTL2011/|http://metl.adm.monash.edu.au/MeTLStaging/|http://drawkward.adm.monash.edu/MeTLStaging/|http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu/SpecialMeTL/</UpdateUrlHistory>
+    <UpdateUrlHistory>http://metl.adm.monash.edu.au/MeTLStaging/|http://metl.adm.monash.edu.au/MeTL2011/|http://drawkward.adm.monash.edu/MeTLStaging/|http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu/SpecialMeTL/</UpdateUrlHistory>
     <BootstrapperUrlHistory>
     </BootstrapperUrlHistory>
     <ErrorReportUrlHistory>

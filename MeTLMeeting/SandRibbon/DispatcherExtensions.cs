@@ -11,14 +11,14 @@ namespace SandRibbon
     public static class DispatcherExtensions
     {
         public static void adopt(this Dispatcher dispatcher, Action del) {
-            if (Thread.CurrentThread == dispatcher.Thread)
+            if(dispatcher.CheckAccess())
                 del();
             else
                 dispatcher.Invoke(del);
         }
         public static void adoptAsync(this Dispatcher dispatcher, Action del)
         {
-            if (Thread.CurrentThread == dispatcher.Thread)
+            if(dispatcher.CheckAccess())
                 del();
             else
                 dispatcher.BeginInvoke(del);
