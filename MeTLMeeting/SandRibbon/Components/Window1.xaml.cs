@@ -151,6 +151,7 @@ namespace SandRibbon
             //player.MediaOpened += playMedia;
             RibbonApplicationPopup.Opened += ApplicationButtonPopup_Opened;
             RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
+            smartboard = new SmartboardConnector(this);
         }
         private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
         {
