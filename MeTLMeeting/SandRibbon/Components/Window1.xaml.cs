@@ -551,21 +551,12 @@ namespace SandRibbon
                 return Globals.isAuthor || Globals.conversationDetails.Permissions.studentCanPublish;
             else return false;
         }
-        private ConversationDetails _details;
-        private ConversationDetails cachedDetails
-        {
-            get
-            {
-                if (_details == null)
-                    _details = Globals.conversationDetails;
-                return _details;
-            }
-        }
         private bool mustBeInConversation(object _arg)
         {
-           
-            if (cachedDetails == null) return false;
-            if(cachedDetails.Subject != "Deleted" && cachedDetails.Jid != "")
+
+            var details = Globals.conversationDetails;
+            if (ConversationDetails.Empty.Equals(details)) return false;
+            if(details.Subject != "Deleted" && details.Jid != "")
                     return true;
             return false;
         }
@@ -585,7 +576,6 @@ namespace SandRibbon
             if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adopt(delegate
                                  {
-                                     _details = details;
                 if (details.Jid == Globals.location.activeConversation)
                     UpdateTitle(details);
             });
