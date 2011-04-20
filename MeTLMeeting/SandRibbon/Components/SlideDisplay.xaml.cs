@@ -184,7 +184,7 @@ namespace SandRibbon.Components
                     thumbnailList.Add(slide);
                 }
             });
-            Commands.UpdateConversationDetails.RegisterCommand(reorder);
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(reorder);
             new EditConversation().ShowDialog();
         }
         public void Display(ConversationDetails details)
