@@ -112,6 +112,7 @@ namespace SandRibbon.Components
         }
         private void setUpSyncDisplay(int slide)
         {
+
             if (!Globals.synched) return;
             try
             {
