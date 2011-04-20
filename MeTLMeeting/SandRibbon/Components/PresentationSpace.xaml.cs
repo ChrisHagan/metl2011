@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Submissions;
@@ -47,8 +48,28 @@ namespace SandRibbon.Components
             Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
             Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
+            Commands.BanhammerSelectedItems.RegisterCommand(new DelegateCommand<object>(BanHammerSelectedItems));
             Commands.AllStaticCommandsAreRegistered();
         }
+
+        private void BanHammerSelectedItems(object obj)
+        {
+            var authors = new List<string>();
+            authors.AddRange(stack.handwriting.getSelectedAuthors());
+            authors.AddRange(stack.text.GetSelectedAuthors());
+            authors.AddRange(stack.images.GetSelectedAuthors());
+            var details = Globals.conversationDetails;
+            foreach(var author in authors.Distinct())
+            {
+                if(!details.blacklist.Contains(author))
+                    details.blacklist.Add(author);
+            }
+            ClientFactory.Connection().UpdateConversationDetails(details);
+            stack.handwriting.deleteSelectedItems(null);
+            stack.images.deleteSelectedImages(null);
+            stack.text.deleteSelectedItems(null);
+        }
+
         private void exploreBubble(ThoughtBubble thoughtBubble)
         {
             var origin = new Point(0, 0);

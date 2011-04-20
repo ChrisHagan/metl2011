@@ -78,7 +78,7 @@ namespace SandRibbon.Components
             try
             {
                 return privacy != (string)GetValue(PrivateProperty)
-                && (Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.Author == Globals.me);
+                && ((Globals.conversationDetails.Permissions.studentCanPublish && !Globals.conversationDetails.blacklist.Contains(Globals.me)) || Globals.conversationDetails.Author == Globals.me);
             }
             catch (Exception)
             {

@@ -205,7 +205,7 @@ namespace SandRibbon.Components.Canvas
         {
             addAdorners();
         }
-        private void deleteSelectedItems(object obj)
+        public void deleteSelectedItems(object obj)
         {
             if(GetSelectedElements().Count == 0) return;
             var selectedElements = GetSelectedElements().Select(b => Clone((MeTLTextBox)b)).ToList();
@@ -318,6 +318,11 @@ namespace SandRibbon.Components.Canvas
             });
         }
 
+        public List<string> GetSelectedAuthors()
+        {
+            return GetSelectedElements().Where(s => ((MeTLTextBox)s).tag().author != me).Select(s => ((MeTLTextBox)s).tag().author).Distinct().ToList();
+
+        }
         protected override void CanEditChanged()
         {
             canEdit = base.canEdit;
@@ -372,7 +377,7 @@ namespace SandRibbon.Components.Canvas
         private IEnumerable<UIElement> filterMyText(IEnumerable<UIElement> elements)
         {
             if (inMeeting()) return elements;
-            return elements.Cast<MeTLTextBox>().Where(text => text.tag().author == Globals.me).Cast<UIElement>().ToList();
+            return elements.Cast<MeTLTextBox>().Where(text => text.tag().author == Globals.me || Globals.isAuthor).Cast<UIElement>().ToList();
         }
         private void SendTextBoxes(object sender, EventArgs e)
         {
