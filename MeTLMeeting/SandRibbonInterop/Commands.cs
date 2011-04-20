@@ -219,7 +219,7 @@ namespace SandRibbon
         public static CompositeCommand CreateBlankConversation = new CompositeCommand();
         public static CompositeCommand ShowEditSlidesDialog = new CompositeCommand();
         public static CompositeCommand CreateConversation = new CompositeCommand();
-        public static CompositeCommand PreEditConversation = new CompositeCommand();
+        //public static CompositeCommand PreEditConversation = new CompositeCommand();
         public static CompositeCommand EditConversation = new CompositeCommand();
         public static CompositeCommand BlockInput = new CompositeCommand();
         public static CompositeCommand UnblockInput = new CompositeCommand();

@@ -40,6 +40,7 @@ namespace SandRibbon.Components
         }
         private void loadConversation(List<Slide> slides)
         {
+            activeSlideList.Clear();
             foreach (var slide in slides.OrderBy(s => s.index))
             {
                 var image = new Image();

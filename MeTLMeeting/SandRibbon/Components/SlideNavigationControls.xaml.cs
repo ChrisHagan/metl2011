@@ -76,9 +76,5 @@ namespace SandRibbon.Components
             Commands.SetSync.Execute(synch);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            new EditConversation().ShowDialog();
-        }
     }
 }

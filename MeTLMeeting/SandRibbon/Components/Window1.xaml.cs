@@ -70,7 +70,6 @@ namespace SandRibbon
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
-            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
             Commands.ShowEditSlidesDialog.RegisterCommand(new DelegateCommand<object>(ShowEditSlidesDialog, mustBeInConversation));
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));

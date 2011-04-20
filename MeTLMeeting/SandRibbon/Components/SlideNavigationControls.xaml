@@ -13,7 +13,7 @@ xmlns:quizzing="clr-namespace:SandRibbon.Quizzing"
             <dict:Button Text="Previous" Icon="\Resources\Previous.png" x:Name="moveToPrevious" ToolTip="{StaticResource PreviousSlideToolTip}" Command="{x:Static api:Commands.MoveToPrevious}" />
             <dict:Button Text="Sync" Icon="\Resources\SyncGreen.png" x:Name="syncButton" ToolTip="{StaticResource SyncToolTip}" Click="toggleSync"/>
             <dict:Button Text="Add Page" Icon="/Resources/NewSlide.png" ToolTip="{StaticResource AddSlideToolTip}" x:Name="addSlideButton"  Command="{x:Static api:Commands.AddSlide}"/>
-            <dict:Button Text="Edit conversation" Icon="/Resources/NewSlide.png"  x:Name="editConversation" Click="Button_Click"/>
+            <dict:Button Text="Edit conversation" Icon="/Resources/NewSlide.png"  x:Name="editConversation" Command="{x:Static api:Commands.EditConversation}"/>
             <dict:Button Text="Next" Icon="\Resources\Next.png" x:Name="moveToNext" ToolTip="{StaticResource NextSlideToolTip}" Command="{x:Static api:Commands.MoveToNext}" />
         </dict:RibbonPanel>
     </Grid>
