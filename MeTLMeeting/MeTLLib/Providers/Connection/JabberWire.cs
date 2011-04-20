@@ -47,7 +47,8 @@ namespace MeTLLib.Providers.Connection
             lock (instanceLock)
             {
                 if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a wire");
-                if(instance == null)
+                if (instance == null)
+                {
                     instance = new JabberWire(
                         credentials,
                         conversationDetailsProvider,
@@ -58,7 +59,8 @@ namespace MeTLLib.Providers.Connection
                         receiveEvents,
                         clientFactory,
                         resourceProvider);
-                instance.openConnection();
+                    instance.openConnection();
+                }
                 return instance;
             };
         }
@@ -773,12 +775,6 @@ namespace MeTLLib.Providers.Connection
             var newDetails = conversationDetailsProvider.DetailsOf(jid);
             //if (conversationDetailsProvider.isAccessibleToMe(jid))
             receiveEvents.receiveConversationDetails(newDetails);
-        }
-        private bool isCurrentConversation(string jid)
-        {
-            return location != null
-                && location.activeConversation != null
-                && location.activeConversation.Equals(jid);
         }
         protected virtual void handleUnknownMessage(string message)
         {

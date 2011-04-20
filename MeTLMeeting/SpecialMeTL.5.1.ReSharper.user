@@ -2102,7 +2102,6 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml" caret="4606" fromTop="21" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:ConversationDetails.cs" caret="216" fromTop="10" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ToolBar.xaml" caret="0" fromTop="0" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="10759" fromTop="0" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:Client.cs" caret="19880" fromTop="0" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="4619" fromTop="11" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:NetworkController.cs" caret="12905" fromTop="55" />
@@ -2117,7 +2116,8 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:Globals.cs" caret="3050" fromTop="15" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:StatusBar.xaml.cs" caret="2103" fromTop="20" />
       <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="701" fromTop="7" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="28109" fromTop="7" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="29315" fromTop="37" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="31826" fromTop="16" />
     </RecentFiles>
     <RecentEdits>
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml.cs" caret="11318" fromTop="9" />

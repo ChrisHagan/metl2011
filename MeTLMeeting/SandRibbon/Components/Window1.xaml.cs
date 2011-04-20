@@ -880,9 +880,7 @@ namespace SandRibbon
                                       })
                     if (s.Label == style)
                         details.Permissions = s;
-                var client = MeTLLib.ClientFactory.Connection();
-                client.UpdateConversationDetails(details);
-                //ConversationDetailsProviderFactory.Provider.Update(details);
+                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
             }
             catch (NotSetException e)
             {
