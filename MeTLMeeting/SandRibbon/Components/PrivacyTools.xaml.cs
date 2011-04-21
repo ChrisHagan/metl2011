@@ -53,7 +53,12 @@ namespace SandRibbon.Components
                                       if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(Globals.me))|| Globals.isAuthor)
                                           publicMode.IsEnabled = true;
                                       else
+                                      {
                                           publicMode.IsEnabled = false;
+                                          SetPrivacy("private");
+
+                                      }
+                                        
                                   });
         }
 
