@@ -773,7 +773,6 @@ namespace MeTLLib.Providers.Connection
             var jid = parts[1];
             conversationDetailsProvider.ReceiveDirtyConversationDetails(jid);
             var newDetails = conversationDetailsProvider.DetailsOf(jid);
-            //if (conversationDetailsProvider.isAccessibleToMe(jid))
             receiveEvents.receiveConversationDetails(newDetails);
         }
         protected virtual void handleUnknownMessage(string message)
