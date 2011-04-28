@@ -31,6 +31,8 @@ using SandRibbon.Components.Utility;
 using System.Windows.Documents;
 using MeTLLib;
 using MeTLLib.Providers.Connection;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 
 namespace SandRibbon
 {

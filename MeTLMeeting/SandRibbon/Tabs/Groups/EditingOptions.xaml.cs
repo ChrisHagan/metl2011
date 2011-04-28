@@ -15,6 +15,8 @@ using Divelements.SandRibbon;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers.Structure;
 using SandRibbon.Providers;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 
 namespace SandRibbon.Tabs.Groups
 {
@@ -50,8 +52,9 @@ namespace SandRibbon.Tabs.Groups
                     break;
             }
         }
-        private void hideAll() {
-            foreach (FrameworkElement child in new FrameworkElement[]{penColors,textTools,toolBox})
+        private void hideAll()
+        {
+            foreach (FrameworkElement child in new FrameworkElement[] { penColors, textTools, toolBox })
             {
                 child.Visibility = Visibility.Collapsed;
             }

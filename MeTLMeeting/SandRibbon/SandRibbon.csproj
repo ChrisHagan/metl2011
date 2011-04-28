@@ -89,6 +89,7 @@
     </Reference>
     <Reference Include="Interop.SBSDKComWrapperLib, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>lib\Interop.SBSDKComWrapperLib.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.1, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
@@ -220,6 +221,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\BackStageNav.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\CommandBridge.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -598,6 +603,9 @@
     </Compile>
     <Compile Include="Components\BackStageNav.xaml.cs">
       <DependentUpon>BackStageNav.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\CommandBridge.xaml.cs">
+      <DependentUpon>CommandBridge.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\EditConversation.xaml.cs">
       <DependentUpon>EditConversation.xaml</DependentUpon>

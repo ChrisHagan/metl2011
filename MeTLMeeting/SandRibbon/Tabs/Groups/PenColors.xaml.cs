@@ -26,6 +26,8 @@ using SandRibbon.Providers;
 using System.Diagnostics;
 using SandRibbon.Utils;
 using System.Diagnostics;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 
 namespace SandRibbon.Tabs.Groups
 {
@@ -352,11 +354,13 @@ namespace SandRibbon.Tabs.Groups
             Commands.SetDrawingAttributes.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(SetDrawingAttributes));
             InvokeAlteredPreset(2);
         }
-        private void checkDraw() { 
+        private void checkDraw()
+        {
             Draw.IsChecked = true;
             Commands.SetInkCanvasMode.ExecuteAsync("Ink");
         }
-        private void JoinConversation(object obj){
+        private void JoinConversation(object obj)
+        {
             checkDraw();
         }
         private void SetDrawingAttributes(object obj)
@@ -461,7 +465,7 @@ namespace SandRibbon.Tabs.Groups
                 var IndexNumber = listBox.Items.IndexOf(listBox.SelectedItem);
                 var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[IndexNumber])).Attributes);
                 Commands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
-                Trace.TraceInformation("Pen selected, Pen {0}, Colour {1}, Size {2}, isHighlighter {3}", IndexNumber.ToString(), drawingAttributes.Color.ToString(), drawingAttributes.Height.ToString(),drawingAttributes.IsHighlighter.ToString());
+                Trace.TraceInformation("Pen selected, Pen {0}, Colour {1}, Size {2}, isHighlighter {3}", IndexNumber.ToString(), drawingAttributes.Color.ToString(), drawingAttributes.Height.ToString(), drawingAttributes.IsHighlighter.ToString());
                 e.Handled = true;
             }
         }
@@ -526,7 +530,7 @@ namespace SandRibbon.Tabs.Groups
             ((DrawingAttributesEntry)(defaultColours.Items[PresetToUpdate])).Attributes = DrawingAttributes;
             defaultColours.Items.Refresh();
             InvokeAlteredPreset(PresetToUpdate);
-            Trace.TraceInformation("Pen Reset to Default, Pen {0}",PresetToUpdate.ToString());
+            Trace.TraceInformation("Pen Reset to Default, Pen {0}", PresetToUpdate.ToString());
         }
         private void ChangeSize(object sender, RoutedEventArgs e)
         {
@@ -753,4 +757,5 @@ new StylusPoint[]{new StylusPoint(17.6666666666667,86,0.5f),new StylusPoint(18,8
             }
         }
     }
+
 }
