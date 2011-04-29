@@ -62,12 +62,12 @@
                             <components:SimpleConversationSelector x:Name="recentDocuments" />
                         </StackPanel>
                     </sr:ApplicationPopup.RecentDocumentsControl>
-                    <sr:MenuItem Text="Create new" ToolTip="{StaticResource CreateConversationToolTip}" Command="{x:Static api:Commands.CreateBlankConversation}"/>
-                    <sr:MenuItem Text="Import PowerPoint" ToolTip="{StaticResource CreatePowerpointToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
-                    <sr:MenuItem Text="Search" ToolTip="{StaticResource SearchConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
-                    <sr:MenuItem Text="My Conversations" ToolTip="{StaticResource SearchMyConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
-                    <sr:MenuItem Text="Print" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{StaticResource PrintConversationToolTip}" />
-                    <sr:MenuItem Text="Logout and Exit" ToolTip="{StaticResource LogoutMeTLToolTip}" Command="{x:Static api:Commands.LogOut}"/>
+                    <sr:MenuItem Text="Create new" ToolTip="{DynamicResource CreateConversationToolTip}" Command="{x:Static api:Commands.CreateBlankConversation}"/>
+                    <sr:MenuItem Text="Import PowerPoint" ToolTip="{DynamicResource CreatePowerpointToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
+                    <sr:MenuItem Text="Search" ToolTip="{DynamicResource SearchConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
+                    <sr:MenuItem Text="My Conversations" ToolTip="{DynamicResource SearchMyConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
+                    <sr:MenuItem Text="Print" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{DynamicResource PrintConversationToolTip}" />
+                    <sr:MenuItem Text="Logout and Exit" ToolTip="{DynamicResource LogoutMeTLToolTip}" Command="{x:Static api:Commands.LogOut}"/>
                 </sr:ApplicationPopup>
             </sr:Ribbon.ApplicationPopup>
             <sr:Ribbon.ToolBar>

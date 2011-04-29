@@ -12,7 +12,7 @@
         <core:String x:Key="preferredDisplayIndex">7</core:String>
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup Header="Uploads">
-        <dict:Button ToolTip="{StaticResource UploadFileToolTip}" x:Name="fileUpload" Icon="\Resources\Attachment.png" Text="Upload file" Command="api:Commands.FileUpload"/>
+        <dict:Button ToolTip="{DynamicResource UploadFileToolTip}" x:Name="fileUpload" Icon="\Resources\Attachment.png" Text="Upload file" Command="api:Commands.FileUpload"/>
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Downloadable Items">
         <Label VerticalAlignment="Center" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"

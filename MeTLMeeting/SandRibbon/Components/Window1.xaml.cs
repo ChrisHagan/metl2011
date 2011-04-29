@@ -199,7 +199,15 @@ namespace SandRibbon
             {
                 var culture = lang.GetSpecificCulture();
                 FlowDirection = culture.TextInfo.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+                var mergedDicts = System.Windows.Application.Current.Resources.MergedDictionaries;
+                var currentToolTips = mergedDicts.Where(rd => ((ResourceDictionary)rd).Source.ToString().ToLower().Contains("tooltips")).First();
+                var rdUri = new Uri("Components\\ResourceDictionaries\\ToolTips_"+lang+".xaml", UriKind.Relative);
+                var newDict = (ResourceDictionary)App.LoadComponent(rdUri);
+                var sourceUri = new Uri("ToolTips_" + lang + ".xaml", UriKind.Relative);
+                newDict.Source = sourceUri;
+                mergedDicts[mergedDicts.IndexOf(currentToolTips)] = newDict;
             }
+
             catch (Exception e)
             {
                 Logger.Crash(e);
