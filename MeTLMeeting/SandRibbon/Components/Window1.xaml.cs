@@ -132,6 +132,7 @@ namespace SandRibbon
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
 
             Commands.ListenToAudio.RegisterCommand(new DelegateCommand<int>(ListenToAudio));
+            Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
    
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
@@ -180,6 +181,19 @@ namespace SandRibbon
             System.Diagnostics.Process.Start("http://www.monash.edu.au/eeducation/myls2010/students/resources/software/metl/");
         }
         #endregion
+        private void changeLanguage(System.Windows.Markup.XmlLanguage lang)
+        {
+            try
+            {
+                var culture = lang.GetSpecificCulture();
+                FlowDirection = culture.TextInfo.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+            }
+            catch (Exception e)
+            {
+                Logger.Crash(e);
+            }
+        }
+        
         private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
         {
             Trace.TraceInformation("UserOptionsDialog_Show");

@@ -32,6 +32,7 @@ namespace SandRibbon
     }
     public class Commands
     {
+        public static CompositeCommand ChangeLanguage = new CompositeCommand();
         public static CompositeCommand ListenToAudio = new CompositeCommand();
         public static CompositeCommand ReorderDragDone = new CompositeCommand();
         public static CompositeCommand ConnectToSmartboard = new CompositeCommand();

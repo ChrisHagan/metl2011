@@ -27,6 +27,7 @@
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200"/>
@@ -53,8 +54,14 @@
                 </ComboBox>
                 <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Include private notes when printing:"></TextBlock>
                 <CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding Path=includePrivateNotesOnPrint}" />
-                <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="Logging level:"></TextBlock>
-                <ComboBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Height="25" SelectedValue="{Binding Path=logLevel}" SelectedValuePath="Tag">
+                <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="Language:"></TextBlock>
+                <ComboBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Height="25" SelectedValue="{Binding Path=language}" SelectedValuePath="Tag">
+                    <ComboBoxItem Tag="en-US">English</ComboBoxItem>
+                    <ComboBoxItem Tag="ar">Arabic</ComboBoxItem>
+                    <ComboBoxItem Tag="de">German</ComboBoxItem>
+                </ComboBox>
+                <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Text="Logging level:"></TextBlock>
+                <ComboBox Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Height="25" SelectedValue="{Binding Path=logLevel}" SelectedValuePath="Tag">
                     <!--<ComboBoxItem>FINE</ComboBoxItem>
                 <ComboBoxItem>ERROR</ComboBoxItem>-->
                     <ComboBoxItem Tag="FINE">Detailed</ComboBoxItem>
