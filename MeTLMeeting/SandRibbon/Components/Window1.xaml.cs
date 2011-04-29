@@ -152,6 +152,11 @@ namespace SandRibbon
             RibbonApplicationPopup.Opened += ApplicationButtonPopup_Opened;
             RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
             smartboard = new SmartboardConnector(this);
+            getDefaultSystemLanguage();
+        }
+        private void getDefaultSystemLanguage()
+        {
+            Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage("en-US"));
         }
         private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
         {
