@@ -158,7 +158,7 @@ namespace SandRibbon
         {
             try
             {
-                Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(App.Current.Dispatcher.Thread.CurrentUICulture.IetfLanguageTag));
+                Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentUICulture.IetfLanguageTag));
             }
             catch (Exception e)
             {
