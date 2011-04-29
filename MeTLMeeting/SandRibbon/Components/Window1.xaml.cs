@@ -156,7 +156,14 @@ namespace SandRibbon
         }
         private void getDefaultSystemLanguage()
         {
-            Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage("en-US"));
+            try
+            {
+                Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(App.Current.Dispatcher.Thread.CurrentUICulture.IetfLanguageTag));
+            }
+            catch (Exception e)
+            {
+                Logger.Crash(e);
+            }
         }
         private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
         {
