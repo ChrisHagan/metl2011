@@ -15,8 +15,7 @@
     <sr:RibbonGroup Header="Diagnostics">
         <components:RubyRepl /> 
     </sr:RibbonGroup>
-    <sr:RibbonGroup Header="Integration">
-        <components:SMARTboardControl /> 
-    </sr:RibbonGroup>
+<!--    <sr:RibbonGroup Header="Integration">
+    </sr:RibbonGroup>-->
 
 </sr:RibbonTab>

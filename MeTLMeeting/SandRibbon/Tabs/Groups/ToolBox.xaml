@@ -5,7 +5,6 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
                  xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:simple="clr-namespace:SandRibbon.Components.SimpleImpl" >
     <StackPanel Orientation="Horizontal">
