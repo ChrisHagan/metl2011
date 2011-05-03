@@ -26,7 +26,7 @@ namespace SmartboardController
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Could not find a process named MeTL.  Have you started an instance (it can be clickonce)");
+                    //MessageBox.Show("Could not find a process named MeTL.  Have you started an instance (it can be clickonce)");
                 }
         }
         public static void initializeSmartboard(DependencyObject userControl)
@@ -36,26 +36,32 @@ namespace SmartboardController
         }
         public static void SetDrawingAttributes(DrawingAttributes attributes)
         {
+            if (metl == null)
+                AttachToProcess();
             if (metl != null)
             {
                 var color = String.Format("{0} {1} {2} {3}", attributes.Color.A.ToString(), attributes.Color.R.ToString(), attributes.Color.G.ToString(), attributes.Color.B.ToString());
                 var size = attributes.Height.ToString();
                 var isHighlighter = attributes.IsHighlighter.ToString();
-                metl.Value(String.Format("setDrawingAttributes:128 128 128 128:5:false", color, size, isHighlighter));
+                metl.Value(String.Format("SetDrawingAttributes:{0}:{1}:{2}", color, size, isHighlighter));
             }
         }
         public static void SetInkCanvasMode(string mode)
         {
+            if (metl == null)
+                AttachToProcess();
             if (metl != null)
             {
-                metl.Value(String.Format("setInkCanvasMode:{0}", mode));
+                metl.Value(String.Format("SetInkCanvasMode:{0}", mode));
             }
         }
         public static void SetLayer(string mode)
         {
+            if (metl == null)
+                AttachToProcess();
             if (metl != null)
             {
-                metl.Value(String.Format("setLayer:{0}", mode));
+                metl.Value(String.Format("SetLayer:{0}", mode));
             }
         }
         public static void ConnectToSmartboard()

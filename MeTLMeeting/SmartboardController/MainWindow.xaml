@@ -7,8 +7,26 @@
         <CommandBinding Command="{x:Static api:App.connectToSmartboard}" CanExecute="Connect_CanExecute" Executed="Connect_Executed"/>
         <CommandBinding Command="{x:Static api:App.disconnectFromSmartboard}" CanExecute="Disconnect_CanExecute" Executed="Disconnect_Executed"/>
     </Window.CommandBindings>
-    <StackPanel>
-        <Button Command="{x:Static api:App.connectToSmartboard}" Content="Connect"/>
-        <Button Command="{x:Static api:App.disconnectFromSmartboard}" Content="Disconnect"/>
-    </StackPanel>
+    <Border Margin="4" CornerRadius="4" BorderBrush="Gray" BorderThickness="1" Padding="4">
+        <StackPanel>
+            <Label>Smartboard Controller</Label>
+            <Border Margin="4" CornerRadius="4" BorderBrush="Gray" BorderThickness="1" Padding="4">
+                <StackPanel>
+                    <Label>Smartboard actions</Label>
+                    <Button Command="{x:Static api:App.connectToSmartboard}" Content="Connect"/>
+                    <Button Command="{x:Static api:App.disconnectFromSmartboard}" Content="Disconnect"/>
+                </StackPanel>
+            </Border>
+            <Border Margin="4" CornerRadius="4" BorderBrush="Gray" BorderThickness="1" Padding="4">
+                <StackPanel>
+                    <Label>Smartboard testing (remove)</Label>
+                    <Button Click="CommandBridgeTest" >red</Button>
+                    <Button Click="CommandBridgeTest" >blue</Button>
+                    <Button Click="CommandBridgeTest" >green</Button>
+                    <Button Click="CommandBridgeTest" >black</Button>
+                    <Button Click="CommandBridgeTest" >eraser</Button>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Border>
 </Window>
