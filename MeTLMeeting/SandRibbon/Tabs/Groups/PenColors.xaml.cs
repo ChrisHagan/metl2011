@@ -26,8 +26,6 @@ using SandRibbon.Providers;
 using System.Diagnostics;
 using SandRibbon.Utils;
 using System.Diagnostics;
-using System.Windows.Automation.Peers;
-using System.Windows.Automation.Provider;
 
 namespace SandRibbon.Tabs.Groups
 {
