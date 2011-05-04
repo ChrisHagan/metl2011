@@ -28,9 +28,9 @@
             </DrawingBrush>
         </StackPanel.Resources>
         <dict:RibbonPanel>
-            <dict:RadioButton x:Name="Draw" Visibility="Collapsed" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
-            <dict:RadioButton ToolTip="{StaticResource SelectToolTip}"  Icon="\Resources\SelectInk.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
-            <dict:RadioButton ToolTip="{StaticResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
+            <dict:RadioButton x:Name="Draw" Visibility="Collapsed" ToolTip="{DynamicResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
+            <dict:RadioButton ToolTip="{DynamicResource SelectToolTip}"  Icon="\Resources\SelectInk.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
+            <dict:RadioButton ToolTip="{DynamicResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
         </dict:RibbonPanel>
         <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
         <dict:PenColorsListBox x:Name="defaultColours" SelectionChanged="ChangeColorFromPreset" Background="Transparent" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
@@ -256,7 +256,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Button Click="ResetToDefault" ToolTip="{StaticResource ResetPenToDefaultToolTip}">
+                    <Button Click="ResetToDefault" ToolTip="{DynamicResource ResetPenToDefaultToolTip}">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                             <Rectangle Width="25" Height="20" x:Name="ColourSettingPopupDefaultColour"/>
                             <Label Content="Reset pen to default settings" FontWeight="Regular" FontSize="11"/>

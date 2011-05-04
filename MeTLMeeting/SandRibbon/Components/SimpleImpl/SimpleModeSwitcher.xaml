@@ -7,9 +7,9 @@
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components">
     <dict:RibbonPanel>
-        <dict:RadioButton Visibility="Collapsed" x:Name="View" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\MagnifyingGlassShiny.png" Text="View" Command="api:Commands.SetLayer" CommandParameter="View" />
-        <dict:RadioButton x:Name="Pen" ToolTip="{StaticResource PenToolTip}" Icon="\Resources\RedPenShiny.png" Text="Ink" Command="api:Commands.SetLayer" CommandParameter="Sketch" IsChecked="True"/>
-        <dict:RadioButton x:Name="Text" ToolTip="{StaticResource TextModeToolTip}" Icon="\Resources\TextMode.png" Text="Text" Command="api:Commands.SetLayer" CommandParameter="Text" />
-        <dict:RadioButton x:Name="Image" ToolTip="{StaticResource ImageModeToolTip}" Icon="\Resources\ImageMode.png" Text="Image" Command="api:Commands.SetLayer" CommandParameter="Insert" />
+        <dict:RadioButton Visibility="Collapsed" x:Name="View" ToolTip="{DynamicResource PenToolTip}" Icon="\Resources\MagnifyingGlassShiny.png" Text="View" Command="api:Commands.SetLayer" CommandParameter="View" />
+        <dict:RadioButton x:Name="Pen" ToolTip="{DynamicResource PenToolTip}" Icon="\Resources\RedPenShiny.png" Text="Ink" Command="api:Commands.SetLayer" CommandParameter="Sketch" IsChecked="True"/>
+        <dict:RadioButton x:Name="Text" ToolTip="{DynamicResource TextModeToolTip}" Icon="\Resources\TextMode.png" Text="Text" Command="api:Commands.SetLayer" CommandParameter="Text" />
+        <dict:RadioButton x:Name="Image" ToolTip="{DynamicResource ImageModeToolTip}" Icon="\Resources\ImageMode.png" Text="Image" Command="api:Commands.SetLayer" CommandParameter="Insert" />
     </dict:RibbonPanel>
 </UserControl>

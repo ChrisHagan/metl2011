@@ -32,7 +32,7 @@
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Results" x:Name="results">
         <StackPanel>
-            <dict:Button Command="{x:Static tabs:Quizzes.openQuizResults}" Icon="\Resources\Results.png" Text="Results" ToolTip="{StaticResource ViewQuizResultsToolTip}"/>
+            <dict:Button Command="{x:Static tabs:Quizzes.openQuizResults}" Icon="\Resources\Results.png" Text="Results" ToolTip="{DynamicResource ViewQuizResultsToolTip}"/>
         </StackPanel>
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Quizzes" x:Name="quizResultsRibbonGroup" ShowDialogLauncher="False" Image="\Resources\Results.png">

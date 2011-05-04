@@ -32,9 +32,11 @@ namespace SandRibbon
     }
     public class Commands
     {
+        public static CompositeCommand ChangeLanguage = new CompositeCommand();
         public static CompositeCommand ListenToAudio = new CompositeCommand();
         public static CompositeCommand ReorderDragDone = new CompositeCommand();
-
+        public static CompositeCommand ConnectToSmartboard = new CompositeCommand();
+        public static CompositeCommand DisconnectFromSmartboard = new CompositeCommand();
         public static CompositeCommand ViewSubmissions = new CompositeCommand();
         public static CompositeCommand Reconnecting = new CompositeCommand();
         public static CompositeCommand LeaveAllRooms = new CompositeCommand();
@@ -218,7 +220,7 @@ namespace SandRibbon
         public static CompositeCommand CreateBlankConversation = new CompositeCommand();
         public static CompositeCommand ShowEditSlidesDialog = new CompositeCommand();
         public static CompositeCommand CreateConversation = new CompositeCommand();
-        public static CompositeCommand PreEditConversation = new CompositeCommand();
+        //public static CompositeCommand PreEditConversation = new CompositeCommand();
         public static CompositeCommand EditConversation = new CompositeCommand();
         public static CompositeCommand BlockInput = new CompositeCommand();
         public static CompositeCommand UnblockInput = new CompositeCommand();

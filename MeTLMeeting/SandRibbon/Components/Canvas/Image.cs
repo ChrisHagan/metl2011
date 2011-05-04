@@ -105,7 +105,7 @@ namespace SandRibbon.Components.Canvas
         {
             addAdorners();
         }
-        private void deleteSelectedImages(object obj)
+        public void deleteSelectedImages(object obj)
         {
             if (GetSelectedElements().Count == 0) return;
             deleteImages();
@@ -198,6 +198,12 @@ namespace SandRibbon.Components.Canvas
             redo();
             UndoHistory.Queue(undo, redo);
         }
+        public List<string> GetSelectedAuthors()
+        {
+            return GetSelectedElements().Where(s => ((System.Windows.Controls.Image)s).tag().author != me).Select(s => ((System.Windows.Controls.Image)s).tag().author).Distinct().ToList();
+
+        }
+
         protected override void CanEditChanged()
         {
             canEdit = base.canEdit;
@@ -517,7 +523,7 @@ namespace SandRibbon.Components.Canvas
                     {
                         var newImage = (System.Windows.Controls.Image)image;
                         ImageInformation imageInfo = getImageInformation(newImage);
-                        if (imageInfo.Author == Globals.me)
+                        if (imageInfo.Author == Globals.me || Globals.isAuthor)
                             myImages.Add((System.Windows.Controls.Image)image);
                     }
                 }

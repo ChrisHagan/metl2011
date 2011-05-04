@@ -50,7 +50,7 @@ xmlns:metl="clr-namespace:SandRibbon"
                                     <TextBox MaxHeight="300" MinWidth="100" Width="300" x:Name="question" AcceptsReturn="True" TextWrapping="WrapWithOverflow"></TextBox>
                                 </ScrollViewer>
                                 <Grid Grid.Column="1" x:Name="questionSnapshotContainer">
-                                    <dict:Button x:Name="screenshot" Click="screenshotAsAQuestion" ToolTip="{StaticResource AttachCurrentSlideToQuizToolTip}" Icon="\Resources\AttachSnapshot.png" Text="Attach Current Slide"/>
+                                    <dict:Button x:Name="screenshot" Click="screenshotAsAQuestion" ToolTip="{DynamicResource AttachCurrentSlideToQuizToolTip}" Icon="\Resources\AttachSnapshot.png" Text="Attach Current Slide"/>
                                 </Grid>
                             </Grid>
                         </StackPanel>

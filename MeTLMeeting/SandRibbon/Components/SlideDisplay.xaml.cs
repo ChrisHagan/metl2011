@@ -85,6 +85,7 @@ namespace SandRibbon.Components
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(EditConversation));
             Display(Globals.conversationDetails);
         }
 
@@ -171,6 +172,21 @@ namespace SandRibbon.Components
             slides.SelectedIndex = nextIndex;
             slides.ScrollIntoView(slides.SelectedItem);
         }
+        public void EditConversation(object _obj)
+        {
+            DelegateCommand<ConversationDetails> reorder = null;
+            reorder = new DelegateCommand<ConversationDetails>(details =>
+            {
+                thumbnailList.Clear();
+                Commands.UpdateConversationDetails.UnregisterCommand(reorder);
+                foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
+                {
+                    thumbnailList.Add(slide);
+                }
+            });
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(reorder);
+            new EditConversation().ShowDialog();
+        }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)
             if (details.Equals(ConversationDetails.Empty))
@@ -183,12 +199,9 @@ namespace SandRibbon.Components
 
             if (thumbnailList.Count == 0)
             {
-                foreach (var slide in details.Slides.OrderBy(s => s.index))
+                foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
                 {
-                    if (slide.type == Slide.TYPE.SLIDE)
-                    {
-                        thumbnailList.Add(slide);
-                    }
+                    thumbnailList.Add(slide);
                 }
             }
             else if (thumbnailList.Count < details.Slides.Count)

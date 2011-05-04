@@ -42,6 +42,7 @@ namespace SandRibbon.Components
             var level = Pedagogicometer.level(((UserOptions)DataContext).pedagogyLevel);
             Trace.TraceInformation("SetPedagogy {0}",level.label);
             Commands.SetPedagogyLevel.Execute(level);
+            Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(((UserOptions)DataContext).language));
             Close();
         }
         private void Cancel(object sender, RoutedEventArgs e)

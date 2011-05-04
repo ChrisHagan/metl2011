@@ -8,7 +8,7 @@
         <beforeApplicationStartup />
       </update>
     </subscription>
-    <deploymentProvider codebase="http://metl.adm.monash.edu.au/MeTLStaging/MeTL%20Presenter.application" />
+    <deploymentProvider codebase="http://metl.adm.monash.edu.au/MeTL2011/MeTL%20Presenter.application" />
   </deployment>
   <dependency>
     <dependentAssembly dependencyType="install" codebase="Application Files\MeTL Presenter_1_0_0_144\MeTL Presenter.exe.manifest" size="35728">

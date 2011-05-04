@@ -40,6 +40,7 @@ namespace SandRibbon
         #region SurroundingServers
         #endregion
         private PowerPointLoader loader;
+        private SmartboardConnector smartboard;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
         public string log
@@ -68,8 +69,8 @@ namespace SandRibbon
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
-            Commands.PreEditConversation.RegisterCommand(new DelegateCommand<object>(EditConversation, mustBeAuthor));
-            
+            Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             //conversation movement
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
@@ -129,6 +130,7 @@ namespace SandRibbon
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeAuthor));
 
             Commands.ListenToAudio.RegisterCommand(new DelegateCommand<int>(ListenToAudio));
+            Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
    
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
@@ -147,6 +149,19 @@ namespace SandRibbon
             //player.MediaOpened += playMedia;
             RibbonApplicationPopup.Opened += ApplicationButtonPopup_Opened;
             RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
+            smartboard = new SmartboardConnector(this);
+            getDefaultSystemLanguage();
+        }
+        private void getDefaultSystemLanguage()
+        {
+            try
+            {
+                Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentUICulture.IetfLanguageTag));
+            }
+            catch (Exception e)
+            {
+                Logger.Crash(e);
+            }
         }
         private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
         {
@@ -176,6 +191,27 @@ namespace SandRibbon
             System.Diagnostics.Process.Start("http://www.monash.edu.au/eeducation/myls2010/students/resources/software/metl/");
         }
         #endregion
+        private void changeLanguage(System.Windows.Markup.XmlLanguage lang)
+        {
+            try
+            {
+                var culture = lang.GetSpecificCulture();
+                FlowDirection = culture.TextInfo.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+                var mergedDicts = System.Windows.Application.Current.Resources.MergedDictionaries;
+                var currentToolTips = mergedDicts.Where(rd => ((ResourceDictionary)rd).Source.ToString().ToLower().Contains("tooltips")).First();
+                var rdUri = new Uri("Components\\ResourceDictionaries\\ToolTips_"+lang+".xaml", UriKind.Relative);
+                var newDict = (ResourceDictionary)App.LoadComponent(rdUri);
+                var sourceUri = new Uri("ToolTips_" + lang + ".xaml", UriKind.Relative);
+                newDict.Source = sourceUri;
+                mergedDicts[mergedDicts.IndexOf(currentToolTips)] = newDict;
+            }
+
+            catch (Exception e)
+            {
+                Logger.Crash(e);
+            }
+        }
+        
         private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
         {
             Trace.TraceInformation("UserOptionsDialog_Show");
@@ -942,6 +978,7 @@ namespace SandRibbon
                             break;
                         case 2:
                             //ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
+                            tabs.Add(new Tabs.AdvancedTools());
                             RHSDrawerDefinition.Width = new GridLength(180);
                             homeGroups.Add(new ZoomControlsHost());
                             homeGroups.Add(new MiniMap());
@@ -952,7 +989,6 @@ namespace SandRibbon
                         case 4:
                             homeGroups.Add(new Notes());
                             tabs.Add(new Tabs.Analytics());
-                            tabs.Add(new Tabs.Plugins());
                             break;
                         default:
                             break;

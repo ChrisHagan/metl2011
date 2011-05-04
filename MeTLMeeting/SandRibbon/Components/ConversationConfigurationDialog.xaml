@@ -31,7 +31,7 @@
                                 <Label Content="Create" FontWeight="Bold"  Background="White"/>
                                 <StackPanel Background="White">
                                     <Label Content="Blank" HorizontalAlignment="Center"  />
-                                    <dict:RadioButton  GroupName="conversationType" x:Name="WhiteboardListBoxItem" Icon="..\Resources\Whiteboard.png" Text="Whiteboard"  FontWeight="Bold" Tag="whiteboard" Checked="selectChoice" ToolTip="{StaticResource BlankWhiteboardConversationTypeToolTip}"/>
+                                    <dict:RadioButton  GroupName="conversationType" x:Name="WhiteboardListBoxItem" Icon="..\Resources\Whiteboard.png" Text="Whiteboard"  FontWeight="Bold" Tag="whiteboard" Checked="selectChoice" ToolTip="{DynamicResource BlankWhiteboardConversationTypeToolTip}"/>
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel  >
@@ -41,13 +41,13 @@
                                 <StackPanel Orientation="Horizontal">
                                     <StackPanel Background="White">
                                         <Label HorizontalAlignment="Center" Content="Approximate Layout"/>
-                                        <dict:RadioButton GroupName="conversationType" Icon="..\Resources\FlexiblePowerpoint.png" x:Name="EditablePowerpointListBoxItem" Tag="editable" Text="Editable" FontWeight="Bold" Checked="selectChoice" ToolTip="{StaticResource EditablePowerpointConversationTypeToolTip}"/>
+                                        <dict:RadioButton GroupName="conversationType" Icon="..\Resources\FlexiblePowerpoint.png" x:Name="EditablePowerpointListBoxItem" Tag="editable" Text="Editable" FontWeight="Bold" Checked="selectChoice" ToolTip="{DynamicResource EditablePowerpointConversationTypeToolTip}"/>
                                     </StackPanel>
                                     <StackPanel Background="White">
                                         <Label HorizontalAlignment="Center" Content="True Layout"/>
                                         <StackPanel Orientation="Horizontal">
-                                            <dict:RadioButton GroupName="conversationType" Icon="..\Resources\ExactPowerpoint.png" x:Name="LowQualityPowerpointListBoxItem" Tag="lowquality" Text="Low Quality" FontWeight="Bold"  Checked="selectChoice" ToolTip="{StaticResource ExactPowerpointConversationTypeToolTip}"/>
-                                            <dict:RadioButton GroupName="conversationType" Icon="..\Resources\ExactPowerpoint.png" x:Name="HighQualityPowerpointListBoxItem" Tag="highquality" Text="High Quality" FontWeight="Bold"  Checked="selectChoice" ToolTip="{StaticResource ExactPowerpointConversationTypeToolTip}"/>
+                                            <dict:RadioButton GroupName="conversationType" Icon="..\Resources\ExactPowerpoint.png" x:Name="LowQualityPowerpointListBoxItem" Tag="lowquality" Text="Low Quality" FontWeight="Bold"  Checked="selectChoice" ToolTip="{DynamicResource ExactPowerpointConversationTypeToolTip}"/>
+                                            <dict:RadioButton GroupName="conversationType" Icon="..\Resources\ExactPowerpoint.png" x:Name="HighQualityPowerpointListBoxItem" Tag="highquality" Text="High Quality" FontWeight="Bold"  Checked="selectChoice" ToolTip="{DynamicResource ExactPowerpointConversationTypeToolTip}"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </StackPanel>

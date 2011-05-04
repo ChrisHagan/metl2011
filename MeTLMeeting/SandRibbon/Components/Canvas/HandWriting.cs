@@ -42,7 +42,6 @@ namespace SandRibbon.Components.Canvas
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
-            Commands.BanhammerSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(banhammerSelectedItems));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<object>(updateStrokePrivacy));
             Commands.ZoomChanged.RegisterCommand(new DelegateCommand<Double>(ZoomChanged));
@@ -57,24 +56,6 @@ namespace SandRibbon.Components.Canvas
         private void hideConversationSearchBox(object obj)
         {
             addAdorners();
-        }
-        private double correctZoom(double desiredZoom)
-        {
-            double finalZoomWidth;
-            double finalZoomHeight;
-            if ((desiredZoom > DrawingAttributes.MinHeight) && (desiredZoom < DrawingAttributes.MaxHeight))
-                finalZoomHeight = desiredZoom;
-            else if (desiredZoom < DrawingAttributes.MaxHeight)
-                finalZoomHeight = DrawingAttributes.MinHeight;
-            else finalZoomHeight = DrawingAttributes.MaxHeight;
-            if (desiredZoom > DrawingAttributes.MinWidth && desiredZoom < DrawingAttributes.MaxWidth)
-                finalZoomWidth = desiredZoom;
-            else if (desiredZoom < DrawingAttributes.MaxWidth)
-                finalZoomWidth = DrawingAttributes.MinWidth;
-            else finalZoomWidth = DrawingAttributes.MaxWidth;
-            if (Math.Max(finalZoomHeight, finalZoomWidth) == Math.Max(DrawingAttributes.MaxHeight, DrawingAttributes.MaxWidth))
-                return Math.Min(finalZoomHeight, finalZoomWidth);
-            else return Math.Max(finalZoomHeight, finalZoomWidth);
         }
         private Double zoom = 1;
         private void ZoomChanged(Double zoom)
@@ -105,17 +86,12 @@ namespace SandRibbon.Components.Canvas
             }
             DefaultDrawingAttributes = zoomCompensatedAttributes;
         }
-        private void banhammerSelectedItems(object _obj)
+        public List<string> getSelectedAuthors()
         {
-            var authors = GetSelectedStrokes().Select(s => s.tag().author).ToList();
-            var details = Globals.conversationDetails;
-            foreach(var author in authors)
-                details.blacklist.Add(author);
-            ClientFactory.Connection().UpdateConversationDetails(details);
-            //deleteSelectedItems(_obj);
+            return GetSelectedStrokes().Where(s => s.tag().author != me).Select(s => s.tag().author).Distinct().ToList();
         }
 
-        private void deleteSelectedItems(object obj)
+        public void deleteSelectedItems(object obj)
         {
             if(GetSelectedStrokes().Count == 0) return;
             deleteSelectedStrokes(null, null);
@@ -303,13 +279,13 @@ namespace SandRibbon.Components.Canvas
         {
             if (!strokes.Contains(stroke.sum()))
                 strokes.Add(stroke.sum());
-            stroke.tag(new StrokeTag { author = Globals.me, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
+            stroke.tag(new StrokeTag { author = stroke.tag().author, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
             SendTargettedStroke(stroke, thisPrivacy);
         }
         public void SendTargettedStroke(Stroke stroke, string thisPrivacy)
         {
             if (!stroke.shouldPersist()) return;
-            Commands.SendStroke.Execute(new TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke, stroke.tag().startingSum));
+            Commands.SendStroke.Execute(new TargettedStroke(currentSlide,stroke.tag().author,target,stroke.tag().privacy,stroke, stroke.tag().startingSum));
         }
         private void doMyStrokeRemoved(Stroke stroke)
         {
@@ -337,7 +313,7 @@ namespace SandRibbon.Components.Canvas
         private void doMyStrokeRemovedExceptHistory(Stroke stroke)
         {
             var sum = stroke.sum().checksum.ToString();
-            Commands.SendDirtyStroke.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,stroke.tag().privacy,sum));
+            Commands.SendDirtyStroke.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, stroke.tag().author,target,stroke.tag().privacy,sum));
         }
 
         private List<Stroke> strokesAtTheStart = new List<Stroke>();
@@ -514,7 +490,7 @@ namespace SandRibbon.Components.Canvas
         #region utilityFunctions
         private StrokeCollection filter(IEnumerable<Stroke> from, string author)
         {
-            if (inMeeting() /*|| Globals.conversationDetails.Author == Globals.me*/) return new StrokeCollection(from);
+            if (inMeeting() || Globals.conversationDetails.Author == Globals.me) return new StrokeCollection(from);
             return new StrokeCollection(from.Where(s => s.tag().author == author));
         }
         
@@ -572,7 +548,7 @@ namespace SandRibbon.Components.Canvas
         }
         protected override void HandleCut()
         {
-            var listToCut = GetSelectedStrokes().Select(stroke => new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, stroke.tag().privacy, stroke.sum().checksum.ToString())).ToList();
+            var listToCut = GetSelectedStrokes().Select(stroke => new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, stroke.tag().author, target, stroke.tag().privacy, stroke.sum().checksum.ToString())).ToList();
             var strokesToCut = GetSelectedStrokes().Select(s => s.Clone());
             var topPoint = GetSelectionBounds().TopLeft;
             CutSelection();
