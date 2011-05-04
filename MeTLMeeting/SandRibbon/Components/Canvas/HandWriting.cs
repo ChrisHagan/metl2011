@@ -279,13 +279,13 @@ namespace SandRibbon.Components.Canvas
         {
             if (!strokes.Contains(stroke.sum()))
                 strokes.Add(stroke.sum());
-            stroke.tag(new StrokeTag { author = Globals.me, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
+            stroke.tag(new StrokeTag { author = stroke.tag().author, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
             SendTargettedStroke(stroke, thisPrivacy);
         }
         public void SendTargettedStroke(Stroke stroke, string thisPrivacy)
         {
             if (!stroke.shouldPersist()) return;
-            Commands.SendStroke.Execute(new TargettedStroke(currentSlide,Globals.me,target,stroke.tag().privacy,stroke, stroke.tag().startingSum));
+            Commands.SendStroke.Execute(new TargettedStroke(currentSlide,stroke.tag().author,target,stroke.tag().privacy,stroke, stroke.tag().startingSum));
         }
         private void doMyStrokeRemoved(Stroke stroke)
         {
@@ -313,7 +313,7 @@ namespace SandRibbon.Components.Canvas
         private void doMyStrokeRemovedExceptHistory(Stroke stroke)
         {
             var sum = stroke.sum().checksum.ToString();
-            Commands.SendDirtyStroke.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide,Globals.me,target,stroke.tag().privacy,sum));
+            Commands.SendDirtyStroke.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, stroke.tag().author,target,stroke.tag().privacy,sum));
         }
 
         private List<Stroke> strokesAtTheStart = new List<Stroke>();
@@ -548,7 +548,7 @@ namespace SandRibbon.Components.Canvas
         }
         protected override void HandleCut()
         {
-            var listToCut = GetSelectedStrokes().Select(stroke => new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, Globals.me, target, stroke.tag().privacy, stroke.sum().checksum.ToString())).ToList();
+            var listToCut = GetSelectedStrokes().Select(stroke => new MeTLLib.DataTypes.TargettedDirtyElement(currentSlide, stroke.tag().author, target, stroke.tag().privacy, stroke.sum().checksum.ToString())).ToList();
             var strokesToCut = GetSelectedStrokes().Select(s => s.Clone());
             var topPoint = GetSelectionBounds().TopLeft;
             CutSelection();
