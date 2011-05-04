@@ -223,6 +223,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\blacklistController.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\CommandBridge.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Components\ConversationSearchBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -340,6 +348,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Quizzing\ViewQuizResults.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tabs\AdvancedTools.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -703,6 +715,9 @@
     </Compile>
     <Compile Include="Quizzing\ViewQuizResults.xaml.cs">
       <DependentUpon>ViewQuizResults.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\AdvancedTools.xaml.cs">
+      <DependentUpon>AdvancedTools.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Attachments.xaml.cs">
       <DependentUpon>Attachments.xaml</DependentUpon>

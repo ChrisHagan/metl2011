@@ -713,7 +713,12 @@ namespace SandRibbon.Components.Canvas
             var oldTextTag = box.tag();
             var newTextTag = new MeTLLib.DataTypes.TextTag(oldTextTag.author, thisPrivacy, oldTextTag.id);
             box.tag(newTextTag);
+            var privateRoom = string.Format("{0}{1}", currentSlide, box.tag().author);
+            if(thisPrivacy.ToLower() == "private" && Globals.isAuthor && Globals.me != box.tag().author)
+                Commands.SneakInto.Execute(privateRoom);
             Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(slide, Globals.me, target, thisPrivacy, box));
+            if(thisPrivacy.ToLower() == "private" && Globals.isAuthor && Globals.me != box.tag().author)
+                Commands.SneakOutOf.Execute(privateRoom);
         }
         private void setAppropriatePrivacyHalo(MeTLTextBox box)
         {

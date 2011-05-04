@@ -181,7 +181,6 @@ namespace SandRibbon.Components
         {
             client.SendVideo(tv);
         }
-
         private void SneakInto(string room)
         {
             client.SneakInto(room);

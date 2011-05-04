@@ -1032,10 +1032,19 @@ namespace SandRibbon.Components.Canvas
                     (currentSlide, Globals.me, target, ((System.Windows.Controls.Image)image).tag().privacy, ((System.Windows.Controls.Image)image).tag().id));
                     oldTag.privacy = newPrivacy;
                     ((System.Windows.Controls.Image)image).tag(oldTag);
-                    Commands.SendImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedImage
-                    (currentSlide, Globals.me, target, newPrivacy, (System.Windows.Controls.Image)image));
+                    
+                    
+                    var privateRoom = string.Format("{0}{1}", currentSlide, image.tag().author);
+                    if(newPrivacy.ToLower() == "private" && Globals.isAuthor && Globals.me != image.tag().author)
+                        Commands.SneakInto.Execute(privateRoom);
+
+                    Commands.SendImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedImage(currentSlide, Globals.me, target, newPrivacy, (System.Windows.Controls.Image)image));
+                    if(newPrivacy.ToLower() == "private" && Globals.isAuthor && Globals.me != image.tag().author)
+                        Commands.SneakOutOf.Execute(privateRoom);
+                        
+                    Commands.SendImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedImage(currentSlide, Globals.me, target, newPrivacy, (System.Windows.Controls.Image)image));
                 }
-                foreach (MeTLLib.DataTypes.Video video in selectedElements.Where(i =>
+                foreach (Video video in selectedElements.Where(i =>
                     i is MeTLLib.DataTypes.Video
                     && ((MeTLLib.DataTypes.Video)i).tag().privacy != newPrivacy))
                 {

@@ -285,7 +285,12 @@ namespace SandRibbon.Components.Canvas
         public void SendTargettedStroke(Stroke stroke, string thisPrivacy)
         {
             if (!stroke.shouldPersist()) return;
+            var privateRoom = string.Format("{0}{1}", currentSlide, stroke.tag().author);
+            if(thisPrivacy.ToLower() == "private" && Globals.isAuthor && Globals.me != stroke.tag().author)
+                Commands.SneakInto.Execute(privateRoom);
             Commands.SendStroke.Execute(new TargettedStroke(currentSlide,stroke.tag().author,target,stroke.tag().privacy,stroke, stroke.tag().startingSum));
+            if (thisPrivacy.ToLower() == "private" && Globals.isAuthor && Globals.me != stroke.tag().author)
+                Commands.SneakOutOf.Execute(privateRoom);
         }
         private void doMyStrokeRemoved(Stroke stroke)
         {

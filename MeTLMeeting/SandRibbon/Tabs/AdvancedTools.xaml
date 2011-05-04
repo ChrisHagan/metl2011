@@ -6,14 +6,14 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries" 
     sr:KeyboardAccess.Keys="P" Text="Advanced Tools" x:Name="advancedRoot">
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">8</core:String>    
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup>
-        <Button Content="Manage Blacklist" x:Name="manageBlackList" Click="ManageBlacklist"/>
-        <Button Content="Connect to Smartboard" Command="{x:Static api:Commands.ConnectToSmartboard}"/>
-        <Button Content="Disconnect from Smartboard" Command="{x:Static api:Commands.DisconnectFromSmartboard}"/>
+        <dict:Button Text="Manage Blacklist"  Icon="/Resources/NewSlide.png" x:Name="manageBlackList" Click="ManageBlacklist"/>
+        <dict:Button Text="Edit conversation" Icon="/Resources/NewSlide.png" x:Name="editConversation" Command="{x:Static api:Commands.EditConversation}"/>
     </sr:RibbonGroup>
 
 </sr:RibbonTab>

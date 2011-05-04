@@ -40,7 +40,6 @@ namespace SandRibbon
         #region SurroundingServers
         #endregion
         private PowerPointLoader loader;
-        private SmartboardConnector smartboard;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
         public string log
@@ -149,7 +148,6 @@ namespace SandRibbon
             //player.MediaOpened += playMedia;
             RibbonApplicationPopup.Opened += ApplicationButtonPopup_Opened;
             RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
-            smartboard = new SmartboardConnector(this);
             getDefaultSystemLanguage();
         }
         private void getDefaultSystemLanguage()
