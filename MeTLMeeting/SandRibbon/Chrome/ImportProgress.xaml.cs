@@ -69,8 +69,8 @@ namespace SandRibbon
             Commands.RequerySuggested();
             Visibility = Visibility.Collapsed;
         }
-        private int slidesExtracted = 0;
-        private int slidesAnalyzed = 0;
+        private int slidesExtracted;
+        private int slidesAnalyzed;
         private void UpdatePowerpointProgress(PowerpointImportProgress progress) {
             switch (progress.stage) { 
                 case PowerpointImportProgress.IMPORT_STAGE.DESCRIBED:

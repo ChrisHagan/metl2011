@@ -12,7 +12,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Divelements.SandRibbon;
+using MeTLLib.DataTypes;
+using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
+using SandRibbon.Providers;
 using SandRibbon.Utils;
 
 namespace SandRibbon.Tabs
@@ -22,9 +25,15 @@ namespace SandRibbon.Tabs
         public AdvancedTools()
         {
             InitializeComponent();
+            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
         }
 
-        private void manageBlacklist(object sender, RoutedEventArgs e)
+        private void UpdateConversationDetails(ConversationDetails details)
+        {
+            manageBlackList.Visibility = details.Author == Globals.me ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ManageBlacklist(object sender, RoutedEventArgs e)
         {
             new blacklistController().ShowDialog();
         }

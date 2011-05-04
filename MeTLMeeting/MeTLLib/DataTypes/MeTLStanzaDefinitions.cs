@@ -1450,7 +1450,7 @@ namespace MeTLLib.DataTypes
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Trace.TraceInformation("CRASH: MeTLLib::MeTLStanzaDefinitions:Image:source Image instantiation failed at: {0} {1} with {2}",DateTime.Now,DateTime.Now.Millisecond,e.Message);
+                    Trace.TraceInformation("CRASH: MeTLLib::MeTLStanzaDefinitions:Image:source Image instantiation failed at: {0} {1} with {2}",DateTime.Now,DateTime.Now.Millisecond,e.Message);
                     //Who knows what sort of hell is lurking in our history
                 }
                 return image;

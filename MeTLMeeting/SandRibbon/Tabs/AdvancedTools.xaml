@@ -11,7 +11,7 @@
         <core:String x:Key="preferredDisplayIndex">8</core:String>    
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup>
-        <Button Content="Manage Blacklist" Click="manageBlacklist"/>
+        <Button Content="Manage Blacklist" x:Name="manageBlackList" Click="ManageBlacklist"/>
         <Button Content="Connect to Smartboard" Command="{x:Static api:Commands.ConnectToSmartboard}"/>
         <Button Content="Disconnect from Smartboard" Command="{x:Static api:Commands.DisconnectFromSmartboard}"/>
     </sr:RibbonGroup>

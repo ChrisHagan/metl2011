@@ -41,8 +41,6 @@ namespace SandRibbon
         #endregion
         private PowerPointLoader loader;
         private SmartboardConnector smartboard;
-        private UndoHistory history = new UndoHistory();
-        public ConversationDetails details = null;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
         public string log
@@ -57,10 +55,11 @@ namespace SandRibbon
         private void DoConstructor()
         {
             InitializeComponent();
+
+            Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(level);
             Title = "MeTL 2011";
-                //Globals.MeTLType;
             try {
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
@@ -70,11 +69,10 @@ namespace SandRibbon
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
-            Commands.ShowEditSlidesDialog.RegisterCommand(new DelegateCommand<object>(ShowEditSlidesDialog, mustBeInConversation));
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.DisconnectFromSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             //conversation movement
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo, CanExecuteMoveTo));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(ExecuteMoveTo));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
@@ -468,13 +466,6 @@ namespace SandRibbon
         {
             Dispatcher.adoptAsync((HideProgressBlocker));
         }
-        private void ConnectWithAuthenticatedCredentials(MeTLLib.DataTypes.Credentials credentials)
-        {
-            Commands.AllStaticCommandsAreRegistered();
-            Commands.RequerySuggested();
-            Pedagogicometer.SetPedagogyLevel(Globals.pedagogy);
-            Commands.SetIdentity.ExecuteAsync(credentials);
-        }
         private void SetZoomRect(Rectangle viewbox)
         {
             var topleft = new Point(Canvas.GetLeft(viewbox), Canvas.GetTop(viewbox));
@@ -483,16 +474,6 @@ namespace SandRibbon
             scroll.ScrollToHorizontalOffset(topleft.X);
             scroll.ScrollToVerticalOffset(topleft.Y);
             Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", topleft.X, topleft.Y, viewbox.Width, viewbox.Height);
-        }
-        private bool SmartBoardMeTLAlreadyLoaded
-        {
-            get
-            {
-                var thisProcess = Process.GetCurrentProcess();
-                return Process.GetProcessesByName("MeTL").Any(p =>
-                    p.Id != thisProcess.Id &&
-                    (p.MainWindowTitle.StartsWith("S15") || p.MainWindowTitle.Equals("")));
-            }
         }
         private void AddWindowEffect(object _o)
         {
@@ -505,10 +486,6 @@ namespace SandRibbon
         private void ExecuteMoveTo(int slide)
         {
             MoveTo(slide);
-        }
-        private bool CanExecuteMoveTo(int slide)
-        {
-            return mustBeInConversation(slide);
         }
         private void JoinConversation(string title)
         {
@@ -610,19 +587,11 @@ namespace SandRibbon
                 return Globals.isAuthor || Globals.conversationDetails.Permissions.studentCanPublish;
             else return false;
         }
-
         private bool mustBeInConversation(object _arg)
         {
-            ConversationDetails details;
-            try
-            {
-                details = Globals.conversationDetails;
-            }
-            catch (NotSetException)
-            {
-                return false;
-            }
-            if (details == null) return false;
+
+            var details = Globals.conversationDetails;
+            if (ConversationDetails.Empty.Equals(details)) return false;
             if(details.Subject != "Deleted" && details.Jid != "")
                     return true;
             return false;
@@ -642,10 +611,9 @@ namespace SandRibbon
         {
             if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adopt(delegate
-            {
+                                 {
                 if (details.Jid == Globals.location.activeConversation)
                     UpdateTitle(details);
-                this.details = details;
             });
         }
         private void UpdateTitle(ConversationDetails details)
@@ -936,17 +904,9 @@ namespace SandRibbon
         private void SetConversationPermissions(object obj)
         {
             var style = (string)obj;
-            /*foreach (var s in new[]{
-                Permissions.LABORATORY_PERMISSIONS,
-                Permissions.TUTORIAL_PERMISSIONS,
-                Permissions.LECTURE_PERMISSIONS,
-                Permissions.MEETING_PERMISSIONS})
-                if (s.Label == style)
-                    details.Permissions = s;
-            MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);*/
             try
             {
-                details = Globals.conversationDetails;
+                var details = Globals.conversationDetails;
                 foreach (var s in new[]
                                       {
                                           Permissions.LABORATORY_PERMISSIONS,
@@ -956,9 +916,7 @@ namespace SandRibbon
                                       })
                     if (s.Label == style)
                         details.Permissions = s;
-                var client = MeTLLib.ClientFactory.Connection();
-                client.UpdateConversationDetails(details);
-                //ConversationDetailsProviderFactory.Provider.Update(details);
+                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
             }
             catch (NotSetException e)
             {
@@ -967,15 +925,8 @@ namespace SandRibbon
         }
         private bool CanSetConversationPermissions(object _style)
         {
-            return details != null && Globals.userInformation.credentials.name == details.Author;
-            try
-            {
-                return Globals.conversationDetails != null && Globals.userInformation.credentials.name == Globals.conversationDetails.Author;
-            }
-            catch (NotSetException e)
-            {
-                return false;
-            }
+            return Globals.isAuthor;
+
         }
         /*taskbar management*/
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
@@ -991,11 +942,6 @@ namespace SandRibbon
                 WindowState = System.Windows.WindowState.Maximized;
             });
         }
-        void ShowTrayIcon(bool show)
-        {
-            if (m_notifyIcon != null)
-                m_notifyIcon.Visible = show;
-        }
         public void SetPedagogyLevel(PedagogyLevel level)
         {
             SetupUI(level);
@@ -1009,17 +955,6 @@ namespace SandRibbon
                 privacyTools.Children.Clear();
                 RHSDrawerDefinition.Width = new GridLength(0);
             });
-        }
-        private GridSplitter split()
-        {
-            return new GridSplitter
-            {
-                ShowsPreview = true,
-                VerticalAlignment = VerticalAlignment.Stretch,
-                Width = 10,
-                Height = Double.NaN,
-                ResizeBehavior = GridResizeBehavior.PreviousAndNext
-            };
         }
         public void SetupUI(PedagogyLevel level)
         {

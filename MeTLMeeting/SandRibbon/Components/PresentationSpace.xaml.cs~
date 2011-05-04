@@ -1,77 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Sandpit;
+using SandRibbon.Components.Submissions;
 using SandRibbon.Components.Utility;
 using SandRibbon.Quizzing;
 using SandRibbon.Utils.Connection;
 using SandRibbonInterop;
-using SandRibbonObjects;
 using SandRibbon.Utils;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
-using SandRibbonInterop.MeTLStanzas;
+using SandRibbon.Providers;
+using SandRibbon.Components.Canvas;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
 {
     public partial class PresentationSpace
     {
-        public JabberWire.Location currentLocation = new JabberWire.Location();
-        private string me;
-        public ConversationDetails currentDetails;
-        private bool synced = false;
-        private bool joiningConversation;
         public PresentationSpace()
         {
+            privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
+            privacyOverlay.Freeze();
             InitializeComponent();
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<JabberWire.Credentials>( who => me = who.name));
-            Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveSlide));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
-            Commands.ReceiveQuiz.RegisterCommand(new DelegateCommand<QuizDetails>(receiveQuiz));
-            Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<Window1>( MirrorPresentationSpace, CanMirrorPresentationSpace));
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(p => { }, CanSetPrivacy));
-            Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(PreParserAvailable));
-            Commands.CreateThumbnail.RegisterCommand(new DelegateCommand<int>(CreateThumbnail));
+            Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
+            Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
             Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(exploreBubble));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
-            Loaded += presentationSpaceLoaded;
+            Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
+            Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
+            Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
+            Commands.AllStaticCommandsAreRegistered();
         }
-        private void exploreBubble(ThoughtBubble obj)
+        private void exploreBubble(ThoughtBubble thoughtBubble)
         {
             var origin = new Point(0, 0);
             var marquee = new Rectangle();
             marquee.Width = this.ActualWidth;
             marquee.Height = this.ActualHeight;
 
-            var setup =new LiveWindowSetup
-                {
-                    frame = marquee,
-                    origin = origin,
-                    target = new Point(0, 0),
-                    snapshotAtTimeOfCreation = ResourceUploader.uploadResourceToPath(
+            var setup = new LiveWindowSetup(Globals.location.currentSlide, Globals.me,
+                    stack,
+                marquee, origin, new Point(0, 0),
+                MeTLLib.ClientFactory.Connection().UploadResourceToPath(
                         toByteArray(this, marquee, origin),
-                        "Resource/" + currentLocation.currentSlide.ToString(),
+                        "Resource/" + Globals.location.currentSlide.ToString(),
                         "quizSnapshot.png",
-                        false),
-                    author = me,
-                    slide = currentLocation.currentSlide,
-                    visualSource = stack
-                };
+                        false).ToString());
 
             var view = new Rect(setup.origin, new Size(setup.frame.Width, setup.frame.Height));
             var liveWindow = new Rectangle
@@ -88,103 +80,174 @@ namespace SandRibbon.Components
                     ViewboxUnits = BrushMappingMode.Absolute,
                     Viewbox = view
                 },
+
                 Tag = setup.snapshotAtTimeOfCreation
             };
-            Commands.ThoughtLiveWindow.Execute(liveWindow);
-        }
-
-        private void presentationSpaceLoaded(object sender, RoutedEventArgs e)
-        {
-            //remove these if you want the on-canvas privacy buttons to disappear.  If you do that, you MUST uncomment the static declaration of currentPrivacyTools
-            var adorner = GetAdorner();
-            AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyTools()));
-        }
-        private void setSync(object obj)
-        {
-            synced = !synced;
+            Commands.ThoughtLiveWindow.ExecuteAsync(new ThoughtBubbleLiveWindow
+                                                   {
+                                                       LiveWindow = liveWindow,
+                                                       Bubble = thoughtBubble
+                                                   });
         }
         private void setUpSyncDisplay(int slide)
         {
-            if(!synced) return;
-            if(currentDetails == null) return;
-            if (currentDetails.Author == me) return;
-            if(currentDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0)return;
-            Dispatcher.BeginInvoke((Action) delegate
-                        {
-                            var adorner = GetAdorner();
-                            AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new SyncDisplay()));
-                        });
+            if (!Globals.synched) return;
+            try
+            {
+                if (Globals.conversationDetails.Author == Globals.me) return;
+                if (Globals.conversationDetails.Slides.Where(s => s.id.Equals(slide)).Count() == 0) return;
+                Dispatcher.adoptAsync((Action)delegate
+                            {
+                                var adorner = GetAdorner();
+                                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new SyncDisplay()));
+                            });
+            }
+            catch (NotSetException e)
+            {
+                //You are listening to the channel but have not yet joined the room
+            }
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            currentDetails = details;
-            joiningConversation = false;
-            if(currentDetails.Author == me || currentDetails.Permissions.studentCanPublish)
-                Commands.SetPrivacy.Execute(stack.handwriting.actualPrivacy);
-            else
-                Commands.SetPrivacy.Execute("private");
+            if (ConversationDetails.Empty.Equals(details)) return;
+            if (details.Jid == "" || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject)))
+            {
+                Dispatcher.adoptAsync(delegate
+                {
+                    foreach (FrameworkElement child in stack.canvasStack.Children)
+                    {
+                        if (child is AbstractCanvas)
+                        {
+                            ((AbstractCanvas)child).Strokes.Clear();
+                            ((AbstractCanvas)child).Children.Clear();
+                        }
+                    }
+                });
+                return;
+            }
+            try
+            {
+                if (Globals.conversationDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
+                    Commands.SetPrivacy.ExecuteAsync("public");
+                else
+                    Commands.SetPrivacy.ExecuteAsync("private");
+            }
+            catch (NotSetException)
+            {
+                Commands.SetPrivacy.ExecuteAsync("private");
+            }
         }
         public FrameworkElement GetAdorner()
         {
             var element = (FrameworkElement)this;
-            while(element.Parent != null && !(element.Name == "adornerGrid"))
+            while (element.Parent != null && !(element.Name == "adornerGrid"))
                 element = (FrameworkElement)element.Parent;
-               
-            foreach(var child in ((Grid)element).Children)
-                if(((FrameworkElement)child).Name == "adorner")
-                   return (FrameworkElement)child;
+
+            foreach (var child in ((Grid)element).Children)
+                if (((FrameworkElement)child).Name == "adorner")
+                    return (FrameworkElement)child;
             return null;
         }
-        private bool CanSetPrivacy(string s)
+        private void SendScreenShot(ScreenshotDetails details)
         {
-            if(currentDetails == null)
-                return false;
-            return (currentDetails.Permissions.studentCanPublish || currentDetails.Author == me);
+            Commands.ScreenshotGenerated.Execute(generateScreenshot(details));
         }
-        private void CreateThumbnail(int id)
+        private string generateScreenshot(ScreenshotDetails details)
         {
-            try
+            var dpi = 96;
+            var ratio = ActualWidth / ActualHeight;
+            int targetWidth = 1024;
+            int targetHeight = (int)(targetWidth / ratio);
+            var file = "";
+            Dispatcher.adopt(() =>
             {
-                const int side = 96;
-                var dpi = 96;
-                var bitmap = new RenderTargetBitmap(side, side, dpi, dpi, PixelFormats.Default);
+                var bitmap = new RenderTargetBitmap(targetWidth ,targetHeight, dpi, dpi, PixelFormats.Default);
                 var dv = new DrawingVisual();
                 using (var context = dv.RenderOpen())
-                    context.DrawRectangle(new VisualBrush(stack), null, new Rect(new Point(), new Size(side, side)));
+                {
+                    var visual = details.showPrivate ? cloneAll() : clonePublicOnly();
+                    context.DrawRectangle(new VisualBrush(visual), null,
+                                          new Rect(new Point(), new Size(targetWidth, targetHeight)));
+                    context.DrawText(new FormattedText(
+                                            details.message, 
+                                            CultureInfo.CurrentCulture, 
+                                            FlowDirection.LeftToRight, 
+                                            new Typeface(
+                                                new FontFamily("Arial"),
+                                                FontStyles.Normal,
+                                                FontWeights.Normal,
+                                                FontStretches.Normal),
+                                            12,
+                                            Brushes.Black),
+                                        new Point(10, 10));
+                }
                 bitmap.Render(dv);
-                Commands.ThumbnailGenerated.Execute(new UnscaledThumbnailData { id = currentLocation.currentSlide, data = bitmap });
-            }
-            catch (OverflowException)
-            {
-                //The image is too large to thumbnail.  Just leave it be.
-            }
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                file = string.Format("{0}{1}submission.png", DateTime.Now.Ticks, Globals.me);
+                using (Stream stream = File.Create(file))
+                {
+                    encoder.Save(stream);
+                }
+            });
+            return file;
         }
-        private void PreParserAvailable(PreParser parser)
+        private Rect measureToAspect(double width, double height, double max)
         {
+            var dominantSide = height > width ? height : width;
+            var scalingFactor = max / dominantSide;
+            return new Rect(0, 0, width * scalingFactor, height * scalingFactor);
+        }
+        private RenderTargetBitmap generateCapture(int side)
+        {
+            var dpi = 96;
+            var dimensions = measureToAspect(ActualWidth, ActualHeight, side);
+            RenderTargetBitmap bitmap = null;
+            Dispatcher.adopt(() =>
+            {
+                bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
+                var dv = new DrawingVisual();
+                using (var context = dv.RenderOpen())
+                    context.DrawRectangle(new VisualBrush(stack), null, dimensions);
+                bitmap.Render(dv);
+            });
+            return bitmap;
+        }
+        private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
+        {
+            BeginInit();
             stack.handwriting.ReceiveStrokes(parser.ink);
             stack.images.ReceiveImages(parser.images.Values);
             foreach (var text in parser.text.Values)
                 stack.text.doText(text);
-            foreach(var quizDetails in parser.quizs)
-                receiveQuiz(quizDetails);
             foreach (var video in parser.videos)
-                stack.images.AddVideo(((TargettedVideo)video.Value).video);
-            Worm.heart.Interval = TimeSpan.FromMilliseconds(1500);
+            {
+                var srVideo = ((MeTLLib.DataTypes.TargettedVideo)video.Value).video;
+                srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
+                srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
+                srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
+                srVideo.MediaElement.ScrubbingEnabled = true;
+                stack.images.AddVideo(srVideo);
+            } foreach (var bubble in parser.bubbleList)
+                stack.ReceiveNewBubble(bubble);
+            EndInit();
         }
         private void MirrorPresentationSpace(Window1 parent)
         {
-            var currentAttributes = stack.handwriting.DefaultDrawingAttributes;
-            var mirror = new Window { Content = new Projector { viewConstraint = parent.scroll} };
-            Projector.Window = mirror;
-            parent.Closed += (_sender, _args) => mirror.Close();
-            mirror.WindowStyle = WindowStyle.None;
-            mirror.AllowsTransparency = true;
-            setSecondaryWindowBounds( mirror);
-            mirror.Show();
-            Commands.SetDrawingAttributes.Execute(currentAttributes);
-            Commands.SetPrivacy.Execute(stack.handwriting.privacy);
-            //We rerequest the current slide data because we're not storing it in reusable form - it's in thread affine objects in the logical tree.
-            Commands.MoveTo.Execute(currentLocation.currentSlide);
+            try
+            {
+                var mirror = new Window { Content = new Projector { viewConstraint = parent.scroll } };
+                Projector.Window = mirror;
+                parent.Closed += (_sender, _args) => mirror.Close();
+                mirror.WindowStyle = WindowStyle.None;
+                mirror.AllowsTransparency = true;
+                setSecondaryWindowBounds(mirror);
+                mirror.Show();
+            }
+            catch (NotSetException)
+            {
+                //Fine it's not time yet anyway.  I don't care.
+            }
         }
         private static bool CanMirrorPresentationSpace(object _param)
         {
@@ -206,40 +269,36 @@ namespace SandRibbon.Components
         }
         private void setSecondaryWindowBounds(Window w)
         {
-           System.Drawing.Rectangle r= getSecondaryScreenBounds();
-           w.Top = r.Top;
-           w.Left = r.Left;
-           w.Width = r.Width;
-           w.Height = r.Height;
+            System.Drawing.Rectangle r = getSecondaryScreenBounds();
+            w.Top = r.Top;
+            w.Left = r.Left;
+            w.Width = r.Width;
+            w.Height = r.Height;
         }
-        private void MoveSlide(int slide)
+        private void MoveTo(int slide)
         {
-            if(currentDetails == null) return;
-            currentLocation.currentSlide = slide;
             ClearAdorners();
+            stack.Flush();
         }
         private void ClearAdorners()
         {
-            var doClear = (Action)delegate
-                                      {
-                                          removeAdornerItems(this);
-                                          ClearPrivacy();
-                                          removeSyncDisplay();
-                                      };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doClear);
-            else
-                doClear();
+            Dispatcher.adoptAsync(delegate
+                          {
+                              removeAdornerItems(this);
+                              ClearPrivacy();
+                              removeSyncDisplay();
+                          });
+
         }
         private void removeSyncDisplay()
         {
             var adorner = GetAdorner();
             var adornerLayer = AdornerLayer.GetAdornerLayer(adorner);
             var adorners = adornerLayer.GetAdorners(adorner);
-            if(adorners != null)
-                foreach(var element in adorners)
-                    if(element is UIAdorner)
-                        if(((UIAdorner)element).contentType.Name.Equals("SyncDisplay"))
+            if (adorners != null)
+                foreach (var element in adorners)
+                    if (element is UIAdorner)
+                        if (((UIAdorner)element).contentType.Name.Equals("SyncDisplay"))
                             adornerLayer.Remove(element);
         }
 
@@ -251,27 +310,27 @@ namespace SandRibbon.Components
                 foreach (var adorner in adorners)
                     adornerLayer.Remove(adorner);
         }
-        private void JoinConversation(string jid)
-        {
-            joiningConversation = true;
-            currentLocation.activeConversation = jid;
-
-        }
         private void ReceiveLiveWindow(LiveWindowSetup window)
         {
-            if (window.slide != currentLocation.currentSlide || window.author != me) return;
+            if (window.slide != Globals.slide || window.author != Globals.me) return;
             window.visualSource = stack;
-            Commands.DugPublicSpace.Execute(window);
+            Commands.DugPublicSpace.ExecuteAsync(window);
         }
         private void InitiateDig(object _param)
         {
             withDragMarquee(SendNewDig);
         }
-        private void InitiateGrabZoom(object _param) 
+        private void InitiateGrabZoom(object _param)
         {
-            withDragMarquee(marquee => {
-                Commands.SetZoomRect.Execute(marquee);
-            }); 
+            App.Now("GrabZoom pressed");
+            withDragMarquee(marquee =>
+            {
+                Commands.EndGrabZoom.ExecuteAsync(null);
+                if (marquee.Width > 10 && marquee.Height > 10)
+                {
+                    Commands.SetZoomRect.ExecuteAsync(marquee);
+                }
+            });
         }
         private void withDragMarquee(Action<Rectangle> doWithRect)
         {
@@ -283,35 +342,39 @@ namespace SandRibbon.Components
                     if (a is UIAdorner && ((UIAdorner)a).contentType == typeof(System.Windows.Controls.Canvas))
                         return;
             var adorner = new UIAdorner(this, canvas);
-            var marquee = new Rectangle { Fill = Brushes.Purple };
+            var marquee = new Rectangle { Fill = Brushes.Purple, Opacity = 0.4 };
             canvas.Background = new SolidColorBrush { Color = Colors.Wheat, Opacity = 0.1 };
             canvas.Children.Add(marquee);
             bool mouseDown = false;
-            canvas.MouseDown += (sender, e)=>
+            Point origin = new Point(-1, -1);
+            canvas.MouseDown += (sender, e) =>
             {
                 var pos = e.GetPosition(canvas);
                 System.Windows.Controls.Canvas.SetLeft(marquee, pos.X);
                 System.Windows.Controls.Canvas.SetTop(marquee, pos.Y);
+                origin = pos;
                 mouseDown = true;
             };
-            canvas.MouseUp += (sender, e)=>
+            canvas.MouseUp += (sender, e) =>
             {
                 mouseDown = false;
-                var pos = e.GetPosition(this);
-                var origin = new Point(pos.X - marquee.Width, pos.Y - marquee.Height);
-                doWithRect(marquee); 
+                doWithRect(marquee);
                 adornerLayer.Remove(adorner);
             };
-            canvas.MouseMove += (sender, e)=>
+            canvas.MouseMove += (sender, e) =>
             {
-                if (!mouseDown) return;
+                if (!mouseDown || origin.X == -1 || origin.Y == -1) return;
                 var pos = e.GetPosition(canvas);
-                var prevX = System.Windows.Controls.Canvas.GetLeft(marquee);
-                var prevY = System.Windows.Controls.Canvas.GetTop(marquee);
-                marquee.Width = Math.Max(prevX, pos.X) - Math.Min(prevX, pos.X);
-                marquee.Height = Math.Max(prevY, pos.Y) - Math.Min(prevY, pos.Y);
+                System.Windows.Controls.Canvas.SetLeft(marquee, Math.Min(origin.X, pos.X));
+                System.Windows.Controls.Canvas.SetTop(marquee, Math.Min(origin.Y, pos.Y));
+                marquee.Width = Math.Max(origin.X, pos.X) - Math.Min(origin.X, pos.X);
+                marquee.Height = Math.Max(origin.Y, pos.Y) - Math.Min(origin.Y, pos.Y);
             };
-            canvas.MouseLeave += (_sender, _args) => adornerLayer.Remove(adorner);
+            canvas.MouseLeave += (_sender, _args) =>
+            {
+                adornerLayer.Remove(adorner);
+                Commands.EndGrabZoom.ExecuteAsync(null);
+            };
             adornerLayer.Add(adorner);
         }
         private void SendNewDig(Rectangle marquee)
@@ -319,19 +382,13 @@ namespace SandRibbon.Components
             var origin = new Point(
                 System.Windows.Controls.Canvas.GetLeft(marquee),
                 System.Windows.Controls.Canvas.GetTop(marquee));
-            Commands.SendLiveWindow.Execute(new LiveWindowSetup
-            {
-                frame = marquee,
-                origin = origin,
-                target = new Point(0, 0),
-                snapshotAtTimeOfCreation = ResourceUploader.uploadResourceToPath(
-                    toByteArray(this, marquee, origin),
-                    "Resource/" + currentLocation.currentSlide.ToString(),
-                    "quizSnapshot.png",
-                    false),
-                author = me,
-                slide = currentLocation.currentSlide
-            });
+            Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
+            (Globals.slide, Globals.me, marquee, origin, new Point(0, 0), 
+            MeTLLib.ClientFactory.Connection().UploadResourceToPath(
+                                            toByteArray(this, marquee, origin),
+                                            "Resource/" + Globals.slide.ToString(),
+                                            "quizSnapshot.png",
+                                            false).ToString()));
         }
         private static byte[] toByteArray(Visual adornee, FrameworkElement marquee, Point origin)
         {
@@ -372,54 +429,64 @@ namespace SandRibbon.Components
                 return new byte[0];
             }
         }
-        private void receiveQuiz(QuizDetails details)
+        private void receiveQuiz(QuizQuestion details)
         {
-            var doReceive = (Action) delegate
-            {
-                var adorner = AdornerLayer.GetAdornerLayer(this);
-                if (adorner != null)
-                {
-                    var adorners = adorner.GetAdorners(this);
-                    if(adorners != null)
-                        foreach (var a in adorners)
-                            if (a is PollMarker && ((PollMarker)a).target == details.targetSlide)
-                                return;
-                    var x = 30 * (adorners == null ? 1 : adorners.Length);
-                    var y = 5 * (adorners == null ? 1 : adorners.Length);
-                    adorner.Add(new PollMarker(x, y, this, details));
-                }
-            };
-            if (Thread.CurrentThread != Dispatcher.Thread)
-                Dispatcher.BeginInvoke(doReceive);
-            else
-                doReceive();
+
         }
         private System.Windows.Shapes.Path privacyAdorner = new System.Windows.Shapes.Path();
-        private readonly Brush privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
+        public Brush privacyOverlay;
         public void ClearPrivacy()
         {
             var geometry = new PathGeometry();
-            privacyAdorner = new System.Windows.Shapes.Path { 
-                Fill = privacyOverlay,  Data=geometry};
+            privacyAdorner = new System.Windows.Shapes.Path
+            {
+                Fill = privacyOverlay,
+                Data = geometry
+            };
             geometry.FillRule = FillRule.Nonzero;
             var adornerLayer = AdornerLayer.GetAdornerLayer(this);
             if (adornerLayer == null) return;
             privacyAdorner.IsHitTestVisible = false;
             adornerLayer.Add(new UIAdorner(this, privacyAdorner));
         }
+
+        private void removeHighlight(HighlightParameters param)
+        {
+            RemovePrivateRegion(param.verticies);
+        }
+        private void highlight(HighlightParameters param)
+        {
+            AddPrivateRegion(param.verticies, param.color);
+        }
+        public void AddPrivateRegion(IEnumerable<Point> vertices, Color color)
+        {
+            try
+            {
+                if (Globals.pedagogy.code < 3) return;
+                privacyOverlay = new SolidColorBrush { Color = color, Opacity = 0.2 };
+                privacyAdorner.Fill = privacyOverlay;
+                RemovePrivateRegion(vertices);
+                var segments = vertices.Select(v => (PathSegment)new LineSegment(v, true));
+                if (privacyAdorner.Data == null) return;
+                ((PathGeometry)privacyAdorner.Data).Figures.Add(new PathFigure(vertices.First(), segments, true));
+            }
+            catch (NotSetException e)
+            {
+            }
+        }
         public void AddPrivateRegion(IEnumerable<Point> vertices)
         {
-            RemovePrivateRegion(vertices);
-            var segments = vertices.Select(v => (PathSegment)new LineSegment(v, true));
-            ((PathGeometry)privacyAdorner.Data).Figures.Add(new PathFigure(vertices.First(), segments, true));
+            AddPrivateRegion(vertices, Colors.Red);
         }
         public void RemovePrivateRegion(IEnumerable<Point> vertices)
         {
-            if(vertices == null) return;
+            if (vertices == null) return;
             var sum = vertices.Aggregate(0.0, (acc, v) => acc + v.X + v.Y);
             var geometry = (PathGeometry)privacyAdorner.Data;
+            if (geometry == null) return;
             var regionToRemove = geometry.Figures.Where(
-                f=>{
+                f =>
+                {
                     var figureSum = f.Segments.Select(s => ((LineSegment)s).Point).Aggregate(0.0, (acc, p) => acc + p.X + p.Y);
                     return Math.Abs(figureSum - sum) < 1;
                 }).ToList();
@@ -432,22 +499,64 @@ namespace SandRibbon.Components
             var width = (int)ActualWidth;
             var height = (int)ActualHeight;
             new PrintingHost().saveCanvasToDisk(
-                this,
+                this.clonePublicOnly(),
                 path,
                 width,
                 height,
                 width,
                 height);
-            var hostedFileName = ResourceUploader.uploadResource(me, path);
-            Commands.SendQuiz.Execute(new QuizDetails
-            {
-                author = me,
-                optionCount = options,
-                quizPath = hostedFileName,
-                returnSlide = currentLocation.currentSlide,
-                targetSlide = currentLocation.currentSlide,
-                target = "presentationSpace"
-            });
+            MeTLLib.ClientFactory.Connection().UploadResource(new Uri(path,UriKind.RelativeOrAbsolute), Globals.me).ToString();
+        }
+        private FrameworkElement clonePublicOnly(){
+            var clone = new InkCanvas();
+            clone.Height = ActualHeight;
+            clone.Width = ActualWidth;
+            foreach(var stroke in stack.handwriting.Strokes.Where(s=>s.tag().privacy == "public"))
+                clone.Strokes.Add(stroke.Clone());
+            foreach(var canvas in new AbstractCanvas[]{stack.images, stack.text})
+                foreach (var child in canvas.Children)
+                {
+                    var fe = (FrameworkElement)child;
+                    if (fe.privacy() == "public")
+                        clone.Children.Add(viewFor(fe));
+                }
+            var size = new Size(ActualWidth,ActualHeight);
+            clone.Measure(size);
+            clone.Arrange(new Rect(size));
+            return clone;
+        }
+        private FrameworkElement cloneAll(){
+            var clone = new InkCanvas();
+            foreach(var stroke in stack.handwriting.Strokes)
+                clone.Strokes.Add(stroke.Clone());
+            foreach(var canvas in new AbstractCanvas[]{stack.images, stack.text})
+                foreach (var child in canvas.Children)
+                {
+                    var fe = (FrameworkElement)child;
+                    clone.Children.Add(viewFor(fe));
+                }
+            var size = new Size(ActualWidth,ActualHeight);
+            clone.Measure(size);
+            clone.Arrange(new Rect(size));
+            return clone;
+        }
+        private FrameworkElement viewFor(FrameworkElement element) {
+            var rect = new Rectangle {
+                Width = element.ActualWidth,
+                Height = element.ActualHeight,
+                Fill=new VisualBrush(element)
+            };
+            /* Okay, this bit is complicated.  The bounds of an image are the bounds of the element(x,y,height,width), 
+             * not the image, but the actualHeight of an image (which is calculated after drawing the image) which is 
+             * the pixels of the imageData.  So, when an image is drawn with correct aspect ratio, it may be smaller
+             * than the bounds, which means that the x and y will need to be adjusted by half the difference between the
+             * height and the actual height.  However, this doesn't happen for textboxes, and if you apply the difference
+             * one of them way a NaN, and adding a NaN to any number makes a NaN.  So, that's why these "SetTop" and "SetLeft"
+             * are so horrible.
+            */
+            InkCanvas.SetTop(rect, (element is TextBox)?InkCanvas.GetTop(element):InkCanvas.GetTop(element) + ((element.Height != element.ActualHeight)?((element.Height - element.ActualHeight) / 2):0));
+            InkCanvas.SetLeft(rect, (element is TextBox)?InkCanvas.GetLeft(element):InkCanvas.GetLeft(element) + ((element.Width != element.ActualWidth) ? ((element.Width - element.ActualWidth) / 2) : 0));
+            return rect;
         }
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -456,7 +565,7 @@ namespace SandRibbon.Components
     }
     public class PresentationSpaceAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
     {
-        public PresentationSpaceAutomationPeer(FrameworkElement parent):base(parent) {}
+        public PresentationSpaceAutomationPeer(FrameworkElement parent) : base(parent) { }
         public PresentationSpace PresentationSpace
         {
             get { return (PresentationSpace)base.Owner; }
@@ -473,7 +582,7 @@ namespace SandRibbon.Components
         }
         public string Value
         {
-            get { return Permissions.InferredTypeOf(this.PresentationSpace.currentDetails.Permissions).Label; }
+            get { return MeTLLib.DataTypes.Permissions.InferredTypeOf(Globals.conversationDetails.Permissions).Label; }
         }
         public void SetValue(string value)
         {
@@ -484,5 +593,10 @@ namespace SandRibbon.Components
     {
         public int id;
         public RenderTargetBitmap data;
+    }
+    public class HighlightParameters
+    {
+        public IEnumerable<Point> verticies;
+        public Color color;
     }
 }

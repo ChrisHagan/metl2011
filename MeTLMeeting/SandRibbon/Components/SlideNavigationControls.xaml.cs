@@ -38,10 +38,12 @@ namespace SandRibbon.Components
                 {
                     Commands.SetSync.Execute(true);
                     addSlideButton.Visibility = Visibility.Visible;
+                    editConversation.Visibility = Visibility.Visible;
                     syncButton.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
+                    editConversation.Visibility = Visibility.Collapsed;
                     addSlideButton.Visibility = Visibility.Collapsed;
                     syncButton.Visibility = Visibility.Visible;
                 }
