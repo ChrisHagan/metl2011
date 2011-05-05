@@ -2091,68 +2091,68 @@
   </CompletionStatisticsManager>
   <RecentFiles>
     <RecentFiles>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:StatusBar.xaml" caret="0" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml" caret="4840" fromTop="3" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Projector.xaml.cs" caret="3852" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml" caret="4606" fromTop="21" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:ConversationDetails.cs" caret="216" fromTop="10" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ToolBar.xaml" caret="0" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="4619" fromTop="11" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="4789" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PrintingHost.xaml.cs" caret="506" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/d:Connection/f:Printer.cs" caret="7662" fromTop="21" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="61892" fromTop="5" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ImportProgress.xaml.cs" caret="3038" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:CreateAQuiz.xaml.cs" caret="6483" fromTop="15" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:ConnectionExtensions.cs" caret="2842" fromTop="15" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml.cs" caret="12836" fromTop="20" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:Globals.cs" caret="3050" fromTop="15" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:StatusBar.xaml.cs" caret="2103" fromTop="20" />
-      <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="701" fromTop="7" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="28109" fromTop="7" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PrivacyTools.xaml.cs" caret="1991" fromTop="29" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="584" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml.cs" caret="1957" fromTop="25" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:AdvancedTools.xaml.cs" caret="596" fromTop="21" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:AdvancedTools.xaml" caret="731" fromTop="12" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:EditConversation.xaml" caret="1436" fromTop="24" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:blacklistController.xaml" caret="1149" fromTop="19" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="12900" fromTop="25" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:NetworkController.cs" caret="7646" fromTop="24" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:Client.cs" caret="6791" fromTop="26" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="14844" fromTop="14" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:ResourceDictionaries/f:TypedControlStylingEventHandlers.cs" caret="17885" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/f:Converters.cs" caret="7688" fromTop="23" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml.cs" caret="2135" fromTop="18" />
+      <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="21140" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:StatusBar.xaml.cs" caret="944" fromTop="19" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Submissions/f:ScreenshotSubmission.xaml.cs" caret="1247" fromTop="18" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:BackStageNav.xaml.cs" caret="1083" fromTop="22" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="2169" fromTop="19" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="1820" fromTop="23" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Projector.xaml.cs" caret="2493" fromTop="22" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml.cs" caret="796" fromTop="22" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="3207" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:UserCanvasStack.xaml.cs" caret="1107" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PrivacyTools.xaml.cs" caret="1568" fromTop="22" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:AdvancedTools.xaml.cs" caret="809" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Attachments.xaml.cs" caret="2022" fromTop="15" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="32149" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="8364" fromTop="26" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/d:Structure/f:IConversationDetailsProvider.cs" caret="199" fromTop="7" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/d:Connection/f:Printer.cs" caret="4839" fromTop="22" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:Client.cs" caret="17730" fromTop="27" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:IConversationDetailsProvider.cs" caret="195" fromTop="7" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:FileConversationDetailsProvider.cs" caret="2857" fromTop="31" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/f:INodeFix.cs" caret="563" fromTop="15" />
     </RecentFiles>
     <RecentEdits>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="27329" fromTop="8" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="27441" fromTop="10" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="42750" fromTop="20" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="42317" fromTop="11" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="40848" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="41852" fromTop="24" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="21628" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="22127" fromTop="31" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="1250" fromTop="17" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="2006" fromTop="19" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="27684" fromTop="17" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="27360" fromTop="11" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="22491" fromTop="14" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="2898" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="1546" fromTop="10" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="1698" fromTop="15" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="27606" fromTop="10" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="28186" fromTop="10" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="14274" fromTop="25" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="12967" fromTop="32" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="12588" fromTop="20" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="23982" fromTop="43" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml.cs" caret="1521" fromTop="13" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml.cs" caret="1720" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:AdvancedTools.xaml.cs" caret="858" fromTop="26" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml.cs" caret="1533" fromTop="13" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml.cs" caret="1732" fromTop="18" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:AdvancedTools.xaml" caret="799" fromTop="13" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:AdvancedTools.xaml.cs" caret="1008" fromTop="32" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:AdvancedTools.xaml.cs" caret="1020" fromTop="32" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:blacklistController.xaml" caret="1138" fromTop="0" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:blacklistController.xaml" caret="330" fromTop="4" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:blacklistController.xaml" caret="925" fromTop="14" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="7717" fromTop="30" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:StatusBar.xaml.cs" caret="986" fromTop="12" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:StatusBar.xaml.cs" caret="2029" fromTop="28" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:StatusBar.xaml.cs" caret="2045" fromTop="28" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Submissions/f:ScreenshotSubmission.xaml.cs" caret="2551" fromTop="28" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Submissions/f:ScreenshotSubmission.xaml.cs" caret="2291" fromTop="19" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Submissions/f:ScreenshotSubmission.xaml.cs" caret="1248" fromTop="18" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationConfigurationDialog.xaml.cs" caret="2170" fromTop="22" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="6605" fromTop="27" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="6942" fromTop="34" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PresentationSpace.xaml.cs" caret="1821" fromTop="26" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideNavigationControls.xaml.cs" caret="797" fromTop="22" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="3207" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:UserCanvasStack.xaml.cs" caret="1107" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PrivacyTools.xaml.cs" caret="1568" fromTop="22" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:AdvancedTools.xaml.cs" caret="810" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Attachments.xaml.cs" caret="2023" fromTop="15" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>
