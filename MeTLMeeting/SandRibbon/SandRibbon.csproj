@@ -961,6 +961,7 @@
     <Content Include="lame_enc.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\banhammer.jpg" />
     <Content Include="Resources\empty.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

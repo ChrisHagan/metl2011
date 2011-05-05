@@ -10,7 +10,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
             <dict:Button x:Name="deleteButton" ToolTip="{DynamicResource DeleteContentToolTip}" Icon="\Resources\sexyDelete.png" Text="Delete" Click="deleteContent" InternalButtonSize="Small"/>
             <dict:Button x:Name="hideButton" ToolTip="{DynamicResource HideContentToolTip}" Icon="\Resources\Hide.png" Text="Hide" Click="hideContent" InternalButtonSize="Small"/>
             <dict:Button x:Name="showButton" ToolTip="{DynamicResource ShowContentToolTip}" Icon="\Resources\Show.png" Text="Show" Click="showContent" InternalButtonSize="Small"/>
-            <dict:Button x:Name="banhammerButton" ToolTip="{DynamicResource ShowContentToolTip}" Icon="\Resources\banhammer.jpg" Text="Ban" Click="banhammerContent" InternalButtonSize="Small"/>
+            <dict:Button x:Name="banhammerButton" ToolTip="{DynamicResource ShowContentToolTip}" Icon ="\Resources\banhammer.jpg" Text="Ban" Click="banhammerContent" InternalButtonSize="Small"/>
         </StackPanel>
     </Canvas>
 </UserControl>

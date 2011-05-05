@@ -24,7 +24,7 @@ namespace SandRibbon.Components
         public SlideNavigationControls()
         {
             InitializeComponent();
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
             Commands.SetSync.Execute(false);
         }
@@ -38,12 +38,10 @@ namespace SandRibbon.Components
                 {
                     Commands.SetSync.Execute(true);
                     addSlideButton.Visibility = Visibility.Visible;
-                    editConversation.Visibility = Visibility.Visible;
                     syncButton.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    editConversation.Visibility = Visibility.Collapsed;
                     addSlideButton.Visibility = Visibility.Collapsed;
                     syncButton.Visibility = Visibility.Visible;
                 }

@@ -25,7 +25,7 @@ namespace SandRibbon.Tabs
         public AdvancedTools()
         {
             InitializeComponent();
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
         }
 
         private void UpdateConversationDetails(ConversationDetails details)

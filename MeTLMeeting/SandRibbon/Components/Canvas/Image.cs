@@ -1023,38 +1023,19 @@ namespace SandRibbon.Components.Canvas
                 List<UIElement> selectedElements = new List<UIElement>();
                 Dispatcher.adopt(() => selectedElements = GetSelectedElements().ToList());
 
-                foreach (System.Windows.Controls.Image image in selectedElements.Where(i =>
-                    i is System.Windows.Controls.Image
-                    && ((System.Windows.Controls.Image)i).tag().privacy != newPrivacy))
+                foreach (System.Windows.Controls.Image image in selectedElements.Where(i => i is System.Windows.Controls.Image && ((System.Windows.Controls.Image)i).tag().privacy != newPrivacy))
                 {
-                    var oldTag = ((System.Windows.Controls.Image)image).tag();
-                    Commands.SendDirtyImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement
-                    (currentSlide, Globals.me, target, ((System.Windows.Controls.Image)image).tag().privacy, ((System.Windows.Controls.Image)image).tag().id));
+                    var oldTag = image.tag();
+                    Commands.SendDirtyImage.ExecuteAsync(new TargettedDirtyElement (currentSlide, image.tag().author, target, image.tag().privacy, image.tag().id));
                     oldTag.privacy = newPrivacy;
-                    ((System.Windows.Controls.Image)image).tag(oldTag);
-                    
-                    
+                    image.tag(oldTag);
                     var privateRoom = string.Format("{0}{1}", currentSlide, image.tag().author);
                     if(newPrivacy.ToLower() == "private" && Globals.isAuthor && Globals.me != image.tag().author)
                         Commands.SneakInto.Execute(privateRoom);
-
-                    Commands.SendImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedImage(currentSlide, Globals.me, target, newPrivacy, (System.Windows.Controls.Image)image));
+                    Commands.SendImage.ExecuteAsync(new TargettedImage(currentSlide, image.tag().author, target, newPrivacy, image));
                     if(newPrivacy.ToLower() == "private" && Globals.isAuthor && Globals.me != image.tag().author)
                         Commands.SneakOutOf.Execute(privateRoom);
                         
-                    Commands.SendImage.ExecuteAsync(new MeTLLib.DataTypes.TargettedImage(currentSlide, Globals.me, target, newPrivacy, (System.Windows.Controls.Image)image));
-                }
-                foreach (Video video in selectedElements.Where(i =>
-                    i is MeTLLib.DataTypes.Video
-                    && ((MeTLLib.DataTypes.Video)i).tag().privacy != newPrivacy))
-                {
-                    var oldTag = ((MeTLLib.DataTypes.Video)video).tag();
-                    Commands.SendDirtyVideo.ExecuteAsync(new MeTLLib.DataTypes.TargettedDirtyElement
-                    (currentSlide, Globals.me, target, ((MeTLLib.DataTypes.Video)video).tag().privacy, ((MeTLLib.DataTypes.Video)video).tag().id));
-                    oldTag.privacy = newPrivacy;
-                    ((MeTLLib.DataTypes.Video)video).tag(oldTag);
-                    Commands.SendVideo.ExecuteAsync(new MeTLLib.DataTypes.TargettedVideo
-                    (currentSlide, Globals.me, target, newPrivacy, (MeTLLib.DataTypes.Video)video));
                 }
             }
             Dispatcher.adoptAsync(() => Select(new List<UIElement>()));

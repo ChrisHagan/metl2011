@@ -298,7 +298,7 @@ namespace SandRibbon.Components.Canvas
             RemovePrivacyStylingFromElement(box);
             if (Children.ToList().Where(c => ((MeTLTextBox)c).tag().id == box.tag().id).ToList().Count != 0)
                 Children.Remove(Children.ToList().Where(b => ((MeTLTextBox)b).tag().id == box.tag().id).First());
-            Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(currentSlide, Globals.me, target, box.tag().privacy, box.tag().id));
+            Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(currentSlide, box.tag().author, target, box.tag().privacy, box.tag().id));
         }
 
         private void receiveDirtyText(TargettedDirtyElement element)
@@ -716,7 +716,7 @@ namespace SandRibbon.Components.Canvas
             var privateRoom = string.Format("{0}{1}", currentSlide, box.tag().author);
             if(thisPrivacy.ToLower() == "private" && Globals.isAuthor && Globals.me != box.tag().author)
                 Commands.SneakInto.Execute(privateRoom);
-            Commands.SendTextBox.ExecuteAsync(new MeTLLib.DataTypes.TargettedTextBox(slide, Globals.me, target, thisPrivacy, box));
+            Commands.SendTextBox.ExecuteAsync(new TargettedTextBox(slide, box.tag().author, target, thisPrivacy, box));
             if(thisPrivacy.ToLower() == "private" && Globals.isAuthor && Globals.me != box.tag().author)
                 Commands.SneakOutOf.Execute(privateRoom);
         }

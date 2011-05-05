@@ -26,7 +26,7 @@ namespace SandRibbon.Chrome
             InitializeComponent();
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
         }
         private void SetPrivacy(string _privacy)
         {
@@ -46,23 +46,14 @@ namespace SandRibbon.Chrome
             try
             {
                 var details = Globals.conversationDetails;
-                Dispatcher.adoptAsync(delegate
-                                             {
-                                                 try
-                                                 {
-                                                     if (ConversationDetails.Empty.Equals(details))
-                                                         StatusLabel.Text = "MeTL 2011";
-                                                     else
-                                                         string.Format(
-                                                             "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
-                                                             Globals.privacy,
-                                                             MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
-                                                             details.Subject, Globals.me);
-                                                 }
-                                                 catch (NotSetException)
-                                                 {
-                                                 }
-                                             });
+                if (ConversationDetails.Empty.Equals(details))
+                    StatusLabel.Text = "MeTL 2011";
+                else
+                    string.Format(
+                        "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
+                        Globals.privacy,
+                        MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
+                        details.Subject, Globals.me);
             }
             catch(NotSetException)
             {

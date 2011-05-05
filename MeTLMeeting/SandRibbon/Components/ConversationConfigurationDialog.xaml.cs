@@ -51,7 +51,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             this.dialogMode = mode;
             extantConversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             this.CommandBindings.Add(new CommandBinding(CompleteConversationDialog, Create, CanCompleteDialog));
             if (mode == ConversationConfigurationMode.IMPORT)
             {

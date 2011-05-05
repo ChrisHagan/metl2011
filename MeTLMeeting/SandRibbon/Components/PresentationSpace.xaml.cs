@@ -40,7 +40,7 @@ namespace SandRibbon.Components
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
             Commands.MirrorPresentationSpace.RegisterCommandToDispatcher(new DelegateCommand<Window1>(MirrorPresentationSpace, CanMirrorPresentationSpace));
             Commands.PreParserAvailable.RegisterCommandToDispatcher(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
             Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(exploreBubble));
@@ -134,17 +134,14 @@ namespace SandRibbon.Components
             if (ConversationDetails.Empty.Equals(details)) return;
             if (details.Jid == "" || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject)))
             {
-                Dispatcher.adoptAsync(delegate
+                foreach (FrameworkElement child in stack.canvasStack.Children)
                 {
-                    foreach (FrameworkElement child in stack.canvasStack.Children)
+                    if (child is AbstractCanvas)
                     {
-                        if (child is AbstractCanvas)
-                        {
-                            ((AbstractCanvas)child).Strokes.Clear();
-                            ((AbstractCanvas)child).Children.Clear();
-                        }
+                        ((AbstractCanvas)child).Strokes.Clear();
+                        ((AbstractCanvas)child).Children.Clear();
                     }
-                });
+                }
                 return;
             }
             try
