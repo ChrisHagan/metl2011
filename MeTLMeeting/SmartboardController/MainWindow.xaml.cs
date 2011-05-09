@@ -21,10 +21,6 @@ namespace SmartboardController
         {
             InitializeComponent();
         }
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            App.initializeSmartboard(this);
-        }
         private void Connect_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = !App.isConnectedToSmartboard;

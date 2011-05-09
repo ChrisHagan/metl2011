@@ -9,6 +9,7 @@ using System.Windows.Input;
 using SBSDKComWrapperLib;
 using MessageBox = System.Windows.MessageBox;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace SmartboardController
 {
@@ -21,27 +22,29 @@ namespace SmartboardController
         private static extern int RegisterWindowMessageA([MarshalAs(UnmanagedType.LPStr)] string lpString);
         private int SBSDKMessageID = RegisterWindowMessageA("SBSDK_NEW_MESSAGE");
         public bool isConnected = false;
-        private IntPtr mainMeTLWindowPtr;
-        private HwndSource mainMeTLWindowSrc;
-        private DependencyObject dpObj;
-        public SmartboardConnector(DependencyObject windowsObject)
-        {
-            dpObj = windowsObject;
-        }
+        private static List<int> attachedMeTLWindows = new List<int>();
+        
         private void SMARTboardConsole(string message)
         {
             Trace.TraceInformation("SmartboardConnector Message at (" + DateTime.Now + "): " + message);
         }
-        public void connectToSmartboard(object _unused)
+        private void addHook(IntPtr Hwnd)
         {
+            var mainMeTLWindowSrc = HwndSource.FromHwnd(Hwnd);
+            if (mainMeTLWindowSrc != null)
+                mainMeTLWindowSrc.AddHook(windowMessageHook);
+        }
+        public void connectToSmartboard(IntPtr Hwnd)
+        {
+            disconnectFromSmartboard();        
             try
             {
-                Main_Loaded();
+                addHook(Hwnd);
                 Sbsdk = new SBSDKBaseClass2();
             }
             catch (Exception e)
             {
-                Trace.TraceInformation("SmartboardConnector::connectToSmartboard Exception: " + e.Message);
+                SMARTboardConsole("SmartboardConnector::connectToSmartboard Exception: " + e.Message);
                 return;
             }
             if (Sbsdk != null)
@@ -57,16 +60,29 @@ namespace SmartboardController
             }
             if (Sbsdk != null)
             {
-                Sbsdk.SBSDKAttachWithMsgWnd(mainMeTLWindowPtr.ToInt32(), false, mainMeTLWindowPtr.ToInt32());
-                Sbsdk.SBSDKSetSendMouseEvents(mainMeTLWindowPtr.ToInt32(), _SBCSDK_MOUSE_EVENT_FLAG.SBCME_ALWAYS, -1);
+                Sbsdk.SBSDKAttachWithMsgWnd(Hwnd.ToInt32(), false, Hwnd.ToInt32());
+                Sbsdk.SBSDKSetSendMouseEvents(Hwnd.ToInt32(), _SBCSDK_MOUSE_EVENT_FLAG.SBCME_ALWAYS, -1);
             }
             isConnected = true;
             SMARTboardConsole("Connected to SMARTboard");
         }
-        public void disconnectFromSmartboard(object _unused)
+        public void disconnectFromSmartboard()
         {
-            if (Sbsdk != null)
-                Sbsdk.SBSDKDetach(mainMeTLWindowPtr.ToInt32());
+            List<int> attachedMeTLWindowsToBeForgotten = new List<int>();
+            if (attachedMeTLWindows.Count > 0)
+                foreach (int IntPtr in attachedMeTLWindows)
+                {
+                    try
+                    {
+                        HwndSource.FromHwnd((IntPtr)IntPtr).RemoveHook(windowMessageHook);
+                        if (Sbsdk != null)
+                            Sbsdk.SBSDKDetach(IntPtr);
+                        attachedMeTLWindowsToBeForgotten.Add(IntPtr);
+                    }
+                    catch (Exception) { }
+                }
+            foreach (int IntPtr in attachedMeTLWindowsToBeForgotten)
+                attachedMeTLWindows.Remove(IntPtr);
             if (SbsdkEvents != null)
             {
                 SbsdkEvents.OnEraser -= new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnEraserEventHandler(this.OnEraser);
@@ -78,13 +94,15 @@ namespace SmartboardController
             isConnected = false;
             SMARTboardConsole("Disconnected from SMARTboard");
         }
-        private void Main_Loaded()
+        private HwndSourceHook _windowMessageHook;
+        private HwndSourceHook windowMessageHook
         {
-            if (dpObj == null) return;
-            mainMeTLWindowPtr = new WindowInteropHelper(Window.GetWindow(dpObj)).Handle;
-            mainMeTLWindowSrc = HwndSource.FromHwnd(mainMeTLWindowPtr);
-            if (mainMeTLWindowSrc != null)
-                mainMeTLWindowSrc.AddHook(new HwndSourceHook(WndProc));
+            get
+            {
+                if (_windowMessageHook == null)
+                    _windowMessageHook = new HwndSourceHook(WndProc);
+                return _windowMessageHook;
+            }
         }
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
