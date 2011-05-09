@@ -760,7 +760,9 @@ namespace MeTLLib.DataTypes
                     Tag = tag,
                     Text = text,
                     Height = height,
-                    Width = width
+                    Width = width,
+                    AcceptsReturn = true,
+                    TextWrapping = TextWrapping.WrapWithOverflow
                 };
 
                 InkCanvas.SetLeft(textBox, x);
@@ -1391,6 +1393,19 @@ namespace MeTLLib.DataTypes
             protected static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\empty.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
             public Func<System.Windows.Controls.Image> curryEvaluation(MeTLServerAddress server) {
                 return ()=> forceEvaluation();
+            }
+            public System.Windows.Controls.Image forceEvaluationForPrinting()
+            {
+                System.Windows.Controls.Image image = new System.Windows.Controls.Image
+                {
+                    Tag = "FOR_PRINTING_ONLY::::" + this.tag,
+                    Height = this.height,
+                    Width = this.width,
+                    Source = this.asynchronouslyLoadImageData()
+                };
+                InkCanvas.SetLeft(image, this.x);
+                InkCanvas.SetTop(image, this.y);
+                return image;
             }
             public System.Windows.Controls.Image forceEvaluation()
             {
