@@ -198,7 +198,7 @@ namespace MeTLLib.Providers.Connection
         {
             if (error.TagName == "failure")
             {
-                conn.RegisterAccount = true;
+                usernameToBeRegistered = conn.Username;
                 Reset("Auth failed");
             }
             else
@@ -206,11 +206,17 @@ namespace MeTLLib.Providers.Connection
                 throw new AuthenticationException(error.ToString());
             }
         }
+        private static string usernameToBeRegistered;
         public void openConnection()
         {
             var resource = DateTimeFactory.Now().Ticks.ToString();
             jid.Resource = resource;
             makeAvailableNewSocket();
+            if (!(String.IsNullOrEmpty(usernameToBeRegistered) && usernameToBeRegistered == conn.Username))
+            {
+                conn.RegisterAccount = true;
+                usernameToBeRegistered = null;
+            }
             conn.Open(jid.User, "examplePassword", resource, 1);
         }
         private void OnLogin(object o)
