@@ -212,7 +212,7 @@ namespace MeTLLib.Providers.Connection
             var resource = DateTimeFactory.Now().Ticks.ToString();
             jid.Resource = resource;
             makeAvailableNewSocket();
-            if (!String.IsNullOrEmpty(usernameToBeRegistered) && usernameToBeRegistered == conn.Username)
+            if (!String.IsNullOrEmpty(usernameToBeRegistered) && usernameToBeRegistered == jid.User)
             {
                 conn.RegisterAccount = true;
                 usernameToBeRegistered = null;
@@ -299,6 +299,9 @@ namespace MeTLLib.Providers.Connection
                 switch (conn.XmppConnectionState) { 
                     case XmppConnectionState.Disconnected:
                         Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Resetting.  {0}", caller));
+                        openConnection();
+                        break;
+                    case XmppConnectionState.Authenticating:
                         openConnection();
                         break;
                 }
