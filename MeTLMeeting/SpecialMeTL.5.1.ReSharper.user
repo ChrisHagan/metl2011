@@ -18,7 +18,7 @@
       <Item value="slides" priority="9" />
       <Item value="foreach" priority="52" />
       <Item value="Slider" priority="1" />
-      <Item value="var" priority="187" />
+      <Item value="var" priority="190" />
       <Item value="in" priority="43" />
       <Item value="slide" priority="18" />
       <Item value="slideList" priority="0" />
@@ -34,7 +34,7 @@
       <Item value="strokes" priority="7" />
       <Item value="listX" priority="0" />
       <Item value="child" priority="3" />
-      <Item value="new" priority="155" />
+      <Item value="new" priority="159" />
       <Item value="InkCanvas" priority="6" />
       <Item value="children" priority="0" />
       <Item value="bounds" priority="0" />
@@ -101,8 +101,8 @@
       <Item value="thought" priority="13" />
       <Item value="true" priority="23" />
       <Item value="SystemParameters" priority="0" />
-      <Item value="Point" priority="0" />
-      <Item value="Rect" priority="1" />
+      <Item value="Point" priority="1" />
+      <Item value="Rect" priority="2" />
       <Item value="Rectangle" priority="1" />
       <Item value="marquee" priority="1" />
       <Item value="setup" priority="0" />
@@ -127,7 +127,7 @@
       <Item value="bubbleList" priority="1" />
       <Item value="parser" priority="12" />
       <Item value="relevantChildren" priority="0" />
-      <Item value="canvas" priority="1" />
+      <Item value="canvas" priority="3" />
       <Item value="AbstractCanvas" priority="0" />
       <Item value="newSlide" priority="2" />
       <Item value="SneakOutOf" priority="0" />
@@ -394,7 +394,7 @@
       <Item value="last" priority="1" />
       <Item value="newList" priority="2" />
       <Item value="ObservableCollection&lt;Option&gt;" priority="0" />
-      <Item value="for" priority="1" />
+      <Item value="for" priority="2" />
       <Item value="Option" priority="0" />
       <Item value="obj" priority="0" />
       <Item value="LostFocus" priority="0" />
@@ -428,7 +428,7 @@
       <Item value="Delegate" priority="0" />
       <Item value="HideProgressBlocker" priority="0" />
       <Item value="UnblockInput" priority="0" />
-      <Item value="case" priority="14" />
+      <Item value="case" priority="15" />
       <Item value="IO" priority="1" />
       <Item value="Path" priority="4" />
       <Item value="File" priority="9" />
@@ -444,7 +444,7 @@
       <Item value="Tabs" priority="0" />
       <Item value="attachments" priority="2" />
       <Item value="FileInfo" priority="4" />
-      <Item value="fileInfo" priority="6" />
+      <Item value="fileInfo" priority="7" />
       <Item value="uploadTime" priority="1" />
       <Item value="file" priority="14" />
       <Item value="SIZE" priority="0" />
@@ -496,7 +496,7 @@
       <Item value="switch" priority="0" />
       <Item value="Children" priority="9" />
       <Item value="ReceiveStrokes" priority="5" />
-      <Item value="break" priority="5" />
+      <Item value="break" priority="6" />
       <Item value="TargettedStroke" priority="10" />
       <Item value="default" priority="0" />
       <Item value="Strokes" priority="0" />
@@ -630,7 +630,7 @@
       <Item value="MeTLLibEventHandlers`0" priority="2" />
       <Item value="EventArgs`0" priority="0" />
       <Item value="SyncMoveRequestedEventArgs`0" priority="1" />
-      <Item value="NewsStyleUriParser`0" priority="1" />
+      <Item value="NewsStyleUriParser`0" priority="2" />
       <Item value="SyncMoveRequested" priority="0" />
       <Item value="SyncMoveRequestedEventArgs" priority="0" />
       <Item value="colour" priority="0" />
@@ -696,7 +696,7 @@
       <Item value="List&lt;PrintParser&gt;" priority="1" />
       <Item value="PrinterInfo" priority="1" />
       <Item value="Merged" priority="0" />
-      <Item value="ValidationResult`0" priority="3" />
+      <Item value="ValidationResult`0" priority="4" />
       <Item value="targetPageCount" priority="2" />
       <Item value="targetParserCount" priority="2" />
       <Item value="HttpResourceProvider`0" priority="0" />
@@ -736,7 +736,7 @@
       <Item value="slideId" priority="3" />
       <Item value="ThumbnailCaptureHost" priority="1" />
       <Item value="conversationDetailsToDescription`0" priority="1" />
-      <Item value="jid" priority="3" />
+      <Item value="jid" priority="4" />
       <Item value="thumbnailer" priority="2" />
       <Item value="thumbConversation`0" priority="0" />
       <Item value="Action`0" priority="0" />
@@ -899,6 +899,13 @@
       <Item value="_details" priority="4" />
       <Item value="mustBeInConversation`0" priority="0" />
       <Item value="cachedDetails" priority="3" />
+      <Item value="XmppConnectionState`0" priority="0" />
+      <Item value="openConnection`0" priority="0" />
+      <Item value="publicCanvas" priority="0" />
+      <Item value="privateCanvas" priority="0" />
+      <Item value="Size" priority="0" />
+      <Item value="PrintDialog" priority="0" />
+      <Item value="tempPrinter" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Windows.FrameworkElement">
       <Item value="BeginAnimation" priority="0" />
@@ -940,6 +947,8 @@
       <Item value="Flush" priority="0" />
       <Item value="Background" priority="0" />
       <Item value="stack" priority="0" />
+      <Item value="Measure`0" priority="0" />
+      <Item value="Arrange`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Windows.Media.Colors">
       <Item value="Wheat" priority="1" />
@@ -2085,47 +2094,54 @@
       <Item value="DESCRIBED" priority="0" />
       <Item value="PRINTING" priority="3" />
     </ItemStatistics>
+    <ItemStatistics item="Qualified:@agsXMPP.XmppConnectionState">
+      <Item value="Authenticating" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:agsXMPP.Jid">
+      <Item value="User" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Controls.PrintDialog">
+      <Item value="PrintableAreaWidth" priority="0" />
+      <Item value="PrintableAreaHeight" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Size">
+      <Item value="Equals`0" priority="0" />
+    </ItemStatistics>
   </CompletionStatisticsManager>
   <RecentFiles>
     <RecentFiles>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:App.xaml.cs" caret="4619" fromTop="11" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:PrintingHost.xaml.cs" caret="506" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ImportProgress.xaml.cs" caret="3038" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:CreateAQuiz.xaml.cs" caret="6483" fromTop="15" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:ConnectionExtensions.cs" caret="2842" fromTop="15" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:Globals.cs" caret="3050" fromTop="15" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:StatusBar.xaml.cs" caret="2103" fromTop="20" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:StatusBar.xaml" caret="0" fromTop="0" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ToolBar.xaml" caret="1063" fromTop="8" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:ConversationSearchBox.xaml.cs" caret="5930" fromTop="22" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:ConversationDetails.cs" caret="3628" fromTop="15" />
-      <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="20882" fromTop="15" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Utility/f:UIAdorner.cs" caret="1170" fromTop="14" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:ReceiveEvents.cs" caret="9633" fromTop="11" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="41124" fromTop="22" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:Client.cs" caret="17352" fromTop="15" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Structure/f:FileConversationDetailsProvider.cs" caret="6807" fromTop="22" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:NetworkController.cs" caret="13320" fromTop="11" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="32590" fromTop="28" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:SlideDisplay.xaml.cs" caret="1978" fromTop="11" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:HandWriting.cs" caret="11425" fromTop="19" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Providers/f:ThumbnailProvider.cs" caret="1389" fromTop="17" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/f:PowerPointLoader.cs" caret="1973" fromTop="30" />
       <File id="BB7E9E3D-B005-4F2B-9BA9-BC7B5EE0D7BD/d:Properties/f:AssemblyInfo.cs" caret="0" fromTop="0" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:CommandBridge.xaml" caret="474" fromTop="11" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/d:Connection/f:Printer.cs" caret="11116" fromTop="40" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="16529" fromTop="25" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="49246" fromTop="13" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AnswerAQuiz.xaml" caret="1143" fromTop="0" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AnswerAQuiz.xaml.cs" caret="639" fromTop="19" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:AnswerAQuiz.xaml.cs" caret="1552" fromTop="0" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:ClientFactory.cs" caret="711" fromTop="16" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Attachments.xaml" caret="0" fromTop="0" />
+      <File id="936C46AC-5A2F-4476-A89C-52537260DBE4/f:Commands.cs" caret="9462" fromTop="10" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:Client.cs" caret="11778" fromTop="27" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Login.xaml.cs" caret="3027" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Quizzing/f:Worm.xaml.cs" caret="4531" fromTop="10" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/f:HistoryProvider.cs" caret="1582" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/d:Connection/f:Printer.cs" caret="12249" fromTop="22" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Image.cs" caret="13528" fromTop="21" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:NetworkController.cs" caret="9090" fromTop="16" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/f:ReceiveEvents.cs" caret="5706" fromTop="15" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Attachments.xaml.cs" caret="2866" fromTop="26" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="28206" fromTop="28" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="48734" fromTop="35" />
     </RecentFiles>
     <RecentEdits>
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/d:Connection/f:Printer.cs" caret="8123" fromTop="29" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/d:Connection/f:Printer.cs" caret="8401" fromTop="34" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ImportProgress.xaml.cs" caret="4153" fromTop="38" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:DataTypes/f:MeTLStanzaDefinitions.cs" caret="61892" fromTop="5" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Chrome/f:ImportProgress.xaml.cs" caret="3038" fromTop="18" />
-      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="27360" fromTop="10" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="27360" fromTop="14" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="27329" fromTop="8" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="27441" fromTop="10" />
@@ -2148,8 +2164,14 @@
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/f:Window1.xaml.cs" caret="41500" fromTop="38" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="2407" fromTop="9" />
       <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="2408" fromTop="21" />
-      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="32323" fromTop="21" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="32453" fromTop="21" />
       <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Components/d:Canvas/f:Text.cs" caret="16390" fromTop="22" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Tabs/f:Attachments.xaml.cs" caret="2854" fromTop="26" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="12685" fromTop="25" />
+      <File id="4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD/d:Providers/d:Connection/f:JabberWire.cs" caret="8903" fromTop="16" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/d:Connection/f:Printer.cs" caret="3998" fromTop="22" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/d:Connection/f:Printer.cs" caret="3910" fromTop="22" />
+      <File id="0213D150-6485-4F40-AF80-5AC5E8BB10CC/d:Utils/d:Connection/f:Printer.cs" caret="12625" fromTop="18" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>

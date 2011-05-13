@@ -172,6 +172,7 @@ namespace MeTLLib.DataTypes
             uploadTime = UploadTime;
             size = Size;
             name = Name;
+            conversationJid = slide - ((Slide % 1000) % 400);
         }
         public bool ValueEquals(object obj)
         {
@@ -184,6 +185,7 @@ namespace MeTLLib.DataTypes
                 && foreignFile.name == name);
         }
         public string url { get; set; }
+        public int conversationJid { get; set; }
         public string uploadTime { get; set; }
         public long size { get; set; }
         public string name { get; set; }
@@ -943,6 +945,7 @@ namespace MeTLLib.DataTypes
                     SetTag(TIME, value.uploadTime);
                     SetTag(SIZE, value.size);
                     SetTag(NAME, value.name);
+                    SetTag(slideTag, value.conversationJid);
                 }
             }
         }

@@ -66,7 +66,10 @@ namespace SandRibbon.Utils.Connection
                 var imageToAdd = image.Value.imageSpecification.forceEvaluationForPrinting();
                 imageToAdd.Margin = new Thickness(5, 5, 5, 5);
                 if (image.Value.privacy == "public" || image.Value.target == "presentationSpace")
+                {
+                    Panel.SetZIndex(imageToAdd, image.Value.privacy == "public" ? 1 : 2);
                     publicCanvas.images.Children.Add(imageToAdd);
+                }
                 else if (image.Value.target == "notepad")
                     privateCanvas.images.Children.Add(imageToAdd);
             }
@@ -80,6 +83,13 @@ namespace SandRibbon.Utils.Connection
                     publicCanvas.text.Children.Add(textbox);
                 else if (box.Value.target == "notepad")
                     privateCanvas.text.Children.Add(textbox);
+            }
+            var tempPrinter = new PrintDialog();
+            var size = new Size(tempPrinter.PrintableAreaWidth, tempPrinter.PrintableAreaHeight);
+            foreach(var canvas in new[]{publicCanvas, privateCanvas})
+            {
+                canvas.Measure(size);
+                canvas.Arrange(new Rect(new Point(0,0), size));
             }
             if (privateCanvas.images.Children.Count == 0 & privateCanvas.text.Children.Count == 0 && privateCanvas.handwriting.Strokes.Count == 0)
                 return new[] { publicCanvas };
@@ -238,7 +248,7 @@ namespace SandRibbon.Utils.Connection
             foreach (var box in visual.text.Children)
             {
                 var textbox = (TextBox)box;
-                var testSize = new Size(textbox.Width, textbox.Height);
+                var testSize = new Size(textbox.ActualWidth, textbox.ActualHeight);
                 textbox.Measure(testSize);
                 textbox.Arrange(new Rect(testSize));
                 var lastCharRect = textbox.GetRectFromCharacterIndex(textbox.Text.Count());

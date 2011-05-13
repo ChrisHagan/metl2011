@@ -110,6 +110,8 @@ namespace SandRibbon.Components.Canvas
                 HandleCopy()));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) =>
                                                                             HandleCut()));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (sender, args) => Commands.Undo.Execute(null)));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (sender, args) => Commands.Redo.Execute(null)));
             SelectionChanged += new EventHandler(AbstractCanvas_SelectionChanged);
             Loaded += (_sender, _args) => this.Dispatcher.adoptAsync(delegate
             {

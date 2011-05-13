@@ -404,10 +404,7 @@ namespace SandRibbon.Components.Canvas
             {
                 if (!imageExistsOnCanvas(image))
                 {
-                    if (image.tag().isBackground)
-                        Panel.SetZIndex(image, 1);
-                    else
-                        Panel.SetZIndex(image, 2);
+                    Panel.SetZIndex(image, image.tag().isBackground ? 1 : 2);
                     Children.Add(image);
                 }
             }
