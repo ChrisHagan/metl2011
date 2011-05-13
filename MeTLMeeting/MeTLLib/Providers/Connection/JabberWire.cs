@@ -212,7 +212,7 @@ namespace MeTLLib.Providers.Connection
             var resource = DateTimeFactory.Now().Ticks.ToString();
             jid.Resource = resource;
             makeAvailableNewSocket();
-            if (!(String.IsNullOrEmpty(usernameToBeRegistered) && usernameToBeRegistered == conn.Username))
+            if (!String.IsNullOrEmpty(usernameToBeRegistered) && usernameToBeRegistered == conn.Username)
             {
                 conn.RegisterAccount = true;
                 usernameToBeRegistered = null;
