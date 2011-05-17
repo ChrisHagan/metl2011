@@ -34,6 +34,8 @@ namespace SandRibbon.Components
             privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
             privacyOverlay.Freeze();
             InitializeComponent();
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (sender, args) => Commands.Undo.Execute(null)));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, (sender, args) => Commands.Redo.Execute(null)));
             Commands.InitiateDig.RegisterCommand(new DelegateCommand<object>(InitiateDig));
             Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveTo));
             Commands.ReceiveLiveWindow.RegisterCommand(new DelegateCommand<LiveWindowSetup>(ReceiveLiveWindow));
