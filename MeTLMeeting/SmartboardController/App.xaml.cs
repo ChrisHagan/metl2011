@@ -13,20 +13,26 @@ namespace SmartboardController
     public partial class App : Application
     {
         public static RoutedCommand connectToSmartboard = new RoutedCommand();
+        public static RoutedCommand reconnectToSmartboard = new RoutedCommand();
         public static RoutedCommand disconnectFromSmartboard = new RoutedCommand();
         private static AutomationElement metl;
         private static int metlPtr;
+        public static int appPtr;
         private static SmartboardConnector smartboard = new SmartboardConnector();
         public static void AttachToProcess()
         {
             try
             {
-                metlPtr = (int)WindowsInteropFunctions.fuzzyFindWindow("MeTL");
-                if (metlPtr > 0)
+                var candidate = WindowsInteropFunctions.fuzzyFindWindow("MeTL");
+                if (metlPtr == 0 || metlPtr != candidate.ToInt32())
                 {
-                    var rootMeTLWindow = AutomationElement.FromHandle((IntPtr)metlPtr);
-                    var rootMetl = rootMeTLWindow.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "ribbonWindow"))[0];
-                    metl = rootMetl.Descendant("commandBridge");
+                    metlPtr = (int)candidate;
+                    if (metlPtr > 0)
+                    {
+                        var rootMeTLWindow = AutomationElement.FromHandle((IntPtr)metlPtr);
+                        metl = rootMeTLWindow.Descendant("commandBridge");
+                        smartboard.ReAssertConnection(metlPtr);
+                    }
                 }
             }
             catch (Exception)
@@ -61,14 +67,24 @@ namespace SmartboardController
                 metl.Value(String.Format("SetLayer:{0}", mode));
             }
         }
+        public static void InitialConnectToSmartboard()
+        {
+            AttachToProcess();
+            if (metlPtr == 0)
+                metlPtr = appPtr;
+            if (metlPtr > 0 && appPtr > 0 && !isConnectedToSmartboard)
+                smartboard.connectToSmartboard((IntPtr)metlPtr);
+        }
         public static void ConnectToSmartboard()
         {
-            if (metlPtr > 0 && !isConnectedToSmartboard)
+            AttachToProcess();
+            if (metlPtr > 0 && appPtr > 0 && !isConnectedToSmartboard)
                 smartboard.connectToSmartboard((IntPtr)metlPtr);
         }
         public static void DisconnectFromSmartboard()
         {
-            if (metlPtr > 0 && isConnectedToSmartboard)
+            AttachToProcess();
+            if (metlPtr > 0 && appPtr > 0 && isConnectedToSmartboard)
                 smartboard.disconnectFromSmartboard();
         }
         public static bool isConnectedToSmartboard

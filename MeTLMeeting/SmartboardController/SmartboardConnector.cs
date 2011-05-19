@@ -23,7 +23,12 @@ namespace SmartboardController
         private int SBSDKMessageID = RegisterWindowMessageA("SBSDK_NEW_MESSAGE");
         public bool isConnected = false;
         private static List<int> attachedMeTLWindows = new List<int>();
-        
+
+        public void ReAssertConnection(int Hwnd)
+        {
+            if (attachedMeTLWindows.Contains(Hwnd)) return;
+            connectToSmartboard((IntPtr)Hwnd);
+        }
         private void SMARTboardConsole(string message)
         {
             Trace.TraceInformation("SmartboardConnector Message at (" + DateTime.Now + "): " + message);
@@ -32,67 +37,85 @@ namespace SmartboardController
         {
             var mainMeTLWindowSrc = HwndSource.FromHwnd(Hwnd);
             if (mainMeTLWindowSrc != null)
+            {
                 mainMeTLWindowSrc.AddHook(windowMessageHook);
+                attachedMeTLWindows.Add((int)Hwnd);
+            }
         }
         public void connectToSmartboard(IntPtr Hwnd)
         {
-            disconnectFromSmartboard();        
             try
             {
-                addHook(Hwnd);
-                Sbsdk = new SBSDKBaseClass2();
+                disconnectFromSmartboard();
+                try
+                {
+                    addHook(Hwnd);
+                    if (Hwnd.ToInt32() != App.appPtr)
+                        addHook((IntPtr)App.appPtr);
+                    Sbsdk = new SBSDKBaseClass2();
+                }
+                catch (Exception e)
+                {
+                    SMARTboardConsole("SmartboardConnector::connectToSmartboard Exception: " + e.Message);
+                    return;
+                }
+                if (Sbsdk != null)
+                {
+                    SbsdkEvents = (_ISBSDKBaseClass2Events_Event)Sbsdk;
+                }
+                if (SbsdkEvents != null)
+                {
+                    SbsdkEvents.OnEraser += new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnEraserEventHandler(this.OnEraser);
+                    SbsdkEvents.OnNoTool += new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnNoToolEventHandler(this.OnNoTool);
+                    SbsdkEvents.OnPen += new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnPenEventHandler(this.OnPen);
+                    SbsdkEvents.OnBoardStatusChange += new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnBoardStatusChangeEventHandler(this.OnBoardStatusChange);
+                }
+                if (Sbsdk != null)
+                {
+                    Sbsdk.SBSDKAttachWithMsgWnd(App.appPtr, false, App.appPtr);
+                    Sbsdk.SBSDKAttachWithMsgWnd(Hwnd.ToInt32(), false, App.appPtr);
+                    Sbsdk.SBSDKSetSendMouseEvents(App.appPtr, _SBCSDK_MOUSE_EVENT_FLAG.SBCME_ALWAYS, -1);
+                    Sbsdk.SBSDKSetSendMouseEvents(Hwnd.ToInt32(), _SBCSDK_MOUSE_EVENT_FLAG.SBCME_ALWAYS, -1);
+                }
+                isConnected = true;
+                SMARTboardConsole("Connected to SMARTboard");
             }
-            catch (Exception e)
-            {
-                SMARTboardConsole("SmartboardConnector::connectToSmartboard Exception: " + e.Message);
-                return;
-            }
-            if (Sbsdk != null)
-            {
-                SbsdkEvents = (_ISBSDKBaseClass2Events_Event)Sbsdk;
-            }
-            if (SbsdkEvents != null)
-            {
-                SbsdkEvents.OnEraser += new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnEraserEventHandler(this.OnEraser);
-                SbsdkEvents.OnNoTool += new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnNoToolEventHandler(this.OnNoTool);
-                SbsdkEvents.OnPen += new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnPenEventHandler(this.OnPen);
-                SbsdkEvents.OnBoardStatusChange += new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnBoardStatusChangeEventHandler(this.OnBoardStatusChange);
-            }
-            if (Sbsdk != null)
-            {
-                Sbsdk.SBSDKAttachWithMsgWnd(Hwnd.ToInt32(), false, Hwnd.ToInt32());
-                Sbsdk.SBSDKSetSendMouseEvents(Hwnd.ToInt32(), _SBCSDK_MOUSE_EVENT_FLAG.SBCME_ALWAYS, -1);
-            }
-            isConnected = true;
-            SMARTboardConsole("Connected to SMARTboard");
+            catch (Exception) { }
         }
         public void disconnectFromSmartboard()
         {
-            List<int> attachedMeTLWindowsToBeForgotten = new List<int>();
-            if (attachedMeTLWindows.Count > 0)
-                foreach (int IntPtr in attachedMeTLWindows)
-                {
-                    try
-                    {
-                        HwndSource.FromHwnd((IntPtr)IntPtr).RemoveHook(windowMessageHook);
-                        if (Sbsdk != null)
-                            Sbsdk.SBSDKDetach(IntPtr);
-                        attachedMeTLWindowsToBeForgotten.Add(IntPtr);
-                    }
-                    catch (Exception) { }
-                }
-            foreach (int IntPtr in attachedMeTLWindowsToBeForgotten)
-                attachedMeTLWindows.Remove(IntPtr);
-            if (SbsdkEvents != null)
+            try
             {
-                SbsdkEvents.OnEraser -= new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnEraserEventHandler(this.OnEraser);
-                SbsdkEvents.OnNoTool -= new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnNoToolEventHandler(this.OnNoTool);
-                SbsdkEvents.OnPen -= new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnPenEventHandler(this.OnPen);
-                SbsdkEvents.OnBoardStatusChange -= new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnBoardStatusChangeEventHandler(this.OnBoardStatusChange);
+                List<int> attachedMeTLWindowsToBeForgotten = new List<int>();
+                if (attachedMeTLWindows.Count > 0)
+                    foreach (int IntPtr in attachedMeTLWindows)
+                    {
+                        try
+                        {
+                            HwndSource.FromHwnd((IntPtr)IntPtr).RemoveHook(windowMessageHook);
+                            if (Sbsdk != null)
+                            {
+                                Sbsdk.SBSDKSetSendMouseEvents(IntPtr, _SBCSDK_MOUSE_EVENT_FLAG.SBCME_DEFAULT, -1);
+                                Sbsdk.SBSDKDetach(IntPtr);
+                            }
+                            attachedMeTLWindowsToBeForgotten.Add(IntPtr);
+                        }
+                        catch (Exception) { }
+                    }
+                foreach (int IntPtr in attachedMeTLWindowsToBeForgotten)
+                    attachedMeTLWindows.Remove(IntPtr);
+                if (SbsdkEvents != null)
+                {
+                    SbsdkEvents.OnEraser -= new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnEraserEventHandler(this.OnEraser);
+                    SbsdkEvents.OnNoTool -= new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnNoToolEventHandler(this.OnNoTool);
+                    SbsdkEvents.OnPen -= new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnPenEventHandler(this.OnPen);
+                    SbsdkEvents.OnBoardStatusChange -= new SBSDKComWrapperLib._ISBSDKBaseClass2Events_OnBoardStatusChangeEventHandler(this.OnBoardStatusChange);
+                }
+                Sbsdk = null;
+                isConnected = false;
+                SMARTboardConsole("Disconnected from SMARTboard");
             }
-            Sbsdk = null;
-            isConnected = false;
-            SMARTboardConsole("Disconnected from SMARTboard");
+            catch (Exception) { }
         }
         private HwndSourceHook _windowMessageHook;
         private HwndSourceHook windowMessageHook
