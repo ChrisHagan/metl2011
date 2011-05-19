@@ -94,7 +94,7 @@ namespace SmartboardController
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
         private static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
-        private static IntPtr FindWindowByCaption(string lpWindowName)
+        public static IntPtr FindWindowByCaption(string lpWindowName)
         {
             return FindWindowByCaption(IntPtr.Zero, lpWindowName);
         }
