@@ -317,6 +317,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Utility\MeTLVideoPlayer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Quizzing\AnswerAQuiz.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -629,6 +633,9 @@
     <Compile Include="Components\Utility\DragDrop\DraggedAdorner.cs" />
     <Compile Include="Components\Utility\DragDrop\InsertionAdorner.cs" />
     <Compile Include="Components\Utility\DragDrop\Utilities.cs" />
+    <Compile Include="Components\Utility\MeTLVideoPlayer.xaml.cs">
+      <DependentUpon>MeTLVideoPlayer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Window1.xaml.cs">
       <DependentUpon>Window1.xaml</DependentUpon>
       <SubType>Code</SubType>

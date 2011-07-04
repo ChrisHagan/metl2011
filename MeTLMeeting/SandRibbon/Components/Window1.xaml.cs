@@ -31,6 +31,7 @@ using SandRibbon.Components.Utility;
 using System.Windows.Documents;
 using MeTLLib;
 using MeTLLib.Providers.Connection;
+using System.Windows.Media.Imaging;
 
 namespace SandRibbon
 {
@@ -146,6 +147,7 @@ namespace SandRibbon
             player.LoadedBehavior = MediaState.Manual;
             player.Loaded += playMedia;
             //player.MediaOpened += playMedia;
+            Commands.PresentVideo.RegisterCommandToDispatcher(new DelegateCommand<object>(presentVideo));
             RibbonApplicationPopup.Opened += ApplicationButtonPopup_Opened;
             RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
             getDefaultSystemLanguage();
@@ -1023,6 +1025,75 @@ namespace SandRibbon
                 {
                     return 0;
                 }
+            }
+        }
+        private void presentVideo(object _arg)
+        {
+            var chooseVideo = new System.Windows.Forms.OpenFileDialog();
+            var result = chooseVideo.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                var popup = new Window();
+                var sp = new StackPanel();
+                var player = new MediaElement
+                {
+                    Source = new Uri(chooseVideo.FileName),
+                    LoadedBehavior = MediaState.Manual
+                };
+                player.Play();
+                var buttons = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal
+                };
+                bool isPaused = false;
+                player.MouseLeftButtonUp += delegate
+                {
+                    if (isPaused)
+                        player.Play();
+                    else
+                        player.Pause();
+                };
+                Func<Func<Point>,RoutedEventHandler> handler = point =>{
+                    return delegate
+                    {
+                        var location = String.Format("{0}{1}.jpg", System.IO.Path.GetTempPath(), DateTime.Now.Ticks);
+                        if (player.HasVideo)
+                        {
+                            var width = Convert.ToInt32(player.ActualWidth);
+                            var height = Convert.ToInt32(player.ActualHeight);
+                            var rtb = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+                            rtb.Render(player);
+                            var encoder = new JpegBitmapEncoder();
+                            encoder.Frames.Add(BitmapFrame.Create(rtb));
+                            using (var fs = new FileStream(location, FileMode.CreateNew))
+                            {
+                                encoder.Save(fs);
+                            }
+                            Commands.PlaceQuizSnapshot.Execute(new SandRibbon.Components.Canvas.ImageDropParameters
+                            {
+                                file = location,
+                                location = point()
+                            });
+                        }
+                    };
+                };
+                var under = new SandRibbon.Components.ResourceDictionaries.Button
+                {
+                    Text = "Drop"
+                };
+                under.Click += handler(()=>popup.TranslatePoint(new Point(0, 0), canvasViewBox));
+                var fullScreen = new SandRibbon.Components.ResourceDictionaries.Button
+                {
+                    Text = "Fill"
+                };
+                fullScreen.Click += handler(()=>new Point(0,0));
+                buttons.Children.Add(under);
+                buttons.Children.Add(fullScreen);
+                sp.Children.Add(player);
+                sp.Children.Add(buttons);
+                popup.Content = sp;
+                popup.Topmost = true;
+                popup.Show();
             }
         }
         private void zoomConcernedControlSizeChanged(object sender, SizeChangedEventArgs e)

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Documents;
 using WpfCanvas = System.Windows.Controls.Canvas;
 using System.Windows.Media;
+using System.Windows.Controls.Primitives;
 
 namespace SandRibbon.Components.Utility
 {

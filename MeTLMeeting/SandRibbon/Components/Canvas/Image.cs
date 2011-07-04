@@ -33,6 +33,7 @@ using Rectangle = System.Windows.Shapes.Rectangle;
 using Size = System.Windows.Size;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using System.Windows.Controls.Primitives;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -64,7 +65,7 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyVideo.RegisterCommandToDispatcher<TargettedDirtyElement>(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyVideo));
             Commands.AddImage.RegisterCommandToDispatcher(new DelegateCommand<object>(addImageFromDisk));
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(uploadFile));
-            Commands.PlaceQuizSnapshot.RegisterCommand(new DelegateCommand<string>(addImageFromQuizSnapshot));
+            Commands.PlaceQuizSnapshot.RegisterCommand(new DelegateCommand<ImageDropParameters>(addImageFromQuizSnapshot));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ImageDropped.RegisterCommandToDispatcher(new DelegateCommand<ImageDrop>(imagedDropped));
             Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyLiveWindow));
@@ -81,7 +82,7 @@ namespace SandRibbon.Components.Canvas
         {
             e.CanExecute = false;
         }
-
+        
         private void updateImagePrivacy(object obj)
         {
             foreach (System.Windows.Controls.Image image in Children)
@@ -751,10 +752,10 @@ namespace SandRibbon.Components.Canvas
                                         }
                                     });
         }
-        private void addImageFromQuizSnapshot(string filename)
+        private void addImageFromQuizSnapshot(ImageDropParameters parameters)
         {
             if (target == "presentationSpace" && me != "projector")
-                handleDrop(filename, new Point(200, 100), 1);
+                handleDrop(parameters.file, parameters.location, 1);
         }
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {
@@ -805,7 +806,6 @@ namespace SandRibbon.Components.Canvas
                     var placeHolder = new Video { MediaElement = placeHolderMe, VideoSource = placeHolderMe.Source };
                     InkCanvas.SetLeft(placeHolder, pos.X);
                     InkCanvas.SetTop(placeHolder, pos.Y);
-                    //Children.Add(placeHolder);
                     var animationPulse = new DoubleAnimation
                                              {
                                                  From = .3,
@@ -908,7 +908,6 @@ namespace SandRibbon.Components.Canvas
                 SetLeft(image, pos.X);
                 SetTop(image, pos.Y);
                 image.tag(new ImageTag(Globals.me, privacy, generateId(), false, 0));
-                Console.WriteLine(string.Format("The image id is : {0}", image.tag().id));
                 if (!fileName.StartsWith("http"))
                     MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, target, privacy, image, fileName, false));
                 else
@@ -1087,5 +1086,9 @@ namespace SandRibbon.Components.Canvas
     }
     class ImageImpl : Image
     {
+    }
+    class ImageDropParameters {
+        public string file { get; set; }
+        public Point location { get; set; }
     }
 }
