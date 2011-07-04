@@ -207,8 +207,9 @@ namespace SandRibbon.Components.Canvas
         }
         public void deleteSelectedItems(object obj)
         {
-            if(GetSelectedElements().Count == 0) return;
-            var selectedElements = GetSelectedElements().Select(b => Clone((MeTLTextBox)b)).ToList();
+            var rawElements = GetSelectedElements().Where(t => ((MeTLTextBox)t).tag().author == Globals.me).ToList();
+            if(rawElements.Count == 0) return;
+            var selectedElements = rawElements.Select(b => Clone((MeTLTextBox)b)).ToList();
             if (selectedElements.Count == 0) return;
             Action undo = () =>
                               {
@@ -355,6 +356,7 @@ namespace SandRibbon.Components.Canvas
             var selectedElements = GetSelectedElements();
             if (selectedElements.Count == 0) return;
             var publicElements = selectedElements.Where(t => ((MeTLTextBox)t).tag().privacy.ToLower() == "public").ToList();
+            var myElements = selectedElements.Where(t => ((MeTLTextBox)t).tag().author == Globals.me).Count();
             string privacyChoice;
             if (publicElements.Count == 0)
                 privacyChoice = "show";
@@ -367,7 +369,7 @@ namespace SandRibbon.Components.Canvas
                 if (box != null)
                     box.UpdateLayout();
             }
-            Commands.AddPrivacyToggleButton.ExecuteAsync(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
+            Commands.AddPrivacyToggleButton.ExecuteAsync(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, myElements!= 0, GetSelectionBounds()));
         }
         private void selectingText(object sender, InkCanvasSelectionChangingEventArgs e)
         {
@@ -613,8 +615,8 @@ namespace SandRibbon.Components.Canvas
         }
         private void textboxGotFocus(object sender, RoutedEventArgs e)
         {
+            if (((MeTLTextBox)sender).tag().author != Globals.me) return; //cannot edit other peoples textboxes
             myTextBox = (MeTLTextBox)sender;
-            Console.WriteLine(string.Format("my textbox => {0}", myTextBox.Text));
             updateTools();
             requeryTextCommands();
             Select(new List<UIElement>());
@@ -806,8 +808,6 @@ namespace SandRibbon.Components.Canvas
         }
         public MeTLTextBox Clone(MeTLTextBox OldBox)
         {
-
-
             var box = new MeTLTextBox();
             box.AcceptsReturn = true;
             box.TextWrapping = TextWrapping.WrapWithOverflow;

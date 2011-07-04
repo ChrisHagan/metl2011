@@ -373,7 +373,7 @@ namespace SandRibbon
                 var adornerRect = new Rect(canvas.TranslatePoint(info.ElementBounds.TopLeft, canvasViewBox), canvas.TranslatePoint(info.ElementBounds.BottomRight, canvasViewBox));
                 if (adornerRect.Right < 0 || adornerRect.Right > canvasViewBox.ActualWidth
                     || adornerRect.Top < 0 || adornerRect.Top > canvasViewBox.ActualHeight) return;
-                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(info.privacyChoice, adornerRect)));
+                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(info, adornerRect)));
             });
         }
         private Adorner[] getPrivacyAdorners()
@@ -976,7 +976,8 @@ namespace SandRibbon
                             break;
                         case 2:
                             //ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
-                            tabs.Add(new Tabs.AdvancedTools());
+                            tabs.Add(new Tabs.ClassManagement());
+                            tabs.Add(new Tabs.ConversationManagement());
                             RHSDrawerDefinition.Width = new GridLength(180);
                             homeGroups.Add(new ZoomControlsHost());
                             homeGroups.Add(new MiniMap());

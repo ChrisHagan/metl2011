@@ -167,7 +167,7 @@ namespace SandRibbon.Components.Canvas
             var selectedElements = new List<UIElement>();
             Dispatcher.adopt(() =>
                                  {
-                                     selectedElements = GetSelectedClonedElements();
+                                     selectedElements = GetSelectedClonedElements().Where(i=> ((System.Windows.Controls.Image)i).tag().author == Globals.me).ToList();
                                  });
             Trace.TraceInformation("DeletingImages");
             Action undo = () =>
@@ -550,6 +550,7 @@ namespace SandRibbon.Components.Canvas
             var selectedElements = GetSelectedElements();
             if (selectedElements.Count == 0) return;
             var publicElements = selectedElements.Where(i => (((i is System.Windows.Controls.Image) && ((System.Windows.Controls.Image)i).tag().privacy.ToLower() == "public")) || ((i is Video) && ((Video)i).tag().privacy.ToLower() == "public")).ToList();
+            var myElements = selectedElements.Where(i => ((i is System.Windows.Controls.Image) && ((System.Windows.Controls.Image)i).tag().author == Globals.me)).ToList();
             string privacyChoice;
             if (publicElements.Count == 0)
                 privacyChoice = "show";
@@ -557,7 +558,7 @@ namespace SandRibbon.Components.Canvas
                 privacyChoice = "hide";
             else
                 privacyChoice = "both";
-            Commands.AddPrivacyToggleButton.ExecuteAsync(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
+            Commands.AddPrivacyToggleButton.ExecuteAsync(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, myElements.Count != 0, GetSelectionBounds()));
         }
         List<UIElement> elementsAtStartOfTheMove = new List<UIElement>();
         private void elementsMovingOrResizing(object sender, InkCanvasSelectionEditingEventArgs e)

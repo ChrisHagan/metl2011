@@ -20,23 +20,28 @@ namespace SandRibbon.Components
 {
     public partial class PrivacyToggleButton : UserControl
     {
-        public PrivacyToggleButton(string mode, Rect bounds)
+        public PrivacyToggleButton(PrivacyToggleButtonInfo mode, Rect bounds)
         {
             InitializeComponent();
             System.Windows.Controls.Canvas.SetLeft(privacyButtons, bounds.Right);
             System.Windows.Controls.Canvas.SetTop(privacyButtons, bounds.Top);
+            privacyButtons.Height = bounds.Height;
+            if (mode.showDelete)
+                deleteButton.Visibility = Visibility.Visible;
+            else
+                deleteButton.Visibility = Visibility.Collapsed;
             if(!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor)
             {
                 showButton.Visibility = Visibility.Collapsed;
                 hideButton.Visibility = Visibility.Collapsed;
             }
-            else if (mode == "show")
+            else if (mode.privacyChoice == "show")
             {
                 showButton.Visibility = Visibility.Visible;
                 hideButton.Visibility = Visibility.Collapsed;
             
             }
-            else if(mode == "hide")
+            else if(mode.privacyChoice == "hide")
             {
                 showButton.Visibility = Visibility.Collapsed;
                 hideButton.Visibility = Visibility.Visible;
@@ -71,9 +76,11 @@ namespace SandRibbon.Components
         {
             public string privacyChoice;
             public Rect ElementBounds;
-            public PrivacyToggleButtonInfo(string privacy, Rect bounds)
+            public bool showDelete;
+            public PrivacyToggleButtonInfo(string privacy, Boolean delete, Rect bounds)
             {
                 privacyChoice = privacy;
+                showDelete = delete;
                 ElementBounds = bounds;
             }
         }

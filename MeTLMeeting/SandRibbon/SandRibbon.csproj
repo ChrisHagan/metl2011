@@ -351,7 +351,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\AdvancedTools.xaml">
+    <Page Include="Tabs\ClassManagement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -633,6 +633,10 @@
       <DependentUpon>Window1.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Tabs\ConversationManagement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Automation\AutomationPeers\ConversationListingAutomationPeer.cs" />
@@ -716,8 +720,8 @@
     <Compile Include="Quizzing\ViewQuizResults.xaml.cs">
       <DependentUpon>ViewQuizResults.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\AdvancedTools.xaml.cs">
-      <DependentUpon>AdvancedTools.xaml</DependentUpon>
+    <Compile Include="Tabs\ClassManagement.xaml.cs">
+      <DependentUpon>ClassManagement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Attachments.xaml.cs">
       <DependentUpon>Attachments.xaml</DependentUpon>
@@ -826,6 +830,9 @@
     </Compile>
     <Compile Include="Tabs\Quizzes.xaml.cs">
       <DependentUpon>Quizzes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\ConversationManagement.xaml.cs">
+      <DependentUpon>ConversationManagement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\BackDoor.cs" />
     <Compile Include="Utils\Crypto.cs" />

@@ -46,8 +46,11 @@ namespace SandRibbon.Components
                 var image = new Image();
                 activeSlideList.Add(slide);
                 ThumbnailProvider.thumbnail(image, slide.id);
-
             }
+        }
+        private void cancel(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
         private void save(object sender, RoutedEventArgs e)
         {

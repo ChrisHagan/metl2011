@@ -65,9 +65,7 @@ namespace SandRibbon.Components
                     details.blacklist.Add(author);
             }
             ClientFactory.Connection().UpdateConversationDetails(details);
-            stack.handwriting.deleteSelectedItems(null);
-            stack.images.deleteSelectedImages(null);
-            stack.text.deleteSelectedItems(null);
+            Commands.SetPrivacyOfItems.Execute("private");
         }
 
         private void exploreBubble(ThoughtBubble thoughtBubble)

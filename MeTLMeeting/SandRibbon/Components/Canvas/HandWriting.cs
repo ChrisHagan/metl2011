@@ -195,6 +195,7 @@ namespace SandRibbon.Components.Canvas
             var selectedStrokes = GetSelectedStrokes();
             if (selectedStrokes.Count == 0) return;
             var publicStrokes = selectedStrokes.Where(s => s.tag().privacy.ToLower() == "public").ToList();
+            var myStrokes = selectedStrokes.Where(s => s.tag().author == Globals.me);
             string privacyChoice;
             if (publicStrokes.Count == 0)
                 privacyChoice = "show";
@@ -202,7 +203,11 @@ namespace SandRibbon.Components.Canvas
                 privacyChoice = "hide";
             else
                 privacyChoice = "both";
-            Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, GetSelectionBounds()));
+            Commands.AddPrivacyToggleButton.Execute(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, myStrokes.Count() != 0, GetSelectionBounds()));
+        }
+        public StrokeCollection GetMySelectedStrokes()
+        {
+            return filter(base.GetSelectedStrokes(), Globals.me, true);
         }
         public StrokeCollection GetSelectedStrokes()
         {
@@ -401,7 +406,7 @@ namespace SandRibbon.Components.Canvas
 
         private void dirtySelectedRegions(object _sender, InkCanvasSelectionEditingEventArgs _e)
         {
-            var selectedStrokes = GetSelectedStrokes();
+            var selectedStrokes = GetMySelectedStrokes();
             Action redo = () =>
                 {
                     ClearAdorners();
@@ -495,7 +500,11 @@ namespace SandRibbon.Components.Canvas
         #region utilityFunctions
         private StrokeCollection filter(IEnumerable<Stroke> from, string author)
         {
-            if (inMeeting() || Globals.conversationDetails.Author == Globals.me) return new StrokeCollection(from);
+            return filter(from, author, false);
+        }
+        private StrokeCollection filter(IEnumerable<Stroke> from, string author, bool justAuthors)
+        {
+            if (!justAuthors && (inMeeting() || Globals.conversationDetails.Author == Globals.me)) return new StrokeCollection(from);
             return new StrokeCollection(from.Where(s => s.tag().author == author));
         }
         

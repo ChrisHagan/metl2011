@@ -25,63 +25,67 @@
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
-    <StackPanel Background="{StaticResource BackgroundBlueGradient}">
-        <ListBox Background="AliceBlue"
-        Height="100"
-        Width="Auto"
-        ScrollViewer.HorizontalScrollBarVisibility="Visible" 
-        ScrollViewer.VerticalScrollBarVisibility="Disabled"
-		x:Name="activeSlides"   
-		local:DragDropHelper.IsDragSource="true" local:DragDropHelper.IsDropTarget="true" local:DragDropHelper.DragDropTemplate="{StaticResource slideDragTemplate}">
-            
-             <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListBoxItem">
-                                <Border
-                                    Name="Border" Margin="1" 
-                                    Padding="5" Background="{StaticResource BackgroundBlueGradient}"
-                                    SnapsToDevicePixels="true" CornerRadius="2">
-                                    <Grid>
-                                        <Image Height="90" Width="90">
-                                            <Image.Source>
-                                                <MultiBinding Converter="{x:Static components:EditConversation.SlideToThumb}">
-                                                    <Binding RelativeSource="{RelativeSource Self}" />
-                                                    <Binding Path="id" />
-                                                </MultiBinding>
-                                            </Image.Source> 
-                                        </Image>
-                                        <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
-                                                HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
-                                                VerticalAlignment="Bottom" 
-                                                BorderThickness="1">
-                                        </Border>
-                                    </Grid>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsSelected" Value="true">
-                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedGradient}"/>
-                                    </Trigger>
-                                    <Trigger Property="IsMouseOver" Value="true">
-                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource MouseOverGradient}"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
-        <StackPanel Orientation="Horizontal">
-            <Button Click="save">Save changes</Button>
+    <DockPanel Background="{StaticResource BackgroundBlueGradient}">
+        <StackPanel DockPanel.Dock="Bottom"  Orientation="Horizontal">
+            <Button Click="save">Publish</Button>
             <Button Click="first">Move to the start</Button>
             <Button Click="last">Move to the end</Button>
+            <Button Click="cancel">Cancel</Button>
         </StackPanel>
-    </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <ListBox Background="AliceBlue"
+            Height="100"
+            Width="Auto"
+            ScrollViewer.HorizontalScrollBarVisibility="Visible" 
+            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+    		x:Name="activeSlides"   
+    		local:DragDropHelper.IsDragSource="true" local:DragDropHelper.IsDropTarget="true" local:DragDropHelper.DragDropTemplate="{StaticResource slideDragTemplate}">
+                
+                 <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border
+                                        Name="Border" Margin="1" 
+                                        Padding="5" Background="{StaticResource BackgroundBlueGradient}"
+                                        SnapsToDevicePixels="true" CornerRadius="2">
+                                        <Grid>
+                                            <Image Height="90" Width="90">
+                                                <Image.Source>
+                                                    <MultiBinding Converter="{x:Static components:EditConversation.SlideToThumb}">
+                                                        <Binding RelativeSource="{RelativeSource Self}" />
+                                                        <Binding Path="id" />
+                                                    </MultiBinding>
+                                                </Image.Source> 
+                                            </Image>
+                                            <Border CornerRadius="2" BorderBrush="{StaticResource PressedBorderBrush}"
+                                                    HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
+                                                    VerticalAlignment="Bottom" 
+                                                    BorderThickness="1">
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="true">
+                                            <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedGradient}"/>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="true">
+                                            <Setter TargetName="Border" Property="Background" Value="{StaticResource MouseOverGradient}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+            <Label >Consider the effects of this on your students</Label>
+        </StackPanel>
+    </DockPanel>
 </Window>
