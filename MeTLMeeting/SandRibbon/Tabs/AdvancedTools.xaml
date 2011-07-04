@@ -14,6 +14,6 @@
     <sr:RibbonGroup>
         <dict:Button Text="Manage Blacklist"  Icon="/Resources/NewSlide.png" x:Name="manageBlackList" Click="ManageBlacklist"/>
         <dict:Button Text="Edit conversation" Icon="/Resources/NewSlide.png" x:Name="editConversation" Command="{x:Static api:Commands.EditConversation}"/>
+        <dict:Button Text="Present Video" Icon="/Resources/NewSlide.png" x:Name="presentVideo" Command="{x:Static api:Commands.PresentVideo}"/>
     </sr:RibbonGroup>
-
 </sr:RibbonTab>

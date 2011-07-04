@@ -20,6 +20,7 @@ using SandRibbonInterop;
 using SandRibbon.Providers;
 using Button = System.Windows.Controls.Button;
 using MeTLLib.Providers.Connection;
+using SandRibbon.Components.Canvas;
 
 namespace SandRibbon.Tabs
 {
@@ -135,7 +136,11 @@ namespace SandRibbon.Tabs
             onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
             {
                 Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
-                Commands.PlaceQuizSnapshot.ExecuteAsync(filename);
+                Commands.PlaceQuizSnapshot.ExecuteAsync(new ImageDropParameters
+                {
+                    file = filename,
+                    location = new Point(200,200)
+                });
             });
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
             Commands.AddSlide.ExecuteAsync(null);
