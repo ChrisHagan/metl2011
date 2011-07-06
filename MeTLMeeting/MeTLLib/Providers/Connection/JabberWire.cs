@@ -564,6 +564,7 @@ namespace MeTLLib.Providers.Connection
         }
         public void sendDirtyStroke(TargettedDirtyElement element)
         {
+        //    stanza(element.slide.ToString(), new MeTLStanzas.DirtyInk(element));
             stanza(new MeTLStanzas.DirtyInk(element));
         }
         public virtual void ReceiveCommand(string message)

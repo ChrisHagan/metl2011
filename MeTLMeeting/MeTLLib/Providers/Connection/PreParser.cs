@@ -202,9 +202,12 @@ namespace MeTLLib.Providers.Connection
         }
         public static int ParentRoom(string room)
         {
+            return Int32.Parse(room.Split('/').Last());
+            /*
             var regex = new Regex(@"(\d+).*");
             var parent = regex.Matches(room)[0].Groups[1].Value;
             return Int32.Parse(parent);
+             */
         }
     }
 }
