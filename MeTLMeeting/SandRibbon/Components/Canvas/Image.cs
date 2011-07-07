@@ -513,8 +513,7 @@ namespace SandRibbon.Components.Canvas
                     if (!((System.Windows.Controls.Image)image).Tag.ToString().StartsWith("NOT_LOADED"))
                     {
                         var newImage = (System.Windows.Controls.Image)image;
-                        ImageInformation imageInfo = getImageInformation(newImage);
-                        if (imageInfo.Author == Globals.me)
+                        if (newImage.tag().author == Globals.me)
                             myImages.Add((System.Windows.Controls.Image)image);
                     }
                 }
@@ -644,24 +643,10 @@ namespace SandRibbon.Components.Canvas
                     break;
             }
         }
-        private ImageInformation getImageInformation(FrameworkElement newImage)
-        {
-            if (newImage.Tag == null || !(newImage is System.Windows.Controls.Image)) return null;
-            ImageInformation imageInfo = new ImageInformation();
-            if (newImage.Tag.ToString().StartsWith("NOT_LOADED"))
-                imageInfo = JsonConvert.DeserializeObject<ImageInformation>(newImage.Tag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2]);
-            else
-                imageInfo = JsonConvert.DeserializeObject<ImageInformation>(newImage.Tag.ToString());
-            return imageInfo;
-        }
         private void dirtyThisElement(UIElement element)
         {
-            var elementTag = ((FrameworkElement)element).Tag;
-            ImageInformation imageInfo = getImageInformation((FrameworkElement)element);
-            var elementPrivacy = elementTag == null ? "public"
-                                    : imageInfo.isPrivate
-                                    ? "private" : "public";
-            var dirtyElement = new TargettedDirtyElement(currentSlide, Globals.me, target, elementPrivacy, imageInfo.Id);
+            var thisImage = (System.Windows.Controls.Image)element;
+            var dirtyElement = new TargettedDirtyElement(currentSlide, Globals.me, target,thisImage.tag().privacy, thisImage.tag().id );
             switch (element.GetType().ToString())
             {
                 case "System.Windows.Controls.Image":
