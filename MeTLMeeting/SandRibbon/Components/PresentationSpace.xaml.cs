@@ -329,13 +329,10 @@ namespace SandRibbon.Components
             withDragMarquee(marquee =>
             {
                 Commands.EndGrabZoom.ExecuteAsync(null);
-                if (marquee.Width > 10 && marquee.Height > 10)
-                {
-                    Commands.SetZoomRect.ExecuteAsync(marquee);
-                }
+                Commands.SetZoomRect.ExecuteAsync(marquee);
             });
         }
-        private void withDragMarquee(Action<Rectangle> doWithRect)
+        private void withDragMarquee(Action<Rect> doWithRect)
         {
             var canvas = new System.Windows.Controls.Canvas();
             var adornerLayer = AdornerLayer.GetAdornerLayer(this);
@@ -350,18 +347,27 @@ namespace SandRibbon.Components
             canvas.Children.Add(marquee);
             bool mouseDown = false;
             Point origin = new Point(-1, -1);
+            Rect finalRect = new Rect();
             canvas.MouseDown += (sender, e) =>
             {
-                var pos = e.GetPosition(canvas);
-                System.Windows.Controls.Canvas.SetLeft(marquee, pos.X);
-                System.Windows.Controls.Canvas.SetTop(marquee, pos.Y);
+                var pos = e.GetPosition(this);
+                var visPos = e.GetPosition(canvas);
+                System.Windows.Controls.Canvas.SetLeft(marquee, visPos.X);
+                System.Windows.Controls.Canvas.SetTop(marquee, visPos.Y);
                 origin = pos;
                 mouseDown = true;
             };
             canvas.MouseUp += (sender, e) =>
             {
+                if (origin.X == -1 || origin.Y == -1) return;
+                var pos = e.GetPosition(this);
+                finalRect.X = (pos.X < origin.X) ? pos.X : origin.X;
+                finalRect.Y = (pos.Y < origin.Y) ? pos.Y : origin.Y;
+                finalRect.Height = Math.Abs(pos.Y - origin.Y);
+                finalRect.Width = Math.Abs(pos.X - origin.X);
                 mouseDown = false;
-                doWithRect(marquee);
+                if (!isPointNear(marquee.PointToScreen(finalRect.TopLeft),marquee.PointToScreen(finalRect.BottomRight),10))
+                    doWithRect(finalRect);
                 adornerLayer.Remove(adorner);
             };
             canvas.MouseMove += (sender, e) =>
@@ -380,11 +386,17 @@ namespace SandRibbon.Components
             };
             adornerLayer.Add(adorner);
         }
-        private void SendNewDig(Rectangle marquee)
+        private bool isPointNear(Point a, Point b, Int32 tolerance)
         {
-            var origin = new Point(
-                System.Windows.Controls.Canvas.GetLeft(marquee),
-                System.Windows.Controls.Canvas.GetTop(marquee));
+            return (Math.Abs(a.X - b.X) < tolerance || Math.Abs(a.Y - b.Y) < tolerance);
+        }
+        private void SendNewDig(Rect rect)
+        {
+            var marquee = new Rectangle {Height=rect.Height, Width=rect.Width };
+            System.Windows.Controls.Canvas.SetLeft(marquee, rect.Left);
+            System.Windows.Controls.Canvas.SetTop(marquee, rect.Top);
+            
+            var origin = rect.Location;
             Commands.SendLiveWindow.ExecuteAsync(new LiveWindowSetup
             (Globals.slide, Globals.me, marquee, origin, new Point(0, 0), 
             MeTLLib.ClientFactory.Connection().UploadResourceToPath(

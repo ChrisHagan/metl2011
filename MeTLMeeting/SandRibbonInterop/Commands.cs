@@ -44,6 +44,7 @@ namespace SandRibbon
         public static CompositeCommand SetUserOptions = new CompositeCommand();
         //public static CompositeCommand SaveUserOptions = new CompositeCommand();
         public static CompositeCommand ZoomChanged = new CompositeCommand();
+        public static CompositeCommand ExtendCanvasBySize = new CompositeCommand();
 
         public static CompositeCommand AddPrivacyToggleButton = new CompositeCommand();
         public static CompositeCommand RemovePrivacyAdorners = new CompositeCommand();
