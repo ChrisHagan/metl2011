@@ -35,3 +35,4 @@ syntax: glob
 *_ReSharper*
 
 *.Designer.*
+*.suo
