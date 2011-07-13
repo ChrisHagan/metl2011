@@ -1403,6 +1403,7 @@ namespace MeTLLib.DataTypes
                 {
                     Tag = "FOR_PRINTING_ONLY::::" + this.tag,
                     Height = this.height,
+                    Margin = new Thickness(5),
                     Width = this.width,
                     Source = this.asynchronouslyLoadImageData()
                 };
@@ -1417,6 +1418,7 @@ namespace MeTLLib.DataTypes
                     {
                         Tag = "NOT_LOADED::::" + sourceString + "::::" + this.tag,
                         Height = this.height,
+                        Margin = new Thickness(5),
                         Width = this.width,
                         Source = BackupSource
                     };

@@ -601,7 +601,6 @@ namespace SandRibbon.Components.Canvas
               };
             Action redo = () =>
               {
-
                   ClearAdorners();
                   var selection = new List<UIElement>();
                   var mySelectedImages = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
@@ -618,6 +617,7 @@ namespace SandRibbon.Components.Canvas
                           Children.Add(element);
                       sendThisElement(element);
                   }
+                  Select(new List<UIElement>());
                   addAdorners();
               };
             UndoHistory.Queue(undo, redo);
