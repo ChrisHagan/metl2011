@@ -340,10 +340,8 @@ namespace SandRibbon.Components.Canvas
         }
         private void selectionChanged(object sender, EventArgs e)
         {
-            if(GetSelectedElements().Count == 0)
-                ClearAdorners();
-            else
-                addAdorners();
+            ClearAdorners();
+            addAdorners();
             if (GetSelectedElements().Count == 0 && myTextBox != null) return;
             myTextBox = null;
         }

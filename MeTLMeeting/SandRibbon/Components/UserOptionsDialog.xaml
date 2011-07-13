@@ -54,8 +54,8 @@
                 </ComboBox>
                 <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Include private notes when printing:"></TextBlock>
                 <CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding Path=includePrivateNotesOnPrint}" />
-                <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="Language:"></TextBlock>
-                <ComboBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Height="25" SelectedValue="{Binding Path=language}" SelectedValuePath="Tag">
+                <TextBlock Visibility="Collapsed" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="Language:"></TextBlock>
+                <ComboBox Visibility="Collapsed" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Height="25" SelectedValue="{Binding Path=language}" SelectedValuePath="Tag">
                     <ComboBoxItem Tag="en-US">English</ComboBoxItem>
                     <ComboBoxItem Tag="ar">Arabic</ComboBoxItem>
                     <ComboBoxItem Tag="de">German</ComboBoxItem>

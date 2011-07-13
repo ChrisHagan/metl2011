@@ -411,10 +411,7 @@ namespace SandRibbon.Components.Canvas
             {
                 if (!imageExistsOnCanvas(image))
                 {
-                    if (image.tag().isBackground)
-                        Panel.SetZIndex(image, 1);
-                    else
-                        Panel.SetZIndex(image, 2);
+                    Panel.SetZIndex(image, image.tag().isBackground ? 1 : 2);
                     Children.Add(image);
                 }
             }
@@ -523,8 +520,7 @@ namespace SandRibbon.Components.Canvas
                     if (!((System.Windows.Controls.Image)image).Tag.ToString().StartsWith("NOT_LOADED"))
                     {
                         var newImage = (System.Windows.Controls.Image)image;
-                        ImageInformation imageInfo = getImageInformation(newImage);
-                        if (imageInfo.Author == Globals.me || Globals.isAuthor)
+                        if (newImage.tag().author == Globals.me)
                             myImages.Add((System.Windows.Controls.Image)image);
                     }
                 }
@@ -613,7 +609,6 @@ namespace SandRibbon.Components.Canvas
               };
             Action redo = () =>
               {
-
                   ClearAdorners();
                   var selection = new List<UIElement>();
                   var mySelectedImages = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
@@ -630,6 +625,7 @@ namespace SandRibbon.Components.Canvas
                           Children.Add(element);
                       sendThisElement(element);
                   }
+                  Select(new List<UIElement>());
                   addAdorners();
               };
             UndoHistory.Queue(undo, redo);
@@ -655,24 +651,10 @@ namespace SandRibbon.Components.Canvas
                     break;
             }
         }
-        private ImageInformation getImageInformation(FrameworkElement newImage)
-        {
-            if (newImage.Tag == null || !(newImage is System.Windows.Controls.Image)) return null;
-            ImageInformation imageInfo = new ImageInformation();
-            if (newImage.Tag.ToString().StartsWith("NOT_LOADED"))
-                imageInfo = JsonConvert.DeserializeObject<ImageInformation>(newImage.Tag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2]);
-            else
-                imageInfo = JsonConvert.DeserializeObject<ImageInformation>(newImage.Tag.ToString());
-            return imageInfo;
-        }
         private void dirtyThisElement(UIElement element)
         {
-            var elementTag = ((FrameworkElement)element).Tag;
-            ImageInformation imageInfo = getImageInformation((FrameworkElement)element);
-            var elementPrivacy = elementTag == null ? "public"
-                                    : imageInfo.isPrivate
-                                    ? "private" : "public";
-            var dirtyElement = new TargettedDirtyElement(currentSlide, Globals.me, target, elementPrivacy, imageInfo.Id);
+            var thisImage = (System.Windows.Controls.Image)element;
+            var dirtyElement = new TargettedDirtyElement(currentSlide, Globals.me, target,thisImage.tag().privacy, thisImage.tag().id );
             switch (element.GetType().ToString())
             {
                 case "System.Windows.Controls.Image":

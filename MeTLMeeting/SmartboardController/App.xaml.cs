@@ -13,31 +13,36 @@ namespace SmartboardController
     public partial class App : Application
     {
         public static RoutedCommand connectToSmartboard = new RoutedCommand();
+        public static RoutedCommand reconnectToSmartboard = new RoutedCommand();
         public static RoutedCommand disconnectFromSmartboard = new RoutedCommand();
-        private static SmartboardConnector smartboard;
         private static AutomationElement metl;
+        private static int metlPtr;
+        public static int appPtr;
+        private static SmartboardConnector smartboard = new SmartboardConnector();
         public static void AttachToProcess()
         {
-            if (metl == null)
-                try
+            try
+            {
+                var candidate = WindowsInteropFunctions.fuzzyFindWindow("MeTL");
+                if (metlPtr == 0 || metlPtr != candidate.ToInt32())
                 {
-                    var rootMetl = AutomationElement.RootElement.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "ribbonWindow"))[0];
-                    metl = rootMetl.Descendant("commandBridge");
+                    metlPtr = (int)candidate;
+                    if (metlPtr > 0)
+                    {
+                        var rootMeTLWindow = AutomationElement.FromHandle((IntPtr)metlPtr);
+                        metl = rootMeTLWindow.Descendant("commandBridge");
+                        smartboard.ReAssertConnection(metlPtr);
+                    }
                 }
-                catch (Exception)
-                {
-                    //MessageBox.Show("Could not find a process named MeTL.  Have you started an instance (it can be clickonce)");
-                }
-        }
-        public static void initializeSmartboard(DependencyObject userControl)
-        {
-            smartboard = new SmartboardConnector(userControl);
-            AttachToProcess();
+            }
+            catch (Exception)
+            {
+                //MessageBox.Show("Could not find a process named MeTL.  Have you started an instance (it can be clickonce)");
+            }
         }
         public static void SetDrawingAttributes(DrawingAttributes attributes)
         {
-            if (metl == null)
-                AttachToProcess();
+            AttachToProcess();
             if (metl != null)
             {
                 var color = String.Format("{0} {1} {2} {3}", attributes.Color.A.ToString(), attributes.Color.R.ToString(), attributes.Color.G.ToString(), attributes.Color.B.ToString());
@@ -48,8 +53,7 @@ namespace SmartboardController
         }
         public static void SetInkCanvasMode(string mode)
         {
-            if (metl == null)
-                AttachToProcess();
+            AttachToProcess();
             if (metl != null)
             {
                 metl.Value(String.Format("SetInkCanvasMode:{0}", mode));
@@ -57,28 +61,37 @@ namespace SmartboardController
         }
         public static void SetLayer(string mode)
         {
-            if (metl == null)
-                AttachToProcess();
+            AttachToProcess();
             if (metl != null)
             {
                 metl.Value(String.Format("SetLayer:{0}", mode));
             }
         }
+        public static void InitialConnectToSmartboard()
+        {
+            AttachToProcess();
+            if (metlPtr == 0)
+                metlPtr = appPtr;
+            if (metlPtr > 0 && appPtr > 0 && !isConnectedToSmartboard)
+                smartboard.connectToSmartboard((IntPtr)metlPtr);
+        }
         public static void ConnectToSmartboard()
         {
-            if (smartboard != null && !isConnectedToSmartboard)
-                smartboard.connectToSmartboard(null);
+            AttachToProcess();
+            if (metlPtr > 0 && appPtr > 0 && !isConnectedToSmartboard)
+                smartboard.connectToSmartboard((IntPtr)metlPtr);
         }
         public static void DisconnectFromSmartboard()
         {
-            if (isConnectedToSmartboard)
-                smartboard.disconnectFromSmartboard(null);
+            AttachToProcess();
+            if (metlPtr > 0 && appPtr > 0 && isConnectedToSmartboard)
+                smartboard.disconnectFromSmartboard();
         }
         public static bool isConnectedToSmartboard
         {
             get
             {
-                if (smartboard != null && smartboard.isConnected)
+                if (smartboard.isConnected)
                     return true;
                 else return false;
             }

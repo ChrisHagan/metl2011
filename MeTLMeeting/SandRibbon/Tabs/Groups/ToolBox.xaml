@@ -14,7 +14,7 @@
         </dict:RibbonPanel>
         <dict:RibbonPanel x:Name="ImageOptions">
             <dict:Button ToolTip="{DynamicResource AddImageToolTip}"  x:Name="addMedia" Icon="\Resources\AddImage.png" Text="Add Picture" Command="api:Commands.AddImage"/>
-            <dict:Button x:Name="presentVideo" Icon="\Resources\LewMouthOpenHead.png" Text="Present Video" Command="api:Commands.PresentVideo"/>
+            <!--<dict:Button x:Name="presentVideo" Icon="\Resources\LewMouthOpenHead.png" Text="Present Video" Command="api:Commands.PresentVideo"/>-->
         </dict:RibbonPanel>
     </StackPanel>
 </UserControl>

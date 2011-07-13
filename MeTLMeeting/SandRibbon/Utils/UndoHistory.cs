@@ -22,7 +22,7 @@ namespace SandRibbon.Utils
         private static Dictionary<int, Stack<HistoricalAction>> undoQueue = new Dictionary<int,Stack<HistoricalAction>>();
         private static Dictionary<int, Stack<HistoricalAction>> redoQueue = new Dictionary<int,Stack<HistoricalAction>>();
         private static int currentSlide;
-        public UndoHistory()
+        static UndoHistory()
         {
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(Undo, CanUndo));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(Redo, CanRedo));

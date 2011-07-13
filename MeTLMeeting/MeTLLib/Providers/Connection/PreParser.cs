@@ -25,7 +25,7 @@ namespace MeTLLib.Providers.Connection
         public Dictionary<string, TargettedTextBox> text = new Dictionary<string, TargettedTextBox>();
         public Dictionary<string, LiveWindowSetup> liveWindows = new Dictionary<string, LiveWindowSetup>();
         public PreParser(Credentials credentials, int room, Structure.IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents receiveEvents, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider) 
-            : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory, resourceProvider)
+            : base(credentials,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory, resourceProvider,false)
         {
             if (this.location == null)
                 this.location = new Location("0",1,new List<int>{1});
@@ -202,9 +202,12 @@ namespace MeTLLib.Providers.Connection
         }
         public static int ParentRoom(string room)
         {
+            return Int32.Parse(room.Split('/').Last());
+            /*
             var regex = new Regex(@"(\d+).*");
             var parent = regex.Matches(room)[0].Groups[1].Value;
             return Int32.Parse(parent);
+             */
         }
     }
 }

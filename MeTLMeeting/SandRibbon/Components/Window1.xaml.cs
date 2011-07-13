@@ -87,7 +87,7 @@ namespace SandRibbon
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(FitToView));
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rectangle>(SetZoomRect));
+            Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rect>(SetZoomRect));
  
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
             
@@ -466,14 +466,14 @@ namespace SandRibbon
         {
             Dispatcher.adoptAsync((HideProgressBlocker));
         }
-        private void SetZoomRect(Rectangle viewbox)
+        private void SetZoomRect(Rect viewbox)
         {
-            var topleft = new Point(Canvas.GetLeft(viewbox), Canvas.GetTop(viewbox));
             scroll.Width = viewbox.Width;
             scroll.Height = viewbox.Height;
-            scroll.ScrollToHorizontalOffset(topleft.X);
-            scroll.ScrollToVerticalOffset(topleft.Y);
-            Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", topleft.X, topleft.Y, viewbox.Width, viewbox.Height);
+            scroll.UpdateLayout();
+            scroll.ScrollToHorizontalOffset(viewbox.X);
+            scroll.ScrollToVerticalOffset(viewbox.Y);
+            Trace.TraceInformation("ZoomRect changed to X:{0},Y:{1},W:{2},H:{3}", viewbox.X, viewbox.Y, viewbox.Width, viewbox.Height);
         }
         private void AddWindowEffect(object _o)
         {
@@ -978,7 +978,7 @@ namespace SandRibbon
                             break;
                         case 2:
                             //ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
-                            tabs.Add(new Tabs.ClassManagement());
+                            //tabs.Add(new Tabs.ClassManagement());
                             tabs.Add(new Tabs.ConversationManagement());
                             RHSDrawerDefinition.Width = new GridLength(180);
                             homeGroups.Add(new ZoomControlsHost());
