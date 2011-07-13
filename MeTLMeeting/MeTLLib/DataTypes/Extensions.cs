@@ -172,6 +172,7 @@ namespace MeTLLib.DataTypes
             var newImage = new Image {Height = image.Height, Width = image.Width};
             newImage.tag(image.tag());
             newImage.Source = image.Source;
+            newImage.Margin = image.Margin;
             InkCanvas.SetLeft(newImage, InkCanvas.GetLeft(image));
             InkCanvas.SetTop(newImage, InkCanvas.GetTop(image));
 

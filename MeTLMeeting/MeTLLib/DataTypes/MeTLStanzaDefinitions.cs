@@ -1403,7 +1403,6 @@ namespace MeTLLib.DataTypes
                 {
                     Tag = "FOR_PRINTING_ONLY::::" + this.tag,
                     Height = this.height,
-                    Margin = new Thickness(5),
                     Width = this.width,
                     Source = this.asynchronouslyLoadImageData()
                 };
@@ -1418,7 +1417,6 @@ namespace MeTLLib.DataTypes
                     {
                         Tag = "NOT_LOADED::::" + sourceString + "::::" + this.tag,
                         Height = this.height,
-                        Margin = new Thickness(5),
                         Width = this.width,
                         Source = BackupSource
                     };
@@ -1503,8 +1501,10 @@ namespace MeTLLib.DataTypes
                     SetTag(sourceTag, relativePath);
                     SetTag(widthTag, value.imageProperty.Width.ToString());
                     SetTag(heightTag, value.imageProperty.Height.ToString());
-                    SetTag(xTag, InkCanvas.GetLeft(value.imageProperty).ToString());
-                    SetTag(yTag, InkCanvas.GetTop(value.imageProperty).ToString());
+                    var currentX = (InkCanvas.GetLeft(value.imageProperty) + (Double.IsNaN(value.imageProperty.Margin.Left)?0:value.imageProperty.Margin.Left)).ToString(); 
+                    var currentY = (InkCanvas.GetTop(value.imageProperty) + (Double.IsNaN(value.imageProperty.Margin.Top)?0:value.imageProperty.Margin.Top)).ToString(); 
+                    SetTag(xTag, currentX);
+                    SetTag(yTag, currentY);
                     SetTag(authorTag, value.author);
                     SetTag(targetTag, value.target);
                     SetTag(privacyTag, value.privacy);
