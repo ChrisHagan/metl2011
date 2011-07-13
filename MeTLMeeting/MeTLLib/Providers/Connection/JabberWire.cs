@@ -58,7 +58,7 @@ namespace MeTLLib.Providers.Connection
                         cache,
                         receiveEvents,
                         clientFactory,
-                        resourceProvider);
+                        resourceProvider,true);
                     instance.openConnection();
                 }
                 return instance;
@@ -106,6 +106,7 @@ namespace MeTLLib.Providers.Connection
         protected const string SLEEP = "/SLEEP";
         protected const string PING = "/PING";
         protected const string PONG = "/PONG";
+        protected const uint HEARTBEAT_PERIOD = 20000;
         public Credentials credentials;
         public Location location = Location.Empty; 
         protected IReceiveEvents receiveEvents;
@@ -113,7 +114,9 @@ namespace MeTLLib.Providers.Connection
         protected HttpResourceProvider resourceProvider;
         protected static string privacy = "PUBLIC";
         private XmppClientConnection conn;
+        private Timer heartbeat;
         protected Jid jid;
+        public bool activeWire { get; private set; }
 
         private void registerCommands()
         {
@@ -123,7 +126,7 @@ namespace MeTLLib.Providers.Connection
             Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
         }
         public ResourceCache cache;
-        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider)
+        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, bool active)
         {
             this.credentials = credentials;
             this.conversationDetailsProvider = conversationDetailsProvider;
@@ -136,8 +139,26 @@ namespace MeTLLib.Providers.Connection
             this.resourceProvider = resourceProvider;
             this.jid = createJid(credentials.name);
             new MeTLLib.DataTypes.MeTLStanzasConstructor();
+            this.activeWire = active;
+            if (activeWire)
+            {
+                receiveEvents.StatusChanged += listenToStatusChangedForReset;
+                establishHeartBeat();
+            }
         }
+        private void establishHeartBeat()
+        {
+            heartbeat = new Timer((_unused) => { checkConnection(); }, null, HEARTBEAT_PERIOD, HEARTBEAT_PERIOD);
+        } 
 
+        private void checkConnection()
+        {
+            if (!this.IsConnected()) Reset("resetting on heartbeat");
+        }
+        private void listenToStatusChangedForReset(object sender, StatusChangedEventArgs e)
+        {
+            if (!e.isConnected && !this.IsConnected()) Reset("Jabberwire::listenToStatusChangedForResest");
+        }
         private void makeAvailableNewSocket()
         {
             if (this.conn != null) { 
@@ -198,7 +219,7 @@ namespace MeTLLib.Providers.Connection
         {
             if (error.TagName == "failure")
             {
-                conn.RegisterAccount = true;
+                usernameToBeRegistered = conn.Username;
                 Reset("Auth failed");
             }
             else
@@ -206,11 +227,17 @@ namespace MeTLLib.Providers.Connection
                 throw new AuthenticationException(error.ToString());
             }
         }
+        private static string usernameToBeRegistered;
         public void openConnection()
         {
             var resource = DateTimeFactory.Now().Ticks.ToString();
             jid.Resource = resource;
             makeAvailableNewSocket();
+            if (!String.IsNullOrEmpty(usernameToBeRegistered) && usernameToBeRegistered == jid.User)
+            {
+                conn.RegisterAccount = true;
+                usernameToBeRegistered = null;
+            }
             conn.Open(jid.User, "examplePassword", resource, 1);
         }
         private void OnLogin(object o)
@@ -290,11 +317,21 @@ namespace MeTLLib.Providers.Connection
         {
             lock (resetLock)
             {
-                switch (conn.XmppConnectionState) { 
-                    case XmppConnectionState.Disconnected:
-                        Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Resetting.  {0}", caller));
-                        openConnection();
-                        break;
+                if (conn != null)
+                    switch (conn.XmppConnectionState)
+                    {
+                        case XmppConnectionState.Disconnected:
+                            Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Resetting.  {0}", caller));
+                            openConnection();
+                            break;
+                        //case XmppConnectionState.Authenticating:
+                        //    openConnection();
+                        //    break;
+                    }
+                else
+                {
+                    Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Conn is null - openingConnection.  {0}", caller));
+                    openConnection();
                 }
             }
         }
@@ -555,6 +592,7 @@ namespace MeTLLib.Providers.Connection
         }
         public void sendDirtyStroke(TargettedDirtyElement element)
         {
+        //    stanza(element.slide.ToString(), new MeTLStanzas.DirtyInk(element));
             stanza(new MeTLStanzas.DirtyInk(element));
         }
         public virtual void ReceiveCommand(string message)

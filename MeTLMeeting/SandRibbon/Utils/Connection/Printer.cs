@@ -14,7 +14,7 @@ using SandRibbon.Providers.Structure;
 using SandRibbonInterop;
 using SandRibbonObjects;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using PrintDialog=System.Windows.Controls.PrintDialog;
+using PrintDialog = System.Windows.Controls.PrintDialog;
 using MeTLLib.DataTypes;
 using MeTLLib;
 using MeTLLib.Providers;
@@ -28,16 +28,17 @@ namespace SandRibbon.Utils.Connection
         public List<object> history = new List<object>();
         public PrintParser(
             Credentials credentials,
-            int room, 
-            MeTLLib.Providers.Structure.IConversationDetailsProvider conversationDetailsProvider, 
-            HttpHistoryProvider historyProvider, 
-            CachedHistoryProvider cachedHistoryProvider, 
-            MeTLServerAddress metlServerAddress, 
-            ResourceCache cache, 
-            IReceiveEvents receiveEvents, 
+            int room,
+            MeTLLib.Providers.Structure.IConversationDetailsProvider conversationDetailsProvider,
+            HttpHistoryProvider historyProvider,
+            CachedHistoryProvider cachedHistoryProvider,
+            MeTLServerAddress metlServerAddress,
+            ResourceCache cache,
+            IReceiveEvents receiveEvents,
             IWebClientFactory webClientFactory,
-            HttpResourceProvider httpResourceProvider) 
-            : base(credentials,room,conversationDetailsProvider,historyProvider,cachedHistoryProvider,metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider){
+            HttpResourceProvider httpResourceProvider)
+            : base(credentials, room, conversationDetailsProvider, historyProvider, cachedHistoryProvider, metlServerAddress, cache, receiveEvents, webClientFactory, httpResourceProvider)
+        {
         }
         //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
         public IEnumerable<UserCanvasStack> ToVisualWithNotes()
@@ -47,7 +48,7 @@ namespace SandRibbon.Utils.Connection
         public IEnumerable<UserCanvasStack> ToVisuaWithoutNotes()
         {
             var canvases = createVisual();
-            return new [] {canvases.First()};
+            return new[] { canvases.First() };
         }
         private IEnumerable<UserCanvasStack> createVisual()
         {
@@ -55,19 +56,22 @@ namespace SandRibbon.Utils.Connection
             var privateCanvas = new UserCanvasStack();
             foreach (var stroke in ink)
             {
-                if((stroke.privacy == "public" || stroke.target=="presentationSpace"))
+                if ((stroke.privacy == "public" || stroke.target == "presentationSpace"))
                     publicCanvas.handwriting.Strokes.Add(stroke.stroke);
-                else if(stroke.target== "notepad")
+                else if (stroke.target == "notepad")
                     privateCanvas.handwriting.Strokes.Add(stroke.stroke);
             }
             foreach (var image in images)
             {
-                var imageToAdd = image.Value.image;
-                imageToAdd.Margin = new Thickness(5,5,5,5);
+                var imageToAdd = image.Value.imageSpecification.forceEvaluationForPrinting();
+                imageToAdd.Margin = new Thickness(5, 5, 5, 5);
                 if (image.Value.privacy == "public" || image.Value.target == "presentationSpace")
+                {
+                    Panel.SetZIndex(imageToAdd, image.Value.privacy == "public" ? 1 : 2);
                     publicCanvas.images.Children.Add(imageToAdd);
-                else if(image.Value.target== "notepad")
-                    privateCanvas.images.Children.Add(imageToAdd);    
+                }
+                else if (image.Value.target == "notepad")
+                    privateCanvas.images.Children.Add(imageToAdd);
             }
             foreach (var box in text)
             {
@@ -77,12 +81,19 @@ namespace SandRibbon.Utils.Connection
                 textbox.Background = new SolidColorBrush(Colors.Transparent);
                 if (box.Value.privacy == "public" || box.Value.target == "presentationSpace")
                     publicCanvas.text.Children.Add(textbox);
-                else if(box.Value.target== "notepad")
-                    privateCanvas.text.Children.Add(textbox);    
+                else if (box.Value.target == "notepad")
+                    privateCanvas.text.Children.Add(textbox);
+            }
+            var tempPrinter = new PrintDialog();
+            var size = new Size(tempPrinter.PrintableAreaWidth, tempPrinter.PrintableAreaHeight);
+            foreach(var canvas in new[]{publicCanvas, privateCanvas})
+            {
+                canvas.Measure(size);
+                canvas.Arrange(new Rect(new Point(0,0), size));
             }
             if (privateCanvas.images.Children.Count == 0 & privateCanvas.text.Children.Count == 0 && privateCanvas.handwriting.Strokes.Count == 0)
-                return new [] {publicCanvas};
-            return new [] {publicCanvas, privateCanvas};
+                return new[] { publicCanvas };
+            return new[] { publicCanvas, privateCanvas };
         }
         public override void actOnQuizReceived(MeTLLib.DataTypes.QuizQuestion quizDetails)
         {
@@ -94,7 +105,7 @@ namespace SandRibbon.Utils.Connection
         private static int targetPageCount;
         private static int targetParserCount;
         public PrinterInformation PrinterInfo = new PrinterInformation();
-        
+
         public class PrinterInformation
         {
             public List<Slide> slides;
@@ -104,8 +115,8 @@ namespace SandRibbon.Utils.Connection
         public void PrintHandout(string jid, string user)
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithoutNotes);
-            var conversation =  MeTLLib.ClientFactory.Connection().DetailsOf(jid);
-            targetPageCount = conversation.Slides.Where(s=>s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
+            var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(jid);
+            targetPageCount = conversation.Slides.Where(s => s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).Count();
             targetParserCount = targetPageCount;
             PrinterInfo = new PrinterInformation
                               {
@@ -113,13 +124,13 @@ namespace SandRibbon.Utils.Connection
                                   title = jid,
                                   slides = conversation.Slides
                               };
-            foreach (var slide in conversation.Slides.Where(s=>s.type==MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
+            foreach (var slide in conversation.Slides.Where(s => s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
             {
                 var room = slide.id;
                 ClientFactory.Connection().getHistoryProvider().Retrieve<PrintParser>(
                                 null,
                                 null,
-                                (parser)=> ReceiveParser(parser, printDocument, room),
+                                (parser) => ReceiveParser(parser, printDocument, room),
                                 room.ToString());
             }
         }
@@ -127,7 +138,7 @@ namespace SandRibbon.Utils.Connection
         {
             var printDocument = new Action<IEnumerable<PrintParser>>(ShowPrintDialogWithNotes);
             var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(jid);
-            targetPageCount = conversation.Slides.Where(s=>s.type == Slide.TYPE.SLIDE).Count();
+            targetPageCount = conversation.Slides.Where(s => s.type == Slide.TYPE.SLIDE).Count();
             targetParserCount = targetPageCount * 2;
             PrinterInfo = new PrinterInformation
                               {
@@ -135,19 +146,19 @@ namespace SandRibbon.Utils.Connection
                                   title = jid,
                                   slides = conversation.Slides
                               };
-            foreach (var slide in conversation.Slides.Where(s=>s.type==MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
+            foreach (var slide in conversation.Slides.Where(s => s.type == MeTLLib.DataTypes.Slide.TYPE.SLIDE).OrderBy(s => s.index))
             {
                 var room = slide.id;
                 var parsers = new List<PrintParser>();
                 ClientFactory.Connection().getHistoryProvider().Retrieve<PrintParser>(
                                 null,
                                 null,
-                                (parser) => ReceiveParser(parser, printDocument,room),
+                                (parser) => ReceiveParser(parser, printDocument, room),
                                 room.ToString());
                 ClientFactory.Connection().getHistoryProvider().RetrievePrivateContent<PrintParser>(
                                 null,
                                 null,
-                                (parser) => ReceiveParser(parser, printDocument,room),
+                                (parser) => ReceiveParser(parser, printDocument, room),
                                 user,
                                 room.ToString());
             }
@@ -170,12 +181,12 @@ namespace SandRibbon.Utils.Connection
             }
             if (PrinterInfo.parsers.Count() == targetPageCount && parsers == targetParserCount)
             {
-                var indicesByJid = PrinterInfo.slides.Aggregate(new Dictionary<string,int>(),
-                    (acc,item)=>
-                        {
-                            acc.Add(item.id.ToString(), item.index);
-                            return acc;
-                        });
+                var indicesByJid = PrinterInfo.slides.Aggregate(new Dictionary<string, int>(),
+                    (acc, item) =>
+                    {
+                        acc.Add(item.id.ToString(), item.index);
+                        return acc;
+                    });
                 ShowPrintDialog(from p in PrinterInfo.parsers orderby indicesByJid[p.Key] select p.Value);
 
             }
@@ -184,9 +195,10 @@ namespace SandRibbon.Utils.Connection
         {
             var visuals = parsers.Select(p => p.ToVisualWithNotes())
                                  .Aggregate(new List<UserCanvasStack>(),
-                                                           (acc, item) => {
-                                                                              acc.AddRange(item);
-                                                                              return acc;
+                                                           (acc, item) =>
+                                                           {
+                                                               acc.AddRange(item);
+                                                               return acc;
                                                            });
             HandlePrint(visuals);
         }
@@ -194,9 +206,10 @@ namespace SandRibbon.Utils.Connection
         {
             var visuals = parsers.Select(p => p.ToVisuaWithoutNotes())
                                  .Aggregate(new List<UserCanvasStack>(),
-                                                           (acc, item) => {
-                                                                              acc.AddRange(item);
-                                                                              return acc;
+                                                           (acc, item) =>
+                                                           {
+                                                               acc.AddRange(item);
+                                                               return acc;
                                                            });
             HandlePrint(visuals);
         }
@@ -220,7 +233,7 @@ namespace SandRibbon.Utils.Connection
                           var viewbox = new Viewbox();
                           viewbox.Width = page.Width;
                           viewbox.Height = page.Height;
-                          viewbox.Child = (UIElement)visual;
+                          viewbox.Child = (UIElement)visuallyAdjustedVisual(visual);
                           page.Children.Add(viewbox);
                           ((IAddChild)pageContent).AddChild(page);
                           myDocument.Pages.Add(pageContent);
@@ -230,12 +243,27 @@ namespace SandRibbon.Utils.Connection
                   Commands.HideProgressBlocker.Execute(null);
               });
         }
+        private UserCanvasStack visuallyAdjustedVisual(UserCanvasStack visual)
+        {
+            foreach (var box in visual.text.Children)
+            {
+                var textbox = (TextBox)box;
+                var testSize = new Size(textbox.ActualWidth, textbox.ActualHeight);
+                textbox.Measure(testSize);
+                textbox.Arrange(new Rect(testSize));
+                var lastCharRect = textbox.GetRectFromCharacterIndex(textbox.Text.Count());
+                if (textbox.Height < lastCharRect.Bottom)
+                    textbox.Height = lastCharRect.Bottom;
+            }
+            return visual;
+        }
         private class ThumbBox : Viewbox
         {
             public static int THUMBNAIL_WIDTH = 96;
             public static int THUMBNAIL_HEIGHT = 96;
             private string filename;
-            public ThumbBox(UIElement child, string filename) : base()
+            public ThumbBox(UIElement child, string filename)
+                : base()
             {
                 this.Child = child;
                 this.filename = filename;

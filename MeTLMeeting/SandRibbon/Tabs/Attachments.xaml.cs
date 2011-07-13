@@ -72,6 +72,7 @@ namespace SandRibbon.Tabs
         }
         private void receiveFile(MeTLLib.DataTypes.TargettedFile fileInfo)
         {
+            if(Globals.conversationDetails.Jid != fileInfo.conversationJid.ToString()) return;
             var unMangledFileUri = fileInfo.url.EndsWith(".MeTLFileUpload") ? fileInfo.url.Substring(0, fileInfo.url.Length - 15) : fileInfo.url;
             Dispatcher.adoptAsync(() => files.Add(new FileInfo
                                                      {

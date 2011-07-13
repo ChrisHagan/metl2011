@@ -19,7 +19,7 @@ xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInte
         <StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">
                 <ComboBox ToolTip="{DynamicResource FontFamilyToolTip}" Text="Font family"  Width="120" x:Name="fontFamily"   IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
-                <ComboBox ToolTip="{DynamicResource FontSizeToolTip}" Text="Font size" Width="40" x:Name="fontSize"  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                <ComboBox ToolTip="{DynamicResource FontSizeToolTip}" Text="Font size" x:Name="fontSize"  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
             </StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">
                 <dict:CheckBox x:Name="TextBoldButton" Icon="..\..\Resources\bold.png" Text="B" ToolTip="{DynamicResource BoldToolTip}" Click="valuesUpdated" InternalButtonSize="Small"/>

@@ -246,6 +246,7 @@ namespace SandRibbon.Utils
                 new XAttribute("height", backgroundHeight),
                 new XAttribute("width", backgroundWidth),
                 new XAttribute("privacy", "public"),
+                new XAttribute("background", true),
                 new XAttribute("snapshot", slidePath)));
                 xml.Add(xSlide);
                 var exportFormat = PpShapeFormat.ppShapeFormatPNG;
@@ -428,61 +429,6 @@ namespace SandRibbon.Utils
                 clientConnection.SendStanza(id.ToString(), stanza);
             }
         }
-        private void sendShapes(int id, IEnumerable<XElement> shapes)
-        {
-            int shapeCount = 0;
-            var me = Globals.me;
-            foreach (var shape in shapes)
-            {
-                var uri = new Uri(shape.Attribute("uri").Value);
-                var hostedImage = new Image();
-                var bitmap = new BitmapImage(uri);
-                hostedImage.Source = bitmap;
-                InkCanvas.SetLeft(hostedImage, Double.Parse(shape.Attribute("x").Value));
-                InkCanvas.SetTop(hostedImage, Double.Parse(shape.Attribute("y").Value));
-                if (shape.Attributes("height").Count() > 0)
-                    hostedImage.Height = Double.Parse(shape.Attribute("height").Value);
-                if (shape.Attributes("width").Count() > 0)
-                    hostedImage.Width = Double.Parse(shape.Attribute("width").Value);
-                bool isBackgroundImage = false;
-                if (shape.Attribute("background") != null && shape.Attribute("background").Value.ToLower() == "true")
-                    isBackgroundImage = true;
-                hostedImage.tag(new ImageTag
-                                    {
-                                        id = string.Format("{0}:{1}:{2}", me, DateTimeFactory.Now(), shapeCount++),
-                                        author = me,
-                                        privacy = shape.Attribute("privacy").Value,
-                                        isBackground = isBackgroundImage
-                                    });
-                clientConnection.SendImage(new TargettedImage(id,me,"presentationSpace",shape.Attribute("privacy").Value,hostedImage));
-            }
-        }
-        private void sendTextboxes(int id, IEnumerable<XElement> shapes)
-        {
-            var shapeCount = 0;
-            var height = 0;
-            var me = Globals.me;
-            foreach (var text in shapes)
-            {
-                var newText = new TextBox();
-                newText.Text = text.Attribute("content").Value;
-                InkCanvas.SetLeft(newText, 10);
-                InkCanvas.SetTop(newText, 20 + height);
-                newText.FontFamily = new FontFamily("Arial");
-                newText.FontSize = 12;
-                var newLines = newText.Text.Where(l => l.Equals('\r')).Count() + 1;
-                height += (int)(newLines * (newText.FontSize));
-                shapeCount++;
-                newText.tag(new TextTag
-                        {
-                            author = me,
-                            privacy = "private",
-                            id = string.Format("{0}:{1}{2}", me, DateTimeFactory.Now(), shapeCount++)
-                        });
-                ;
-                clientConnection.SendTextBox(new TargettedTextBox (id,me,"presentationSpace","private",newText));
-            }
-        }
         private XElement uploadXmlUrls(int slide, XElement doc)
         {
             var conn = MeTLLib.ClientFactory.Connection();
@@ -634,7 +580,7 @@ namespace SandRibbon.Utils
                                                     new XAttribute("height", shape.Height * Magnification),
                                                     new XAttribute("width", shape.Width * Magnification),
                                                     new XAttribute("privacy", "public"),
-                                                    new XAttribute("background", false),
+                                                    new XAttribute("background", true),
                                                     new XAttribute("snapshot", file)));
                         }
                         catch (COMException e)
@@ -660,7 +606,7 @@ namespace SandRibbon.Utils
                                                     new XAttribute("height", shape.Height * Magnification),
                                                     new XAttribute("width", shape.Width * Magnification),
                                                     new XAttribute("privacy", "public"),
-                                                    new XAttribute("background", false),
+                                                    new XAttribute("background", true),
                                                     new XAttribute("snapshot", file)));
                         }
                         catch (COMException)

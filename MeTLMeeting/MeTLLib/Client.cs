@@ -517,6 +517,8 @@ namespace MeTLLib
         {
             if (wire.IsConnected() == false)
                 wire.AddActionToReloginQueue(action);
+            else
+                tryIfConnected(action);
         }
         private void tryIfConnected(Action action)
         {
@@ -536,12 +538,21 @@ namespace MeTLLib
             var wait = new ManualResetEvent(false);
             T result = default(T);
             bool complete = false;
-            tryIfConnected(delegate {
-                result = function();
-                complete = true;
+            try
+            {
+                tryIfConnected(delegate
+                {
+                    result = function();
+                    complete = true;
+                    wait.Set();
+                });
+            }
+            catch (Exception e)
+            {
                 wait.Set();
-            });  
-            if(!complete)
+                throw e;
+            }
+                if(!complete)
                 wait.WaitOne();
             return result;
         }
