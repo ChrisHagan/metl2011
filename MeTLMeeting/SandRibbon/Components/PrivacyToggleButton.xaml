@@ -7,7 +7,7 @@ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     >
     <Canvas>
         <DockPanel Margin="10, 0, 0, 0" x:Name="privacyButtons"  >
-            <dict:Button DockPanel.Dock="Bottom"  x:Name="banhammerButton" ToolTip="{DynamicResource ShowContentToolTip}" Icon ="\Resources\banhammer.jpg" Text="Ban" Click="banhammerContent" InternalButtonSize="Small"/>
+            <!-- <dict:Button DockPanel.Dock="Bottom"  x:Name="banhammerButton" ToolTip="{DynamicResource ShowContentToolTip}" Icon ="\Resources\banhammer.jpg" Text="Ban" Click="banhammerContent" InternalButtonSize="Small"/> -->
             <StackPanel DockPanel.Dock="Top" Orientation="Vertical" >
                 <dict:Button x:Name="deleteButton" ToolTip="{DynamicResource DeleteContentToolTip}" Icon="\Resources\sexyDelete.png" Text="Delete" Click="deleteContent" InternalButtonSize="Small"/>
                 <dict:Button x:Name="hideButton" ToolTip="{DynamicResource HideContentToolTip}" Icon="\Resources\Hide.png" Text="Hide" Click="hideContent" InternalButtonSize="Small"/>
