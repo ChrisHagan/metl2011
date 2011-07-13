@@ -34,6 +34,8 @@ namespace SandRibbon.Components.Canvas
     }
     public class Text : AbstractCanvas
     {
+        private readonly double defaultSize = 10.0;
+        private readonly FontFamily defaultFamily = new FontFamily("Arial");
         private double currentSize = 10.0;
         private FontFamily currentFamily = new FontFamily("Arial");
         public Text()
@@ -77,6 +79,7 @@ namespace SandRibbon.Components.Canvas
                 ApplyPrivacyStylingToElement(box, box.tag().privacy);
             }
         }
+  
         private void updateStyling(TextInformation info)
         {
             try
@@ -344,6 +347,9 @@ namespace SandRibbon.Components.Canvas
             addAdorners();
             if (GetSelectedElements().Count == 0 && myTextBox != null) return;
             myTextBox = null;
+            if (GetSelectedElements().Count == 1 && GetSelectedElements()[0] is MeTLTextBox)
+                myTextBox = ((MeTLTextBox)GetSelectedElements()[0]);
+            updateTools();
         }
         private void updateSelectionAdorners()
         {
@@ -623,26 +629,34 @@ namespace SandRibbon.Components.Canvas
         }
         private void updateTools()
         {
-            var strikethrough = false;
-            var underline = false;
-            if(myTextBox == null) return;
-            if (myTextBox.TextDecorations.Count > 0)
-            {
-                strikethrough = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
-                underline = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "underline";
-            }
             var info = new TextInformation
-                           {
-                               family = myTextBox.FontFamily,
-                               size = myTextBox.FontSize,
-                               bold = myTextBox.FontWeight == FontWeights.Bold,
-                               italics = myTextBox.FontStyle == FontStyles.Italic,
-                               strikethrough = strikethrough,
-                               underline = underline,
-                               color =  ((SolidColorBrush)myTextBox.Foreground).Color
-
-                           };
-            Commands.TextboxFocused.ExecuteAsync(info);
+            {
+                family = defaultFamily,
+                size = defaultSize,
+                bold = false,
+                italics = false,
+                strikethrough = false,
+                underline = false,
+                color = Colors.Black
+            };
+            if (myTextBox != null)
+            {
+                info = new TextInformation
+                {
+                    family = myTextBox.FontFamily,
+                    size = myTextBox.FontSize,
+                    bold = myTextBox.FontWeight == FontWeights.Bold,
+                    italics = myTextBox.FontStyle == FontStyles.Italic,
+                    color = ((SolidColorBrush)myTextBox.Foreground).Color
+                };
+                
+                if (myTextBox.TextDecorations.Count > 0)
+                {
+                    info.strikethrough = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
+                    info.underline = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "underline";
+                }
+            }
+             Commands.TextboxFocused.ExecuteAsync(info);
         }
         private void box_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
