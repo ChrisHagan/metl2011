@@ -79,6 +79,8 @@ namespace SandRibbon
 
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
+            Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
+            Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             
             //zoom
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
@@ -136,7 +138,7 @@ namespace SandRibbon
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
             Commands.SetRibbonAppearance.RegisterCommandToDispatcher(new DelegateCommand<RibbonAppearance>(SetRibbonAppearance));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused1, e) => { e.Handled = true; e.CanExecute = true; }));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
