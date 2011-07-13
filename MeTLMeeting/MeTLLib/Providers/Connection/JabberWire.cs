@@ -58,7 +58,7 @@ namespace MeTLLib.Providers.Connection
                         cache,
                         receiveEvents,
                         clientFactory,
-                        resourceProvider);
+                        resourceProvider,true);
                     instance.openConnection();
                 }
                 return instance;
@@ -116,6 +116,7 @@ namespace MeTLLib.Providers.Connection
         private XmppClientConnection conn;
         private Timer heartbeat;
         protected Jid jid;
+        public bool activeWire { get; private set; }
 
         private void registerCommands()
         {
@@ -125,7 +126,7 @@ namespace MeTLLib.Providers.Connection
             Commands.SendPing.RegisterCommand(new DelegateCommand<string>(SendPing));
         }
         public ResourceCache cache;
-        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider)
+        public JabberWire(Credentials credentials, IConversationDetailsProvider conversationDetailsProvider, HttpHistoryProvider historyProvider, CachedHistoryProvider cachedHistoryProvider, MeTLServerAddress metlServerAddress, ResourceCache cache, IReceiveEvents events, IWebClientFactory webClientFactory, HttpResourceProvider resourceProvider, bool active)
         {
             this.credentials = credentials;
             this.conversationDetailsProvider = conversationDetailsProvider;
@@ -138,7 +139,8 @@ namespace MeTLLib.Providers.Connection
             this.resourceProvider = resourceProvider;
             this.jid = createJid(credentials.name);
             new MeTLLib.DataTypes.MeTLStanzasConstructor();
-            if (this.GetType() != typeof(PreParser))
+            this.activeWire = active;
+            if (activeWire)
             {
                 receiveEvents.StatusChanged += listenToStatusChangedForReset;
                 establishHeartBeat();
