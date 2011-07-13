@@ -350,13 +350,19 @@ namespace MeTLLib.Providers.Connection
                     });
             foreach (var room in rooms)
             {
-                var alias = credentials.name + conn.Resource;
-                new MucManager(conn).LeaveRoom(room, alias);
+                leaveRoom(room);
+                //var alias = credentials.name + conn.Resource;
+                //new MucManager(conn).LeaveRoom(room, alias);
             }
         }
         private bool isLocationValid()
         {
             return (location != null && !String.IsNullOrEmpty(location.activeConversation) && location.availableSlides.Count > 0 && location.currentSlide > 0);
+        }
+        private void leaveRoom(Jid room)
+        {
+            var alias = credentials.name + conn.Resource;
+            new MucManager(conn).LeaveRoom(room, alias);
         }
         private void joinRooms()
         {
@@ -531,7 +537,18 @@ namespace MeTLLib.Providers.Connection
         }
         public void sendFileResource(TargettedFile file)
         {
-            stanza(Globals.location.activeConversation, new MeTLStanzas.FileResource(file));
+            var fileResource = new MeTLStanzas.FileResource(file);
+            if (Globals.location.availableSlides.Contains(file.slide))
+                stanza(Globals.location.activeConversation, fileResource);
+            else
+            {
+                var fileConversation = file.conversationJid.ToString();
+                var fileConversationJid = new Jid(fileConversation + "@" + metlServerAddress.muc);
+                joinRoom(fileConversationJid);
+                stanza(fileConversation.ToString(), fileResource);
+                if (fileConversation != Globals.location.activeConversation)
+                    leaveRoom(fileConversationJid);
+            }
         }
         public void SendVideo(TargettedVideo video)
         {
