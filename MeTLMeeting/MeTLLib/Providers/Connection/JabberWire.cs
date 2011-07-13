@@ -106,6 +106,7 @@ namespace MeTLLib.Providers.Connection
         protected const string SLEEP = "/SLEEP";
         protected const string PING = "/PING";
         protected const string PONG = "/PONG";
+        protected const uint HEARTBEAT_PERIOD = 20000;
         public Credentials credentials;
         public Location location = Location.Empty; 
         protected IReceiveEvents receiveEvents;
@@ -113,6 +114,7 @@ namespace MeTLLib.Providers.Connection
         protected HttpResourceProvider resourceProvider;
         protected static string privacy = "PUBLIC";
         private XmppClientConnection conn;
+        private Timer heartbeat;
         protected Jid jid;
 
         private void registerCommands()
@@ -136,8 +138,25 @@ namespace MeTLLib.Providers.Connection
             this.resourceProvider = resourceProvider;
             this.jid = createJid(credentials.name);
             new MeTLLib.DataTypes.MeTLStanzasConstructor();
+            if (this.GetType() != typeof(PreParser))
+            {
+                receiveEvents.StatusChanged += listenToStatusChangedForReset;
+                establishHeartBeat();
+            }
         }
+        private void establishHeartBeat()
+        {
+            heartbeat = new Timer((_unused) => { checkConnection(); }, null, HEARTBEAT_PERIOD, HEARTBEAT_PERIOD);
+        } 
 
+        private void checkConnection()
+        {
+            if (!this.IsConnected()) Reset("resetting on heartbeat");
+        }
+        private void listenToStatusChangedForReset(object sender, StatusChangedEventArgs e)
+        {
+            if (!e.isConnected && !this.IsConnected()) Reset("Jabberwire::listenToStatusChangedForResest");
+        }
         private void makeAvailableNewSocket()
         {
             if (this.conn != null) { 
@@ -296,14 +315,21 @@ namespace MeTLLib.Providers.Connection
         {
             lock (resetLock)
             {
-                switch (conn.XmppConnectionState) { 
-                    case XmppConnectionState.Disconnected:
-                        Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Resetting.  {0}", caller));
-                        openConnection();
-                        break;
-                    case XmppConnectionState.Authenticating:
-                        openConnection();
-                        break;
+                if (conn != null)
+                    switch (conn.XmppConnectionState)
+                    {
+                        case XmppConnectionState.Disconnected:
+                            Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Resetting.  {0}", caller));
+                            openConnection();
+                            break;
+                        //case XmppConnectionState.Authenticating:
+                        //    openConnection();
+                        //    break;
+                    }
+                else
+                {
+                    Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Conn is null - openingConnection.  {0}", caller));
+                    openConnection();
                 }
             }
         }
