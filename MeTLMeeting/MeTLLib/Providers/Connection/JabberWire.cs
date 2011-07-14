@@ -106,7 +106,8 @@ namespace MeTLLib.Providers.Connection
         protected const string SLEEP = "/SLEEP";
         protected const string PING = "/PING";
         protected const string PONG = "/PONG";
-        protected const uint HEARTBEAT_PERIOD = 20000;
+        private const uint HEARTBEAT_PERIOD = 20000;
+        private const uint TIMEOUT_PERIOD = 10000;
         public Credentials credentials;
         public Location location = Location.Empty; 
         protected IReceiveEvents receiveEvents;
@@ -149,15 +150,43 @@ namespace MeTLLib.Providers.Connection
         private void establishHeartBeat()
         {
             heartbeat = new Timer((_unused) => { checkConnection(); }, null, HEARTBEAT_PERIOD, HEARTBEAT_PERIOD);
-        } 
+        }
+        private Timer ConnectionTimeoutTimer;
+        private void EstablishConnectionTimer(){ 
+            ConnectionTimeoutTimer = new Timer((_unused) => {
+                if (conn == null || conn.XmppConnectionState != XmppConnectionState.Connected)
+                    Reset("Resetting because connection took too long");
+            },null,TIMEOUT_PERIOD,TIMEOUT_PERIOD);
+        }
+        private void StopConnectionTimeoutTimer()
+        {
+            if (ConnectionTimeoutTimer == null) return;
+            ConnectionTimeoutTimer.Change(Timeout.Infinite, Timeout.Infinite);
+        }
+        private void StartConnectionTimeoutTimer()
+        {
+            if (ConnectionTimeoutTimer == null) EstablishConnectionTimer();
+            ConnectionTimeoutTimer.Change(TIMEOUT_PERIOD, TIMEOUT_PERIOD);
+        }
 
         private void checkConnection()
         {
             if (!this.IsConnected()) Reset("resetting on heartbeat");
-        }
+         }
         private void listenToStatusChangedForReset(object sender, StatusChangedEventArgs e)
         {
-            if (!e.isConnected && !this.IsConnected()) Reset("Jabberwire::listenToStatusChangedForResest");
+            if (e.isConnected) {
+                StopConnectionTimeoutTimer();
+            }
+            if (conn == null) return;
+            switch (conn.XmppConnectionState)
+            {
+                // fall through
+                case XmppConnectionState.Connecting:
+                case XmppConnectionState.Authenticating:
+                    return;
+            }
+            if (!e.isConnected && !this.IsConnected()) Reset("Jabberwire::listenToStatusChangedForReset");
         }
         private void makeAvailableNewSocket()
         {
@@ -166,6 +195,7 @@ namespace MeTLLib.Providers.Connection
                 conn.OnLogin -= OnLogin;
                 conn.OnMessage -= OnMessage;
                 conn.OnSocketError -= HandlerError;
+                conn.OnSocketError -= Disconnect;
                 conn.OnError -= HandlerError;
                 conn.OnRegisterError -= ElementError;
                 conn.OnStreamError -= ElementError;
@@ -182,6 +212,7 @@ namespace MeTLLib.Providers.Connection
             conn.OnLogin += OnLogin;
             conn.OnMessage += OnMessage;
             conn.OnSocketError += HandlerError;
+            conn.OnSocketError += Disconnect;
             conn.OnError += HandlerError;
             conn.OnRegisterError += ElementError;
             conn.OnStreamError += ElementError;
@@ -238,8 +269,10 @@ namespace MeTLLib.Providers.Connection
                 conn.RegisterAccount = true;
                 usernameToBeRegistered = null;
             }
+            StartConnectionTimeoutTimer();
             conn.Open(jid.User, "examplePassword", resource, 1);
         }
+       
         private void OnLogin(object o)
         {
             receiveEvents.statusChanged(true, this.credentials);
@@ -255,6 +288,24 @@ namespace MeTLLib.Providers.Connection
         {
             Trace.TraceError(string.Format("MeTLLib::Providers::Connection:JabberWire:Handler error: {0}", ex.Message));
             Reset("JabberWire::HandlerError");
+        }
+        private void Disconnect(object sender, Exception ex)
+        {
+            Trace.TraceError(string.Format("MeTLLib::Providers::Connection:JabberWire:Disconnect: {0}", ex.Message));
+            disconnectSocket();
+        }
+        private void disconnectSocket()
+        {
+            if (conn == null) return;
+
+            try
+            {
+                conn.SocketDisconnect();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(string.Format("MeTLLib::Providers::Connection:JabberWire:disconnectSocket: {0}", ex.Message));
+            }
         }
         private void ElementError(object sender, Element element)
         {
@@ -312,16 +363,22 @@ namespace MeTLLib.Providers.Connection
         protected HttpHistoryProvider historyProvider;
         protected CachedHistoryProvider cachedHistoryProvider;
         protected MeTLServerAddress metlServerAddress;
-        private object resetLock = new object();
-        public void Reset(string caller)
+        private static int resetInProgress = 0;
+
+        private void Reset(string caller)
         {
-            lock (resetLock)
+            if (1 == Interlocked.Increment(ref resetInProgress))
             {
                 if (conn != null)
                     switch (conn.XmppConnectionState)
                     {
                         case XmppConnectionState.Disconnected:
                             Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Resetting.  {0}", caller));
+                            openConnection();
+                            break;
+                        case XmppConnectionState.Connecting:
+                            // Timed out trying to connect, so disconnect and start again
+                            disconnectSocket();
                             openConnection();
                             break;
                         //case XmppConnectionState.Authenticating:
@@ -333,6 +390,12 @@ namespace MeTLLib.Providers.Connection
                     Trace.TraceWarning(string.Format("CRASH: JabberWire::Reset: Conn is null - openingConnection.  {0}", caller));
                     openConnection();
                 }
+
+                Interlocked.Exchange(ref resetInProgress, 0);
+            }
+            else
+            {
+                Trace.TraceWarning(string.Format("++++: JabberWire::Reset: Called {0} times.", resetInProgress));
             }
         }
         public void leaveRooms()
@@ -351,8 +414,6 @@ namespace MeTLLib.Providers.Connection
             foreach (var room in rooms)
             {
                 leaveRoom(room);
-                //var alias = credentials.name + conn.Resource;
-                //new MucManager(conn).LeaveRoom(room, alias);
             }
         }
         private bool isLocationValid()
