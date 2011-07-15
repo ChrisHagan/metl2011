@@ -136,7 +136,6 @@ namespace SandRibbon.Utils
         }
         public PowerPointLoader()
         {
-            Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(EditConversation));
             Commands.UploadPowerpoint.RegisterCommandToDispatcher(new DelegateCommand<PowerpointSpec>(UploadPowerpoint));
             clientConnection = MeTLLib.ClientFactory.Connection();
         }
@@ -186,10 +185,6 @@ namespace SandRibbon.Utils
                 }));
             worker.SetApartmentState(ApartmentState.STA);
             worker.Start();
-        }
-        private void EditConversation(string conversation)
-        {
-            new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.EDIT, conversation).ShowDialog();
         }
         public void CreateBlankConversation()
         {

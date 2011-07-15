@@ -240,8 +240,13 @@ namespace SandRibbon.Components
         {
             if (e.conversationDetails != null && e.conversationDetails.Jid == ClientFactory.Connection().location.activeConversation)
                 Commands.UpdateConversationDetails.Execute(e.conversationDetails);
-            else
-                Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
+            else 
+            {
+                App.Current.Dispatcher.adopt(() =>
+                {
+                    Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
+                });
+            }
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {
