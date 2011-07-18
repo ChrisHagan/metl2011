@@ -242,10 +242,10 @@ namespace SandRibbon.Components
                 Commands.UpdateConversationDetails.Execute(e.conversationDetails);
             else 
             {
-                //App.Current.Dispatcher.adopt(() =>
-                //{
+                App.Current.Dispatcher.adopt(() =>
+                {
                     Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
-                //});
+                });
             }
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)
