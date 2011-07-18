@@ -76,6 +76,7 @@ namespace SandRibbon
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<string>(JoinConversation, mustBeLoggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
+            Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
 
             Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
@@ -588,6 +589,10 @@ namespace SandRibbon
             if (conversationSearchMustBeClosed(null))
                 return Globals.isAuthor || Globals.conversationDetails.Permissions.studentCanPublish;
             else return false;
+        }
+        private bool mustBeInConversationAndBeAuthor(object _arg)
+        {
+            return mustBeInConversation(_arg) && mustBeAuthor(_arg);
         }
         private bool mustBeInConversation(object _arg)
         {
