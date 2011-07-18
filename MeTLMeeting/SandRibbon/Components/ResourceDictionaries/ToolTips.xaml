@@ -96,7 +96,7 @@
     <resources:MeTLImageToolTip x:Key="SubmitSubmissionToolTip" 
                                         TitleText="Send Submission"
                                         ImageSource="\Resources\SendSubmission.png" 
-                                        ContentText="Submit a snapshot of your screen to the teacher."/>
+                                        ContentText="Submit a snapshot of your screen to the teacher. This snapshot includes both public and private content."/>
     <resources:MeTLImageToolTip x:Key="RestoreCanvasToolTip" 
                                         TitleText="Restore Page"
                                         ImageSource="\Resources\Ribbon-FitCanvas.png" 
