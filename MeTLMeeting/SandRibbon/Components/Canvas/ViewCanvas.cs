@@ -61,6 +61,11 @@ namespace SandRibbon.Components.Canvas
             Height = newSize.Height;
             Width = newSize.Width;
         }
+        public void FlushDimensions()
+        {
+            Height = Double.NaN;
+            Width = Double.NaN;
+        }
         private void mouseDrag(object sender, MouseEventArgs e)
         {
             switch (currentViewMode)

@@ -159,6 +159,7 @@ namespace SandRibbon.Components
             handwriting.FlushStrokes();
             images.FlushImages();
             text.FlushText();
+            viewCanvas.FlushDimensions();
         }
         protected void ClearAdorners()
         {
