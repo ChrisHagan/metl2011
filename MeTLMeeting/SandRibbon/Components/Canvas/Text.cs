@@ -84,7 +84,6 @@ namespace SandRibbon.Components.Canvas
         {
             try
             {
-
                 currentColor = info.color;
                 currentFamily = info.family;
                 currentSize = info.size;
