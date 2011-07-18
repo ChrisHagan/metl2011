@@ -39,10 +39,40 @@ namespace SandRibbon.Tabs
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
             quizzes.ItemsSource = activeQuizzes;
+            JoinConversation(null);
         }
         private void JoinConversation(object _jid)
         {
             activeQuizzes.Clear();
+            Dispatcher.adoptAsync( delegate
+                                            {
+                                                try
+                                                {
+                                                    if (Globals.isAuthor)
+                                                        amAuthor();
+                                                    else
+                                                        amRespondent();
+                                                }
+                                                catch(NotSetException)
+                                                {
+                                                }
+                                            });
+        }
+        private void amAuthor()
+        {
+            quizResultsRibbonGroup.Header = "Quizzes";
+            quizRibbonGroup.Visibility = Visibility.Visible;
+            createQuiz.Visibility = Visibility.Visible;
+            createQuiz.IsEnabled = true;
+            results.Visibility = Visibility.Visible;
+        }
+        private void amRespondent()
+        {
+            quizResultsRibbonGroup.Header = "Respond";
+            quizRibbonGroup.Visibility = Visibility.Collapsed;
+            //createQuiz.Visibility = Visibility.Collapsed;
+            createQuiz.IsEnabled = false;
+            results.Visibility = Visibility.Collapsed;
         }
         private void updateConversationDetails(ConversationDetails details)
         {
@@ -51,18 +81,11 @@ namespace SandRibbon.Tabs
             {
                 if (Globals.isAuthor)
                 {
-                    quizResultsRibbonGroup.Header = "Quizzes";
-                    quizRibbonGroup.Visibility = Visibility.Visible;
-                    createQuiz.Visibility = Visibility.Visible;
-                    createQuiz.IsEnabled = true;
-                    results.Visibility = Visibility.Visible;
+                    amAuthor();            
                 }
                 else
                 {
-                    quizResultsRibbonGroup.Header = "Respond";
-                    quizRibbonGroup.Visibility = Visibility.Collapsed;
-                    createQuiz.Visibility = Visibility.Collapsed;
-                    results.Visibility = Visibility.Collapsed;
+                    amRespondent();
                 }
             }
             catch (NotSetException)

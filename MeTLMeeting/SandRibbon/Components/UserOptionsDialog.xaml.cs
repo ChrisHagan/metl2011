@@ -43,6 +43,7 @@ namespace SandRibbon.Components
             Trace.TraceInformation("SetPedagogy {0}",level.label);
             Commands.SetPedagogyLevel.Execute(level);
             Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(((UserOptions)DataContext).language));
+            Commands.JoinConversation.Execute(Globals.location.activeConversation);
             Close();
         }
         private void Cancel(object sender, RoutedEventArgs e)
