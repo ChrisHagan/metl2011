@@ -17,6 +17,8 @@ namespace SandRibbon.Providers
         public const string METLDEMONSTRATOR = "MeTL Demonstrator";
         public const string METL = "MeTL";
         public const string METLPRESENTER = "MeTL Presenter";
+
+        private static QuizData quizData = new QuizData();
         public static bool isAuthor
         {
             get
@@ -96,7 +98,8 @@ namespace SandRibbon.Providers
         {
             get
             {
-                try{
+                try
+                {
                     return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
                 }
                 catch (NotSetException e)
@@ -110,6 +113,13 @@ namespace SandRibbon.Providers
                         return ConversationDetails.Empty;
                     }
                 }
+            }
+        }
+        public static MeTLLib.DataTypes.QuizData quiz
+        {
+            get
+            {
+                return quizData;                
             }
         }
         public static MeTLLib.DataTypes.Credentials credentials

@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseModule.cs" />
+    <Compile Include="DataTypes\QuizData.cs" />
     <Compile Include="DataTypes\UserOptions.cs" />
     <Compile Include="Providers\INodeFix.cs" />
     <Compile Include="Providers\UserOptionsProvider.cs" />
