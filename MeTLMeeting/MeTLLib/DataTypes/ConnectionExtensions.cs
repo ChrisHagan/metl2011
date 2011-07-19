@@ -25,6 +25,13 @@ namespace MeTLLib.DataTypes
         public string name;
         public string password;
         public List<AuthorizedGroup> authorizedGroups;
+        public static Credentials Empty
+        {
+            get
+            {
+                return new Credentials("", "", new List<AuthorizedGroup>());
+            }
+        }
     }
     public class AuthorizedGroup
     {

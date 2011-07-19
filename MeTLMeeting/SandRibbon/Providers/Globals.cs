@@ -123,7 +123,7 @@ namespace SandRibbon.Providers
                 }
                 catch (NotSetException e)
                 {
-                    return new Credentials("", "", new List<AuthorizedGroup>());
+                    return Credentials.Empty;
                 }
             }
         }

@@ -67,6 +67,7 @@ namespace SandRibbon
             Globals.userInformation.policy = new Policy(false, false);
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
+            Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(createBlankConversation));
             Commands.CreateConversation.RegisterCommand(new DelegateCommand<object>(createConversation, canCreateConversation));
             Commands.ConnectToSmartboard.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -113,6 +114,7 @@ namespace SandRibbon
             Commands.SendWakeUp.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
+            Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             
             //canvas stuff
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
@@ -151,7 +153,6 @@ namespace SandRibbon
             player.Loaded += playMedia;
             //player.MediaOpened += playMedia;
             Commands.PresentVideo.RegisterCommandToDispatcher(new DelegateCommand<object>(presentVideo));
-            RibbonApplicationPopup.Opened += ApplicationButtonPopup_Opened;
             RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
             getDefaultSystemLanguage();
         }
@@ -169,12 +170,6 @@ namespace SandRibbon
         private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
         {
             Trace.TraceInformation("ApplicationButtonPopup_Closed");
-        }
-        private void ApplicationButtonPopup_Opened(object sender, EventArgs e)
-        {
-            if (ribbon.Tabs.Count < 1)
-                    RibbonApplicationPopup.IsOpen = false;
-            Trace.TraceInformation("ApplicationButtonPopup_Opened");
         }
         #region helpLinks
         private void OpenEULABrowser(object sender, RoutedEventArgs e)
@@ -218,7 +213,9 @@ namespace SandRibbon
         private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
         {
             Trace.TraceInformation("UserOptionsDialog_Show");
-            new UserOptionsDialog().Show();
+            if (mustBeLoggedIn(null))
+                new UserOptionsDialog().Show();
+            else MessageBox.Show("You must be logged in to edit your options");
         }
         private void playMedia(object sender, EventArgs e)
         {
@@ -573,7 +570,7 @@ namespace SandRibbon
         {
             try
             {
-                return Globals.credentials != null;
+                return Globals.credentials != null && !Globals.credentials.ValueEquals(Credentials.Empty);
             }
             catch (NotSetException)
             {

@@ -5,7 +5,7 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:my="clr-namespace:SandRibbon"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
 xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     Loaded="setUpTools">
@@ -22,11 +22,11 @@ xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInte
                 <ComboBox ToolTip="{DynamicResource FontSizeToolTip}" Text="Font size" x:Name="fontSize"  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
             </StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">
-                <dict:CheckBox x:Name="TextBoldButton" Icon="..\..\Resources\bold.png" Text="B" ToolTip="{DynamicResource BoldToolTip}" Click="valuesUpdated" InternalButtonSize="Small"/>
-                <dict:CheckBox x:Name="TextItalicButton" Icon="..\..\Resources\italic.png" Text="I" ToolTip="{DynamicResource ItalicToolTip}" Click="valuesUpdated" InternalButtonSize="Small"/>
-                <dict:CheckBox x:Name="TextUnderlineButton" Icon="..\..\Resources\underline.png" Text="U" ToolTip="{DynamicResource UnderlineToolTip}" Click="valuesUpdated" InternalButtonSize="Small"/>
-                <dict:CheckBox x:Name="TextStrikethroughButton" Icon="..\..\Resources\strikethrough.png" Text="S" ToolTip="{DynamicResource StrikeThroughToolTip}" Click="valuesUpdated" InternalButtonSize="Small"/>
-                <dict:Button ToolTip="{DynamicResource ClearFormattingToolTip}" Icon="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Text="Clear Formatting" Click="restoreDefaults" InternalButtonSize="Small"/>
+                <dict:CheckBox x:Name="TextBoldButton" Icon="..\..\Resources\bold.png" Text="B" ToolTip="{DynamicResource BoldToolTip}" Click="valuesUpdated" InternalButtonSize="Small"  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                <dict:CheckBox x:Name="TextItalicButton" Icon="..\..\Resources\italic.png" Text="I" ToolTip="{DynamicResource ItalicToolTip}" Click="valuesUpdated" InternalButtonSize="Small"  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                <dict:CheckBox x:Name="TextUnderlineButton" Icon="..\..\Resources\underline.png" Text="U" ToolTip="{DynamicResource UnderlineToolTip}" Click="valuesUpdated" InternalButtonSize="Small"  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                <dict:CheckBox x:Name="TextStrikethroughButton" Icon="..\..\Resources\strikethrough.png" Text="S" ToolTip="{DynamicResource StrikeThroughToolTip}" Click="valuesUpdated" InternalButtonSize="Small"  IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                <dict:Button ToolTip="{DynamicResource ClearFormattingToolTip}" Icon="..\..\Resources\clearFormatting.png" x:Name="ClearFormattingButton" Text="Clear Formatting" Click="restoreDefaults" InternalButtonSize="Small" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
                 <Border x:Name="ColourPickerBorder" BorderBrush="Black" BorderThickness="2">
                     <dict:DoubleButton IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" Click="ShowColourSelector" x:Name="FontColourButton" Icon="..\..\Resources\changeFontColour.png" Text="C" ToolTip="{DynamicResource FontColourToolTip}" InternalButtonSize="Small">
                         <dict:DoubleButton.Popup>
