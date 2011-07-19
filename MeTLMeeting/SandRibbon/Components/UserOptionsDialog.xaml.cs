@@ -42,8 +42,19 @@ namespace SandRibbon.Components
             var level = Pedagogicometer.level(((UserOptions)DataContext).pedagogyLevel);
             Trace.TraceInformation("SetPedagogy {0}",level.label);
             Commands.SetPedagogyLevel.Execute(level);
+            // ChangeLanguage commented out for 182 staging release. Causing a crash.
             //Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(((UserOptions)DataContext).language));
-            Commands.JoinConversation.Execute(Globals.location.activeConversation);
+            try
+            {
+                if (!String.IsNullOrEmpty(Globals.location.activeConversation))
+                {
+                    Commands.JoinConversation.Execute(Globals.location.activeConversation);
+                }
+            }
+            catch (NotSetException)
+            {
+            }
+
             Close();
         }
         private void Cancel(object sender, RoutedEventArgs e)
