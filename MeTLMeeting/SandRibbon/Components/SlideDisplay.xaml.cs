@@ -86,6 +86,7 @@ namespace SandRibbon.Components
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(EditConversation));
+            Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
             Display(Globals.conversationDetails);
         }
 
@@ -172,19 +173,18 @@ namespace SandRibbon.Components
             slides.SelectedIndex = nextIndex;
             slides.ScrollIntoView(slides.SelectedItem);
         }
+        private void reorderSlides(int conversationJid)
+        {
+            if (Globals.conversationDetails.Jid != conversationJid.ToString()) return;
+            var details = Globals.conversationDetails;
+            thumbnailList.Clear();
+            foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
+            {
+                thumbnailList.Add(slide);
+            }
+        }
         public void EditConversation(object _obj)
         {
-            DelegateCommand<ConversationDetails> reorder = null;
-            reorder = new DelegateCommand<ConversationDetails>(details =>
-            {
-                thumbnailList.Clear();
-                Commands.UpdateConversationDetails.UnregisterCommand(reorder);
-                foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
-                {
-                    thumbnailList.Add(slide);
-                }
-            });
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(reorder);
             new EditConversation().ShowDialog();
         }
         public void Display(ConversationDetails details)
@@ -209,17 +209,6 @@ namespace SandRibbon.Components
                 var newSlides = details.Slides.Where(s => !thumbnailList.Contains(s)).ToList();
                 foreach (var newSlide in newSlides)
                     thumbnailList.Insert(newSlide.index, newSlide);
-            }
-            foreach (var slide in thumbnailList)
-            {
-                foreach (var relatedSlide in details.Slides.Where(s => s.id == slide.id))
-                {
-                    if (slide.index != relatedSlide.index)
-                    {
-                        slide.index = relatedSlide.index;
-                        slide.refreshIndex();
-                    }
-                }
             }
             var currentSlideIndex = indexOf(currentSlideId);
             if (moveTo)

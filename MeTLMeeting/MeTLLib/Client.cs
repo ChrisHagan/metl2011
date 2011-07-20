@@ -481,6 +481,12 @@ namespace MeTLLib
             tryIfConnected(work);
             return cd;
         }
+        public void UpdateSlideCollection(Int32 conversationJid)
+        {
+            tryIfConnected(() => {
+                wire.sendSlideCollectionUpdatedCommand(conversationJid);
+            });
+        }
         public ConversationDetails DetailsOf(string room)
         {
             ConversationDetails cd = ConversationDetails.Empty;

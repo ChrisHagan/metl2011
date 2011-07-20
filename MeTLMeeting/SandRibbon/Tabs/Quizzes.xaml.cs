@@ -27,8 +27,6 @@ namespace SandRibbon.Tabs
     public partial class Quizzes : Divelements.SandRibbon.RibbonTab
     {
         public static RoutedCommand openQuizResults = new RoutedCommand();
-        public ObservableCollection<QuizQuestion> activeQuizzes = new ObservableCollection<MeTLLib.DataTypes.QuizQuestion>();
-        public Dictionary<long, ObservableCollection<MeTLLib.DataTypes.QuizAnswer>> answers = new Dictionary<long, ObservableCollection<MeTLLib.DataTypes.QuizAnswer>>();
         public Quizzes()
         {
             InitializeComponent();
@@ -38,25 +36,30 @@ namespace SandRibbon.Tabs
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
-            quizzes.ItemsSource = activeQuizzes;
-            JoinConversation(null);
+            quizzes.ItemsSource = Globals.quiz.activeQuizzes;
+            SetupUI();
+        }
+        private void SetupUI()
+        {
+            Dispatcher.adoptAsync( 
+                delegate
+                {
+                    try
+                    {
+                        if (Globals.isAuthor)
+                            amAuthor();
+                        else
+                            amRespondent();
+                    }
+                    catch(NotSetException)
+                    {
+                    }
+                });
         }
         private void JoinConversation(object _jid)
         {
-            activeQuizzes.Clear();
-            Dispatcher.adoptAsync( delegate
-                                            {
-                                                try
-                                                {
-                                                    if (Globals.isAuthor)
-                                                        amAuthor();
-                                                    else
-                                                        amRespondent();
-                                                }
-                                                catch(NotSetException)
-                                                {
-                                                }
-                                            });
+            Globals.quiz.activeQuizzes.Clear();
+            SetupUI();
         }
         private void amAuthor()
         {
@@ -93,8 +96,8 @@ namespace SandRibbon.Tabs
             }
             if (details.Jid == Globals.location.activeConversation && details.Subject.ToLower() == "deleted")
             {
-                answers.Clear();
-                activeQuizzes.Clear();
+                Globals.quiz.answers.Clear();
+                Globals.quiz.activeQuizzes.Clear();
             }
         }
         private void preparserAvailable(PreParser preParser)
@@ -110,19 +113,19 @@ namespace SandRibbon.Tabs
         {
             Dispatcher.adoptAsync(() =>
             {
-                if (answers.ContainsKey(answer.id))
+                if (Globals.quiz.answers.ContainsKey(answer.id))
                 {
-                    if (answers[answer.id].Where(a => a.answerer == answer.answerer).Count() > 0)
+                    if (Globals.quiz.answers[answer.id].Where(a => a.answerer == answer.answerer).Count() > 0)
                     {
-                        var oldAnswer = answers[answer.id].Where(a => a.answerer == answer.answerer).First();
-                        answers[answer.id].Remove(oldAnswer);
+                        var oldAnswer = Globals.quiz.answers[answer.id].Where(a => a.answerer == answer.answerer).First();
+                        Globals.quiz.answers[answer.id].Remove(oldAnswer);
                     }
-                    answers[answer.id].Add(answer);
+                    Globals.quiz.answers[answer.id].Add(answer);
                 }
                 else
                 {
                     var newList = new ObservableCollection<QuizAnswer> { answer };
-                    answers.Add(answer.id, newList);
+                    Globals.quiz.answers.Add(answer.id, newList);
                 }
             });
         }
@@ -130,10 +133,10 @@ namespace SandRibbon.Tabs
         {
             Dispatcher.adoptAsync(() =>
             {
-                if (activeQuizzes.Any(q => q.id == quiz.id)) return;
-                if (!answers.ContainsKey(quiz.id))
-                    answers[quiz.id] = new ObservableCollection<QuizAnswer>();
-                activeQuizzes.Add(quiz);
+                if (Globals.quiz.activeQuizzes.Any(q => q.id == quiz.id)) return;
+                if (!Globals.quiz.answers.ContainsKey(quiz.id))
+                    Globals.quiz.answers[quiz.id] = new ObservableCollection<QuizAnswer>();
+                Globals.quiz.activeQuizzes.Add(quiz);
                 quizzes.ScrollToEnd();
             });
         }
@@ -142,7 +145,7 @@ namespace SandRibbon.Tabs
             Commands.BlockInput.ExecuteAsync("Create a quiz dialog open.");
             Dispatcher.adoptAsync(() =>
             {
-                var quizDialog = new CreateAQuiz(activeQuizzes.Count);
+                var quizDialog = new CreateAQuiz(Globals.quiz.activeQuizzes.Count);
                 quizDialog.Owner = Window.GetWindow(this);
                 quizDialog.ShowDialog();
             });
@@ -170,12 +173,12 @@ namespace SandRibbon.Tabs
         }
         private void canOpenResults(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (activeQuizzes != null && activeQuizzes.Count > 0) ? true : false;
+            e.CanExecute = (Globals.quiz.activeQuizzes != null && Globals.quiz.activeQuizzes.Count > 0) ? true : false;
         }
         private void OpenResults(object sender, ExecutedRoutedEventArgs e)
         {
             Commands.BlockInput.ExecuteAsync("Viewing a quiz.");
-            new ViewQuizResults(answers, activeQuizzes).ShowDialog();
+            new ViewQuizResults(Globals.quiz.answers, Globals.quiz.activeQuizzes).ShowDialog();
         }
     }
 }

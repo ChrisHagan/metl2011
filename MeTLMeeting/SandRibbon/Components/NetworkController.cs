@@ -94,6 +94,11 @@ namespace SandRibbon.Components
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
+            Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
+        }
+        private void sendNewSlideOrder(int conversationJid)
+        {
+            client.UpdateSlideCollection(conversationJid);
         }
         private void sendSyncMove(int slide)
         {
@@ -218,6 +223,11 @@ namespace SandRibbon.Components
             client.events.VideoAvailable += videoAvailable;
             client.events.SyncMoveRequested += syncMoveRequested;
             client.events.StatusChanged += statusChanged;
+            client.events.SlideCollectionUpdated += slideCollectionChanged;
+        }
+        private void slideCollectionChanged(object sender, SlideCollectionUpdatedEventArgs e)
+        {
+            Commands.UpdateNewSlideOrder.Execute(e.Conversation);
         }
         private void syncMoveRequested(object sender, SyncMoveRequestedEventArgs e)
         {

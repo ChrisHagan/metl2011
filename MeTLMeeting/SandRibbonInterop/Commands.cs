@@ -32,6 +32,7 @@ namespace SandRibbon
     }
     public class Commands
     {
+        public static CompositeCommand SendNewSlideOrder = new CompositeCommand();
         public static CompositeCommand ChangeLanguage = new CompositeCommand();
         public static CompositeCommand ListenToAudio = new CompositeCommand();
         public static CompositeCommand PresentVideo= new CompositeCommand();
@@ -219,6 +220,7 @@ namespace SandRibbon
         public static CompositeCommand ReceiveDirtyConversationDetails = new CompositeCommand();
         public static CompositeCommand SetSync = new CompositeCommand();
         public static CompositeCommand AddSlide = new CompositeCommand();
+        public static CompositeCommand UpdateNewSlideOrder = new CompositeCommand();
         public static CompositeCommand CreateBlankConversation = new CompositeCommand();
         public static CompositeCommand ShowEditSlidesDialog = new CompositeCommand();
         public static CompositeCommand CreateConversation = new CompositeCommand();

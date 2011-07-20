@@ -57,7 +57,9 @@ namespace SandRibbon.Components
             var details = Globals.conversationDetails;
             foreach (var slide in activeSlideList)
                 details.Slides.Where(s => s.id == slide.id).First().index = activeSlideList.IndexOf(slide);
+            
             ClientFactory.Connection().UpdateConversationDetails(details);
+            Commands.SendNewSlideOrder.Execute(Int32.Parse(details.Jid));
             Close();
         }
         private void first(object sender, RoutedEventArgs e)

@@ -14,6 +14,7 @@ namespace MeTLLib
     public class MeTLLibEventHandlers
     {
         public delegate void SubmissionAvailableEventHandler(object sender, SubmissionAvailableEventArgs e);
+        public delegate void SlideCollectionUpdatedEventHandler(object sender, SlideCollectionUpdatedEventArgs e);
         public delegate void FileAvailableEventHandler(object sender, FileAvailableEventArgs e);
         public delegate void StatusChangedEventHandler(object sender, StatusChangedEventArgs e);
         public delegate void PreParserAvailableEventHandler(object sender, PreParserAvailableEventArgs e);
@@ -37,6 +38,7 @@ namespace MeTLLib
     #region EventArgs
     public class SubmissionAvailableEventArgs : EventArgs { public TargettedSubmission submission;}
     public class FileAvailableEventArgs : EventArgs { public TargettedFile file;}
+    public class SlideCollectionUpdatedEventArgs : EventArgs { public Int32 Conversation;}
     public class StatusChangedEventArgs : EventArgs { public bool isConnected; public Credentials credentials;}
     public class PreParserAvailableEventArgs : EventArgs { public PreParser parser; }
     public class StrokeAvailableEventArgs : EventArgs { public TargettedStroke stroke;}
@@ -59,6 +61,7 @@ namespace MeTLLib
     {
         void receiveSubmission(TargettedSubmission ts);
         void receiveQuiz(QuizQuestion qq);
+        void receiveUpdatedSlideCollection(Int32 conversationJid);
         void receiveQuizAnswer(QuizAnswer qa);
         void receiveFileResource(TargettedFile tf);
         void receiveStroke(TargettedStroke ts);
@@ -82,6 +85,7 @@ namespace MeTLLib
         void statusChanged(bool isConnected, Credentials credentials);
         void syncMoveRequested(int where);
         event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
+        event MeTLLibEventHandlers.SlideCollectionUpdatedEventHandler SlideCollectionUpdated;
         event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
         event MeTLLibEventHandlers.StatusChangedEventHandler StatusChanged;
         event MeTLLibEventHandlers.PreParserAvailableEventHandler PreParserAvailable;
@@ -113,27 +117,28 @@ namespace MeTLLib
         {
             this.AutoshapeAvailable += (sender, args) => { };
             this.BubbleAvailable += (sender, args) => { };
-            this.ChatAvailable+= (sender, args) => { };
+            this.SlideCollectionUpdated += (sender, args) => { };
+            this.ChatAvailable += (sender, args) => { };
             this.CommandAvailable += (sender, args) => { };
-            this.ConversationDetailsAvailable+= (sender, args) => { };
-            this.DirtyAutoShapeAvailable+= (sender, args) => { };
-            this.DirtyImageAvailable+= (sender, args) => { };
-            this.DirtyLiveWindowAvailable+= (sender, args) => { };
-            this.DirtyStrokeAvailable+= (sender, args) => { };
-            this.DirtyTextBoxAvailable+= (sender, args) => { };
-            this.DirtyVideoAvailable+= (sender, args) => { };
-            this.DiscoAvailable+= (sender, args) => { };
-            this.FileAvailable+= (sender, args) => { };
-            this.ImageAvailable+= (sender, args) => { };
-            this.LiveWindowAvailable+= (sender, args) => { };
-            this.PreParserAvailable+= (sender, args) => { };
-            this.QuizAnswerAvailable+= (sender, args) => { };
-            this.QuizQuestionAvailable+= (sender, args) => { };
+            this.ConversationDetailsAvailable += (sender, args) => { };
+            this.DirtyAutoShapeAvailable += (sender, args) => { };
+            this.DirtyImageAvailable += (sender, args) => { };
+            this.DirtyLiveWindowAvailable += (sender, args) => { };
+            this.DirtyStrokeAvailable += (sender, args) => { };
+            this.DirtyTextBoxAvailable += (sender, args) => { };
+            this.DirtyVideoAvailable += (sender, args) => { };
+            this.DiscoAvailable += (sender, args) => { };
+            this.FileAvailable += (sender, args) => { };
+            this.ImageAvailable += (sender, args) => { };
+            this.LiveWindowAvailable += (sender, args) => { };
+            this.PreParserAvailable += (sender, args) => { };
+            this.QuizAnswerAvailable += (sender, args) => { };
+            this.QuizQuestionAvailable += (sender, args) => { };
             this.StatusChanged += (sender,args) =>{ };
-            this.StrokeAvailable+= (sender, args) => { };
-            this.SubmissionAvailable+= (sender, args) => { };
-            this.TextBoxAvailable+= (sender, args) => { };
-            this.VideoAvailable+= (sender, args) => { };
+            this.StrokeAvailable += (sender, args) => { };
+            this.SubmissionAvailable += (sender, args) => { };
+            this.TextBoxAvailable += (sender, args) => { };
+            this.VideoAvailable += (sender, args) => { };
             this.SyncMoveRequested += (sender, SyncMoveRequestedEventArgs) => { };
             Commands.ServersDown.RegisterCommand(new DelegateCommand<String>(ServersDown));
         }
@@ -144,6 +149,10 @@ namespace MeTLLib
         void IReceiveEvents.receiveSubmission(TargettedSubmission ts)
         {
             SubmissionAvailable(this, new SubmissionAvailableEventArgs { submission = ts });
+        }
+        void IReceiveEvents.receiveUpdatedSlideCollection(Int32 conversationJid)
+        {
+            SlideCollectionUpdated(this, new SlideCollectionUpdatedEventArgs { Conversation = conversationJid });
         }
         void IReceiveEvents.receiveQuiz(QuizQuestion qq)
         {
@@ -243,6 +252,7 @@ namespace MeTLLib
 
         #region Events
         public event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
+        public event MeTLLibEventHandlers.SlideCollectionUpdatedEventHandler SlideCollectionUpdated;
         public event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
         public event MeTLLibEventHandlers.StatusChangedEventHandler StatusChanged;
         public event MeTLLibEventHandlers.SyncMoveRequestedEventHandler SyncMoveRequested;
@@ -270,6 +280,8 @@ namespace MeTLLib
         #region VirtualEventSubscribers
         protected virtual void onSubmissionAvailable(SubmissionAvailableEventArgs e)
         { SubmissionAvailable(this, e); }
+        protected virtual void onSlideCollectionUpdated(SlideCollectionUpdatedEventArgs e)
+        { SlideCollectionUpdated(this, e); }
         protected virtual void onFileAvailable(FileAvailableEventArgs e)
         { FileAvailable(this, e); }
         protected virtual void onStatusChanged(StatusChangedEventArgs e)

@@ -106,6 +106,7 @@ namespace MeTLLib.Providers.Connection
         protected const string SLEEP = "/SLEEP";
         protected const string PING = "/PING";
         protected const string PONG = "/PONG";
+        protected const string UPDATE_SLIDE_COLLECTION = "/UPDATE_SLIDE_COLLECTION";
         private const uint HEARTBEAT_PERIOD = 20000;
         private const uint TIMEOUT_PERIOD = 10000;
         public Credentials credentials;
@@ -500,6 +501,11 @@ namespace MeTLLib.Providers.Connection
         {
             //Commands.RetrievedHistoryPortion.Execute(new[] { upTo, outOf });
         }
+        public void sendSlideCollectionUpdatedCommand(Int32 conversationJid)
+        {
+            var jid = conversationJid.ToString();
+            send(jid, String.Format("{0} {1}", UPDATE_SLIDE_COLLECTION, jid));
+        }
         public void SendDirtyText(TargettedDirtyElement element)
         {
             stanza(new MeTLStanzas.DirtyText(element));
@@ -702,6 +708,9 @@ namespace MeTLLib.Providers.Connection
                     case PONG:
                         handlePong(parts);
                         break;
+                    case UPDATE_SLIDE_COLLECTION:
+                        handleUpdateSlideCollection(parts);
+                        break;
                     default:
                         handleUnknownMessage(message);
                         break;
@@ -719,6 +728,17 @@ namespace MeTLLib.Providers.Connection
         public virtual void handlePong(string[] parts)
         {
             Commands.ReceivePong.Execute(parts[1]);
+        }
+        public virtual void handleUpdateSlideCollection(string[] parts)
+        {
+            try
+            {
+                receiveEvents.receiveUpdatedSlideCollection(Int32.Parse(parts[1]));
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError("wire received inappropriate jid in updateSlideCollection: " + e.Message);
+            }
         }
         public virtual void handleGoToConversation(string[] parts)
         {
