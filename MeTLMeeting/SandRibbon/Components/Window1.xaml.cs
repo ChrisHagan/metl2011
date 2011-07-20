@@ -593,7 +593,6 @@ namespace SandRibbon
         }
         private bool mustBeInConversation(object _arg)
         {
-
             var details = Globals.conversationDetails;
             if (ConversationDetails.Empty.Equals(details)) return false;
             if(details.Subject != "Deleted" && details.Jid != "")
