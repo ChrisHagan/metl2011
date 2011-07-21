@@ -215,6 +215,7 @@ namespace SandRibbon
         public static CompositeCommand SetConversationPermissions = new CompositeCommand();
         public static CompositeCommand JoinConversation = new CompositeCommand();
         public static CompositeCommand LeaveConversation = new CompositeCommand();
+        public static CompositeCommand LeaveLocation = new CompositeCommand();
         public static CompositeCommand SendDirtyConversationDetails = new CompositeCommand();
         public static CompositeCommand UpdateConversationDetails = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyConversationDetails = new CompositeCommand();

@@ -95,6 +95,7 @@ namespace SandRibbon.Components
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
             Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
+            Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
         }
         private void sendNewSlideOrder(int conversationJid)
         {
@@ -178,6 +179,11 @@ namespace SandRibbon.Components
         {
             client.SendStroke(ts);
         }
+        private void LeaveLocation(object _unused)
+        {
+            Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+            client.LeaveLocation();
+        }
         private void SendTextBox(TargettedTextBox ttb)
         {
             client.SendTextBox(ttb);
@@ -246,6 +252,7 @@ namespace SandRibbon.Components
         private void commandAvailable(object sender, CommandAvailableEventArgs e)
         {
         }
+        
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
             if (e.conversationDetails != null && e.conversationDetails.Jid == ClientFactory.Connection().location.activeConversation)
