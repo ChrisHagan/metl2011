@@ -9,7 +9,7 @@
     <resources:MeTLImageToolTip x:Key="DisplaySubmissionToolTip" 
                                         TitleText="Show submission"
                                         ImageSource="\Resources\Ribbon-LivePreviewDraft02.png" 
-                                        ContentText="Import this submission onto a new slide, so that you can show it publicly."/>
+                                        ContentText="Import this submission onto a new page, so that you can show it publicly."/>
     <resources:MeTLImageToolTip x:Key="BlankWhiteboardConversationTypeToolTip" 
                                         TitleText="Blank Whiteboard"
                                         ImageSource="\Resources\Whiteboard.png" 
@@ -25,7 +25,7 @@
     <resources:MeTLImageToolTip x:Key="AttachCurrentSlideToQuizToolTip" 
                                         TitleText="Attach snapshot"
                                         ImageSource="\Resources\AttachSnapshot.png" 
-                                        ContentText="Include an image of your current slide in this quiz."/>
+                                        ContentText="Include an image of your current page in this quiz."/>
     <resources:MeTLImageToolTip x:Key="ArtistPaletteToolTip" 
                                         TitleText="Artist's palette"
                                         ImageSource="\Resources\Ribbon-Palette.png" 
@@ -76,7 +76,7 @@
     <resources:MeTLImageToolTip x:Key="AddImageToolTip" 
                                         TitleText="Add Image"
                                         ImageSource="\Resources\AddImage.png" 
-                                        ContentText="Add an image to the slide."/>
+                                        ContentText="Add an image to the page."/>
     <resources:MeTLImageToolTip x:Key="UploadFileToolTip" 
                                         TitleText="Upload File"
                                         ImageSource="\Resources\Attachment.png" 
@@ -373,7 +373,7 @@
                                         ImageSource="\Resources\subscript.png" 
                                         ContentText="Fit the width of the page to the screen"/>
     <resources:MeTLImageToolTip x:Key="ShowSlideToolTip" 
-                                        TitleText="Show slide"
+                                        TitleText="Show page"
                                         ImageSource="\Resources\ShowOriginal.png" 
                                         ContentText="Show the original view of the page"/>
     <resources:MeTLImageToolTip x:Key="FontColourToolTip" 
