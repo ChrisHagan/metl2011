@@ -69,6 +69,10 @@
                                         TitleText="Synchronize"
                                         ImageSource="\Resources\SyncShiny.png" 
                                         ContentText="Link to or unlink from the teacher's current location."/>
+    <resources:MeTLImageToolTip x:Key="PageReorderToolTip"
+                                        TitleText="Page Reorder"
+                                        ImageSource="\Resources\NewSlide.png"
+                                        ContentText="Change the ordering of the pages."/>
     <resources:MeTLImageToolTip x:Key="AddVideoToolTip" 
                                         TitleText="Add Video"
                                         ImageSource="\Resources\AddVideo.png" 
