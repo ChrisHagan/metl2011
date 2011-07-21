@@ -87,9 +87,13 @@ namespace SandRibbon.Components
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(EditConversation));
             Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
+            Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
             Display(Globals.conversationDetails);
         }
-
+        private void resetLocationLocals(object _unused)
+        {
+            currentSlideId = -1;
+        }
         private void JoinConversation(object obj)
         {
             thumbnailList.Clear();

@@ -419,12 +419,19 @@ namespace MeTLLib.Providers.Connection
         }
         private bool isLocationValid()
         {
-            return (location != null && !String.IsNullOrEmpty(location.activeConversation) && location.availableSlides.Count > 0 && location.currentSlide > 0);
+            return (location != null && !String.IsNullOrEmpty(location.activeConversation) && location.availableSlides.Count > 0 && location.currentSlide > 0 && !location.ValueEquals(Location.Empty));
         }
         private void leaveRoom(Jid room)
         {
             var alias = credentials.name + conn.Resource;
             new MucManager(conn).LeaveRoom(room, alias);
+        }
+        public void resetLocation()
+        {
+            leaveRooms();
+            location = Location.Empty;
+            joinRooms();
+            receiveEvents.receiveConversationDetails(ConversationDetails.Empty);
         }
         private void joinRooms()
         {
