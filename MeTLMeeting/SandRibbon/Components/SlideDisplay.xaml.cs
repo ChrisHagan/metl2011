@@ -182,6 +182,13 @@ namespace SandRibbon.Components
             {
                 thumbnailList.Add(slide);
             }
+
+            var currentIndex = indexOf(Globals.location.currentSlide);
+            
+            slides.SelectedIndex = currentIndex; 
+            if (slides.SelectedIndex == -1)
+                slides.SelectedIndex = 0;
+            slides.ScrollIntoView(slides.SelectedItem);
         }
         public void EditConversation(object _obj)
         {
@@ -209,6 +216,17 @@ namespace SandRibbon.Components
                 var newSlides = details.Slides.Where(s => !thumbnailList.Contains(s)).ToList();
                 foreach (var newSlide in newSlides)
                     thumbnailList.Insert(newSlide.index, newSlide);
+            }
+            foreach (var slide in thumbnailList)
+           {
+                foreach (var relatedSlide in details.Slides.Where(s => s.id == slide.id))
+                {
+                    if (slide.index != relatedSlide.index)
+                    {
+                        slide.index = relatedSlide.index;
+                        slide.refreshIndex();
+                    }
+                }
             }
             var currentSlideIndex = indexOf(currentSlideId);
             if (moveTo)
