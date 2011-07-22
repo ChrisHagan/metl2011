@@ -51,13 +51,6 @@ namespace SandRibbon.Tabs.Groups
             fontSize.SelectedItem = generateDefaultFontSize();
         }
 
-        private void restoreTextDefaults(object obj)
-        {
-            ColourPickerBorder.BorderBrush = Brushes.Black;
-            fontSize.SelectedItem = 10;
-            fontFamily.SelectedItem = "Arial";
-        }
-
         private void update(TextInformation info)
         {
             fontSize.SelectionChanged -= fontSizeSelected;
@@ -71,6 +64,8 @@ namespace SandRibbon.Tabs.Groups
             fontFamily.SelectedItem = info.family.ToString();
             fontSize.SelectionChanged += fontSizeSelected;
             fontFamily.SelectionChanged += fontFamilySelected;
+
+            Globals.currentTextInfo = info;
         }
         private void sendValues()
         {
@@ -85,6 +80,7 @@ namespace SandRibbon.Tabs.Groups
                 strikethrough = TextStrikethroughButton.IsChecked == true,
                 color = ((SolidColorBrush) ColourPickerBorder.BorderBrush).Color
             };
+            Globals.currentTextInfo = info;
             Commands.UpdateTextStyling.Execute(info);
         }
 
@@ -97,7 +93,12 @@ namespace SandRibbon.Tabs.Groups
         }
         private void setUpTools(object sender, RoutedEventArgs e)
         {
-            fontFamily.SelectedItem = "Arial";
+            if (Globals.currentTextInfo != null)
+            {
+                update(Globals.currentTextInfo);
+            }
+            else
+                fontFamily.SelectedItem = "Arial";
         }
         private const double defaultWidth = 720;
         private const double defaultFontSize = 24.0;
