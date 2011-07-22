@@ -8,6 +8,7 @@ using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Utils;
 using System.Diagnostics;
+using SandRibbon.Components.Canvas;
 
 namespace SandRibbon.Providers
 {
@@ -121,6 +122,11 @@ namespace SandRibbon.Providers
             {
                 return quizData;                
             }
+        }
+        public static TextInformation currentTextInfo
+        {
+            get;
+            set;
         }
         public static MeTLLib.DataTypes.Credentials credentials
         {

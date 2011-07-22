@@ -594,9 +594,11 @@ namespace SandRibbon
         private bool mustBeInConversation(object _arg)
         {
             var details = Globals.conversationDetails;
-            if (ConversationDetails.Empty.Equals(details)) return false;
-            if(details.Subject != "Deleted" && details.Jid != "")
-                    return true;
+            if(!details.IsValid)
+            if(Globals.credentials.authorizedGroups.Select(su => su.groupKey).Contains("Superuser")) return true;
+            var validGroups = Globals.credentials.authorizedGroups.Select(g => g.groupKey).ToList();
+            validGroups.Add("Unrestricted");
+            if (!details.isDeleted  && validGroups.Contains(details.Subject)) return true;
             return false;
         }
         private bool mustBeAuthor(object _arg)
@@ -616,17 +618,27 @@ namespace SandRibbon
             
             Dispatcher.adopt(delegate
                                  {
-                if (details.Subject.ToLower() == "deleted" && details.Jid == Globals.location.activeConversation)
-                    ShowConversationSearchBox(null);
-                else if (details.Jid == Globals.location.activeConversation)
-                    UpdateTitle(details);
+                                     if (details.Jid == Globals.location.activeConversation)
+                                     {
+                                         UpdateTitle(details);
+
+                                         if (!mustBeInConversation(null))
+                                         {
+                                             ShowConversationSearchBox(null);
+                                             Commands.LeaveLocation.Execute(null);
+                                         }
+                                     }
             });
+        }
+        private bool conversationValid(ConversationDetails details)
+        {
+            return details.IsValid && !details.isDeleted;
         }
         private void UpdateTitle(ConversationDetails details)
         {
             try
             {
-                if (details.Subject.ToLower() != "deleted")
+                if (mustBeInConversation(null))
                     Title = messageFor(Globals.conversationDetails);
                 else
                     Title = "MeTL 2011";
