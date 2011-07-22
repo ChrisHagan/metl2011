@@ -613,9 +613,12 @@ namespace SandRibbon
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (ConversationDetails.Empty.Equals(details)) return;
+            
             Dispatcher.adopt(delegate
                                  {
-                if (details.Jid == Globals.location.activeConversation)
+                if (details.Subject.ToLower() == "deleted" && details.Jid == Globals.location.activeConversation)
+                    ShowConversationSearchBox(null);
+                else if (details.Jid == Globals.location.activeConversation)
                     UpdateTitle(details);
             });
         }
