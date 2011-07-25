@@ -11,12 +11,6 @@ namespace MeTLLib.DataTypes
 {
     public class ConversationDetails : INotifyPropertyChanged
     {
-       public bool isDeleted
-        {
-            get {
-                return Subject.ToLower() == "deleted";
-            }
-        }
         public static string DefaultName(string author)
         {
             var now = DateTimeFactory.Now();
@@ -88,14 +82,8 @@ namespace MeTLLib.DataTypes
         }
         public bool IsValid
         {
-            get
-            {
-                if (String.IsNullOrEmpty(Jid) || (String.IsNullOrEmpty(Subject)) || String.IsNullOrEmpty(Title) || String.IsNullOrEmpty(Author)) return false;
-                else
-                    return true;
-            }
+            get { return Title != null && Author != null && Author != "Happenstance"; }
         }
- 
         public override bool Equals(object obj)
         {
             if (obj == null || !(obj is ConversationDetails)) return false;

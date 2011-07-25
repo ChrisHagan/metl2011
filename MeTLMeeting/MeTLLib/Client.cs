@@ -83,7 +83,6 @@ namespace MeTLLib
         void AsyncRetrieveHistoryOf(int room);
         void MoveTo(int slide);
         void JoinConversation(string conversation);
-        void LeaveLocation();
         ConversationDetails AppendSlide(string Jid);
         ConversationDetails AppendSlideAfter(int slide, string Jid);
         ConversationDetails AppendSlideAfter(int slide, string Jid, Slide.TYPE type);
@@ -157,11 +156,6 @@ namespace MeTLLib
             return historyProvider;
         }
         #region connection
-        public void LeaveLocation()
-        {
-            LeaveConversation(location.activeConversation);    
-            wire.location = Location.Empty;
-        }
         public void Connect(string username, string password)
         {
             var credentials = authorisationProvider.attemptAuthentication(username, password);
@@ -411,8 +405,12 @@ namespace MeTLLib
             Action work = delegate
             {
                 if (String.IsNullOrEmpty(conversation)) return;
-                if (conversation == wire.location.activeConversation)
-                wire.resetLocation();
+                var cd = conversationDetailsProvider.DetailsOf(conversation);
+                wire.leaveRooms();
+                location.activeConversation = null;
+                location.availableSlides = null;
+                location.currentSlide = 0;
+                events.receiveConversationDetails(null);
             };
             tryIfConnected(work);
         }

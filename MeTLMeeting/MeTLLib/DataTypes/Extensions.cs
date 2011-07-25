@@ -5,7 +5,6 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using Newtonsoft.Json;
 using System.Windows;
-using System.Diagnostics;
 
 namespace MeTLLib.DataTypes
 {
@@ -184,35 +183,19 @@ namespace MeTLLib.DataTypes
             ImageTag imagetag = new ImageTag();
             image.Dispatcher.adopt(delegate
             {
-                try
+                ImageTag imageInfo = new ImageTag();
+                if (image.Tag.ToString().StartsWith("NOT_LOADED"))
+                    imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString().Split(new[]{"::::"}, StringSplitOptions.RemoveEmptyEntries)[2]);
+                else
+                    imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
+                imagetag = new ImageTag
                 {
-                    ImageTag imageInfo = new ImageTag();
-                    if (image.Tag.ToString().StartsWith("NOT_LOADED"))
-                        imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2]);
-                    else
-                        imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
-
-                    imagetag = new ImageTag
-                    {
-                        author = imageInfo.author,
-                        id = imageInfo.id,
-                        privacy = imageInfo.privacy,
-                        isBackground = imageInfo.isBackground,
-                        zIndex = imageInfo.zIndex
-                    };
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError("Error making ImageTag =>" + e);
-                    imagetag = new ImageTag
-                    {
-                        author = "unknown",
-                        id = "unknown",
-                        privacy = "private",
-                        isBackground = false,
-                        zIndex = 1
-                    };
-                }
+                    author = imageInfo.author,
+                    id = imageInfo.id,
+                    privacy = imageInfo.privacy,
+                    isBackground = imageInfo.isBackground,
+                    zIndex = imageInfo.zIndex
+                };
             });
             return imagetag;
         }

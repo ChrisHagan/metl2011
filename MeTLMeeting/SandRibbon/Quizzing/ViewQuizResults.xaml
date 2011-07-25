@@ -5,7 +5,6 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     Title="View Quiz Results"
     x:Name="viewQuizResults"
-    MaxHeight="600"
     SizeToContent="WidthAndHeight">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>

@@ -195,7 +195,8 @@ namespace SandRibbon.Components
                    searchResults.Add(details);
                else if (details.Jid == Globals.location.activeConversation)
                    currentConversation.Visibility = Visibility.Collapsed;
-               if ((!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid) || details.Subject.ToLower() == "deleted")
+               if ((!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid) || details.Equals(ConversationDetails.Empty))
+
                {
                    Commands.RequerySuggested();
                    this.Visibility = Visibility.Visible;
