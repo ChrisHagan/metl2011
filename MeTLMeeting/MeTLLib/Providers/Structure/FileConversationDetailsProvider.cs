@@ -98,26 +98,23 @@ namespace MeTLLib.Providers.Structure
         {
             return AppendSlideAfter(currentSlide, title, Slide.TYPE.SLIDE);
         }
-        public ConversationDetails AppendSlideAfter(int currentSlide, string title, Slide.TYPE type)
+        public ConversationDetails AppendSlideAfter(int currentSlideId, string title, Slide.TYPE type)
         {
             var details = DetailsOf(title);
-            var slideId = details.Slides.Select(s => s.id).Max() + 1;
-            var position = getPosition(currentSlide, details.Slides);
-            if (position == -1) return details;
-            var slide = new Slide(slideId, details.Author, type, position + 1, 720, 540);
+            var nextSlideId = details.Slides.Select(s => s.id).Max() + 1;
+            var currentSlide = details.Slides.Where(s => s.id == currentSlideId).First();
+            if (currentSlide == null)
+            {
+                Trace.TraceInformation("CRASH: currentSlideId does not belong to the conversation");
+                return details;
+            }
+            var slide = new Slide(nextSlideId, details.Author, type, currentSlide.index + 1, 720, 540);
             foreach (var existingSlide in details.Slides)
                 if (existingSlide.index >= slide.index)
                     existingSlide.index++;
             details.Slides.Insert(slide.index, slide);
             Update(details);
             return details;
-        }
-        private int getPosition(int slide, List<Slide> slides)
-        {
-            for (var i = 0; i < slides.Count; i++)
-                if (slides[i].id == slide)
-                    return i;
-            return -1;
         }
         public ConversationDetails AppendSlide(string title)
         {
