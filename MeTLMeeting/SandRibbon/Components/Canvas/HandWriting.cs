@@ -49,6 +49,8 @@ namespace SandRibbon.Components.Canvas
         }
         private void updateStrokePrivacy(object obj)
         {
+            ClearAdorners();
+
             var newStrokes = new StrokeCollection(Strokes.Select(s => (Stroke)new PrivateAwareStroke(s, target)));
             Strokes.Clear();
             Strokes.Add(newStrokes);
@@ -335,7 +337,6 @@ namespace SandRibbon.Components.Canvas
                 strokesAtTheStart.Add(stroke.Clone());
             }
         }
-
 
         protected static void abosoluteizeStrokes(List<Stroke> selectedElements)
         {
