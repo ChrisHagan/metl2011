@@ -389,7 +389,7 @@ namespace SandRibbon.Components.Canvas
             ClearAdorners();
             var clonedCollection = new List<MeTLTextBox>();
             foreach(MeTLTextBox box in GetSelectedElements())
-                clonedCollection.Add(box.clone());
+                clonedCollection.Add(Clone(box));
             foreach (MeTLTextBox box in clonedCollection)
             {
                 myTextBox = box;
@@ -674,7 +674,7 @@ namespace SandRibbon.Components.Canvas
             var undoText = originalText.Clone().ToString();
             var redoText = box.Text.Clone().ToString();
             ApplyPrivacyStylingToElement(box, box.tag().privacy);
-            box.Height = Double.NaN;
+            //box.Height = Double.NaN;
             var mybox = Clone(box);
             Action undo = () =>
             {
