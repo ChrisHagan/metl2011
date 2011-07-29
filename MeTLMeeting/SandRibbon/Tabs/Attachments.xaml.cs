@@ -82,7 +82,7 @@ namespace SandRibbon.Tabs
                                                          fileImage = getFileImage(fileInfo.name),
                                                          uploadTime =fileInfo.uploadTime, 
                                                          size = fileInfo.size,
-                                                         tooltip = string.Format("Type: {0}\nAuthor: {1}\nUpload Time: {2}\nSize {3:0.00}mb", getFileType(fileInfo.name), fileInfo.author, new DateTime(long.Parse(fileInfo.uploadTime)), fileInfo.size / 1048576.0) 
+                                                         tooltip = string.Format("Type: {0}\nAuthor: {1}\nUpload Time: {2}\nSize: {3:0.00}mb", getFileType(fileInfo.name), fileInfo.author, new DateTime(long.Parse(fileInfo.uploadTime)), fileInfo.size / 1048576.0) 
                                                      }));
         }
         private void saveFile(object sender, RoutedEventArgs e)
