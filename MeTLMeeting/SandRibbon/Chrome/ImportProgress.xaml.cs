@@ -37,6 +37,7 @@ namespace SandRibbon
         }
         private void HideProgressBlocker(object _arg) {
             Visibility = Visibility.Collapsed;
+            reset(); 
         }
         private void setProgress(double percentage) {
             if(Visibility == Visibility.Collapsed)
@@ -50,6 +51,7 @@ namespace SandRibbon
         {
             slidesAnalyzed = 0;
             slidesExtracted = 0;
+            progress.Value = 0;
             Dispatcher.adopt(delegate
             {
                 fromStack.Clear();
