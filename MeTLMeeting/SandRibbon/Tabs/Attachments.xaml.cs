@@ -73,7 +73,6 @@ namespace SandRibbon.Tabs
         private void receiveFile(MeTLLib.DataTypes.TargettedFile fileInfo)
         {
             if(Globals.conversationDetails.Jid != fileInfo.conversationJid.ToString()) return;
-            var unMangledFileUri = fileInfo.url.EndsWith(".MeTLFileUpload") ? fileInfo.url.Substring(0, fileInfo.url.Length - 15) : fileInfo.url;
             Dispatcher.adoptAsync(() => files.Add(new FileInfo
                                                      {
                                                          fileType = getFileType(fileInfo.name),
@@ -83,16 +82,15 @@ namespace SandRibbon.Tabs
                                                          fileImage = getFileImage(fileInfo.name),
                                                          uploadTime =fileInfo.uploadTime, 
                                                          size = fileInfo.size,
-                                                         tooltip = string.Format("Type: {0}\nAuthor: {1}\nUpload Time:{2}\nSize {3:0.00}mb", getFileType(unMangledFileUri), fileInfo.author, new DateTime(long.Parse(fileInfo.uploadTime)), fileInfo.size / 1048576.0) 
+                                                         tooltip = string.Format("Type: {0}\nAuthor: {1}\nUpload Time:{2}\nSize {3:0.00}mb", getFileType(fileInfo.name), fileInfo.author, new DateTime(long.Parse(fileInfo.uploadTime)), fileInfo.size / 1048576.0) 
                                                      }));
         }
         private void saveFile(object sender, RoutedEventArgs e)
         {
             var file = (FileInfo)((Button) sender).DataContext;
-            var unMangledFileUri = file.url.EndsWith(".MeTLFileUpload") ? file.url.Substring(0, file.url.Length - 15) : file.url;
             var saveFile = new SaveFileDialog();
             saveFile.FileName = file.filename;
-            saveFile.Filter = string.Format("{0} (*{1})|*{1}|All Files (*.*)|*.*", file.fileType, System.IO.Path.GetExtension(unMangledFileUri));
+            saveFile.Filter = string.Format("{0} (*{1})|*{1}|All Files (*.*)|*.*", file.fileType, System.IO.Path.GetExtension(file.filename));
             saveFile.FilterIndex = 1;
             saveFile.RestoreDirectory = true;
             if(saveFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
