@@ -674,7 +674,7 @@ namespace SandRibbon.Components.Canvas
             var undoText = originalText.Clone().ToString();
             var redoText = box.Text.Clone().ToString();
             ApplyPrivacyStylingToElement(box, box.tag().privacy);
-            //box.Height = Double.NaN;
+            box.Height = Double.NaN;
             var mybox = Clone(box);
             Action undo = () =>
             {

@@ -367,15 +367,26 @@ namespace SandRibbon
         {
             Commands.SetLayer.ExecuteAsync("Sketch");
         }
+        private bool LessThan(double val1, double val2, double tolerance)
+        {
+            var difference = val2 * tolerance;
+            return val1 < (val2 - difference) && val1 < (val2 + difference);
+        }
+        private bool GreaterThan(double val1, double val2, double tolerance)
+        {
+            var difference = val2 * tolerance;
+            return val1 > (val2 - difference) && val1 > (val2 + difference);
+        }
         private void AddPrivacyButton(PrivacyToggleButton.PrivacyToggleButtonInfo info)
         {
             var adorner = ((FrameworkElement)canvasViewBox);
             Dispatcher.adoptAsync(() =>
             {
                 var adornerRect = new Rect(canvas.TranslatePoint(info.ElementBounds.TopLeft, canvasViewBox), canvas.TranslatePoint(info.ElementBounds.BottomRight, canvasViewBox));
-                if (adornerRect.Right < 0 || adornerRect.Right > canvasViewBox.ActualWidth
-                    || adornerRect.Top < 0 || adornerRect.Top > canvasViewBox.ActualHeight) return;
-                AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new PrivacyToggleButton(info, adornerRect)));
+                if (LessThan(adornerRect.Right, 0, 0.001) || GreaterThan(adornerRect.Right, canvasViewBox.ActualWidth, 0.001)
+                    || LessThan(adornerRect.Top, 0, 0.001) || GreaterThan(adornerRect.Top, canvasViewBox.ActualHeight, 0.001)) return;
+                var adornerLayer = AdornerLayer.GetAdornerLayer(adorner);
+                adornerLayer.Add(new UIAdorner(adorner, new PrivacyToggleButton(info, adornerRect)));
             });
         }
         private Adorner[] getPrivacyAdorners()
