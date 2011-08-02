@@ -381,8 +381,10 @@ namespace SandRibbon.Components.Canvas
         }
         private IEnumerable<UIElement> filterMyText(IEnumerable<UIElement> elements)
         {
+            //Banhammer line of code
+            //if (inMeeting() || Globals.isAuthor) return elements;
             if (inMeeting()) return elements;
-            return elements.Cast<MeTLTextBox>().Where(text => text.tag().author == Globals.me || Globals.isAuthor).Cast<UIElement>().ToList();
+            return elements.Cast<MeTLTextBox>().Where(text => text.tag().author == Globals.me).Cast<UIElement>().ToList();
         }
         private void SendTextBoxes(object sender, EventArgs e)
         {
