@@ -15,6 +15,7 @@
         <dict:Button ToolTip="{DynamicResource UploadFileToolTip}" x:Name="fileUpload" Icon="\Resources\Attachment.png" Text="Upload file" Command="api:Commands.FileUpload"/>
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Downloadable Items">
+        <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
         <Label VerticalAlignment="Center" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                FontWeight="Bold"
                FontSize="12px"
