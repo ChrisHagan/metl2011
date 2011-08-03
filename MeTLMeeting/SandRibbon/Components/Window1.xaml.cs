@@ -628,16 +628,15 @@ namespace SandRibbon
             if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adopt(delegate
                                  {
-                                     if (details.Jid == Globals.location.activeConversation)
-                                     {
+                                    if (details.Jid == Globals.location.activeConversation || String.IsNullOrEmpty(Globals.location.activeConversation))
+                                    {
                                          UpdateTitle(details);
-
                                          if (!mustBeInConversation(null))
                                          {
                                              ShowConversationSearchBox(null);
                                              Commands.LeaveLocation.Execute(null);
                                          }
-                                     }
+                                    }
             });
         }
         private bool conversationValid(ConversationDetails details)
