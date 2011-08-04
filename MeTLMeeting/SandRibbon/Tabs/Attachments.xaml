@@ -10,6 +10,20 @@
     xmlns:SandRibbon="clr-namespace:SandRibbon" >
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">7</core:String>
+        <Style x:Key="{x:Type Label}" TargetType="Label">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Label">
+                        <Border>
+                            <ContentPresenter
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              RecognizesAccessKey="False" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </sr:RibbonTab.Resources>
     <sr:RibbonGroup Header="Uploads">
         <dict:Button ToolTip="{DynamicResource UploadFileToolTip}" x:Name="fileUpload" Icon="\Resources\Attachment.png" Text="Upload file" Command="api:Commands.FileUpload"/>
@@ -40,7 +54,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="{Binding Path=fileImage, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" />
                                 <Label Content="{Binding Path=filename}"/>
-                            </StackPanel>
+                        </StackPanel>
                         </Button>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
