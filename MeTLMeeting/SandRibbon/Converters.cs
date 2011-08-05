@@ -196,7 +196,7 @@ namespace SandRibbon
                 var penString = ColourInformationProvider.ConvertToName(((System.Windows.Ink.DrawingAttributes)value).Color) + " " + penType;
                 return penString.Substring(0,1).ToUpper() + penString.Substring(1);
             }
-            return "Use this pen";
+            return "Use this pen.";
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -209,10 +209,10 @@ namespace SandRibbon
         {
             if (value is System.Windows.Ink.DrawingAttributes)
             {
-                var penType = ((System.Windows.Ink.DrawingAttributes)value).IsHighlighter ? "highlighter" : "pen";
+                var penType = ((System.Windows.Ink.DrawingAttributes)value).IsHighlighter ? "highlighter." : "pen.";
                 return "Use this " + penType;
             }
-            return "Use this pen";
+            return "Use this pen.";
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -249,7 +249,7 @@ namespace SandRibbon
                     ColourInformationProvider.ConvertToName(((System.Windows.Ink.DrawingAttributes)value).Color) +
                     " " + penType+", by changing the colour or width";
             }*/
-            return "Change the colour or width of this tool";
+            return "Change the colour or width of this tool.";
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
