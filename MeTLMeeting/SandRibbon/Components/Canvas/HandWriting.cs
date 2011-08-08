@@ -50,8 +50,10 @@ namespace SandRibbon.Components.Canvas
         private void updateStrokePrivacy(object obj)
         {
             ClearAdorners();
-            Commands.SetInkCanvasMode.ExecuteAsync(Commands.SetInkCanvasMode.lastValue());
-
+            try {
+                Commands.SetInkCanvasMode.ExecuteAsync(Commands.SetInkCanvasMode.lastValue());
+            }
+            catch (NotSetException e) { }
             var newStrokes = new StrokeCollection(Strokes.Select(s => (Stroke)new PrivateAwareStroke(s, target)));
             Strokes.Clear();
             Strokes.Add(newStrokes);
