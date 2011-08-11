@@ -27,6 +27,7 @@ namespace SandRibbon.Components.Canvas
         {
             Loaded += HandWritingLoaded;
             StrokeCollected += singleStrokeCollected;
+            StylusMove += stylusMove;
             SelectionChanging += selectingStrokes;
             SelectionChanged += selectionChanged;
             StrokeErasing += erasingStrokes;
@@ -225,10 +226,13 @@ namespace SandRibbon.Components.Canvas
             e.SetSelectedStrokes(myStrokes);
             ClearAdorners();
         }
+        private void stylusMove(object sender, StylusEventArgs e)
+        {
+            GlobalTimers.resetSyncTimer();
+        }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
             e.Stroke.tag(new StrokeTag { author = Globals.me, privacy = Globals.privacy, isHighlighter = e.Stroke.DrawingAttributes.IsHighlighter });
-            GlobalTimers.resetSyncTimer();
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, target);
             Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(privateAwareStroke.sum().checksum);
