@@ -899,7 +899,9 @@ namespace SandRibbon.Components.Canvas
                     Children.Add(box);
                     SetLeft(box, 15);
                     SetTop(box, 15);
+                    box.TextChanged -= SendNewText;
                     box.Text = Clipboard.GetText();
+                    box.TextChanged += SendNewText;
                     Action undo = () =>
                                       {
                                           dirtyTextBoxWithoutHistory(box);
@@ -907,7 +909,6 @@ namespace SandRibbon.Components.Canvas
                          
                     Action redo = () =>
                                    {
-                                       
                                        sendTextWithoutHistory(box, box.tag().privacy);
                                    };
                     UndoHistory.Queue(undo, redo);
