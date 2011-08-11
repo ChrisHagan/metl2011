@@ -28,6 +28,7 @@ namespace SandRibbon.Components.Canvas
             Loaded += HandWritingLoaded;
             StrokeCollected += singleStrokeCollected;
             StylusMove += stylusMove;
+            MouseMove += mouseMove;
             SelectionChanging += selectingStrokes;
             SelectionChanged += selectionChanged;
             StrokeErasing += erasingStrokes;
@@ -229,6 +230,13 @@ namespace SandRibbon.Components.Canvas
         private void stylusMove(object sender, StylusEventArgs e)
         {
             GlobalTimers.resetSyncTimer();
+        }
+        private void mouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                GlobalTimers.resetSyncTimer();
+            }
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
