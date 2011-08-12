@@ -883,6 +883,7 @@ namespace SandRibbon.Components.Canvas
                     };
                     Action redo = () =>
                     {
+                        ClearAdorners();
                         var box = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
                         box.TextChanged -= SendNewText;
                         box.Text = redoText;
