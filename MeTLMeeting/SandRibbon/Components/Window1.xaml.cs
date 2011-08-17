@@ -536,7 +536,6 @@ namespace SandRibbon
         private void showReconnectingDialog()
         {
             ProgressDisplay.Children.Clear();
-            var sp = new StackPanel();
             var majorHeading = new TextBlock
                            {
                                Foreground = Brushes.White,
@@ -553,9 +552,8 @@ namespace SandRibbon
                                HorizontalAlignment = HorizontalAlignment.Center,
                                VerticalAlignment = VerticalAlignment.Center
                            };
-            sp.Children.Add(majorHeading);
-            sp.Children.Add(minorHeading);
-            ProgressDisplay.Children.Add(sp);
+            ProgressDisplay.Children.Add(majorHeading);
+            ProgressDisplay.Children.Add(minorHeading);
             InputBlocker.Visibility = Visibility.Visible;
         }
         private bool canCreateConversation(object obj)
@@ -738,8 +736,6 @@ namespace SandRibbon
             Dispatcher.adoptAsync(() =>
             {
                 showPowerPointProgress(explanation);
-                Canvas.SetTop(ProgressDisplay, (canvas.ActualHeight / 2));
-                Canvas.SetLeft(ProgressDisplay, (ActualWidth / 2) - 100);
                 InputBlocker.Visibility = Visibility.Visible;
             });
         }
