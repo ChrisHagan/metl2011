@@ -101,6 +101,9 @@ namespace MeTLLib.Providers.Structure
         public ConversationDetails AppendSlideAfter(int currentSlideId, string title, Slide.TYPE type)
         {
             var details = DetailsOf(title);
+            if (ConversationDetails.Empty.Equals(details)) 
+                return ConversationDetails.Empty;
+            
             var nextSlideId = details.Slides.Select(s => s.id).Max() + 1;
             var currentSlide = details.Slides.Where(s => s.id == currentSlideId).First();
             if (currentSlide == null)
