@@ -58,7 +58,7 @@ namespace SandRibbon.Components.Canvas
             SelectionChanging += selectingImages;
             SelectionChanged += selectionChanged;
             SelectionResizing += elementsMovingOrResizing;
-            SelectionResized += elementsMovedOrResized;
+            SelectionResized += elementsResized;
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<IEnumerable<TargettedImage>>(ReceiveImages));
             Commands.ReceiveVideo.RegisterCommandToDispatcher<TargettedVideo>(new DelegateCommand<TargettedVideo>(ReceiveVideo));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
@@ -559,10 +559,45 @@ namespace SandRibbon.Components.Canvas
             Commands.AddPrivacyToggleButton.ExecuteAsync(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, myElements.Count != 0, GetSelectionBounds()));
         }
         List<UIElement> elementsAtStartOfTheMove = new List<UIElement>();
+
+        private double Clamp(double val, double min, double max)
+        {
+            if (val < min) 
+                return min;
+            else if ( val > max)
+                return max;
+            else 
+                return val;
+        }
+
         private void elementsMovingOrResizing(object sender, InkCanvasSelectionEditingEventArgs e)
         {
             elementsAtStartOfTheMove.Clear();
             elementsAtStartOfTheMove = GetSelectedClonedElements();
+
+            if (e.NewRectangle.Width == e.OldRectangle.Width && e.NewRectangle.Height == e.OldRectangle.Height)
+                return;
+
+            Rect imageCanvasRect = new Rect(new Size(ActualWidth, ActualHeight));
+
+            double resizeWidth;
+            double resizeHeight;
+            double imageX;
+            double imageY;
+
+            if (e.NewRectangle.Right > imageCanvasRect.Right)
+                resizeWidth = Clamp(imageCanvasRect.Width - e.NewRectangle.X, 0, imageCanvasRect.Width);
+            else
+                resizeWidth = e.NewRectangle.Width;
+
+            if (e.NewRectangle.Height > imageCanvasRect.Height)
+                resizeHeight = Clamp(imageCanvasRect.Height - e.NewRectangle.Y, 0, imageCanvasRect.Height);
+            else
+                resizeHeight = e.NewRectangle.Height;
+
+            imageX = Clamp(e.NewRectangle.X, 0, e.NewRectangle.X);
+            imageY = Clamp(e.NewRectangle.Y, 0, e.NewRectangle.Y);
+            e.NewRectangle = new Rect(imageX, imageY, resizeWidth, resizeHeight);
         }
 
         private List<UIElement> GetSelectedClonedElements()
@@ -578,6 +613,22 @@ namespace SandRibbon.Components.Canvas
                 SetTop(selectedElements.Last(), GetTop(element));
             }
             return selectedElements;
+        }
+        private void elementsResized(object sender, EventArgs e)
+        {
+            var selectedElements = GetSelectedElements();
+            foreach (var element in selectedElements)
+            {
+               // move the images back on the canvas if they moved out of range while resizing
+                var imageX = GetLeft(element);
+                var imageY = GetTop(element);
+                imageX = imageX < 0 ? 0: imageX;
+                imageY = imageY < 0 ? 0: imageY;
+
+                SetLeft(element, imageX);
+                SetTop(element, imageY);
+            }
+            elementsMovedOrResized(sender, e);
         }
 
         private void elementsMovedOrResized(object sender, EventArgs e)
@@ -640,7 +691,20 @@ namespace SandRibbon.Components.Canvas
             {
                 case "System.Windows.Controls.Image":
                     var newImage = (System.Windows.Controls.Image)element;
+                    var origX = GetLeft(newImage);
+                    var origY = GetTop(newImage);
                     newImage.UpdateLayout();
+                    var newX = GetLeft(newImage);
+                    var newY = GetTop(newImage);
+
+                    if (origX < 0 || origY < 0)
+                    {
+                        Console.WriteLine();
+                    }
+                    if (newX < 0 || newY < 0)
+                    {
+                        Console.WriteLine();
+                    }
                     Commands.SendImage.Execute(new TargettedImage(currentSlide, Globals.me, target, newImage.tag().privacy, newImage));
                     break;
                 case "MeTLLib.DataTypes.Video":
@@ -927,6 +991,7 @@ namespace SandRibbon.Components.Canvas
             image.Height = jpgFrame.Height;
             image.Width = jpgFrame.Width;
             image.Stretch = Stretch.Uniform;
+            image.StretchDirection = StretchDirection.Both;
             image.Margin = new Thickness(5);
             return image;
         }
