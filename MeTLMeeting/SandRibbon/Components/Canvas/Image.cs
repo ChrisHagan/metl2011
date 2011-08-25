@@ -691,20 +691,8 @@ namespace SandRibbon.Components.Canvas
             {
                 case "System.Windows.Controls.Image":
                     var newImage = (System.Windows.Controls.Image)element;
-                    var origX = GetLeft(newImage);
-                    var origY = GetTop(newImage);
                     newImage.UpdateLayout();
-                    var newX = GetLeft(newImage);
-                    var newY = GetTop(newImage);
 
-                    if (origX < 0 || origY < 0)
-                    {
-                        Console.WriteLine();
-                    }
-                    if (newX < 0 || newY < 0)
-                    {
-                        Console.WriteLine();
-                    }
                     Commands.SendImage.Execute(new TargettedImage(currentSlide, Globals.me, target, newImage.tag().privacy, newImage));
                     break;
                 case "MeTLLib.DataTypes.Video":
