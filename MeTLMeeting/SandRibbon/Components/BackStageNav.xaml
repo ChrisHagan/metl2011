@@ -11,6 +11,9 @@
                 <Setter Property="Margin" Value="20 20" />
             </Style>
     </UserControl.Resources>
+    <UserControl.CommandBindings>
+        <CommandBinding Command="Help" CanExecute="HelpCanExecute" />
+    </UserControl.CommandBindings>
     <Grid Background="{DynamicResource backgroundColor}">
         <StackPanel VerticalAlignment="Top" Margin="15 30 0 0">
             <dict:Button HorizontalAlignment="Left" Text="Create new" Foreground="{StaticResource ResourceKey=foreground}" x:Name="new" ToolTip="{DynamicResource CreateConversationToolTip}" Command="{x:Static api:Commands.CreateBlankConversation}"/>

@@ -242,10 +242,8 @@ namespace SandRibbon
             if(loader == null) loader = new PowerPointLoader();
             loader.CreateBlankConversation();
         }
-        private void PrintBinding(object sender, EventArgs e) {
-            PrintConversation(null);
-        }
-        private void HelpBinding(object sender, EventArgs e) {
+        private void HelpBinding(object sender, EventArgs e) 
+        {
             LaunchHelp(null);
         }
         private void LaunchHelp(object _arg)
@@ -257,6 +255,9 @@ namespace SandRibbon
             catch (Exception)
             {
             }
+        }
+        private void PrintBinding(object sender, EventArgs e) {
+            PrintConversation(null);
         }
         private void PrintConversation(object _arg) {
             if(Globals.UserOptions.includePrivateNotesOnPrint)
