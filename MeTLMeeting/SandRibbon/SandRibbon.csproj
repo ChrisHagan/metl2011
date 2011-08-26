@@ -605,6 +605,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="AttachedInputBindings.cs" />
     <Compile Include="Chrome\ImportProgress.xaml.cs">
       <DependentUpon>ImportProgress.xaml</DependentUpon>
     </Compile>
