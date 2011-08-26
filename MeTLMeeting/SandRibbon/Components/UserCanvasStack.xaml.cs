@@ -32,6 +32,7 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
             Commands.SetLayer.ExecuteAsync("Sketch");
             Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedBubbleContext>(ReceiveNewBubble));
+            Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(MoveTo));
         }
         public void ReceiveNewBubble(MeTLLib.DataTypes.TargettedBubbleContext context)
         {
@@ -153,6 +154,12 @@ namespace SandRibbon.Components
             currentCanvas.Opacity = 1.0;
             canvasStack.Children.Add(currentCanvas);
         }
+        private void MoveTo(object _unused)
+        {
+            UIElement elem = canvasStack.Children[canvasStack.Children.Count - 1];
+            elem.Focus();
+        }
+
         public void Flush()
         {
             ClearAdorners();
