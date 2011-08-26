@@ -1150,6 +1150,12 @@ namespace SandRibbon.Components.Canvas
         public MeTLTextBox()
         {
             UndoLimit = 1;
+
+            undoBinding = new CommandBinding( ApplicationCommands.Undo, UndoExecuted, null);
+            redoBinding = new CommandBinding( ApplicationCommands.Redo, RedoExecuted, null);
+            CommandBindings.Add(undoBinding);
+            CommandBindings.Add(redoBinding);
+
             CommandManager.AddPreviewCanExecuteHandler(this, canExecute);
         }
 
@@ -1161,17 +1167,6 @@ namespace SandRibbon.Components.Canvas
                 e.Handled = true;
                 e.CanExecute = false;
             }
-        }
-        protected override void OnTextChanged(TextChangedEventArgs e)
-        {
-            if (undoBinding == null || redoBinding == null)
-            {
-                undoBinding = new CommandBinding( ApplicationCommands.Undo, UndoExecuted, null);
-                redoBinding = new CommandBinding( ApplicationCommands.Redo, RedoExecuted, null);
-                CommandBindings.Add(undoBinding);
-                CommandBindings.Add(redoBinding);
-            }
-            base.OnTextChanged(e);
         }
         private void UndoExecuted(object sender, ExecutedRoutedEventArgs args)
         {
