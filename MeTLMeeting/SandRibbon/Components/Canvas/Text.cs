@@ -1146,6 +1146,8 @@ namespace SandRibbon.Components.Canvas
     {
         CommandBinding undoBinding;
         CommandBinding redoBinding;
+        CommandBinding priorBinding;
+        CommandBinding nextBinding;
 
         public MeTLTextBox()
         {

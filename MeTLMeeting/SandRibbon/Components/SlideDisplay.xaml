@@ -29,6 +29,10 @@
              SelectionChanged="slides_SelectionChanged"
              Background="Transparent"
              HorizontalAlignment="Stretch" Width="Auto" >
+            <ListBox.InputBindings>
+                <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
+                <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
+            </ListBox.InputBindings>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel/>
