@@ -28,7 +28,9 @@ namespace SandRibbon.Components
 {
     public partial class Login : UserControl
     {
+        private bool canLoginAgain = true;
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
+        public static RoutedCommand LoginPending = new RoutedCommand();
         static Random random = new Random();
         public string Version { get; set; }
         public string ReleaseNotes
@@ -57,6 +59,7 @@ namespace SandRibbon.Components
             Commands.AddWindowEffect.ExecuteAsync(null);
             Version = ConfigurationProvider.instance.getMetlVersion();
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
+            Commands.LoginFailed.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { LoginFailed(); }));
             if (WorkspaceStateProvider.savedStateExists())
             {
                 rememberMe.IsChecked = true;
@@ -71,10 +74,11 @@ namespace SandRibbon.Components
         }
         private void checkAuthenticationAttemptIsPlausible(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = username != null && username.Text.Length > 0 && password != null && password.Password.Length > 0;
+            e.CanExecute = username != null && username.Text.Length > 0 && password != null && password.Password.Length > 0 && canLoginAgain;
         }
         private void attemptAuthentication(object sender, ExecutedRoutedEventArgs e)
         {
+            canLoginAgain = false;
             App.Login(username.Text.ToLower(), password.Password);
         }
         private void SetIdentity(Credentials identity)
@@ -93,6 +97,14 @@ namespace SandRibbon.Components
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(options.pedagogyLevel));
                 this.Visibility = Visibility.Collapsed;
             });
+        }
+        private void LoginFailed()
+        {
+            canLoginAgain = true;
+        }
+        private void checkLoginPending(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = canLoginAgain;
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

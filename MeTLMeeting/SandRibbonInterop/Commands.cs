@@ -189,6 +189,7 @@ namespace SandRibbon
         public static CompositeCommand RegisterPowerpointSourceDirectoryPreference = new CompositeCommand();
         public static CompositeCommand MeTLType = new CompositeCommand();
         public static CompositeCommand LogOut = new CompositeCommand();
+        public static CompositeCommand LoginFailed = new CompositeCommand();
         public static CompositeCommand SetIdentity = new CompositeCommand();
         public static CompositeCommand EstablishPrivileges = new CompositeCommand();
         public static RoutedCommand CloseApplication = new RoutedCommand();

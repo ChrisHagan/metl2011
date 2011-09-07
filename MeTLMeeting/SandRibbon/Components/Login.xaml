@@ -7,6 +7,7 @@
     xmlns:util="clr-namespace:Components.Utility">
     <UserControl.CommandBindings>
         <CommandBinding Command="{x:Static components:Login.CheckAuthentication}"  CanExecute="checkAuthenticationAttemptIsPlausible" Executed="attemptAuthentication"/>
+        <CommandBinding Command="{x:Static components:Login.LoginPending}" CanExecute="checkLoginPending"/>
     </UserControl.CommandBindings>
     <UserControl.InputBindings>
         <KeyBinding Command="{x:Static components:Login.CheckAuthentication}" Key="Enter" />
@@ -61,10 +62,11 @@
                                             <RowDefinition Height="25"/>
                                             <RowDefinition Height="25"/>
                                         </Grid.RowDefinitions>
+                                        <Button x:Name="hiddenButton" Visibility="Collapsed" Command="{x:Static components:Login.LoginPending}" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
                                         <Label Content="username (eg fgsmi3)" FontWeight="bold" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
-                                        <TextBox x:Name="username" Grid.Row="0" Grid.Column="1" />
+                                        <TextBox x:Name="username" Grid.Row="0" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
                                         <Label Content="password" FontWeight="bold" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"/>
-                                        <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" />
+                                        <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
                                     </Grid>
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
                                         <CheckBox VerticalAlignment="Center" x:Name="rememberMe">Stay signed in</CheckBox>

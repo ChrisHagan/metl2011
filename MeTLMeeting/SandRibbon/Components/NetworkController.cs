@@ -43,7 +43,10 @@ namespace SandRibbon.Components
                         Commands.LogOut.Execute(null);
                     }
                     else
+                    {
                         System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
+                        Commands.LoginFailed.Execute(null);
+                    }
                 }
                 client.events.StatusChanged -= checkValidity;
             };
