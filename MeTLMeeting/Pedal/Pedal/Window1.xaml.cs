@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Xml.Linq;
-using SandRibbonInterop.MeTLStanzas;
+using MeTLLib.DataTypes;
 using Keys = System.Windows.Forms.SendKeys;
 using System.Text;
 using System.Windows;
