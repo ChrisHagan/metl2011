@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Threading;
+using System.Windows.Automation.Peers;
 
 namespace SandRibbon.Components
 {
@@ -368,4 +369,31 @@ namespace SandRibbon.Components
             return -1 * dis.Created.CompareTo(dat.Created);
         }
     }
+
+
+    /// <summary>
+    /// The ItemsView is the same as the ItemsControl but provides an Automation ID.
+    /// </summary>
+    public class ItemsView : ItemsControl
+    {
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ItemsViewAutomationPeer(this);
+        }
+    }
+
+    public class ItemsViewAutomationPeer : FrameworkElementAutomationPeer
+    {
+        private readonly ItemsView itemsView;
+
+        public ItemsViewAutomationPeer(ItemsView itemsView) : base(itemsView)
+        {
+            this.itemsView = itemsView;
+        }
+
+        protected override string GetAutomationIdCore()
+        {
+            return itemsView.Name;
+        }
+    } 
 }

@@ -13,6 +13,7 @@ using MeTLLib.DataTypes;
 using Keys = System.Windows.Forms.SendKeys;
 using System.Text;
 using System.Windows;
+using System.Diagnostics;
 namespace Pedal
 {
     public partial class Window1 : Window
@@ -24,7 +25,7 @@ namespace Pedal
         private static AutomationElement metl;
         public void AttachToProcess()
         {
-            if(metl == null)
+            if (metl == null)
                 try
                 {
                     metl = AutomationElement.RootElement.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "ribbonWindow"))[0];
@@ -34,11 +35,27 @@ namespace Pedal
                     MessageBox.Show("Could not find a process named MeTL.  Have you started an instance (it can be clickonce)");
                 }
         }
+
+        private void TestSetup()
+        {
+            if (String.IsNullOrEmpty(username.Text))
+            {
+                MessageBox.Show("You must specify a valid jid in username (an authcate is a good bet");
+                return;
+            }
+            name = username.Text;
+            slide = String.IsNullOrEmpty(optionalSlide.Text) ? "1001" : optionalSlide.Text;
+            delayInMilis = String.IsNullOrEmpty(optionalSpeed.Text) ? 150 : Int32.Parse(optionalSpeed.Text);
+            xOffset = String.IsNullOrEmpty(optionalXOffset.Text) ? 0 : Int32.Parse(optionalXOffset.Text);
+            presentationSpace = new UserCanvasStack(metl, "presentationSpace");
+        }
+
         string target = "presentationSpace";
         string slide;
         string name;
         int xOffset;
         int delayInMilis;
+        UserCanvasStack presentationSpace;
         XNamespace METL = "monash:metl";
         Random RANDOM = new Random();
         Timer timer;
@@ -47,16 +64,7 @@ namespace Pedal
             AttachToProcess();
             Dispatcher.Invoke((Action)delegate
             {
-                if (String.IsNullOrEmpty(username.Text))
-                {
-                    MessageBox.Show("You must specify a valid jid in username (an authcate is a good bet");
-                    return;
-                }
-                name = username.Text;
-                slide = String.IsNullOrEmpty(optionalSlide.Text) ? "1001" : optionalSlide.Text;
-                delayInMilis = String.IsNullOrEmpty(optionalSpeed.Text) ? 150 : Int32.Parse(optionalSpeed.Text);
-                xOffset = String.IsNullOrEmpty(optionalXOffset.Text) ? 0 : Int32.Parse(optionalXOffset.Text);
-                var presentationSpace = new UserCanvasStack(metl, "presentationSpace");
+                TestSetup();
                 Random random = new Random();
                 var strokes = File.ReadAllLines("availableStrokes.txt");
                 var x = xOffset;
@@ -83,6 +91,88 @@ namespace Pedal
                             (int)(255 * Double.Parse(sourcePoints[i++])));
                     presentationSpace.Ink = stroke(name, randomColor(), 3, relocatedStroke.ToString().Trim());
                 }, null, 0, delayInMilis);
+            });
+        }
+        public void RandomTextInjection()
+        {
+            AttachToProcess();
+            Dispatcher.Invoke((Action)delegate
+            {
+                TestSetup();
+                Random random = new Random();
+                var x = xOffset;
+                var y = 0;
+                var color = randomColor();
+                var xLimit = xOffset+2000;
+                timer = new Timer((_state) =>
+                {
+                    presentationSpace.Text = "Lorum Ipsum";
+                }, null, 0, delayInMilis);
+            });
+        }
+        public void open()
+        {
+            var buttons = metl.Children(typeof(Button));
+            var appButton = buttons[3];
+            var rect = appButton.Current.BoundingRectangle;
+            //Assert.AreEqual(46,rect.Width);
+            //Assert.AreEqual(46,rect.Height);
+            appButton.Invoke();
+        }
+
+        public class Login
+        {
+            private AutomationElement _login;
+            private AutomationElement _username;
+            private AutomationElement _password;
+            private AutomationElement _submit;
+            public Login(AutomationElement parent)
+            {
+                _login = parent.Descendant("login");
+                _username = _login.Descendant("username");
+                _password = _login.Descendant("password");
+                _submit = _login.Descendant("submit");
+            }
+            public Login username(string value)
+            {
+                _username.Value("");
+                _username.SetFocus();
+                _username.Value(value);
+                return this;
+            }
+            public Login password(string value)
+            {
+                _password.Value("");
+                _password.SetFocus();
+                Keys.SendWait(value);
+                return this;
+            }
+            public Login submit()
+            {
+                _submit.Invoke();
+                return this;
+            }
+        }
+        public void LocateAndLogin()
+        {
+            // Admirable username no longer available
+            //int userSuffix = 22;
+            {
+                //var name = string.Format("Admirable{0}", userSuffix++);
+                var name = "jpjor1";
+                var password = "h3lp1nh4nd";
+                new Login(metl).username(name).password(password);
+                new Login((AutomationElement) metl).submit();
+            }
+        }
+        public void TextInsertChangeSizeAndColour()
+        {
+            AttachToProcess();
+            Dispatcher.Invoke((Action)delegate
+            {
+                TestSetup();
+                LocateAndLogin();
+                Thread.Sleep(5000);
             });
         }
         private Color randomColor()
@@ -126,7 +216,25 @@ namespace Pedal
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            PeriodicallyInjectContent();
+            switch (lstTests.SelectedIndex)
+            {
+                case 0:
+                    {
+                        PeriodicallyInjectContent();
+                    }
+                    break;
+                case 1:
+                    {
+                        RandomTextInjection();
+                    }
+                    break;
+                case 2:
+                    {
+                        TextInsertChangeSizeAndColour();                        
+                    }
+                    break;
+                default: break;
+            }
         }
         private void Help(object sender, RoutedEventArgs e)
         {
@@ -199,6 +307,29 @@ A: Our research indicates that only the first three lines of any document are");
     }
     public static class AutomationExtensions
     {
+        /// <summary>
+        /// Find a UI Automation child element by ID.
+        /// </summary>
+        /// <param name="controlName">Name of the control, such as "button1"</param>
+        /// <param name="parentElement">Parent element, such as an application window, or the 
+        /// AutomationElement.RootElement when searching for the application window.</param>
+        /// <returns>The UI Automation element.</returns>
+        public static AutomationElement FindChildElement(this AutomationElement element, string controlName)
+        {
+            if ((controlName == "") || (element == null))
+            {
+                throw new ArgumentException("Argument cannot be null or empty.");
+            }
+            // Set a property condition that will be used to find the main form of the
+            // target application. In the case of a WinForms control, the name of the control
+            // is also the AutomationId of the element representing the control.
+            var propCondition = new PropertyCondition(
+                AutomationElement.AutomationIdProperty, controlName, PropertyConditionFlags.IgnoreCase);
+        
+            // Find the element.
+            return element.FindFirst(TreeScope.Element | TreeScope.Children, propCondition);
+        }
+
         public static AutomationElement Descendant(this AutomationElement element, string name)
         {
             var result = element.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, name));

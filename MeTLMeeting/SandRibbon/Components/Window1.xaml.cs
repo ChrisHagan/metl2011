@@ -231,7 +231,7 @@ namespace SandRibbon
         private void ImportPowerpoint(object obj)
         {
             if(loader == null) loader = new PowerPointLoader();
-            loader.ImportPowerpoint();
+            loader.ImportPowerpoint(this);
         }
         private void SetRibbonAppearance(RibbonAppearance appearance)
         {

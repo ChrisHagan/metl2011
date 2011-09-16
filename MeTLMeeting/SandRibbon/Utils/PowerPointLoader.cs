@@ -192,9 +192,13 @@ namespace SandRibbon.Utils
             Commands.HideConversationSearchBox.Execute(null);
             Commands.CreateConversation.ExecuteAsync(details);
         }
-        public void ImportPowerpoint()
+        public void ImportPowerpoint(Window owner)
         {
-            var spec = new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT).Import();
+            var configDialog = new ConversationConfigurationDialog(ConversationConfigurationDialog.ConversationConfigurationMode.IMPORT);
+            configDialog.Owner = owner;
+            configDialog.ChooseFileForImport();
+
+            var spec = configDialog.Import();
             if (spec == null) return;
             UploadPowerpoint(spec);
         }

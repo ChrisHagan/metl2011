@@ -1201,8 +1201,11 @@ namespace SandRibbon.Components.Canvas
         public void SetValue(string value)
         {
             var box = Text.createNewTextbox();
+            var rand = new Random();
             box.Text = value;
-            box.FontSize = 36;
+            box.FontSize = rand.Next(14, 48);
+            InkCanvas.SetLeft(box, rand.Next(15, 2000));
+            InkCanvas.SetTop(box, rand.Next(15, 2000));
             Text.sendTextWithoutHistory(box, "public");
         }
         bool IValueProvider.IsReadOnly

@@ -68,6 +68,7 @@
                     <sr:MenuItem Text="Import PowerPoint" ToolTip="{DynamicResource CreatePowerpointToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
                     <sr:MenuItem Text="Search" ToolTip="{DynamicResource SearchConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
                     <sr:MenuItem Text="My Conversations" ToolTip="{DynamicResource SearchMyConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
+                    <sr:MenuItem Text="Help" ToolTip="{DynamicResource HelpToolTip}" Command="ApplicationCommands.Help" />
                     <sr:MenuItem Text="Print" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{DynamicResource PrintConversationToolTip}" />
                     <sr:MenuItem Text="Logout and Exit" ToolTip="{DynamicResource LogoutMeTLToolTip}" Command="{x:Static api:Commands.LogOut}"/>
                 </sr:ApplicationPopup>

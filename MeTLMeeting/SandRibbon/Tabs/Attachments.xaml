@@ -34,6 +34,7 @@
                FontWeight="Bold"
                FontSize="12px"
                FontFamily="Verdana"
+               Foreground="{x:Static SystemColors.GrayTextBrush}"
                Visibility="{Binding ElementName=attachments, Path=ItemsSource.Count, Converter={x:Static SandRibbon:Converters.reverseQuizzesToVisibilityConverter}}"
                Content="There are currently no attachments for this conversation"/>
         <ListBox x:Name="attachments" Background="Transparent" 

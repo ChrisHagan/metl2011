@@ -1,6 +1,8 @@
 ﻿<Window x:Class="Pedal.Window1"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:local="clr-namespace:Pedal"
     Topmost="True"
     Title="Vroom vroom!">
     <Grid>
@@ -8,6 +10,11 @@
         <StackPanel VerticalAlignment="Center">
             <Label Background="Wheat" Width="100">Pick a username</Label>
             <TextBox x:Name="username" Background="Wheat" Width="120"></TextBox>
+            <ListBox Height="100" Name="lstTests" Width="120">
+                <ListBoxItem Content="Random Ink" />
+                <ListBoxItem Content="Random Text" />
+                <ListBoxItem Content="Insert Text, Change Size and Colour" />
+            </ListBox>
             <Button Click="Button_Click" Width="100" Height="40">Begin</Button>        
             <Button Click="Help" Width="100" Height="40">Click here for help</Button>
         </StackPanel>
