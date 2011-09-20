@@ -504,7 +504,7 @@ namespace SandRibbon.Components.Canvas
         }
         private StrokeCollection filter(IEnumerable<Stroke> from, string author, bool justAuthors)
         {
-            if (!justAuthors && (inMeeting() || Globals.conversationDetails.Author == Globals.me)) return new StrokeCollection(from);
+            if (!justAuthors && (true || inMeeting() || Globals.conversationDetails.Author == Globals.me)) return new StrokeCollection(from);
             return new StrokeCollection(from.Where(s => s.tag().author == author));
         }
         

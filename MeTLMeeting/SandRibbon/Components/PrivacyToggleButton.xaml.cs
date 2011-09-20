@@ -68,6 +68,11 @@ namespace SandRibbon.Components
         {
             Commands.DeleteSelectedItems.ExecuteAsync(null);
         }
+
+        private void visualizeContent(object sender, RoutedEventArgs e)
+        {
+            Commands.VisualizeContent.Execute(null);
+        }
         private void banhammerContent(object sender, RoutedEventArgs e)
         {
             Commands.BanhammerSelectedItems.Execute(null);

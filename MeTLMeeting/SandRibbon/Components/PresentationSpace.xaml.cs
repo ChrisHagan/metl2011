@@ -49,9 +49,28 @@ namespace SandRibbon.Components
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
             Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
             Commands.BanhammerSelectedItems.RegisterCommand(new DelegateCommand<object>(BanHammerSelectedItems));
+            Commands.VisualizeContent.RegisterCommandToDispatcher(new DelegateCommand<object>(VisualizeContent));
             Commands.AllStaticCommandsAreRegistered();
         }
-
+        private void VisualizeContent(object obj) {
+            var authors = new List<string>();
+            authors.AddRange(stack.handwriting.getSelectedAuthors());
+            authors.AddRange(stack.text.GetSelectedAuthors());
+            authors.AddRange(stack.images.GetSelectedAuthors());
+            authors.Add(Globals.me);
+            var colors = ColorLookup.GetMediaColors();
+            var distinctAuthors = authors.Distinct();
+            var authorColor = new Dictionary<string, Color>();
+            foreach (var author in distinctAuthors)
+                authorColor.Add(author, colors.ElementAt(distinctAuthors.ToList().IndexOf(author)));
+            foreach (var stroke in stack.handwriting.GetSelectedStrokes())
+                stroke.DrawingAttributes.Color = authorColor[stroke.tag().author];
+            foreach (var elem in stack.text.GetSelectedElements())
+                ((MeTLTextBox)elem).Foreground = new SolidColorBrush(authorColor[((MeTLTextBox)elem).tag().author]);
+            foreach (var elem in stack.images.GetSelectedElements())
+                stack.images.applyShadowEffectTo((FrameworkElement)elem, authorColor[((System.Windows.Controls.Image)elem).tag().author]);
+            new colorCodedUsers(authorColor).ShowDialog();
+        }
         private void BanHammerSelectedItems(object obj)
         {
             var authors = new List<string>();

@@ -227,6 +227,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Components\colorCodedUsers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\CommandBridge.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -617,6 +621,9 @@
     </Compile>
     <Compile Include="Components\blacklistController.xaml.cs">
       <DependentUpon>blacklistController.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\colorCodedUsers.xaml.cs">
+      <DependentUpon>colorCodedUsers.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\CommandBridge.xaml.cs">
       <DependentUpon>CommandBridge.xaml</DependentUpon>
