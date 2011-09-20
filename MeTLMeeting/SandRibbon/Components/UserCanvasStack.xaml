@@ -6,6 +6,22 @@
     xmlns:canvas="clr-namespace:SandRibbon.Components.Canvas"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop" >
+     <UserControl.Resources>
+        <Style TargetType="{x:Type canvas:MeTLTextBox}">
+            <Setter Property="my:AttachedInputBindings.InputBindings">
+                <Setter.Value>
+                    <InputBindingCollection>
+                        <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
+                        <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
+                    </InputBindingCollection>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
+        <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
+    </UserControl.InputBindings>
     <Grid MinHeight="540" MinWidth="720"  x:Name="canvasStack" Background="White">
         <canvas:ViewCanvas x:Name="viewCanvas"/>
         <canvas:Image x:Name="images"/>

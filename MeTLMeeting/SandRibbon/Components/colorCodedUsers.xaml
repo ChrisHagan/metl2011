@@ -1,0 +1,22 @@
+﻿<Window x:Class="SandRibbon.Components.colorCodedUsers"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="colorCodedUsers" Height="300" Width="300">
+    <Grid>
+        <ItemsControl x:Name="codedUsers" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{Binding Path=User}" Foreground="{Binding Path=ColorCode}"/>
+                        <Rectangle Width="20" Height="20" Fill="{Binding Path=ColorCode}"  Stroke="Black" StrokeThickness="3"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</Window>

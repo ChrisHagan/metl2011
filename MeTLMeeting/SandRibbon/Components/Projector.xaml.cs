@@ -84,7 +84,13 @@ namespace SandRibbon.Components
 
         private void UpdateConversationDetails(ConversationDetails details)
         {
+            if(ConversationDetails.Empty.Equals(details)) return;
             conversationLabel.Text = details.Title;
+            
+            if (((details.Subject.ToLower() == "deleted" || Globals.authorizedGroups.Where(g=>g.groupKey == details.Subject).Count() == 0) && details.Jid == Globals.location.activeConversation) || String.IsNullOrEmpty(Globals.location.activeConversation))
+            {
+                shutdown(null);
+            }
         }
 
         private void shutdown(object obj)

@@ -58,7 +58,7 @@ namespace SandRibbon.Components.Canvas
             SelectionChanging += selectingImages;
             SelectionChanged += selectionChanged;
             SelectionResizing += elementsMovingOrResizing;
-            SelectionResized += elementsMovedOrResized;
+            SelectionResized += elementsResized;
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<IEnumerable<TargettedImage>>(ReceiveImages));
             Commands.ReceiveVideo.RegisterCommandToDispatcher<TargettedVideo>(new DelegateCommand<TargettedVideo>(ReceiveVideo));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
@@ -417,10 +417,7 @@ namespace SandRibbon.Components.Canvas
             {
                 if (!imageExistsOnCanvas(image))
                 {
-                    if (image.tag().isBackground)
-                        Panel.SetZIndex(image, 1);
-                    else
-                        Panel.SetZIndex(image, 2);
+                    Panel.SetZIndex(image, image.tag().isBackground ? 1 : 2);
                     Children.Add(image);
                 }
             }
@@ -520,6 +517,7 @@ namespace SandRibbon.Components.Canvas
         }
         private IEnumerable<UIElement> filterMyImages(IEnumerable<UIElement> elements)
         {
+           // if (inMeeting() || Globals.isAuthor) return elements;
             if (inMeeting()) return elements;
             var myImages = new List<UIElement>();
             foreach (UIElement image in elements)
@@ -529,8 +527,7 @@ namespace SandRibbon.Components.Canvas
                     if (!((System.Windows.Controls.Image)image).Tag.ToString().StartsWith("NOT_LOADED"))
                     {
                         var newImage = (System.Windows.Controls.Image)image;
-                        ImageInformation imageInfo = getImageInformation(newImage);
-                        if (imageInfo.Author == Globals.me || Globals.isAuthor)
+                        if (newImage.tag().author == Globals.me)
                             myImages.Add((System.Windows.Controls.Image)image);
                     }
                 }
@@ -568,10 +565,45 @@ namespace SandRibbon.Components.Canvas
             Commands.AddPrivacyToggleButton.ExecuteAsync(new PrivacyToggleButton.PrivacyToggleButtonInfo(privacyChoice, myElements.Count != 0, GetSelectionBounds()));
         }
         List<UIElement> elementsAtStartOfTheMove = new List<UIElement>();
+
+        private double Clamp(double val, double min, double max)
+        {
+            if (val < min) 
+                return min;
+            else if ( val > max)
+                return max;
+            else 
+                return val;
+        }
+
         private void elementsMovingOrResizing(object sender, InkCanvasSelectionEditingEventArgs e)
         {
             elementsAtStartOfTheMove.Clear();
             elementsAtStartOfTheMove = GetSelectedClonedElements();
+
+            if (e.NewRectangle.Width == e.OldRectangle.Width && e.NewRectangle.Height == e.OldRectangle.Height)
+                return;
+
+            Rect imageCanvasRect = new Rect(new Size(ActualWidth, ActualHeight));
+
+            double resizeWidth;
+            double resizeHeight;
+            double imageX;
+            double imageY;
+
+            if (e.NewRectangle.Right > imageCanvasRect.Right)
+                resizeWidth = Clamp(imageCanvasRect.Width - e.NewRectangle.X, 0, imageCanvasRect.Width);
+            else
+                resizeWidth = e.NewRectangle.Width;
+
+            if (e.NewRectangle.Height > imageCanvasRect.Height)
+                resizeHeight = Clamp(imageCanvasRect.Height - e.NewRectangle.Y, 0, imageCanvasRect.Height);
+            else
+                resizeHeight = e.NewRectangle.Height;
+
+            imageX = Clamp(e.NewRectangle.X, 0, e.NewRectangle.X);
+            imageY = Clamp(e.NewRectangle.Y, 0, e.NewRectangle.Y);
+            e.NewRectangle = new Rect(imageX, imageY, resizeWidth, resizeHeight);
         }
 
         private List<UIElement> GetSelectedClonedElements()
@@ -587,6 +619,22 @@ namespace SandRibbon.Components.Canvas
                 SetTop(selectedElements.Last(), GetTop(element));
             }
             return selectedElements;
+        }
+        private void elementsResized(object sender, EventArgs e)
+        {
+            var selectedElements = GetSelectedElements();
+            foreach (var element in selectedElements)
+            {
+               // move the images back on the canvas if they moved out of range while resizing
+                var imageX = GetLeft(element);
+                var imageY = GetTop(element);
+                imageX = imageX < 0 ? 0: imageX;
+                imageY = imageY < 0 ? 0: imageY;
+
+                SetLeft(element, imageX);
+                SetTop(element, imageY);
+            }
+            elementsMovedOrResized(sender, e);
         }
 
         private void elementsMovedOrResized(object sender, EventArgs e)
@@ -619,7 +667,6 @@ namespace SandRibbon.Components.Canvas
               };
             Action redo = () =>
               {
-
                   ClearAdorners();
                   var selection = new List<UIElement>();
                   var mySelectedImages = selectedElements.Select(i => ((System.Windows.Controls.Image)i).clone()).ToList();
@@ -636,6 +683,7 @@ namespace SandRibbon.Components.Canvas
                           Children.Add(element);
                       sendThisElement(element);
                   }
+                  Select(new List<UIElement>());
                   addAdorners();
               };
             UndoHistory.Queue(undo, redo);
@@ -650,6 +698,7 @@ namespace SandRibbon.Components.Canvas
                 case "System.Windows.Controls.Image":
                     var newImage = (System.Windows.Controls.Image)element;
                     newImage.UpdateLayout();
+
                     Commands.SendImage.Execute(new TargettedImage(currentSlide, Globals.me, target, newImage.tag().privacy, newImage));
                     break;
                 case "MeTLLib.DataTypes.Video":
@@ -661,24 +710,10 @@ namespace SandRibbon.Components.Canvas
                     break;
             }
         }
-        private ImageInformation getImageInformation(FrameworkElement newImage)
-        {
-            if (newImage.Tag == null || !(newImage is System.Windows.Controls.Image)) return null;
-            ImageInformation imageInfo = new ImageInformation();
-            if (newImage.Tag.ToString().StartsWith("NOT_LOADED"))
-                imageInfo = JsonConvert.DeserializeObject<ImageInformation>(newImage.Tag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2]);
-            else
-                imageInfo = JsonConvert.DeserializeObject<ImageInformation>(newImage.Tag.ToString());
-            return imageInfo;
-        }
         private void dirtyThisElement(UIElement element)
         {
-            var elementTag = ((FrameworkElement)element).Tag;
-            ImageInformation imageInfo = getImageInformation((FrameworkElement)element);
-            var elementPrivacy = elementTag == null ? "public"
-                                    : imageInfo.isPrivate
-                                    ? "private" : "public";
-            var dirtyElement = new TargettedDirtyElement(currentSlide, Globals.me, target, elementPrivacy, imageInfo.Id);
+            var thisImage = (System.Windows.Controls.Image)element;
+            var dirtyElement = new TargettedDirtyElement(currentSlide, Globals.me, target,thisImage.tag().privacy, thisImage.tag().id );
             switch (element.GetType().ToString())
             {
                 case "System.Windows.Controls.Image":
@@ -950,6 +985,7 @@ namespace SandRibbon.Components.Canvas
             image.Height = jpgFrame.Height;
             image.Width = jpgFrame.Width;
             image.Stretch = Stretch.Uniform;
+            image.StretchDirection = StretchDirection.Both;
             image.Margin = new Thickness(5);
             return image;
         }

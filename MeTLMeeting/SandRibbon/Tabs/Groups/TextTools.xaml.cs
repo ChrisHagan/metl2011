@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +15,6 @@ namespace SandRibbon.Tabs.Groups
     {
         private List<double> fontSizes = new List<double> { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 40.0, 48.0, 56.0, 64.0, 72.0, 96.0, 128.0, 144.0, 196.0, 240.0 };
         private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
-
         public TextTools()
         {
             InitializeComponent();
@@ -28,7 +26,7 @@ namespace SandRibbon.Tabs.Groups
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(update));
             Commands.MoveTo.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(MoveTo));
-            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold ));
+            Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold));
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
         }
@@ -53,13 +51,6 @@ namespace SandRibbon.Tabs.Groups
             fontSize.SelectedItem = generateDefaultFontSize();
         }
 
-        private void restoreTextDefaults(object obj)
-        {
-            ColourPickerBorder.BorderBrush = Brushes.Black;
-            fontSize.SelectedItem = 10;
-            fontFamily.SelectedItem = "Arial";
-        }
-
         private void update(TextInformation info)
         {
             fontSize.SelectionChanged -= fontSizeSelected;
@@ -73,6 +64,8 @@ namespace SandRibbon.Tabs.Groups
             fontFamily.SelectedItem = info.family.ToString();
             fontSize.SelectionChanged += fontSizeSelected;
             fontFamily.SelectionChanged += fontFamilySelected;
+
+            Globals.currentTextInfo = info;
         }
         private void sendValues()
         {
@@ -87,6 +80,7 @@ namespace SandRibbon.Tabs.Groups
                 strikethrough = TextStrikethroughButton.IsChecked == true,
                 color = ((SolidColorBrush) ColourPickerBorder.BorderBrush).Color
             };
+            Globals.currentTextInfo = info;
             Commands.UpdateTextStyling.Execute(info);
         }
 
@@ -99,7 +93,12 @@ namespace SandRibbon.Tabs.Groups
         }
         private void setUpTools(object sender, RoutedEventArgs e)
         {
-            fontFamily.SelectedItem = "Arial";
+            if (Globals.currentTextInfo != null)
+            {
+                update(Globals.currentTextInfo);
+            }
+            else
+                fontFamily.SelectedItem = "Arial";
         }
         private const double defaultWidth = 720;
         private const double defaultFontSize = 24.0;
@@ -161,6 +160,7 @@ namespace SandRibbon.Tabs.Groups
         {
             ((System.Windows.Controls.Primitives.Popup)ColourSelection.Parent).IsOpen = true;
         }
+
         private void valuesUpdated(object sender, RoutedEventArgs e)
         {
             var clickedButton = (CheckBox)sender;

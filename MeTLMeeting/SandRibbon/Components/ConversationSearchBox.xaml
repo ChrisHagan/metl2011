@@ -23,10 +23,10 @@
         <core:Double x:Key="searchBoxMargin">0.05</core:Double>
         <DataTemplate x:Key="nonAuthorOptions" />
         <DataTemplate x:Key="authorOptions">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <dict:Button Icon="\Resources\Edit.png" Text="Rename" InternalButtonSize="Medium" Click="renameConversation" />
-                <dict:Button Icon="\Resources\Share.png" Text="Share" InternalButtonSize="Medium" Click="shareConversation" />
-                <dict:Button Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Click="deleteConversation"/>
+            <StackPanel x:Name="conversationOptions" Orientation="Horizontal" HorizontalAlignment="Right">
+                <dict:Button x:Name="renameConversation" Icon="\Resources\Edit.png" Text="Rename" InternalButtonSize="Medium" Click="renameConversation" />
+                <dict:Button x:Name="shareConversation" Icon="\Resources\Share.png" Text="Share" InternalButtonSize="Medium" Click="shareConversation" />
+                <dict:Button x:Name="deleteConversation" Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Click="deleteConversation"/>
             </StackPanel>
         </DataTemplate>
         <Style TargetType="Border" x:Key="thinBlack">
@@ -168,7 +168,7 @@
                                              Width="Auto" HorizontalAlignment="Stretch" />
                     <Button Content="Search all conversations" x:Name="searchConversations" Click="searchConversations_Click"/>
                 </StackPanel>
-                <ItemsControl
+                <components:ItemsView
                          Grid.Column="1" Grid.Row="3" x:Name="SearchResults" HorizontalAlignment="Left" 
                          ItemTemplate="{StaticResource viewing}" />
             </StackPanel>

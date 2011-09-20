@@ -7,7 +7,7 @@ xmlns:metl="clr-namespace:SandRibbon"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:SandRibbon="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    Title="Create a quiz" 
+    Title="Create a Quiz" 
     ShowInTaskbar="False"
     x:Name="createAQuiz"
         MaxHeight="600"
@@ -50,7 +50,7 @@ xmlns:metl="clr-namespace:SandRibbon"
                                     <TextBox MaxHeight="300" MinWidth="100" Width="300" x:Name="question" AcceptsReturn="True" TextWrapping="WrapWithOverflow"></TextBox>
                                 </ScrollViewer>
                                 <Grid Grid.Column="1" x:Name="questionSnapshotContainer">
-                                    <dict:Button x:Name="screenshot" Click="screenshotAsAQuestion" ToolTip="{DynamicResource AttachCurrentSlideToQuizToolTip}" Icon="\Resources\AttachSnapshot.png" Text="Attach Current Slide"/>
+                                    <dict:Button x:Name="screenshot" Click="screenshotAsAQuestion" ToolTip="{DynamicResource AttachCurrentSlideToQuizToolTip}" Icon="\Resources\AttachSnapshot.png" Text="Attach Current Page"/>
                                 </Grid>
                             </Grid>
                         </StackPanel>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="HeadfulClassRoom">
+</Property><Property Name="Solution File" Value="C:\specialMeTL\MeTLMeeting\HeadfulClassRoom\HeadfulClassRoom.sln">
+</Property><Property Name="Date" Value="Wednesday, 14 September 2011">
+</Property><Property Name="Time" Value="14:35 PM">
+</Property></Properties><Event ErrorLevel="0" Project="HeadfulClassRoom" Source="HeadfulClassRoom.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="HeadfulClassRoom" Source="HeadfulClassRoom.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="" Source="HeadfulClassRoom.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="HeadfulClassRoom.sln" Description="Converted">
+</Event></UpgradeLog>

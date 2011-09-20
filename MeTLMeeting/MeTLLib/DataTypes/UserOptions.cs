@@ -15,13 +15,20 @@ namespace MeTLLib.DataTypes
         public string language { get; set; }
         public bool includePrivateNotesOnPrint { get; set; }
 
-        public static UserOptions DEFAULT = new UserOptions { 
-            logLevel = "ERROR",
-            pedagogyLevel = 2,
-            powerpointImportScale = 1,
-            includePrivateNotesOnPrint = true,
-            language = "en-US"
-        };
+        public static UserOptions DEFAULT
+        {
+            get
+            {
+                return new UserOptions
+                {
+                    logLevel = "ERROR",
+                    pedagogyLevel = 2,
+                    powerpointImportScale = 1,
+                    includePrivateNotesOnPrint = true,
+                    language = "en-US"
+                };
+            }
+        }
         public static UserOptions ReadXml(string xml) {
             return (UserOptions) new XmlSerializer(typeof(UserOptions)).Deserialize(new StringReader(xml));
         } 

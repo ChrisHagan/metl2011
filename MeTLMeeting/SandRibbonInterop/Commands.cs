@@ -32,6 +32,7 @@ namespace SandRibbon
     }
     public class Commands
     {
+        public static CompositeCommand SendNewSlideOrder = new CompositeCommand();
         public static CompositeCommand ChangeLanguage = new CompositeCommand();
         public static CompositeCommand ListenToAudio = new CompositeCommand();
         public static CompositeCommand PresentVideo= new CompositeCommand();
@@ -47,6 +48,7 @@ namespace SandRibbon
         public static CompositeCommand SetUserOptions = new CompositeCommand();
         //public static CompositeCommand SaveUserOptions = new CompositeCommand();
         public static CompositeCommand ZoomChanged = new CompositeCommand();
+        public static CompositeCommand ExtendCanvasBySize = new CompositeCommand();
 
         public static CompositeCommand AddPrivacyToggleButton = new CompositeCommand();
         public static CompositeCommand RemovePrivacyAdorners = new CompositeCommand();
@@ -189,6 +191,7 @@ namespace SandRibbon
         public static CompositeCommand RegisterPowerpointSourceDirectoryPreference = new CompositeCommand();
         public static CompositeCommand MeTLType = new CompositeCommand();
         public static CompositeCommand LogOut = new CompositeCommand();
+        public static CompositeCommand LoginFailed = new CompositeCommand();
         public static CompositeCommand SetIdentity = new CompositeCommand();
         public static CompositeCommand EstablishPrivileges = new CompositeCommand();
         public static RoutedCommand CloseApplication = new RoutedCommand();
@@ -215,11 +218,13 @@ namespace SandRibbon
         public static CompositeCommand SetConversationPermissions = new CompositeCommand();
         public static CompositeCommand JoinConversation = new CompositeCommand();
         public static CompositeCommand LeaveConversation = new CompositeCommand();
+        public static CompositeCommand LeaveLocation = new CompositeCommand();
         public static CompositeCommand SendDirtyConversationDetails = new CompositeCommand();
         public static CompositeCommand UpdateConversationDetails = new CompositeCommand();
         public static CompositeCommand ReceiveDirtyConversationDetails = new CompositeCommand();
         public static CompositeCommand SetSync = new CompositeCommand();
         public static CompositeCommand AddSlide = new CompositeCommand();
+        public static CompositeCommand UpdateNewSlideOrder = new CompositeCommand();
         public static CompositeCommand CreateBlankConversation = new CompositeCommand();
         public static CompositeCommand ShowEditSlidesDialog = new CompositeCommand();
         public static CompositeCommand CreateConversation = new CompositeCommand();
@@ -326,11 +331,11 @@ namespace SandRibbon
                 command.Execute(arg);
         }
         public static void RegisterCommandToDispatcher<T>(this CompositeCommand command, DelegateCommand<T> handler) {
-            var dispatcher = Application.Current.Dispatcher;
             command.RegisterCommand(new DelegateCommand<T>(arg =>
                                    {
                                        try
                                        {
+                                           var dispatcher = Application.Current.Dispatcher;
                                            if (!dispatcher.CheckAccess())
                                                dispatcher.Invoke((Action)delegate
                                                                               {

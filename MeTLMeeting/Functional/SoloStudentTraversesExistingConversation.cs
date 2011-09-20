@@ -10,8 +10,9 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SandRibbonInterop.MeTLStanzas;
+using MeTLLib.DataTypes;
 using System.Text;
+using System.Windows;
 
 namespace Functional
 {
@@ -114,9 +115,17 @@ namespace Functional
             answerAQuiz();
         }
         [TestMethod]
+        public void TeacherLoginAndImportPowerpoint()
+        {
+            LocateAndLogin();
+            Thread.Sleep(5000);
+            ImportPowerpoint();
+        }
+        [TestMethod]
         public void TeacherConversationCreation()
         {
             LocateAndLogin();
+            Thread.Sleep(5000);
             CreateConversation();
         }
         [TestMethod]
@@ -139,6 +148,16 @@ namespace Functional
         public void OpenQuiz()
         {
             new Quiz(windows[0]).open();
+        }
+        [TestMethod]
+        public void CreateConversationAndQuiz()
+        {
+            var window = windows[0];
+            LocateAndLogin();
+            window.pause(5000);
+            CreateConversation();
+            window.pause(1000);
+            QuizCreationAndAnswering();
         }
         [TestMethod]
         public void CreateQuiz()
@@ -179,18 +198,70 @@ namespace Functional
         [TestMethod]
         public void StudentJoin()
         {
-            var window = windows[1]; 
+            //var window = windows[1]; 
+            SearchForConversation("AutomatedConversation");
 
         }
         [TestMethod]
         public void LocateAndLogin()
         {
-            int userSuffix = 22;
             foreach (AutomationElement window in windows)
             {
-                var name = string.Format("Admirable{0}", userSuffix++);
-                new Login(window).username(name).password("mon4sh2008");
+                var name = "jpjor1";
+                var password = "h3lp1nh4nd";
+                new Login(window).username(name).password(password);
                 new Login((AutomationElement) window).submit();
+            }
+        }
+        [TestMethod]
+        public void SearchForConversation(string searchString)
+        {
+            if (String.IsNullOrEmpty(searchString))
+                searchString = "jpjor1";
+
+            var window = windows[0];
+            LocateAndLogin();
+            window.pause(5000);
+            SearchConversation();
+            window.pause(1000);
+            var search = new ConversationSearcher(window);
+            search.searchField(searchString).Search();
+            window.pause(300);
+            search.GetResults();
+        }
+        [TestMethod]
+        public void SearchAndEditConversation()
+        {
+            SearchForConversation("");
+            var window = windows[0];
+            var edit = window.Descendant("editConversation");
+        }
+        [TestMethod]
+        public void CreateConversationAndAddPage()
+        {
+            var window = windows[0];
+            LocateAndLogin();
+            window.pause(5000);
+            CreateConversation();
+            window.pause(1000);
+            TeacherAdd();
+
+            var canvasStack = window.Descendant(typeof(UserCanvasStack));
+            var canvasSize = ((Rect)canvasStack.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)).Size;
+            var expectSize = new Size(759, 569); // YAY, hardcoded values!
+            Assert.AreEqual(expectSize, canvasSize);
+        }
+        [TestMethod]
+        public void LoginAndSaveCredentials()
+        {
+            foreach (AutomationElement window in windows)
+            {
+                var name = "jpjor1";
+                var password = "h3lp1nh4nd";
+                var login = new Login(window).username(name).password(password);
+                
+                window.pause(250);
+                login.remember().submit();
             }
         }
         [TestMethod]
@@ -224,12 +295,16 @@ namespace Functional
         [TestMethod]
         public void CreateConversation()
         {
-            var popup = new ApplicationPopup(windows[0]).CreateConversation();
-            popup.title(string.Format("AutomatedConversation{0}", DateTime.Now));
-            popup.createType(1);
-            popup.powerpointType(1);
-            popup.file(@"C:\Users\monash\Desktop\beards.ppt");
-            popup.create();
+            new ApplicationPopup(windows[0]).CreateConversation();
+        }
+        public void SearchConversation()
+        {
+            new ApplicationPopup(windows[0]).SearchConversation();
+        }
+        [TestMethod]
+        public void ImportPowerpoint()
+        {
+            new ApplicationPopup(windows[0]).ImportPowerpoint(@"C:\Users\monash\Desktop\scala.ppt");
         }
         [TestMethod]
         public void EditConversation()

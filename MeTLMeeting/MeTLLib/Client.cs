@@ -83,6 +83,7 @@ namespace MeTLLib
         void AsyncRetrieveHistoryOf(int room);
         void MoveTo(int slide);
         void JoinConversation(string conversation);
+        void LeaveLocation();
         ConversationDetails AppendSlide(string Jid);
         ConversationDetails AppendSlideAfter(int slide, string Jid);
         ConversationDetails AppendSlideAfter(int slide, string Jid, Slide.TYPE type);
@@ -156,6 +157,11 @@ namespace MeTLLib
             return historyProvider;
         }
         #region connection
+        public void LeaveLocation()
+        {
+            LeaveConversation(location.activeConversation);    
+            wire.location = Location.Empty;
+        }
         public void Connect(string username, string password)
         {
             var credentials = authorisationProvider.attemptAuthentication(username, password);
@@ -405,12 +411,8 @@ namespace MeTLLib
             Action work = delegate
             {
                 if (String.IsNullOrEmpty(conversation)) return;
-                var cd = conversationDetailsProvider.DetailsOf(conversation);
-                wire.leaveRooms();
-                location.activeConversation = null;
-                location.availableSlides = null;
-                location.currentSlide = 0;
-                events.receiveConversationDetails(null);
+                if (conversation == wire.location.activeConversation)
+                wire.resetLocation();
             };
             tryIfConnected(work);
         }
@@ -481,6 +483,12 @@ namespace MeTLLib
             tryIfConnected(work);
             return cd;
         }
+        public void UpdateSlideCollection(Int32 conversationJid)
+        {
+            tryIfConnected(() => {
+                wire.sendSlideCollectionUpdatedCommand(conversationJid);
+            });
+        }
         public ConversationDetails DetailsOf(string room)
         {
             ConversationDetails cd = ConversationDetails.Empty;
@@ -517,6 +525,8 @@ namespace MeTLLib
         {
             if (wire.IsConnected() == false)
                 wire.AddActionToReloginQueue(action);
+            else
+                tryIfConnected(action);
         }
         private void tryIfConnected(Action action)
         {
@@ -536,12 +546,21 @@ namespace MeTLLib
             var wait = new ManualResetEvent(false);
             T result = default(T);
             bool complete = false;
-            tryIfConnected(delegate {
-                result = function();
-                complete = true;
+            try
+            {
+                tryIfConnected(delegate
+                {
+                    result = function();
+                    complete = true;
+                    wait.Set();
+                });
+            }
+            catch (Exception e)
+            {
                 wait.Set();
-            });  
-            if(!complete)
+                throw e;
+            }
+                if(!complete)
                 wait.WaitOne();
             return result;
         }

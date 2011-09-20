@@ -172,6 +172,7 @@ namespace MeTLLib.DataTypes
             uploadTime = UploadTime;
             size = Size;
             name = Name;
+            conversationJid = slide - ((Slide % 1000) % 400);
         }
         public bool ValueEquals(object obj)
         {
@@ -184,6 +185,7 @@ namespace MeTLLib.DataTypes
                 && foreignFile.name == name);
         }
         public string url { get; set; }
+        public int conversationJid { get; set; }
         public string uploadTime { get; set; }
         public long size { get; set; }
         public string name { get; set; }
@@ -760,7 +762,9 @@ namespace MeTLLib.DataTypes
                     Tag = tag,
                     Text = text,
                     Height = height,
-                    Width = width
+                    Width = width,
+                    AcceptsReturn = true,
+                    TextWrapping = TextWrapping.WrapWithOverflow
                 };
 
                 InkCanvas.SetLeft(textBox, x);
@@ -941,6 +945,7 @@ namespace MeTLLib.DataTypes
                     SetTag(TIME, value.uploadTime);
                     SetTag(SIZE, value.size);
                     SetTag(NAME, value.name);
+                    SetTag(slideTag, value.conversationJid);
                 }
             }
         }
@@ -1392,6 +1397,19 @@ namespace MeTLLib.DataTypes
             public Func<System.Windows.Controls.Image> curryEvaluation(MeTLServerAddress server) {
                 return ()=> forceEvaluation();
             }
+            public System.Windows.Controls.Image forceEvaluationForPrinting()
+            {
+                System.Windows.Controls.Image image = new System.Windows.Controls.Image
+                {
+                    Tag = "FOR_PRINTING_ONLY::::" + this.tag,
+                    Height = this.height,
+                    Width = this.width,
+                    Source = this.asynchronouslyLoadImageData()
+                };
+                InkCanvas.SetLeft(image, this.x);
+                InkCanvas.SetTop(image, this.y);
+                return image;
+            }
             public System.Windows.Controls.Image forceEvaluation()
             {
                 var sourceString = string.Format("https://{0}:1188{1}", server.host, INodeFix.StemBeneath("/Resource/", GetTag(sourceTag)));
@@ -1483,8 +1501,10 @@ namespace MeTLLib.DataTypes
                     SetTag(sourceTag, relativePath);
                     SetTag(widthTag, value.imageProperty.Width.ToString());
                     SetTag(heightTag, value.imageProperty.Height.ToString());
-                    SetTag(xTag, InkCanvas.GetLeft(value.imageProperty).ToString());
-                    SetTag(yTag, InkCanvas.GetTop(value.imageProperty).ToString());
+                    var currentX = (InkCanvas.GetLeft(value.imageProperty) + (Double.IsNaN(value.imageProperty.Margin.Left)?0:value.imageProperty.Margin.Left)).ToString(); 
+                    var currentY = (InkCanvas.GetTop(value.imageProperty) + (Double.IsNaN(value.imageProperty.Margin.Top)?0:value.imageProperty.Margin.Top)).ToString(); 
+                    SetTag(xTag, currentX);
+                    SetTag(yTag, currentY);
                     SetTag(authorTag, value.author);
                     SetTag(targetTag, value.target);
                     SetTag(privacyTag, value.privacy);

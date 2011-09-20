@@ -86,9 +86,14 @@ namespace SandRibbon.Components
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(EditConversation));
+            Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
+            Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
             Display(Globals.conversationDetails);
         }
-
+        private void resetLocationLocals(object _unused)
+        {
+            currentSlideId = -1;
+        }
         private void JoinConversation(object obj)
         {
             thumbnailList.Clear();
@@ -172,19 +177,25 @@ namespace SandRibbon.Components
             slides.SelectedIndex = nextIndex;
             slides.ScrollIntoView(slides.SelectedItem);
         }
+        private void reorderSlides(int conversationJid)
+        {
+            if (Globals.conversationDetails.Jid != conversationJid.ToString()) return;
+            var details = Globals.conversationDetails;
+            thumbnailList.Clear();
+            foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
+            {
+                thumbnailList.Add(slide);
+            }
+
+            var currentIndex = indexOf(Globals.location.currentSlide);
+            
+            slides.SelectedIndex = currentIndex; 
+            if (slides.SelectedIndex == -1)
+                slides.SelectedIndex = 0;
+            slides.ScrollIntoView(slides.SelectedItem);
+        }
         public void EditConversation(object _obj)
         {
-            DelegateCommand<ConversationDetails> reorder = null;
-            reorder = new DelegateCommand<ConversationDetails>(details =>
-            {
-                thumbnailList.Clear();
-                Commands.UpdateConversationDetails.UnregisterCommand(reorder);
-                foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
-                {
-                    thumbnailList.Add(slide);
-                }
-            });
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(reorder);
             new EditConversation().ShowDialog();
         }
         public void Display(ConversationDetails details)
@@ -211,7 +222,7 @@ namespace SandRibbon.Components
                     thumbnailList.Insert(newSlide.index, newSlide);
             }
             foreach (var slide in thumbnailList)
-            {
+           {
                 foreach (var relatedSlide in details.Slides.Where(s => s.id == slide.id))
                 {
                     if (slide.index != relatedSlide.index)

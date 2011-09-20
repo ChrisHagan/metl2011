@@ -1,7 +1,6 @@
 ﻿<UserControl x:Class="SandRibbon.Components.SlideDisplay"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:my="clr-namespace:SandRibbon"
@@ -29,6 +28,10 @@
              SelectionChanged="slides_SelectionChanged"
              Background="Transparent"
              HorizontalAlignment="Stretch" Width="Auto" >
+            <ListBox.InputBindings>
+                <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
+                <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
+            </ListBox.InputBindings>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel/>

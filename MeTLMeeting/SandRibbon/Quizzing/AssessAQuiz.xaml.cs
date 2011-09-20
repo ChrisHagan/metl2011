@@ -40,7 +40,8 @@ namespace SandRibbon.Quizzing
             Trace.TraceInformation("AssessAQuiz {0}", question.id);
             Dispatcher.adoptAsync(delegate
             {
-                responseCount.Content = string.Format("({0} responses)", answers.Count());
+                var response = (answers.Count() > 1 || answers.Count() == 0) ? "({0} responses)" : "({0} response)"; 
+                responseCount.Content = string.Format(response, answers.Count());
                 resultDisplay.ItemsSource = question.options.Select(o =>
                 {
                     if (answers != null)

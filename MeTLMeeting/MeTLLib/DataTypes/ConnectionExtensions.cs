@@ -25,6 +25,13 @@ namespace MeTLLib.DataTypes
         public string name;
         public string password;
         public List<AuthorizedGroup> authorizedGroups;
+        public static Credentials Empty
+        {
+            get
+            {
+                return new Credentials("", "", new List<AuthorizedGroup>());
+            }
+        }
     }
     public class AuthorizedGroup
     {
@@ -71,7 +78,9 @@ namespace MeTLLib.DataTypes
         public string activeConversation;
         public int currentSlide;
         public List<int> availableSlides = new List<int>();
-        public static Location Empty = new Location("0", 1, new List<int>{1});
+        public static Location Empty {
+            get { return new Location("0", 1, new List<int> { 1 }); }
+        }
     }
     public class Policy
     {

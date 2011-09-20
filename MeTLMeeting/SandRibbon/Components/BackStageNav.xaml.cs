@@ -16,6 +16,7 @@ using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using MessageBox = System.Windows.MessageBox;
 using UserControl = System.Windows.Controls.UserControl;
+using System.Diagnostics;
 
 namespace SandRibbon.Components
 {
@@ -101,6 +102,12 @@ namespace SandRibbon.Components
         }
         private void current_Click(object sender, RoutedEventArgs e){
             Commands.HideConversationSearchBox.Execute(null);
+        }
+        
+        private void HelpCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+          e.CanExecute = true;
+          e.Handled = true;
         }
     }
 }

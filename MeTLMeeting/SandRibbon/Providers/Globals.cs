@@ -8,6 +8,7 @@ using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Utils;
 using System.Diagnostics;
+using SandRibbon.Components.Canvas;
 
 namespace SandRibbon.Providers
 {
@@ -17,6 +18,8 @@ namespace SandRibbon.Providers
         public const string METLDEMONSTRATOR = "MeTL Demonstrator";
         public const string METL = "MeTL";
         public const string METLPRESENTER = "MeTL Presenter";
+
+        private static QuizData quizData = new QuizData();
         public static bool isAuthor
         {
             get
@@ -96,7 +99,8 @@ namespace SandRibbon.Providers
         {
             get
             {
-                try{
+                try
+                {
                     return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
                 }
                 catch (NotSetException e)
@@ -112,6 +116,18 @@ namespace SandRibbon.Providers
                 }
             }
         }
+        public static MeTLLib.DataTypes.QuizData quiz
+        {
+            get
+            {
+                return quizData;                
+            }
+        }
+        public static TextInformation currentTextInfo
+        {
+            get;
+            set;
+        }
         public static MeTLLib.DataTypes.Credentials credentials
         {
             get
@@ -123,7 +139,7 @@ namespace SandRibbon.Providers
                 }
                 catch (NotSetException e)
                 {
-                    return new Credentials("", "", new List<AuthorizedGroup>());
+                    return Credentials.Empty;
                 }
             }
         }

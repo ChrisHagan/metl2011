@@ -43,7 +43,10 @@ namespace SandRibbon.Components
                         Commands.LogOut.Execute(null);
                     }
                     else
+                    {
                         System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
+                        Commands.LoginFailed.Execute(null);
+                    }
                 }
                 client.events.StatusChanged -= checkValidity;
             };
@@ -94,6 +97,12 @@ namespace SandRibbon.Components
             Commands.SneakOutOf.RegisterCommand(new DelegateCommand<string>(SneakOutOf));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(leaveAllRooms));
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
+            Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
+            Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
+        }
+        private void sendNewSlideOrder(int conversationJid)
+        {
+            client.UpdateSlideCollection(conversationJid);
         }
         private void sendSyncMove(int slide)
         {
@@ -173,6 +182,11 @@ namespace SandRibbon.Components
         {
             client.SendStroke(ts);
         }
+        private void LeaveLocation(object _unused)
+        {
+            Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
+            client.LeaveLocation();
+        }
         private void SendTextBox(TargettedTextBox ttb)
         {
             client.SendTextBox(ttb);
@@ -218,6 +232,11 @@ namespace SandRibbon.Components
             client.events.VideoAvailable += videoAvailable;
             client.events.SyncMoveRequested += syncMoveRequested;
             client.events.StatusChanged += statusChanged;
+            client.events.SlideCollectionUpdated += slideCollectionChanged;
+        }
+        private void slideCollectionChanged(object sender, SlideCollectionUpdatedEventArgs e)
+        {
+            Commands.UpdateNewSlideOrder.Execute(e.Conversation);
         }
         private void syncMoveRequested(object sender, SyncMoveRequestedEventArgs e)
         {
@@ -236,12 +255,18 @@ namespace SandRibbon.Components
         private void commandAvailable(object sender, CommandAvailableEventArgs e)
         {
         }
+        
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
             if (e.conversationDetails != null && e.conversationDetails.Jid == ClientFactory.Connection().location.activeConversation)
                 Commands.UpdateConversationDetails.Execute(e.conversationDetails);
-            else
-                Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
+            else 
+            {
+                App.Current.Dispatcher.adopt(() =>
+                {
+                    Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
+                });
+            }
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)
         {

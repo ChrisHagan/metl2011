@@ -45,15 +45,15 @@ namespace SandRibbon.Chrome
         {
             try
             {
-                var details = Globals.conversationDetails;
-                if (ConversationDetails.Empty.Equals(details))
-                    StatusLabel.Text = "MeTL 2011";
-                else
-                    string.Format(
-                        "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
-                        Globals.privacy,
-                        MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
-                        details.Subject, Globals.me);
+                Dispatcher.adopt(() =>
+                {
+                    var details = Globals.conversationDetails;
+                    StatusLabel.Text = ConversationDetails.Empty.Equals(details)?"MeTL 2011":string.Format(
+                            "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
+                            Globals.privacy,
+                            MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
+                            details.Subject, Globals.me);
+                });
             }
             catch(NotSetException)
             {

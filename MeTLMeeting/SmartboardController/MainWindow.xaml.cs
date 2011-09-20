@@ -21,10 +21,6 @@ namespace SmartboardController
         {
             InitializeComponent();
         }
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            App.initializeSmartboard(this);
-        }
         private void Connect_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = !App.isConnectedToSmartboard;
@@ -33,6 +29,15 @@ namespace SmartboardController
         private void Connect_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             App.ConnectToSmartboard();
+        }
+        private void Reconnect_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            App.ConnectToSmartboard();
+        }
+        private void Reconnect_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+            e.Handled = true;
         }
         private void Disconnect_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -67,6 +72,12 @@ namespace SmartboardController
                 App.SetInkCanvasMode("Ink");
                 App.SetDrawingAttributes(da);
             }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            App.appPtr = (int)WindowsInteropFunctions.FindWindowByCaption(this.Title);
+            App.InitialConnectToSmartboard();
         }
     }
 }

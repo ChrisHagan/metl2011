@@ -67,6 +67,11 @@ namespace Functional
             ((InvokePattern)element.GetCurrentPattern(InvokePattern.Pattern)).Invoke();
             return element;
         }
+        public static AutomationElement Toggle(this AutomationElement element)
+        {
+            ((TogglePattern)element.GetCurrentPattern(TogglePattern.Pattern)).Toggle();
+            return element;
+        }
         public static string AutomationId(this AutomationElement element)
         {
             return element.GetCurrentPropertyValue(AutomationElement.AutomationIdProperty).ToString();

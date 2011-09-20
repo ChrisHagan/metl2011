@@ -16,7 +16,7 @@ namespace HeadfulClassRoom
     /*PLEASE NOTE THIS NEEDS TO BE RUN IN DEBUG MODE FOR IT TO WORK*/
     class Program
     {
-        public static int population = 2;
+        public static int population = 1;
         public static Dictionary<AutomationElement, string> usernames = new Dictionary<AutomationElement, string>();
         private static Random RANDOM = new Random();
         static void Main(string[] args)
@@ -27,15 +27,20 @@ namespace HeadfulClassRoom
                 {
                     File.Delete(Directory.GetCurrentDirectory() + "\\Workspace\\state.xml");
                 }
-                catch(Exception e)
+                catch(Exception)
                 {
                     
                 }
-                foreach (var i in Enumerable.Range(0, population))
-                {
-                    Process.Start(@"MeTL.exe");
-                }
-                AutomationElementCollection windows;
+                //foreach (var i in Enumerable.Range(0, population))
+                var solo = new SoloStudentTraversesExistingConversation();
+                solo.AttachToProcess();
+                solo.LocateAndLogin();
+                solo.JoinConversation();
+                //solo.TeacherLoginAndImportPowerpoint();
+                //{
+                //    Process.Start(@"MeTL.exe");
+                //}
+                /*AutomationElementCollection windows;
                 while (true)
                 {
                     windows = AutomationElement
@@ -47,7 +52,20 @@ namespace HeadfulClassRoom
                         break;
                     Thread.Sleep(250);
                 }
-                var bounds = System.Windows.Forms.Screen.AllScreens.First().Bounds;
+                foreach (var window in windows)
+                {
+                    //var name = string.Format("Admirable{0}", user);
+                    //user++;
+                    var name = "jpjor1";
+                    var password = "h3lp1nh4nd";
+                    new Functional.Login((AutomationElement)window).username(name).password(password);
+                    //window.SetPosition(width, height, x, y);
+                }
+                foreach (var window in windows)
+                    new Functional.Login((AutomationElement)window).submit();
+
+                solo.ImportPowerpoint();*/
+                /*var bounds = System.Windows.Forms.Screen.AllScreens.First().Bounds;
                 var screenWidth = bounds.Width;
                 var screenHeight = bounds.Height;
                 var cells = Convert.ToInt32(Math.Sqrt(population));
@@ -64,8 +82,10 @@ namespace HeadfulClassRoom
                         x = 0;
                         y += height;
                     }
-                }
+                }*/
                 return;
+                
+                /*
                 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 int user = 22;
                 foreach (AutomationElement window in windows)
@@ -83,7 +103,8 @@ namespace HeadfulClassRoom
                     joinConversation(window);
                 }
                 
-             Console.ReadLine();
+                Console.ReadLine();
+                */
             }
             catch (Exception e)
             {

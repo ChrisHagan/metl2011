@@ -344,7 +344,7 @@ namespace SandRibbon.Tabs.Groups
             InitializeComponent();
 
             this.DataContext = currentColourValues;
-            Commands.TogglePens.RegisterCommand(new DelegateCommand<bool>(SetPens, delegate { return mustBeInConversation(null); }));
+            Commands.TogglePens.RegisterCommand(new DelegateCommand<bool>(SetPens, delegate { return StateHelper.mustBeInConversation(); }));
             SetupPreviousColoursWithDefaults();
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher(new DelegateCommand<string>(SetInkCanvasMode));
             Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<string>(SetLayer));
@@ -364,17 +364,6 @@ namespace SandRibbon.Tabs.Groups
         private void SetDrawingAttributes(object obj)
         {
             checkDraw();
-        }
-        private bool mustBeInConversation(object _unused)
-        {
-            try
-            {
-                return (Globals.location != null && Globals.location.activeConversation != null);
-            }
-            catch (NotSetException e)
-            {
-                return false;
-            }
         }
         private void SetInkCanvasMode(string mode)
         {

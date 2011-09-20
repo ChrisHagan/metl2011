@@ -36,6 +36,7 @@ namespace SandRibbon.Components.Canvas
             target = "";
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<object>(new DelegateCommand<object>(setInkCanvasMode));
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
+            Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<Size>(new DelegateCommand<Size>(extendCanvasBySize));
         }
         private void SetLayer(string layer)
         {
@@ -54,6 +55,16 @@ namespace SandRibbon.Components.Canvas
         {
             currentViewMode = ViewModes.Moving;
             oldPosition = e.GetPosition(this);
+        }
+        private void extendCanvasBySize(Size newSize)
+        {
+            Height = newSize.Height;
+            Width = newSize.Width;
+        }
+        public void FlushDimensions()
+        {
+            Height = Double.NaN;
+            Width = Double.NaN;
         }
         private void mouseDrag(object sender, MouseEventArgs e)
         {

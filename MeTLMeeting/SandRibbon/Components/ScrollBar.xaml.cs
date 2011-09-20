@@ -14,6 +14,7 @@ namespace SandRibbon.Components
             scroll.SizeChanged += scrollChanged;
             scroll.ScrollChanged += scroll_ScrollChanged;
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(ExtendBoth));
+
             updateScrollBarButtonDistances();
             VScroll.SmallChange = 10;
             HScroll.SmallChange = 10;
@@ -28,24 +29,8 @@ namespace SandRibbon.Components
         }
         private void ExtendBoth(object _unused)
         {
-            doCanvasMoveDown();
-            doCanvasMoveRight();
-        }
-        private void canvasMoveDown(object sender, RoutedEventArgs e)
-        {
-            doCanvasMoveDown();
-        }
-        private void canvasMoveRight(object sender, RoutedEventArgs e)
-        {
-            doCanvasMoveRight();
-        }
-        private void doCanvasMoveDown()
-        {
-            ((FrameworkElement)scroll.Content).Height = ((FrameworkElement)scroll.Content).ActualHeight * 1.2;
-        }
-        private void doCanvasMoveRight()
-        {
-            ((FrameworkElement)scroll.Content).Width = ((FrameworkElement)scroll.Content).ActualWidth * 1.2;
+            var canvas = (FrameworkElement)scroll.Content;
+            Commands.ExtendCanvasBySize.Execute(new Size(canvas.ActualWidth * 1.2, canvas.ActualHeight * 1.2));
         }
         private void VScroll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {

@@ -19,11 +19,12 @@ using SandRibbonObjects;
 using MessageBox = System.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
 using ListBox = System.Windows.Controls.ListBox;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using SandRibbon.Utils;
 using SandRibbon.Components.Pedagogicometry;
 using MeTLLib.DataTypes;
 using System.IO;
+using Microsoft.Win32;
 
 namespace SandRibbon.Components
 {
@@ -53,11 +54,6 @@ namespace SandRibbon.Components
             extantConversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             this.CommandBindings.Add(new CommandBinding(CompleteConversationDialog, Create, CanCompleteDialog));
-            if (mode == ConversationConfigurationMode.IMPORT)
-            {
-                conversationNameTextBox.Text = ConversationDetails.DefaultName(Globals.me);
-                doBrowseFiles();
-            }
         }
         private void PopulateFields()
         {
@@ -106,7 +102,8 @@ namespace SandRibbon.Components
         {
             doBrowseFiles();
         }
-        private void doBrowseFiles(){
+        private void doBrowseFiles()
+        {
             string initialDirectory = "\\";
             try
             {
@@ -129,7 +126,7 @@ namespace SandRibbon.Components
                 RestoreDirectory = true,
                 Multiselect = false
             };
-            var fileDialogResult = fileBrowser.ShowDialog();
+            Nullable<bool> fileDialogResult = fileBrowser.ShowDialog(Owner);
             if (!String.IsNullOrEmpty(fileBrowser.FileName))
             {
                 importFile = fileBrowser.FileName;
@@ -141,7 +138,7 @@ namespace SandRibbon.Components
                     WorkspaceStateProvider.SaveCurrentSettings();
                 }
             }
-            if (fileDialogResult == System.Windows.Forms.DialogResult.Cancel)
+            if (!fileDialogResult.HasValue) 
                 importFile = null;
         }
         private static void UpdateConversationDetails(ConversationDetails details)
@@ -339,6 +336,14 @@ namespace SandRibbon.Components
         private void selectAll(object sender, RoutedEventArgs e)
         {
             conversationNameTextBox.SelectAll();
+        }
+        public void ChooseFileForImport()
+        {
+            if (dialogMode == ConversationConfigurationMode.IMPORT)
+            {
+                conversationNameTextBox.Text = ConversationDetails.DefaultName(Globals.me);
+                doBrowseFiles();
+            }
         }
         internal PowerpointSpec Import()
         {

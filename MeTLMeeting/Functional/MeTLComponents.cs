@@ -7,6 +7,8 @@ using System.Windows.Controls.Primitives;
 using Keys = System.Windows.Forms.SendKeys;
 using System.Windows.Automation;
 using Button=System.Windows.Forms.Button;
+using System.Threading;
+using System.Windows;
 
 namespace Functional
 {
@@ -106,28 +108,50 @@ namespace Functional
             return picker;
 
         }
-        public  ConversationPicker CreateConversation()
+        public void ImportPowerpoint(string filename)
         {
             open();
             var popup = _parent.Descendant(typeof(Popup));
             var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
-            var prev = popup.Descendants();
-            ConversationPicker picker = null;
             try
             {
-                var menu = menuItems[0];
-                var post = popup.Descendants().Except(prev);
+                // Invoke the import powerpoint menuitem
+                var menu = menuItems[1];
                 menu.Invoke();
-                picker = new ConversationPicker(AutomationElement
-                                                .RootElement
-                                                .FindFirst(TreeScope.Children, 
-                                                            new PropertyCondition(AutomationElement.AutomationIdProperty, 
-                                                            "createConversation")));
             }
-            catch(Exception ) { }
-            
-            return picker;
-
+            catch (Exception)
+            {
+            }
+        }
+        public void CreateConversation()
+        {
+            open();
+            var popup = _parent.Descendant(typeof(Popup));
+            var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
+            try
+            {
+                // invoke create new conversation
+                var menu = menuItems[0];
+                menu.Invoke();
+            }
+            catch (Exception) 
+            {
+            }
+        }
+        public void SearchConversation()
+        {
+            open();
+            var popup = _parent.Descendant(typeof(Popup));
+            var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
+            try
+            {
+                // invoke search conversation
+                var menu = menuItems[2];
+                menu.Invoke();
+            }
+            catch (Exception) 
+            {
+            }
         }
     }
     public class ConversationPicker
@@ -351,7 +375,6 @@ namespace Functional
         }
     }
 
-
     public class Submission
     {
         private AutomationElement _submit;
@@ -376,16 +399,14 @@ namespace Functional
     {
         private AutomationElement _searchField;
         private AutomationElement _searchButton;
-        private AutomationElement _link;
         private AutomationElement _searchResults;
-        private AutomationElement _recommendedConversations;
         private AutomationElement _parent;
+
         public ConversationSearcher(AutomationElement parent)
         {
             _parent = parent;
             _searchField = parent.Descendant("SearchInput");
             _searchButton = parent.Descendant("searchConversations");
-            _recommendedConversations = parent.Descendant("recommendedConversationsLabel");
         }
         public ConversationSearcher searchField(string value)
         {
@@ -397,13 +418,13 @@ namespace Functional
         }
         public ConversationSearcher Search()
         {
-            new ApplicationPopup(_parent).open();
             _searchButton.Invoke();
             return this;
         }
         public ConversationSearcher GetResults()
         {
             _searchResults = _parent.Descendant("SearchResults");
+            Assert.AreNotEqual(Rect.Empty, _searchResults.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty));
             return this;
         }
     }
@@ -444,12 +465,14 @@ namespace Functional
         private AutomationElement _username;
         private AutomationElement _password;
         private AutomationElement _submit;
+        private AutomationElement _remember;
         public Login(AutomationElement parent)
         {
             _login = parent.Descendant("login");
             _username = _login.Descendant("username");
             _password = _login.Descendant("password");
-            _submit = _login.Descendant(typeof(Button));
+            _submit = _login.Descendant("submit");
+            _remember = _login.Descendant("rememberMe");
         }
         private void moveWindowToTestingDatabase()
         {
@@ -468,6 +491,11 @@ namespace Functional
             _password.Value("");
             _password.SetFocus();
             Keys.SendWait(value);
+            return this;
+        }
+        public Login remember()
+        {
+            _remember.Toggle();
             return this;
         }
         public Login submit()

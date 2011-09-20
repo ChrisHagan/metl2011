@@ -34,6 +34,8 @@
         <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
         <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
         <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
+        <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
+        <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
     </sr:RibbonWindow.InputBindings>
     <sr:RibbonWindow.Ribbon>
         <sr:Ribbon x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" 
@@ -66,6 +68,7 @@
                     <sr:MenuItem Text="Import PowerPoint" ToolTip="{DynamicResource CreatePowerpointToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
                     <sr:MenuItem Text="Search" ToolTip="{DynamicResource SearchConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
                     <sr:MenuItem Text="My Conversations" ToolTip="{DynamicResource SearchMyConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
+                    <sr:MenuItem Text="Help" ToolTip="{DynamicResource HelpToolTip}" Command="ApplicationCommands.Help" />
                     <sr:MenuItem Text="Print" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{DynamicResource PrintConversationToolTip}" />
                     <sr:MenuItem Text="Logout and Exit" ToolTip="{DynamicResource LogoutMeTLToolTip}" Command="{x:Static api:Commands.LogOut}"/>
                 </sr:ApplicationPopup>
@@ -125,8 +128,8 @@
             <my:ProgressDialog Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" />
             <components:Login x:Name="login"/>
         </Grid>
-        <Canvas Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">
-            <StackPanel x:Name="ProgressDisplay" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        </Canvas>
+        <StackPanel Background="SteelBlue" Opacity="0.7"  IsHitTestVisible="True" x:Name="InputBlocker" Visibility="Collapsed">
+            <StackPanel x:Name="ProgressDisplay" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </StackPanel>
     </Grid>
 </sr:RibbonWindow>

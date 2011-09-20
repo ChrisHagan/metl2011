@@ -5,6 +5,7 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using Newtonsoft.Json;
 using System.Windows;
+using System.Diagnostics;
 
 namespace MeTLLib.DataTypes
 {
@@ -172,6 +173,7 @@ namespace MeTLLib.DataTypes
             var newImage = new Image {Height = image.Height, Width = image.Width};
             newImage.tag(image.tag());
             newImage.Source = image.Source;
+            newImage.Margin = image.Margin;
             InkCanvas.SetLeft(newImage, InkCanvas.GetLeft(image));
             InkCanvas.SetTop(newImage, InkCanvas.GetTop(image));
 
@@ -182,19 +184,35 @@ namespace MeTLLib.DataTypes
             ImageTag imagetag = new ImageTag();
             image.Dispatcher.adopt(delegate
             {
-                ImageTag imageInfo = new ImageTag();
-                if (image.Tag.ToString().StartsWith("NOT_LOADED"))
-                    imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString().Split(new[]{"::::"}, StringSplitOptions.RemoveEmptyEntries)[2]);
-                else
-                    imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
-                imagetag = new ImageTag
+                try
                 {
-                    author = imageInfo.author,
-                    id = imageInfo.id,
-                    privacy = imageInfo.privacy,
-                    isBackground = imageInfo.isBackground,
-                    zIndex = imageInfo.zIndex
-                };
+                    ImageTag imageInfo = new ImageTag(); 
+                    if (image.Tag.ToString().StartsWith("NOT_LOADED"))
+                        imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2]);
+                    else
+                        imageInfo = JsonConvert.DeserializeObject<ImageTag>(image.Tag.ToString());
+
+                    imagetag = new ImageTag
+                    {
+                        author = imageInfo.author,
+                        id = imageInfo.id,
+                        privacy = imageInfo.privacy,
+                        isBackground = imageInfo.isBackground,
+                        zIndex = imageInfo.zIndex
+                    };
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError("Error making ImageTag =>" + e);
+                    imagetag = new ImageTag
+                    {
+                        author = "unknown",
+                        id = "unknown",
+                        privacy = "private",
+                        isBackground = false,
+                        zIndex = 1
+                    };
+                }
             });
             return imagetag;
         }
