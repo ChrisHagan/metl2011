@@ -51,13 +51,10 @@ namespace SandRibbon.Components
                 showButton.Visibility = Visibility.Visible;
                 hideButton.Visibility = Visibility.Visible;
             }
-            // Commented out for 173 staging
-            /*
             if (Globals.conversationDetails.Author == Globals.me)
                 banhammerButton.Visibility = Visibility.Visible;
             else
                 banhammerButton.Visibility = Visibility.Collapsed;
-             */
         }
         private void showContent(object sender, RoutedEventArgs e)
         {
