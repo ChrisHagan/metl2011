@@ -2,18 +2,18 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:q="clr-namespace:SandRibbon.Quizzing"
-                 xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-xmlns:metl="clr-namespace:SandRibbon"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+    xmlns:metl="clr-namespace:SandRibbon"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:SandRibbon="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     Title="Create a Quiz" 
     ShowInTaskbar="False"
     x:Name="createAQuiz"
-        MaxHeight="600"
+    MaxHeight="600"
     WindowStartupLocation="CenterOwner"
-        Closing="createAQuiz_Closing"
-        Loaded="createAQuiz_Loaded"
+    Closing="createAQuiz_Closing"
+    Loaded="createAQuiz_Loaded"
     SizeToContent="WidthAndHeight">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static SandRibbon:Commands.CreateQuizStructure}" Executed="CreateQuizQuestion" CanExecute="canCreateQuizQuestion"/>
@@ -62,8 +62,8 @@ xmlns:metl="clr-namespace:SandRibbon"
                                     <q:GoldPlaque PreviewMouseDown="QuizButton_PreviewMouseUp" />
                                     <StackPanel Orientation="Horizontal">
                                         <q:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" />
-                                        <TextBox Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" GotFocus="TextBox_GotFocus" TextWrapping="WrapWithOverflow"/>
-                                        <Button Focusable="False" Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
+                                        <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" GotFocus="TextBox_GotFocus" TextWrapping="WrapWithOverflow"/>
+                                        <Button x:Name="quizAnswerDelete" Focusable="False" Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
                                             <Image Height="20" Width="20"  Source="\Resources\Delete.png"/>
                                         </Button>
                                     </StackPanel>

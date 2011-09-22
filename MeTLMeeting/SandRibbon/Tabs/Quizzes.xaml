@@ -1,6 +1,6 @@
 ﻿<sr:RibbonTab sr:KeyboardAccess.Keys="Q" Text="Quizzes"
     x:Class="SandRibbon.Tabs.Quizzes"
-    x:Name="feedback"
+    x:Name="quizzesTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"

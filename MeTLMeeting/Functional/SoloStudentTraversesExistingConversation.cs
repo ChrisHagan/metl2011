@@ -142,12 +142,12 @@ namespace Functional
         [TestMethod]
         public void answerAQuiz()
         {
-            new QuizAnswer().answer();
+            new QuizAnswer(windows[0]).answer();
         }
         [TestMethod]
         public void OpenQuiz()
         {
-            new Quiz(windows[0]).open();
+            new Quiz(windows[0]).openTab().open();
         }
         [TestMethod]
         public void CreateConversationAndQuiz()
@@ -162,7 +162,7 @@ namespace Functional
         [TestMethod]
         public void CreateQuiz()
         {
-            new QuizCreate().options().create();
+            new QuizCreate(windows[0]).question("What's the colour of the sky?").options().create();
         }
 
         [TestMethod]
@@ -213,8 +213,7 @@ namespace Functional
                 new Login((AutomationElement) window).submit();
             }
         }
-        [TestMethod]
-        public void SearchForConversation(string searchString)
+        private void SearchForConversation(string searchString)
         {
             if (String.IsNullOrEmpty(searchString))
                 searchString = "jpjor1";

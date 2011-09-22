@@ -110,6 +110,8 @@ namespace SandRibbon.Components.Canvas
         {
             if (GetSelectedElements().Count == 0) return;
             deleteImages();
+            // set keyboard focus to the current canvas so the help button does not grey out
+            Keyboard.Focus(this);
             ClearAdorners();
         }
         private void mirrorVideoRefresh(string id)

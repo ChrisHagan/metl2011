@@ -87,5 +87,20 @@ namespace Functional
             Thread.Sleep(milis);
             return element;
         }
+        public static AutomationElement WalkAllElements(this AutomationElement element, string elementName)
+        {
+            AutomationElement elementNode = TreeWalker.RawViewWalker.GetFirstChild(element);
+        
+            while (elementNode != null)
+            {
+                if (!String.IsNullOrEmpty(elementNode.Current.Name) && String.Equals(elementNode.Current.Name, elementName, StringComparison.OrdinalIgnoreCase))
+                    return elementNode;
+
+                WalkAllElements(elementNode, elementName);
+                elementNode = TreeWalker.ControlViewWalker.GetNextSibling(elementNode);
+            }
+
+            return null;
+        }
     }
 }

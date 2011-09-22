@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Controls;
-using System.Xaml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Controls.Primitives;
 using Keys = System.Windows.Forms.SendKeys;
@@ -281,23 +280,39 @@ namespace Functional
     public class Quiz
     {
         private AutomationElement _open;
+        private AutomationElement _quiz;
         private AutomationElement _parent;
         public Quiz(AutomationElement parent)
         {
             _parent = parent;
-            _open = parent.Descendant("createQuiz");    
+        }
+        public Quiz openTab()
+        {
+            Keys.SendWait("%");
+            Thread.Sleep(100);
+            Keys.SendWait("Q");
+            return this;
         }
         public void open()
         {
-            _open.Invoke();
+            var buttons = _parent.Descendants(typeof(Button));
+            foreach (AutomationElement button in buttons)
+            {
+                if (button.Current.AutomationId.ToLower().Contains("createquiz"))
+                {
+                    button.Invoke();
+                    return;
+                }
+            }
         }
 
         public void openQuiz()
         {
-            var allButtons = _parent.Descendants(typeof (Button));
+            var allButtons = _parent.Descendants(typeof(Button));
             foreach(AutomationElement button in allButtons)
             {
-                if(button.Current.Name.ToLower().Contains("quiz: 1"))
+                // this will only find the first quiz
+                if (button.Current.AutomationId.ToLower().Equals("quiz"))
                 {
                     button.Invoke();
                     return;
@@ -308,17 +323,16 @@ namespace Functional
     public class QuizAnswer
     {
         private AutomationElement _buttons;
-        public QuizAnswer()
+        public QuizAnswer(AutomationElement parent)
         {
-             var parent = AutomationElement.RootElement
+             var _dialog = AutomationElement.RootElement
                                         .FindFirst(TreeScope.Children, 
                                                     new PropertyCondition(AutomationElement.AutomationIdProperty, 
                                                     "answerAQuiz"));
-            _buttons = parent.Descendant("quizOptions"); 
+            _buttons = _dialog.Descendant("quizOptions"); 
         }
         public void answer()
         {
-
             ((SelectionItemPattern)_buttons.Children(typeof(ListBoxItem))[0]
                 .GetCurrentPattern(SelectionItemPattern.Pattern)).Select();
         }
@@ -327,24 +341,34 @@ namespace Functional
     {
         private AutomationElement _create;
         private AutomationElement _title;
+        private AutomationElement _question;
+        private AutomationElement _parent;
+        private AutomationElement _dialog;
         private AutomationElementCollection _options;
-        public QuizCreate()
+        public QuizCreate(AutomationElement parent)
         {
-            
-              var parent = AutomationElement.RootElement
-                                            .FindFirst(TreeScope.Children, 
-                                                        new PropertyCondition(AutomationElement.AutomationIdProperty, 
-                                                        "createAQuiz"));
-            _create = parent.Descendant("quizCommitButton");
-            _options = parent.Descendants(typeof (TextBox));
+            _parent = parent;
+            _dialog = _parent.Descendant("createAQuiz");
+            _create = _dialog.Descendant("quizCommitButton");
+            _question = _dialog.Descendant("question");
+            _title = _dialog.Descendant("quizTitle");
+            _options = _dialog.Descendants(typeof(TextBox));
+        }
+        public QuizCreate question(string value)
+        {
+            _question.Value(value);
+            return this; 
         }
         public QuizCreate options()
         {
             var count = 0;
-            foreach(AutomationElement element in _options)
+            foreach (AutomationElement element in _options)
             {
-                element.Value(count.ToString());
-                count++;
+                if (element.Current.AutomationId.ToLower().Equals("quizanswer"))
+                {
+                    element.Value("Answer " + count.ToString());
+                    count++;
+                }
             }
             return this;
         }
