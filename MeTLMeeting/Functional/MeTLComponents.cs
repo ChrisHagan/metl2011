@@ -84,29 +84,6 @@ namespace Functional
             return new ConversationPicker(post.Where(e => e.Current.ClassName == "SimpleConversationFilterer").First());
         }
 
-        public  ConversationPicker EditConversation()
-        {
-            open();
-            var popup = _parent.Descendant(typeof(Popup));
-            var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
-            var prev = popup.Descendants();
-            ConversationPicker picker = null;
-            try
-            {
-                var menu = menuItems[2];
-                var post = popup.Descendants().Except(prev);
-                menu.Invoke();
-                picker = new ConversationPicker(AutomationElement
-                                                .RootElement
-                                                .FindFirst(TreeScope.Children, 
-                                                            new PropertyCondition(AutomationElement.AutomationIdProperty, 
-                                                            "createConversation")));
-            }
-            catch(Exception ) { }
-            
-            return picker;
-
-        }
         public void ImportPowerpoint(string filename)
         {
             open();
@@ -404,14 +381,24 @@ namespace Functional
 
     public class Submission
     {
-        private AutomationElement _submit;
+        private AutomationElement _parent;
         private AutomationElement _view;
 
         public Submission(AutomationElement parent)
         {
-            _submit = parent.Descendant("submitSubmission");
+            _parent = parent;
             _view= parent.Descendant("viewSubmission");
 
+        }
+        public Submission openTab()
+        {
+            Keys.SendWait("%");
+            Thread.Sleep(100);
+            Keys.SendWait("S");
+            return this;
+        }
+        public void open()
+        {
         }
         public void view()
         {
@@ -419,7 +406,15 @@ namespace Functional
         }
         public void submit()
         {
-            _submit.Invoke();
+            var buttons = _parent.Descendants(typeof(Button));
+            foreach (AutomationElement button in buttons)
+            {
+                if (button.Current.AutomationId.ToLower().Contains("submitSubmission"))
+                {
+                    button.Invoke();
+                    return;
+                }
+            }
         }
     }
     public  class ConversationSearcher

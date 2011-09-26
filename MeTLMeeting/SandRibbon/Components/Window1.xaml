@@ -64,13 +64,13 @@
                             <components:SimpleConversationSelector x:Name="recentDocuments" />
                         </StackPanel>
                     </sr:ApplicationPopup.RecentDocumentsControl>
-                    <sr:MenuItem Text="Create new" ToolTip="{DynamicResource CreateConversationToolTip}" Command="{x:Static api:Commands.CreateBlankConversation}"/>
-                    <sr:MenuItem Text="Import PowerPoint" ToolTip="{DynamicResource CreatePowerpointToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
-                    <sr:MenuItem Text="Search" ToolTip="{DynamicResource SearchConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
-                    <sr:MenuItem Text="My Conversations" ToolTip="{DynamicResource SearchMyConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
-                    <sr:MenuItem Text="Help" ToolTip="{DynamicResource HelpToolTip}" Command="ApplicationCommands.Help" />
-                    <sr:MenuItem Text="Print" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{DynamicResource PrintConversationToolTip}" />
-                    <sr:MenuItem Text="Logout and Exit" ToolTip="{DynamicResource LogoutMeTLToolTip}" Command="{x:Static api:Commands.LogOut}"/>
+                    <sr:MenuItem Text="Create new" Image="\Resources\Whiteboard.png" ToolTip="{DynamicResource CreateConversationToolTip}" Command="{x:Static api:Commands.CreateBlankConversation}"/>
+                    <sr:MenuItem Text="Import PowerPoint" Image="\Resources\ExactPowerpoint.png" ToolTip="{DynamicResource CreatePowerpointToolTip}" Command="{x:Static api:Commands.ImportPowerpoint}"/>
+                    <sr:MenuItem Text="Search" Image="\Resources\MagnifyingGlassShiny.png" ToolTip="{DynamicResource SearchConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="AllConversations"/>
+                    <sr:MenuItem Text="My Conversations" Image="\Resources\MagnifyingGlassShiny.png" ToolTip="{DynamicResource SearchMyConversationsToolTip}" Command="{x:Static api:Commands.ShowConversationSearchBox}" CommandParameter="MyConversations"/>
+                    <sr:MenuItem Text="Help" Image="\Resources\Help.png" ToolTip="{DynamicResource HelpToolTip}" Command="ApplicationCommands.Help" />
+                    <sr:MenuItem Text="Print" Image="\Resources\Slide_Not_Loaded.png" Command="{x:Static api:Commands.PrintConversation}" ToolTip="{DynamicResource PrintConversationToolTip}" />
+                    <sr:MenuItem Text="Logout and Exit" Image="\Resources\logoutAndExit.png" ToolTip="{DynamicResource LogoutMeTLToolTip}" Command="{x:Static api:Commands.LogOut}"/>
                 </sr:ApplicationPopup>
             </sr:Ribbon.ApplicationPopup>
             <sr:Ribbon.ToolBar>

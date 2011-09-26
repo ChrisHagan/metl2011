@@ -14,6 +14,9 @@ using MeTLLib.DataTypes;
 using System.Text;
 using System.Windows;
 using Keys = System.Windows.Forms.SendKeys;
+using Microsoft.Test;
+using Mouse = Microsoft.Test.Mouse;
+using System.Windows.Input;
 
 namespace Functional
 {
@@ -62,13 +65,14 @@ namespace Functional
             InjectContent();
             TeacherAdd();
             InjectContent();
-            TeacherMoveForward();
+            //TeacherMoveForward();
             EditConversation();
             Thread.Sleep(2000);
             for (var i = 0; i < 3; i++)
             {
                 InjectContent();
-                TeacherMoveForward();
+                //TeacherMoveForward();
+                TeacherAdd();
             }
             Thread.Sleep(3000);
             InjectStudentStrokes();
@@ -129,6 +133,82 @@ namespace Functional
             Thread.Sleep(5000);
             CreateConversation();
         }
+        [TestMethod]
+        public void TeacherCreateAndAddContent()
+        {
+            LocateAndLogin();
+            Thread.Sleep(5000);
+            CreateConversation();
+            Thread.Sleep(1000);
+            // ready to create. add something, then change colour and add something else
+            var canvas = windows[0].Descendant(typeof(UserCanvasStack));
+            DrawSpirographWaveOnCanvas(canvas);
+        }
+            
+        private void DrawSpirographWaveOnCanvas(AutomationElement canvasElement)
+        {
+            var bounds = canvasElement.Current.BoundingRectangle;
+
+            var centerX = (int)(bounds.X + bounds.Width /2);
+            int centerY = (int)(bounds.Y + bounds.Height / 2);
+
+            var points = GetPointsForSpirograph(centerX, centerY, 1.02, 5, 2, 0, 300);
+
+            Mouse.MoveTo(points.First());
+            Mouse.Down(MouseButton.Left);
+
+            AnimateMouseThroughPoints(points);
+
+            Mouse.Up(MouseButton.Left);
+        }
+
+        private IEnumerable<System.Drawing.Point> GetPointsForSpirograph(int centerX, int centerY, double littleR, double bigR, double a, int tStart, int tEnd)
+        {
+            // Equations from http://www.mathematische-basteleien.de/spirographs.htm
+            for (double t = tStart; t < tEnd; t += 0.1)
+            {
+                var rDifference = bigR - littleR;
+                var rRatio = littleR / bigR;
+                var x = (rDifference * Math.Cos(rRatio * t) + a * Math.Cos((1 - rRatio) * t)) * 25;
+                var y = (rDifference * Math.Sin(rRatio * t) - a * Math.Sin((1 - rRatio) * t)) * 25;
+
+                yield return new System.Drawing.Point(centerX + (int)x, centerY + (int)y);
+            }
+        }
+
+        private void AnimateMouseThroughPoints(IEnumerable<System.Drawing.Point> points)
+        {
+            var window = windows[0];
+            var listItems = window.Descendants(typeof(ListBoxItem));
+            var list = new List<SelectionItemPattern>();
+
+            foreach (AutomationElement item in listItems)
+            {
+                if (item.Current.Name.Contains("PenColors"))
+                {
+                    var selection = item.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                    list.Add(selection);
+                }
+            }
+            var count = 0;
+            var color = 0; 
+            foreach (var point in points)
+            {
+                if (count % 10 == 0)
+                {
+                    Mouse.Up(MouseButton.Left);
+                    Mouse.Down(MouseButton.Left);
+                    list[color].Select();
+                    if (++color >= (list.Count - 1))
+                        color = 0;
+                }
+                Mouse.MoveTo(point);
+                Thread.Sleep(5);
+                count++;
+        
+            }
+        }
+
         [TestMethod]
         public void openQuizToAnswer()
         {
@@ -202,15 +282,38 @@ namespace Functional
         {
             //var window = windows[1]; 
             SearchForConversation("AutomatedConversation");
+        }
+        [TestMethod]
+        public void LoginAndChangePagesViaShortcuts()
+        {
+            SearchForConversation("AutomatedPageChange");
 
+            var window = windows[0];
+            var results = window.Descendant("SearchResults");
+            var buttons = results.Descendants(typeof(Button));
+            buttons[1].Invoke();
+
+            for (int i = 0; i < 3; i++)
+            {
+                TeacherMoveForwardViaShortcut();
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                TeacherMoveBackViaShortcut();
+            }
         }
         [TestMethod]
         public void LocateAndLogin()
         {
+            string[,] credentials = { { "joshuaj", "TqTAg3t7KbfP" }, { "jpjor1", "h3lp1nh4nd" } };
+            var count = 0;
+
             foreach (AutomationElement window in windows)
             {
-                var name = "jpjor1";
-                var password = "h3lp1nh4nd";
+                var name = credentials[count,0]; //"jpjor1";
+                var password = credentials[count,1]; // "h3lp1nh4nd";
+                count++;
                 new Login(window).username(name).password(password);
                 new Login((AutomationElement) window).submit();
             }
@@ -374,7 +477,21 @@ namespace Functional
         public void EditConversation()
         {
             var window = windows[0];
-            new ApplicationPopup(window).EditConversation().title("AutomatedConversationEdited").update();
+            SearchConversation();
+            window.pause(1000);
+            var search = new ConversationSearcher(window);
+            search.searchField("SuperTest").Search();
+            window.pause(300);
+            search.GetResults();
+
+            var rename = window.Descendant("renameConversation");
+            rename.Invoke();
+
+            var title = window.Descendant("renameTitle");
+            title.Value(title.Value() + " Edited");
+
+            var save = window.Descendant("saveEdit");
+            save.Invoke();
         }
         [TestMethod]
         public void JoinConversation()
@@ -383,8 +500,7 @@ namespace Functional
             {
                 var search = new ConversationSearcher(window);
                 Thread.Sleep(1000);
-                search.searchField("AutomatedConversation");
-
+                search.searchField("SuperTest");
             }
             foreach (AutomationElement window in windows)
             {
@@ -392,6 +508,9 @@ namespace Functional
                 Thread.Sleep(1000);
                 search.Search();
 
+                var results = window.Descendant("SearchResults");
+                var buttons = results.Descendants(typeof(Button));
+                buttons[1].Invoke();
             }
         }
         [TestMethod]
