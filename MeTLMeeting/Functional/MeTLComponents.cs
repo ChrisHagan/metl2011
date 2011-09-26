@@ -117,6 +117,9 @@ namespace Functional
                 // Invoke the import powerpoint menuitem
                 var menu = menuItems[1];
                 menu.Invoke();
+
+                //Thread.Sleep(3000);
+                Keys.SendWait(filename);
             }
             catch (Exception)
             {

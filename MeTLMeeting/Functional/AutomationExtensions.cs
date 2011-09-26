@@ -72,6 +72,30 @@ namespace Functional
             ((TogglePattern)element.GetCurrentPattern(TogglePattern.Pattern)).Toggle();
             return element;
         }
+        public static AutomationElement SelectListItem(this AutomationElement element, String itemText)
+        {
+            if ((element == null) || (String.IsNullOrEmpty(itemText)))
+            {
+                throw new ArgumentException("Argument cannot be null or empty.");
+            }
+        
+            var propertyCondition = new PropertyCondition(AutomationElement.NameProperty, itemText, PropertyConditionFlags.IgnoreCase);
+            var firstMatch = element.FindFirst(TreeScope.Children, propertyCondition);
+        
+            if (firstMatch != null)
+            {
+                try
+                {
+                    var selectionItemPattern = firstMatch.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                    selectionItemPattern.Select();
+                }
+                catch (InvalidOperationException)
+                {
+                }
+            }
+
+            return element;
+        }
         public static string AutomationId(this AutomationElement element)
         {
             return element.GetCurrentPropertyValue(AutomationElement.AutomationIdProperty).ToString();

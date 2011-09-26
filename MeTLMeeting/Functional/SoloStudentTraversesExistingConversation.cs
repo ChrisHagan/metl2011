@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MeTLLib.DataTypes;
 using System.Text;
 using System.Windows;
+using Keys = System.Windows.Forms.SendKeys;
 
 namespace Functional
 {
@@ -186,11 +187,12 @@ namespace Functional
             InjectContent();
             TeacherAdd();
             InjectContent();
-            TeacherMoveForward();
+            //TeacherMoveForward();
             for (var i = 0; i < 5; i++)
             {
+                TeacherAdd();
                 InjectContent();
-                TeacherMoveForward();
+                //TeacherMoveForward();
             }
             TeacherMoveBack();
             TeacherMoveBack();
@@ -229,11 +231,60 @@ namespace Functional
             search.GetResults();
         }
         [TestMethod]
-        public void SearchAndEditConversation()
+        public void SearchConversationAndEdit()
+        {
+            SearchForConversation("");
+        }
+        [TestMethod]
+        public void SearchForConversationAndRename()
         {
             SearchForConversation("");
             var window = windows[0];
-            var edit = window.Descendant("editConversation");
+            var rename = window.Descendant("renameConversation");
+            rename.Invoke();
+
+            var title = window.Descendant("renameTitle");
+            title.Value(title.Value() + " Edited");
+
+            var save = window.Descendant("saveEdit");
+            save.Invoke();
+        }
+        [TestMethod]
+        public void SearchForConversationAndChangePrivacy()
+        {
+            SearchForConversation("");
+
+            var window = windows[0];
+            var sharing = window.Descendant("shareConversation");
+            sharing.Invoke();
+
+            var groups = window.Descendant("groupsList");
+            groups.SelectListItem("jpjor1");
+
+            var save = window.Descendant("saveEdit");
+            save.Invoke();
+        }
+        [TestMethod]
+        public void SearchForConversationAndDelete()
+        {
+            SearchForConversation("");
+
+            var window = windows[0];
+            var delete = window.Descendant("deleteConversation");
+            delete.Invoke();
+
+            window.pause(200);
+
+            // select yes on confirmation dialog box
+            var buttons = window.Descendants(typeof(Button));
+            foreach (AutomationElement button in buttons)
+            {
+                if (button.Current.Name.Equals("Yes"))
+                {
+                    button.Invoke();
+                    break;
+                }
+            }
         }
         [TestMethod]
         public void CreateConversationAndAddPage()
@@ -247,7 +298,7 @@ namespace Functional
 
             var canvasStack = window.Descendant(typeof(UserCanvasStack));
             var canvasSize = ((Rect)canvasStack.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)).Size;
-            var expectSize = new Size(759, 569); // YAY, hardcoded values!
+            var expectSize = new Size(759, 569); // Hardcoded values for the expected size of canvas 
             Assert.AreEqual(expectSize, canvasSize);
         }
         [TestMethod]
@@ -271,11 +322,25 @@ namespace Functional
             new SlideNavigation(window).Forward();
         }
         [TestMethod]
+        public void TeacherMoveForwardViaShortcut()
+        {
+            var window = windows[0];
+            window.pause(500);
+            Keys.SendWait("{PGDN}"); 
+        }
+        [TestMethod]
         public void TeacherMoveBack()
         {
             var window = windows[0];
             window.pause(500);
             new SlideNavigation(window).Back();
+        }
+        [TestMethod]
+        public void TeacherMoveBackViaShortcut()
+        {
+            var window = windows[0];
+            window.pause(500);
+            Keys.SendWait("{PGUP}");
         }
         [TestMethod]
         public void TeacherAdd()
@@ -337,16 +402,36 @@ namespace Functional
             InjectImages();
         }
         [TestMethod]
+        public void InjectStrokesSelectingColours()
+        {
+            var presentationSpace = new UserCanvasStack(windows[0], "canvas");
+
+            var window = windows[0];
+            var listItems = window.Descendants(typeof(ListBoxItem));
+
+            foreach (AutomationElement item in listItems)
+            {
+                if (item.Current.Name.Contains("PenColors"))
+                {
+                    var selection = item.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                    selection.Select();
+                    // TODO: change x and y offsets to random
+                    presentationSpace.Ink = ink("jpjor1", 30, 0, "public");
+                    window.pause(500);
+                }
+            }
+        }
+        [TestMethod]
         public void InjectStrokes()
         {
             var presentationSpace = new UserCanvasStack(windows[0], "canvas");
-            presentationSpace.Ink = ink("dhag22", 30,0, "public");
+            presentationSpace.Ink = ink("jpjor1", 30,0, "public");
         }
         [TestMethod]
         public void InjectStudentStrokes()
         {
             var presentationSpace = new UserCanvasStack(windows[1], "canvas");
-            presentationSpace.Ink = ink("dhag23", 100,100, "public");
+            presentationSpace.Ink = ink("jpjor1", 100,100, "public");
         }
         [TestMethod]
         public void InjectText()
