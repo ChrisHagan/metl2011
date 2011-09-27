@@ -361,15 +361,11 @@ namespace Functional
     {
         private AutomationElement _submissionList;
         private AutomationElement _import;
-        public SubmissionViewer(AutomationElement _obj)
+        public SubmissionViewer(AutomationElement parent)
         {
-              var parent = AutomationElement
-                                                .RootElement
-                                                .FindFirst(TreeScope.Children, 
-                                                            new PropertyCondition(AutomationElement.AutomationIdProperty, 
-                                                            "viewSubmissions"));
-            _submissionList = parent.Descendant("submissions");
-            _import = parent.Descendant("importSelectedSubmission");
+            var window = parent.Descendant("viewSubmissions");
+            _submissionList = window.Descendant("submissions");
+            _import = window.Descendant("importSelectedSubmission");
         }
         public void import()
         {
@@ -382,13 +378,10 @@ namespace Functional
     public class Submission
     {
         private AutomationElement _parent;
-        private AutomationElement _view;
 
         public Submission(AutomationElement parent)
         {
             _parent = parent;
-            _view= parent.Descendant("viewSubmission");
-
         }
         public Submission openTab()
         {
@@ -402,17 +395,37 @@ namespace Functional
         }
         public void view()
         {
-            _view.Invoke();
+            var buttons = _parent.Descendants(typeof(Button));
+            foreach (AutomationElement button in buttons)
+            {
+                if (button.Current.AutomationId.Contains("viewSubmission"))
+                {
+                    button.Invoke();
+                    return;
+                }
+            }
         }
         public void submit()
         {
             var buttons = _parent.Descendants(typeof(Button));
             foreach (AutomationElement button in buttons)
             {
-                if (button.Current.AutomationId.ToLower().Contains("submitSubmission"))
+                if (button.Current.AutomationId.Contains("submitSubmission"))
                 {
                     button.Invoke();
-                    return;
+                    break;
+                }
+            }
+
+            Thread.Sleep(200);
+
+            buttons = _parent.Descendants(typeof(Button));
+            foreach (AutomationElement button in buttons)
+            {
+                if (button.Current.Name.Equals("OK"))
+                {
+                    button.Invoke();
+                    break;
                 }
             }
         }

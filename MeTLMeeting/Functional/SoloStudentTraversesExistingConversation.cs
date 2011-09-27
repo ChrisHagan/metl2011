@@ -120,6 +120,27 @@ namespace Functional
             answerAQuiz();
         }
         [TestMethod]
+        public void TeacherLoginAndViewSubmissions()
+        {
+            var window = windows[0];
+            LocateAndLogin();
+            Thread.Sleep(3000);
+            var search = new ConversationSearcher(window);
+            Thread.Sleep(1000);
+            search.searchField("SuperTest");
+            Thread.Sleep(1000);
+            search.Search();
+
+            var results = window.Descendant("SearchResults");
+            var buttons = results.Descendants(typeof(Button));
+            buttons[1].Invoke();
+
+            Thread.Sleep(3000);
+            TeacherViewSubmissions();
+            Thread.Sleep(3000);
+            TeacherImportSubmission();
+        }
+        [TestMethod]
         public void TeacherLoginAndImportPowerpoint()
         {
             LocateAndLogin();
@@ -228,6 +249,7 @@ namespace Functional
         [TestMethod]
         public void OpenQuiz()
         {
+            windows[0].SetFocus();
             new Quiz(windows[0]).openTab().open();
         }
         [TestMethod]
@@ -249,12 +271,14 @@ namespace Functional
         [TestMethod]
         public void StudentSubmitScreenshot()
         {
-            new Submission(windows[1]).submit();
+            windows[1].SetFocus();
+            new Submission(windows[1]).openTab().submit();
         }
         [TestMethod]
         public void TeacherViewSubmissions()
         {
-            new Submission(windows[0]).view();
+            windows[0].SetFocus();
+            new Submission(windows[0]).openTab().view();
         }
         [TestMethod]
         public void TeacherImportSubmission()
@@ -492,6 +516,11 @@ namespace Functional
 
             var save = window.Descendant("saveEdit");
             save.Invoke();
+
+            window.pause(500);
+
+            var current = window.Descendant("current");
+            current.Invoke();
         }
         [TestMethod]
         public void JoinConversation()
