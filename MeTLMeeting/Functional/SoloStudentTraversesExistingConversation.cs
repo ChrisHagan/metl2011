@@ -42,14 +42,15 @@ namespace Functional
         [TestInitialize]
         public void AttachToProcess()
         {
-            if(windows == null)
-                windows = AutomationElement.RootElement.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, "ribbonWindow"));
+            if (windows == null)
+                windows = MeTL.GetAllMainWindows(); 
             Assert.IsNotNull(windows, "Could not find a process named MeTL.  Have you started an instance (it can be clickonce)");
         }
         string target = "presentationSpace";
         string slide = "483401";
         XNamespace METL = "monash:metl";
         Random RANDOM = new Random();
+
         [TestMethod] 
         public void SUPERTEST()
         {
@@ -331,11 +332,11 @@ namespace Functional
 
             foreach (AutomationElement window in windows)
             {
-                var name = credentials[count,0]; //"jpjor1";
-                var password = credentials[count,1]; // "h3lp1nh4nd";
+                var name = credentials[count,0]; 
+                var password = credentials[count,1]; 
                 count++;
                 new Login(window).username(name).password(password);
-                new Login((AutomationElement) window).submit();
+                new Login(window).submit();
             }
         }
         private void SearchForConversation(string searchString)

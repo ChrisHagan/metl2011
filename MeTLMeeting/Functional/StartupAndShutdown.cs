@@ -12,35 +12,18 @@ namespace Functional
     [TestClass]
     public class StartupAndShutdown
     {
-        private static Process metlProcess;
-
         private AutomationElement metlWindow;
-        private const string workingDirectory = @"C:\specialMeTL\MeTLMeeting\SandRibbon\bin\Debug\";
 
         [ClassInitialize]
         public static void StartProcess(TestContext context)
         {
-            metlProcess = new Process();
-            metlProcess.StartInfo.UseShellExecute = false;
-            metlProcess.StartInfo.WorkingDirectory = workingDirectory; 
-            metlProcess.StartInfo.FileName = workingDirectory + "MeTL Presenter.exe";
-            metlProcess.Start();
+            MeTL.StartProcess();
         }
 
-        [ClassCleanup]
-        public static void EndProcess()
-        {
-            if (!metlProcess.HasExited)
-            {
-                metlProcess.CloseMainWindow();
-                metlProcess.Close();
-            }
-        }
-        
         [TestInitialize]
         public void Setup()
         {
-            var control = new UITestControl();
+            var control = new UITestHelper();
             control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
 
             if (metlWindow == null)
@@ -51,12 +34,10 @@ namespace Functional
         public void Quit()
         {
             new ApplicationPopup(metlWindow).Quit();
-        }
 
-        [TestMethod]
-        public void LogoutAndQuit()
-        {
-            new ApplicationPopup(metlWindow).LogoutAndQuit();
+            var control = new UITestHelper();
+            var success = control.WaitForControlNotExist(Constants.ID_METL_MAIN_WINDOW);
+            Assert.IsTrue(success, "MeTL did not shutdown correctly.");
         }
     }
 }

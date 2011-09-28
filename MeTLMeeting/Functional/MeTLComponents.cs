@@ -8,11 +8,15 @@ using System.Windows.Automation;
 using Button=System.Windows.Forms.Button;
 using System.Threading;
 using System.Windows;
+using System.Diagnostics;
 
 namespace Functional
 {
     public class MeTL
     {
+        private const string workingDirectory = @"C:\specialMeTL\MeTLMeeting\SandRibbon\bin\Debug\";
+        private static Process metlProcess;
+
         public static AutomationElement GetMainWindow()
         {
             var mainWindow = AutomationElement.RootElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));        
@@ -25,6 +29,15 @@ namespace Functional
             var mainWindows = AutomationElement.RootElement.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
 
             return mainWindows;
+        }
+
+        public static void StartProcess()
+        {
+            metlProcess = new Process();
+            metlProcess.StartInfo.UseShellExecute = false;
+            metlProcess.StartInfo.WorkingDirectory = workingDirectory; 
+            metlProcess.StartInfo.FileName = workingDirectory + "MeTL Presenter.exe";
+            metlProcess.Start();
         }
     }
 
@@ -111,9 +124,6 @@ namespace Functional
                 // Invoke the import powerpoint menuitem
                 var menu = menuItems[1];
                 menu.Invoke();
-
-                Thread.Sleep(15000);
-                Keys.SendWait(filename);
             }
             catch (Exception)
             {
@@ -155,7 +165,7 @@ namespace Functional
             var popup = _parent.Descendant(typeof(Popup));
             var quitButton = popup.Descendant("PART_ExitButton");
 
-            Assert.IsNotNull(quitButton, "MeTL main menu Quit button was not found.");
+            Assert.IsNotNull(quitButton, "MeTL main menu 'Quit' button was not found.");
             quitButton.Invoke();
         }
         public void LogoutAndQuit()
@@ -165,7 +175,7 @@ namespace Functional
             var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
             var logoutAndQuit = menuItems[6];
 
-            Assert.IsNotNull(logoutAndQuit, "MeTL main menu Logout And Quit button was not found.");
+            Assert.IsNotNull(logoutAndQuit, "MeTL main menu 'Logout And Quit' button was not found.");
             logoutAndQuit.Invoke();
         }
     }
