@@ -37,7 +37,7 @@ namespace Functional
 
             var control = new UITestHelper();
             var success = control.WaitForControlNotExist(Constants.ID_METL_MAIN_WINDOW);
-            Assert.IsTrue(success, "MeTL did not shutdown correctly.");
+            Assert.IsTrue(success, ErrorMessages.PROBLEM_SHUTTING_DOWN);
         }
     }
 }

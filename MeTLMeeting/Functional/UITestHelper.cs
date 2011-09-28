@@ -9,6 +9,8 @@ namespace Functional
 {
     public class UITestHelper
     {
+        public delegate bool Condition(AutomationElement element);
+        
         private const int sleepIncrement = 100;
         private const int defaultTimeout = 30 * 1000;
         private AutomationElement desktop;
@@ -23,8 +25,7 @@ namespace Functional
             return desktop.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, controlAutomationId));
         }
 
-        /// returns true if control is enabled before time-out; otherwise, false.
-        public bool WaitForControlEnabled(string controlAutomationId)
+        public bool WaitForControl(string controlAutomationId, Condition loopCondition, Condition returnCondition)
         {
             int totalTime = 0;
             AutomationElement uiControl = null;
@@ -35,26 +36,41 @@ namespace Functional
                 totalTime += sleepIncrement;
                 Thread.Sleep(sleepIncrement);
             }
-            while (uiControl == null && totalTime < defaultTimeout);
+            while (loopCondition(uiControl) && totalTime < defaultTimeout);
 
-            return uiControl != null;
+            return returnCondition(uiControl);
+        }
+
+        /// returns true if control is enabled before time-out; otherwise, false.
+        public bool WaitForControlEnabled(string controlAutomationId)
+        {
+            Condition loopCondition = (uiControl) =>
+            {
+                return uiControl == null || (bool)uiControl.GetCurrentPropertyValue(AutomationElement.IsEnabledProperty) == false;
+            };
+
+            Condition returnCondition = (uiControl) =>
+            {
+                return uiControl != null;
+            };
+
+            return WaitForControl(controlAutomationId, loopCondition, returnCondition);
         }
 
         /// returns true if control is not found before time-out; otherwise, false.
         public bool WaitForControlNotExist(string controlAutomationId)
         {
-            int totalTime = 0;
-            AutomationElement uiControl = null;
-
-            do
+            Condition loopCondition = (uiControl) =>
             {
-                uiControl = FindFirstChildUsingAutomationId(controlAutomationId);
-                totalTime += sleepIncrement;
-                Thread.Sleep(sleepIncrement);
-            }
-            while (uiControl != null && totalTime < defaultTimeout);
+                return uiControl != null;                
+            };
 
-            return uiControl == null;
+            Condition returnCondition = (uiControl) =>
+            {
+                return uiControl == null;
+            };
+
+            return WaitForControl(controlAutomationId, loopCondition, returnCondition); 
         }
     }
 }
