@@ -20,10 +20,6 @@ using System.Windows.Input;
 
 namespace Functional
 {
-    class Constants
-    {
-        public static readonly string TEST_DB = "reviver.adm.monash.edu.au";
-    }
     [TestClass]
     public class SoloStudentTraversesExistingConversation
     {
@@ -144,7 +140,7 @@ namespace Functional
         public void TeacherLoginAndImportPowerpoint()
         {
             LocateAndLogin();
-            Thread.Sleep(5000);
+            Thread.Sleep(8000);
             ImportPowerpoint();
         }
         [TestMethod]

@@ -11,6 +11,23 @@ using System.Windows;
 
 namespace Functional
 {
+    public class MeTL
+    {
+        public static AutomationElement GetMainWindow()
+        {
+            var mainWindow = AutomationElement.RootElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));        
+
+            return mainWindow; 
+        }
+
+        public static AutomationElementCollection GetAllMainWindows()
+        {
+            var mainWindows = AutomationElement.RootElement.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
+
+            return mainWindows;
+        }
+    }
+
     public class PresentationSpace
     {
         private AutomationElement _parent;
@@ -95,7 +112,7 @@ namespace Functional
                 var menu = menuItems[1];
                 menu.Invoke();
 
-                //Thread.Sleep(3000);
+                Thread.Sleep(15000);
                 Keys.SendWait(filename);
             }
             catch (Exception)
@@ -131,6 +148,25 @@ namespace Functional
             catch (Exception) 
             {
             }
+        }
+        public void Quit()
+        {
+            open();
+            var popup = _parent.Descendant(typeof(Popup));
+            var quitButton = popup.Descendant("PART_ExitButton");
+
+            Assert.IsNotNull(quitButton, "MeTL main menu Quit button was not found.");
+            quitButton.Invoke();
+        }
+        public void LogoutAndQuit()
+        {
+            open();
+            var popup = _parent.Descendant(typeof(Popup));
+            var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
+            var logoutAndQuit = menuItems[6];
+
+            Assert.IsNotNull(logoutAndQuit, "MeTL main menu Logout And Quit button was not found.");
+            logoutAndQuit.Invoke();
         }
     }
     public class ConversationPicker
@@ -508,11 +544,6 @@ namespace Functional
             _password = _login.Descendant("password");
             _submit = _login.Descendant("submit");
             _remember = _login.Descendant("rememberMe");
-        }
-        private void moveWindowToTestingDatabase()
-        {
-            _login.Value(Constants.TEST_DB);
-            Assert.AreEqual(_login.Value(), Constants.TEST_DB, "MeTL has not been pointed at the testing DB.  Testing cannot continue.");
         }
         public Login username(string value)
         {
