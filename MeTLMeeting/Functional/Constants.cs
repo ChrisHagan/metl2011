@@ -9,4 +9,9 @@ namespace Functional
     {
         public const string ID_METL_MAIN_WINDOW = "ribbonWindow";
     }
+
+    class ErrorMessages
+    {
+        public const string PROBLEM_SHUTTING_DOWN = "MeTL did not shutdown correctly.";
+    }
 }
