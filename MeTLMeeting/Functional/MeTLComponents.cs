@@ -84,12 +84,8 @@ namespace Functional
         }
         public void open()
         {
-            var buttons = _parent.Children(typeof(Button));
-            var appButton = buttons[3];
-            var rect = appButton.Current.BoundingRectangle;
-            Assert.AreEqual(46,rect.Width);
-            Assert.AreEqual(46,rect.Height);
-            appButton.Invoke();
+            var main = _parent.Descendant("PART_ApplicationButton");
+            main.Invoke();
         }
         public ConversationPicker RecommendedConversations()
         {
