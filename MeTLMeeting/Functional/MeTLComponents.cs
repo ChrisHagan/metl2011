@@ -9,13 +9,21 @@ using Button=System.Windows.Forms.Button;
 using System.Threading;
 using System.Windows;
 using System.Diagnostics;
+using System.IO;
 
 namespace Functional
 {
     public class MeTL
     {
-        private const string workingDirectory = @"C:\specialMeTL\MeTLMeeting\SandRibbon\bin\Debug\";
         private static Process metlProcess;
+        private static readonly string workingDirectory;
+
+        static MeTL()
+        {
+            var baseDirectory = "MeTLMeeting";
+            var currentDirectory = Directory.GetCurrentDirectory();
+            workingDirectory = currentDirectory.Remove(currentDirectory.IndexOf(baseDirectory) + baseDirectory.Length) + @"\SandRibbon\bin\Debug\";
+        }
 
         public static AutomationElement GetMainWindow()
         {
@@ -84,8 +92,10 @@ namespace Functional
         }
         public void open()
         {
-            var main = _parent.Descendant("PART_ApplicationButton");
-            main.Invoke();
+            var appButton = _parent.Descendant("PART_ApplicationButton");
+            
+            Assert.IsNotNull(appButton, "MeTL main menu 'ApplicationButton' button was not found.");
+            appButton.Invoke();
         }
         public ConversationPicker RecommendedConversations()
         {
