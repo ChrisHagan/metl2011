@@ -44,7 +44,8 @@ namespace Functional
             metlProcess = new Process();
             metlProcess.StartInfo.UseShellExecute = false;
             metlProcess.StartInfo.WorkingDirectory = workingDirectory; 
-            metlProcess.StartInfo.FileName = workingDirectory + "MeTL Presenter.exe";
+            //metlProcess.StartInfo.FileName = workingDirectory + "MeTL Presenter.exe";
+            metlProcess.StartInfo.FileName = @"C:\Projects\specialMeTL\MeTLMeeting\SandRibbon\bin\Debug\MeTL Presenter.exe";
             metlProcess.Start();
         }
     }
