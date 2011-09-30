@@ -22,7 +22,7 @@ namespace Functional
         {
             var baseDirectory = "MeTLMeeting";
             var currentDirectory = Directory.GetCurrentDirectory();
-            workingDirectory = currentDirectory.Remove(currentDirectory.IndexOf(baseDirectory) + baseDirectory.Length) + @"\SandRibbon\bin\Debug\";
+            workingDirectory = currentDirectory.Remove(currentDirectory.IndexOf(baseDirectory) + baseDirectory.Length) + @"\SandRibbon\bin\Debug";
         }
 
         public static AutomationElement GetMainWindow()
@@ -43,9 +43,9 @@ namespace Functional
         {
             metlProcess = new Process();
             metlProcess.StartInfo.UseShellExecute = false;
-            metlProcess.StartInfo.WorkingDirectory = workingDirectory; 
-            //metlProcess.StartInfo.FileName = workingDirectory + "MeTL Presenter.exe";
-            metlProcess.StartInfo.FileName = @"C:\Projects\specialMeTL\MeTLMeeting\SandRibbon\bin\Debug\MeTL Presenter.exe";
+            metlProcess.StartInfo.LoadUserProfile = true;
+            metlProcess.StartInfo.WorkingDirectory = workingDirectory;
+            metlProcess.StartInfo.FileName = workingDirectory + @"\MeTL Presenter.exe";
             metlProcess.Start();
         }
     }
