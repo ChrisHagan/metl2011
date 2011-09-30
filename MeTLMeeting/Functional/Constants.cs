@@ -13,5 +13,6 @@ namespace Functional
     class ErrorMessages
     {
         public const string PROBLEM_SHUTTING_DOWN = "MeTL did not shutdown correctly.";
+        public const string EXPECTED_MAIN_WINDOW = "Expected to find MeTL '" + Constants.ID_METL_MAIN_WINDOW + "'";
     }
 }

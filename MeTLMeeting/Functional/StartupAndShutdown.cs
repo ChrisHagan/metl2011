@@ -24,7 +24,8 @@ namespace Functional
         public void Setup()
         {
             var control = new UITestHelper();
-            control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
+            var success = control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
+            Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
 
             if (metlWindow == null)
                 metlWindow = MeTL.GetMainWindow(); 
