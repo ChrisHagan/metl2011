@@ -22,7 +22,8 @@ namespace Functional
         {
             var baseDirectory = "MeTLMeeting";
             var currentDirectory = Directory.GetCurrentDirectory();
-            workingDirectory = currentDirectory.Remove(currentDirectory.IndexOf(baseDirectory) + baseDirectory.Length) + @"\SandRibbon\bin\Debug\";
+            //workingDirectory = currentDirectory.Remove(currentDirectory.IndexOf(baseDirectory) + baseDirectory.Length) + @"\SandRibbon\bin\Debug\";
+            workingDirectory = currentDirectory.Remove(currentDirectory.IndexOf(baseDirectory) + baseDirectory.Length);
         }
 
         public static AutomationElement GetMainWindow()
@@ -45,7 +46,8 @@ namespace Functional
             metlProcess.StartInfo.UseShellExecute = false;
             metlProcess.StartInfo.LoadUserProfile = true;
             metlProcess.StartInfo.WorkingDirectory = workingDirectory;
-            metlProcess.StartInfo.FileName = workingDirectory + @"MeTL Presenter.exe";
+            //metlProcess.StartInfo.FileName = workingDirectory + @"MeTL Presenter.exe";
+            metlProcess.StartInfo.FileName = workingDirectory + @"\RunMeTLForRemote.bat";
             metlProcess.Start();
         }
     }
