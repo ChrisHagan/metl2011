@@ -169,8 +169,7 @@ namespace Functional
         public void Quit()
         {
             open();
-            var popup = _parent.Descendant(typeof(Popup));
-            var quitButton = popup.Descendant("PART_ExitButton");
+            var quitButton = _parent.Descendant("PART_ExitButton");
 
             Assert.IsNotNull(quitButton, "MeTL main menu 'Quit' button was not found.");
             quitButton.Invoke();
