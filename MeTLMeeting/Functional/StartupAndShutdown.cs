@@ -28,7 +28,9 @@ namespace Functional
             //Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
 
             if (metlWindow == null)
-                metlWindow = MeTL.GetMainWindow(); 
+                metlWindow = MeTL.GetMainWindow();
+
+            Assert.IsNotNull(metlWindow, ErrorMessages.EXPECTED_MAIN_WINDOW); 
         }
 
         [TestMethod]
