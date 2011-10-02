@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
 using System.Windows.Automation;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Functional
 {
@@ -24,8 +25,19 @@ namespace Functional
         public void Setup()
         {
             var control = new UITestHelper();
-            var success = control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
+            //var success = control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
             //Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
+            int count = 0;
+            int increment = 100;
+
+            while (metlWindow == null && count < 30000)
+            {
+                Thread.Sleep(increment);
+                metlWindow = MeTL.GetMainWindow();
+                count += increment;
+            }
+
+            MessageBox.Show("Count is " + count);
 
             if (metlWindow == null)
                 metlWindow = MeTL.GetMainWindow();
