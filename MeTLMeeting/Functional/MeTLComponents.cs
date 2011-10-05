@@ -27,14 +27,14 @@ namespace Functional
 
         public static AutomationElement GetMainWindow()
         {
-            var mainWindow = AutomationElement.RootElement.FindFirst(TreeScope.Subtree, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));        
+            var mainWindow = AutomationElement.RootElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));        
 
             return mainWindow; 
         }
 
         public static AutomationElementCollection GetAllMainWindows()
         {
-            var mainWindows = AutomationElement.RootElement.FindAll(TreeScope.Subtree, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
+            var mainWindows = AutomationElement.RootElement.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
 
             return mainWindows;
         }
