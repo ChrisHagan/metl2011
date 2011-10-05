@@ -37,8 +37,6 @@ namespace Functional
                 count += increment;
             }
 
-            MessageBox.Show("Count is " + count);
-
             if (metlWindow == null)
                 metlWindow = MeTL.GetMainWindow();
 
