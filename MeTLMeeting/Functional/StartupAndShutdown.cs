@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Windows.Automation;
 using System.Threading;
 using System.Windows.Forms;
+using UITestFramework;
 
 namespace Functional
 {
