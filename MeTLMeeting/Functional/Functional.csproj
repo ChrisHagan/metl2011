@@ -147,7 +147,7 @@
     <Shadow Include="Test References\UITestFramework.accessor" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="OrderedTest1.orderedtest">
+    <None Include="MeTLTests.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
