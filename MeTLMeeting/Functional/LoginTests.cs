@@ -25,7 +25,7 @@ namespace Functional
         [TestMethod]
         public void LoginWithValidCredentials()
         {
-            // TODO: This needs to be data-driven, and not personal details 
+            // TODO: This needs to be data-driven, and not using personal details 
             var user = "jpjor1";
             var pass = "h3lp1nh4nd";
 
