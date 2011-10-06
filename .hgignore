@@ -36,3 +36,6 @@ syntax: glob
 
 *.Designer.*
 *.suo
+
+#Generated test results
+TestResults

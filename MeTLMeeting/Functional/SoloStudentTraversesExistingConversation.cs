@@ -17,6 +17,7 @@ using Keys = System.Windows.Forms.SendKeys;
 using Microsoft.Test;
 using Mouse = Microsoft.Test.Mouse;
 using System.Windows.Input;
+using UITestFramework;
 
 namespace Functional
 {
@@ -38,12 +39,27 @@ namespace Functional
                 testContextInstance = value;
             }
         }
-        public static AutomationElementCollection windows;
+        
+        private AutomationElementCollection windows;
+        
+        [ClassInitialize]
+        public static void StartProcess(TestContext context)
+        {
+            // run two instances for student-teacher interaction
+            MeTL.StartProcess();
+            MeTL.StartProcess();
+        }        
+
         [TestInitialize]
         public void AttachToProcess()
         {
+            var control = new UITestHelper();
+            var success = control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
+            Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
+
             if (windows == null)
                 windows = MeTL.GetAllMainWindows(); 
+
             Assert.IsNotNull(windows, "Could not find a process named MeTL.  Have you started an instance (it can be clickonce)");
         }
         string target = "presentationSpace";

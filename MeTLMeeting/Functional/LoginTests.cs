@@ -5,15 +5,9 @@ using UITestFramework;
 namespace Functional
 {
     [TestClass]
-    public class StartupAndShutdown
+    public class LoginTests
     {
         private AutomationElement metlWindow;
-
-        [ClassInitialize]
-        public static void StartProcess(TestContext context)
-        {
-            MeTL.StartProcess();
-        }
 
         [TestInitialize]
         public void Setup()
@@ -27,15 +21,16 @@ namespace Functional
 
             Assert.IsNotNull(metlWindow, ErrorMessages.EXPECTED_MAIN_WINDOW); 
         }
-
+        
         [TestMethod]
-        public void CloseProgram()
+        public void LoginWithValidCredentials()
         {
-            new ApplicationPopup(metlWindow).Quit();
+            // TODO: This needs to be data-driven, and not personal details 
+            var user = "jpjor1";
+            var pass = "h3lp1nh4nd";
 
-            var control = new UITestHelper();
-            var success = control.WaitForControlNotExist(Constants.ID_METL_MAIN_WINDOW);
-            Assert.IsTrue(success, ErrorMessages.PROBLEM_SHUTTING_DOWN);
+            new Login(metlWindow).username(user).password(pass);
+            new Login(metlWindow).submit();
         }
     }
 }
