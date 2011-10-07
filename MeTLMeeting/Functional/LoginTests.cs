@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Automation;
 using UITestFramework;
+using System.Threading;
 
 namespace Functional
 {
@@ -31,6 +32,8 @@ namespace Functional
 
             new Login(metlWindow).username(user).password(pass);
             new Login(metlWindow).submit();
+
+            Thread.Sleep(8000);
         }
     }
 }

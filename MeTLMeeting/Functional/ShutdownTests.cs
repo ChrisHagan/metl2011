@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Automation;
 using UITestFramework;
-using System.Threading;
 
 namespace Functional
 {
@@ -33,8 +32,6 @@ namespace Functional
             // TODO: Test that there is only one instance
             if (metlWindows == null)
                 metlWindows = MeTL.GetAllMainWindows();
-
-            Thread.Sleep(8000);
 
             foreach (AutomationElement window in metlWindows)
             {
