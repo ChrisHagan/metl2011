@@ -609,11 +609,6 @@ namespace Functional
             }
         }
         [TestMethod]
-        public void ChangeTab()
-        {
-            
-        }
-        [TestMethod]
         public void InjectImages()
         {
             var presentationSpace = new UserCanvasStack(windows[0], "canvas");

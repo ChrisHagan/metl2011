@@ -603,4 +603,32 @@ namespace Functional
             return this;
         }
     }
+
+    public class HomeTabScreen
+    {
+        private AutomationElement _parent;
+        private AutomationElement _inkButton;
+        private AutomationElement _textButton;
+        private AutomationElement _imageButton;
+
+        public HomeTabScreen(AutomationElement parent)
+        {
+            _parent = parent;
+        }
+
+        public HomeTabScreen OpenTab()
+        {
+            Keys.SendWait("%");
+            Thread.Sleep(100);
+            Keys.SendWait("H");
+
+            FindElements();
+            return this;
+        }
+
+        private void FindElements()
+        {
+            
+        }
+    }
 }

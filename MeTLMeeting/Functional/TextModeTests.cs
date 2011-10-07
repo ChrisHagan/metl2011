@@ -9,9 +9,16 @@ namespace Functional
     [TestClass]
     public class TextModeTests
     {
-        [TestMethod]
-        public void TestMethod1()
+        [TestInitialize]
+        public void SwitchToTextMode()
         {
+
+        }
+
+        [TestMethod]
+        public void InsertText()
+        {
+
         }
     }
 }
