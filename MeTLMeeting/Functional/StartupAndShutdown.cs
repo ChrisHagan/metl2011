@@ -9,15 +9,11 @@ namespace Functional
     {
         private AutomationElement metlWindow;
 
-        [ClassInitialize]
-        public static void StartProcess(TestContext context)
-        {
-            MeTL.StartProcess();
-        }
-
         [TestInitialize]
         public void Setup()
         {
+            metlWindow = MeTL.StartProcess();
+
             var control = new UITestHelper();
             var success = control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
             Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);

@@ -115,6 +115,7 @@
     <Compile Include="StartupTests.cs" />
     <Compile Include="StartupAndShutdown.cs" />
     <Compile Include="LoginTests.cs" />
+    <Compile Include="TextModeTests.cs" />
     <Compile Include="UITestHelperTest.cs" />
     <Compile Include="WpfExtensions.cs" />
   </ItemGroup>

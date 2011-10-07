@@ -39,14 +39,31 @@ namespace Functional
             return mainWindows;
         }
 
-        public static void StartProcess()
+        public static AutomationElement StartProcess()
         {
+            const int MAX_WAIT_TIME = 30000;
+            const int WAIT_INCREMENT = 100;
+
             metlProcess = new Process();
             metlProcess.StartInfo.UseShellExecute = false;
             metlProcess.StartInfo.LoadUserProfile = true;
             metlProcess.StartInfo.WorkingDirectory = workingDirectory;
             metlProcess.StartInfo.FileName = workingDirectory + @"\MeTL Presenter.exe";
             metlProcess.Start();
+
+            int waitTime = 0;
+            while (metlProcess.MainWindowHandle.Equals(IntPtr.Zero))
+            {
+                if (waitTime > MAX_WAIT_TIME)
+                    Assert.Fail(ErrorMessages.UNABLE_TO_FIND_EXECUTABLE);
+
+                Thread.Sleep(WAIT_INCREMENT);
+                waitTime += WAIT_INCREMENT;
+
+                metlProcess.Refresh();
+            }
+
+            return AutomationElement.FromHandle(metlProcess.MainWindowHandle);
         }
     }
 
