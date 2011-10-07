@@ -12,7 +12,7 @@ namespace Functional
         [TestMethod]
         public void StartOneInstance()
         {
-            MeTL.StartProcess();
+            metlWindow = MeTL.StartProcess();
 
             var control = new UITestHelper();
             var success = control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);

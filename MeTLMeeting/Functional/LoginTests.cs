@@ -34,6 +34,9 @@ namespace Functional
             new Login(metlWindow).submit();
 
             Thread.Sleep(8000);
+            // TODO: Won't work until SearchProperties has been implemented
+            //var control = new UITestHelper();
+            //control.WaitForControlEnabled(Constants.ID_METL_CONVERSATION_SEARCH_TEXTBOX);            
         }
     }
 }

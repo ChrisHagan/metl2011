@@ -8,6 +8,7 @@ namespace Functional
     class Constants
     {
         public const string ID_METL_MAIN_WINDOW = "ribbonWindow";
+        public const string ID_METL_CONVERSATION_SEARCH_TEXTBOX = "SearchInput";
     }
 
     class ErrorMessages
