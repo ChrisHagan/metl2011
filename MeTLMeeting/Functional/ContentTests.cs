@@ -5,11 +5,10 @@ using UITestFramework;
 namespace Functional
 {
     [TestClass]
-    public class TextModeTests
+    public class ContentTests
     {
         private AutomationElement metlWindow;
-        private HomeTabScreen homeTab;
-        
+
         [TestInitialize]
         public void Setup()
         {
@@ -21,21 +20,12 @@ namespace Functional
                 metlWindow = MeTL.GetMainWindow();
 
             Assert.IsNotNull(metlWindow, ErrorMessages.EXPECTED_MAIN_WINDOW); 
-            metlWindow = MeTL.GetMainWindow();
-
-            homeTab = new HomeTabScreen(metlWindow).OpenTab();
         }
 
         [TestMethod]
-        public void ActivateTextMode()
+        public void CreateNewConversation()
         {
-            homeTab.ActivateTextMode();
-        }
-
-        [TestMethod]
-        public void InsertText()
-        {
-
+            new ApplicationPopup(metlWindow).CreateConversation();
         }
     }
 }
