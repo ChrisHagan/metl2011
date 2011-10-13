@@ -1,5 +1,7 @@
 ﻿using System.Windows.Automation;
 using System.Threading;
+using System.Collections.Generic;
+using System;
 
 namespace UITestFramework
 {
@@ -9,16 +11,38 @@ namespace UITestFramework
         
         private const int sleepIncrement = 100;
         private const int defaultTimeout = 30 * 1000;
-        private AutomationElement desktop;
+        private AutomationElement parentElement;
+        private List<AutomationElement> matchingElements = new List<AutomationElement>();
+        private PropertyExpression searchProperties = new PropertyExpression();
 
         public UITestHelper()
         {
-            desktop = AutomationElement.RootElement;
+            parentElement = AutomationElement.RootElement;
         }
-
+        public UITestHelper(AutomationElement parent)
+        {
+            if (parent != null)
+            {
+                parentElement = parent;
+            }
+            else
+                throw new ArgumentNullException();
+        }
+    
         private AutomationElement FindFirstChildUsingAutomationId(string controlAutomationId)
         {
-            return desktop.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, controlAutomationId));
+            return parentElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, controlAutomationId));
+        }
+
+        private TreeScope DetermineScopeFromParent()
+        {
+            return parentElement.Equals(AutomationElement.RootElement) ? TreeScope.Children : TreeScope.Descendants;
+        }
+
+        public void Find()
+        {
+            var element = parentElement.FindFirst(DetermineScopeFromParent(), new PropertyCondition(searchProperties.PropertyName, searchProperties.PropertyValue));
+            matchingElements.Add(element);
         }
 
         public bool WaitForControl(string controlAutomationId, Condition loopCondition, Condition returnCondition)
@@ -67,6 +91,14 @@ namespace UITestFramework
             };
 
             return WaitForControl(controlAutomationId, loopCondition, returnCondition); 
+        }
+
+        public PropertyExpression SearchProperties
+        {
+            get
+            {
+                return searchProperties;
+            }
         }
     }
 }
