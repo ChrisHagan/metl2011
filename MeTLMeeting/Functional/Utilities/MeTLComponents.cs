@@ -511,6 +511,14 @@ namespace Functional
             _searchButton.Invoke();
             return this;
         }
+        public ConversationSearcher JoinFirstFound()
+        {
+            _searchResults = _parent.Descendant("SearchResults");
+            var buttons = _searchResults.Descendants(typeof(Button));
+
+            buttons[1].Invoke();
+            return this;
+        }
         public ConversationSearcher GetResults()
         {
             _searchResults = _parent.Descendant("SearchResults");
@@ -586,6 +594,35 @@ namespace Functional
         public Login submit()
         {
             _submit.Invoke();
+            return this;
+        }
+    }
+
+    public class ZoomButtons
+    {
+        private AutomationElement _parent;
+        private AutomationElement _zoomIn;
+        private AutomationElement _zoomOut;
+        private AutomationElement _initiateGrab;
+
+        public ZoomButtons(AutomationElement parent)
+        {
+            _parent = parent;
+
+            _zoomIn = _parent.Descendant("ZoomIn");
+            _zoomOut = _parent.Descendant("ZoomOut");
+            _initiateGrab = _parent.Descendant("InitiateGrabZoom");
+        }
+
+        public ZoomButtons ZoomIn()
+        {
+            _zoomIn.Invoke();
+            return this;
+        }
+
+        public ZoomButtons ZoomOut()
+        {
+            _zoomOut.Invoke();
             return this;
         }
     }
