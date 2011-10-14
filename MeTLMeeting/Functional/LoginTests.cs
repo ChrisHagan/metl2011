@@ -8,19 +8,16 @@ namespace Functional
     [TestClass]
     public class LoginTests
     {
-        private AutomationElement metlWindow;
+        private UITestHelper metlWindow;
 
         [TestInitialize]
         public void Setup()
         {
-            var control = new UITestHelper();
-            var success = control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
+            metlWindow = new UITestHelper();
+            metlWindow.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
+
+            var success = metlWindow.WaitForControlEnabled();
             Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
-
-            if (metlWindow == null)
-                metlWindow = MeTL.GetMainWindow();
-
-            Assert.IsNotNull(metlWindow, ErrorMessages.EXPECTED_MAIN_WINDOW); 
         }
         
         [TestMethod]
@@ -30,13 +27,13 @@ namespace Functional
             var user = "jpjor1";
             var pass = "h3lp1nh4nd";
 
-            new Login(metlWindow).username(user).password(pass);
-            new Login(metlWindow).submit();
+            new Login(metlWindow.AutomationElement).username(user).password(pass);
+            new Login(metlWindow.AutomationElement).submit();
 
-            Thread.Sleep(8000);
-            // TODO: Won't work until SearchProperties has been implemented
-            //var control = new UITestHelper();
-            //control.WaitForControlEnabled(Constants.ID_METL_CONVERSATION_SEARCH_TEXTBOX);            
+            var control = new UITestHelper(metlWindow);
+            control.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_TEXTBOX));
+            var success = control.WaitForControlEnabled();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
         }
     }
 }

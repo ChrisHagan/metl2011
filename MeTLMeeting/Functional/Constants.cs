@@ -16,5 +16,7 @@ namespace Functional
         public const string PROBLEM_SHUTTING_DOWN = "MeTL did not shutdown correctly.";
         public const string EXPECTED_MAIN_WINDOW = "Expected to find MeTL '" + Constants.ID_METL_MAIN_WINDOW + "'.";
         public const string UNABLE_TO_FIND_EXECUTABLE = "Unable to find the MeTL executable.";
+        public const string EXPECTED_ONE_INSTANCE = "Expected only one instance of MeTL to be running.";
+        public const string WAIT_FOR_CONTROL_FAILED = "WaitForControl function failed";
     }
 }

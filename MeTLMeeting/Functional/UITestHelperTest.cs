@@ -76,22 +76,6 @@ namespace Functional
         }
 
         /// <summary>
-        ///A test for FindFirstChildUsingAutomationId
-        ///</summary>
-        [TestMethod()]
-        [DeploymentItem("UITestFramework.dll")]
-        public void FindFirstChildUsingAutomationIdTest()
-        {
-            UITestHelper_Accessor target = new UITestHelper_Accessor(); // TODO: Initialize to an appropriate value
-            string controlAutomationId = string.Empty; // TODO: Initialize to an appropriate value
-            AutomationElement expected = null; // TODO: Initialize to an appropriate value
-            AutomationElement actual;
-            actual = target.FindFirstChildUsingAutomationId(controlAutomationId);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        /// <summary>
         ///A test for WaitForControl
         ///</summary>
         [TestMethod()]
@@ -103,7 +87,7 @@ namespace Functional
             UITestHelper.Condition returnCondition = null; // TODO: Initialize to an appropriate value
             bool expected = false; // TODO: Initialize to an appropriate value
             bool actual;
-            actual = target.WaitForControl(controlAutomationId, loopCondition, returnCondition);
+            actual = target.WaitForControl(loopCondition, returnCondition);
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }
@@ -118,7 +102,7 @@ namespace Functional
             string controlAutomationId = string.Empty; // TODO: Initialize to an appropriate value
             bool expected = false; // TODO: Initialize to an appropriate value
             bool actual;
-            actual = target.WaitForControlEnabled(controlAutomationId);
+            actual = target.WaitForControlEnabled();
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }
@@ -133,7 +117,7 @@ namespace Functional
             string controlAutomationId = string.Empty; // TODO: Initialize to an appropriate value
             bool expected = false; // TODO: Initialize to an appropriate value
             bool actual;
-            actual = target.WaitForControlNotExist(controlAutomationId);
+            actual = target.WaitForControlNotExist();
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }

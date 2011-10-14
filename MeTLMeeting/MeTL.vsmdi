@@ -4,6 +4,7 @@
     <Description>Run through each function of MeTL. A minimal test for functionality. Other test lists will cover edge cases and quirks.</Description>
     <TestLinks>
       <TestLink id="5cdb461c-932c-4503-bc60-168b7eadabc7" name="metltests" storage="functional\metltests.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="9cae8cb8-37c7-4d7b-bde5-54558a912007" name="TextContentTests" storage="functional\textcontenttests.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
     </TestLinks>
   </TestList>
   <TestList name="Lists of Tests" id="8c43106b-9dc1-4907-a29f-aa66a61bf5b6" />

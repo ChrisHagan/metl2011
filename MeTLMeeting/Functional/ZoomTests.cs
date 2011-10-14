@@ -1,37 +1,27 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Windows.Automation;
 using UITestFramework;
+using System.Windows.Automation;
 
 namespace Functional
 {
     [TestClass]
-    public class TextModeTests
-    {
-        private UITestHelper metlWindow;
-        private HomeTabScreen homeTab;
-        
+    public class ZoomTests
+    {        private UITestHelper metlWindow;
+
         [TestInitialize]
         public void Setup()
         {
+            MeTL.StartProcess();
+
             metlWindow = new UITestHelper();
             metlWindow.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
 
             var success = metlWindow.WaitForControlExist();
             Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
-
-            homeTab = new HomeTabScreen(metlWindow.AutomationElement).OpenTab();
         }
-
         [TestMethod]
-        public void ActivateTextMode()
+        public void TestMethod1()
         {
-            homeTab.ActivateTextMode();
-        }
-
-        [TestMethod]
-        public void InsertText()
-        {
-
         }
     }
 }

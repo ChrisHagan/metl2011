@@ -7,39 +7,36 @@ namespace Functional
     [TestClass]
     public class StartupTests
     {
-        private AutomationElement metlWindow;
+        private UITestHelper metlWindow1;
+        private UITestHelper metlWindow2;
         
         [TestMethod]
         public void StartOneInstance()
         {
-            metlWindow = MeTL.StartProcess();
+            MeTL.StartProcess(); 
 
-            var control = new UITestHelper();
-            var success = control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
+            metlWindow1 = new UITestHelper();
+            metlWindow1.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
 
+            var success = metlWindow1.WaitForControlEnabled();
             Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
-
-            if (metlWindow == null)
-                metlWindow = MeTL.GetMainWindow();
-
-            Assert.IsNotNull(metlWindow, ErrorMessages.EXPECTED_MAIN_WINDOW); 
         }
 
         [TestMethod]
         public void StartTwoInstances()
         {
-            MeTL.StartProcess();
-            MeTL.StartProcess();
+            metlWindow1 = new UITestHelper(MeTL.StartProcess());
+            metlWindow2 = new UITestHelper(MeTL.StartProcess());
 
-            var control = new UITestHelper();
-            var success = control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
+            var propertyExpression = new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW);
+            metlWindow1.SearchProperties.Add(propertyExpression);
+            metlWindow2.SearchProperties.Add(propertyExpression);
 
-            Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
+            var success1 = metlWindow1.WaitForControlEnabled();
+            Assert.IsTrue(success1, ErrorMessages.EXPECTED_MAIN_WINDOW);
 
-            if (metlWindow == null)
-                metlWindow = MeTL.GetMainWindow();
-
-            Assert.IsNotNull(metlWindow, ErrorMessages.EXPECTED_MAIN_WINDOW); 
+            var success2 = metlWindow2.WaitForControlEnabled();
+            Assert.IsTrue(success2, ErrorMessages.EXPECTED_MAIN_WINDOW);
         }
     }
 }

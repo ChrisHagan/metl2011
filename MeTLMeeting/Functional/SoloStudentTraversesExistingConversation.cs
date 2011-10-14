@@ -46,20 +46,28 @@ namespace Functional
         public static void StartProcess(TestContext context)
         {
             // run two instances for student-teacher interaction
-            MeTL.StartProcess();
-            MeTL.StartProcess();
         }        
 
         [TestInitialize]
         public void AttachToProcess()
         {
-            var control = new UITestHelper();
-            var success = control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
-            Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
+            var win1 = MeTL.StartProcess();
+            var win2 = MeTL.StartProcess();
+            
+            var metlWindow1 = new UITestHelper();
+            var metlWindow2 = new UITestHelper();
+
+            metlWindow1.AutomationElement = win1;
+            metlWindow2.AutomationElement = win2;
+            metlWindow1.WaitForControlExist();
+            metlWindow2.WaitForControlExist();
+
+            Thread.Sleep(3000);
 
             if (windows == null)
-                windows = MeTL.GetAllMainWindows(); 
+                windows = MeTL.GetAllMainWindows();
 
+            Assert.IsTrue(windows.Count == 2, "Expected two instances to be running.");
             Assert.IsNotNull(windows, "Could not find a process named MeTL.  Have you started an instance (it can be clickonce)");
         }
         string target = "presentationSpace";

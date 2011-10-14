@@ -1,37 +1,28 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Windows.Automation;
 using UITestFramework;
+using System.Windows.Automation;
 
 namespace Functional
 {
     [TestClass]
-    public class TextModeTests
+    public class CreateConversationTests
     {
         private UITestHelper metlWindow;
-        private HomeTabScreen homeTab;
-        
+
         [TestInitialize]
         public void Setup()
         {
             metlWindow = new UITestHelper();
             metlWindow.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
 
-            var success = metlWindow.WaitForControlExist();
+            var success = metlWindow.WaitForControlEnabled();
             Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
-
-            homeTab = new HomeTabScreen(metlWindow.AutomationElement).OpenTab();
         }
 
         [TestMethod]
-        public void ActivateTextMode()
+        public void CreateNewConversation()
         {
-            homeTab.ActivateTextMode();
-        }
-
-        [TestMethod]
-        public void InsertText()
-        {
-
+            new ApplicationPopup(metlWindow.AutomationElement).CreateConversation();
         }
     }
 }

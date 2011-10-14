@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Collections.Generic;
 using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UITestFramework
 {
@@ -12,8 +13,8 @@ namespace UITestFramework
         private const int sleepIncrement = 100;
         private const int defaultTimeout = 30 * 1000;
         private AutomationElement parentElement;
-        private List<AutomationElement> matchingElements = new List<AutomationElement>();
-        private PropertyExpression searchProperties = new PropertyExpression();
+        private AutomationElement matchingElement;
+        private List<PropertyExpression> searchProperties = new List<PropertyExpression>();
 
         public UITestHelper()
         {
@@ -21,48 +22,57 @@ namespace UITestFramework
         }
         public UITestHelper(AutomationElement parent)
         {
-            if (parent != null)
-            {
-                parentElement = parent;
-            }
-            else
+            if (parent == null)
                 throw new ArgumentNullException();
+
+            parentElement = parent;
+        }
+        public UITestHelper(UITestHelper parent)
+        {
+            if (parent == null)
+                throw new ArgumentNullException();
+
+            parentElement = parent.AutomationElement;
         }
     
-        private AutomationElement FindFirstChildUsingAutomationId(string controlAutomationId)
-        {
-            return parentElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, controlAutomationId));
-        }
-
         private TreeScope DetermineScopeFromParent()
         {
-            return parentElement.Equals(AutomationElement.RootElement) ? TreeScope.Children : TreeScope.Descendants;
+            return parentElement.Equals(AutomationElement.RootElement) ? TreeScope.Children : TreeScope.Element | TreeScope.Descendants;
         }
 
         public void Find()
         {
-            var element = parentElement.FindFirst(DetermineScopeFromParent(), new PropertyCondition(searchProperties.PropertyName, searchProperties.PropertyValue));
-            matchingElements.Add(element);
+            Assert.IsTrue(searchProperties.Count > 0, "SearchProperties must be set before calling WaitForControl functions");
+            matchingElement = parentElement.FindFirst(DetermineScopeFromParent(), new PropertyCondition(searchProperties[0].PropertyName, searchProperties[0].PropertyValue));
         }
 
-        public bool WaitForControl(string controlAutomationId, Condition loopCondition, Condition returnCondition)
+        public bool WaitForControl(Condition loopCondition, Condition returnCondition)
         {
             int totalTime = 0;
             AutomationElement uiControl = null;
 
-            do
+            try
             {
-                uiControl = FindFirstChildUsingAutomationId(controlAutomationId);
-                totalTime += sleepIncrement;
-                Thread.Sleep(sleepIncrement);
+                do
+                {
+                    Find();
+                    uiControl = matchingElement;
+
+                    totalTime += sleepIncrement;
+                    Thread.Sleep(sleepIncrement);
+                }
+                while (loopCondition(uiControl) && totalTime < defaultTimeout);
             }
-            while (loopCondition(uiControl) && totalTime < defaultTimeout);
+            catch (ElementNotAvailableException)
+            {
+                return false;
+            }
 
             return returnCondition(uiControl);
         }
 
         /// returns true if control is enabled before time-out; otherwise, false.
-        public bool WaitForControlEnabled(string controlAutomationId)
+        public bool WaitForControlEnabled()
         {
             Condition loopCondition = (uiControl) =>
             {
@@ -74,11 +84,11 @@ namespace UITestFramework
                 return uiControl != null;
             };
 
-            return WaitForControl(controlAutomationId, loopCondition, returnCondition);
+            return WaitForControl(loopCondition, returnCondition);
         }
 
         /// returns true if control is not found before time-out; otherwise, false.
-        public bool WaitForControlNotExist(string controlAutomationId)
+        public bool WaitForControlNotExist()
         {
             Condition loopCondition = (uiControl) =>
             {
@@ -90,14 +100,53 @@ namespace UITestFramework
                 return uiControl == null;
             };
 
-            return WaitForControl(controlAutomationId, loopCondition, returnCondition); 
+            return WaitForControl(loopCondition, returnCondition); 
         }
 
-        public PropertyExpression SearchProperties
+        /// <summary>
+        ///  returns true if control exists before time-out; otherwise, false.
+        /// </summary>
+        public bool WaitForControlExist()
+        {
+            Condition loopCondition = (uiControl) =>
+            {
+                return uiControl == null;
+            };
+
+            Condition returnCondition = (uiControl) =>
+            {
+                return uiControl != null;
+            };
+
+            return WaitForControl(loopCondition, returnCondition);
+        }
+
+        public List<PropertyExpression> SearchProperties
         {
             get
             {
                 return searchProperties;
+            }
+        }
+
+        public AutomationElement AutomationElement
+        {
+            get
+            {
+                try
+                {
+                    return matchingElement;
+                }
+                catch (ElementNotAvailableException)
+                {
+                }
+
+                return null;
+            }
+
+            set
+            {
+                matchingElement = value;
             }
         }
     }
