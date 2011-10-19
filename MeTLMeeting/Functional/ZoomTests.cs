@@ -9,7 +9,8 @@ namespace Functional
 {
     [TestClass]
     public class ZoomTests
-    {        private UITestHelper metlWindow;
+    {
+        private UITestHelper metlWindow;
 
         [TestInitialize]
         public void Setup()
