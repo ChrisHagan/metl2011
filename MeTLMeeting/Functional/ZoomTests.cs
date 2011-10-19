@@ -46,10 +46,10 @@ namespace Functional
             var tolerance = Snapshot.FromFile(toleranceFile);
             var master = Snapshot.FromFile(masterFile);
             var actual = Snapshot.FromWindow((IntPtr)metlWindow.AutomationElement.Current.NativeWindowHandle, WindowSnapshotMode.ExcludeWindowBorder);
-            actual.ToFile(@"Master-actual.png", ImageFormat.Png);
             var diff = actual.CompareTo(master);
 
             master.ToFile(@"Master-expected.png", ImageFormat.Png);
+            actual.ToFile(@"Master-actual.png", ImageFormat.Png);
             diff.ToFile(@"Master-difference.png", ImageFormat.Png);
 
             var verifier = new SnapshotToleranceMapVerifier(tolerance);
