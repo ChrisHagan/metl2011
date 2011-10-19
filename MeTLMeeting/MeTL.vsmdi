@@ -7,6 +7,9 @@
       <TestLink id="9cae8cb8-37c7-4d7b-bde5-54558a912007" name="textcontenttests" storage="functional\textcontenttests.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
     </TestLinks>
   </TestList>
+  <TestList name="UseCase_LogIn" id="574b6d00-5228-42e5-a4ef-4209dfc68688" parentListId="cb048c62-9979-4429-a258-8a2421016870">
+    <Description>Tests for all the log in use cases</Description>
+  </TestList>
   <TestList name="Lists of Tests" id="8c43106b-9dc1-4907-a29f-aa66a61bf5b6" />
   <TestList name="ChangeFontSizeButtonTests" id="90e6842f-c6bc-4a26-a70f-62951ea0919e" parentListId="018a72cc-7ed7-453d-9540-4766807b4ccd">
     <Description>Insert a textbox and change the font size using the font size increase and decrease buttons.</Description>

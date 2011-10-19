@@ -108,6 +108,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckVersionTests.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ConversationEditingInMultipleUserSpace.cs" />
     <Compile Include="CreateConversationTests.cs" />
@@ -160,6 +161,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="MeTLTests.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseLogIn_StartupAndUpdate.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ZoomVerifyTests.orderedtest">
