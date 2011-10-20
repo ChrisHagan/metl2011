@@ -22,5 +22,6 @@ namespace Functional
         public const string EXPECTED_ONE_INSTANCE = "Expected only one instance of MeTL to be running.";
         public const string WAIT_FOR_CONTROL_FAILED = "WaitForControl function failed.";
         public const string VERSION_MISMATCH = "MeTL version does not match with provided.";
+        public const string UNABLE_TO_FIND_CONVERSATION = "Unable to find searched conversation.";
     }
 }

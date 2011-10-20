@@ -44,6 +44,7 @@ namespace Functional
         {
             const int MAX_WAIT_TIME = 30000;
             const int WAIT_INCREMENT = 100;
+            AutomationElement metlWindow = null;
 
             metlProcess = new Process();
             metlProcess.StartInfo.UseShellExecute = false;
@@ -64,7 +65,16 @@ namespace Functional
                 metlProcess.Refresh();
             }
 
-            return AutomationElement.FromHandle(metlProcess.MainWindowHandle);
+            try
+            {
+                metlWindow = AutomationElement.FromHandle(metlProcess.MainWindowHandle);
+            }
+            catch (ElementNotAvailableException)
+            {
+                Assert.Fail(ErrorMessages.EXPECTED_MAIN_WINDOW);
+            }
+
+            return metlWindow;
         }
     }
 
@@ -505,6 +515,10 @@ namespace Functional
         }
         public ConversationSearcher searchField(string value)
         {
+            var searchField = new UITestHelper(_searchField);
+            searchField.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "SearchInput"));
+            searchField.WaitForControlEnabled();
+
             _searchField.Value("");
             _searchField.SetFocus();
             _searchField.Value(value);
@@ -521,7 +535,11 @@ namespace Functional
             _searchResults = _parent.Descendant("SearchResults");
             var buttons = _searchResults.Descendants(typeof(Button));
 
+            if (buttons.Count <= 1)
+                Assert.Fail(ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
+
             buttons[1].Invoke();
+            
             return this;
         }
         public ConversationSearcher GetResults()
