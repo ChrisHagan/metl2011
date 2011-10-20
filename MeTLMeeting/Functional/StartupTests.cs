@@ -13,13 +13,9 @@ namespace Functional
         [TestMethod]
         public void StartOneInstance()
         {
-            MeTL.StartProcess(); 
+            MeTL.StartProcess();
 
-            metlWindow1 = new UITestHelper();
-            metlWindow1.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
-
-            var success = metlWindow1.WaitForControlEnabled();
-            Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
+            metlWindow1 = MeTL.GetMainWindow();
         }
 
         [TestMethod]

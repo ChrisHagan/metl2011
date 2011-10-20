@@ -26,11 +26,15 @@ namespace Functional
             workingDirectory = currentDirectory.Remove(currentDirectory.IndexOf(baseDirectory) + baseDirectory.Length) + @"\SandRibbon\bin\Debug";
         }
 
-        public static AutomationElement GetMainWindow()
+        public static UITestHelper GetMainWindow()
         {
-            var mainWindow = AutomationElement.RootElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));        
+            var metlWindow = new UITestHelper();
+            metlWindow.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
 
-            return mainWindow; 
+            var success = metlWindow.WaitForControlEnabled();
+            Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
+
+            return metlWindow;
         }
 
         public static AutomationElementCollection GetAllMainWindows()

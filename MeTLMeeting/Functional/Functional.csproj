@@ -123,6 +123,7 @@
     <Compile Include="TextModeTests.cs" />
     <Compile Include="UITestHelperTest.cs" />
     <Compile Include="Utilities\MeTLComponents.cs" />
+    <Compile Include="Utilities\UITestHelperExtensions.cs" />
     <Compile Include="Utilities\WpfExtensions.cs" />
     <Compile Include="ZoomTests.cs" />
   </ItemGroup>
