@@ -657,6 +657,59 @@ namespace Functional
         }
     }
 
+    public class ConversationEditScreen
+    {
+        private AutomationElement _parent;
+        private AutomationElement _rename;
+        private AutomationElement _share;
+        private AutomationElement _delete;
+        private AutomationElement _save;
+        private AutomationElement _groups;
+        private AutomationElement _returnToCurrent;
+
+        public ConversationEditScreen(AutomationElement parent)
+        {
+            _parent = parent;
+            _rename = _parent.Descendant("renameConversation");
+            _share = _parent.Descendant("shareConversation");
+            _delete = _parent.Descendant("deleteConversation");
+
+            _returnToCurrent = _parent.Descendant("current");
+        }
+
+        public ConversationEditScreen Rename(string conversationTitle)
+        {
+            _rename.Invoke();
+
+            var title = _parent.Descendant("renameTitle");
+            title.Value(conversationTitle);
+
+            return this;
+        }
+
+        public ConversationEditScreen ChangeGroup(string groupName)
+        {
+            _share.Invoke();
+
+            _groups = _parent.Descendant("groupsList");
+            _groups.SelectListItem(groupName);
+
+            return this;
+        }
+        public ConversationEditScreen Save()
+        {
+            _save = _parent.Descendant("saveEdit");
+            _save.Invoke();
+            return this;
+        }
+
+        public ConversationEditScreen ReturnToCurrent()
+        {
+            _returnToCurrent.Invoke();
+
+            return this;
+        }
+    }
     public class HomeTabScreen
     {
         private AutomationElement _parent;

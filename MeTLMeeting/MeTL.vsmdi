@@ -22,6 +22,11 @@
   <TestList name="ChangeFontSizeButtonTests" id="90e6842f-c6bc-4a26-a70f-62951ea0919e" parentListId="018a72cc-7ed7-453d-9540-4766807b4ccd">
     <Description>Insert a textbox and change the font size using the font size increase and decrease buttons.</Description>
   </TestList>
+  <TestList name="UseCase_ConversationControl" id="c7af97fb-2b14-4670-bfc9-ea7cae57f04a" parentListId="cb048c62-9979-4429-a258-8a2421016870">
+    <TestLinks>
+      <TestLink id="d5d3882d-713e-49d5-a114-4e69f53cbebe" name="UseCaseConversationControl_ChangePrivacyOfOwnConversation" storage="functional\usecaseconversationcontrol_changeprivacyofownconversation.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+    </TestLinks>
+  </TestList>
   <TestList name="MeTLHealthCheck" id="cb048c62-9979-4429-a258-8a2421016870" parentListId="018a72cc-7ed7-453d-9540-4766807b4ccd">
     <Description>Run through all the use cases</Description>
   </TestList>

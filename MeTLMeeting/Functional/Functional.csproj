@@ -112,6 +112,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="ConversationEditingInMultipleUserSpace.cs" />
     <Compile Include="CreateConversationTests.cs" />
+    <Compile Include="EditConversationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchConversationTests.cs" />
     <Compile Include="ShutdownTests.cs" />
@@ -161,6 +162,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="MeTLTests.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseConversationControl_ChangePrivacyOfOwnConversation.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="UseCaseLogIn_EnterConversation.orderedtest">

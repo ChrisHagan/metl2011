@@ -40,5 +40,14 @@ namespace Functional
 
             search.JoinFirstFound();
         }
+
+        [TestMethod]
+        public void SearchForConversation()
+        {
+            var search = new ConversationSearcher(metlWindow.AutomationElement);
+
+            search.searchField("TEST_FindAndJoinConversationOwned");
+            search.Search();
+        }
     }
 }
