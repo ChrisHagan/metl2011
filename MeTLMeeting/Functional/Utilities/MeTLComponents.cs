@@ -585,6 +585,8 @@ namespace Functional
             _password.Value("");
             _password.SetFocus();
             _password.Value(value);
+
+            Keys.SendWait("{TAB}");
             return this;
         }
         public Login remember()

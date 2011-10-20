@@ -51,5 +51,15 @@ namespace Functional
             var success = control.WaitForControlEnabled();
             Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
         }
+
+        [TestMethod]
+        public void LoginFromSavedCredentials()
+        {
+            var loggingIn = new UITestHelper(metlWindow);
+            loggingIn.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_LOGGING_IN_LABEL));
+
+            var success = loggingIn.WaitForControlExist();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+        }
     }
 }
