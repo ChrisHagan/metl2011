@@ -3,6 +3,12 @@
   <TestList name="BasicMeTLFunctionality" id="018a72cc-7ed7-453d-9540-4766807b4ccd" parentListId="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
     <Description>Run through each function of MeTL. A minimal test for functionality. Other test lists will cover edge cases and quirks.</Description>
   </TestList>
+  <TestList name="UseCase_Search" id="04ce737b-d79c-4807-989f-96a6ef4e3fec" parentListId="cb048c62-9979-4429-a258-8a2421016870">
+    <TestLinks>
+      <TestLink id="12adc8e0-5349-495f-ae93-d16a9f1b0684" name="UseCaseSearch_SearchForOtherConversations" storage="functional\usecasesearch_searchforotherconversations.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="34b3275b-861f-4e4f-8b3d-632aabef53a6" name="UseCaseSearch_SearchForOwnConversations" storage="functional\usecasesearch_searchforownconversations.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+    </TestLinks>
+  </TestList>
   <TestList name="UseCase_LogIn" id="574b6d00-5228-42e5-a4ef-4209dfc68688" parentListId="cb048c62-9979-4429-a258-8a2421016870">
     <Description>Tests for all the log in use cases</Description>
     <TestLinks>
