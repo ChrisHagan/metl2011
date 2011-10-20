@@ -11,6 +11,7 @@
     <Description>Tests for all the log in use cases</Description>
     <TestLinks>
       <TestLink id="c5881a39-7aa6-4cfb-ad8f-87e0c14c4bae" name="UseCaseLogIn_StartupAndUpdate" storage="functional\usecaselogin_startupandupdate.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="90c11457-9a92-49a5-af2e-7b3cbecca286" name="UseCaseLogIn_LoginAndSaveCredentials" storage="functional\usecaselogin_loginandsavecredentials.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
       <TestLink id="523fae4f-6af9-41d5-98e8-aefd97fd65a4" name="UseCaseLogIn_LoginWithValidCredentials" storage="functional\usecaselogin_loginwithvalidcredentials.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
     </TestLinks>
   </TestList>

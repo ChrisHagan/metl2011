@@ -162,6 +162,9 @@
     <None Include="MeTLTests.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="UseCaseLogIn_LoginAndSaveCredentials.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="UseCaseLogIn_LoginWithValidCredentials.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

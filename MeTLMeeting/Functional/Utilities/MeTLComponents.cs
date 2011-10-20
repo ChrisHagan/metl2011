@@ -584,7 +584,7 @@ namespace Functional
         {
             _password.Value("");
             _password.SetFocus();
-            Keys.SendWait(value);
+            _password.Value(value);
             return this;
         }
         public Login remember()
@@ -594,7 +594,12 @@ namespace Functional
         }
         public Login submit()
         {
-            _submit.Invoke();
+            var submitButton = new UITestHelper(_login);
+
+            submitButton.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "submit"));
+            submitButton.WaitForControlEnabled();
+
+            submitButton.AutomationElement.Invoke();
             return this;
         }
     }
