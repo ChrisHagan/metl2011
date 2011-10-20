@@ -55,7 +55,11 @@ namespace Functional
             metlWindow.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
             metlWindow.Find();
 
-            new ApplicationPopup(metlWindow.AutomationElement).LogoutAndQuit();
+            var logoutAndExit = new UITestHelper(metlWindow);
+            logoutAndExit.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_LOGOUT_AND_EXIT_BACKNAV_BUTTON));
+
+            logoutAndExit.WaitForControlExist();
+            logoutAndExit.AutomationElement.Invoke(); 
 
             var success = metlWindow.WaitForControlNotExist();
             Assert.IsTrue(success, ErrorMessages.PROBLEM_SHUTTING_DOWN);

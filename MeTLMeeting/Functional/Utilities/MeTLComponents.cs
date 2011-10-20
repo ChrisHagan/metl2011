@@ -197,7 +197,11 @@ namespace Functional
             open();
             var popup = _parent.Descendant(typeof(Popup));
             var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
-            var logoutAndQuit = menuItems[6];
+
+            AutomationElement logoutAndQuit = null;
+            
+            if (menuItems.Count >= 7)
+                logoutAndQuit = menuItems[6];
 
             Assert.IsNotNull(logoutAndQuit, "MeTL main menu 'Logout And Quit' button was not found.");
             logoutAndQuit.Invoke();
