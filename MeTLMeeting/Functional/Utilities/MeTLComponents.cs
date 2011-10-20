@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows;
 using System.Diagnostics;
 using System.IO;
+using UITestFramework;
 
 namespace Functional
 {

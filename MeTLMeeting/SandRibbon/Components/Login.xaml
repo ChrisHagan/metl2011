@@ -78,7 +78,7 @@
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="Version" FontWeight="bold"/>
-                                        <Label Content="{Binding Path=Version}"/>
+                                        <Label x:Name="VersionLabel" Content="{Binding Path=Version}"/>
                                     </StackPanel>
                                     <ScrollViewer x:Name="releaseNotesViewer" Visibility="Collapsed" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxWidth="400" MaxHeight="200">
                                         <StackPanel>

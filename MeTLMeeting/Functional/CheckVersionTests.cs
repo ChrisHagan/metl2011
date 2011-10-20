@@ -8,6 +8,7 @@ namespace Functional
     public class CheckVersionTests
     {
         private UITestHelper metlWindow;
+        private string expectedVersionString = "1.0.0.179";
 
         [TestInitialize]
         public void Setup()
@@ -22,6 +23,11 @@ namespace Functional
         [TestMethod]
         public void CheckVersionAgainstHardcoded()
         {
+            var version = new UITestHelper(metlWindow);
+            version.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_VERSION_LABEL));
+
+            version.Find();
+            Assert.AreEqual(version.AutomationElement.Current.Name, expectedVersionString, ErrorMessages.VERSION_MISMATCH);
         }
     }
 }

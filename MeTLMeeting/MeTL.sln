@@ -16,6 +16,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartboardController", "SmartboardController\SmartboardController.csproj", "{BB7E9E3D-B005-4F2B-9BA9-BC7B5EE0D7BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functional", "Functional\Functional.csproj", "{EEA9F528-4885-4D7E-8BDC-914FA52370C7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0213D150-6485-4F40-AF80-5AC5E8BB10CC} = {0213D150-6485-4F40-AF80-5AC5E8BB10CC}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UITestFramework", "UITestFramework\UITestFramework.csproj", "{D91E43FB-3666-4840-AB1F-579B05AC963C}"
 EndProject

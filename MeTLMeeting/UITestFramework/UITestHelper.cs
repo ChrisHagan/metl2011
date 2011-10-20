@@ -16,6 +16,7 @@ namespace UITestFramework
         private AutomationElement matchingElement;
         private List<PropertyExpression> searchProperties = new List<PropertyExpression>();
 
+        #region Constructors
         public UITestHelper()
         {
             parentElement = AutomationElement.RootElement;
@@ -34,7 +35,8 @@ namespace UITestFramework
 
             parentElement = parent.AutomationElement;
         }
-    
+        #endregion
+
         private TreeScope DetermineScopeFromParent()
         {
             return parentElement.Equals(AutomationElement.RootElement) ? TreeScope.Children : TreeScope.Element | TreeScope.Descendants;
@@ -46,6 +48,7 @@ namespace UITestFramework
             matchingElement = parentElement.FindFirst(DetermineScopeFromParent(), new PropertyCondition(searchProperties[0].PropertyName, searchProperties[0].PropertyValue));
         }
 
+        #region WaitForControl functions
         public bool WaitForControl(Condition loopCondition, Condition returnCondition)
         {
             int totalTime = 0;
@@ -120,7 +123,9 @@ namespace UITestFramework
 
             return WaitForControl(loopCondition, returnCondition);
         }
+        #endregion
 
+        #region Properties
         public List<PropertyExpression> SearchProperties
         {
             get
@@ -149,5 +154,19 @@ namespace UITestFramework
                 matchingElement = value;
             }
         }
+
+        public string Value
+        {
+            get
+            {
+                return AutomationElement.Value();
+            }
+
+            set
+            {
+                AutomationElement.Value(value);
+            }
+        }
+        #endregion
     }
 }

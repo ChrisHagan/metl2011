@@ -120,7 +120,6 @@
     <Compile Include="LoginTests.cs" />
     <Compile Include="TextModeTests.cs" />
     <Compile Include="UITestHelperTest.cs" />
-    <Compile Include="Utilities\AutomationExtensions.cs" />
     <Compile Include="Utilities\MeTLComponents.cs" />
     <Compile Include="Utilities\WpfExtensions.cs" />
     <Compile Include="ZoomTests.cs" />
@@ -161,6 +160,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="MeTLTests.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseLogIn_LoginWithValidCredentials.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="UseCaseLogIn_StartupAndUpdate.orderedtest">
