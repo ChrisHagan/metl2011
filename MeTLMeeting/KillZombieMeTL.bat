@@ -1,2 +1,2 @@
 @echo off
-tskill "MeTL Presenter"
+tskill "MeTL Presenter" 2> nul
