@@ -23,5 +23,11 @@ namespace Functional
             editConversation.ChangeGroup("jpjor1");
             editConversation.Save();
         }
+
+        [TestMethod]
+        public void AddPageToConversation()
+        {
+            new SlideNavigation(metlWindow.AutomationElement).Add();
+        }
     }
 }

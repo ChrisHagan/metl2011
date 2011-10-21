@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OrderedTest name="UseCaseConversationControl_OwnersCanAddPageWithCorrectSize" storage="c:\specialmetl\metlmeeting\functional\usecaseconversationcontrol_ownerscanaddpagewithcorrectsize.orderedtest" id="2eb74424-31e3-441f-9581-f66e5967a6c4" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestLinks>
+    <TestLink id="12bea1d3-3acd-b5f1-a954-24e174ad2924" name="StartOneInstance" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="fe35d8ce-e6ae-ff17-62b6-df0cc4e7d565" name="CreateNewConversation" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="d513c072-c42b-c1ff-919d-2a3231800927" name="CloseInstance" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestLinks>
+</OrderedTest>
