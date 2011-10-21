@@ -22,7 +22,7 @@ namespace Functional
 
             search.searchField("TEST_FindAndJoinConversationOwned");
             search.Search();
-
+            // TODO: predicate func to wait for "SearchResults" rect to be non-zero
             search.JoinFirstFound();
         }
 
