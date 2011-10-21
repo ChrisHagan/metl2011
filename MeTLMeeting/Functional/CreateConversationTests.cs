@@ -2,6 +2,7 @@
 using UITestFramework;
 using System.Windows.Automation;
 using Functional.Utilities;
+using System.Windows;
 
 namespace Functional
 {
@@ -20,6 +21,15 @@ namespace Functional
         public void CreateNewConversation()
         {
             new ApplicationPopup(metlWindow.AutomationElement).CreateConversation();
+        }
+
+        [TestMethod]
+        public void ConversationCanvasIsExpectedSize()
+        {
+            var canvasStack = metlWindow.AutomationElement.Descendant(typeof(UserCanvasStack));
+            var canvasSize = ((Rect)canvasStack.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)).Size;
+            var expectSize = new Size(759, 569); // Hardcoded values for the expected size of canvas 
+            Assert.AreEqual(expectSize, canvasSize);
         }
     }
 }

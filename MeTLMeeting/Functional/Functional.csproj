@@ -168,7 +168,7 @@
     <None Include="UseCaseConversationControl_ChangePrivacyOfOwnConversation.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="UseCaseConversationControl_OwnersCanAddPageWithCorrectSize.orderedtest">
+    <None Include="UseCaseConversationControl_OwnersCanAddPage.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="UseCaseLogIn_EnterConversation.orderedtest">

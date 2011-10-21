@@ -691,6 +691,13 @@ namespace Functional
             return this;
         }
 
+        public ConversationEditScreen Delete()
+        {
+            _delete.Invoke();
+
+            return this;
+        }
+
         public ConversationEditScreen ChangeGroup(string groupName)
         {
             _share.Invoke();

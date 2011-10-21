@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UITestFramework;
-using System.Windows.Automation;
 
 namespace Functional
 {
@@ -25,9 +24,17 @@ namespace Functional
         }
 
         [TestMethod]
+        public void DeleteCurrentConversation()
+        {
+            var editConversation = new ConversationEditScreen(metlWindow.AutomationElement);
+
+            editConversation.Delete();
+        }
+        [TestMethod]
         public void AddPageToConversation()
         {
             new SlideNavigation(metlWindow.AutomationElement).Add();
+            // TODO: Check that there are now two pages in the conversation
         }
     }
 }

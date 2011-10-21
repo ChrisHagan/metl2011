@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UITestFramework;
 using System.Windows.Automation;
+using System.Windows;
 
 namespace Functional
 {
@@ -22,7 +23,12 @@ namespace Functional
 
             search.searchField("TEST_FindAndJoinConversationOwned");
             search.Search();
-            // TODO: predicate func to wait for "SearchResults" rect to be non-zero
+
+            var results = new UITestHelper(metlWindow);
+            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "SearchResults"));
+
+            results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
+
             search.JoinFirstFound();
         }
 
@@ -34,6 +40,11 @@ namespace Functional
             search.searchField("TEST_FindAndJoinConversationNotOwned");
             search.Search();
 
+            var results = new UITestHelper(metlWindow);
+            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "SearchResults"));
+
+            results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
+
             search.JoinFirstFound();
         }
 
@@ -44,6 +55,11 @@ namespace Functional
 
             search.searchField("TEST_FindAndJoinConversationOwned");
             search.Search();
+
+            var results = new UITestHelper(metlWindow);
+            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "SearchResults"));
+
+            results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
         }
     }
 }
