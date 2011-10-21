@@ -61,5 +61,11 @@ namespace Functional
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
         }
+
+        [TestMethod]
+        public void SwitchToSearchMyConversations()
+        {
+            new ApplicationPopup(metlWindow.AutomationElement).SearchMyConversation();
+        }
     }
 }

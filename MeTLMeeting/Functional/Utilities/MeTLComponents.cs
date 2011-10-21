@@ -198,6 +198,21 @@ namespace Functional
             {
             }
         }
+        public void SearchMyConversation()
+        {
+            open();
+            var popup = _parent.Descendant(typeof(Popup));
+            var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
+            try
+            {
+                // invoke search conversation
+                var menu = menuItems[3];
+                menu.Invoke();
+            }
+            catch (Exception) 
+            {
+            }
+        }
         public void Quit()
         {
             open();
@@ -694,6 +709,13 @@ namespace Functional
         public ConversationEditScreen Delete()
         {
             _delete.Invoke();
+
+            var yesButton = new UITestHelper(_parent);
+            yesButton.SearchProperties.Add(new PropertyExpression(AutomationElement.NameProperty, "Yes"));
+            var success = yesButton.WaitForControlExist();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
+            yesButton.AutomationElement.Invoke();
 
             return this;
         }

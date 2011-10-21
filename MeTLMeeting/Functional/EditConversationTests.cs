@@ -30,6 +30,7 @@ namespace Functional
 
             editConversation.Delete();
         }
+
         [TestMethod]
         public void AddPageToConversation()
         {
