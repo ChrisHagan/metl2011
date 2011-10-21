@@ -37,10 +37,12 @@ namespace UITestFramework
         }
         #endregion
 
+        #region Helpers
         private TreeScope DetermineScopeFromParent()
         {
             return parentElement.Equals(AutomationElement.RootElement) ? TreeScope.Children : TreeScope.Element | TreeScope.Descendants;
         }
+        #endregion
 
         public void Find()
         {
@@ -122,6 +124,19 @@ namespace UITestFramework
             };
 
             return WaitForControl(loopCondition, returnCondition);
+        }
+
+        /// <summary>
+        /// returns true if control meets specified condition before time-out; otherwise, false.
+        /// </summary>
+        public bool WaitForControlCondition(Condition condition)
+        {
+            Condition returnCondition = (uiControl) =>
+            {
+                return uiControl != null;
+            };
+            
+            return WaitForControl(condition, returnCondition);
         }
         #endregion
 
