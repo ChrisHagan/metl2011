@@ -8,7 +8,7 @@ namespace UITestFramework
 {
     public class UITestHelper
     {
-        public delegate bool Condition(AutomationElement element);
+        public delegate bool WaitCondition(AutomationElement element);
         
         private const int sleepIncrement = 100;
         private const int defaultTimeout = 30 * 1000;
@@ -42,16 +42,37 @@ namespace UITestFramework
         {
             return parentElement.Equals(AutomationElement.RootElement) ? TreeScope.Children : TreeScope.Element | TreeScope.Descendants;
         }
+
+        private Condition GetPropertyConditions()
+        {
+            Condition properties = null;
+            if (searchProperties.Count > 1)
+            {
+                var propertyList = new List<Condition>();
+                foreach (var property in searchProperties)
+                {
+                    propertyList.Add(new PropertyCondition(property.PropertyName, property.PropertyValue));
+                }
+                properties = new AndCondition(propertyList.ToArray());
+            }
+            else
+            {
+                properties = new PropertyCondition(searchProperties[0].PropertyName, searchProperties[0].PropertyValue); 
+            }
+
+            return properties;
+        }
         #endregion
 
         public void Find()
         {
             Assert.IsTrue(searchProperties.Count > 0, "SearchProperties must be set before calling WaitForControl functions");
-            matchingElement = parentElement.FindFirst(DetermineScopeFromParent(), new PropertyCondition(searchProperties[0].PropertyName, searchProperties[0].PropertyValue));
+
+            matchingElement = parentElement.FindFirst(DetermineScopeFromParent(), GetPropertyConditions());
         }
 
         #region WaitForControl functions
-        public bool WaitForControl(Condition loopCondition, Condition returnCondition)
+        public bool WaitForControl(WaitCondition loopCondition, WaitCondition returnCondition)
         {
             int totalTime = 0;
             AutomationElement uiControl = null;
@@ -79,12 +100,12 @@ namespace UITestFramework
         /// returns true if control is enabled before time-out; otherwise, false.
         public bool WaitForControlEnabled()
         {
-            Condition loopCondition = (uiControl) =>
+            WaitCondition loopCondition = (uiControl) =>
             {
                 return uiControl == null || (bool)uiControl.GetCurrentPropertyValue(AutomationElement.IsEnabledProperty) == false;
             };
 
-            Condition returnCondition = (uiControl) =>
+            WaitCondition returnCondition = (uiControl) =>
             {
                 return uiControl != null;
             };
@@ -95,12 +116,12 @@ namespace UITestFramework
         /// returns true if control is not found before time-out; otherwise, false.
         public bool WaitForControlNotExist()
         {
-            Condition loopCondition = (uiControl) =>
+            WaitCondition loopCondition = (uiControl) =>
             {
                 return uiControl != null;                
             };
 
-            Condition returnCondition = (uiControl) =>
+            WaitCondition returnCondition = (uiControl) =>
             {
                 return uiControl == null;
             };
@@ -113,12 +134,12 @@ namespace UITestFramework
         /// </summary>
         public bool WaitForControlExist()
         {
-            Condition loopCondition = (uiControl) =>
+            WaitCondition loopCondition = (uiControl) =>
             {
                 return uiControl == null;
             };
 
-            Condition returnCondition = (uiControl) =>
+            WaitCondition returnCondition = (uiControl) =>
             {
                 return uiControl != null;
             };
@@ -129,9 +150,9 @@ namespace UITestFramework
         /// <summary>
         /// returns true if control meets specified condition before time-out; otherwise, false.
         /// </summary>
-        public bool WaitForControlCondition(Condition condition)
+        public bool WaitForControlCondition(WaitCondition condition)
         {
-            Condition returnCondition = (uiControl) =>
+            WaitCondition returnCondition = (uiControl) =>
             {
                 return uiControl != null;
             };

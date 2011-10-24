@@ -83,8 +83,8 @@ namespace Functional
         {
             UITestHelper target = new UITestHelper(); // TODO: Initialize to an appropriate value
             string controlAutomationId = string.Empty; // TODO: Initialize to an appropriate value
-            UITestHelper.Condition loopCondition = null; // TODO: Initialize to an appropriate value
-            UITestHelper.Condition returnCondition = null; // TODO: Initialize to an appropriate value
+            UITestHelper.WaitCondition loopCondition = null; // TODO: Initialize to an appropriate value
+            UITestHelper.WaitCondition returnCondition = null; // TODO: Initialize to an appropriate value
             bool expected = false; // TODO: Initialize to an appropriate value
             bool actual;
             actual = target.WaitForControl(loopCondition, returnCondition);
