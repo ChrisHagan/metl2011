@@ -558,6 +558,11 @@ namespace Functional
                 Assert.Fail(ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
 
             buttons[1].Invoke();
+
+            // wait until we've finished joining the conversation before returning
+            var canvas = new UITestHelper(_parent);
+            canvas.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_USER_CANVAS_STACK));
+            canvas.WaitForControlEnabled();
             
             return this;
         }

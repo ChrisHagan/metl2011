@@ -12,6 +12,7 @@ namespace Functional
         public const string ID_METL_VERSION_LABEL = "VersionLabel";
         public const string ID_METL_LOGGING_IN_LABEL = "LoggingInLabel";
         public const string ID_METL_LOGOUT_AND_EXIT_BACKNAV_BUTTON = "LogoutAndExit";
+        public const string ID_METL_USER_CANVAS_STACK = "canvas";
     }
 
     class ErrorMessages
