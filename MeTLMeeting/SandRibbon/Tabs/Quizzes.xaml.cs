@@ -165,7 +165,7 @@ namespace SandRibbon.Tabs
                 Commands.PlaceQuizSnapshot.ExecuteAsync(new ImageDropParameters
                 {
                     file = filename,
-                    location = new Point(200,200)
+                    location = new Point(0,0)
                 });
             });
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
