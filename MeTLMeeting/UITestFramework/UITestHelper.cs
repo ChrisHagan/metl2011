@@ -102,7 +102,7 @@ namespace UITestFramework
         {
             WaitCondition loopCondition = (uiControl) =>
             {
-                return uiControl == null || (bool)uiControl.GetCurrentPropertyValue(AutomationElement.IsEnabledProperty) == false;
+                return !(uiControl != null && (bool)uiControl.GetCurrentPropertyValue(AutomationElement.IsEnabledProperty) == true);
             };
 
             WaitCondition returnCondition = (uiControl) =>

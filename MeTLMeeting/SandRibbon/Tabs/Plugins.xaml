@@ -13,7 +13,6 @@
         <sandpit:BoardManagerLauncher />
     </sr:RibbonGroup>
     <sr:RibbonGroup Header="Diagnostics">
-        <components:RubyRepl /> 
     </sr:RibbonGroup>
 <!--    <sr:RibbonGroup Header="Integration">
     </sr:RibbonGroup>-->
