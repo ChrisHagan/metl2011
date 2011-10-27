@@ -124,7 +124,7 @@ namespace SandRibbon.Components
                 RestoreDirectory = true,
                 Multiselect = false
             };
-            Nullable<bool> fileDialogResult = fileBrowser.ShowDialog(Owner);
+            var fileDialogResult = fileBrowser.ShowDialog(this.Owner);
             if (!String.IsNullOrEmpty(fileBrowser.FileName))
             {
                 importFile = fileBrowser.FileName;

@@ -5,8 +5,8 @@ xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInte
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
         <StackPanel x:Name="StatusRight" Orientation="Horizontal">
-        <dict:Button Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="..\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}" InternalButtonSize="Small"/>
-        <dict:Button Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="..\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}" InternalButtonSize="Small"/>
-        <dict:Button Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="..\Resources\GrabZoom.png" ToolTip="{DynamicResource GrabZoomToolTip}" InternalButtonSize="Small"/>
+        <dict:Button x:Name="ZoomOut" Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="..\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}" InternalButtonSize="Small"/>
+        <dict:Button x:Name="ZoomIn" Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="..\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}" InternalButtonSize="Small"/>
+        <dict:Button x:Name="InitiateGrabZoom" Command="{x:Static api:Commands.InitiateGrabZoom}" Text="Grab Zoom" Icon="..\Resources\GrabZoom.png" ToolTip="{DynamicResource GrabZoomToolTip}" InternalButtonSize="Small"/>
         </StackPanel>
 </UserControl>

@@ -422,6 +422,8 @@ namespace SandRibbon.Components.Canvas
             var selectedStrokes = GetMySelectedStrokes();
             Action redo = () =>
                 {
+                    // set keyboard focus to the current canvas so the help button does not grey out
+                    Keyboard.Focus(this);
                     ClearAdorners();
                    removeStrokes(selectedStrokes.ToList()); 
                 };

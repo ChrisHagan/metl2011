@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Controls;
-using System.Xaml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Controls.Primitives;
 using Keys = System.Windows.Forms.SendKeys;
@@ -9,9 +8,80 @@ using System.Windows.Automation;
 using Button=System.Windows.Forms.Button;
 using System.Threading;
 using System.Windows;
+using System.Diagnostics;
+using System.IO;
+using UITestFramework;
 
 namespace Functional
 {
+    public class MeTL
+    {
+        private static Process metlProcess;
+        private static readonly string workingDirectory;
+
+        static MeTL()
+        {
+            var baseDirectory = "MeTLMeeting";
+            var currentDirectory = Directory.GetCurrentDirectory();
+            workingDirectory = currentDirectory.Remove(currentDirectory.IndexOf(baseDirectory) + baseDirectory.Length) + @"\SandRibbon\bin\Debug";
+        }
+
+        public static UITestHelper GetMainWindow()
+        {
+            var metlWindow = new UITestHelper();
+            metlWindow.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
+
+            var success = metlWindow.WaitForControlEnabled();
+            Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
+
+            return metlWindow;
+        }
+
+        public static AutomationElementCollection GetAllMainWindows()
+        {
+            var mainWindows = AutomationElement.RootElement.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
+
+            return mainWindows;
+        }
+
+        public static AutomationElement StartProcess()
+        {
+            const int MAX_WAIT_TIME = 30000;
+            const int WAIT_INCREMENT = 100;
+            AutomationElement metlWindow = null;
+
+            metlProcess = new Process();
+            metlProcess.StartInfo.UseShellExecute = false;
+            metlProcess.StartInfo.LoadUserProfile = true;
+            metlProcess.StartInfo.WorkingDirectory = workingDirectory;
+            metlProcess.StartInfo.FileName = workingDirectory + @"\MeTL Presenter.exe";
+            metlProcess.Start();
+
+            int waitTime = 0;
+            while (metlProcess.MainWindowHandle.Equals(IntPtr.Zero))
+            {
+                if (waitTime > MAX_WAIT_TIME)
+                    Assert.Fail(ErrorMessages.UNABLE_TO_FIND_EXECUTABLE);
+
+                Thread.Sleep(WAIT_INCREMENT);
+                waitTime += WAIT_INCREMENT;
+
+                metlProcess.Refresh();
+            }
+
+            try
+            {
+                metlWindow = AutomationElement.FromHandle(metlProcess.MainWindowHandle);
+            }
+            catch (ElementNotAvailableException)
+            {
+                Assert.Fail(ErrorMessages.EXPECTED_MAIN_WINDOW);
+            }
+
+            return metlWindow;
+        }
+    }
+
     public class PresentationSpace
     {
         private AutomationElement _parent;
@@ -55,11 +125,9 @@ namespace Functional
         }
         public void open()
         {
-            var buttons = _parent.Children(typeof(Button));
-            var appButton = buttons[3];
-            var rect = appButton.Current.BoundingRectangle;
-            Assert.AreEqual(46,rect.Width);
-            Assert.AreEqual(46,rect.Height);
+            var appButton = _parent.Descendant("PART_ApplicationButton");
+            
+            Assert.IsNotNull(appButton, "MeTL main menu 'ApplicationButton' button was not found.");
             appButton.Invoke();
         }
         public ConversationPicker RecommendedConversations()
@@ -85,29 +153,6 @@ namespace Functional
             return new ConversationPicker(post.Where(e => e.Current.ClassName == "SimpleConversationFilterer").First());
         }
 
-        public  ConversationPicker EditConversation()
-        {
-            open();
-            var popup = _parent.Descendant(typeof(Popup));
-            var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
-            var prev = popup.Descendants();
-            ConversationPicker picker = null;
-            try
-            {
-                var menu = menuItems[2];
-                var post = popup.Descendants().Except(prev);
-                menu.Invoke();
-                picker = new ConversationPicker(AutomationElement
-                                                .RootElement
-                                                .FindFirst(TreeScope.Children, 
-                                                            new PropertyCondition(AutomationElement.AutomationIdProperty, 
-                                                            "createConversation")));
-            }
-            catch(Exception ) { }
-            
-            return picker;
-
-        }
         public void ImportPowerpoint(string filename)
         {
             open();
@@ -152,6 +197,43 @@ namespace Functional
             catch (Exception) 
             {
             }
+        }
+        public void SearchMyConversation()
+        {
+            open();
+            var popup = _parent.Descendant(typeof(Popup));
+            var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
+            try
+            {
+                // invoke search conversation
+                var menu = menuItems[3];
+                menu.Invoke();
+            }
+            catch (Exception) 
+            {
+            }
+        }
+        public void Quit()
+        {
+            open();
+            var quitButton = _parent.Descendant("PART_ExitButton");
+
+            Assert.IsNotNull(quitButton, "MeTL main menu 'Quit' button was not found.");
+            quitButton.Invoke();
+        }
+        public void LogoutAndQuit()
+        {
+            open();
+            var popup = _parent.Descendant(typeof(Popup));
+            var menuItems = popup.Descendants(typeof(Divelements.SandRibbon.MenuItem));
+
+            AutomationElement logoutAndQuit = null;
+            
+            if (menuItems.Count >= 7)
+                logoutAndQuit = menuItems[6];
+
+            Assert.IsNotNull(logoutAndQuit, "MeTL main menu 'Logout And Quit' button was not found.");
+            logoutAndQuit.Invoke();
         }
     }
     public class ConversationPicker
@@ -223,7 +305,6 @@ namespace Functional
         private AutomationElement _handwriting;
         private AutomationElement _text;
         private AutomationElement _images;
-        private AutomationElement _privacyTools;
         public string Ink
         {
             get 
@@ -257,17 +338,6 @@ namespace Functional
                 _images.Value(value);
             }
         }
-        public string Privacy
-        {
-            get
-            {
-                return _privacyTools.Value();
-            }
-            set
-            {
-                _privacyTools.Value(value);
-            }
-        }
       
         public UserCanvasStack(AutomationElement parent, string target)
         {
@@ -280,24 +350,38 @@ namespace Functional
 
     public class Quiz
     {
-        private AutomationElement _open;
         private AutomationElement _parent;
         public Quiz(AutomationElement parent)
         {
             _parent = parent;
-            _open = parent.Descendant("createQuiz");    
+        }
+        public Quiz openTab()
+        {
+            Keys.SendWait("%");
+            Thread.Sleep(100);
+            Keys.SendWait("Q");
+            return this;
         }
         public void open()
         {
-            _open.Invoke();
+            var buttons = _parent.Descendants(typeof(Button));
+            foreach (AutomationElement button in buttons)
+            {
+                if (button.Current.AutomationId.ToLower().Contains("createquiz"))
+                {
+                    button.Invoke();
+                    return;
+                }
+            }
         }
 
         public void openQuiz()
         {
-            var allButtons = _parent.Descendants(typeof (Button));
+            var allButtons = _parent.Descendants(typeof(Button));
             foreach(AutomationElement button in allButtons)
             {
-                if(button.Current.Name.ToLower().Contains("quiz: 1"))
+                // this will only find the first quiz
+                if (button.Current.AutomationId.ToLower().Equals("quiz"))
                 {
                     button.Invoke();
                     return;
@@ -308,17 +392,16 @@ namespace Functional
     public class QuizAnswer
     {
         private AutomationElement _buttons;
-        public QuizAnswer()
+        public QuizAnswer(AutomationElement parent)
         {
-             var parent = AutomationElement.RootElement
+             var _dialog = AutomationElement.RootElement
                                         .FindFirst(TreeScope.Children, 
                                                     new PropertyCondition(AutomationElement.AutomationIdProperty, 
                                                     "answerAQuiz"));
-            _buttons = parent.Descendant("quizOptions"); 
+            _buttons = _dialog.Descendant("quizOptions"); 
         }
         public void answer()
         {
-
             ((SelectionItemPattern)_buttons.Children(typeof(ListBoxItem))[0]
                 .GetCurrentPattern(SelectionItemPattern.Pattern)).Select();
         }
@@ -327,24 +410,34 @@ namespace Functional
     {
         private AutomationElement _create;
         private AutomationElement _title;
+        private AutomationElement _question;
+        private AutomationElement _parent;
+        private AutomationElement _dialog;
         private AutomationElementCollection _options;
-        public QuizCreate()
+        public QuizCreate(AutomationElement parent)
         {
-            
-              var parent = AutomationElement.RootElement
-                                            .FindFirst(TreeScope.Children, 
-                                                        new PropertyCondition(AutomationElement.AutomationIdProperty, 
-                                                        "createAQuiz"));
-            _create = parent.Descendant("quizCommitButton");
-            _options = parent.Descendants(typeof (TextBox));
+            _parent = parent;
+            _dialog = _parent.Descendant("createAQuiz");
+            _create = _dialog.Descendant("quizCommitButton");
+            _question = _dialog.Descendant("question");
+            _title = _dialog.Descendant("quizTitle");
+            _options = _dialog.Descendants(typeof(TextBox));
+        }
+        public QuizCreate question(string value)
+        {
+            _question.Value(value);
+            return this; 
         }
         public QuizCreate options()
         {
             var count = 0;
-            foreach(AutomationElement element in _options)
+            foreach (AutomationElement element in _options)
             {
-                element.Value(count.ToString());
-                count++;
+                if (element.Current.AutomationId.ToLower().Equals("quizanswer"))
+                {
+                    element.Value("Answer " + count.ToString());
+                    count++;
+                }
             }
             return this;
         }
@@ -357,15 +450,11 @@ namespace Functional
     {
         private AutomationElement _submissionList;
         private AutomationElement _import;
-        public SubmissionViewer(AutomationElement _obj)
+        public SubmissionViewer(AutomationElement parent)
         {
-              var parent = AutomationElement
-                                                .RootElement
-                                                .FindFirst(TreeScope.Children, 
-                                                            new PropertyCondition(AutomationElement.AutomationIdProperty, 
-                                                            "viewSubmissions"));
-            _submissionList = parent.Descendant("submissions");
-            _import = parent.Descendant("importSelectedSubmission");
+            var window = parent.Descendant("viewSubmissions");
+            _submissionList = window.Descendant("submissions");
+            _import = window.Descendant("importSelectedSubmission");
         }
         public void import()
         {
@@ -377,22 +466,57 @@ namespace Functional
 
     public class Submission
     {
-        private AutomationElement _submit;
-        private AutomationElement _view;
+        private AutomationElement _parent;
 
         public Submission(AutomationElement parent)
         {
-            _submit = parent.Descendant("submitSubmission");
-            _view= parent.Descendant("viewSubmission");
-
+            _parent = parent;
+        }
+        public Submission openTab()
+        {
+            Keys.SendWait("%");
+            Thread.Sleep(100);
+            Keys.SendWait("S");
+            return this;
+        }
+        public void open()
+        {
         }
         public void view()
         {
-            _view.Invoke();
+            var buttons = _parent.Descendants(typeof(Button));
+            foreach (AutomationElement button in buttons)
+            {
+                if (button.Current.AutomationId.Contains("viewSubmission"))
+                {
+                    button.Invoke();
+                    return;
+                }
+            }
         }
         public void submit()
         {
-            _submit.Invoke();
+            var buttons = _parent.Descendants(typeof(Button));
+            foreach (AutomationElement button in buttons)
+            {
+                if (button.Current.AutomationId.Contains("submitSubmission"))
+                {
+                    button.Invoke();
+                    break;
+                }
+            }
+
+            Thread.Sleep(200);
+
+            buttons = _parent.Descendants(typeof(Button));
+            foreach (AutomationElement button in buttons)
+            {
+                if (button.Current.Name.Equals("OK"))
+                {
+                    button.Invoke();
+                    break;
+                }
+            }
         }
     }
     public  class ConversationSearcher
@@ -410,6 +534,10 @@ namespace Functional
         }
         public ConversationSearcher searchField(string value)
         {
+            var searchField = new UITestHelper(_searchField);
+            searchField.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "SearchInput"));
+            searchField.WaitForControlEnabled();
+
             _searchField.Value("");
             _searchField.SetFocus();
             _searchField.Value(value);
@@ -419,6 +547,23 @@ namespace Functional
         public ConversationSearcher Search()
         {
             _searchButton.Invoke();
+            return this;
+        }
+        public ConversationSearcher JoinFirstFound()
+        {
+            _searchResults = _parent.Descendant("SearchResults");
+            var buttons = _searchResults.Descendants(typeof(Button));
+
+            if (buttons.Count <= 1)
+                Assert.Fail(ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
+
+            buttons[1].Invoke();
+
+            // wait until we've finished joining the conversation before returning
+            var canvas = new UITestHelper(_parent);
+            canvas.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_USER_CANVAS_STACK));
+            canvas.WaitForControlEnabled();
+            
             return this;
         }
         public ConversationSearcher GetResults()
@@ -474,11 +619,6 @@ namespace Functional
             _submit = _login.Descendant("submit");
             _remember = _login.Descendant("rememberMe");
         }
-        private void moveWindowToTestingDatabase()
-        {
-            _login.Value(Constants.TEST_DB);
-            Assert.AreEqual(_login.Value(), Constants.TEST_DB, "MeTL has not been pointed at the testing DB.  Testing cannot continue.");
-        }
         public Login username(string value)
         {
             _username.Value("");
@@ -490,7 +630,9 @@ namespace Functional
         {
             _password.Value("");
             _password.SetFocus();
-            Keys.SendWait(value);
+            _password.Value(value);
+
+            Keys.SendWait("{TAB}");
             return this;
         }
         public Login remember()
@@ -500,8 +642,159 @@ namespace Functional
         }
         public Login submit()
         {
-            _submit.Invoke();
+            var submitButton = new UITestHelper(_login);
+
+            submitButton.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "submit"));
+            submitButton.WaitForControlEnabled();
+
+            submitButton.AutomationElement.Invoke();
             return this;
+        }
+    }
+
+    public class ZoomButtons
+    {
+        private AutomationElement _parent;
+        private AutomationElement _zoomIn;
+        private AutomationElement _zoomOut;
+        private AutomationElement _initiateGrab;
+
+        public ZoomButtons(AutomationElement parent)
+        {
+            _parent = parent;
+
+            _zoomIn = _parent.Descendant("ZoomIn");
+            _zoomOut = _parent.Descendant("ZoomOut");
+            _initiateGrab = _parent.Descendant("InitiateGrabZoom");
+        }
+
+        public ZoomButtons ZoomIn()
+        {
+            _zoomIn.Invoke();
+            return this;
+        }
+
+        public ZoomButtons ZoomOut()
+        {
+            _zoomOut.Invoke();
+            return this;
+        }
+    }
+
+    public class ConversationEditScreen
+    {
+        private AutomationElement _parent;
+        private AutomationElement _rename;
+        private AutomationElement _share;
+        private AutomationElement _delete;
+        private AutomationElement _save;
+        private AutomationElement _groups;
+        private AutomationElement _returnToCurrent;
+
+        public ConversationEditScreen(AutomationElement parent)
+        {
+            _parent = parent;
+            _rename = _parent.Descendant("renameConversation");
+            _share = _parent.Descendant("shareConversation");
+            _delete = _parent.Descendant("deleteConversation");
+
+            _returnToCurrent = _parent.Descendant("current");
+        }
+
+        public ConversationEditScreen Rename(string conversationTitle)
+        {
+            _rename.Invoke();
+
+            var title = _parent.Descendant("renameTitle");
+            title.Value(conversationTitle);
+
+            return this;
+        }
+
+        public ConversationEditScreen Delete()
+        {
+            _delete.Invoke();
+
+            var yesButton = new UITestHelper(_parent);
+            yesButton.SearchProperties.Add(new PropertyExpression(AutomationElement.NameProperty, "Yes"));
+            var success = yesButton.WaitForControlExist();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
+            yesButton.AutomationElement.Invoke();
+
+            return this;
+        }
+
+        public ConversationEditScreen ChangeGroup(string groupName)
+        {
+            _share.Invoke();
+
+            _groups = _parent.Descendant("groupsList");
+            _groups.SelectListItem(groupName);
+
+            return this;
+        }
+        public ConversationEditScreen Save()
+        {
+            _save = _parent.Descendant("saveEdit");
+            _save.Invoke();
+            return this;
+        }
+
+        public ConversationEditScreen ReturnToCurrent()
+        {
+            _returnToCurrent.Invoke();
+
+            return this;
+        }
+    }
+    public class HomeTabScreen
+    {
+        private AutomationElement _parent;
+        private AutomationElement _inkButton;
+        private AutomationElement _textButton;
+        private AutomationElement _imageButton;
+
+        public HomeTabScreen(AutomationElement parent)
+        {
+            _parent = parent;
+        }
+
+        public HomeTabScreen OpenTab()
+        {
+            _parent.SetFocus();
+
+            Keys.SendWait("%");
+            Thread.Sleep(100);
+            Keys.SendWait("H");
+
+            FindElements();
+            return this;
+        }
+
+        public HomeTabScreen ActivatePenMode()
+        {
+            _inkButton.Select();
+            return this;
+        }
+
+        public HomeTabScreen ActivateTextMode()
+        {
+            _textButton.Select();
+            return this;
+        }
+
+        public HomeTabScreen ActivateImageMode()
+        {
+            _imageButton.Select();
+            return this;
+        }
+
+        private void FindElements()
+        {
+            _inkButton = _parent.Descendant("Pen");
+            _textButton = _parent.Descendant("Text");
+            _imageButton = _parent.Descendant("Image");
         }
     }
 }

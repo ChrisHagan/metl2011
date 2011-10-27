@@ -59,6 +59,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\SandRibbon\lib\Divelements.SandRibbon.dll</HintPath>
     </Reference>
+    <Reference Include="MeTL Presenter">
+      <HintPath>..\SandRibbon\bin\Debug\MeTL Presenter.exe</HintPath>
+    </Reference>
     <Reference Include="MeTLLib">
       <HintPath>..\MeTLLib\bin\Debug\MeTLLib.dll</HintPath>
     </Reference>
@@ -74,11 +77,16 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="TestApiCore">
+      <HintPath>Libs\TestApiCore.dll</HintPath>
     </Reference>
     <Reference Include="UIAutomationClient">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
@@ -95,13 +103,29 @@
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="WpfUtilities">
+      <HintPath>.\WpfUtilities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutomationExtensions.cs" />
+    <Compile Include="CheckVersionTests.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="ConversationEditingInMultipleUserSpace.cs" />
-    <Compile Include="MeTLComponents.cs" />
+    <Compile Include="CreateConversationTests.cs" />
+    <Compile Include="EditConversationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchConversationTests.cs" />
+    <Compile Include="ShutdownTests.cs" />
     <Compile Include="SoloStudentTraversesExistingConversation.cs" />
+    <Compile Include="StartupTests.cs" />
+    <Compile Include="StartupAndShutdown.cs" />
+    <Compile Include="LoginTests.cs" />
+    <Compile Include="TextModeTests.cs" />
+    <Compile Include="UITestHelperTest.cs" />
+    <Compile Include="Utilities\MeTLComponents.cs" />
+    <Compile Include="Utilities\UITestHelperExtensions.cs" />
+    <Compile Include="Utilities\WpfExtensions.cs" />
+    <Compile Include="ZoomTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -124,6 +148,59 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UITestFramework\UITestFramework.csproj">
+      <Project>{D91E43FB-3666-4840-AB1F-579B05AC963C}</Project>
+      <Name>UITestFramework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Shadow Include="Test References\UITestFramework.accessor" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CreateConversation.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MeTLTests.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseConversationControl_ChangePrivacyOfOwnConversation.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseConversationControl_DeleteCurrentConversation.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseConversationControl_OwnersCanAddPage.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseLogIn_EnterConversation.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseLogIn_LoginAndSaveCredentials.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseLogIn_LoginWithValidCredentials.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseLogIn_StartupAndUpdate.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseSearch_SearchForOtherConversations.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="UseCaseSearch_SearchForOwnConversations.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ZoomVerifyTests.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="SuperTest.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TextContentTests.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

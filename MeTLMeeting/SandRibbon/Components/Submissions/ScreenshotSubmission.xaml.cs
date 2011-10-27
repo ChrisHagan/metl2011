@@ -41,8 +41,10 @@ namespace SandRibbon.Components.Submissions
             conversationChanged(null);
         }
         private void viewSubmissions(object _obj)
-        { 
-            new ViewSubmissions(submissionList).Show();
+        {
+            var view = new ViewSubmissions(submissionList);
+            view.Owner = Window.GetWindow(this);
+            view.Show();
         }
         private bool canViewSubmissions(object _e)
         {
@@ -121,7 +123,7 @@ namespace SandRibbon.Components.Submissions
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  MeTLLib.ClientFactory.Connection().uploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
                                  (MeTLLib.ClientFactory.Connection().location.currentSlide,Globals.me,"submission","public",hostedFileName));
-                                MessageBox.Show("Submission sent to " + Globals.conversationDetails.Author);
+                                 MessageBox.Show(Window.GetWindow(this), "Submission sent to " + Globals.conversationDetails.Author);
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails

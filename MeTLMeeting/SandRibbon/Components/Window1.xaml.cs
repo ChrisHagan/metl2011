@@ -242,10 +242,12 @@ namespace SandRibbon
             if(loader == null) loader = new PowerPointLoader();
             loader.CreateBlankConversation();
         }
+        
         private void HelpBinding(object sender, EventArgs e) 
         {
             LaunchHelp(null);
         }
+
         private void LaunchHelp(object _arg)
         {
             try

@@ -43,6 +43,7 @@ namespace SandRibbon
             if(Visibility == Visibility.Collapsed)
                 Visibility = Visibility.Visible;
             progress.Value = percentage;
+            progress.IsIndeterminate = false;
         }
         private void setContent(string content) {
             goldLabel.Content = content; 
@@ -52,6 +53,7 @@ namespace SandRibbon
             slidesAnalyzed = 0;
             slidesExtracted = 0;
             progress.Value = 0;
+            progress.IsIndeterminate = false;
             Dispatcher.adopt(delegate
             {
                 fromStack.Clear();
@@ -66,6 +68,7 @@ namespace SandRibbon
             reset();
             Visibility = Visibility.Visible;
             setContent("Joining");
+            setProgress(100);
         }
         private void PreParserAvailable(object _arg) {
             Commands.RequerySuggested();
@@ -79,6 +82,7 @@ namespace SandRibbon
                     reset();
                     Visibility = Visibility.Visible;
                     setContent("Importing");
+                    this.progress.IsIndeterminate = true;
                     break;
                 case PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES:
                     slidesExtracted++;

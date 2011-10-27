@@ -30,7 +30,7 @@
                         <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://www.policy.monash.edu/policy-bank/management/its/it-use-policy-staff-and-authorised.html">IT Use policy for staff and other authorised users</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="9" HorizontalAlignment="Right">
-                                    Copyright (c) 2010
+                                    Copyright (c) 2011
                                     <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://monash.edu/">Monash University</Hyperlink>
                                     -
                                     <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://monash.edu/legals/">Caution</Hyperlink>
@@ -48,7 +48,7 @@
                         <StackPanel VerticalAlignment="Center">
                             <Border x:Name="loggingIn" Padding="5" Visibility="Collapsed" Background="{StaticResource BackgroundBlueGradient}" CornerRadius="4" BorderBrush="DarkGray" BorderThickness="1">
                                 <StackPanel Orientation="Horizontal">
-                                    <Label FontSize="20" Content="MeTL is logging you in"/>
+                                    <Label x:Name="LoggingInLabel" FontSize="20" Content="MeTL is logging you in"/>
                                 </StackPanel>
                             </Border>
                             <Border x:Name="usernameAndPassword" Padding="5" Background="{StaticResource BackgroundBlueGradient}" CornerRadius="4" BorderBrush="DarkGray" BorderThickness="1">
@@ -78,7 +78,7 @@
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="Version" FontWeight="bold"/>
-                                        <Label Content="{Binding Path=Version}"/>
+                                        <Label x:Name="VersionLabel" Content="{Binding Path=Version}"/>
                                     </StackPanel>
                                     <ScrollViewer x:Name="releaseNotesViewer" Visibility="Collapsed" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxWidth="400" MaxHeight="200">
                                         <StackPanel>

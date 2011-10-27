@@ -38,10 +38,10 @@
                 <TextBlock x:Name="errorText" Foreground="Red" Text="{Binding ElementName=root, Path=Errors}" HorizontalAlignment="Left"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Border Style="{StaticResource thinBlack}">
-                        <dict:Button Text="Apply" InternalButtonSize="Medium" Click="saveEdit" />
+                        <dict:Button x:Name="saveEdit" Text="Apply" InternalButtonSize="Medium" Click="saveEdit" />
                     </Border> 
                     <Border Style="{StaticResource thinBlack}">
-                        <dict:Button Text="Cancel" InternalButtonSize="Medium" Click="cancelEdit"/>
+                        <dict:Button x:Name="cancelEdit" Text="Cancel" InternalButtonSize="Medium" Click="cancelEdit"/>
                     </Border> 
                 </StackPanel>
             </Grid>
@@ -51,7 +51,7 @@
                 <StackPanel>
                     <Label Content="{Binding Path=Title}" Visibility="Collapsed" />
                     <Button HorizontalContentAlignment="Left" Click="Button_Click"  Tag="{Binding Path=Jid}">
-                        <TextBox MinWidth="400" MaxWidth="800" Loaded="TextBox_Loaded"
+                        <TextBox x:Name ="renameTitle" MinWidth="400" MaxWidth="800" Loaded="TextBox_Loaded"
                                  FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" 
                                  Text="{Binding Path=Title}" TextWrapping="Wrap" TextChanged="EditTitleChanged" PreviewKeyDown="KeyPressedInTitleRename"/>
                     </Button>
@@ -65,7 +65,7 @@
                     <Button HorizontalContentAlignment="Left" Click="Button_Click"  Tag="{Binding Path=Jid}">
                         <StackPanel Margin="0,0,0,5" HorizontalAlignment="Left">
                             <Label FontSize="14" FontFamily="Verdana" Foreground="#FF353535" FontWeight="Bold" Cursor="Hand" Content="{Binding Path=Title}" />
-                            <ListBox ItemsSource="{x:Static providers:Globals.authorizedGroupNames}" SelectedItem="{Binding Path=Subject}" />
+                            <ListBox x:Name="groupsList" ItemsSource="{x:Static providers:Globals.authorizedGroupNames}" SelectedItem="{Binding Path=Subject}" />
                         </StackPanel>
                     </Button>
                     <ContentPresenter x:Name="content" ContentTemplate="{StaticResource doneEditing}" VerticalAlignment="Bottom"/>

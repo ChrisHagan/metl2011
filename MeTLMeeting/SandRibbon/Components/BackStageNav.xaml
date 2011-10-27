@@ -29,7 +29,7 @@
         <StackPanel VerticalAlignment="Bottom">
             <dict:Button Command="Help" Text="Help" Icon="\Resources\Help.png" ToolTip="{DynamicResource HelpToolTip}" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" x:Name="help" />
             <dict:Button Text="Exit" Icon="\Resources\Delete.png" ToolTip="{DynamicResource ExitMeTLToolTip}" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.CloseApplication}"/>
-            <dict:Button Text="Logout and exit"  Icon="\Resources\logoutAndExit.png" ToolTip="{DynamicResource LogoutMeTLToolTip}" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.LogOut}"/>
+            <dict:Button x:Name="LogoutAndExit" Text="Logout and exit"  Icon="\Resources\logoutAndExit.png" ToolTip="{DynamicResource LogoutMeTLToolTip}" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" Command="{x:Static api:Commands.LogOut}"/>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -27,7 +27,7 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Viewbox Width="100" Height="100">
-                                <Image Source="{Binding Path=url, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" ToolTip="{Binding Path=author}"/>
+                                <Image Source="{Binding Path=url, Converter={x:Static SandRibbon:Converters.ConvertStringToImageSource}}" />
                             </Viewbox>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

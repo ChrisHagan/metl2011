@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OrderedTest name="UseCaseConversationControl_OwnersCanAddPage" storage="c:\specialmetl\metlmeeting\functional\usecaseconversationcontrol_ownerscanaddpage.orderedtest" id="2eb74424-31e3-441f-9581-f66e5967a6c4" continueAfterFailure="true" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Execution id="f3000ec7-7277-48f9-b8a1-5bee83aae264" />
+  <TestLinks>
+    <TestLink id="12bea1d3-3acd-b5f1-a954-24e174ad2924" name="StartOneInstance" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="db41b97b-8edf-5e73-5ac6-d41ef6fa4b54" name="LoginWithValidCredentials" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="80beb629-2d82-a3ec-afac-7f8a98d0ff0f" name="SearchForOwnedAndJoin" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="e1188f46-2094-0cc1-7b6f-2252dbe101b0" name="ConversationCanvasIsExpectedSize" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="d513c072-c42b-c1ff-919d-2a3231800927" name="CloseInstance" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestLinks>
+</OrderedTest>

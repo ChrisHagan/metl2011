@@ -236,6 +236,8 @@ namespace SandRibbon.Components.Canvas
                                       myTextBox = null;
                                       dirtyTextBoxWithoutHistory(box);
                                   }
+                                  // set keyboard focus to the current canvas so the help button does not grey out
+                                  Keyboard.Focus(this);
                                   ClearAdorners();
                               };
             redo();

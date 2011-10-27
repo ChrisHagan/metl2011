@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OrderedTest name="SuperTest" storage="c:\specialmetl\metlmeeting\functional\supertest.orderedtest" id="65a9fc7a-3a72-49aa-b302-612f4bbe8deb" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Execution id="41857e0b-1c80-44f1-9b18-4038711f02a9" />
+  <TestLinks>
+    <TestLink id="e56ee0e4-3e2d-506b-b476-cdddab666438" name="SUPERTEST" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="2a84a5a2-e3df-2f23-d4c7-8ec5f8f35480" name="CloseAllInstances" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="e82f2a6e-9662-e0f4-6aa5-e8312aed47e8" name="TeacherCreateAndAddContent" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="2a84a5a2-e3df-2f23-d4c7-8ec5f8f35480" name="CloseAllInstances" storage="bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestLinks>
+</OrderedTest>

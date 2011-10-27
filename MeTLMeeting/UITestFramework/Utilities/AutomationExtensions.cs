@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Automation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Functional
+namespace UITestFramework
 {
     public static class AutomationExtensions
     {
@@ -67,9 +66,38 @@ namespace Functional
             ((InvokePattern)element.GetCurrentPattern(InvokePattern.Pattern)).Invoke();
             return element;
         }
+        public static AutomationElement Select(this AutomationElement element)
+        {
+            (element.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern).Select();
+            return element;
+        }
         public static AutomationElement Toggle(this AutomationElement element)
         {
             ((TogglePattern)element.GetCurrentPattern(TogglePattern.Pattern)).Toggle();
+            return element;
+        }
+        public static AutomationElement SelectListItem(this AutomationElement element, String itemText)
+        {
+            if ((element == null) || (String.IsNullOrEmpty(itemText)))
+            {
+                throw new ArgumentException("Argument cannot be null or empty.");
+            }
+        
+            var propertyCondition = new PropertyCondition(AutomationElement.NameProperty, itemText, PropertyConditionFlags.IgnoreCase);
+            var firstMatch = element.FindFirst(TreeScope.Children, propertyCondition);
+        
+            if (firstMatch != null)
+            {
+                try
+                {
+                    var selectionItemPattern = firstMatch.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                    selectionItemPattern.Select();
+                }
+                catch (InvalidOperationException)
+                {
+                }
+            }
+
             return element;
         }
         public static string AutomationId(this AutomationElement element)
@@ -86,6 +114,21 @@ namespace Functional
         {
             Thread.Sleep(milis);
             return element;
+        }
+        public static AutomationElement WalkAllElements(this AutomationElement element, string elementName)
+        {
+            AutomationElement elementNode = TreeWalker.RawViewWalker.GetFirstChild(element);
+        
+            while (elementNode != null)
+            {
+                if (!String.IsNullOrEmpty(elementNode.Current.Name) && String.Equals(elementNode.Current.Name, elementName, StringComparison.OrdinalIgnoreCase))
+                    return elementNode;
+
+                WalkAllElements(elementNode, elementName);
+                elementNode = TreeWalker.ControlViewWalker.GetNextSibling(elementNode);
+            }
+
+            return null;
         }
     }
 }

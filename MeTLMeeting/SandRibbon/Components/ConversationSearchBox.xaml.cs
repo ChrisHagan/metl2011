@@ -255,7 +255,8 @@ namespace SandRibbon.Components
         }
         private void deleteConversation(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            var owner = Window.GetWindow(this);
+            if (MessageBox.Show(owner, "Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 var details = (MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext;
                 details.Subject = "Deleted";
