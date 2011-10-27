@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -170,6 +171,21 @@ namespace MeTLLib.Providers.Structure
         }
         private object cacheLock = new object();
         private List<ConversationDetails> conversationsCache;
+        private string meggleURL = "http://adm-web13-v01.adm.monash.edu:8080/search/";
+       
+        public IEnumerable<SearchConversationDetails> ConversationsFor(String query)
+        {
+            try
+            {
+                var data = secureGetString(new Uri(string.Format("{0}{1}", meggleURL, HttpUtility.UrlEncode(query))));
+                return XElement.Parse(data).Descendants("conversation").Select(x => SearchConversationDetails.ReadXML(x)).ToList().OrderBy(s => s.relevance);
+            }
+            catch (Exception e)
+            {
+                return new List<SearchConversationDetails>();
+            }
+
+        }
         public IEnumerable<ConversationDetails> ListConversations()
         {
             try

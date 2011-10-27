@@ -76,7 +76,6 @@ namespace SandRibbon.Components
         public ConversationSearchBox()
         {
             InitializeComponent();
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
@@ -96,7 +95,11 @@ namespace SandRibbon.Components
             refreshTimer = new Timer(delegate {
                 Dispatcher.Invoke((Action)delegate
                 {
-                    GetListCollectionView().Refresh();
+                    searchResults.Clear();
+                    MeTLLib.ClientFactory.Connection().ConversationsFor(SearchInput.Text.Trim()).ForEach(cd => {
+                        if (cd.Subject.ToLower() != "deleted")
+                            searchResults.Add(cd);
+                    });
                 });
             });
         }
@@ -140,16 +143,6 @@ namespace SandRibbon.Components
             foreach (var button in elements)
                 if (button.Name == mode)
                     button.IsChecked = true;
-        }
-        private void SetIdentity(object _arg){
-            var availableConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
-            Dispatcher.adoptAsync(() =>
-            {
-                foreach (var conversation in availableConversations)
-                    if(conversation.Subject.ToLower() != "deleted")
-                        searchResults.Add(conversation);
-            });
-            //setMyConversationVisibility();
         }
         private void clearState(){
             SearchInput.Text = "";

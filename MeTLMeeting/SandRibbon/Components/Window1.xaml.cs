@@ -559,22 +559,7 @@ namespace SandRibbon
         }
         private bool canCreateConversation(object obj)
         {
-            return doesConversationAlreadyExist(obj) && mustBeLoggedIn(obj);
-        }
-        private bool doesConversationAlreadyExist(object obj)
-        {
-            if (!(obj is ConversationDetails))
-                return true;
-            var details = (ConversationDetails)obj;
-            if (details == null)
-                return true;
-            if (details.Subject.ToLower() == "deleted")
-                return true;
-            if (details.Title.Length == 0)
-                return true;
-            var currentConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
-            bool conversationExists = currentConversations.Any(c => c.Title.Equals(details.Title));
-            return !conversationExists;
+            return mustBeLoggedIn(obj);
         }
         private bool mustBeLoggedIn(object _arg)
         {
