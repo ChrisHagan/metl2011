@@ -14,9 +14,7 @@ namespace SandRibbon.Tabs.Groups
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
             Commands.ChangeTextMode.RegisterCommand(new DelegateCommand<string>(changeTextMode));
-            SetLayer((string)Commands.SetLayer.lastValue());
         }
-
         private void changeTextMode(string mode)
         {
             switch (mode.ToLower())
@@ -30,14 +28,12 @@ namespace SandRibbon.Tabs.Groups
             }
             Commands.SetTextCanvasMode.Execute(mode);
         }
-
         private void joinConversation(object obj)
         {
 
             type.IsChecked = true;
             Commands.SetTextCanvasMode.Execute("None");
         }
-
         private void SetLayer(string layer)
         {
             hideAll();

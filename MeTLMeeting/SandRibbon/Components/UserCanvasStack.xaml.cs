@@ -30,7 +30,6 @@ namespace SandRibbon.Components
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(loggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
-            Commands.SetLayer.ExecuteAsync("Sketch");
             Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedBubbleContext>(ReceiveNewBubble));
             Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(MoveTo));
         }

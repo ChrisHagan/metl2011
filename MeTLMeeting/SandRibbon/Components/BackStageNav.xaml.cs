@@ -50,7 +50,7 @@ namespace SandRibbon.Components
         {
             if (String.IsNullOrEmpty(Globals.location.activeConversation))
             {
-               current.Visibility = Visibility.Collapsed;
+                current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
             }

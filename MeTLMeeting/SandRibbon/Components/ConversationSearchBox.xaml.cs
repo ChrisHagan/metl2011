@@ -62,7 +62,6 @@ namespace SandRibbon.Components
         public static HideIfNotCurrentConversation hideIfNotCurrentConversation = new HideIfNotCurrentConversation();
         private ObservableCollection<MeTLLib.DataTypes.ConversationDetails> searchResults = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
         protected static string activeConversation;
-        protected static string me;
         public string Errors
         {
             get { return (string)GetValue(ErrorsProperty); }
@@ -72,6 +71,7 @@ namespace SandRibbon.Components
         public static readonly DependencyProperty ErrorsProperty =
             DependencyProperty.Register("Errors", typeof(string), typeof(ConversationSearchBox), new UIPropertyMetadata(""));
         public string Version { get; set; }
+        private static string me;
         private System.Threading.Timer refreshTimer;
         public ConversationSearchBox()
         {
@@ -87,8 +87,7 @@ namespace SandRibbon.Components
             Version = ConfigurationProvider.instance.getMetlVersion();
             versionNumber.DataContext = Version;
             SearchResults.ItemsSource = searchResults;
-            activeConversation = Globals.location.activeConversation;
-            me = Globals.me;
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg=> me = Globals.me));
             var view = GetListCollectionView();
             view.Filter = isWhatWeWereLookingFor;
             view.CustomSort = new ConversationComparator();
@@ -158,8 +157,6 @@ namespace SandRibbon.Components
             else {
                 currentConversation.Visibility = Visibility.Visible;
             }
-            //setMyConversationVisibility();
-            Commands.RequerySuggested();
             this.Visibility = Visibility.Visible;
             clearState();
             Dispatcher.queueFocus(SearchInput);

@@ -73,7 +73,6 @@ namespace SandRibbon.Components
         private void SetIdentity(Credentials identity)
         {
             Commands.RemoveWindowEffect.ExecuteAsync(null);
-            Commands.ShowConversationSearchBox.ExecuteAsync(null);
             Dispatcher.adoptAsync(() =>
             {
                 if (rememberMe.IsChecked == true)
@@ -86,6 +85,7 @@ namespace SandRibbon.Components
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(options.pedagogyLevel));
                 this.Visibility = Visibility.Collapsed;
             });
+            Commands.ShowConversationSearchBox.ExecuteAsync(null);
         }
         private void LoginFailed()
         {
@@ -104,7 +104,6 @@ namespace SandRibbon.Components
         {
             return new LoginAutomationPeer(this);
         }
-
         private void clearAndClose(object sender, RoutedEventArgs e)
         {
             WorkspaceStateProvider.ClearSettings();

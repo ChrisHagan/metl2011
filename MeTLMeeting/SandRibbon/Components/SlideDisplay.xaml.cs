@@ -101,16 +101,10 @@ namespace SandRibbon.Components
 
         private bool canAddSlide(object _slide)
         {
-            try
-            {
-                var details = Globals.conversationDetails;
-                if (String.IsNullOrEmpty(Globals.me) || details == null) return false;
-                return (details.Permissions.studentCanPublish || details.Author == Globals.me);
-            }
-            catch (NotSetException e)
-            {
-                return false;
-            }
+            var details = Globals.conversationDetails;
+            if (details.ValueEquals(ConversationDetails.Empty)) return false;
+            if (String.IsNullOrEmpty(Globals.me)) return false;
+            return (details.Permissions.studentCanPublish || details.Author == Globals.me);
         }
         private void addSlide(object _slide)
         {

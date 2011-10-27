@@ -67,7 +67,7 @@ namespace SandRibbon.Providers
                 switch (which) { 
                     case "SetPedagogyLevel":
                         var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
-                        CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(level);
+                        Commands.SetPedagogyLevel.defaultValue = Pedagogicometer.level(level);
                     break;
                     case "SetIdentity":
                         var values = (Crypto.decrypt(param.Attribute("authentication").Value)).Split(':');

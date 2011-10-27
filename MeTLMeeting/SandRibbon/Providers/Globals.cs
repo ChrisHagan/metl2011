@@ -24,6 +24,7 @@ namespace SandRibbon.Providers
         {
             get
             {
+                if(me == null || conversationDetails.ValueEquals(ConversationDetails.Empty)) return false;
                 return me == conversationDetails.Author;
             }
         }
@@ -73,16 +74,8 @@ namespace SandRibbon.Providers
         {
             get
             {
-                try
-                {
-                    var conversationDetails = Globals.conversationDetails;
-                    return new Location(conversationDetails.Jid, slide, conversationDetails.Slides.Select(s => s.id).ToList());
-                }
-                catch (NotSetException e)
-                {
-                    Trace.TraceInformation("CRASH: SandRibbon::Providers:Globals:location threw ex: {0}", e.Message);
-                    throw e;
-                }
+                var conversationDetails = Globals.conversationDetails;
+                return new Location(conversationDetails.Jid, slide, conversationDetails.Slides.Select(s => s.id).ToList());
             }
         }
         public static List<Slide> slides
@@ -108,6 +101,7 @@ namespace SandRibbon.Providers
                     try
                     {
                         var lastJoined = (String)Commands.JoinConversation.lastValue();
+                        Console.WriteLine("Ouch.  Networked on Globals::conversationDetails");
                         return MeTLLib.ClientFactory.Connection().DetailsOf(lastJoined);
                     }
                     catch (NotSetException) { 
@@ -132,15 +126,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                try
-                {
-                    var credentials = Commands.SetIdentity.lastValue();
-                    return (MeTLLib.DataTypes.Credentials)credentials;
-                }
-                catch (NotSetException e)
-                {
-                    return Credentials.Empty;
-                }
+                return (MeTLLib.DataTypes.Credentials) Commands.SetIdentity.lastValue();
             }
         }
         public static List<MeTLLib.DataTypes.AuthorizedGroup> authorizedGroups
@@ -159,14 +145,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                try
-                {
-                    return (bool)Commands.SetSync.lastValue();
-                }
-                catch (NotSetException)
-                {
-                    return true;
-                }
+                return (bool)Commands.SetSync.lastValue();
             }
         }
         public static int teacherSlide
@@ -180,11 +159,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                try
-                {
-                    return (int)Commands.MoveTo.lastValue();
-                }
-                catch (NotSetException e) { return 0; }
+                return (int)Commands.MoveTo.lastValue();
             }
         }
         public static string me
@@ -212,15 +187,7 @@ namespace SandRibbon.Providers
         public static bool rememberMe {
             get
             {
-                try
-                {
-                    return (bool)Commands.RememberMe.lastValue();
-                }
-                catch (NotSetException)
-                {
-                    return false;
-
-                }
+                return (bool)Commands.RememberMe.lastValue();
             }
         }
     }

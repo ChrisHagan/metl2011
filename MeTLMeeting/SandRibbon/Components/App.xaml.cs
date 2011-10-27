@@ -118,7 +118,6 @@ namespace SandRibbon
             Trace.Listeners.Add(new CouchTraceListener());
             base.OnStartup(e);
             new Worm();
-            new CommandParameterProvider();
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
