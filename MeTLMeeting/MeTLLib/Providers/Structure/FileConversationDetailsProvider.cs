@@ -42,7 +42,6 @@ namespace MeTLLib.Providers.Structure
             : base(factory)
         {
             resourceUploader = uploader;
-            ListConversations();
         }
         private readonly int HTTP_PORT = 1188;
         private string ROOT_ADDRESS
