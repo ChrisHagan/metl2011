@@ -914,7 +914,6 @@ namespace MeTLLib.Providers.Connection
         private void handleConversationDetailsUpdated(string[] parts)
         {
             var jid = parts[1];
-            conversationDetailsProvider.ReceiveDirtyConversationDetails(jid);
             var newDetails = conversationDetailsProvider.DetailsOf(jid);
             receiveEvents.receiveConversationDetails(newDetails);
         }

@@ -126,18 +126,6 @@ namespace MeTLLib.Providers.Structure
             details.Slides.Add(new Slide(slideId, details.Author, Slide.TYPE.SLIDE, details.Slides.Count, 720, 540));
             return Update(details);
         }
-        public void ReceiveDirtyConversationDetails(string jid)
-        {
-            var newDetails = DetailsOf(jid);
-            if (Globals.authorizedGroups.Select(g => g.groupKey).Contains("Superuser"))
-            {
-                conversationsCache = (conversationsCache.Where(c => c.Jid != jid).Union(new[] { newDetails })).ToList();
-            }
-            else
-            {
-                conversationsCache = RestrictToAccessible(conversationsCache.Where(c => c.Jid != jid).Union(new[] { newDetails }), Globals.authorizedGroups.Select(g => g.groupKey)).ToList();
-            }
-        }
         private bool DetailsAreAccurate(ConversationDetails details)
         {
             var url = string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
@@ -169,7 +157,6 @@ namespace MeTLLib.Providers.Structure
             }
         }
         private object cacheLock = new object();
-        private List<ConversationDetails> conversationsCache;
         private string meggleURL = "http://adm-web13-v01.adm.monash.edu:8080/search/";
        
         public IEnumerable<SearchConversationDetails> ConversationsFor(String query)
@@ -183,61 +170,10 @@ namespace MeTLLib.Providers.Structure
             {
                 return new List<SearchConversationDetails>();
             }
-
-        }
-        public IEnumerable<ConversationDetails> ListConversations()
-        {
-            try
-            {
-                var myGroups = Globals.authorizedGroups.Select(g => g.groupKey);
-                if (conversationsCache != null && conversationsCache.Count() > 0)
-                {
-                    if (Globals.authorizedGroups.Select(g => g.groupKey).Contains("Superuser"))
-                    {
-                        return conversationsCache;
-                    }
-                    conversationsCache = RestrictToAccessible(conversationsCache, myGroups);
-                    return conversationsCache;
-                }
-                if (server == null) return new List<ConversationDetails>();
-                var data = secureGetData(new System.Uri(string.Format("https://{0}:1188/Structure/all.zip", server.host)));
-                using (var zip = ZipFile.Read(data))
-                {
-                    var summary = zip
-                        .Entries
-                        .Where(e => e.FileName.Contains("details.xml"))
-                        .Select(e =>
-                                    {
-                                        using (var stream = new MemoryStream())
-                                        {
-                                            e.Extract(stream);
-                                            return
-                                                ConversationDetails.ReadXml(
-                                                    XElement.Parse(Encoding.UTF8.GetString(stream.ToArray())));
-                                        }
-                                    }).ToList();
-                    if (Globals.authorizedGroups.Select(g => g.groupKey).Contains("Superuser"))
-                    {
-                        conversationsCache = summary;
-                        return summary;
-                    }
-                    conversationsCache = RestrictToAccessible(summary, myGroups);
-                    return conversationsCache;
-                }
-            }
-            catch (Exception e)
-            {
-                return new List<ConversationDetails>();
-            }
         }
         private List<ConversationDetails> RestrictToAccessible(IEnumerable<ConversationDetails> summary, IEnumerable<string> myGroups)
         {
             return summary.ToList();
-            /*return summary
-                .Where(c => !String.IsNullOrEmpty(c.Subject))
-                .Where(c => myGroups.Contains(c.Subject))
-                .Distinct(new UniqueConversationComparator()).ToList();
-        */
         }
         public ConversationDetails Create(ConversationDetails details)
         {

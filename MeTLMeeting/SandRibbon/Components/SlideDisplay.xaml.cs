@@ -108,7 +108,7 @@ namespace SandRibbon.Components
         }
         private void addSlide(object _slide)
         {
-            MeTLLib.ClientFactory.Connection().AppendSlideAfter(Globals.slide, Globals.conversationDetails.Jid);
+            var newSlide = MeTLLib.ClientFactory.Connection().AppendSlideAfter(Globals.slide, Globals.conversationDetails.Jid);
             moveTo = true;
         }
         private bool isSlideInSlideDisplay(int slide)

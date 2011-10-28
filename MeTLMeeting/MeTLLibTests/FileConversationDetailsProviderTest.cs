@@ -345,18 +345,6 @@ namespace MeTLLibTests
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }
-        [TestMethod()]
-        [DeploymentItem("MeTLLib.dll")]
-        public void ReceiveDirtyConversationDetailsTest()
-        {
-            string jid = string.Empty; // TODO: Initialize to an appropriate value
-            IKernel kernel = new StandardKernel(new BaseModule());
-            kernel.Bind<IWebClientFactory>().To<FileConversationDetailsProviderWebClientFactory>().InSingletonScope();
-            kernel.Bind<IResourceUploader>().To<FileConversationDetailsResourceUploader>().InSingletonScope();
-            FileConversationDetailsProvider provider = kernel.Get<FileConversationDetailsProvider>();
-            provider.ReceiveDirtyConversationDetails(jid);
-            Assert.Inconclusive("A method that does not return a value cannot be verified.");
-        }
         /*
         [TestMethod()]
         [DeploymentItem("MeTLLib.dll")]
