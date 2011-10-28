@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SandRibbon.Utils
 {
-    class Stopwatch
+    public class Stopwatch
     {
         private DateTime start = DateTime.Now;
         public Stopwatch() {
