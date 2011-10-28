@@ -368,13 +368,6 @@ namespace SandRibbon.Components.ResourceDictionaries
         public static readonly DependencyProperty ParentActiveVariantProperty =
             DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(Button), new UIPropertyMetadata(RibbonGroupVariant.Large));
 
-        public Button()
-            : base()
-        {
-            this.Loaded += (a, b) =>
-            {
-            };
-        }
     }
     public class DrawerContent
     {
@@ -408,13 +401,6 @@ namespace SandRibbon.Components.ResourceDictionaries
         public static readonly DependencyProperty InternalButtonSizeProperty =
             DependencyProperty.Register("InternalButtonSize", typeof(InternalButtonSize), typeof(NonRibbonButton), new UIPropertyMetadata(InternalButtonSize.Large));
 
-        public NonRibbonButton()
-            : base()
-        {
-            this.Loaded += (a, b) =>
-            {
-            };
-        }
     }
     public class DoubleButton : System.Windows.Controls.Button
     {
@@ -476,13 +462,6 @@ namespace SandRibbon.Components.ResourceDictionaries
         public static readonly DependencyProperty ParentActiveVariantProperty =
             DependencyProperty.Register("ParentActiveVariant", typeof(RibbonGroupVariant), typeof(DoubleButton), new UIPropertyMetadata(RibbonGroupVariant.Large));
 
-        public DoubleButton()
-            : base()
-        {
-            this.Loaded += (a, b) =>
-            {
-            };
-        }
     }
     public class SlideViewingListBox : System.Windows.Controls.ListBox
     {

@@ -90,6 +90,9 @@ namespace SandRibbon
             Trace.TraceInformation(s);
             return s;
         }
+        public static void mark(string msg) {
+            Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
+        }
         static App()
         {
             setDotNetPermissionState();

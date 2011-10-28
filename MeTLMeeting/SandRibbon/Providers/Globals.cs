@@ -59,14 +59,6 @@ namespace SandRibbon.Providers
         {
             get
             {
-                try
-                {
-                    Commands.SetPedagogyLevel.lastValue();
-                }
-                catch (NotSetException)
-                {
-                    Pedagogicometer.SetDefaultPedagogyLevel();
-                }
                 return (PedagogyLevel)Commands.SetPedagogyLevel.lastValue();
             }
         }
@@ -126,7 +118,12 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (MeTLLib.DataTypes.Credentials) Commands.SetIdentity.lastValue();
+                var v = (MeTLLib.DataTypes.Credentials) Commands.SetIdentity.lastValue();
+                /*
+                if(v.ValueEquals(Credentials.Empty))
+                    Console.WriteLine(String.Format("   Globals.credentials not set when called by {0}",new StackTrace().GetFrame(1).GetMethod()));
+                 */
+                return v;
             }
         }
         public static List<MeTLLib.DataTypes.AuthorizedGroup> authorizedGroups
