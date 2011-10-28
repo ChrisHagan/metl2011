@@ -129,7 +129,13 @@ namespace SandRibbon.Components
             string searchButtonText;
             switch (mode)
             {
-                case "mine": searchButtonText = "Filter my Conversations"; break;
+                case "mine": 
+                    searchButtonText = "Filter my Conversations"; 
+                    MeTLLib.ClientFactory.Connection().ConversationsFor(Globals.me).ForEach(cd => {
+                        if (cd.Subject.ToLower() != "deleted")
+                            searchResults.Add(cd);
+                    });
+                    break;
                 default: searchButtonText = "Search all Conversations"; break;
             }
             Dispatcher.adoptAsync(() =>
