@@ -121,7 +121,6 @@ namespace SandRibbon
 
             //canvas stuff
             Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
-            Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<String>(SetLayer, conversationSearchMustBeClosed));
             Commands.MoveCanvasByDelta.RegisterCommandToDispatcher(new DelegateCommand<Point>(GrabMove));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
@@ -222,9 +221,6 @@ namespace SandRibbon
         }
         private void ListenToAudio(int jid) {
             player.Source = new Uri("http://radar.adm.monash.edu:8500/MeTLStream1.m3u");
-        }
-        private void SetLayer(string layer) {
-            Trace.TraceInformation("SelectedMode {0}", layer);
         }
         private void ImportPowerpoint(object obj)
         {
@@ -1001,7 +997,6 @@ namespace SandRibbon
             });
             CommandManager.InvalidateRequerySuggested();
             Commands.RequerySuggested();
-            Commands.SetLayer.ExecuteAsync("Sketch");
         }
         private class PreferredDisplayIndexComparer : IComparer<FrameworkElement>
         {
