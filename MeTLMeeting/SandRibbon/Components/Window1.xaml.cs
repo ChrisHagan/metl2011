@@ -66,7 +66,9 @@ namespace SandRibbon
             try {
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
-            catch (Exception) { }
+            catch (Exception e) {
+                Console.WriteLine("Couldn't find the image");
+            }
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));

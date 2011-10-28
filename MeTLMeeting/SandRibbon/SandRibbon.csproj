@@ -933,7 +933,9 @@
     <Resource Include="Resources\fontFamily.png" />
     <Resource Include="Resources\fontSize.png" />
     <Resource Include="Resources\Ribbon-ApplicationButton.png" />
-    <Resource Include="Resources\MeTL Collaborator.ico" />
+    <Resource Include="Resources\MeTL Collaborator.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\HandToolWide.png" />
     <Resource Include="Resources\Exit button mine.png" />
     <Resource Include="Resources\Help.png" />

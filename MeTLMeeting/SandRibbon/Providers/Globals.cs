@@ -50,7 +50,7 @@ namespace SandRibbon.Providers
                 }
                 catch (Exception)
                 {
-                    return METLCOLLABORATOR;
+                    return METL;
                 }
             }
 
