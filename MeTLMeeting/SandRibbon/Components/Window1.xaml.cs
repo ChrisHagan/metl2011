@@ -47,19 +47,18 @@ namespace SandRibbon
         {
             get { return Logger.log; }
         }
-        private SandRibbon.Utils.Stopwatch timer = new SandRibbon.Utils.Stopwatch();
         public Window1()
         {
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
-            timer.mark("Window1 constructor complete");
+            App.mark("Window1 constructor complete");
         }
         private void DoConstructor()
         {
             InitializeComponent();
 
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg =>{
-                timer.mark("Identity established");
+                App.mark("Window1 knows about identity");
             }));
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             Commands.SetPedagogyLevel.defaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
@@ -120,13 +119,12 @@ namespace SandRibbon
             Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
 
             //canvas stuff
-            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
             Commands.MoveCanvasByDelta.RegisterCommandToDispatcher(new DelegateCommand<Point>(GrabMove));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.UpdateTextStyling.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed)); Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
+            Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed)); 
 
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
             Commands.SetLayer.ExecuteAsync("Sketch");
@@ -358,10 +356,6 @@ namespace SandRibbon
             var seDialog = new SlidesEditingDialog();
             seDialog.Owner = Window.GetWindow(this);
             seDialog.ShowDialog();
-        }
-        private void SetInkCanvasMode(object unused)
-        {
-            Commands.SetLayer.ExecuteAsync("Sketch");
         }
         private bool LessThan(double val1, double val2, double tolerance)
         {
@@ -922,7 +916,9 @@ namespace SandRibbon
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
         private void sleep(object _obj)
         {
-            Dispatcher.adoptAsync(delegate { Hide(); });
+            Dispatcher.adoptAsync(delegate { 
+                Hide(); 
+            });
         }
         private void wakeUp(object _obj)
         {

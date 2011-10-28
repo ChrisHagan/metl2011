@@ -25,6 +25,7 @@ namespace SandRibbon.Components
         private ClientConnection client;
         public NetworkController()
         {
+            App.mark("NetworkController instantiating");
             client = buildServerSpecificClient();
             MeTLLib.MeTLLibEventHandlers.StatusChangedEventHandler checkValidity = null;
             checkValidity = (sender,e)=>{
@@ -33,6 +34,7 @@ namespace SandRibbon.Components
                     registerCommands();
                     attachToClient();
                     Commands.AllStaticCommandsAreRegistered();
+                    App.mark(String.Format("NetworkController firing SetIdentity for {0}",e.credentials.name));
                     Commands.SetIdentity.ExecuteAsync(e.credentials);
                 }
                 else

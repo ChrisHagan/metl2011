@@ -95,6 +95,7 @@ namespace SandRibbon.Components
         }
         private void loggedIn(MeTLLib.DataTypes.Credentials identity)
         {
+            App.mark("UserCanvasStack knows about identity");
             handwriting.Enable();
         }
         private void UpdateConversationDetails(MeTLLib.DataTypes.ConversationDetails details)

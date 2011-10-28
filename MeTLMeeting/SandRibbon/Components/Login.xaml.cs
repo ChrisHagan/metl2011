@@ -85,6 +85,7 @@ namespace SandRibbon.Components
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(options.pedagogyLevel));
                 this.Visibility = Visibility.Collapsed;
             });
+            App.mark("Login knows identity");
             Commands.ShowConversationSearchBox.ExecuteAsync(null);
         }
         private void LoginFailed()
