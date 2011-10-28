@@ -8,10 +8,4 @@
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">9</core:String>    
     </sr:RibbonTab.Resources>
-    <sr:RibbonGroup Header="Worm" ShowDialogLauncher="False">
-        <sr:RibbonGroup.Variants>
-            <sr:GroupVariant Variant="Collapsed" Priority="9"/>
-        </sr:RibbonGroup.Variants>
-        <quiz:Worm />
-    </sr:RibbonGroup>
 </sr:RibbonTab>           

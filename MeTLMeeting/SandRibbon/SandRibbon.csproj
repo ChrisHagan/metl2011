@@ -409,18 +409,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\Sandpit\ThoughtBubble.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\Sandpit\ThoughtBubbleSpace.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\ScrollBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -506,12 +494,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ZoomControls.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Quizzing\Worm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -726,12 +708,6 @@
     <Compile Include="Components\Sandpit\BoardManagerLauncher.xaml.cs">
       <DependentUpon>BoardManagerLauncher.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Sandpit\ThoughtBubble.xaml.cs">
-      <DependentUpon>ThoughtBubble.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Sandpit\ThoughtBubbleSpace.xaml.cs">
-      <DependentUpon>ThoughtBubbleSpace.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\ScrollBar.xaml.cs">
       <DependentUpon>ScrollBar.xaml</DependentUpon>
     </Compile>
@@ -803,9 +779,6 @@
     </Compile>
     <Compile Include="Utils\BackDoor.cs" />
     <Compile Include="Utils\Crypto.cs" />
-    <Compile Include="Quizzing\Worm.xaml.cs">
-      <DependentUpon>Worm.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Utils\Connection\Printer.cs" />
     <Compile Include="Utils\CursorExtensions.cs" />
     <Compile Include="Utils\CursorHelper.cs" />

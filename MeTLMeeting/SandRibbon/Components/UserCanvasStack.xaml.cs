@@ -31,56 +31,7 @@ namespace SandRibbon.Components
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(loggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
             Commands.SetLayer.ExecuteAsync("Sketch");
-            Commands.ReceiveNewBubble.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.TargettedBubbleContext>(ReceiveNewBubble));
             Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(MoveTo));
-        }
-        public void ReceiveNewBubble(MeTLLib.DataTypes.TargettedBubbleContext context)
-        {
-            if (context.target != handwriting.target) return;
-            var bubble = getBubble(context);
-            Dispatcher.adoptAsync(delegate
-                                    {
-                                        if (bubble != null)
-                                        {
-                                            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
-                                            adornerLayer.Add(UIAdorner.InCanvas(this, bubble, bubble.position));
-                                            bubble.enterBubble();
-                                        }
-                                    });
-        }
-        private ThoughtBubble getBubble(MeTLLib.DataTypes.TargettedBubbleContext bubble)
-        {
-            try
-            {
-                var a = Globals.conversationDetails;
-            }
-            catch (NotSetException)
-            {
-                return null;
-            }
-            ThoughtBubble thoughtBubble = null; 
-            Dispatcher.adopt((Action)delegate
-               {
-                   thoughtBubble = new ThoughtBubble();
-                   var ids = bubble.context.Select(c => c.id);
-                   var relevantStrokes = getStrokesRelevantTo(ids);
-                   var relevantChildren = getChildrenRelevantTo(ids);
-                   if (relevantChildren.Count > 0 || relevantStrokes.Count > 0)
-                   {
-                       thoughtBubble = new ThoughtBubble
-                                               {
-                                                   childContext = relevantChildren,
-                                                   strokeContext = relevantStrokes,
-                                                   parent = bubble.slide,
-                                                   conversation = Globals.conversationDetails.Jid,
-                                                   room = bubble.thoughtSlide
-                                               };
-                       thoughtBubble.overrideCanvasDefaults();
-                       thoughtBubble.relocate();
-
-                   }
-               });
-            return thoughtBubble.conversation != null ? thoughtBubble : null;
         }
         private List<Stroke> getStrokesRelevantTo(IEnumerable<String> ids)
         {

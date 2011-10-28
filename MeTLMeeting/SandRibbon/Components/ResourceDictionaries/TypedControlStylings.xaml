@@ -200,11 +200,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border Name="border" 
-			BorderThickness="1"
-			Padding="2" 
-			BorderBrush="Transparent" 
-			CornerRadius="2" 
-			Background="Transparent">
+            BorderThickness="1"
+            Padding="2" 
+            BorderBrush="Transparent" 
+            CornerRadius="2" 
+            Background="Transparent">
                         <Grid>
                             <Rectangle Fill="{TemplateBinding Background}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Name="content"/>
@@ -247,11 +247,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border Name="border" 
-			BorderThickness="1"
-			Padding="0" 
-			BorderBrush="Transparent" 
-			CornerRadius="0" 
-			Background="Transparent">
+            BorderThickness="1"
+            Padding="0" 
+            BorderBrush="Transparent" 
+            CornerRadius="0" 
+            Background="Transparent">
                         <Grid>
                             <Rectangle Fill="{TemplateBinding Background}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Name="content"/>
@@ -300,11 +300,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="GridSplitter">
                     <Border Name="border" 
-			BorderThickness="1"
-			Padding="0" 
-			BorderBrush="LightGray" 
-			CornerRadius="0" 
-			Background="{StaticResource BackgroundBlueGradient}">
+            BorderThickness="1"
+            Padding="0" 
+            BorderBrush="LightGray" 
+            CornerRadius="0" 
+            Background="{StaticResource BackgroundBlueGradient}">
                         <Rectangle Margin="0" Fill="{TemplateBinding Background}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -359,11 +359,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
                     <Border Name="border" 
-			BorderThickness="1"
-			Padding="4,2" 
-			BorderBrush="Transparent" 
-			CornerRadius="2" 
-			Background="Transparent">
+            BorderThickness="1"
+            Padding="4,2" 
+            BorderBrush="Transparent" 
+            CornerRadius="2" 
+            Background="Transparent">
                         <Grid>
                             <Rectangle Fill="{TemplateBinding Background}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto"/>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Name="content"/>

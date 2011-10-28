@@ -45,7 +45,6 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.ConvertPresentationSpaceToQuiz.RegisterCommand(new DelegateCommand<int>(ConvertPresentationSpaceToQuiz));
             Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(setUpSyncDisplay));
-            Commands.ExploreBubble.RegisterCommand(new DelegateCommand<ThoughtBubble>(exploreBubble));
             Commands.InitiateGrabZoom.RegisterCommand(new DelegateCommand<object>(InitiateGrabZoom));
             Commands.Highlight.RegisterCommand(new DelegateCommand<HighlightParameters>(highlight));
             Commands.RemoveHighlight.RegisterCommand(new DelegateCommand<HighlightParameters>(removeHighlight));
@@ -70,46 +69,6 @@ namespace SandRibbon.Components
             Commands.SetPrivacyOfItems.Execute("private");
         }
 
-        private void exploreBubble(ThoughtBubble thoughtBubble)
-        {
-            var origin = new Point(0, 0);
-            var marquee = new Rectangle();
-            marquee.Width = this.ActualWidth;
-            marquee.Height = this.ActualHeight;
-
-            var setup = new LiveWindowSetup(Globals.location.currentSlide, Globals.me,
-                    stack,
-                marquee, origin, new Point(0, 0),
-                MeTLLib.ClientFactory.Connection().UploadResourceToPath(
-                        toByteArray(this, marquee, origin),
-                        "Resource/" + Globals.location.currentSlide.ToString(),
-                        "quizSnapshot.png",
-                        false).ToString());
-
-            var view = new Rect(setup.origin, new Size(setup.frame.Width, setup.frame.Height));
-            var liveWindow = new Rectangle
-            {
-                Width = setup.frame.Width,
-                Height = setup.frame.Height,
-                Fill = new VisualBrush
-                {
-                    Visual = setup.visualSource,
-                    TileMode = TileMode.None,
-                    Stretch = Stretch.None,
-                    AlignmentX = AlignmentX.Left,
-                    AlignmentY = AlignmentY.Top,
-                    ViewboxUnits = BrushMappingMode.Absolute,
-                    Viewbox = view
-                },
-
-                Tag = setup.snapshotAtTimeOfCreation
-            };
-            Commands.ThoughtLiveWindow.ExecuteAsync(new ThoughtBubbleLiveWindow
-                                                   {
-                                                       LiveWindow = liveWindow,
-                                                       Bubble = thoughtBubble
-                                                   });
-        }
         private void setUpSyncDisplay(int slide)
         {
 
@@ -247,8 +206,7 @@ namespace SandRibbon.Components
                 srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
                 srVideo.MediaElement.ScrubbingEnabled = true;
                 stack.images.AddVideo(srVideo);
-            } foreach (var bubble in parser.bubbleList)
-                stack.ReceiveNewBubble(bubble);
+            } 
             EndInit();
         }
         private void MirrorPresentationSpace(Window1 parent)
