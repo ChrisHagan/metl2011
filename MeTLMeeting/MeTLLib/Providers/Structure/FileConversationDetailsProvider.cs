@@ -166,7 +166,7 @@ namespace MeTLLib.Providers.Structure
                 var data = secureGetString(new Uri(string.Format("{0}{1}", meggleURL, HttpUtility.UrlEncode(query))));
                 return XElement.Parse(data).Descendants("conversation").Select(x => SearchConversationDetails.ReadXML(x)).ToList().OrderBy(s => s.relevance);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new List<SearchConversationDetails>();
             }

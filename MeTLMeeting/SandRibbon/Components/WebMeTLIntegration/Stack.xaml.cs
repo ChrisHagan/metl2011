@@ -30,19 +30,17 @@ namespace SandRibbon.Components.WebMeTLIntegration
         private AwesomiumSharp.Windows.Controls.WebControl chromeBrowser;
         private CookieAwareWebClient client;
         private bool isHealthy = false;
+        private static WebCoreConfig chromeConfig = new WebCoreConfig { EnableJavascript = true, EnablePlugins = true, LogLevel = LogLevel.Verbose, SaveCacheAndCookies = true };
+        static Stack()
+        {
+            WebCore.Initialize(chromeConfig);
+        }
+           
         public Stack()
         {
             InitializeComponent();
-        }
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            WebCoreConfig chromeConfig = new WebCoreConfig { EnableJavascript = true, EnablePlugins = true, LogLevel = LogLevel.Verbose, SaveCacheAndCookies = true };
-            WebCore.Initialize(chromeConfig);
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>((cred) => establishWebMeTLConnection(cred)));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
-        }
-        private void establishWebMeTLConnection(){
-            establishWebMeTLConnection(Globals.credentials);
         }
         private void establishWebMeTLConnection(Credentials cred)
         {
@@ -71,13 +69,6 @@ namespace SandRibbon.Components.WebMeTLIntegration
             });
         }
         private void setupChrome(){
-            //WebCoreConfig chromeConfig = new WebCoreConfig { EnableJavascript = true, EnablePlugins = true, LogLevel = LogLevel.Verbose, SaveCacheAndCookies = true };
-            /*if (WebCore.IsRunning)
-                WebCore.Shutdown();
-            while (WebCore.IsShuttingDown) 
-                Thread.Sleep(100);
-             */
-            //WebCore.Initialize(chromeConfig);
             Dispatcher.adopt(delegate {
               if (chromeBrowser != null)
               {
@@ -85,7 +76,6 @@ namespace SandRibbon.Components.WebMeTLIntegration
                       chromeBrowser.Crashed -= crashBrowserHandler;
                       chromeBrowser.PluginCrashed -= pluginCrashedHandler; 
                       chromeBrowser.Close();
-                      chromeBrowser = null;
                       browserContainer.Children.Clear();
               }
               chromeBrowser = new WebControl();
@@ -232,7 +222,7 @@ namespace SandRibbon.Components.WebMeTLIntegration
 
         private void AttemptToReconnect(object sender, RoutedEventArgs e)
         {
-            establishWebMeTLConnection();
+            establishWebMeTLConnection(Globals.credentials);
         }
     }
 }
