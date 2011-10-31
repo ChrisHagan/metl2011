@@ -25,6 +25,7 @@ using SandRibbon.Utils;
 using MeTLLib.DataTypes;
 using System.IO;
 using System.Xml;
+using SandRibbon.Components.WebMeTLIntegration;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -307,38 +308,17 @@ namespace SandRibbon.Components.Canvas
                 //local files will deliver filenames.  
                 fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
             }
+            else if (validFormats.Contains("SandRibbon.Components.WebMeTLIntegration.AwesomiumDragObject"))
+            {
+                var awesomeDragObj = (AwesomiumDragObject)e.Data.GetData("SandRibbon.Components.WebMeTLIntegration.AwesomiumDragObject");
+                var html = awesomeDragObj._html;
+                var host = awesomeDragObj._originatingPage;
+                fileNames = ProcessHtmlDrop(html,host);
+            }
             else if (validFormats.Contains("text/html"))
             {
-                try
-                {
-                    var html = System.Text.Encoding.UTF8.GetString(((MemoryStream)e.Data.GetData("text/html")).ToArray());
-                    var htmlElement = System.Xml.Linq.XElement.Parse(html);
-                    if (htmlElement.Name == "img")
-                    {
-                        fileNames = new string[] { 
-                            htmlElement.Attribute("src").Value
-                        };
-                    }
-                    else
-                    {
-                        fileNames = htmlElement.Descendants("img").Select(i => i.Attribute("src").Value).ToArray();
-                    }
-                    var wc = new CookieAwareWebClient();
-                    fileNames = fileNames.Select(remoteF =>
-                    {
-                        var uri = new Uri(remoteF);
-                        var extension = Path.GetExtension(uri.LocalPath);
-                        if (String.IsNullOrEmpty(extension))
-                            extension = ".jpg";
-                        var localF = Convert.ToBase64String(Encoding.UTF8.GetBytes(remoteF)) + extension;
-                        File.WriteAllBytes(localF, wc.DownloadData(remoteF));
-                        return localF;
-                    }).ToArray();
-                }
-                catch (XmlException ex){
-                    Console.WriteLine("Drop exception: {0}", ex.Message);
-                    MessageBox.Show("Sorry, MeTL couldn't handle this content.");
-                }
+                var html = System.Text.Encoding.UTF8.GetString(((MemoryStream)e.Data.GetData("text/html")).ToArray());
+                fileNames = ProcessHtmlDrop(html);
             }
             else if (validFormats.Contains("UniformResourceLocator"))
             {
@@ -377,6 +357,54 @@ namespace SandRibbon.Components.Canvas
             if (needsToRemoveTempFile)
                 File.Delete(tempImagePath);
             e.Handled = true;
+        }
+        public static string[] ProcessHtmlDrop(string html){ 
+            return ProcessHtmlDrop(html,new Uri("badscheme://this.is.not.a.valid.url"));
+        }
+        public static string[] ProcessHtmlDrop(string html, Uri originatingHost)
+        {
+            var fileNames = new string[]{};
+            try
+            {
+                var htmlElement = System.Xml.Linq.XElement.Parse(html);
+                if (htmlElement.Name.LocalName == "img")
+                {
+                    fileNames = new string[] { 
+                            htmlElement.Attribute("src").Value
+                        };
+                }
+                else
+                {
+                    fileNames = htmlElement.Descendants("img").Select(i => i.Attribute("src").Value).ToArray();
+                }
+                var wc = new CookieAwareWebClient();
+                fileNames = fileNames.Select(fn =>
+                {
+                    var remoteF = "";
+                    if (originatingHost.Scheme != "badscheme") {
+                         var fnUri = new System.Uri(fn,UriKind.RelativeOrAbsolute);
+                         if (fnUri.IsAbsoluteUri)
+                            return fnUri.ToString();
+                         else
+                       remoteF = new Uri(originatingHost, fnUri).ToString();
+                    }
+                    else remoteF = fn;
+                    var uri = new Uri(remoteF,UriKind.RelativeOrAbsolute);
+                    var extension = Path.GetExtension(uri.LocalPath);
+                    if (String.IsNullOrEmpty(extension))
+                        extension = ".jpg";
+                    var localF = Convert.ToBase64String(Encoding.UTF8.GetBytes(remoteF)) + extension;
+                    File.WriteAllBytes(localF, wc.DownloadData(remoteF));
+                    return localF;
+                }).ToArray();
+            }
+            catch (XmlException ex)
+            {
+                Console.WriteLine("Drop exception: {0}", ex.Message);
+                MessageBox.Show("Sorry, MeTL couldn't handle this content.");
+            }
+
+            return fileNames;
         }
         public void SetCanEdit(bool canEdit)
         {
