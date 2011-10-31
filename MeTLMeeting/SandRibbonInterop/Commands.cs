@@ -205,7 +205,7 @@ namespace SandRibbon
         #endregion
         #region AppLevel
         public static DefaultableCompositeCommand RegisterPowerpointSourceDirectoryPreference = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand MeTLType = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand MeTLType = new DefaultableCompositeCommand(String.Empty);
         public static DefaultableCompositeCommand LogOut = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand LoginFailed = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetIdentity = new DefaultableCompositeCommand(Credentials.Empty);

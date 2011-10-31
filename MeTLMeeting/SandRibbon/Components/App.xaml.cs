@@ -114,7 +114,7 @@ namespace SandRibbon
         {
 #if DEBUG
             MessageBox.Show("You are operating against the staging server.");
-            isStaging = true;
+            isStaging = false;
 #else
             isStaging = false;
 #endif

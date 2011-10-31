@@ -1,6 +1,34 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <TestLists xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
-  <TestList name="Lists of Tests" id="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
-    <RunConfiguration id="8b0912d8-d00d-4088-959f-898f2c996016" name="Local" storage="local.testsettings" type="Microsoft.VisualStudio.TestTools.Common.TestRunConfiguration, Microsoft.VisualStudio.QualityTools.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <TestList name="BasicMeTLFunctionality" id="018a72cc-7ed7-453d-9540-4766807b4ccd" parentListId="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
+    <Description>Run through each function of MeTL. A minimal test for functionality. Other test lists will cover edge cases and quirks.</Description>
+  </TestList>
+  <TestList name="UseCase_Search" id="04ce737b-d79c-4807-989f-96a6ef4e3fec" parentListId="cb048c62-9979-4429-a258-8a2421016870">
+    <TestLinks>
+      <TestLink id="12adc8e0-5349-495f-ae93-d16a9f1b0684" name="usecasesearch_searchforotherconversations" storage="functional\usecasesearch_searchforotherconversations.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="34b3275b-861f-4e4f-8b3d-632aabef53a6" name="usecasesearch_searchforownconversations" storage="functional\usecasesearch_searchforownconversations.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+    </TestLinks>
+  </TestList>
+  <TestList name="UseCase_LogIn" id="574b6d00-5228-42e5-a4ef-4209dfc68688" parentListId="cb048c62-9979-4429-a258-8a2421016870">
+    <Description>Tests for all the log in use cases</Description>
+    <TestLinks>
+      <TestLink id="90c11457-9a92-49a5-af2e-7b3cbecca286" name="usecaselogin_loginandsavecredentials" storage="functional\usecaselogin_loginandsavecredentials.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="c5881a39-7aa6-4cfb-ad8f-87e0c14c4bae" name="usecaselogin_startupandupdate" storage="functional\usecaselogin_startupandupdate.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="b523b0a2-42f5-4de4-b7d6-a153b436a520" name="usecaselogin_enterconversation" storage="functional\usecaselogin_enterconversation.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="523fae4f-6af9-41d5-98e8-aefd97fd65a4" name="usecaselogin_loginwithvalidcredentials" storage="functional\usecaselogin_loginwithvalidcredentials.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+    </TestLinks>
+  </TestList>
+  <TestList name="Lists of Tests" id="8c43106b-9dc1-4907-a29f-aa66a61bf5b6" />
+  <TestList name="ChangeFontSizeButtonTests" id="90e6842f-c6bc-4a26-a70f-62951ea0919e" parentListId="018a72cc-7ed7-453d-9540-4766807b4ccd">
+    <Description>Insert a textbox and change the font size using the font size increase and decrease buttons.</Description>
+  </TestList>
+  <TestList name="UseCase_ConversationControl" id="c7af97fb-2b14-4670-bfc9-ea7cae57f04a" parentListId="cb048c62-9979-4429-a258-8a2421016870">
+    <TestLinks>
+      <TestLink id="2eb74424-31e3-441f-9581-f66e5967a6c4" name="UseCaseConversationControl_OwnersCanAddPage" storage="functional\usecaseconversationcontrol_ownerscanaddpage.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="d5d3882d-713e-49d5-a114-4e69f53cbebe" name="usecaseconversationcontrol_changeprivacyofownconversation" storage="functional\usecaseconversationcontrol_changeprivacyofownconversation.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+    </TestLinks>
+  </TestList>
+  <TestList name="MeTLHealthCheck" id="cb048c62-9979-4429-a258-8a2421016870" parentListId="018a72cc-7ed7-453d-9540-4766807b4ccd">
+    <Description>Run through all the use cases</Description>
   </TestList>
 </TestLists>
