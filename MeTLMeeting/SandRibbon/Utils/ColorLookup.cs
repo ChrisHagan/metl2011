@@ -12,16 +12,16 @@ namespace SandRibbon
         {
             if (s_mediaColors.Count == 0)
             {
-                s_mediaColors.Add(Colors.Black);
-                s_mediaColors.Add(Colors.White);
-                s_mediaColors.Add(Colors.Blue);
-                s_mediaColors.Add(Colors.Red);
-                s_mediaColors.Add(Colors.Yellow);
-                s_mediaColors.Add(Colors.Green);
                 s_mediaColors.Add(Colors.Brown);
                 s_mediaColors.Add(Colors.Orange);
                 s_mediaColors.Add(Colors.Pink);
                 s_mediaColors.Add(Colors.Purple);
+                s_mediaColors.Add(Colors.Black);
+                //s_mediaColors.Add(Colors.White);
+                s_mediaColors.Add(Colors.Blue);
+                s_mediaColors.Add(Colors.Red);
+                s_mediaColors.Add(Colors.Yellow);
+                s_mediaColors.Add(Colors.Green);
                 s_mediaColors.Add(Colors.AliceBlue);
                 s_mediaColors.Add(Colors.AntiqueWhite);
                 s_mediaColors.Add(Colors.Aqua);

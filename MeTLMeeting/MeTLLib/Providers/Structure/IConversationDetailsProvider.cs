@@ -7,13 +7,12 @@ namespace MeTLLib.Providers.Structure
     {
         ConversationDetails DetailsOf(string jid);
         ConversationDetails Update(ConversationDetails details);
-        IEnumerable<ConversationDetails> ListConversations();
+        IEnumerable<SearchConversationDetails> ConversationsFor(string query);
         ConversationDetails Create(ConversationDetails details);
         ConversationDetails AppendSlide(string title);
         ConversationDetails AppendSlideAfter(int slideId, string title);
         ConversationDetails AppendSlideAfter(int slideId, string title, Slide.TYPE type);
         ApplicationLevelInformation GetApplicationLevelInformation();
-        void ReceiveDirtyConversationDetails(string jid);
         bool isAccessibleToMe(string jid);
     }
 }

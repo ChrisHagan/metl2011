@@ -90,6 +90,9 @@ namespace SandRibbon
             Trace.TraceInformation(s);
             return s;
         }
+        public static void mark(string msg) {
+            Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
+        }
         static App()
         {
             setDotNetPermissionState();
@@ -117,7 +120,6 @@ namespace SandRibbon
 #endif
             Trace.Listeners.Add(new CouchTraceListener());
             base.OnStartup(e);
-            new CommandParameterProvider();
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);

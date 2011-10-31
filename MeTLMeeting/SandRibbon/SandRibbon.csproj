@@ -193,6 +193,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Components\colorCodedUsers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\CommandBridge.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -561,6 +565,9 @@
     <Compile Include="Components\blacklistController.xaml.cs">
       <DependentUpon>blacklistController.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\colorCodedUsers.xaml.cs">
+      <DependentUpon>colorCodedUsers.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\CommandBridge.xaml.cs">
       <DependentUpon>CommandBridge.xaml</DependentUpon>
     </Compile>
@@ -867,6 +874,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\visualize.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\close.png" />
     <Resource Include="Resources\HighlighterShiny.png" />
     <Resource Include="Resources\NewSlide.png" />
@@ -896,7 +906,9 @@
     <Resource Include="Resources\fontFamily.png" />
     <Resource Include="Resources\fontSize.png" />
     <Resource Include="Resources\Ribbon-ApplicationButton.png" />
-    <Resource Include="Resources\MeTL Collaborator.ico" />
+    <Resource Include="Resources\MeTL Collaborator.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\HandToolWide.png" />
     <Resource Include="Resources\Exit button mine.png" />
     <Resource Include="Resources\Help.png" />

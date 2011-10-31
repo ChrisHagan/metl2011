@@ -31,7 +31,7 @@ namespace SandRibbon.Components
         }
         private void setMyConversationVisibility()
         {
-            mine.Visibility = MeTLLib.ClientFactory.Connection().AvailableConversations.ToList().Where(c => c.Author == Globals.me && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
+            mine.Visibility = MeTLLib.ClientFactory.Connection().ConversationsFor(Globals.me).ToList().Where(c => c.Author == Globals.me && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
             if (mine.Visibility == Visibility.Collapsed)
                 find.IsChecked = true;
         }
@@ -50,7 +50,7 @@ namespace SandRibbon.Components
         {
             if (String.IsNullOrEmpty(Globals.location.activeConversation))
             {
-               current.Visibility = Visibility.Collapsed;
+                current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
             }

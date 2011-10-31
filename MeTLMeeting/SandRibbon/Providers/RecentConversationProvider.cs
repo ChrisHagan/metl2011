@@ -31,16 +31,19 @@ namespace SandRibbon.Providers
                         conversation.Attribute("jid").Value,
                         conversation.Attribute("author").Value,
                         new List<Slide>(),
-                        new Permissions("",false,false,false),"",
+                        new Permissions("",false,false,false),
+                        conversation.Attribute("subject").Value,
                         new DateTime(),
                         SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value)))
                     .ToList();
-                var allConversations = MeTLLib.ClientFactory.Connection().AvailableConversations.Select(ac => ac).Where(recentConversations.Contains).ToList();
-                allConversations.RemoveAll(c => c.Subject.ToLower() == "deleted");
+                /*
+                var conn  = MeTLLib.ClientFactory.Connection();
+                var allConversations = recentConversations.Where(rc => conn.DetailsOf(rc.Jid).Subject.ToLower() != "deleted");
                 var sortedRecent = recentConversations.Where(rc => allConversations.Where(ac => ac.Jid == rc.Jid).Count() > 0).ToList();
                 foreach (var conv in sortedRecent)
                     conv.Title = allConversations.Where(ac => ac.Jid == conv.Jid).First().Title;
-                return sortedRecent.Count > 0 ? sortedRecent.OrderByDescending(c => c.LastAccessed).ToList() : new List<ConversationDetails>();
+                 */
+                return recentConversations.Count > 0 ? recentConversations.OrderByDescending(c => c.LastAccessed).ToList() : new List<ConversationDetails>();
             }
             return new List<ConversationDetails>();
         }
@@ -61,6 +64,7 @@ namespace SandRibbon.Providers
                             new XAttribute("title", document.Title),
                             new XAttribute("author", document.Author),
                             new XAttribute("jid", document.Jid),
+                            new XAttribute("subject", document.Subject),
                             new XAttribute("lastAccessTime", SandRibbonObjects.DateTimeFactory.Now().ToString())));
                         break;
                     case 1:

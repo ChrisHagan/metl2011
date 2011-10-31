@@ -72,6 +72,7 @@ namespace SandRibbon.Utils
         private static bool connectionFailed = false;
         private static int slide = -1;
         private static string privacy = "Not set";
+        private static string user = "UNKNOWN";
         static Logger()
         {
             Commands.Reconnecting.RegisterCommand(new DelegateCommand<object>(delegate { 
@@ -79,6 +80,7 @@ namespace SandRibbon.Utils
             }));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg => user = Globals.me));
         }
         private static void MoveTo(int where){
             slide = where;
@@ -131,7 +133,7 @@ namespace SandRibbon.Utils
         {
             try
             {
-                Log(string.Format("CRASH: (fixed): {0} {1}", Globals.me, message));
+                Log(string.Format("CRASH: (fixed): {0} {1}", user, message));
             }
             catch (NotSetException e)
             {
@@ -147,8 +149,7 @@ namespace SandRibbon.Utils
         }
         private static void putCouch(string message, DateTime now)
         {
-            
-            if (String.IsNullOrEmpty(Globals.me)) return;
+            if (String.IsNullOrEmpty(user)) return;
             if (String.IsNullOrEmpty(message)) return;
             if (message.Contains(POST_LOG)) return;
             if (blacklist.Any(prefix => message.StartsWith(prefix))) return;
@@ -180,7 +181,7 @@ namespace SandRibbon.Utils
                         {
                             content = finalMessage,
                             timestamp = now.Ticks,
-                            user = Globals.me,
+                            user = user,
                             slide = slide,
                             server = ClientFactory.Connection().server.host
                         };

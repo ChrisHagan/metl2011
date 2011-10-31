@@ -583,12 +583,9 @@ namespace MeTLLib
         {
             return new System.Uri(resourceUploader.uploadResourceToPath(data, Room.ToString(), filename, false));
         }
-        public List<ConversationDetails> AvailableConversations
+        public List<SearchConversationDetails> ConversationsFor(String query)
         {
-            get
-            {
-                return conversationDetailsProvider.ListConversations().ToList();
-            }
+            return conversationDetailsProvider.ConversationsFor(query).ToList();
         }
         #endregion
         public void SaveUserOptions(string username, UserOptions options)

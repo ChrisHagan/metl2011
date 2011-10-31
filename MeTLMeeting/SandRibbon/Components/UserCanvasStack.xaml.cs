@@ -30,7 +30,6 @@ namespace SandRibbon.Components
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(loggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
-            Commands.SetLayer.ExecuteAsync("Sketch");
             Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(MoveTo));
         }
         private List<Stroke> getStrokesRelevantTo(IEnumerable<String> ids)
@@ -47,6 +46,7 @@ namespace SandRibbon.Components
         }
         private void loggedIn(MeTLLib.DataTypes.Credentials identity)
         {
+            App.mark("UserCanvasStack knows about identity");
             handwriting.Enable();
         }
         private void UpdateConversationDetails(MeTLLib.DataTypes.ConversationDetails details)

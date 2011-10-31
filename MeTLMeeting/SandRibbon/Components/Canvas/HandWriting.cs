@@ -73,6 +73,7 @@ namespace SandRibbon.Components.Canvas
         }
         private void SetDrawingAttributes(DrawingAttributes logicalAttributes)
         {
+            if (logicalAttributes == null) return;
             if (me.ToLower() == "projector") return;
             var zoomCompensatedAttributes = logicalAttributes.Clone();
             try
@@ -519,9 +520,7 @@ namespace SandRibbon.Components.Canvas
         }
         private StrokeCollection filter(IEnumerable<Stroke> from, string author, bool justAuthors)
         {
-            //Banhammer line of code
-            //if (!justAuthors && (inMeeting() || Globals.conversationDetails.Author == Globals.me)) return new StrokeCollection(from);
-            if (!justAuthors && inMeeting()) return new StrokeCollection(from);
+            if (!justAuthors && (true || inMeeting() || Globals.conversationDetails.Author == Globals.me)) return new StrokeCollection(from);
             return new StrokeCollection(from.Where(s => s.tag().author == author));
         }
         

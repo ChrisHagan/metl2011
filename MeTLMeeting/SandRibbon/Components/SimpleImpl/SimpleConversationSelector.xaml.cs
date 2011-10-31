@@ -31,6 +31,7 @@ namespace SandRibbon.Components
 
         private void SetIdentity(object obj)
         {
+            App.mark("SimpleConversationSelector knows about identity");
             RedrawList(null);
         }
 
@@ -64,9 +65,11 @@ namespace SandRibbon.Components
                 var potentialConversations = RecentConversationProvider.loadRecentConversations();
                 if (potentialConversations != null && potentialConversations.Count() > 0)
                 {
-                    recentConversations = potentialConversations.Where(c => c.IsValid && c.Subject != "Deleted");
+                    recentConversations = potentialConversations.Where(c => 
+                        c.IsValid && c.Subject != "Deleted");
                     conversations.ItemsSource = recentConversations.Take(6);
                 }
+                App.mark("SimpleConversationSelector redrew list");
             });
         }
         public void List(IEnumerable<ConversationDetails> conversations)

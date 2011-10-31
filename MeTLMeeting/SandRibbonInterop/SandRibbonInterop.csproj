@@ -87,7 +87,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandParameterProvider.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Interfaces\IConversationListing.cs" />
     <Compile Include="Interfaces\IConversationSelector.cs" />
@@ -97,6 +96,7 @@
     <Compile Include="Interfaces\ISlideDisplay.cs" />
     <Compile Include="Interfaces\ITextTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stopwatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">

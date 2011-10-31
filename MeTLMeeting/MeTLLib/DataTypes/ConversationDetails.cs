@@ -9,6 +9,28 @@ using MeTLLib.Providers;
 
 namespace MeTLLib.DataTypes
 {
+
+    public class SearchConversationDetails:ConversationDetails
+    {
+        public int relevance { get; set; }
+        private static readonly string TITLE_TAG = "title";
+        private static readonly string AUTHOR_TAG = "author";
+        private static readonly string CREATED_TAG = "created";
+        private static readonly string JID_TAG = "jid";
+        private static readonly string RESTRICTION_TAG = "restriction";
+        private static readonly string RELEVANCE_TAG = "relevance";
+
+        public SearchConversationDetails(string title, string author, string created, int relevance, string restriction,  string jid):base(title, jid, author, new List<Slide>(), Permissions.Empty, restriction)
+        {
+            this.relevance = relevance;
+        }
+        public static SearchConversationDetails ReadXML(XElement doc)
+        {
+            var Title = doc.Element(TITLE_TAG).Value;
+            return new SearchConversationDetails(doc.Element(TITLE_TAG).Value,doc.Element(AUTHOR_TAG).Value, doc.Element(CREATED_TAG).Value, Int32.Parse(doc.Element(RELEVANCE_TAG).Value),doc.Element(RESTRICTION_TAG).Value,doc.Element(JID_TAG).Value);
+        }
+    }
+
     public class ConversationDetails : INotifyPropertyChanged
     {
        public bool isDeleted

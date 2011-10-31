@@ -62,7 +62,6 @@ namespace SandRibbon.Components
         public static HideIfNotCurrentConversation hideIfNotCurrentConversation = new HideIfNotCurrentConversation();
         private ObservableCollection<MeTLLib.DataTypes.ConversationDetails> searchResults = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
         protected static string activeConversation;
-        protected static string me;
         public string Errors
         {
             get { return (string)GetValue(ErrorsProperty); }
@@ -72,11 +71,12 @@ namespace SandRibbon.Components
         public static readonly DependencyProperty ErrorsProperty =
             DependencyProperty.Register("Errors", typeof(string), typeof(ConversationSearchBox), new UIPropertyMetadata(""));
         public string Version { get; set; }
+        private static string me;
         private System.Threading.Timer refreshTimer;
         public ConversationSearchBox()
         {
             InitializeComponent();
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(SetIdentity));
+            App.mark("Initializing conversationSearch");
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
@@ -88,17 +88,21 @@ namespace SandRibbon.Components
             Version = ConfigurationProvider.instance.getMetlVersion();
             versionNumber.DataContext = Version;
             SearchResults.ItemsSource = searchResults;
-            activeConversation = Globals.location.activeConversation;
-            me = Globals.me;
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg=> me = Globals.me));
             var view = GetListCollectionView();
             view.Filter = isWhatWeWereLookingFor;
             view.CustomSort = new ConversationComparator();
             refreshTimer = new Timer(delegate {
                 Dispatcher.Invoke((Action)delegate
                 {
-                    GetListCollectionView().Refresh();
+                    searchResults.Clear();
+                    MeTLLib.ClientFactory.Connection().ConversationsFor(SearchInput.Text.Trim()).ForEach(cd => {
+                        if (cd.Subject.ToLower() != "deleted")
+                            searchResults.Add(cd);
+                    });
                 });
             });
+            App.mark("Initialized conversation search");
         }
         private void setMyConversationVisibility()
         {
@@ -122,10 +126,16 @@ namespace SandRibbon.Components
                 updateLiveButton(mode);
                 GetListCollectionView().Refresh();
             });
-                string searchButtonText;
+            string searchButtonText;
             switch (mode)
             {
-                case "mine": searchButtonText = "Filter my Conversations"; break;
+                case "mine": 
+                    searchButtonText = "Filter my Conversations"; 
+                    MeTLLib.ClientFactory.Connection().ConversationsFor(Globals.me).ForEach(cd => {
+                        if (cd.Subject.ToLower() != "deleted")
+                            searchResults.Add(cd);
+                    });
+                    break;
                 default: searchButtonText = "Search all Conversations"; break;
             }
             Dispatcher.adoptAsync(() =>
@@ -141,16 +151,6 @@ namespace SandRibbon.Components
                 if (button.Name == mode)
                     button.IsChecked = true;
         }
-        private void SetIdentity(object _arg){
-            var availableConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
-            Dispatcher.adoptAsync(() =>
-            {
-                foreach (var conversation in availableConversations)
-                    if(conversation.Subject.ToLower() != "deleted")
-                        searchResults.Add(conversation);
-            });
-            //setMyConversationVisibility();
-        }
         private void clearState(){
             SearchInput.Text = "";
             GetListCollectionView().Refresh();
@@ -165,11 +165,10 @@ namespace SandRibbon.Components
             else {
                 currentConversation.Visibility = Visibility.Visible;
             }
-            //setMyConversationVisibility();
-            Commands.RequerySuggested();
             this.Visibility = Visibility.Visible;
             clearState();
             Dispatcher.queueFocus(SearchInput);
+            App.mark("ConversationSearchBox showing");
         }
         private void HideConversationSearchBox(object o)
         {

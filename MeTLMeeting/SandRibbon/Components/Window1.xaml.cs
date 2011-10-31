@@ -51,20 +51,24 @@ namespace SandRibbon
         {
             DoConstructor();
             Commands.AllStaticCommandsAreRegistered();
+            App.mark("Window1 constructor complete");
         }
         private void DoConstructor()
         {
             InitializeComponent();
 
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg =>{
+                App.mark("Window1 knows about identity");
+            }));
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
-            var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
-            CommandParameterProvider.parameters[Commands.SetPedagogyLevel] = Pedagogicometer.level(level);
+            Commands.SetPedagogyLevel.defaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Title = "MeTL 2011";
             try {
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
-            catch (Exception) { }
-            Globals.userInformation.policy = new Policy(false, false);
+            catch (Exception e) {
+                Console.WriteLine("Couldn't find the image");
+            }
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
@@ -83,7 +87,7 @@ namespace SandRibbon
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
-            
+
             //zoom
             Commands.FitToView.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.OriginalView.RegisterCommand(new DelegateCommand<object>(OriginalView, conversationSearchMustBeClosed));
@@ -92,22 +96,22 @@ namespace SandRibbon
             Commands.FitToPageWidth.RegisterCommand(new DelegateCommand<object>(FitToPageWidth));
             Commands.ExtendCanvasBothWays.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetZoomRect.RegisterCommandToDispatcher(new DelegateCommand<Rect>(SetZoomRect));
- 
+
             Commands.PrintConversation.RegisterCommand(new DelegateCommand<object>(PrintConversation, mustBeInConversation));
-            
+
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox, mustBeLoggedIn));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
-            
+
             Commands.MirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.ProxyMirrorPresentationSpace.RegisterCommand(new DelegateCommand<object>(ProxyMirrorPresentationSpace));
-            
+
             Commands.BlockInput.RegisterCommand(new DelegateCommand<string>(BlockInput));
             Commands.UnblockInput.RegisterCommand(new DelegateCommand<object>(UnblockInput));
 
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
-            
+
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
             Commands.AddWindowEffect.RegisterCommand(new DelegateCommand<object>(AddWindowEffect));
             Commands.RemoveWindowEffect.RegisterCommandToDispatcher(new DelegateCommand<object>(RemoveWindowEffect));
@@ -115,20 +119,18 @@ namespace SandRibbon
             Commands.ReceiveWakeUp.RegisterCommand(new DelegateCommand<object>(wakeUp));
             Commands.ReceiveSleep.RegisterCommand(new DelegateCommand<object>(sleep));
             Commands.CreateBlankConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
-            
+
             //canvas stuff
-            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(SetInkCanvasMode, mustBeInConversation));
-            Commands.SetLayer.RegisterCommandToDispatcher(new DelegateCommand<String>(SetLayer, conversationSearchMustBeClosed));
             Commands.MoveCanvasByDelta.RegisterCommandToDispatcher(new DelegateCommand<Point>(GrabMove));
             Commands.AddImage.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.UpdateTextStyling.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.RestoreTextDefaults.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed));Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
-            
+            Commands.ToggleFriendsVisibility.RegisterCommand(new DelegateCommand<object>(ToggleFriendsVisibility, conversationSearchMustBeClosed)); 
+
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(SetPedagogyLevel, mustBeLoggedIn));
             Commands.SetLayer.ExecuteAsync("Sketch");
-            
+
             Commands.AddPrivacyToggleButton.RegisterCommand(new DelegateCommand<PrivacyToggleButton.PrivacyToggleButtonInfo>(AddPrivacyButton));
             Commands.RemovePrivacyAdorners.RegisterCommand(new DelegateCommand<object>(RemovePrivacyAdorners));
             Commands.DummyCommandToProcessCanExecuteForPrivacyTools.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosedAndMustBeAllowedToPublish));
@@ -136,23 +138,19 @@ namespace SandRibbon
 
             Commands.ListenToAudio.RegisterCommand(new DelegateCommand<int>(ListenToAudio));
             Commands.ChangeLanguage.RegisterCommand(new DelegateCommand<System.Windows.Markup.XmlLanguage>(changeLanguage));
-   
+
             Commands.Reconnecting.RegisterCommandToDispatcher(new DelegateCommand<bool>(Reconnecting));
             Commands.SetUserOptions.RegisterCommandToDispatcher(new DelegateCommand<UserOptions>(SetUserOptions));
             Commands.SetRibbonAppearance.RegisterCommandToDispatcher(new DelegateCommand<RibbonAppearance>(SetRibbonAppearance));
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
+            Commands.PresentVideo.RegisterCommandToDispatcher(new DelegateCommand<object>(presentVideo));
             adornerScroll.scroll = scroll;
             adornerScroll.scroll.SizeChanged += adornerScroll.scrollChanged;
             adornerScroll.scroll.ScrollChanged += adornerScroll.scroll_ScrollChanged;
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, PrintBinding));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, HelpBinding, (_unused, e) => { e.Handled = true; e.CanExecute = true; }));
             AddWindowEffect(null);
             ribbon.Loaded += ribbon_Loaded;
             WorkspaceStateProvider.RestorePreviousSettings();
-            CommandManager.InvalidateRequerySuggested();
-            player.LoadedBehavior = MediaState.Manual;
-            player.Loaded += playMedia;
-            //player.MediaOpened += playMedia;
-            Commands.PresentVideo.RegisterCommandToDispatcher(new DelegateCommand<object>(presentVideo));
             RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
             getDefaultSystemLanguage();
         }
@@ -209,7 +207,6 @@ namespace SandRibbon
                 Logger.Crash(e);
             }
         }
-        
         private void ApplicationPopup_ShowOptions(object sender, EventArgs e)
         {
             Trace.TraceInformation("UserOptionsDialog_Show");
@@ -224,9 +221,6 @@ namespace SandRibbon
         }
         private void ListenToAudio(int jid) {
             player.Source = new Uri("http://radar.adm.monash.edu:8500/MeTLStream1.m3u");
-        }
-        private void SetLayer(string layer) {
-            Trace.TraceInformation("SelectedMode {0}", layer);
         }
         private void ImportPowerpoint(object obj)
         {
@@ -301,7 +295,6 @@ namespace SandRibbon
                 ribbon.ToggleMinimize();
         }
         private void Reconnecting(bool success) {
-
             if (success)
             {
                 try
@@ -365,10 +358,6 @@ namespace SandRibbon
             var seDialog = new SlidesEditingDialog();
             seDialog.Owner = Window.GetWindow(this);
             seDialog.ShowDialog();
-        }
-        private void SetInkCanvasMode(object unused)
-        {
-            Commands.SetLayer.ExecuteAsync("Sketch");
         }
         private bool LessThan(double val1, double val2, double tolerance)
         {
@@ -561,33 +550,12 @@ namespace SandRibbon
         }
         private bool canCreateConversation(object obj)
         {
-            return doesConversationAlreadyExist(obj) && mustBeLoggedIn(obj);
-        }
-        private bool doesConversationAlreadyExist(object obj)
-        {
-            if (!(obj is ConversationDetails))
-                return true;
-            var details = (ConversationDetails)obj;
-            if (details == null)
-                return true;
-            if (details.Subject.ToLower() == "deleted")
-                return true;
-            if (details.Title.Length == 0)
-                return true;
-            var currentConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
-            bool conversationExists = currentConversations.Any(c => c.Title.Equals(details.Title));
-            return !conversationExists;
+            return mustBeLoggedIn(obj);
         }
         private bool mustBeLoggedIn(object _arg)
         {
-            try
-            {
-                return Globals.credentials != null && !Globals.credentials.ValueEquals(Credentials.Empty);
-            }
-            catch (NotSetException)
-            {
-                return false;
-            }
+            var v =  !Globals.credentials.ValueEquals(Credentials.Empty);
+            return v;
         }
         private bool conversationSearchMustBeClosed(object _obj)
         {
@@ -615,14 +583,7 @@ namespace SandRibbon
         }
         private bool mustBeAuthor(object _arg)
         {
-            try
-            {
-                return Globals.isAuthor;
-            }
-            catch (NotSetException)
-            {
-                return false;
-            }
+            return Globals.isAuthor;
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
@@ -952,13 +913,14 @@ namespace SandRibbon
         private bool CanSetConversationPermissions(object _style)
         {
             return Globals.isAuthor;
-
         }
         /*taskbar management*/
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
         private void sleep(object _obj)
         {
-            Dispatcher.adoptAsync(delegate { Hide(); });
+            Dispatcher.adoptAsync(delegate { 
+                Hide(); 
+            });
         }
         private void wakeUp(object _obj)
         {
@@ -984,7 +946,7 @@ namespace SandRibbon
         }
         public void SetupUI(PedagogyLevel level)
         {
-            Dispatcher.adopt(() =>
+            Dispatcher.adoptAsync(() =>
             {
                 List<FrameworkElement> homeGroups = new List<FrameworkElement>();
                 List<FrameworkElement> tabs = new List<FrameworkElement>();
@@ -1003,8 +965,6 @@ namespace SandRibbon
                             homeGroups.Add(new EditingModes());
                             break;
                         case 2:
-                            //ribbon.ApplicationPopup = new Chrome.ApplicationPopup();
-                            //tabs.Add(new Tabs.ClassManagement());
                             tabs.Add(new Tabs.ConversationManagement());
                             RHSDrawerDefinition.Width = new GridLength(180);
                             homeGroups.Add(new ZoomControlsHost());
@@ -1035,7 +995,6 @@ namespace SandRibbon
             });
             CommandManager.InvalidateRequerySuggested();
             Commands.RequerySuggested();
-            Commands.SetLayer.ExecuteAsync("Sketch");
         }
         private class PreferredDisplayIndexComparer : IComparer<FrameworkElement>
         {

@@ -298,8 +298,14 @@ namespace SandRibbon.Components.Canvas
                 RemovePrivacyStylingFromElement(element);
                 return;
             }
-            element.Effect = new DropShadowEffect { BlurRadius = 50, Color = Colors.Black, ShadowDepth = 0, Opacity = 1 };
+
+            applyShadowEffectTo(element, Colors.Black);
+        }
+        public FrameworkElement applyShadowEffectTo(FrameworkElement element, Color color)
+        {
+            element.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
             element.Opacity = 0.7;
+            return element;
         }
         private void ensureAllImagesHaveCorrectPrivacy()
         {
@@ -514,7 +520,7 @@ namespace SandRibbon.Components.Canvas
         private IEnumerable<UIElement> filterMyImages(IEnumerable<UIElement> elements)
         {
            // if (inMeeting() || Globals.isAuthor) return elements;
-            if (inMeeting()) return elements;
+            if (true || inMeeting()) return elements;
             var myImages = new List<UIElement>();
             foreach (UIElement image in elements)
             {

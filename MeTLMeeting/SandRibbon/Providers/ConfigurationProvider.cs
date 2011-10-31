@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using SandRibbon.Components.Sandpit;
+using SandRibbon.Components.Pedagogicometry;
 
 namespace SandRibbon.Providers
 {
@@ -39,7 +41,7 @@ namespace SandRibbon.Providers
             }
             return docs.First().Substring(0,docs.First().Length - 4);
         }
-        public int getMeTLPedagogyLevel()
+        public PedagogyLevel getMeTLPedagogyLevel()
         {
             int level;
             var type = getMeTLType();
@@ -62,7 +64,7 @@ namespace SandRibbon.Providers
                     break;
             }
             Commands.MeTLType.ExecuteAsync(type);
-            return level;
+            return Pedagogicometer.level(level);
         }
         public string getMetlVersion()
         {

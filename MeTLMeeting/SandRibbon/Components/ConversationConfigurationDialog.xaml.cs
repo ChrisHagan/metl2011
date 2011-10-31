@@ -51,8 +51,6 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.dialogMode = mode;
-            extantConversations = MeTLLib.ClientFactory.Connection().AvailableConversations; 
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             this.CommandBindings.Add(new CommandBinding(CompleteConversationDialog, Create, CanCompleteDialog));
         }
         private void PopulateFields()
@@ -140,11 +138,6 @@ namespace SandRibbon.Components
             }
             if (!fileDialogResult.HasValue) 
                 importFile = null;
-        }
-        private static void UpdateConversationDetails(ConversationDetails details)
-        {
-            extantConversations = null;
-            extantConversations = MeTLLib.ClientFactory.Connection().AvailableConversations;
         }
         private void UpdateImportFile(object sender, TextChangedEventArgs e)
         {

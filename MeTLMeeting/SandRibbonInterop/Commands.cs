@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Providers;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -11,247 +10,266 @@ using System.Xml.Linq;
 using System.ComponentModel;
 using System.Windows.Threading;
 using System.Threading;
+using MeTLLib.DataTypes;
 
 namespace SandRibbon
 {
-    public static class CompositeCommandExtensions
-    {
-        public static object lastValue(this CompositeCommand command)
-        {
-            if (CommandParameterProvider.parameters.ContainsKey(command))
-                return CommandParameterProvider.parameters[command];
-            Console.WriteLine(string.Format("CompositeCommandExtensions::lastValue Could not get the lastValue of command {0}", Commands.which(command)));
-            throw new NotSetException(string.Format("CompositeCommandExtensions::lastValue Could not get the lastValue of command {0}", Commands.which(command)));
-        }
+    public class NotSetException : Exception{
+        public NotSetException(string msg) : base(msg) { }
     }
-    public class NotSetException : Exception {
-        public NotSetException(string command):base(command)
-        {
-            
+    public class DefaultableCompositeCommand : CompositeCommand {
+        private bool isSet = false;
+        private object _defaultValue;
+        public object defaultValue{
+            get{
+                /*
+                if(!isSet)
+                    Console.WriteLine(String.Format("{0} not set when called by {1}",Commands.which(this),new StackTrace().GetFrame(2).GetMethod()));
+                 */
+                return _defaultValue;
+            }
+            set {
+                isSet = true;
+                _defaultValue = value;
+            }
+        }
+        public DefaultableCompositeCommand(){
+            _defaultValue = null;
+        }
+        public DefaultableCompositeCommand(object defaultValue) {
+            _defaultValue = defaultValue;
+        }
+        public object lastValue(){
+            return defaultValue;
+        }
+        public override void Execute(object arg) {
+            defaultValue = arg;
+            base.Execute(arg);
         }
     }
     public class Commands
     {
-        public static CompositeCommand SendNewSlideOrder = new CompositeCommand();
-        public static CompositeCommand ChangeLanguage = new CompositeCommand();
-        public static CompositeCommand ListenToAudio = new CompositeCommand();
-        public static CompositeCommand PresentVideo= new CompositeCommand();
-        public static CompositeCommand ReorderDragDone = new CompositeCommand();
-        public static CompositeCommand ConnectToSmartboard = new CompositeCommand();
-        public static CompositeCommand DisconnectFromSmartboard = new CompositeCommand();
-        public static CompositeCommand ViewSubmissions = new CompositeCommand();
-        public static CompositeCommand Reconnecting = new CompositeCommand();
-        public static CompositeCommand LeaveAllRooms = new CompositeCommand();
-        public static CompositeCommand BackstageModeChanged = new CompositeCommand();
-        public static CompositeCommand UpdatePowerpointProgress = new CompositeCommand();
-        public static CompositeCommand ShowOptionsDialog = new CompositeCommand();
-        public static CompositeCommand SetUserOptions = new CompositeCommand();
-        //public static CompositeCommand SaveUserOptions = new CompositeCommand();
-        public static CompositeCommand ZoomChanged = new CompositeCommand();
-        public static CompositeCommand ExtendCanvasBySize = new CompositeCommand();
+        public static DefaultableCompositeCommand SendNewSlideOrder = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ChangeLanguage = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ListenToAudio = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand PresentVideo= new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReorderDragDone = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ConnectToSmartboard = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DisconnectFromSmartboard = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ViewSubmissions = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand Reconnecting = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand LeaveAllRooms = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand BackstageModeChanged = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand UpdatePowerpointProgress = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ShowOptionsDialog = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetUserOptions = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ZoomChanged = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ExtendCanvasBySize = new DefaultableCompositeCommand();
 
-        public static CompositeCommand AddPrivacyToggleButton = new CompositeCommand();
-        public static CompositeCommand RemovePrivacyAdorners = new CompositeCommand();
-        public static CompositeCommand MirrorVideo = new CompositeCommand();
-        public static CompositeCommand VideoMirrorRefreshRectangle = new CompositeCommand();
+        public static DefaultableCompositeCommand AddPrivacyToggleButton = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand RemovePrivacyAdorners = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand MirrorVideo = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand VideoMirrorRefreshRectangle = new DefaultableCompositeCommand();
 
         #region Sandpit
-        public static CompositeCommand SendWakeUp = new CompositeCommand();
-        public static CompositeCommand SendSleep = new CompositeCommand();
-        public static CompositeCommand ReceiveWakeUp = new CompositeCommand();
-        public static CompositeCommand ReceiveSleep = new CompositeCommand();
-        public static CompositeCommand SendMoveBoardToSlide = new CompositeCommand();
-        public static CompositeCommand ReceiveMoveBoardToSlide = new CompositeCommand();
-        public static CompositeCommand CloseBoardManager = new CompositeCommand();
-        public static CompositeCommand SendPing = new CompositeCommand();
-        public static CompositeCommand ReceivePong = new CompositeCommand();
-        public static CompositeCommand DoWithCurrentSelection = new CompositeCommand();
-        public static CompositeCommand SendNewBubble = new CompositeCommand();
-        public static CompositeCommand BubbleCurrentSelection = new CompositeCommand();
-        public static CompositeCommand ReceiveNewBubble = new CompositeCommand();
-        public static CompositeCommand ExploreBubble = new CompositeCommand();
-        public static CompositeCommand ThoughtLiveWindow = new CompositeCommand();
-        public static CompositeCommand SetZoomRect = new CompositeCommand();
-        public static CompositeCommand Highlight = new CompositeCommand();
-        public static CompositeCommand RemoveHighlight = new CompositeCommand();
+        public static DefaultableCompositeCommand SendWakeUp = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendSleep = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveWakeUp = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveSleep = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendMoveBoardToSlide = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveMoveBoardToSlide = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand CloseBoardManager = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendPing = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceivePong = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DoWithCurrentSelection = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendNewBubble = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand BubbleCurrentSelection = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveNewBubble = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ExploreBubble = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ThoughtLiveWindow = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetZoomRect = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand Highlight = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand RemoveHighlight = new DefaultableCompositeCommand();
 
         #endregion
-        public static CompositeCommand ServersDown= new CompositeCommand();
-        public static CompositeCommand GenerateScreenshot = new CompositeCommand();
-        public static CompositeCommand ScreenshotGenerated = new CompositeCommand();
-        public static CompositeCommand SendScreenshotSubmission = new CompositeCommand();
-        public static CompositeCommand ReceiveScreenshotSubmission = new CompositeCommand();
+        public static DefaultableCompositeCommand ServersDown= new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand GenerateScreenshot = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ScreenshotGenerated = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendScreenshotSubmission = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveScreenshotSubmission = new DefaultableCompositeCommand();
         public static RoutedCommand ImportSubmission = new RoutedCommand();
         public static RoutedCommand SaveFile = new RoutedCommand();
-        public static CompositeCommand DummyCommandToProcessCanExecute = new CompositeCommand();
-        public static CompositeCommand DummyCommandToProcessCanExecuteForPrivacyTools = new CompositeCommand();
+        public static DefaultableCompositeCommand DummyCommandToProcessCanExecute = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DummyCommandToProcessCanExecuteForPrivacyTools = new DefaultableCompositeCommand();
 
-        public static CompositeCommand TogglePens = new CompositeCommand();
-        public static CompositeCommand SetPedagogyLevel = new CompositeCommand();
-        public static CompositeCommand GetMainScrollViewer = new CompositeCommand();
-        public static CompositeCommand ShowConversationSearchBox = new CompositeCommand();
-        public static CompositeCommand HideConversationSearchBox = new CompositeCommand();
-        public static CompositeCommand AddWindowEffect = new CompositeCommand();
-        public static CompositeCommand RemoveWindowEffect = new CompositeCommand();
-        public static CompositeCommand NotImplementedYet = new CompositeCommand();
-        public static CompositeCommand NoOp = new CompositeCommand();
-        public static CompositeCommand MirrorPresentationSpace = new CompositeCommand();
-        public static CompositeCommand ProxyMirrorPresentationSpace = new CompositeCommand();
-        public static CompositeCommand InitiateDig = new CompositeCommand();
-        public static CompositeCommand SendDig = new CompositeCommand();
-        public static CompositeCommand DugPublicSpace = new CompositeCommand();
-        public static CompositeCommand SendLiveWindow = new CompositeCommand();
-        public static CompositeCommand SendDirtyLiveWindow = new CompositeCommand();
-        public static CompositeCommand ReceiveLiveWindow = new CompositeCommand();
-        public static CompositeCommand ReceiveDirtyLiveWindow = new CompositeCommand();
-        public static CompositeCommand DeleteSelectedItems = new CompositeCommand();
-        public static CompositeCommand BanhammerSelectedItems= new CompositeCommand();
-        //public static CompositeCommand Relogin = new CompositeCommand();
+        public static DefaultableCompositeCommand TogglePens = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetPedagogyLevel = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand GetMainScrollViewer = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ShowConversationSearchBox = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand HideConversationSearchBox = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand AddWindowEffect = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand RemoveWindowEffect = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand NotImplementedYet = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand NoOp = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand MirrorPresentationSpace = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ProxyMirrorPresentationSpace = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand InitiateDig = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendDig = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DugPublicSpace = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendLiveWindow = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendDirtyLiveWindow = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveLiveWindow = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveDirtyLiveWindow = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DeleteSelectedItems = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand BanhammerSelectedItems= new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand VisualizeContent = new DefaultableCompositeCommand();
+
+        //public static DefaultableCompositeCommand Relogin = new DefaultableCompositeCommand();
         #region Quizzing
-        public static CompositeCommand SendWormMove = new CompositeCommand(); 
-        public static CompositeCommand ReceiveWormMove = new CompositeCommand(); 
-        public static CompositeCommand ConvertPresentationSpaceToQuiz = new CompositeCommand();
-        public static CompositeCommand SendQuiz = new CompositeCommand();
-        public static CompositeCommand SendQuizAnswer = new CompositeCommand();
-        public static CompositeCommand ReceiveQuiz = new CompositeCommand();
-        public static CompositeCommand ReceiveQuizAnswer = new CompositeCommand();
-        public static CompositeCommand DisplayQuizResults = new CompositeCommand();
-        public static CompositeCommand QuizResultsAvailableForSnapshot = new CompositeCommand();
-        public static CompositeCommand QuizResultsSnapshotAvailable = new CompositeCommand();
-        public static CompositeCommand PlaceQuizSnapshot = new CompositeCommand();
+        public static DefaultableCompositeCommand SendWormMove = new DefaultableCompositeCommand(); 
+        public static DefaultableCompositeCommand ReceiveWormMove = new DefaultableCompositeCommand(); 
+        public static DefaultableCompositeCommand ConvertPresentationSpaceToQuiz = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendQuiz = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendQuizAnswer = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveQuiz = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveQuizAnswer = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DisplayQuizResults = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand QuizResultsAvailableForSnapshot = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand QuizResultsSnapshotAvailable = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand PlaceQuizSnapshot = new DefaultableCompositeCommand();
 
         #endregion
         #region InkCanvas
-        public static CompositeCommand SetInkCanvasMode = new CompositeCommand();
-        public static CompositeCommand SetPrivacyOfItems = new CompositeCommand();
-        public static CompositeCommand GotoThread = new CompositeCommand();
-        public static CompositeCommand SetDrawingAttributes = new CompositeCommand();
-        public static CompositeCommand SendStroke = new CompositeCommand();
-        public static CompositeCommand ReceiveStroke = new CompositeCommand();
-        public static CompositeCommand ReceiveStrokes = new CompositeCommand();
-        public static CompositeCommand SendDirtyStroke = new CompositeCommand();
-        public static CompositeCommand ReceiveDirtyStrokes = new CompositeCommand();
-        public static CompositeCommand SetPrivacy = new CompositeCommand();
-        public static CompositeCommand OriginalView = new CompositeCommand();
+        public static DefaultableCompositeCommand SetInkCanvasMode = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetPrivacyOfItems = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand GotoThread = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetDrawingAttributes = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendStroke = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveStroke = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveStrokes = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendDirtyStroke = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveDirtyStrokes = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetPrivacy = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand OriginalView = new DefaultableCompositeCommand();
         public static RoutedCommand Flush = new RoutedCommand();
         public static RoutedCommand CreateQuizStructure = new RoutedCommand();
         public static RoutedCommand ZoomIn = new RoutedCommand();
         public static RoutedCommand ZoomOut = new RoutedCommand();
-        public static CompositeCommand ExtendCanvasBothWays = new CompositeCommand();
+        public static DefaultableCompositeCommand ExtendCanvasBothWays = new DefaultableCompositeCommand();
         #endregion
         #region ImageCanvas
-        public static CompositeCommand ImageDropped = new CompositeCommand();
-        public static CompositeCommand AddVideo = new CompositeCommand();
-        public static CompositeCommand SendVideo = new CompositeCommand();
-        public static CompositeCommand ReceiveVideo = new CompositeCommand();
-        public static CompositeCommand SendDirtyVideo = new CompositeCommand();
-        public static CompositeCommand ReceiveDirtyVideo = new CompositeCommand();
-        public static CompositeCommand AddImage = new CompositeCommand();
-        public static CompositeCommand FileUpload = new CompositeCommand();
-        public static CompositeCommand SendImage = new CompositeCommand();
-        public static CompositeCommand ReceiveImage = new CompositeCommand();
-        public static CompositeCommand SendDirtyImage = new CompositeCommand();
-        public static CompositeCommand ReceiveDirtyImage = new CompositeCommand();
-        public static CompositeCommand AddAutoShape = new CompositeCommand();
-        public static CompositeCommand SendAutoShape = new CompositeCommand();
-        public static CompositeCommand SendDirtyAutoShape = new CompositeCommand();
-        public static CompositeCommand ReceiveAutoShape = new CompositeCommand();
-        public static CompositeCommand ReceiveDirtyAutoShape = new CompositeCommand();
+        public static DefaultableCompositeCommand ImageDropped = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand AddVideo = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendVideo = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveVideo = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendDirtyVideo = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveDirtyVideo = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand AddImage = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand FileUpload = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendImage = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveImage = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendDirtyImage = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveDirtyImage = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand AddAutoShape = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendAutoShape = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendDirtyAutoShape = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveAutoShape = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveDirtyAutoShape = new DefaultableCompositeCommand();
 
-        public static CompositeCommand SendFileResource = new CompositeCommand();
-        public static CompositeCommand ReceiveFileResource = new CompositeCommand();
+        public static DefaultableCompositeCommand SendFileResource = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveFileResource = new DefaultableCompositeCommand();
 
         #endregion
         #region TextCanvas
-        public static CompositeCommand ChangeTextMode = new CompositeCommand();
-        public static CompositeCommand TextboxFocused = new CompositeCommand();
-        public static CompositeCommand SendDirtyText = new CompositeCommand();
-        public static CompositeCommand ReceiveDirtyText = new CompositeCommand();
-        public static CompositeCommand SetTextCanvasMode = new CompositeCommand();
-        public static CompositeCommand IncreaseFontSize = new CompositeCommand();
-        public static CompositeCommand DecreaseFontSize = new CompositeCommand();
-        public static CompositeCommand SendTextBox = new CompositeCommand();
-        public static CompositeCommand ReceiveTextBox = new CompositeCommand();
-        public static CompositeCommand RestoreTextDefaults = new CompositeCommand();
-        public static CompositeCommand NewTextCursorPosition = new CompositeCommand();
-        public static CompositeCommand InitiateGrabZoom = new CompositeCommand();
-        public static CompositeCommand EndGrabZoom = new CompositeCommand();
-        public static CompositeCommand MoveCanvasByDelta = new CompositeCommand();
-        public static CompositeCommand FitToView = new CompositeCommand();
-        public static CompositeCommand FitToPageWidth= new CompositeCommand();
-        public static CompositeCommand UpdateTextStyling = new CompositeCommand();
+        public static DefaultableCompositeCommand ChangeTextMode = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand TextboxFocused = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendDirtyText = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveDirtyText = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetTextCanvasMode = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand IncreaseFontSize = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand DecreaseFontSize = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendTextBox = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveTextBox = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand RestoreTextDefaults = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand NewTextCursorPosition = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand InitiateGrabZoom = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand EndGrabZoom = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand MoveCanvasByDelta = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand FitToView = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand FitToPageWidth= new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand UpdateTextStyling = new DefaultableCompositeCommand();
 
-        public static CompositeCommand ToggleBold = new CompositeCommand();
-        public static CompositeCommand ToggleItalic = new CompositeCommand();
-        public static CompositeCommand ToggleUnderline = new CompositeCommand();
+        public static DefaultableCompositeCommand ToggleBold = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ToggleItalic = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ToggleUnderline = new DefaultableCompositeCommand();
         #endregion
         #region AppLevel
-        public static CompositeCommand RegisterPowerpointSourceDirectoryPreference = new CompositeCommand();
-        public static CompositeCommand MeTLType = new CompositeCommand();
-        public static CompositeCommand LogOut = new CompositeCommand();
-        public static CompositeCommand LoginFailed = new CompositeCommand();
-        public static CompositeCommand SetIdentity = new CompositeCommand();
-        public static CompositeCommand EstablishPrivileges = new CompositeCommand();
+        public static DefaultableCompositeCommand RegisterPowerpointSourceDirectoryPreference = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand MeTLType = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand LogOut = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand LoginFailed = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetIdentity = new DefaultableCompositeCommand(Credentials.Empty);
+        public static DefaultableCompositeCommand EstablishPrivileges = new DefaultableCompositeCommand();
         public static RoutedCommand CloseApplication = new RoutedCommand();
-        public static CompositeCommand SetLayer = new CompositeCommand();
-        public static CompositeCommand UpdateForeignConversationDetails = new CompositeCommand();
-        public static CompositeCommand RememberMe = new CompositeCommand();
+        public static DefaultableCompositeCommand SetLayer = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand UpdateForeignConversationDetails = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand RememberMe = new DefaultableCompositeCommand(false);
         #endregion
-        public static CompositeCommand Undo = new CompositeCommand();
-        public static CompositeCommand Redo = new CompositeCommand();
+        public static DefaultableCompositeCommand Undo = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand Redo = new DefaultableCompositeCommand();
         public static RoutedCommand ProxyJoinConversation = new RoutedCommand();
-        public static CompositeCommand ChangeTab = new CompositeCommand();
-        public static CompositeCommand SetRibbonAppearance = new CompositeCommand();
+        public static DefaultableCompositeCommand ChangeTab = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetRibbonAppearance = new DefaultableCompositeCommand();
         #region ConversationLevel
-        public static CompositeCommand SyncedMoveRequested = new CompositeCommand();
-        public static CompositeCommand SendSyncMove = new CompositeCommand();
-        public static CompositeCommand MoveTo = new CompositeCommand();
-        public static CompositeCommand SneakInto = new CompositeCommand();
-        public static CompositeCommand SneakIntoAndDo = new CompositeCommand();
-        public static CompositeCommand SneakOutOf = new CompositeCommand();
-        public static CompositeCommand PreParserAvailable = new CompositeCommand();
-        public static CompositeCommand ConversationPreParserAvailable = new CompositeCommand();
-        public static CompositeCommand MoveToPrevious = new CompositeCommand();
-        public static CompositeCommand MoveToNext = new CompositeCommand();
-        public static CompositeCommand SetConversationPermissions = new CompositeCommand();
-        public static CompositeCommand JoinConversation = new CompositeCommand();
-        public static CompositeCommand LeaveConversation = new CompositeCommand();
-        public static CompositeCommand LeaveLocation = new CompositeCommand();
-        public static CompositeCommand SendDirtyConversationDetails = new CompositeCommand();
-        public static CompositeCommand UpdateConversationDetails = new CompositeCommand();
-        public static CompositeCommand ReceiveDirtyConversationDetails = new CompositeCommand();
-        public static CompositeCommand SetSync = new CompositeCommand();
-        public static CompositeCommand AddSlide = new CompositeCommand();
-        public static CompositeCommand UpdateNewSlideOrder = new CompositeCommand();
-        public static CompositeCommand CreateBlankConversation = new CompositeCommand();
-        public static CompositeCommand ShowEditSlidesDialog = new CompositeCommand();
-        public static CompositeCommand CreateConversation = new CompositeCommand();
-        //public static CompositeCommand PreEditConversation = new CompositeCommand();
-        public static CompositeCommand EditConversation = new CompositeCommand();
-        public static CompositeCommand BlockInput = new CompositeCommand();
-        public static CompositeCommand UnblockInput = new CompositeCommand();
-        public static CompositeCommand CanEdit = new CompositeCommand();
-        public static CompositeCommand PrintConversation = new CompositeCommand();
-        public static CompositeCommand HideProgressBlocker = new CompositeCommand();
-        public static CompositeCommand SendChatMessage = new CompositeCommand();
-        public static CompositeCommand ReceiveChatMessage = new CompositeCommand();
+        public static DefaultableCompositeCommand SyncedMoveRequested = new DefaultableCompositeCommand(0);
+        public static DefaultableCompositeCommand SendSyncMove = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand MoveTo = new DefaultableCompositeCommand(0);
+        public static DefaultableCompositeCommand SneakInto = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SneakIntoAndDo = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SneakOutOf = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand PreParserAvailable = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ConversationPreParserAvailable = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand MoveToPrevious = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand MoveToNext = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetConversationPermissions = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand JoinConversation = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand LeaveConversation = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand LeaveLocation = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendDirtyConversationDetails = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand UpdateConversationDetails = new DefaultableCompositeCommand(ConversationDetails.Empty);
+        public static DefaultableCompositeCommand ReceiveDirtyConversationDetails = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SetSync = new DefaultableCompositeCommand(false);
+        public static DefaultableCompositeCommand AddSlide = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand UpdateNewSlideOrder = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand CreateBlankConversation = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ShowEditSlidesDialog = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand CreateConversation = new DefaultableCompositeCommand();
+        //public static DefaultableCompositeCommand PreEditConversation = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand EditConversation = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand BlockInput = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand UnblockInput = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand CanEdit = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand PrintConversation = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand HideProgressBlocker = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendChatMessage = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveChatMessage = new DefaultableCompositeCommand();
         #endregion
         #region ppt
-        public static CompositeCommand ImportPowerpoint = new CompositeCommand();
-        public static CompositeCommand UploadPowerpoint = new CompositeCommand();
-        public static CompositeCommand PowerpointFinished = new CompositeCommand();
-        public static CompositeCommand ReceiveMove = new CompositeCommand();
-        public static CompositeCommand ReceiveJoin = new CompositeCommand();
-        public static CompositeCommand ReceivePing = new CompositeCommand();
-        public static CompositeCommand ReceiveFlush = new CompositeCommand();
-        public static CompositeCommand SendMeTLType = new CompositeCommand();
+        public static DefaultableCompositeCommand ImportPowerpoint = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand UploadPowerpoint = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand PowerpointFinished = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveMove = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveJoin = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceivePing = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveFlush = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SendMeTLType = new DefaultableCompositeCommand();
         #endregion
         #region Drawers
-        public static CompositeCommand ToggleScratchPadVisibility = new CompositeCommand();
-        public static CompositeCommand ToggleFriendsVisibility = new CompositeCommand();
+        public static DefaultableCompositeCommand ToggleScratchPadVisibility = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ToggleFriendsVisibility = new DefaultableCompositeCommand();
         #endregion
         #region Friends
-        public static CompositeCommand ReceivePublicChat = new CompositeCommand();
+        public static DefaultableCompositeCommand ReceivePublicChat = new DefaultableCompositeCommand();
         public static RoutedCommand HighlightFriend = new RoutedCommand();
         public static RoutedCommand PostHighlightFriend = new RoutedCommand();
         public static RoutedCommand HighlightUser = new RoutedCommand();
@@ -273,12 +291,12 @@ namespace SandRibbon
                     staticHandlers.Add(handler);
             }
         }
-        private static IEnumerable<CompositeCommand> all{
+        private static IEnumerable<DefaultableCompositeCommand> all{
             get
             {
                 return typeof(Commands).GetFields()
-                    .Where(p => p.FieldType == typeof(CompositeCommand))
-                    .Select(f => (CompositeCommand)f.GetValue(null));
+                    .Where(p => p.FieldType == typeof(DefaultableCompositeCommand))
+                    .Select(f => (DefaultableCompositeCommand)f.GetValue(null));
             }
         }
         public static IEnumerable<ICommand> allHandlers() 
@@ -301,19 +319,21 @@ namespace SandRibbon
                     return field.Name;
             return "Not a member of commands";
         }
-        public static CompositeCommand called(string name) {
-            return (CompositeCommand)typeof(Commands).GetField(name).GetValue(null);
+        public static DefaultableCompositeCommand called(string name) {
+            return (DefaultableCompositeCommand)typeof(Commands).GetField(name).GetValue(null);
         }
         public static void RequerySuggested()
         {
+            var s = new StackTrace();
+            Console.WriteLine(String.Format("Command Requery instigated by {0}", s.GetFrame(2).GetMethod()));
             RequerySuggested(all.ToArray());
         }
-        public static void RequerySuggested(params CompositeCommand[] commands)
+        public static void RequerySuggested(params DefaultableCompositeCommand[] commands)
         {
             foreach (var command in commands)
                 Requery(command);
         }
-        private static void Requery(CompositeCommand command)
+        private static void Requery(DefaultableCompositeCommand command)
         {
             if (command.RegisteredCommands.Count() > 0)
             {
@@ -324,11 +344,13 @@ namespace SandRibbon
     }
     public static class CommandExtensions
     {
-        public static void ExecuteAsync(this CompositeCommand command, object arg) {
-            if(command.CanExecute(arg))
+        public static void ExecuteAsync(this DefaultableCompositeCommand command, object arg) {
+            if (command.CanExecute(arg))
+            {
                 command.Execute(arg);
+            }
         }
-        public static void RegisterCommandToDispatcher<T>(this CompositeCommand command, DelegateCommand<T> handler) {
+        public static void RegisterCommandToDispatcher<T>(this DefaultableCompositeCommand command, DelegateCommand<T> handler) {
             command.RegisterCommand(new DelegateCommand<T>(arg =>
                                    {
                                        try
