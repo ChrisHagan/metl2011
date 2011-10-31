@@ -23,6 +23,8 @@ using Point = System.Windows.Point;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using MeTLLib.DataTypes;
+using System.IO;
+using System.Xml;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -248,12 +250,109 @@ namespace SandRibbon.Components.Canvas
         {
             return string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks);
         }
+        /*
+        private Byte[] bytesFromDragImageBitsStream(MemoryStream data)
+        {
+            var buffer = new byte[24];
+            data.Read(buffer, 0, 24);
+            int w = buffer[0] + (buffer[1] << 8) + (buffer[2] << 16) + (buffer[3] << 24);
+            int h = buffer[4] + (buffer[5] << 8) + (buffer[6] << 16) + (buffer[7] << 24);
+            // Stride accounts for any padding bytes at the end of each row. For 32 bit
+            // bitmaps there are none, so stride = width * size of each pixel in bytes.
+            int stride = w * 4;
+            // x and y is the relative position between the top left corner of the image and
+            // the mouse cursor.
+            int x = buffer[8] + (buffer[9] << 8) + (buffer[10] << 16) + (buffer[11] << 24);
+            int y = buffer[12] + (buffer[13] << 8) + (buffer[14] << 16) + (buffer[15] << 24);
+            buffer = new byte[stride * h];
+            // The image is stored upside down, so we flip it as we read it.
+            for (int i = (h - 1) * stride; i >= 0; i -= stride) data.Read(buffer, i, stride);
+            return buffer;
+            //System.Windows.Media.Imaging.BitmapSource.Create(w, h, 96, 96, PixelFormats.Bgra32, null, buffer, stride);
+        }*/
+
         void ImagesDrop(object sender, DragEventArgs e)
         {
-            var fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            if (fileNames == null)
+            var tempImagePath = "temporaryDragNDropFileData.bmp";
+            bool needsToRemoveTempFile = false;
+            var validFormats = e.Data.GetFormats();
+            var fileNames = new string[0];
+            var allTypes = validFormats.Select(vf => {
+                var outputData = "";
+                try
+                {
+                    var rawData = e.Data.GetData(vf);
+                    if (rawData is MemoryStream)
+                    {
+                        outputData = System.Text.Encoding.UTF8.GetString(((MemoryStream)e.Data.GetData(vf)).ToArray());
+                    }
+                    else if (rawData is String)
+                    {
+                        outputData = (String)rawData;
+                    }
+                    else if (rawData is Byte[])
+                    {
+                        outputData = System.Text.Encoding.UTF8.GetString((Byte[])rawData);
+                    }
+                    else throw new Exception("data was in an unexpected format: (" + outputData.GetType() + ") - "+outputData);
+                }
+                catch (Exception ex)
+                {
+                    outputData = "getData failed with exception (" + ex.Message + ")";
+                }
+                return vf + ":  "+ outputData;
+            }).ToList();
+            if (validFormats.Contains(DataFormats.FileDrop))
             {
-                MessageBox.Show("Cannot Drop this onto the canvas");
+                //local files will deliver filenames.  
+                fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+            }
+            else if (validFormats.Contains("text/html"))
+            {
+                try
+                {
+                    var html = System.Text.Encoding.UTF8.GetString(((MemoryStream)e.Data.GetData("text/html")).ToArray());
+                    var htmlElement = System.Xml.Linq.XElement.Parse(html);
+                    if (htmlElement.Name == "img")
+                    {
+                        fileNames = new string[] { 
+                            htmlElement.Attribute("src").Value
+                        };
+                    }
+                    else
+                    {
+                        fileNames = htmlElement.Descendants("img").Select(i => i.Attribute("src").Value).ToArray();
+                    }
+                    var wc = new CookieAwareWebClient();
+                    fileNames = fileNames.Select(remoteF =>
+                    {
+                        var uri = new Uri(remoteF);
+                        var extension = Path.GetExtension(uri.LocalPath);
+                        if (String.IsNullOrEmpty(extension))
+                            extension = ".jpg";
+                        var localF = Convert.ToBase64String(Encoding.UTF8.GetBytes(remoteF)) + extension;
+                        File.WriteAllBytes(localF, wc.DownloadData(remoteF));
+                        return localF;
+                    }).ToArray();
+                }
+                catch (XmlException ex){
+                    Console.WriteLine("Drop exception: {0}", ex.Message);
+                    MessageBox.Show("Sorry, MeTL couldn't handle this content.");
+                }
+            }
+            else if (validFormats.Contains("UniformResourceLocator"))
+            {
+                //dragged pictures from chrome will deliver the urls of the objects.  Firefox and IE don't drag images.
+                var url = (MemoryStream)e.Data.GetData("UniformResourceLocator");
+                if (url != null)
+                {
+                    fileNames = new string[] { System.Text.Encoding.Default.GetString(url.ToArray()) };
+                }
+            }
+             
+            if (fileNames.Length == 0)
+            {
+                MessageBox.Show("Cannot drop this onto the canvas");
                 return;
             }
             Commands.SetLayer.ExecuteAsync("Insert");
@@ -275,6 +374,8 @@ namespace SandRibbon.Components.Canvas
                     height = 0.0;
                 }
             }
+            if (needsToRemoveTempFile)
+                File.Delete(tempImagePath);
             e.Handled = true;
         }
         public void SetCanEdit(bool canEdit)
