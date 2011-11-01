@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Pedagogicometry;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Providers
 {
@@ -66,22 +67,30 @@ namespace SandRibbon.Providers
             Commands.MeTLType.ExecuteAsync(type);
             return Pedagogicometer.level(level);
         }
+        private string metlVersion = "versionUnknown";
         public string getMetlVersion()
         {
-            string MeTLType = getMeTLType();
-            var doc = XDocument.Load(MeTLType + ".exe.manifest");
-            if (doc != null)
+            if (metlVersion == "Unknown")
             {
-                var node = doc.Root.Descendants().Where(n =>
-                        n.Attribute("name") != null && n.Attribute("name").Value.Equals(MeTLType + ".exe")).First();
-                if (node != null)
+                try
                 {
-                    var version = node.Attribute("version").Value;
-                    return version.ToString();
+                    string MeTLType = getMeTLType();
+                    var doc = XDocument.Load(MeTLType + ".exe.manifest");
+                    if (doc != null)
+                    {
+                        var node = doc.Root.Descendants().Where(n =>
+                                n.Attribute("name") != null && n.Attribute("name").Value.Equals(MeTLType + ".exe")).FirstOrDefault();
+                        if (node != null)
+                        {
+                            metlVersion = node.Attribute("version").Value.ToString();
+                        }
+                    }
                 }
-                return "Unknown";
+                catch (Exception) { 
+                    //Don't log it, logging it calls this
+                }
             }
-            return "Unknown";
+            return metlVersion;
         }
     }
 }

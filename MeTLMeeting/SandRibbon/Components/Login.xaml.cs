@@ -72,6 +72,7 @@ namespace SandRibbon.Components
         }
         private void SetIdentity(Credentials identity)
         {
+            Commands.ShowConversationSearchBox.Execute(null);
             Commands.RemoveWindowEffect.ExecuteAsync(null);
             Dispatcher.adoptAsync(() =>
             {

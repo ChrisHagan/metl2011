@@ -57,6 +57,10 @@ namespace SandRibbon.Components.Canvas
     }
     public abstract class AbstractCanvas : InkCanvas
     {
+        private static readonly string TMP_PATH = "tmp\\";
+        public static void deleteTempFiles(){
+            deltree(TMP_PATH);
+        }
         public string defaultPrivacy;
         public string actualPrivacy;
         public string target;
@@ -363,6 +367,7 @@ namespace SandRibbon.Components.Canvas
         }
         public static string[] ProcessHtmlDrop(string html, Uri originatingHost)
         {
+            Directory.CreateDirectory(TMP_PATH);
             var fileNames = new string[]{};
             try
             {
@@ -378,33 +383,60 @@ namespace SandRibbon.Components.Canvas
                     fileNames = htmlElement.Descendants("img").Select(i => i.Attribute("src").Value).ToArray();
                 }
                 var wc = new CookieAwareWebClient();
-                fileNames = fileNames.Select(fn =>
+                try
                 {
-                    var remoteF = "";
-                    if (originatingHost.Scheme != "badscheme") {
-                         var fnUri = new System.Uri(fn,UriKind.RelativeOrAbsolute);
-                         if (fnUri.IsAbsoluteUri)
-                            return fnUri.ToString();
-                         else
-                       remoteF = new Uri(originatingHost, fnUri).ToString();
-                    }
-                    else remoteF = fn;
-                    var uri = new Uri(remoteF,UriKind.RelativeOrAbsolute);
-                    var extension = Path.GetExtension(uri.LocalPath);
-                    if (String.IsNullOrEmpty(extension))
-                        extension = ".jpg";
-                    var localF = Convert.ToBase64String(Encoding.UTF8.GetBytes(remoteF)) + extension;
-                    File.WriteAllBytes(localF, wc.DownloadData(remoteF));
-                    return localF;
-                }).ToArray();
+                    fileNames = fileNames.Select(fn =>
+                    {
+                        var remoteF = "";
+                        if (originatingHost.Scheme != "badscheme")
+                        {
+                            var fnUri = new System.Uri(fn, UriKind.RelativeOrAbsolute);
+                            if (fnUri.IsAbsoluteUri)
+                                return fnUri.ToString();
+                            else
+                                remoteF = new Uri(originatingHost, fnUri).ToString();
+                        }
+                        else remoteF = fn;
+                        var uri = new Uri(remoteF, UriKind.RelativeOrAbsolute);
+                        var extension = Path.GetExtension(uri.LocalPath);
+                        if (String.IsNullOrEmpty(extension))
+                            extension = ".jpg";
+                        var localF = TMP_PATH + Path.GetRandomFileName() + extension;
+                        File.WriteAllBytes(localF, wc.DownloadData(remoteF));
+                        return localF;
+                    }).ToArray();
+                }
+                catch (Exception e) {
+                    Logger.Crash(e);
+                }
             }
             catch (XmlException ex)
             {
                 Console.WriteLine("Drop exception: {0}", ex.Message);
                 MessageBox.Show("Sorry, MeTL couldn't handle this content.");
             }
-
             return fileNames;
+        }
+        private static void deltree(string TMP_PATH)
+        {
+            var errorMessage = string.Format("Deltree failed to delete the path {0}", TMP_PATH);
+            foreach (var f in Directory.EnumerateFiles(TMP_PATH))
+            {
+                try
+                {
+                    File.Delete(f);
+                }
+                catch (Exception) {
+                    Console.WriteLine(errorMessage);
+                }
+            }
+            try
+            {
+                Directory.Delete(TMP_PATH);
+            }
+            catch (Exception) { 
+                Console.WriteLine(errorMessage);
+            }
         }
         public void SetCanEdit(bool canEdit)
         {

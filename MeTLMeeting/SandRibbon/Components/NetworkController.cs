@@ -34,7 +34,6 @@ namespace SandRibbon.Components
                     registerCommands();
                     attachToClient();
                     Commands.AllStaticCommandsAreRegistered();
-                    App.mark(String.Format("NetworkController firing SetIdentity for {0}",e.credentials.name));
                     Commands.SetIdentity.ExecuteAsync(e.credentials);
                 }
                 else

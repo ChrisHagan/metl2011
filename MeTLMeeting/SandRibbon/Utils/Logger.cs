@@ -144,7 +144,6 @@ namespace SandRibbon.Utils
         {/*Interesting quirk about the formatting: \n is the windows line ending but ruby assumes
           *nix endings, which are \r.  Safest to use both, I guess.*/
             var now = SandRibbonObjects.DateTimeFactory.Now();
-
             putCouch(appendThis, now);
         }
         private static void putCouch(string message, DateTime now)

@@ -84,22 +84,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                try
-                {
-                    return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
-                }
-                catch (NotSetException e)
-                {
-                    try
-                    {
-                        var lastJoined = (String)Commands.JoinConversation.lastValue();
-                        Console.WriteLine("Ouch.  Networked on Globals::conversationDetails");
-                        return MeTLLib.ClientFactory.Connection().DetailsOf(lastJoined);
-                    }
-                    catch (NotSetException) { 
-                        return ConversationDetails.Empty;
-                    }
-                }
+                return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
             }
         }
         public static MeTLLib.DataTypes.QuizData quiz
@@ -118,12 +103,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                var v = (MeTLLib.DataTypes.Credentials) Commands.SetIdentity.lastValue();
-                /*
-                if(v.ValueEquals(Credentials.Empty))
-                    Console.WriteLine(String.Format("   Globals.credentials not set when called by {0}",new StackTrace().GetFrame(1).GetMethod()));
-                 */
-                return v;
+                return (MeTLLib.DataTypes.Credentials) Commands.SetIdentity.lastValue();
             }
         }
         public static List<MeTLLib.DataTypes.AuthorizedGroup> authorizedGroups
@@ -134,7 +114,8 @@ namespace SandRibbon.Providers
             }
         }
         public static List<string> authorizedGroupNames {
-            get {// God damn.  I hate the stupidity of this redundant property in Authorized Group.
+            get 
+            {
                 return authorizedGroups.Select(g => g.groupKey).ToList();
             }
         }

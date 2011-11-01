@@ -76,7 +76,6 @@ namespace SandRibbon.Components
         public ConversationSearchBox()
         {
             InitializeComponent();
-            App.mark("Initializing conversationSearch");
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
@@ -168,7 +167,6 @@ namespace SandRibbon.Components
             this.Visibility = Visibility.Visible;
             clearState();
             Dispatcher.queueFocus(SearchInput);
-            App.mark("ConversationSearchBox showing");
         }
         private void HideConversationSearchBox(object o)
         {

@@ -458,7 +458,6 @@ namespace MeTLLib.Providers.Connection
             {
                 var alias = credentials.name + conn.Resource;
                 new MucManager(conn).JoinRoom(room, alias, true);
-                Trace.TraceInformation(string.Format("MeTLLib::Providers::Connection::JabberWire:JoinRoom {0}", room));
             }
             catch (Exception e)
             {

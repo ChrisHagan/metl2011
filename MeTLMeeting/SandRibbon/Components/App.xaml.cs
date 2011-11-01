@@ -18,6 +18,7 @@ using System.Security;
 using System.Diagnostics;
 using MeTLLib.DataTypes;
 using System.Windows.Threading;
+using SandRibbon.Components.Canvas;
 
 [assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -136,6 +137,7 @@ namespace SandRibbon
             {
                 Commands.LeaveAllRooms.Execute(null);
                 MeTLLib.ClientFactory.Connection().Disconnect();
+                AbstractCanvas.deleteTempFiles();
             }
             catch (Exception) { }
         }

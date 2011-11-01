@@ -28,13 +28,10 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>(SetIdentity));
         }
-
         private void SetIdentity(object obj)
         {
-            App.mark("SimpleConversationSelector knows about identity");
             RedrawList(null);
         }
-
         private void joinConversation(string jid)
         {
             var details = ClientFactory.Connection().DetailsOf(jid);
@@ -69,7 +66,6 @@ namespace SandRibbon.Components
                         c.IsValid && c.Subject != "Deleted");
                     conversations.ItemsSource = recentConversations.Take(6);
                 }
-                App.mark("SimpleConversationSelector redrew list");
             });
         }
         public void List(IEnumerable<ConversationDetails> conversations)

@@ -61,6 +61,7 @@ namespace SandRibbon.Components
             }
             openCorrectTab((string)mode);
             setMyConversationVisibility();
+            App.mark("Conversation Search is open for business");
         }
         private void openMyConversations()
         {
