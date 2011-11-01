@@ -83,7 +83,7 @@
                                     <ScrollViewer x:Name="releaseNotesViewer" Visibility="Collapsed" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxWidth="400" MaxHeight="200">
                                         <StackPanel>
                                             <Label Content="Announcements" FontWeight="bold"/>
-                                            <TextBlock Text="{Binding Path=ReleaseNotes}" TextWrapping="Wrap"/>
+                                            <TextBlock x:Name="ReleaseNotes" TextWrapping="Wrap"/>
                                         </StackPanel>
                                     </ScrollViewer>
                                     <StackPanel Orientation="Horizontal">

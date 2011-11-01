@@ -96,6 +96,7 @@ namespace SandRibbon
         }
         static App()
         {
+            App.mark("App static constructor runs");
             setDotNetPermissionState();
         }
         private static void setDotNetPermissionState()

@@ -12,6 +12,7 @@ using System.Windows.Navigation;
 using MeTLLib.DataTypes;
 using MeTLLib;
 using SandRibbon.Components.Sandpit;
+using System.Threading;
 
 namespace SandRibbon.Components
 {
@@ -20,27 +21,7 @@ namespace SandRibbon.Components
         private bool canLoginAgain = true;
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
-        static Random random = new Random();
         public string Version { get; set; }
-        public string ReleaseNotes
-        {
-            get
-            {
-                var releaseNotes = "MeTL is unable to retrieve announcements.  Please check your internet connection.";
-                try
-                {
-                    releaseNotes = new WebClient().DownloadString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
-                }
-                catch (Exception e)
-                {
-                }
-                if (!string.IsNullOrEmpty(releaseNotes))
-                    releaseNotesViewer.Visibility = Visibility.Visible;
-                else
-                    releaseNotesViewer.Visibility = Visibility.Collapsed;
-                return releaseNotes;
-            }
-        }
         public Login()
         {
             InitializeComponent();
@@ -60,6 +41,20 @@ namespace SandRibbon.Components
         private void loaded(object sender, RoutedEventArgs e)
         {
             username.Focus();
+            ThreadPool.QueueUserWorkItem(_arg =>
+            {
+                var notes = new WebClient().DownloadString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
+                Dispatcher.adoptAsync(delegate
+                {
+                    if (!string.IsNullOrEmpty(notes))
+                    {
+                        ReleaseNotes.Text = notes;
+                        releaseNotesViewer.Visibility = Visibility.Visible;
+                    }
+                    else
+                        releaseNotesViewer.Visibility = Visibility.Collapsed;
+                });
+            });
         }
         private void checkAuthenticationAttemptIsPlausible(object sender, CanExecuteRoutedEventArgs e)
         {

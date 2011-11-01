@@ -162,10 +162,13 @@ namespace SandRibbon.Components.WebMeTLIntegration
             }
         }
         private void ShutdownChrome(object _unused){
-            Dispatcher.adopt(delegate
+            if (chromeBrowser != null)
             {
-                chromeBrowser.Close();
-            });
+                Dispatcher.adopt(delegate
+                {
+                    chromeBrowser.Close();
+                });
+            }
             WebCore.Shutdown();
         }
         private void JoinConversation(string conversationJid) { 

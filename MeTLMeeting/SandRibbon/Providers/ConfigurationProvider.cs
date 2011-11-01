@@ -67,7 +67,7 @@ namespace SandRibbon.Providers
             Commands.MeTLType.ExecuteAsync(type);
             return Pedagogicometer.level(level);
         }
-        private string metlVersion = "versionUnknown";
+        private string metlVersion = "Unknown";
         public string getMetlVersion()
         {
             if (metlVersion == "Unknown")

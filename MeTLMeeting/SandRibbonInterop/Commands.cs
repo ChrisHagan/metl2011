@@ -22,10 +22,6 @@ namespace SandRibbon
         private object _defaultValue;
         public object defaultValue{
             get{
-                /*
-                if(!isSet)
-                    Console.WriteLine(String.Format("{0} not set when called by {1}",Commands.which(this),new StackTrace().GetFrame(2).GetMethod()));
-                 */
                 return _defaultValue;
             }
             set {
@@ -324,8 +320,6 @@ namespace SandRibbon
         }
         public static void RequerySuggested()
         {
-            var s = new StackTrace();
-            Console.WriteLine(String.Format("Command Requery instigated by {0}", s.GetFrame(2).GetMethod()));
             RequerySuggested(all.ToArray());
         }
         public static void RequerySuggested(params DefaultableCompositeCommand[] commands)

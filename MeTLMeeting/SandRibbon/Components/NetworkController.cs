@@ -53,7 +53,6 @@ namespace SandRibbon.Components
             };
             client.events.StatusChanged += checkValidity;
         }
-
         private ClientConnection buildServerSpecificClient()
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.
         {
