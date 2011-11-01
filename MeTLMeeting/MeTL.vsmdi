@@ -30,8 +30,5 @@
   </TestList>
   <TestList name="MeTLHealthCheck" id="cb048c62-9979-4429-a258-8a2421016870" parentListId="018a72cc-7ed7-453d-9540-4766807b4ccd">
     <Description>Run through all the use cases</Description>
-    <TestLinks>
-      <TestLink id="65a9fc7a-3a72-49aa-b302-612f4bbe8deb" name="supertest" storage="functional\supertest.orderedtest" type="Microsoft.VisualStudio.TestTools.TestTypes.Ordered.AutoSuite, Microsoft.VisualStudio.QualityTools.Tips.OrderedTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
-    </TestLinks>
   </TestList>
 </TestLists>
