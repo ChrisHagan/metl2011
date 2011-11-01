@@ -1,8 +1,6 @@
 ﻿<sr:StatusBar x:Class="SandRibbon.Chrome.StatusBar"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
-    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon" xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
               x:Name="statusBar">

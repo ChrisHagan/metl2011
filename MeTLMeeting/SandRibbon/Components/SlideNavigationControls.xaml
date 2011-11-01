@@ -1,5 +1,4 @@
 ﻿<UserControl x:Class="SandRibbon.Components.SlideNavigationControls"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"

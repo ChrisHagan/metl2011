@@ -5,7 +5,6 @@
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
-    xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:my="clr-namespace:SandRibbon"
     xmlns:chrome="clr-namespace:SandRibbon.Chrome"
     xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
@@ -45,9 +44,6 @@
                 <sr:ApplicationPopup 
                     OptionsText="Options" ExitText="Quit MeTL" ShowOptions="ApplicationPopup_ShowOptions"
                     x:Name="RibbonApplicationPopup">
-                    <sr:ApplicationPopup.Resources>
-                        <core:Double x:Key="imageSide">100</core:Double>
-                    </sr:ApplicationPopup.Resources>
                     <sr:ApplicationPopup.RecentDocumentsControl>
                         <StackPanel Width="350">
                             <Grid>
@@ -113,7 +109,6 @@
                 </Grid>
             </Grid>
             <Grid x:Name="TutorialLayer" Visibility="Collapsed" IsHitTestVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-90,0,0" Height="{Binding ElementName=ribbonWindow, Path=ActualHeight}" Width="{Binding ElementName=ribbonWindow, Path=ActualWidth}" >
-                <components:Tutorial />
             </Grid>
         </Grid>
         <Grid x:Name="loginParent">

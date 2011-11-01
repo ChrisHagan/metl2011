@@ -269,12 +269,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\Tutorial.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\UserOptionsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -635,10 +629,6 @@
     </Compile>
     <Compile Include="Components\Submissions\ViewSubmissions.xaml.cs">
       <DependentUpon>ViewSubmissions.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Tutorial.xaml.cs">
-      <DependentUpon>Tutorial.xaml</DependentUpon>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="DispatcherExtensions.cs" />
     <Compile Include="Providers\Colors.cs" />

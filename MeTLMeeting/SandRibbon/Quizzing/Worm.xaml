@@ -1,0 +1,9 @@
+--- Worm.xaml
++++ Worm.xaml
+@@ -1,6 +1,5 @@
+ ﻿<UserControl x:Class="SandRibbon.Quizzing.Worm"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+-    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     Background="Black">
+     <UserControl.Resources>

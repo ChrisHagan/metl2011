@@ -1,12 +1,8 @@
 ﻿<UserControl x:Class="SandRibbon.Components.SimplePenTools"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
-    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:groups="clr-namespace:SandRibbon.Tabs.Groups"
-    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop" >
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries">
     <dict:RibbonPanel Tag="inkModes">
         <groups:PenColors />
     </dict:RibbonPanel>

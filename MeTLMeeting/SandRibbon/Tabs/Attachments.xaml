@@ -5,7 +5,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:SandRibbon="clr-namespace:SandRibbon" >
     <sr:RibbonTab.Resources>

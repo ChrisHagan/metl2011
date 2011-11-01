@@ -4,10 +4,7 @@
     xmlns:sr="clr-namespace:Divelements.SandRibbon;assembly=Divelements.SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-    xmlns:my="clr-namespace:SandRibbon"
-    xmlns:groups="clr-namespace:SandRibbon.Tabs.Groups"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
-    xmlns:core="clr-namespace:System;assembly=mscorlib">
+    xmlns:my="clr-namespace:SandRibbon">
     <StackPanel x:Name="LayoutRoot" Orientation="Horizontal">
         <StackPanel.Resources>
             <ImageBrush ImageSource="\Resources\Ribbon-Palette.png" x:Key="SpectrumBrush"/>

@@ -4,8 +4,6 @@
     xmlns:q="clr-namespace:SandRibbon.Quizzing"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:metl="clr-namespace:SandRibbon"
-    xmlns:components="clr-namespace:SandRibbon.Components"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
     xmlns:SandRibbon="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     Title="Create a Quiz" 
     ShowInTaskbar="False"

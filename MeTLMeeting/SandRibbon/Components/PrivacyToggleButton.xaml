@@ -1,9 +1,7 @@
 ﻿<UserControl x:Class="SandRibbon.Components.PrivacyToggleButton"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
                  xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:SandRibbon="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     >
     <Canvas>
         <DockPanel Margin="10, 0, 0, 0" x:Name="privacyButtons"  >

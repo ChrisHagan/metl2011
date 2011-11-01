@@ -1,10 +1,8 @@
 ﻿<UserControl x:Class="SandRibbon.Components.Login"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:sr="clr-namespace:SandRibbon"
     xmlns:components="clr-namespace:SandRibbon.Components"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:util="clr-namespace:Components.Utility">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.CommandBindings>
         <CommandBinding Command="{x:Static components:Login.CheckAuthentication}"  CanExecute="checkAuthenticationAttemptIsPlausible" Executed="attemptAuthentication"/>
         <CommandBinding Command="{x:Static components:Login.LoginPending}" CanExecute="checkLoginPending"/>

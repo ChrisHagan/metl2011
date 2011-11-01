@@ -86,11 +86,12 @@ namespace SandRibbon
             return s;
         }
         public static void mark(string msg) {
-            Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
+            //Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
+            //MessageBox.Show(String.Format("{0} : {1}", msg, DateTime.Now - AccidentallyClosing));
         }
         static App()
         {
-            App.mark("App static constructor runs");
+            //App.mark("App static constructor runs");
             setDotNetPermissionState();
         }
         private static void setDotNetPermissionState()
@@ -120,7 +121,7 @@ namespace SandRibbon
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.Current.Exit += new ExitEventHandler(Current_Exit);
-            mark("App.onStartup finished");
+           // mark("App.onStartup finished");
         }
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {

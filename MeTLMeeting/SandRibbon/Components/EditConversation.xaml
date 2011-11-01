@@ -1,8 +1,8 @@
 ﻿<Window x:Class="SandRibbon.Components.EditConversation"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:components="clr-namespace:SandRibbon.Components" 
-        xmlns:core="clr-namespace:System;assembly=mscorlib" xmlns:local="clr-namespace:SandRibbon.Components.Utility.DragDrop" Title="Page Reorder" Height="300" Width="600">
+        xmlns:components="clr-namespace:SandRibbon.Components"
+        xmlns:local="clr-namespace:SandRibbon.Components.Utility.DragDrop"> 
     <Window.Resources>
 
         <DataTemplate x:Key="slideDragTemplate">

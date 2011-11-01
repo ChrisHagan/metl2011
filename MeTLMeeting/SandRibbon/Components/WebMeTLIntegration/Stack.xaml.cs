@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -32,10 +33,7 @@ namespace SandRibbon.Components.WebMeTLIntegration
         private CookieAwareWebClient client;
         private bool isHealthy = false;
         private static WebCoreConfig chromeConfig = new WebCoreConfig { EnableJavascript = true, EnablePlugins = true, LogLevel = LogLevel.Verbose, SaveCacheAndCookies = true };
-        static Stack()
-        {
-            WebCore.Initialize(chromeConfig);
-        }
+
         public Stack()
         {
             InitializeComponent();
@@ -70,6 +68,10 @@ namespace SandRibbon.Components.WebMeTLIntegration
         }
         private void setupChrome(){
             Dispatcher.adopt(delegate {
+              if (!WebCore.IsRunning)
+              {
+                WebCore.Initialize(chromeConfig);
+              }
               if (chromeBrowser != null)
               {
                       chromeBrowser.Unloaded -= unloadBrowserHandler;

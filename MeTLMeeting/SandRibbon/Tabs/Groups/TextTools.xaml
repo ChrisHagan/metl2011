@@ -2,12 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    xmlns:components="clr-namespace:SandRibbon.Components"
-    xmlns:my="clr-namespace:SandRibbon"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
-xmlns:SandRibbonInterop="clr-namespace:SandRibbonInterop;assembly=SandRibbonInterop"
-    xmlns:core="clr-namespace:System;assembly=mscorlib"
     Loaded="setUpTools">
     <StackPanel Orientation="Horizontal" x:Name="LayoutRoot">
         <dict:RibbonPanel>
