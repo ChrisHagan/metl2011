@@ -45,7 +45,6 @@ namespace SandRibbon.Components.WebMeTLIntegration
         {
             WebCore.Initialize(chromeConfig);
         }
-           
         public Stack()
         {
             InitializeComponent();
