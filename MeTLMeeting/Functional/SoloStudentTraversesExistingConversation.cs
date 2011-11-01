@@ -48,12 +48,13 @@ namespace Functional
         {
             var win1 = MeTL.StartProcess();
             var win2 = MeTL.StartProcess();
-            
+
             var metlWindow1 = new UITestHelper();
             var metlWindow2 = new UITestHelper();
 
-            metlWindow1.AutomationElement = win1;
-            metlWindow2.AutomationElement = win2;
+            var propertyExpression = new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW);
+            metlWindow1.SearchProperties.Add(propertyExpression);
+            metlWindow2.SearchProperties.Add(propertyExpression);
             metlWindow1.WaitForControlExist();
             metlWindow2.WaitForControlExist();
 
