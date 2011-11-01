@@ -5,14 +5,10 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using SandRibbon.Components.Submissions;
 using SandRibbon.Providers;
 using SandRibbon.Tabs;
-using SandRibbonInterop;
-using SandRibbonObjects;
 using System.Collections.Generic;
 using System.Linq;
-using SandRibbon.Components;
 using System.Windows.Controls;
 using MeTLLib.DataTypes;
 

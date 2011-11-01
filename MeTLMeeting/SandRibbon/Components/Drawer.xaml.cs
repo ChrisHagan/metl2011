@@ -1,10 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Pedagogicometry;
-using SandRibbon.Providers;
-using SandRibbonObjects;
 using System.Windows;
 
 namespace SandRibbon.Components

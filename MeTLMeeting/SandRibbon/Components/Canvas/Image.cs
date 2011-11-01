@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -18,12 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Win32;
-using Newtonsoft.Json;
-using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
-using SandRibbon.Utils.Connection;
-using SandRibbonInterop;
 using SandRibbonObjects;
 using System.Windows.Media.Effects;
 using Brushes = System.Windows.Media.Brushes;
@@ -33,7 +26,6 @@ using Rectangle = System.Windows.Shapes.Rectangle;
 using Size = System.Windows.Size;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using System.Windows.Controls.Primitives;
 
 namespace SandRibbon.Components.Canvas
 {

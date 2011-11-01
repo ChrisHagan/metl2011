@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Documents;
 using System.Windows.Ink;
-using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
-using SandRibbonInterop;
 using SandRibbonObjects;
 using System.Windows.Controls;
 using MeTLLib.DataTypes;
-using SandRibbon.Components.Canvas;
 
 namespace SandRibbon.Components
 {

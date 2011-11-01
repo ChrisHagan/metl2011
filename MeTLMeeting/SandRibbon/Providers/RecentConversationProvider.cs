@@ -4,9 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SandRibbon.Providers.Structure;
 using MeTLLib.DataTypes;
-using Microsoft.Practices.Composite.Presentation.Commands;
+
 //using SandRibbonObjects;
 
 namespace SandRibbon.Providers

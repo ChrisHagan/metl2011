@@ -1,6 +1,4 @@
 ﻿using System.Windows.Media.Effects;
-using System.Windows;
-using System.Drawing;
 using System.Windows.Media;
 namespace SandRibbon
 {/*WPF supports pixel shader effects.  I don't think it's worth doing at this point given that

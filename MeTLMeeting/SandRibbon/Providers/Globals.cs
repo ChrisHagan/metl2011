@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MeTLLib.DataTypes;
-using System.Windows.Ink;
-using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Pedagogicometry;
-using SandRibbon.Utils;
-using System.Diagnostics;
 using SandRibbon.Components.Canvas;
 
 namespace SandRibbon.Providers

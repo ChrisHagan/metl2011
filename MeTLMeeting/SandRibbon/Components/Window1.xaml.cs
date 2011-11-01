@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,23 +9,13 @@ using System.Windows.Media;
 using Divelements.SandRibbon;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
-using SandRibbon.Components.SimpleImpl;
 using SandRibbon.Providers;
-using SandRibbon.Providers.Structure;
-using SandRibbon.Quizzing;
 using SandRibbon.Utils;
 using SandRibbon.Utils.Connection;
-using SandRibbonInterop;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using System.Windows.Shapes;
-using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Pedagogicometry;
-using SandRibbon.Tabs;
 using SandRibbon.Tabs.Groups;
-using System.Collections;
-using System.Windows.Ink;
-using System.Collections.ObjectModel;
 using SandRibbon.Components.Utility;
 using System.Windows.Documents;
 using MeTLLib;
@@ -214,11 +203,6 @@ namespace SandRibbon
                 new UserOptionsDialog().Show();
             else MessageBox.Show("You must be logged in to edit your options");
         }
-        private void playMedia(object sender, EventArgs e)
-        {
-            player.Position = new TimeSpan(0, 0, 0);
-            player.Play();
-        }
         private void ListenToAudio(int jid) {
             player.Source = new Uri("http://radar.adm.monash.edu:8500/MeTLStream1.m3u");
         }
@@ -352,13 +336,6 @@ namespace SandRibbon
                 LHSDrawerDefinition.Width = new GridLength((columns.ActualWidth - rightDrawer.ActualWidth) / 4);
             }
         }
-        private void ShowEditSlidesDialog(object unused)
-        {
-            new SlidesEditingDialog().ShowDialog();
-            var seDialog = new SlidesEditingDialog();
-            seDialog.Owner = Window.GetWindow(this);
-            seDialog.ShowDialog();
-        }
         private bool LessThan(double val1, double val2, double tolerance)
         {
             var difference = val2 * tolerance;
@@ -450,16 +427,6 @@ namespace SandRibbon
             var currentZoomWidth = scroll.ActualWidth / canvasViewBox.ActualWidth;
             var currentZoom = Math.Max(currentZoomHeight, currentZoomWidth);
             Commands.ZoomChanged.Execute(currentZoom);
-        }
-        private void CreateConversation(object _unused)
-        {
-            Trace.TraceInformation("CreatedBlankConversation");
-            Commands.CreateBlankConversation.ExecuteAsync(null);
-        }
-        private void EditConversation(object _unused)
-        {
-            ShowPowerpointBlocker("Editing Conversation Dialog Open");
-            Commands.EditConversation.ExecuteAsync(Globals.location.activeConversation);
         }
         private void BlockInput(string message)
         {
@@ -600,10 +567,6 @@ namespace SandRibbon
                                          }
                                     }
             });
-        }
-        private bool conversationValid(ConversationDetails details)
-        {
-            return details.IsValid && !details.isDeleted;
         }
         private void UpdateTitle(ConversationDetails details)
         {

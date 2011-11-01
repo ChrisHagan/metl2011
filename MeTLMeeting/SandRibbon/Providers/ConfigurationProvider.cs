@@ -1,14 +1,10 @@
-﻿using System.Windows;
-using System.Xml.Linq;
-using System.Xml;
+﻿using System.Xml.Linq;
 using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Pedagogicometry;
-using SandRibbon.Utils;
 
 namespace SandRibbon.Providers
 {

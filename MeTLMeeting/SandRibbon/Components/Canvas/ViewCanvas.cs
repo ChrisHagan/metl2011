@@ -1,22 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Windows.Automation.Peers;
-using System.Windows.Automation.Provider;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
 using System.Windows.Input;
-using System.Windows.Input.StylusPlugIns;
 using System.Windows.Media;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Providers;
-using SandRibbon.Utils;
-using SandRibbonInterop;
 //using SandRibbonInterop.MeTLStanzas;
-using SandRibbonObjects;
 using System.Windows;
 
 namespace SandRibbon.Components.Canvas

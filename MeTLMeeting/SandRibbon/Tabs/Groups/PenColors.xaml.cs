@@ -1,31 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
-using System.Windows.Media.Imaging;
-using System.Threading;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using Microsoft.Win32;
-using SandRibbon;
 using SandRibbon.Components.Interfaces;
 using System.ComponentModel;
-using Divelements.SandRibbon;
 using SandRibbon.Providers;
 using System.Diagnostics;
 using SandRibbon.Utils;
-using System.Diagnostics;
 
 namespace SandRibbon.Tabs.Groups
 {

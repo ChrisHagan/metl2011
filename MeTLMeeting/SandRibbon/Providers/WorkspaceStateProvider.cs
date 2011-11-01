@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using System.IO;
-using SandRibbon.Components.Sandpit;
-using System.Windows.Input;
-using SandRibbon.Components.Pedagogicometry;
-using Constants;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbonObjects;
 using SandRibbon.Utils;
 
 namespace SandRibbon.Providers

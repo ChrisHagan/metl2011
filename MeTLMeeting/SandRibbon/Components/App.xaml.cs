@@ -1,22 +1,16 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Specialized;
-using System.Deployment.Application;
-using System.Web;
 using System.Windows;
 using System.Windows.Controls;
 using MeTLLib;
-using SandRibbon.Components.Sandpit;
 using SandRibbon.Utils;
 using System.Security.Permissions;
 using SandRibbon.Providers;
-using SandRibbon.Utils.Connection;
 using SandRibbon.Quizzing;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
 using System.Security;
 using System.Diagnostics;
-using MeTLLib.DataTypes;
 using System.Windows.Threading;
 using SandRibbon.Components.Canvas;
 
@@ -126,6 +120,7 @@ namespace SandRibbon
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.Current.Exit += new ExitEventHandler(Current_Exit);
+            mark("App.onStartup finished");
         }
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -161,29 +156,6 @@ namespace SandRibbon
         {
             Logger.Crash(e);
         }
-        private void AncilliaryButton_Click(object sender, RoutedEventArgs e)
-        {
-            var AncilliaryButton = (Button)sender;
-            var CurrentGrid = (StackPanel)AncilliaryButton.Parent;
-            var CurrentPopup = new System.Windows.Controls.Primitives.Popup();
-            foreach (FrameworkElement f in CurrentGrid.Children)
-                if (f.GetType().ToString() == "System.Windows.Controls.Primitives.Popup")
-                    CurrentPopup = (System.Windows.Controls.Primitives.Popup)f;
-            if (CurrentPopup.IsOpen == false)
-                CurrentPopup.IsOpen = true;
-            else CurrentPopup.IsOpen = false;
-        }
-        private NameValueCollection GetQueryStringParameters()
-        {
-            NameValueCollection nameValueTable = new NameValueCollection();
-            if (ApplicationDeployment.IsNetworkDeployed)
-            {
-                string queryString = ApplicationDeployment.CurrentDeployment.ActivationUri.Query;
-                if (queryString != null)
-                    nameValueTable = HttpUtility.ParseQueryString(queryString);
-            }
-            return (nameValueTable);
-        }
         private void AnyTextBoxGetsFocus(object sender, RoutedEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)delegate
@@ -198,18 +170,6 @@ namespace SandRibbon
             EventManager.RegisterClassHandler(typeof(TextBox),
             TextBox.GotKeyboardFocusEvent,
             new RoutedEventHandler(AnyTextBoxGetsFocus));
-            try
-            {
-                var parameters = GetQueryStringParameters();
-                foreach (var key in parameters.Keys)
-                {
-                    Application.Current.Properties.Add(key, parameters.Get((string)key));
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Crash(ex);
-            }
         }
     }
 }

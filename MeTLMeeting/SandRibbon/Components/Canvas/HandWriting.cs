@@ -2,20 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
-using System.Windows.Input.StylusPlugIns;
 using System.Windows.Media;
-using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
-using SandRibbonObjects;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 

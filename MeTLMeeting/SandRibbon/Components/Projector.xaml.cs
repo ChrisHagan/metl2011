@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Ink;
-using System.Windows.Input;
 using System.Windows.Media;
 using MeTLLib;
 using MeTLLib.Providers.Connection;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Components.Utility;
 using SandRibbon.Providers;
-using SandRibbon.Utils;
-using SandRibbon.Utils.Connection;
 using System.Collections.Generic;
-using SandRibbonInterop;
 using SandRibbon.Components.Canvas;
 using MeTLLib.DataTypes;
 

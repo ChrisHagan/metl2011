@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;

@@ -1,18 +1,11 @@
 ﻿using System;
-using System.IO;
-using System.Diagnostics;
-using System.Net;
-using System.Text;
 using Newtonsoft.Json;
 using SandRibbon.Providers;
 using MeTLLib;
 using Divan;
 using Newtonsoft.Json.Linq;
 using System.Linq;
-using System.Windows.Forms;
-using System.Threading;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using System.Windows.Threading;
 
 namespace SandRibbon.Utils
 {

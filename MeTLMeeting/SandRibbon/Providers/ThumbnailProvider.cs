@@ -1,24 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.IO;
 using System.Net;
-using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using MeTLLib.Providers.Connection;
-using MeTLLib.DataTypes;
-using System.Windows.Data;
 using MeTLLib;
-using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Utils;
-using Size = System.Windows.Size;
-using System.ComponentModel;
 
 namespace SandRibbon.Providers
 {

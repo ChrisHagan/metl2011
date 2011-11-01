@@ -4,10 +4,6 @@ using System.Windows.Interop;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.IO;
-using System.Windows;
 
 namespace SandRibbon.Utils
 {

@@ -87,14 +87,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Divelements.SandRibbon.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.SBSDKComWrapperLib, Version=1.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\Interop.SBSDKComWrapperLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.1.1, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\Ionic.Zip.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Office.Interop.PowerPoint, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
       <Private>True</Private>
     </Reference>
@@ -119,15 +111,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Deployment" />
-    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Serialization">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.ServiceModel">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -475,12 +459,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\SMARTboard.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\SyncDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -749,7 +727,6 @@
     <Compile Include="Tabs\Groups\ToolBox.xaml.cs">
       <DependentUpon>ToolBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\SMARTboard.xaml.cs" />
     <Compile Include="Components\SyncDisplay.xaml.cs">
       <DependentUpon>SyncDisplay.xaml</DependentUpon>
     </Compile>
@@ -801,7 +778,6 @@
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\OverlayAdorner.cs" />
     <Compile Include="Utils\PowerPointLoader.cs" />
-    <Compile Include="Providers\ResourceUploader.cs" />
     <Compile Include="Effects.cs" />
     <Compile Include="Providers\Structure\IConversationDetailsProvider.cs" />
     <Compile Include="Utils\ColorLookup.cs" />

@@ -1,7 +1,5 @@
 ﻿using System.Windows.Controls;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using System;
-using System.Threading;
 
 namespace SandRibbon.Components.SimpleImpl
 {

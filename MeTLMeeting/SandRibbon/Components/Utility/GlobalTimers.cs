@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using SandRibbon.Providers;
-using SandRibbon.Utils;
 
 namespace SandRibbon.Components.Utility
 {

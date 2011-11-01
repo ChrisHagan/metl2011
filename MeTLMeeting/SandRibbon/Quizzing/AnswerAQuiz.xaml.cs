@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
-using SandRibbonInterop;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
 

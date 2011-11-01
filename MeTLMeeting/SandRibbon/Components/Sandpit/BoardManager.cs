@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using SandRibbon.Providers;
-using SandRibbonObjects;
-using SandRibbon.Providers.Structure;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.DataTypes;
 
