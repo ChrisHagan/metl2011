@@ -1069,5 +1069,24 @@ namespace SandRibbon
         {
             App.AccidentallyClosing = DateTime.Now;
         }
+        private void setStackVisibility(Visibility visible)
+        {
+            if (visible == Visibility.Visible)
+            {
+                webMeTLGridSplitter.Visibility = Visibility.Visible;
+                WebMeTLSplitterDefinition.Width = new GridLength(10);
+                WebMeTLDrawerDefinition.Width = new GridLength(400);
+                WebMeTLDrawerDefinition.MinWidth = 100;
+                webMeTLDrawer.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                webMeTLGridSplitter.Visibility = Visibility.Collapsed;
+                WebMeTLDrawerDefinition.MinWidth = 0;
+                WebMeTLDrawerDefinition.Width = new GridLength(0);
+                WebMeTLSplitterDefinition.Width = new GridLength(0);
+                webMeTLDrawer.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

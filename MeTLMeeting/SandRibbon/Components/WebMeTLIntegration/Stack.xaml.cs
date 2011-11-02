@@ -39,6 +39,7 @@ namespace SandRibbon.Components.WebMeTLIntegration
             InitializeComponent();
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>((cred) => establishWebMeTLConnection(cred)));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
+            Commands.SetStackVisibility.RegisterCommand(new DelegateCommand<Visibility>(setStackVisibility));
         }
         private void establishWebMeTLConnection(Credentials cred)
         {
@@ -65,6 +66,18 @@ namespace SandRibbon.Components.WebMeTLIntegration
                 browserContainer.Visibility = Visibility.Collapsed;
                 availableTeachingEvents.Visibility = Visibility.Collapsed;
             });
+        }
+        private void setStackVisibility(Visibility vis){
+            if (vis == Visibility.Visible)
+            {
+                establishWebMeTLConnection(Globals.credentials);
+                this.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ShutdownChrome(null);
+                this.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
         private void setupChrome(){
             Dispatcher.adopt(delegate {
@@ -167,8 +180,16 @@ namespace SandRibbon.Components.WebMeTLIntegration
         private void JoinConversation(string conversationJid) { 
             var teachingEvents = teachingEventsForConversation(conversationJid);
             ListAvailableTeachingEvents(teachingEvents);
-            if (teachingEvents.Count() == 1) 
-                LoadStackForTeachingEvent(teachingEvents.ElementAt(0).code); 
+            if (teachingEvents.Count() == 0)
+            {
+                Commands.SetStackVisibility.Execute(Visibility.Collapsed);
+            }
+            else
+            {
+                Commands.SetStackVisibility.Execute(Visibility.Visible);
+                if (teachingEvents.Count() == 1)
+                    LoadStackForTeachingEvent(teachingEvents.ElementAt(0).code);
+            }
         }
         private class TeachingEvent {
             public string code{get;set;}
