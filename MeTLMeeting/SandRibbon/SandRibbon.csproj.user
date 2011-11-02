@@ -3,9 +3,9 @@
   <PropertyGroup>
     <PublishUrlHistory>publish\</PublishUrlHistory>
     <InstallUrlHistory>http://metl.adm.monash.edu.au/MeTL2011/|http://metl.adm.monash.edu.au/MeTLStaging/|http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu.au/SpecialMeTL/|http://metl.adm.monash.edu.au/specialMeTL/</InstallUrlHistory>
-    <InstallUrlHistory>http://metl.adm.monash.edu.au/whackyMeTL/|http://metl.adm.monash.edu.au/MeTLStaging/|http://metl.adm.monash.edu.au/MeTL2011/|http://metl.adm.monash.edu.au/MeTLPresenter/|http://metl.adm.monash.edu.au/SpecialMeTL/</InstallUrlHistory>
+    <InstallUrlHistory>http://metl.adm.monash.edu.au/whackyMeTLStaging/|http://metl.adm.monash.edu.au/whackyMeTL/|http://metl.adm.monash.edu.au/MeTLStaging/|http://metl.adm.monash.edu.au/MeTL2011/|http://metl.adm.monash.edu.au/MeTLPresenter/</InstallUrlHistory>
     <SupportUrlHistory>http://drawkward.adm.monash.edu/MeTL</SupportUrlHistory>
-    <UpdateUrlHistory>http://metl.adm.monash.edu.au/whackyMeTL/|http://metl.adm.monash.edu.au/MeTLStaging/|http://metl.adm.monash.edu.au/MeTL2011/|http://drawkward.adm.monash.edu/MeTLStaging/|http://metl.adm.monash.edu.au/MeTLPresenter/</UpdateUrlHistory>
+    <UpdateUrlHistory>http://metl.adm.monash.edu.au/whackyMeTLStaging/|http://metl.adm.monash.edu.au/whackyMeTL/|http://metl.adm.monash.edu.au/MeTLStaging/|http://metl.adm.monash.edu.au/MeTL2011/|http://drawkward.adm.monash.edu/MeTLStaging/</UpdateUrlHistory>
     <BootstrapperUrlHistory>
     </BootstrapperUrlHistory>
     <ErrorReportUrlHistory>
