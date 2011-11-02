@@ -37,7 +37,6 @@
     <InstallUrl>http://metl.adm.monash.edu.au/MeTLPresenter/</InstallUrl>
     <ProductName>MeTL Presenter</ProductName>
     <PublisherName>Monash University eEducation Centre</PublisherName>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>26</ApplicationRevision>
