@@ -677,6 +677,7 @@
     <Compile Include="Quizzing\ViewQuizResults.xaml.cs">
       <DependentUpon>ViewQuizResults.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="Tabs\ClassManagement.xaml.cs">
       <DependentUpon>ClassManagement.xaml</DependentUpon>
     </Compile>
@@ -1069,7 +1070,6 @@
     <Content Include="Resources\Spectrum.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <SplashScreen Include="Resources\splashScreen.png" />
     <Resource Include="Resources\Submissions.png" />
     <Content Include="Resources\SyncGreen.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -1118,6 +1118,9 @@
       <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <SplashScreen Include="Resources\splashScreen.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

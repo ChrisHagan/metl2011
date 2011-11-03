@@ -9,6 +9,7 @@ namespace Functional
     {
         private UITestHelper metlWindow1;
         private UITestHelper metlWindow2;
+        //private AutomationElementCollection metlWindows;
         
         [TestMethod]
         public void StartOneInstance()
@@ -16,6 +17,26 @@ namespace Functional
             MeTL.StartProcess();
 
             metlWindow1 = MeTL.GetMainWindow();
+            var success1 = metlWindow1.WaitForControlEnabled();
+            Assert.IsTrue(success1, ErrorMessages.EXPECTED_MAIN_WINDOW);
+
+            /*//Assert.AreEqual(metlWindows.Count, 1);
+
+            metlWindow1 = new UITestHelper(metlWindows[0]);
+            metlWindow1.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
+
+            var success = metlWindow1.WaitForControlEnabled();
+            //Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
+
+            foreach (var window in metlWindows)
+            {
+                var metlWindow = new UITestHelper();
+                metlWindow.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
+
+                var success = metlWindow.WaitForControlExist();
+                Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
+            }
+            */
         }
 
         [TestMethod]

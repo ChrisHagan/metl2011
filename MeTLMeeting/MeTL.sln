@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbonInterop", "SandRi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandRibbonObjects", "SandRibbonObjects\SandRibbonObjects.csproj", "{87F30CE0-8265-4934-8E1E-CF90B26B2562}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LectureMeTL", "LectureMeTL\LectureMeTL.csproj", "{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLib", "MeTLLib\MeTLLib.csproj", "{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeTLLibTests", "MeTLLibTests\MeTLLibTests.csproj", "{FE0598CD-05CE-4EE9-9F93-D2260F504071}"
@@ -29,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		MeTL.vsmdi = MeTL.vsmdi
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LectureMeTL", "LectureMeTL\LectureMeTL.csproj", "{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -73,16 +73,6 @@ Global
 		{87F30CE0-8265-4934-8E1E-CF90B26B2562}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{87F30CE0-8265-4934-8E1E-CF90B26B2562}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{87F30CE0-8265-4934-8E1E-CF90B26B2562}.Release|x86.ActiveCfg = Release|Any CPU
-		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|x86.ActiveCfg = Release|Any CPU
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -133,6 +123,16 @@ Global
 		{D91E43FB-3666-4840-AB1F-579B05AC963C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{D91E43FB-3666-4840-AB1F-579B05AC963C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D91E43FB-3666-4840-AB1F-579B05AC963C}.Release|x86.ActiveCfg = Release|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2AE944D4-D0D8-45E2-BDA5-ACB4A65CE044}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

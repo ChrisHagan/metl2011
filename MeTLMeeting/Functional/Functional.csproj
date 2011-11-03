@@ -165,6 +165,9 @@
     <None Include="MeTLTests.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="UseCaseConversationControl_InkManipulationUndoneAndRedone.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="UseCaseConversationControl_ChangePrivacyOfOwnConversation.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
