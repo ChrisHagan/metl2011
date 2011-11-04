@@ -13,7 +13,7 @@ namespace SandRibbon.Providers
         public const string METLDEMONSTRATOR = "MeTL Demonstrator";
         public const string METL = "MeTL";
         public const string METLPRESENTER = "MeTL Presenter";
-        public static System.Net.CookieContainer cookieContainer = new System.Net.CookieContainer();
+
         private static QuizData quizData = new QuizData();
         public static bool isAuthor
         {

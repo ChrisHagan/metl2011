@@ -16,15 +16,6 @@ using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components.WebMeTLIntegration
 {
-    public class AwesomiumDragObject{
-        public String _html {private set; get;}
-        public Uri _originatingPage { private set; get; }
-        public AwesomiumDragObject(String html, System.Uri originatingPage)
-        {
-            _html = html;
-            _originatingPage = originatingPage;
-        }
-    }
     public partial class Stack : UserControl
     {
         private static readonly string WEB_METL_URL = "http://webmetl3.adm.monash.edu:8080";
@@ -94,26 +85,11 @@ namespace SandRibbon.Components.WebMeTLIntegration
                       browserContainer.Children.Clear();
               }
               chromeBrowser = new WebControl();
-              chromeBrowser.SelectionChanged += chromeBrowser_SelectionChanged;
-              chromeBrowser.PreviewMouseMove += chromeBrowser_dragMoving;
               chromeBrowser.Crashed += crashBrowserHandler;
               chromeBrowser.Unloaded += unloadBrowserHandler;
               chromeBrowser.PluginCrashed += pluginCrashedHandler;
               browserContainer.Children.Add(chromeBrowser);
             });
-        }
-        void chromeBrowser_dragMoving(object sender, MouseEventArgs e){
-            if (e.LeftButton == MouseButtonState.Released) return;
-            if (String.IsNullOrEmpty(chromeBrowser.Selection.HTML)) return;
-            var hostUri = chromeBrowser.Source;
-            var dataObj = new AwesomiumDragObject(chromeBrowser.Selection.HTML,hostUri);
-            Console.WriteLine("dragging " + chromeBrowser.Selection.HTML); 
-            var dragObj = new DataObject("text/awesomiumHtml", dataObj);
-            DragDrop.DoDragDrop((DependencyObject)sender, dataObj, DragDropEffects.All);
-        }
-        void chromeBrowser_SelectionChanged(object sender, WebSelectionEventArgs e)
-        {
-            //AbstractCanvas.ProcessHtmlDrop(e.Selection.HTML);
         }
         private void unloadBrowserHandler(object _sender, RoutedEventArgs _args)
         {
@@ -270,12 +246,7 @@ namespace SandRibbon.Components.WebMeTLIntegration
 
 public class CookieAwareWebClient : WebClient
 {
-    //private CookieContainer m_container = new CookieContainer();
-    private CookieContainer m_container;
-    public CookieAwareWebClient()
-    {
-       m_container = Globals.cookieContainer;
-    }
+    private CookieContainer m_container = new CookieContainer();
     protected override WebRequest GetWebRequest(Uri address)
     {
         WebRequest request = base.GetWebRequest(address);

@@ -302,17 +302,8 @@ namespace SandRibbon.Components.Canvas
                 //local files will deliver filenames.  
                 fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
             }
-            else if (validFormats.Contains("SandRibbon.Components.WebMeTLIntegration.AwesomiumDragObject"))
-            {
-                var awesomeDragObj = (AwesomiumDragObject)e.Data.GetData("SandRibbon.Components.WebMeTLIntegration.AwesomiumDragObject");
-                var html = awesomeDragObj._html;
-                var host = awesomeDragObj._originatingPage;
-                fileNames = ProcessHtmlDrop(html,host);
-            }
             else if (validFormats.Contains("text/html"))
             {
-                var html = System.Text.Encoding.UTF8.GetString(((MemoryStream)e.Data.GetData("text/html")).ToArray());
-                fileNames = ProcessHtmlDrop(html);
             }
             else if (validFormats.Contains("UniformResourceLocator"))
             {
@@ -351,61 +342,6 @@ namespace SandRibbon.Components.Canvas
             if (needsToRemoveTempFile)
                 File.Delete(tempImagePath);
             e.Handled = true;
-        }
-        public static string[] ProcessHtmlDrop(string html){ 
-            return ProcessHtmlDrop(html,new Uri("badscheme://this.is.not.a.valid.url"));
-        }
-        public static string[] ProcessHtmlDrop(string html, Uri originatingHost)
-        {
-            Directory.CreateDirectory(TMP_PATH);
-            var fileNames = new string[]{};
-            try
-            {
-                var htmlElement = System.Xml.Linq.XElement.Parse(html);
-                if (htmlElement.Name.LocalName == "img")
-                {
-                    fileNames = new string[] { 
-                            htmlElement.Attribute("src").Value
-                        };
-                }
-                else
-                {
-                    fileNames = htmlElement.Descendants("img").Select(i => i.Attribute("src").Value).ToArray();
-                }
-                var wc = new CookieAwareWebClient();
-                try
-                {
-                    fileNames = fileNames.Select(fn =>
-                    {
-                        var remoteF = "";
-                        if (originatingHost.Scheme != "badscheme")
-                        {
-                            var fnUri = new System.Uri(fn, UriKind.RelativeOrAbsolute);
-                            if (fnUri.IsAbsoluteUri)
-                                return fnUri.ToString();
-                            else
-                                remoteF = new Uri(originatingHost, fnUri).ToString();
-                        }
-                        else remoteF = fn;
-                        var uri = new Uri(remoteF, UriKind.RelativeOrAbsolute);
-                        var extension = Path.GetExtension(uri.LocalPath);
-                        if (String.IsNullOrEmpty(extension))
-                            extension = ".jpg";
-                        var localF = TMP_PATH + Path.GetRandomFileName() + extension;
-                        File.WriteAllBytes(localF, wc.DownloadData(remoteF));
-                        return localF;
-                    }).ToArray();
-                }
-                catch (Exception e) {
-                    Logger.Crash(e);
-                }
-            }
-            catch (XmlException ex)
-            {
-                Console.WriteLine("Drop exception: {0}", ex.Message);
-                MessageBox.Show("Sorry, MeTL couldn't handle this content.");
-            }
-            return fileNames;
         }
         private static void deltree(string TMP_PATH)
         {
