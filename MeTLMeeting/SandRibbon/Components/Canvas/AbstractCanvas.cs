@@ -10,14 +10,12 @@ using agsXMPP.Xml.Dom;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbonObjects;
 using System.Windows.Media;
-//using SandRibbonInterop.MeTLStanzas;
 using Point = System.Windows.Point;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using MeTLLib.DataTypes;
 using System.IO;
 using System.Xml;
-using SandRibbon.Components.WebMeTLIntegration;
 
 namespace SandRibbon.Components.Canvas
 {
