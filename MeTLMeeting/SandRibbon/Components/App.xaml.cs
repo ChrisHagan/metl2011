@@ -13,6 +13,7 @@ using System.Security;
 using System.Diagnostics;
 using System.Windows.Threading;
 using SandRibbon.Components.Canvas;
+using System.Threading;
 
 [assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -115,6 +116,7 @@ namespace SandRibbon
 #else
             isStaging = false;
 #endif
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Loaded, (DispatcherOperationCallback)delegate { CloseSplashScreen(); return null; }, this);
             Trace.Listeners.Add(new CouchTraceListener());
             base.OnStartup(e);
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
@@ -159,6 +161,14 @@ namespace SandRibbon
         private void doCrash(Exception e)
         {
             Logger.Crash(e);
+        }
+        private void CloseSplashScreen()
+        {
+            // signal process to close splash screen
+            using (var closeSplashEvent = new EventWaitHandle(false, EventResetMode.ManualReset, "CloseSplashScreenWithoutFadeEventSplashScreenStarter"))
+            {
+                closeSplashEvent.Set();
+            }
         }
         private void AnyTextBoxGetsFocus(object sender, RoutedEventArgs e)
         {
