@@ -41,10 +41,13 @@ namespace SandRibbon.Components
                 showButton.Visibility = Visibility.Visible;
                 hideButton.Visibility = Visibility.Visible;
             }
+            /* Banhammer commented out
             if (Globals.conversationDetails.Author == Globals.me)
                 banhammerButton.Visibility = Visibility.Visible;
             else
                 banhammerButton.Visibility = Visibility.Collapsed;
+            // End Banhammer commented out
+            */
         }
         private void showContent(object sender, RoutedEventArgs e)
         {

@@ -1069,6 +1069,7 @@ namespace SandRibbon
         {
             App.AccidentallyClosing = DateTime.Now;
         }
+        /* Awesomium commented out
         private void setStackVisibility(Visibility visible)
         {
             if (visible == Visibility.Visible)
@@ -1088,5 +1089,7 @@ namespace SandRibbon
                 webMeTLDrawer.Visibility = Visibility.Collapsed;
             }
         }
+        // End of Awesomium comment out
+        */
     }
 }

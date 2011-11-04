@@ -134,7 +134,10 @@ namespace SandRibbon
             {
                 Commands.LeaveAllRooms.Execute(null);
                 MeTLLib.ClientFactory.Connection().Disconnect();
+                /* Awesomium comment out
                 AbstractCanvas.deleteTempFiles();
+                // End Awesomium comment out
+                */
             }
             catch (Exception) { }
         }

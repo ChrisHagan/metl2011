@@ -48,9 +48,12 @@ namespace SandRibbon.Components.Canvas
     public abstract class AbstractCanvas : InkCanvas
     {
         private static readonly string TMP_PATH = "tmp\\";
+        /* Awesomium comment out
         public static void deleteTempFiles(){
             deltree(TMP_PATH);
         }
+        // End Awesomium comment out
+        */
         public string defaultPrivacy;
         public string actualPrivacy;
         public string target;
@@ -343,6 +346,7 @@ namespace SandRibbon.Components.Canvas
                 File.Delete(tempImagePath);
             e.Handled = true;
         }
+        /* Awesomium comment out
         private static void deltree(string TMP_PATH)
         {
             var errorMessage = string.Format("Deltree failed to delete the path {0}", TMP_PATH);
@@ -364,6 +368,8 @@ namespace SandRibbon.Components.Canvas
                 Console.WriteLine(errorMessage);
             }
         }
+        // End Awesomium comment out
+        */
         public void SetCanEdit(bool canEdit)
         {
             this.canEdit = canEdit;
