@@ -176,7 +176,8 @@ namespace MeTLLib
         }
         public bool Disconnect()
         {
-            wire.Logout();
+            if (wire != null) 
+                wire.Logout();
             return true;
         }
         #endregion
