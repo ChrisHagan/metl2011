@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Components.Pedagogicometry;
+using System.Reflection;
 
 namespace SandRibbon.Providers
 {
@@ -24,7 +25,13 @@ namespace SandRibbon.Providers
         }
         public string getMeTLType()
         {
-            var files = Directory.GetFiles(".", "*.exe");
+            var executableNames = new List<String>();
+
+            executableNames.Add(Assembly.GetEntryAssembly().Location);
+            executableNames.Add(Assembly.GetExecutingAssembly().Location);
+
+            return Path.GetFileNameWithoutExtension(executableNames.Find((location) => { return !String.IsNullOrEmpty(location); }));
+            /*var files = Directory.GetFiles(".", "*.exe");
             var docs = new List<string>();
             foreach (string filename in files)
             {
@@ -37,6 +44,7 @@ namespace SandRibbon.Providers
                 docs.Add("MeTL.exe");
             }
             return docs.First().Substring(0,docs.First().Length - 4);
+            */
         }
         public PedagogyLevel getMeTLPedagogyLevel()
         {

@@ -86,10 +86,14 @@ namespace SandRibbon.Components
                 Dispatcher.Invoke((Action)delegate
                 {
                     searchResults.Clear();
-                    MeTLLib.ClientFactory.Connection().ConversationsFor(SearchInput.Text.Trim()).ForEach(cd => {
-                        if (cd.Subject.ToLower() != "deleted")
-                            searchResults.Add(cd);
-                    });
+                    var trimmedSearchInput = SearchInput.Text.Trim();
+                    if (trimmedSearchInput.Length > 0)
+                    { 
+                        MeTLLib.ClientFactory.Connection().ConversationsFor(trimmedSearchInput).ForEach(cd => {
+                            if (cd.Subject.ToLower() != "deleted")
+                                searchResults.Add(cd);
+                        });
+                    }
                 });
             });
             App.mark("Initialized conversation search");
