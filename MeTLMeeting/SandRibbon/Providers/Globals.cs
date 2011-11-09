@@ -4,6 +4,7 @@ using System.Linq;
 using MeTLLib.DataTypes;
 using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Components.Canvas;
+using System.Drawing;
 
 namespace SandRibbon.Providers
 {
@@ -14,6 +15,7 @@ namespace SandRibbon.Providers
         public const string METL = "MeTL";
         public const string METLPRESENTER = "MeTL Presenter";
 
+        private static Size canvasSize = new Size();
         private static QuizData quizData = new QuizData();
         public static bool isAuthor
         {
@@ -27,7 +29,7 @@ namespace SandRibbon.Providers
             get {
                 try
                 {
-                    return (UserOptions)SandRibbon.Commands.SetUserOptions.lastValue();
+                    return (UserOptions)SandRibbon.Commands.SetUserOptions.LastValue();
                 }
                 catch (NotSetException)
                 {
@@ -41,7 +43,7 @@ namespace SandRibbon.Providers
             {
                 try
                 {
-                    return Commands.MeTLType.lastValue().ToString();
+                    return Commands.MeTLType.LastValue().ToString();
                 }
                 catch (Exception)
                 {
@@ -50,11 +52,22 @@ namespace SandRibbon.Providers
             }
 
         }
+        public static Size CanvasSize
+        {
+            get
+            {
+                return canvasSize;
+            }
+            set
+            {
+                canvasSize = value;
+            }
+        }
         public static PedagogyLevel pedagogy
         {
             get
             {
-                return (PedagogyLevel)Commands.SetPedagogyLevel.lastValue();
+                return (PedagogyLevel)Commands.SetPedagogyLevel.LastValue();
             }
         }
         public static Location location
@@ -69,7 +82,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                var value = ((ConversationDetails)Commands.UpdateConversationDetails.lastValue()); 
+                var value = ((ConversationDetails)Commands.UpdateConversationDetails.LastValue()); 
                 if (value != null)
                     return value.Slides;
                 else throw new NotSetException("Slides not set");
@@ -79,7 +92,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (ConversationDetails)Commands.UpdateConversationDetails.lastValue();
+                return (ConversationDetails)Commands.UpdateConversationDetails.LastValue();
             }
         }
         public static MeTLLib.DataTypes.QuizData quiz
@@ -98,7 +111,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (MeTLLib.DataTypes.Credentials) Commands.SetIdentity.lastValue();
+                return (MeTLLib.DataTypes.Credentials) Commands.SetIdentity.LastValue();
             }
         }
         public static List<MeTLLib.DataTypes.AuthorizedGroup> authorizedGroups
@@ -118,21 +131,21 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (bool)Commands.SetSync.lastValue();
+                return (bool)Commands.SetSync.LastValue();
             }
         }
         public static int teacherSlide
         {
             get
             {
-                return (int)Commands.SyncedMoveRequested.lastValue();
+                return (int)Commands.SyncedMoveRequested.LastValue();
             }
         }
         public static int slide
         {
             get
             {
-                return (int)Commands.MoveTo.lastValue();
+                return (int)Commands.MoveTo.LastValue();
             }
         }
         public static string me
@@ -146,7 +159,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (string)Commands.SetPrivacy.lastValue();
+                return (string)Commands.SetPrivacy.LastValue();
             }
         }
         public static Policy policy
@@ -160,7 +173,7 @@ namespace SandRibbon.Providers
         public static bool rememberMe {
             get
             {
-                return (bool)Commands.RememberMe.lastValue();
+                return (bool)Commands.RememberMe.LastValue();
             }
         }
     }

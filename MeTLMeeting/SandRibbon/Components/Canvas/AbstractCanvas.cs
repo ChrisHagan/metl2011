@@ -178,7 +178,7 @@ namespace SandRibbon.Components.Canvas
                 this.Select(null, null);
                 try
                 {
-                    Commands.SetInkCanvasMode.ExecuteAsync(Commands.SetInkCanvasMode.lastValue());
+                    Commands.SetInkCanvasMode.ExecuteAsync(Commands.SetInkCanvasMode.LastValue());
                 }
                 catch (Exception) { }
             }

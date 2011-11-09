@@ -61,11 +61,10 @@ namespace SandRibbon.Components.Canvas
         private void ZoomChanged(Double zoom)
         {
             this.zoom = zoom;
-            try
+            if (Commands.SetDrawingAttributes.IsInitialised)
             {
-                SetDrawingAttributes((DrawingAttributes)Commands.SetDrawingAttributes.lastValue());
+                SetDrawingAttributes((DrawingAttributes)Commands.SetDrawingAttributes.LastValue());
             }
-            catch (NotSetException) { }
         }
         private void SetDrawingAttributes(DrawingAttributes logicalAttributes)
         {

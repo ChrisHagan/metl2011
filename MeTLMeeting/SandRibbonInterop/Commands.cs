@@ -17,29 +17,50 @@ namespace SandRibbon
     public class NotSetException : Exception{
         public NotSetException(string msg) : base(msg) { }
     }
-    public class DefaultableCompositeCommand : CompositeCommand {
+    public class DefaultableCompositeCommand : CompositeCommand 
+    {
         private bool isSet = false;
-        private object _defaultValue;
-        public object defaultValue{
-            get{
-                return _defaultValue;
+        private object commandValue = null;
+
+        public object DefaultValue
+        {
+            get
+            {
+                Debug.Assert(isSet, "Default value has not been set");
+                return commandValue;
             }
-            set {
+            set 
+            {
                 isSet = true;
-                _defaultValue = value;
+                commandValue = value;
             }
         }
-        public DefaultableCompositeCommand(){
-            _defaultValue = null;
+
+        public DefaultableCompositeCommand()
+        {
         }
-        public DefaultableCompositeCommand(object defaultValue) {
-            _defaultValue = defaultValue;
+
+        public DefaultableCompositeCommand(object newValue) 
+        {
+            DefaultValue = newValue;
         }
-        public object lastValue(){
-            return defaultValue;
+
+        public bool IsInitialised
+        {
+            get
+            {
+                return isSet;
+            }
         }
-        public override void Execute(object arg) {
-            defaultValue = arg;
+
+        public object LastValue()
+        {
+            Debug.Assert(isSet, "Default value has not been set");
+            return DefaultValue;
+        }
+        public override void Execute(object arg) 
+        {
+            DefaultValue = arg;
             base.Execute(arg);
         }
     }
@@ -202,7 +223,7 @@ namespace SandRibbon
         #endregion
         #region AppLevel
         public static DefaultableCompositeCommand RegisterPowerpointSourceDirectoryPreference = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand MeTLType = new DefaultableCompositeCommand(String.Empty);
+        public static DefaultableCompositeCommand MeTLType = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand LogOut = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand LoginFailed = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetIdentity = new DefaultableCompositeCommand(Credentials.Empty);

@@ -50,7 +50,8 @@ namespace SandRibbon
                 App.mark("Window1 knows about identity");
             }));
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
-            Commands.SetPedagogyLevel.defaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
+            Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
+            Commands.MeTLType.DefaultValue = Globals.METL;
             Title = "MeTL 2011";
             try {
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
@@ -371,7 +372,7 @@ namespace SandRibbon
             if (privacyAdorners != null && privacyAdorners.Count() > 0)
                 try
                 {
-                    var lastValue = Commands.AddPrivacyToggleButton.lastValue();
+                    var lastValue = Commands.AddPrivacyToggleButton.LastValue();
                     if (lastValue != null)
                         AddPrivacyButton((PrivacyToggleButton.PrivacyToggleButtonInfo)lastValue);
                 }

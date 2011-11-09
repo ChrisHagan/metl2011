@@ -92,7 +92,7 @@ namespace SandRibbon.Components
             string initialDirectory = "\\";
             try
             {
-                initialDirectory = (string)Commands.RegisterPowerpointSourceDirectoryPreference.lastValue();
+                initialDirectory = (string)Commands.RegisterPowerpointSourceDirectoryPreference.LastValue();
             }
             catch (NotSetException) {//These variables may or may not be available in any given OS
                 foreach (var path in new[] { Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })

@@ -61,7 +61,7 @@ namespace SandRibbon.Providers
                 switch (which) { 
                     case "SetPedagogyLevel":
                         var level = ConfigurationProvider.instance.getMeTLPedagogyLevel();
-                        Commands.SetPedagogyLevel.defaultValue = level;
+                        Commands.SetPedagogyLevel.DefaultValue = level;
                     break;
                     case "SetIdentity":
                         var values = (Crypto.decrypt(param.Attribute("authentication").Value)).Split(':');
@@ -105,7 +105,7 @@ namespace SandRibbon.Providers
                             break;
                         case "RegisterPowerpointSourceDirectoryPreference":
                             if(Globals.rememberMe)
-                                commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT, Commands.RegisterPowerpointSourceDirectoryPreference.lastValue()));
+                                commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT, Commands.RegisterPowerpointSourceDirectoryPreference.LastValue()));
                             break;
                     }
                 }

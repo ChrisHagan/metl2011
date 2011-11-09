@@ -159,6 +159,7 @@
     <Shadow Include="Test References\UITestFramework.accessor" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="CreateConversation.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

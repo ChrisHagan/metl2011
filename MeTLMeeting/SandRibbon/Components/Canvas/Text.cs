@@ -887,7 +887,19 @@ namespace SandRibbon.Components.Canvas
                         ClearAdorners();
                         var box = ((MeTLTextBox)Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
                         box.TextChanged -= SendNewText;
-                        box.Text = redoText;
+                        // 1. Get visible canvas size
+                        // 2. If the text being pasted will cause the text box width to be larger than the visible canvas width, wrap the text by inserting 
+                        // carriage-returns in the appropriate place.
+                        // Problems: What's the width of text? Dependant on font style, weighting and size.
+                        //         : Where to insert the carriage-returns? Wrap on spaces? Would it work to just set the width of the text box and let it handle
+                        //           the wrapping?
+ 
+                        box.Text = redoText; 
+                        if (box.Width > this.ActualWidth)
+                        {
+                            box.Width = (this.ActualWidth - GetLeft(box)) * 0.95; // Decrease by a further 5%
+                        }
+
                         box.CaretIndex = caret + text.Length;
                         sendTextWithoutHistory(box, box.tag().privacy);
                         box.TextChanged += SendNewText;
