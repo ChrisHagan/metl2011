@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Divan;
 using MeTLLib.Providers;
@@ -23,11 +24,35 @@ namespace MeTLLib.DataTypes
         public SearchConversationDetails(string title, string author, string created, int relevance, string restriction,  string jid):base(title, jid, author, new List<Slide>(), Permissions.Empty, restriction)
         {
             this.relevance = relevance;
+            Created = new DateTime(long.Parse(created));
         }
         public static SearchConversationDetails ReadXML(XElement doc)
         {
-            var Title = doc.Element(TITLE_TAG).Value;
-            return new SearchConversationDetails(doc.Element(TITLE_TAG).Value,doc.Element(AUTHOR_TAG).Value, doc.Element(CREATED_TAG).Value, Int32.Parse(doc.Element(RELEVANCE_TAG).Value),doc.Element(RESTRICTION_TAG).Value,doc.Element(JID_TAG).Value);
+            var createdRegex = @"(\d+)/(\d+)/(\d+) (\d+):(\d+):(\d+) (\w+)";
+            var date = new DateTime();
+            var createdString = doc.Element(CREATED_TAG).Value;
+            var match = Regex.Match(createdString, createdRegex);
+            if(match.Success)
+            {
+                var year = Int32.Parse(match.Groups[3].Value);
+                var month =Int32.Parse(match.Groups[2].Value);
+                var day = Int32.Parse(match.Groups[1].Value);
+                var rawHour = Int32.Parse(match.Groups[4].Value);
+                int hour = 0;
+                var minute = Int32.Parse(match.Groups[5].Value);
+                var seconds = Int32.Parse(match.Groups[6].Value);
+                var timeOfDay = match.Groups[7];
+                if (timeOfDay.ToString().ToLower() == "am" || rawHour == 12)
+                    hour = rawHour;
+                else
+                {
+                    hour = rawHour + 12;
+                }
+                date = new DateTime(year, month, day, hour, minute, seconds);
+
+            }
+            var cd = new SearchConversationDetails(doc.Element(TITLE_TAG).Value,doc.Element(AUTHOR_TAG).Value, date.Ticks.ToString(), Int32.Parse(doc.Element(RELEVANCE_TAG).Value),doc.Element(RESTRICTION_TAG).Value,doc.Element(JID_TAG).Value);
+            return cd;
         }
     }
 
@@ -58,6 +83,7 @@ namespace MeTLLib.DataTypes
             : this(title, jid, author, slides, permissions, subject)
         {
             this.Created = created;
+            this.CreatedAsTicks = created.Ticks;
             this.LastAccessed = lastAccessed;
         }
         public ConversationDetails(String title, String jid, String author, String tag, List<Slide> slides, Permissions permissions, String subject, DateTime created, DateTime lastAccessed)
@@ -94,6 +120,7 @@ namespace MeTLLib.DataTypes
         public string Author;
         public Permissions Permissions { get; set; }
         public System.DateTime Created;
+        public long CreatedAsTicks;
         public System.DateTime LastAccessed;
         public string Tag { get; set; }
         public string Subject { get; set; }

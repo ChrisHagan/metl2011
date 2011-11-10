@@ -26,22 +26,16 @@ namespace SandRibbon.Providers
                 
                 var recentConversations = recentDocs.Descendants("conversation").Select(
                     conversation => new ConversationDetails(
-                        conversation.Attribute("title").Value,
-                        conversation.Attribute("jid").Value,
-                        conversation.Attribute("author").Value,
-                        new List<Slide>(),
-                        new Permissions("",false,false,false),
-                        conversation.Attribute("subject").Value,
-                        new DateTime(),
-                        SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value)))
+                                conversation.Attribute("title").Value,
+                                conversation.Attribute("jid").Value,
+                                conversation.Attribute("author").Value,
+                                new List<Slide>(),
+                                new Permissions("", false, false, false),
+                                conversation.Attribute("subject") == null ? String.Empty : conversation.Attribute("subject").Value,
+                                new DateTime(),
+                                SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value))
+                        )
                     .ToList();
-                /*
-                var conn  = MeTLLib.ClientFactory.Connection();
-                var allConversations = recentConversations.Where(rc => conn.DetailsOf(rc.Jid).Subject.ToLower() != "deleted");
-                var sortedRecent = recentConversations.Where(rc => allConversations.Where(ac => ac.Jid == rc.Jid).Count() > 0).ToList();
-                foreach (var conv in sortedRecent)
-                    conv.Title = allConversations.Where(ac => ac.Jid == conv.Jid).First().Title;
-                 */
                 return recentConversations.Count > 0 ? recentConversations.OrderByDescending(c => c.LastAccessed).ToList() : new List<ConversationDetails>();
             }
             return new List<ConversationDetails>();

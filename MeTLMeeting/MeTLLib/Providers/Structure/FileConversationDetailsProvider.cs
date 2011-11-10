@@ -4,15 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using Microsoft.Practices.Composite.Presentation.Commands;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Runtime.Remoting.Messaging;
-using Ionic.Zip;
-using System.IO;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
 using Ninject;
@@ -157,16 +150,20 @@ namespace MeTLLib.Providers.Structure
             }
         }
         private object cacheLock = new object();
-        private string meggleURL = "http://adm-web13-v01.adm.monash.edu:8080/search/";
+       private string meggleUrl = "http://meggle-staging.adm.monash.edu:8080/search?query=";
+// http://meggle-ext.adm.monash.edu:8080/search?query=
+// http://meggle-prod.adm.monash.edu:8080/search?query=
        
         public IEnumerable<SearchConversationDetails> ConversationsFor(String query)
         {
             try
             {
-                var data = secureGetString(new Uri(string.Format("{0}{1}", meggleURL, HttpUtility.UrlEncode(query))));
-                return XElement.Parse(data).Descendants("conversation").Select(x => SearchConversationDetails.ReadXML(x)).ToList().OrderBy(s => s.relevance);
+                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", meggleUrl, query)), UriKind.Absolute);
+                var data = secureGetString(uri);
+                var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
+                return results.OrderBy(s => s.relevance);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return new List<SearchConversationDetails>();
             }
