@@ -21,6 +21,7 @@ using System.Windows.Documents;
 using MeTLLib;
 using MeTLLib.Providers.Connection;
 using System.Windows.Media.Imaging;
+using System.Windows.Interop;
 
 namespace SandRibbon
 {
@@ -144,6 +145,36 @@ namespace SandRibbon
             RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
             getDefaultSystemLanguage();
         }
+
+        private void AddWndProcHook()
+        {
+            var source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+            source.AddHook(WndProc);
+        }
+
+        private object extendLock = new object();
+        private void CheckForExtendedDesktop()
+        {
+            lock (extendLock)
+            {
+                var screenCount = System.Windows.Forms.Screen.AllScreens.Count();
+                if (Projector.Window == null && screenCount > 1)
+                    Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
+                else if (Projector.Window != null && screenCount == 1)
+                    Projector.Window.Close();
+            }
+        }
+
+        private readonly int WM_SETTINGCHANGE = 0x1A;
+        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == WM_SETTINGCHANGE)
+            {
+                CheckForExtendedDesktop();
+            }
+            return IntPtr.Zero;
+        }
+
         private void getDefaultSystemLanguage()
         {
             try
@@ -269,6 +300,13 @@ namespace SandRibbon
             });
             Commands.SetPedagogyLevel.RegisterCommand(hideRibbon);
         }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            AddWndProcHook();
+        }
+
         private void ShowConversationSearchBox(object _arg)
         {
             if (!ribbon.IsMinimized)
