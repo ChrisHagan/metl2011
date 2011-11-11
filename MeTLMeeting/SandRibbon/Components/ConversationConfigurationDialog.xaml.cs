@@ -90,18 +90,20 @@ namespace SandRibbon.Components
         private void doBrowseFiles()
         {
             string initialDirectory = "\\";
-            try
+            if (Commands.RegisterPowerpointSourceDirectoryPreference.IsInitialised)
             {
                 initialDirectory = (string)Commands.RegisterPowerpointSourceDirectoryPreference.LastValue();
             }
-            catch (NotSetException) {//These variables may or may not be available in any given OS
+            else
+            {
+                //These variables may or may not be available in any given OS
                 foreach (var path in new[] { Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })
-                    try
-                    {
-                        initialDirectory = Environment.GetFolderPath(path);
-                        break;
-                    }
-                    catch (Exception) {}
+                try
+                {
+                    initialDirectory = Environment.GetFolderPath(path);
+                    break;
+                }
+                catch (Exception) {}
             }
             var fileBrowser = new OpenFileDialog
             {
