@@ -160,7 +160,7 @@ namespace MeTLLib.Providers.Structure
                 var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", searchServer.Uri.AbsoluteUri, query)), UriKind.Absolute);
                 var data = secureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
-                return results.OrderBy(s => s.relevance);
+                return results.OrderBy(s => s.relevance).OrderByDescending(s => s.LastModified).Distinct();
             }
             catch (Exception e)
             {

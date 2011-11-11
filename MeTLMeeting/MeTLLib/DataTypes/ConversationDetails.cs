@@ -10,28 +10,30 @@ using MeTLLib.Providers;
 
 namespace MeTLLib.DataTypes
 {
-
     public class SearchConversationDetails:ConversationDetails
     {
         public int relevance { get; set; }
+        public long LastModified { get; set; }
         private static readonly string TITLE_TAG = "title";
         private static readonly string AUTHOR_TAG = "author";
         private static readonly string CREATED_TAG = "created";
         private static readonly string JID_TAG = "jid";
         private static readonly string RESTRICTION_TAG = "restriction";
         private static readonly string RELEVANCE_TAG = "relevance";
+        private static readonly string LASTMODIFIED_TAG = "modified";
 
-        public SearchConversationDetails(string title, string author, string created, int relevance, string restriction,  string jid):base(title, jid, author, new List<Slide>(), Permissions.Empty, restriction)
+        public SearchConversationDetails(string title, string author, string created, int relevance, string restriction, string jid, string lastModified):base(title, jid, author, new List<Slide>(), Permissions.Empty, restriction)
         {
             this.relevance = relevance;
             Created = new DateTime(long.Parse(created));
+            LastModified = long.Parse(lastModified);
         }
-        public static SearchConversationDetails ReadXML(XElement doc)
+        private static string ParseDate(XElement doc, string elementTag)
         {
-            var createdRegex = @"(\d+)/(\d+)/(\d+) (\d+):(\d+):(\d+) (\w+)";
+            var dateRegex = @"(\d+)/(\d+)/(\d+) (\d+):(\d+):(\d+) (\w+)";
             var date = new DateTime();
-            var createdString = doc.Element(CREATED_TAG).Value;
-            var match = Regex.Match(createdString, createdRegex);
+            var dateString = doc.Element(CREATED_TAG).Value;
+            var match = Regex.Match(dateString, dateRegex);
             if(match.Success)
             {
                 var year = Int32.Parse(match.Groups[3].Value);
@@ -49,9 +51,14 @@ namespace MeTLLib.DataTypes
                     hour = rawHour + 12;
                 }
                 date = new DateTime(year, month, day, hour, minute, seconds);
-
             }
-            var cd = new SearchConversationDetails(doc.Element(TITLE_TAG).Value,doc.Element(AUTHOR_TAG).Value, date.Ticks.ToString(), Int32.Parse(doc.Element(RELEVANCE_TAG).Value),doc.Element(RESTRICTION_TAG).Value,doc.Element(JID_TAG).Value);
+
+            return date.Ticks.ToString();
+        }
+        
+        public static SearchConversationDetails ReadXML(XElement doc)
+        {
+            var cd = new SearchConversationDetails(doc.Element(TITLE_TAG).Value,doc.Element(AUTHOR_TAG).Value, ParseDate(doc, CREATED_TAG), Int32.Parse(doc.Element(RELEVANCE_TAG).Value),doc.Element(RESTRICTION_TAG).Value,doc.Element(JID_TAG).Value, doc.Element(LASTMODIFIED_TAG).Value);
             return cd;
         }
     }
