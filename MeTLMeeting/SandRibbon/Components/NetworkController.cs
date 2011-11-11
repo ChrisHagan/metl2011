@@ -20,6 +20,31 @@ namespace SandRibbon.Components
             productionUri = new Uri("http://civic.adm.monash.edu.au", UriKind.Absolute);
         }
     }
+
+    public class StagingSearchAddress : MeTLGenericAddress
+    {
+        public StagingSearchAddress()
+        {
+            Uri = new Uri("http://meggle-staging.adm.monash.edu:8080/search?query=", UriKind.Absolute);
+        }
+    }
+
+    public class ProductionSearchAddress : MeTLGenericAddress
+    {
+        public ProductionSearchAddress()
+        {
+            Uri = new Uri("http://meggle-prod.adm.monash.edu:8080/search?query=", UriKind.Absolute);
+        }
+    }
+
+    public class ExternalSearchAddress : MeTLGenericAddress
+    {
+        public ExternalSearchAddress()
+        {
+            Uri = new Uri("http://meggle-ext.adm.monash.edu:8080/search?query=", UriKind.Absolute);
+        }
+    }
+
     public class NetworkController
     {
         private ClientConnection client;
@@ -58,13 +83,13 @@ namespace SandRibbon.Components
         {
             ClientConnection result;
             if (App.isExternal)
-                result = MeTLLib.ClientFactory.Connection(new CivicServerAddress());
+                result = MeTLLib.ClientFactory.Connection(new CivicServerAddress(), new ExternalSearchAddress());
             else
             {
                 if (App.isStaging)
-                    result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING);
+                    result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.STAGING, new StagingSearchAddress());
                 else
-                    result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION);
+                    result = MeTLLib.ClientFactory.Connection(MeTLServerAddress.serverMode.PRODUCTION, new ProductionSearchAddress());
             }
             Constants.JabberWire.SERVER = result.server.host;
             return result;

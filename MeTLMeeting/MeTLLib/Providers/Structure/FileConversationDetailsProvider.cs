@@ -19,6 +19,8 @@ namespace MeTLLib.Providers.Structure
         [Inject]
         public JabberWireFactory jabberWireFactory { private get; set; }
         private JabberWire _wire;
+        [Inject]
+        public MeTLGenericAddress searchServer { private get; set; }
         private object wireLock = new object();
         private JabberWire wire{
             get {
@@ -150,15 +152,12 @@ namespace MeTLLib.Providers.Structure
             }
         }
         private object cacheLock = new object();
-       private string meggleUrl = "http://meggle-staging.adm.monash.edu:8080/search?query=";
-// http://meggle-ext.adm.monash.edu:8080/search?query=
-// http://meggle-prod.adm.monash.edu:8080/search?query=
        
         public IEnumerable<SearchConversationDetails> ConversationsFor(String query)
         {
             try
             {
-                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", meggleUrl, query)), UriKind.Absolute);
+                var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", searchServer.Uri.AbsoluteUri, query)), UriKind.Absolute);
                 var data = secureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
                 return results.OrderBy(s => s.relevance);
