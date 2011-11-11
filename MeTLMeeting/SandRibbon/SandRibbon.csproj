@@ -1106,8 +1106,14 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>echo Cleaning publish directory
+if not exist $(ProjectDir)\publish\nul goto nopublish
 cd $(ProjectDir)\publish
-del /S /Q *.*</PostBuildEvent>
+del /S /Q *.*
+echo Completed.
+goto success
+:nopublish
+echo Publish directory does not exist, skipping.
+:success</PostBuildEvent>
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
