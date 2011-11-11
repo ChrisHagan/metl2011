@@ -19,6 +19,11 @@ using System.Net;
 
 namespace MeTLLib
 {
+    public abstract class MeTLGenericAddress
+    {
+        public Uri Uri { get; protected set; }
+    }
+
     public abstract class MeTLServerAddress
     {
         public Uri productionUri { get; set; }
