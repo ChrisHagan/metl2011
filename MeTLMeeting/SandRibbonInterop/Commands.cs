@@ -83,6 +83,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SetUserOptions = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ZoomChanged = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ExtendCanvasBySize = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand CheckExtendedDesktop = new DefaultableCompositeCommand();
 
         public static DefaultableCompositeCommand AddPrivacyToggleButton = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RemovePrivacyAdorners = new DefaultableCompositeCommand();

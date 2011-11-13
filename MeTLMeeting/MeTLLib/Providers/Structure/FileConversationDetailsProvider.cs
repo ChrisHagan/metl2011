@@ -160,7 +160,22 @@ namespace MeTLLib.Providers.Structure
                 var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", searchServer.Uri.AbsoluteUri, query)), UriKind.Absolute);
                 var data = secureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
-                return results.OrderBy(s => s.relevance).OrderByDescending(s => s.LastModified).Distinct();
+                /*
+                 * The current results aren't quite correct. Know how to do it in SQL, just need to translate into LINQ
+                 * for each Jid, choose the one with the max (last) modified field, then order the results by relevance
+
+                 var orderResults =
+                    from conv in results
+                    orderby conv.relevance
+                    group conv by conv.Jid into g
+                    select new { Jid = g.Key, LastModified = g.Max(c => c.LastModified) };
+                foreach (var result in orderResults)
+                {
+                    results.SelectMany()
+                }
+
+                return results.Where(conv => orderResults.)).OrderBy(order => order.relevance);*/
+                return results.OrderBy(s => s.relevance).OrderByDescending(s => s.LastAccessed).Distinct();
             }
             catch (Exception e)
             {

@@ -144,6 +144,7 @@ namespace SandRibbon.Components
         private void JoinConversation(string jid)
         {
             client.JoinConversation(jid);
+            Commands.CheckExtendedDesktop.ExecuteAsync(null);
         }
         private void MoveTo(int slide)
         {
