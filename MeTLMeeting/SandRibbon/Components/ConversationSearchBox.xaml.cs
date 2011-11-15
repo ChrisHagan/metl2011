@@ -101,7 +101,7 @@ namespace SandRibbon.Components
         private void FillSearchResults(string searchString)
         {
             searchResults.Clear();
-            MeTLLib.ClientFactory.Connection().ConversationsFor(searchString).ForEach(cd => {
+            MeTLLib.ClientFactory.Connection().ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ForEach(cd => {
                 if (cd.Subject.ToLower() != "deleted")
                     searchResults.Add(cd);
             });

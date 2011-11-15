@@ -153,7 +153,7 @@ namespace MeTLLib.Providers.Structure
         }
         private object cacheLock = new object();
        
-        public IEnumerable<SearchConversationDetails> ConversationsFor(String query)
+        public IEnumerable<SearchConversationDetails> ConversationsFor(String query, int maxResults)
         {
             try
             {
@@ -161,9 +161,9 @@ namespace MeTLLib.Providers.Structure
                 var data = secureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
 
-                var lastModified = from conversation in results
+                var lastModified = (from conversation in results
                                group conversation by conversation.Jid into convGroup
-                               select new { Jid = convGroup.Key, LastModified = convGroup.Max(c => c.LastModified) };
+                               select new { Jid = convGroup.Key, LastModified = convGroup.Max(c => c.LastModified) }).Take(maxResults);
 
                 return results.Where(conv => lastModified.Contains(new { Jid = conv.Jid, LastModified = conv.LastModified })).OrderBy(conv => conv.relevance);
             }

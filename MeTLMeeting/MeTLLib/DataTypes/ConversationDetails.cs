@@ -12,6 +12,8 @@ namespace MeTLLib.DataTypes
 {
     public class SearchConversationDetails:ConversationDetails
     {
+        public const int DEFAULT_MAX_SEARCH_RESULTS = 50;
+
         public int relevance { get; set; }
         public long LastModified { get; set; }
         private static readonly string TITLE_TAG = "title";
