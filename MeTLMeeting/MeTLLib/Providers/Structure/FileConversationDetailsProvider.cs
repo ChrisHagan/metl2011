@@ -167,7 +167,7 @@ namespace MeTLLib.Providers.Structure
 
                 return results.Where(conv => lastModified.Contains(new { Jid = conv.Jid, LastModified = conv.LastModified })).OrderBy(conv => conv.relevance);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new List<SearchConversationDetails>();
             }

@@ -25,16 +25,11 @@ namespace SandRibbon.Providers
                 return me == conversationDetails.Author;
             }
         }
-        public static UserOptions UserOptions {
-            get {
-                try
-                {
-                    return (UserOptions)SandRibbon.Commands.SetUserOptions.LastValue();
-                }
-                catch (NotSetException)
-                {
-                    return UserOptions.DEFAULT;
-                }
+        public static UserOptions UserOptions 
+        {
+            get 
+            {
+                return (UserOptions)(SandRibbon.Commands.SetUserOptions.IsInitialised ? SandRibbon.Commands.SetUserOptions.LastValue() : UserOptions.DEFAULT);
             }
         }
         public static string MeTLType
@@ -92,7 +87,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (ConversationDetails)Commands.UpdateConversationDetails.LastValue();
+                return (ConversationDetails)(Commands.UpdateConversationDetails.IsInitialised ? Commands.UpdateConversationDetails.LastValue() : null);
             }
         }
         public static MeTLLib.DataTypes.QuizData quiz
@@ -145,7 +140,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (int)Commands.MoveTo.LastValue();
+                return (int)(Commands.MoveTo.IsInitialised ? Commands.MoveTo.LastValue() : -1);
             }
         }
         public static string me
@@ -159,7 +154,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (string)Commands.SetPrivacy.LastValue();
+                return (Commands.SetPrivacy.IsInitialised ? (string)Commands.SetPrivacy.LastValue() : String.Empty);
             }
         }
         public static Policy policy

@@ -63,14 +63,7 @@ namespace SandRibbon.Components.Canvas
         {
             get
             {
-                try
-                {
-                    return setSlide == -1 ? Globals.slide : setSlide;
-                }
-                catch (NotSetException e)
-                {
-                    return -1;
-                }
+                return setSlide == -1 ? Globals.slide : setSlide;
             }
             set
             {
@@ -212,7 +205,7 @@ namespace SandRibbon.Components.Canvas
                                                                Globals.conversationDetails.Author == Globals.me;
                                                  SetCanEdit(canEdit);
                                              }
-                                             catch (NotSetException e)
+                                             catch (NotSetException)
                                              {
                                                  //YAY
                                              }
@@ -380,7 +373,11 @@ namespace SandRibbon.Components.Canvas
         {
             try
             {
-                return MeTLLib.DataTypes.Permissions.InferredTypeOf(Globals.conversationDetails.Permissions) == MeTLLib.DataTypes.Permissions.MEETING_PERMISSIONS;
+                var conversationDetails = Globals.conversationDetails;
+                if (conversationDetails == null)
+                    return false;
+
+                return MeTLLib.DataTypes.Permissions.InferredTypeOf(conversationDetails.Permissions) == MeTLLib.DataTypes.Permissions.MEETING_PERMISSIONS;
             }
             catch (NotSetException)
             {

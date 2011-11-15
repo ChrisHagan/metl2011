@@ -22,12 +22,19 @@ namespace SandRibbon.Components
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy, canSetPrivacy));
             try
             {
-                if (Globals.isAuthor)
-                    Commands.SetPrivacy.ExecuteAsync("public");
+                if (String.IsNullOrEmpty(Globals.privacy) || Globals.conversationDetails == null)
+                {
+                    Commands.SetPrivacy.ExecuteAsync("Private");
+                }
                 else
-                    Commands.SetPrivacy.ExecuteAsync("private");
-                settingEnabledModes(Globals.conversationDetails);
-                settingSelectedMode(Globals.privacy);
+                {
+                    if (Globals.isAuthor)
+                        Commands.SetPrivacy.ExecuteAsync("public");
+                    else
+                        Commands.SetPrivacy.ExecuteAsync("private");
+                    settingEnabledModes(Globals.conversationDetails);
+                    settingSelectedMode(Globals.privacy);
+                }
             }
             catch (NotSetException)
             {
@@ -36,7 +43,6 @@ namespace SandRibbon.Components
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(setPedagogy));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             DataContext = this;
-           
         }
 
         private void updateConversationDetails(ConversationDetails details)

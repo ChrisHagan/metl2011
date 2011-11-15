@@ -114,7 +114,7 @@ namespace SandRibbon.Tabs.Groups
                                      ? (int)(currentSlide.defaultWidth / defaultWidth) : 1;
                 return defaultFontSize * multiply;
             }
-            catch (NotSetException e)
+            catch (NotSetException)
             {
                 return defaultFontSize;
             }

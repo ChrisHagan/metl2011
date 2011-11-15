@@ -97,7 +97,7 @@ namespace SandRibbon.Components
                                 AdornerLayer.GetAdornerLayer(adorner).Add(new UIAdorner(adorner, new SyncDisplay()));
                             });
             }
-            catch (NotSetException e)
+            catch (NotSetException)
             {
                 //You are listening to the channel but have not yet joined the room
             }
@@ -119,10 +119,17 @@ namespace SandRibbon.Components
             }
             try
             {
-                if (Globals.conversationDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
-                    Commands.SetPrivacy.ExecuteAsync("public");
-                else
+                if (Globals.conversationDetails == null)
+                {
                     Commands.SetPrivacy.ExecuteAsync("private");
+                }
+                else
+                {
+                    if (Globals.conversationDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
+                        Commands.SetPrivacy.ExecuteAsync("public");
+                    else
+                        Commands.SetPrivacy.ExecuteAsync("private");
+                }
             }
             catch (NotSetException)
             {
@@ -473,7 +480,7 @@ namespace SandRibbon.Components
                 if (privacyAdorner.Data == null) return;
                 ((PathGeometry)privacyAdorner.Data).Figures.Add(new PathFigure(vertices.First(), segments, true));
             }
-            catch (NotSetException e)
+            catch (NotSetException)
             {
             }
         }

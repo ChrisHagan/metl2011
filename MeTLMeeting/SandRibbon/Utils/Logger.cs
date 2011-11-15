@@ -128,7 +128,7 @@ namespace SandRibbon.Utils
             {
                 Log(string.Format("CRASH: (fixed): {0} {1}", user, message));
             }
-            catch (NotSetException e)
+            catch (NotSetException)
             {
                 Log(string.Format("CRASH: (fixed): {0} {1}", "USERNAME_NOT_SET", message));
             }

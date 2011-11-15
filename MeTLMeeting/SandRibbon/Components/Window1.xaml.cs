@@ -323,7 +323,7 @@ namespace SandRibbon
                 try
                 {
                     var details = Globals.conversationDetails;
-                    if (details.Equals(ConversationDetails.Empty))
+                    if (details == null || details.Equals(ConversationDetails.Empty))
                     {
                         Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
                     }
@@ -609,17 +609,10 @@ namespace SandRibbon
         }
         private void UpdateTitle(ConversationDetails details)
         {
-            try
-            {
-                if (mustBeInConversation(null))
-                    Title = messageFor(Globals.conversationDetails);
-                else
-                    Title = "MeTL 2011";
-            }
-            catch (NotSetException)
-            {
+            if (Globals.conversationDetails != null && mustBeInConversation(null))
+                Title = messageFor(Globals.conversationDetails);
+            else
                 Title = "MeTL 2011";
-            }
         }
         private DelegateCommand<object> canOpenFriendsOverride;
         private void applyPermissions(Permissions permissions)
@@ -896,6 +889,9 @@ namespace SandRibbon
             try
             {
                 var details = Globals.conversationDetails;
+                if (details == null)
+                    return;
+
                 foreach (var s in new[]
                                       {
                                           Permissions.LABORATORY_PERMISSIONS,
@@ -907,7 +903,7 @@ namespace SandRibbon
                         details.Permissions = s;
                 MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
             }
-            catch (NotSetException e)
+            catch (NotSetException)
             {
                 return;
             }
@@ -916,8 +912,7 @@ namespace SandRibbon
         {
             return Globals.isAuthor;
         }
-        /*taskbar management*/
-        private System.Windows.Forms.NotifyIcon m_notifyIcon;
+
         private void sleep(object _obj)
         {
             Dispatcher.adoptAsync(delegate { 

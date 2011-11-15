@@ -86,9 +86,8 @@ namespace SandRibbon.Components.Canvas
             {
                 if (drop.target.Equals(target) && me != "projector")
                     handleDrop(drop.filename, drop.point, drop.position);
-                
             }
-            catch (NotSetException e)
+            catch (NotSetException)
             {
                 //YAY
             }
