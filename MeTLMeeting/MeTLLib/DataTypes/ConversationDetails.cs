@@ -61,6 +61,19 @@ namespace MeTLLib.DataTypes
             var cd = new SearchConversationDetails(doc.Element(TITLE_TAG).Value,doc.Element(AUTHOR_TAG).Value, ParseDate(doc, CREATED_TAG), Int32.Parse(doc.Element(RELEVANCE_TAG).Value),doc.Element(RESTRICTION_TAG).Value,doc.Element(JID_TAG).Value, doc.Element(LASTMODIFIED_TAG).Value);
             return cd;
         }
+
+        public static SearchConversationDetails HydrateFromServer(SearchConversationDetails scd)
+        {
+            var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(scd.Jid);
+
+            scd.blacklist = conversation.blacklist;
+            scd.CreatedAsTicks = conversation.CreatedAsTicks;
+            scd.Permissions = conversation.Permissions;
+            scd.Slides = conversation.Slides;
+            scd.Tag = conversation.Tag;
+
+            return scd;
+        }
     }
 
     public class ConversationDetails : INotifyPropertyChanged

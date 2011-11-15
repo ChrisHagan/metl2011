@@ -104,8 +104,13 @@ namespace SandRibbon.Providers
                                 new XAttribute("authentication", Crypto.encrypt(string.Format(@"{0}:{1}", Globals.credentials.name, Globals.credentials.password)))));
                             break;
                         case "RegisterPowerpointSourceDirectoryPreference":
-                            if(Globals.rememberMe)
-                                commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT, Commands.RegisterPowerpointSourceDirectoryPreference.LastValue()));
+                            if (Globals.rememberMe)
+                            {
+                                if (!Commands.RegisterPowerpointSourceDirectoryPreference.IsInitialised)
+                                    commandState.Remove();
+                                else
+                                    commandState.Add(new XElement(WORKSPACE_PARAMETER_ELEMENT, Commands.RegisterPowerpointSourceDirectoryPreference.LastValue()));
+                            }
                             break;
                     }
                 }
