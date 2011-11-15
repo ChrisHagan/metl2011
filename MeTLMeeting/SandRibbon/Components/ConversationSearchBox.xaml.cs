@@ -82,22 +82,31 @@ namespace SandRibbon.Components
             var view = GetListCollectionView();
             view.Filter = isWhatWeWereLookingFor;
             view.CustomSort = new ConversationComparator();
-            refreshTimer = new Timer(delegate {
-                Dispatcher.Invoke((Action)delegate
-                {
-                    searchResults.Clear();
-                    var trimmedSearchInput = SearchInput.Text.Trim();
-                    if (trimmedSearchInput.Length > 0)
-                    { 
-                        MeTLLib.ClientFactory.Connection().ConversationsFor(trimmedSearchInput).ForEach(cd => {
-                            if (cd.Subject.ToLower() != "deleted")
-                                searchResults.Add(cd);
-                        });
-                    }
-                });
-            });
+            refreshTimer = new Timer(delegate { FillSearchResultsFromInput(); });
             App.mark("Initialized conversation search");
         }
+        
+        private void FillSearchResultsFromInput()
+        {
+            Dispatcher.Invoke((Action)delegate
+            {
+                var trimmedSearchInput = SearchInput.Text.Trim();
+                if (!String.IsNullOrEmpty(trimmedSearchInput))
+                {
+                    FillSearchResults(trimmedSearchInput);
+                }
+            });
+        }
+
+        private void FillSearchResults(string searchString)
+        {
+            searchResults.Clear();
+            MeTLLib.ClientFactory.Connection().ConversationsFor(searchString).ForEach(cd => {
+                if (cd.Subject.ToLower() != "deleted")
+                    searchResults.Add(cd);
+            });
+        }
+
         private void setMyConversationVisibility()
         {
             Dispatcher.adoptAsync(()=>
@@ -123,14 +132,14 @@ namespace SandRibbon.Components
             string searchButtonText;
             switch (mode)
             {
-                case "mine": 
-                    searchButtonText = "Filter my Conversations"; 
-                    MeTLLib.ClientFactory.Connection().ConversationsFor(Globals.me).ForEach(cd => {
-                        if (cd.Subject.ToLower() != "deleted")
-                            searchResults.Add(cd);
-                    });
+                case "mine":
+                    searchButtonText = "Filter my Conversations";
+                    FillSearchResults(Globals.me);
                     break;
-                default: searchButtonText = "Search all Conversations"; break;
+                default: 
+                    searchButtonText = "Search all Conversations"; 
+                    FillSearchResultsFromInput();
+                    break;
             }
             Dispatcher.adoptAsync(() =>
             {

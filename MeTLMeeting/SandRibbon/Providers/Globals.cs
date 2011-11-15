@@ -29,7 +29,7 @@ namespace SandRibbon.Providers
         {
             get 
             {
-                return (UserOptions)(SandRibbon.Commands.SetUserOptions.IsInitialised ? SandRibbon.Commands.SetUserOptions.LastValue() : UserOptions.DEFAULT);
+                return SandRibbon.Commands.SetUserOptions.IsInitialised ? (UserOptions)SandRibbon.Commands.SetUserOptions.LastValue() : UserOptions.DEFAULT;
             }
         }
         public static string MeTLType
@@ -87,7 +87,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (ConversationDetails)(Commands.UpdateConversationDetails.IsInitialised ? Commands.UpdateConversationDetails.LastValue() : null);
+                return Commands.UpdateConversationDetails.IsInitialised ? (ConversationDetails)Commands.UpdateConversationDetails.LastValue() : null;
             }
         }
         public static MeTLLib.DataTypes.QuizData quiz
@@ -140,7 +140,7 @@ namespace SandRibbon.Providers
         {
             get
             {
-                return (int)(Commands.MoveTo.IsInitialised ? Commands.MoveTo.LastValue() : -1);
+                return Commands.MoveTo.IsInitialised ? (int)Commands.MoveTo.LastValue() : -1;
             }
         }
         public static string me
