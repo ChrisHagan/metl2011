@@ -382,7 +382,7 @@ namespace SandRibbon.Components.Canvas
         }
         private IEnumerable<UIElement> filterMyText(IEnumerable<UIElement> elements)
         {
-            #if FUNCTIONALITY_BANHAMMER
+            #if ENABLE_BANHAMMER
             if (inMeeting() || Globals.isAuthor) return elements;
 
             return elements.Cast<MeTLTextBox>().Where(text => text.tag().author == Globals.me || Globals.isAuthor).Cast<UIElement>().ToList();
@@ -390,7 +390,7 @@ namespace SandRibbon.Components.Canvas
             if (inMeeting()) return elements;
 
             return elements.Cast<MeTLTextBox>().Where(text => text.tag().author == Globals.me).Cast<UIElement>().ToList();
-            #endif
+            #endif // ENABLE_BANHAMMER
         }
         private void SendTextBoxes(object sender, EventArgs e)
         {
