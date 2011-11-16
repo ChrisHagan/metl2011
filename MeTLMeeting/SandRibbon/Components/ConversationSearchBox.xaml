@@ -157,16 +157,15 @@
                   VerticalAlignment="Stretch" Height="Auto"
                   HorizontalAlignment="Stretch"
                   VerticalScrollBarVisibility="Auto"
-                  HorizontalScrollBarVisibility="Auto">
+                  HorizontalScrollBarVisibility="Auto"
+                  CanContentScroll="True">
             <StackPanel x:Name="searchBoxTotalWidth" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 20 0 0">
-                <StackPanel>
-                    <TextBox x:Name="SearchInput" AcceptsReturn="False" AcceptsTab="True"
-                                             MinWidth="600"
-                                             TextChanged="SearchInput_TextChanged"
-                                             TextWrapping="Wrap" 
-                                             Width="Auto" HorizontalAlignment="Stretch" />
-                    <Button Content="Search all conversations" x:Name="searchConversations" Click="searchConversations_Click"/>
-                </StackPanel>
+                <TextBox x:Name="SearchInput" AcceptsReturn="False" AcceptsTab="True"
+                     MinWidth="600"
+                     TextChanged="SearchInput_TextChanged"
+                     TextWrapping="Wrap" 
+                     Width="Auto" HorizontalAlignment="Stretch" />
+                <Button Content="Search all conversations" x:Name="searchConversations" Click="searchConversations_Click"/>
                 <components:ItemsView
                          Grid.Column="1" Grid.Row="3" x:Name="SearchResults" HorizontalAlignment="Left" 
                          ItemTemplate="{StaticResource viewing}" />
