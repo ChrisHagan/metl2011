@@ -26,6 +26,7 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.DataContext = this;
+            RetrieveReleaseNotes();
             Commands.AddWindowEffect.ExecuteAsync(null);
             Version = ConfigurationProvider.instance.getMetlVersion();
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<Credentials>(SetIdentity));
@@ -38,9 +39,8 @@ namespace SandRibbon.Components
             }
             Loaded += loaded;
         }
-        private void loaded(object sender, RoutedEventArgs e)
+        private void RetrieveReleaseNotes()
         {
-            username.Focus();
             ThreadPool.QueueUserWorkItem(_arg =>
             {
                 var notes = new WebClient().DownloadString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
@@ -55,6 +55,10 @@ namespace SandRibbon.Components
                         releaseNotesViewer.Visibility = Visibility.Collapsed;
                 });
             });
+        }
+        private void loaded(object sender, RoutedEventArgs e)
+        {
+            username.Focus();
         }
         private void checkAuthenticationAttemptIsPlausible(object sender, CanExecuteRoutedEventArgs e)
         {
