@@ -163,9 +163,9 @@ namespace MeTLLib.Providers.Structure
 
                 var lastModified = (from conversation in results
                                group conversation by conversation.Jid into convGroup
-                               select new { Jid = convGroup.Key, LastModified = convGroup.Max(c => c.LastModified) }).Take(maxResults);
+                               select new { Jid = convGroup.Key, LastModified = convGroup.Max(c => c.LastModified) });
 
-                return results.Where(conv => lastModified.Contains(new { Jid = conv.Jid, LastModified = conv.LastModified })).OrderBy(conv => conv.relevance);
+                return results.Where(conv => lastModified.Contains(new { Jid = conv.Jid, LastModified = conv.LastModified })).OrderBy(conv => conv.relevance).Take(maxResults);
             }
             catch (Exception)
             {

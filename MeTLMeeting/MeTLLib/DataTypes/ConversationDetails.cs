@@ -82,10 +82,18 @@ namespace MeTLLib.DataTypes
     {
        public bool isDeleted
         {
-            get {
+            get 
+            {
                 return Subject.ToLower() == "deleted";
             }
         }
+       public bool IsEmpty
+       {
+           get
+           {
+               return Equals(ConversationDetails.Empty);
+           }
+       }
         public static string DefaultName(string author)
         {
             var now = DateTimeFactory.Now();
@@ -167,6 +175,14 @@ namespace MeTLLib.DataTypes
             }
         }
  
+        public bool VisibleToUser(Credentials credentials)
+        {
+            if (!(credentials.authorizedGroups.Select(g => g.groupKey).Contains(Subject))
+                && Subject != "Unrestricted"
+                && !(String.IsNullOrEmpty(Subject))
+                && !(credentials.authorizedGroups.Select(su => su.groupKey).Contains("Superuser"))) return false;
+            return true;
+        }
         public override bool Equals(object obj)
         {
             if (obj == null || !(obj is ConversationDetails)) return false;

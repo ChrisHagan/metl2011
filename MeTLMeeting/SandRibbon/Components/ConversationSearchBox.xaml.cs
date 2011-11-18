@@ -197,7 +197,7 @@ namespace SandRibbon.Components
                    searchResults.Add(details);
                else if (details.Jid == Globals.location.activeConversation)
                    currentConversation.Visibility = Visibility.Collapsed;
-               if ((!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid) || details.Subject.ToLower() == "deleted")
+               if ((!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid) || details.isDeleted)
                {
                    Commands.RequerySuggested();
                    this.Visibility = Visibility.Visible;
@@ -207,11 +207,7 @@ namespace SandRibbon.Components
         }
         private static bool shouldShowConversation(ConversationDetails conversation)
         {
-            if (!(Globals.credentials.authorizedGroups.Select(g => g.groupKey).Contains(conversation.Subject))
-                && conversation.Subject != "Unrestricted"
-                && !(String.IsNullOrEmpty(conversation.Subject))
-                && !(Globals.credentials.authorizedGroups.Select(su => su.groupKey).Contains("Superuser"))) return false;
-            return true;
+            return conversation.VisibleToUser(Globals.credentials);
         }
         private ListCollectionView GetListCollectionView()
         {

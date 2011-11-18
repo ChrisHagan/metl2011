@@ -101,7 +101,16 @@ namespace SandRibbon.Components
         }
         private void doJoinConversation(object sender, ExecutedRoutedEventArgs e)
         {
-            Commands.JoinConversation.ExecuteAsync((string)e.Parameter);
+            var conversationJid = e.Parameter as string;
+            var details = ClientFactory.Connection().DetailsOf(conversationJid);
+            if (details.isDeleted || !details.VisibleToUser(Globals.credentials))
+            {
+                MessageBox.Show(Window.GetWindow(this), String.Format("Conversation \"{0}\" is no longer available.", details.Title), "MeTL 2011", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                Commands.JoinConversation.ExecuteAsync(conversationJid);
+            }
         }
         private void canJoinConversation(object sender, CanExecuteRoutedEventArgs e)
         {//CommandParameter is conversation title

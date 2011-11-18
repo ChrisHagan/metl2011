@@ -104,7 +104,7 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (ConversationDetails.Empty.Equals(details)) return;
+            if (details.IsEmpty) return;
             if (details.Jid == "" || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject)))
             {
                 foreach (FrameworkElement child in stack.canvasStack.Children)

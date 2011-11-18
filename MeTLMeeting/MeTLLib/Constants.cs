@@ -16,6 +16,7 @@ namespace MeTLLib
         public const string MeTL = "MeTL";
         public const string MeTLCollaborator = "MeTL Collaborator";
         public const string MeTLDemonstrator = "MeTL Demonstrator";
+        public const string MeTLWindowTitle = "MeTL 2011";
         public static string SERVER
         {
             get
