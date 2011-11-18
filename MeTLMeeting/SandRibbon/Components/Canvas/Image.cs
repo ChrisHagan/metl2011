@@ -818,11 +818,35 @@ namespace SandRibbon.Components.Canvas
                                                  FilterIndex = 1,
                                                  RestoreDirectory = true
                                              };
+                DisableDragDrop(); 
                 var dialogResult = fileBrowser.ShowDialog(Window.GetWindow(this));
+                EnableDragDrop();
+
                 if (dialogResult == true)
                     withResources(fileBrowser.FileNames);
             }
         }
+
+        private void DisableDragDrop()
+        {
+            DragOver -= ImageDragOver;
+            Drop -= ImagesDrop;
+            DragOver += ImageDragOverCancel;
+        }
+
+        private void EnableDragDrop()
+        {
+            DragOver -= ImageDragOverCancel;
+            DragOver += ImageDragOver;
+            Drop += ImagesDrop;
+        }
+
+        protected void ImageDragOverCancel(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+
         public void dropVideoOnCanvas(string filename, Point pos, int count)
         {
             FileType type = GetFileType(filename);

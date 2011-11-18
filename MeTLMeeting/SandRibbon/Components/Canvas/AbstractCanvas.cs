@@ -223,7 +223,7 @@ namespace SandRibbon.Components.Canvas
             element.Effect = null;
             element.Opacity = 1;
         }
-        void ImageDragOver(object sender, DragEventArgs e)
+        protected void ImageDragOver(object sender, DragEventArgs e)
         {
             e.Effects = DragDropEffects.None;
             var fileNames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
@@ -262,7 +262,7 @@ namespace SandRibbon.Components.Canvas
             //System.Windows.Media.Imaging.BitmapSource.Create(w, h, 96, 96, PixelFormats.Bgra32, null, buffer, stride);
         }*/
 
-        void ImagesDrop(object sender, DragEventArgs e)
+        protected void ImagesDrop(object sender, DragEventArgs e)
         {
             var tempImagePath = "temporaryDragNDropFileData.bmp";
             bool needsToRemoveTempFile = false;
