@@ -22,8 +22,8 @@ namespace SandRibbon.Quizzing
         private string url = "none";
         public static ObservableCollection<Option> options = new ObservableCollection<Option>
                                                      {
-                                                         new Option("A"," ",false,Colors.Blue),
-                                                         new Option("B"," ",false,Colors.Red)
+                                                         new Option("A",String.Empty,false,Colors.Blue)/*,
+                                                         new Option("B",String.Empty,false,Colors.Red)*/
                                                      };
         public CreateAQuiz(int count)
         {
@@ -73,13 +73,36 @@ namespace SandRibbon.Quizzing
                 tryPrefillOption((FrameworkElement)sender);
             }
         }
+        #region Helpers
+        private FrameworkElement GetQuestionContainerFromItem(object itemContainer)
+        {
+            if (itemContainer is FrameworkElement)
+            {
+                var currentOption = (itemContainer as FrameworkElement).DataContext;    
+                return quizQuestions.ItemContainerGenerator.ContainerFromItem(currentOption) as FrameworkElement; 
+            }
+
+            return null;
+        }
+        #endregion
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement)
+            var optionContainer = GetQuestionContainerFromItem(sender);
+            if (optionContainer != null) 
+                optionContainer.Opacity = 1;
+        }
+
+        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var optionContainer = GetQuestionContainerFromItem(sender);
+            if (optionContainer != null)
             {
-                tryPrefillOption((FrameworkElement)sender);
+                var option = (optionContainer.DataContext as Option);
+                if (String.IsNullOrEmpty(option.optionText) && options.IndexOf(option) > 0)
+                    optionContainer.Opacity = 0.5;
             }
         }
+
         private void tryPrefillOption(FrameworkElement sender)
         {
             var currentOption = sender.DataContext;
@@ -88,7 +111,7 @@ namespace SandRibbon.Quizzing
                 var co = ((Option)currentOption);
                 if (string.IsNullOrEmpty(co.optionText))
                 {
-                    co.optionText = " ";
+                    co.optionText = String.Empty;
                 }
                 AddNewEmptyOption();
             }
@@ -134,7 +157,7 @@ namespace SandRibbon.Quizzing
                 }
                 newIndex = AllColors.all.IndexOf(options.Last().color) + 1;
             }
-            var newOption = new Option(newName, "", false, AllColors.all.ElementAt(newIndex));
+            var newOption = new Option(newName, String.Empty, false, AllColors.all.ElementAt(newIndex));
             if (shouldAddNewEmptyOption())
             {
                 options.Add(newOption);
@@ -177,7 +200,7 @@ namespace SandRibbon.Quizzing
             }
             AddNewEmptyOption();
             foreach (var obj in options)
-                if (!(obj.optionText.Length > 0))
+                if (String.IsNullOrEmpty(obj.optionText))
                     ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(obj)).Opacity = 0.5;
             CommandManager.InvalidateRequerySuggested();
         }
@@ -229,8 +252,8 @@ namespace SandRibbon.Quizzing
         {
             options = new ObservableCollection<Option>
                                                      {
-                                                         new Option("A"," ",false, Colors.Blue),
-                                                         new Option("B"," ",false, Colors.Red)
+                                                         new Option("A",String.Empty,false, Colors.Blue)/*,
+                                                         new Option("B",String.Empty,false, Colors.Red)*/
                                                      };
         }
         private void createAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -243,5 +266,6 @@ namespace SandRibbon.Quizzing
         {
             AddNewEmptyOption();
         }
+
     }
 }

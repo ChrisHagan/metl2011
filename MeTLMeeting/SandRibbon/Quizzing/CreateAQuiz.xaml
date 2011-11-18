@@ -48,7 +48,7 @@
                                     <TextBox MaxHeight="300" MinWidth="100" Width="300" x:Name="question" AcceptsReturn="True" TextWrapping="WrapWithOverflow"></TextBox>
                                 </ScrollViewer>
                                 <Grid Grid.Column="1" x:Name="questionSnapshotContainer">
-                                    <dict:Button x:Name="screenshot" Click="screenshotAsAQuestion" ToolTip="{DynamicResource AttachCurrentSlideToQuizToolTip}" Icon="\Resources\AttachSnapshot.png" Text="Attach Current Page"/>
+                                    <dict:Button x:Name="screenshot" Click="screenshotAsAQuestion" ToolTip="{DynamicResource AttachCurrentSlideToQuizToolTip}" Icon="/Resources/AttachSnapshot.png" Text="Attach Current Page"/>
                                 </Grid>
                             </Grid>
                         </StackPanel>
@@ -60,9 +60,9 @@
                                     <q:GoldPlaque PreviewMouseDown="QuizButton_PreviewMouseUp" />
                                     <StackPanel Orientation="Horizontal">
                                         <q:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" />
-                                        <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" GotFocus="TextBox_GotFocus" TextWrapping="WrapWithOverflow"/>
+                                        <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextWrapping="WrapWithOverflow"/>
                                         <Button x:Name="quizAnswerDelete" Focusable="False" Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
-                                            <Image Height="20" Width="20"  Source="\Resources\Delete.png"/>
+                                            <Image Height="20" Width="20"  Source="/Resources/Delete.png"/>
                                         </Button>
                                     </StackPanel>
                                 </Grid>
