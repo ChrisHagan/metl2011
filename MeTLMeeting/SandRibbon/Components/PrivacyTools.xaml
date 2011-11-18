@@ -8,8 +8,9 @@
     AutomationProperties.AutomationId="privacyTools"
     >
     <dict:RibbonPanel>
-        <dict:Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecuteForPrivacyTools" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
-        <RadioButton GroupName="privacyButtons" x:Name="publicMode" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" ToolTip="{DynamicResource WorkPubliclyToolTip}" Tag="public" Content="Public" Checked="privacyChange"></RadioButton>
-        <RadioButton GroupName="privacyButtons" x:Name="privateMode" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" ToolTip="{DynamicResource WorkPrivatelyToolTip}" Tag="private" Content="Private" Checked="privacyChange"></RadioButton>
+        <dict:Button x:Name="publicHidden" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecuteForPrivacyTools" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
+        <dict:Button x:Name="privateHidden" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed. It is only being used to redirect a canExecute Handler."/>
+        <RadioButton GroupName="privacyButtons" x:Name="publicMode" IsEnabled="{Binding ElementName=publicHidden, Path=IsEnabled}" ToolTip="{DynamicResource WorkPubliclyToolTip}" Tag="public" Content="Public" Checked="privacyChange"></RadioButton>
+        <RadioButton GroupName="privacyButtons" x:Name="privateMode" IsEnabled="{Binding ElementName=privateHidden, Path=IsEnabled}" ToolTip="{DynamicResource WorkPrivatelyToolTip}" Tag="private" Content="Private" Checked="privacyChange"></RadioButton>
         </dict:RibbonPanel>
 </UserControl>
