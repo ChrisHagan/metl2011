@@ -23,7 +23,7 @@ namespace SandRibbon.Chrome
         }
         private void UpdateConversationDetails(ConversationDetails details) 
         {
-            if (ConversationDetails.Empty.Equals(details)) return;
+            if (details.IsEmpty) return;
             showDetails();
         }
         private void showDetails()
@@ -33,7 +33,7 @@ namespace SandRibbon.Chrome
                 Dispatcher.adopt(() =>
                 {
                     var details = Globals.conversationDetails;
-                    StatusLabel.Text = ConversationDetails.Empty.Equals(details)?"MeTL 2011":string.Format(
+                    StatusLabel.Text = details.IsEmpty?"MeTL 2011":string.Format(
                             "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
                             Globals.privacy,
                             MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,

@@ -205,59 +205,69 @@ namespace SandRibbon.Utils
             var backgroundWidth = ppt.SlideMaster.Width * MagnificationRating;
             var backgroundHeight = ppt.SlideMaster.Height * MagnificationRating;
             var thumbnailStartId = conversation.Slides.First().id;
-            foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
+            try
             {
-                var slidePath = getThumbnailPath( conversation.Jid, thumbnailStartId++);
-                foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
+                foreach (Microsoft.Office.Interop.PowerPoint.Slide slide in ppt.Slides)
                 {
-                    shape.Visible = MsoTriState.msoFalse;
-                }
-                var privateShapes = new List<Microsoft.Office.Interop.PowerPoint.Shape>();
-                foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
-                {
-                    if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
+                    var slidePath = getThumbnailPath(conversation.Jid, thumbnailStartId++);
+                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
                     {
                         shape.Visible = MsoTriState.msoFalse;
-                        privateShapes.Add(shape);
                     }
-                    else shape.Visible = MsoTriState.msoTrue;
+                    var privateShapes = new List<Microsoft.Office.Interop.PowerPoint.Shape>();
+                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in slide.Shapes)
+                    {
+                        if (shape.Tags.Count > 0 && shape.Tags.Value(shape.Tags.Count) == "Instructor")
+                        {
+                            shape.Visible = MsoTriState.msoFalse;
+                            privateShapes.Add(shape);
+                        }
+                        else shape.Visible = MsoTriState.msoTrue;
+                    }
+                    slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
+                    var xSlide = new XElement("slide");
+                    xSlide.Add(new XAttribute("index", slide.SlideIndex));
+                    xSlide.Add(new XAttribute("defaultHeight", backgroundHeight));
+                    xSlide.Add(new XAttribute("defaultWidth", backgroundWidth));
+                    xSlide.Add(new XElement("shape",
+                    new XAttribute("x", 0),
+                    new XAttribute("y", 0),
+                    new XAttribute("height", backgroundHeight),
+                    new XAttribute("width", backgroundWidth),
+                    new XAttribute("privacy", "public"),
+                    new XAttribute("background", true),
+                    new XAttribute("snapshot", slidePath)));
+                    xml.Add(xSlide);
+                    var exportFormat = PpShapeFormat.ppShapeFormatPNG;
+                    var exportMode = PpExportMode.ppRelativeToSlide;
+                    var actualBackgroundHeight = 540;
+                    var actualBackgroundWidth = 720;
+                    double Magnification = (double)MagnificationRating;
+                    try
+                    {
+                        if (actualBackgroundHeight != Convert.ToInt32(slide.Master.Height))
+                            actualBackgroundHeight = Convert.ToInt32(slide.Master.Height);
+                        if (actualBackgroundWidth != Convert.ToInt32(slide.Master.Width))
+                            actualBackgroundWidth = Convert.ToInt32(slide.Master.Width);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in (from p in privateShapes orderby (p.ZOrderPosition) select p))
+                    {
+                        ExportShape(shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
+                    }
+                    progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, 0, ppt.Slides.Count);
                 }
-                slide.Export(slidePath, "PNG", (int)backgroundWidth, (int)backgroundHeight);
-                var xSlide = new XElement("slide");
-                xSlide.Add(new XAttribute("index", slide.SlideIndex));
-                xSlide.Add(new XAttribute("defaultHeight", backgroundHeight));
-                xSlide.Add(new XAttribute("defaultWidth", backgroundWidth));
-                xSlide.Add(new XElement("shape",
-                new XAttribute("x", 0),
-                new XAttribute("y", 0),
-                new XAttribute("height", backgroundHeight),
-                new XAttribute("width", backgroundWidth),
-                new XAttribute("privacy", "public"),
-                new XAttribute("background", true),
-                new XAttribute("snapshot", slidePath)));
-                xml.Add(xSlide);
-                var exportFormat = PpShapeFormat.ppShapeFormatPNG;
-                var exportMode = PpExportMode.ppRelativeToSlide;
-                var actualBackgroundHeight = 540;
-                var actualBackgroundWidth = 720;
-                double Magnification = (double)MagnificationRating;
-                try
-                {
-                    if (actualBackgroundHeight != Convert.ToInt32(slide.Master.Height))
-                        actualBackgroundHeight = Convert.ToInt32(slide.Master.Height);
-                    if (actualBackgroundWidth != Convert.ToInt32(slide.Master.Width))
-                        actualBackgroundWidth = Convert.ToInt32(slide.Master.Width);
-                }
-                catch (Exception)
-                {
-                }
-                foreach (Microsoft.Office.Interop.PowerPoint.Shape shape in (from p in privateShapes orderby (p.ZOrderPosition) select p))
-                {
-                    ExportShape(shape, xSlide, currentWorkingDirectory, exportFormat, exportMode, actualBackgroundWidth, actualBackgroundHeight, Magnification);
-                }
-                progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, 0, ppt.Slides.Count);
             }
-            ppt.Close();
+            catch (COMException e)
+            {
+                Logger.Crash(e);
+            }
+            finally
+            {
+                ppt.Close();
+            }
             var startingId = conversation.Slides.First().id;
             var index = 0;
             conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();

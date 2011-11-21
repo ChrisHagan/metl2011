@@ -205,7 +205,7 @@ namespace SandRibbon.Components
                                 Magnification = Globals.UserOptions.powerpointImportScale == 2 ? 2 : 1 
                             };
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your PowerPoint.  If the conversation was created, please check whether it has imported correctly.");
                             throw;
@@ -214,7 +214,6 @@ namespace SandRibbon.Components
                         {
                             Commands.PowerpointFinished.ExecuteAsync(null);
                         }
-                        return null;
                     }
                     else
                     {

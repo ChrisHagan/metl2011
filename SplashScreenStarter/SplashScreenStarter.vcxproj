@@ -108,7 +108,6 @@
     <None Include="small.ico" />
     <None Include="splashScreen.png" />
     <None Include="SplashScreenStarter.ico" />
-    <None Include="startuppic.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SplashScreenStarter.rc" />
