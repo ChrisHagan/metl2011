@@ -702,7 +702,11 @@ namespace SandRibbon.Components.Canvas
                 sendTextWithoutHistory(mybox, mybox.tag().privacy);
                 mybox.TextChanged += SendNewText;
             }; 
-            UndoHistory.Queue(undo, redo) ;
+            UndoHistory.Queue(undo, redo);
+
+            mybox.Text = redoText;
+            mybox.TextChanged += SendNewText;
+
             if (typingTimer == null)
             {
                 if (thisSlide == -1) thisSlide = currentSlide;
