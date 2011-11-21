@@ -12,6 +12,9 @@ namespace SandRibbon.Chrome
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+#if DEBUG
+            StatusLabel.Text = "You are operating against the staging server.";
+#endif
         }
         private void SetPrivacy(string _privacy)
         {

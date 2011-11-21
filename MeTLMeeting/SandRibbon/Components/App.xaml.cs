@@ -111,7 +111,6 @@ namespace SandRibbon
         protected override void OnStartup(StartupEventArgs e)
         {
 #if DEBUG
-            MessageBox.Show("You are operating against the staging server.");
             isStaging = true;
 #else
             isStaging = false;
