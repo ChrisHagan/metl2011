@@ -34,8 +34,8 @@ namespace SandRibbon.Providers
                                 conversation.Attribute("subject") == null ? String.Empty : conversation.Attribute("subject").Value,
                                 new DateTime(),
                                 SandRibbonObjects.DateTimeFactory.Parse(conversation.Attribute("lastAccessTime").Value))
-                        )
-                    .ToList();
+                        )/*.Where(conv => !ConversationProvider.DetailsOf(conv.Jid).isDeleted)*/.ToList();
+
                 return recentConversations.Count > 0 ? recentConversations.OrderByDescending(c => c.LastAccessed).ToList() : new List<ConversationDetails>();
             }
             return new List<ConversationDetails>();

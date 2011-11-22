@@ -66,6 +66,9 @@ namespace MeTLLib.DataTypes
 
         public static SearchConversationDetails HydrateFromServer(SearchConversationDetails scd)
         {
+            if (scd == null) 
+                throw new ArgumentNullException("scd", "Probably ConversationDetails is being cast as SearchConversationDetails");
+
             var conversation = MeTLLib.ClientFactory.Connection().DetailsOf(scd.Jid);
 
             scd.blacklist = conversation.blacklist;

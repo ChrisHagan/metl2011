@@ -105,6 +105,8 @@ namespace SandRibbon.Components
             var details = ClientFactory.Connection().DetailsOf(conversationJid);
             if (details.isDeleted || !details.VisibleToUser(Globals.credentials))
             {
+                // remove the conversation from the menu list
+                UpdateConversationDetails(details);
                 MessageBox.Show(Window.GetWindow(this), String.Format("Conversation \"{0}\" is no longer available.", details.Title), "MeTL 2011", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             else

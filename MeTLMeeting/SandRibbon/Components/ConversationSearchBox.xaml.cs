@@ -278,8 +278,8 @@ namespace SandRibbon.Components
             var view = (ContentPresenter)item;
             return view;
         }
-        private SearchConversationDetails context(object sender) {
-            return ((FrameworkElement)sender).DataContext as SearchConversationDetails;
+        private ConversationDetails context(object sender) {
+            return ((FrameworkElement)sender).DataContext as ConversationDetails;
         }
         ConversationDetails originalContext;
         private void assignTemplate(string dataTemplateResourceKey, object sender){
@@ -304,6 +304,9 @@ namespace SandRibbon.Components
         }
         private void cancelEdit(object sender, RoutedEventArgs e)
         {
+            if (sender == null)
+                return;
+
             var source = (FrameworkElement)sender;
             source.DataContext = originalContext;
             originalContext = null;
@@ -325,7 +328,7 @@ namespace SandRibbon.Components
         }
         private void saveEdit(object sender, RoutedEventArgs e)
         {
-            var details = SearchConversationDetails.HydrateFromServer(context(sender));
+            var details = SearchConversationDetails.HydrateFromServer(context(sender) as SearchConversationDetails);
             
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))
