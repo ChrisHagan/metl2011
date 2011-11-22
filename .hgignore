@@ -25,8 +25,9 @@ syntax: glob
 *.baml
 
 *\bin\*
-
 *\obj\*
+*\Release\*
+*\Debug\*
 
 *.orig
 
@@ -36,6 +37,14 @@ syntax: glob
 
 *.Designer.*
 *.suo
+*.user
+*.filters
+
+# C++ specific
+*.sdf
+*.opensdf
+*.vcxproj.user
+*\ipch\*
 
 #Generated test results
 TestResults

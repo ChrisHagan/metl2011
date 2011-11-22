@@ -7,14 +7,11 @@ using agsXMPP.protocol.client;
 using agsXMPP.protocol.x.muc;
 using agsXMPP.Xml.Dom;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using agsXMPP.protocol.iq.disco;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Structure;
 using System.Diagnostics;
 using Ninject;
 using System.Threading;
-using System.Windows;
-using System.Windows.Threading;
 using System.Net.NetworkInformation;
 
 namespace MeTLLib.Providers.Connection
@@ -146,6 +143,7 @@ namespace MeTLLib.Providers.Connection
             {
                 receiveEvents.StatusChanged += listenToStatusChangedForReset;
                 establishHeartBeat();
+                NetworkChange.NetworkAvailabilityChanged += networkAvailabilityChanged;
             }
         }
         private void establishHeartBeat()
@@ -189,6 +187,15 @@ namespace MeTLLib.Providers.Connection
             }
             if (!e.isConnected && !this.IsConnected()) Reset("Jabberwire::listenToStatusChangedForReset");
         }
+
+        private void networkAvailabilityChanged(object sender, EventArgs e)
+        {
+            if (NetworkInterface.GetIsNetworkAvailable())
+                receiveEvents.statusChanged(true, this.credentials);
+            else
+                receiveEvents.statusChanged(false, this.credentials);
+        }
+
         private void makeAvailableNewSocket()
         {
             if (this.conn != null) { 
