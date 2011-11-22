@@ -250,6 +250,7 @@ namespace SandRibbon
         }
         private void createBlankConversation(object obj)
         {
+            var element = Keyboard.FocusedElement;
             if(loader == null) loader = new PowerPointLoader();
             loader.CreateBlankConversation();
         }

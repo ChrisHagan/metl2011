@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Xml.Linq;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
+using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbonObjects;
 using System.Windows;
@@ -190,9 +191,28 @@ namespace SandRibbon.Utils
             if (spec == null) return;
             UploadPowerpoint(spec);
         }
+
+        private PowerPoint.Application GetPowerPointApplication()
+        {
+            try
+            {
+                return new PowerPoint.Application();
+            }
+            catch (COMException)
+            {
+                MessageBox.Show("MeTL requires Microsoft PowerPoint to be installed to import a presentation", "MeTL2011", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return null;
+        }
+
         public void LoadPowerpointAsFlatSlides(string file, ConversationDetails conversation, int MagnificationRating)
         {
-            var ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
+            var app = GetPowerPointApplication();
+            if (app == null)
+                return;
+
+            var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
             var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
             if (!Directory.Exists(currentWorkingDirectory))
                 Directory.CreateDirectory(currentWorkingDirectory);
