@@ -127,6 +127,9 @@ namespace SandRibbon.Components
             if (Globals.isAuthor) return;
             if (!Globals.synched) return;
             var slide = Globals.slide;
+            // don't move if we're already on the slide requested
+            if (where == slide) return;
+
             var action = (Action)(() => Dispatcher.adoptAsync(() => Commands.MoveTo.ExecuteAsync(where)));
             GlobalTimers.SetSyncTimer(action, slide);
         }
@@ -234,11 +237,16 @@ namespace SandRibbon.Components
                     currentSlideId = selected.id;
                     foreach (var slide in removedItems) ((Slide)slide).refresh();
                     Commands.MoveTo.ExecuteAsync(currentSlideId);
-                    if (Globals.isAuthor && Globals.synched)
-                        Commands.SendSyncMove.ExecuteAsync(currentSlideId);
+                    SendSyncMove(currentSlideId);
                     slides.ScrollIntoView(selected);
                 }
             }
+        }
+
+        public static void SendSyncMove(int currentSlideId)
+        {
+            if (Globals.isAuthor && Globals.synched)
+                Commands.SendSyncMove.ExecuteAsync(currentSlideId);
         }
     }
 }

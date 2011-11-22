@@ -334,6 +334,7 @@ namespace SandRibbon
                         var jid = Globals.conversationDetails.Jid;
                         Commands.UpdateConversationDetails.Execute(ClientFactory.Connection().DetailsOf(jid));
                         Commands.MoveTo.Execute(Globals.location.currentSlide);
+                        SlideDisplay.SendSyncMove(Globals.location.currentSlide);
                         ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
                                     null,
                                     null,

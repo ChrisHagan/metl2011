@@ -85,8 +85,8 @@ namespace SandRibbon.Components
 
         private void setUpSyncDisplay(int slide)
         {
-
             if (!Globals.synched) return;
+
             try
             {
                 if (Globals.conversationDetails.Author == Globals.me) return;
