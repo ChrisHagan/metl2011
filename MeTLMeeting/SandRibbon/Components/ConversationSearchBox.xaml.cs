@@ -48,6 +48,17 @@ namespace SandRibbon.Components
                 return false;
             }
         }
+        
+        private bool editInProgress = false;
+        public static RoutedCommand RenameConversation = new RoutedCommand();
+        public static RoutedCommand ShareConversation = new RoutedCommand();
+        public static RoutedCommand DeleteConversation = new RoutedCommand();
+
+        private void CheckEditAllowed(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !editInProgress;
+        }
+
         public static HideErrorsIfEmptyConverter HideErrorsIfEmpty = new HideErrorsIfEmptyConverter();
         public static IsMeConverter isMe = new IsMeConverter();
         public static HideIfNotCurrentConversation hideIfNotCurrentConversation = new HideIfNotCurrentConversation();
@@ -174,15 +185,18 @@ namespace SandRibbon.Components
         }
         private void HideConversationSearchBox(object o)
         {
+            editInProgress = false;
             this.Visibility = Visibility.Collapsed;
             Commands.RequerySuggested();
         }
         private void JoinConversation(object o)
         {
+            editInProgress = false;
             CloseConversationSearchBox();
         }
         private void CloseConversationSearchBox()
         {
+            editInProgress = false;
             Commands.HideConversationSearchBox.Execute(null);
         }
         private void LeaveConversation(string jid)
@@ -207,7 +221,7 @@ namespace SandRibbon.Components
         }
         private static bool shouldShowConversation(ConversationDetails conversation)
         {
-            return conversation.VisibleToUser(Globals.credentials);
+            return conversation.UserHasPermission(Globals.credentials);
         }
         private ListCollectionView GetListCollectionView()
         {
@@ -244,6 +258,7 @@ namespace SandRibbon.Components
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            editInProgress = false;
             if (originalContext != null)
             {
                 foreach (var result in SearchResults.ItemsSource)
@@ -252,12 +267,12 @@ namespace SandRibbon.Components
                 originalContext = null;
             }
             var jid = ((FrameworkElement)sender).Tag;
-            if(jid.Equals(Globals.location.activeConversation) && !Globals.conversationDetails.Equals(ConversationDetails.Empty))
+            if(jid.Equals(Globals.location.activeConversation) && !Globals.conversationDetails.IsEmpty)
                 Commands.HideConversationSearchBox.Execute(null);
             else
                 Commands.JoinConversation.ExecuteAsync(jid);
         }
-        private void deleteConversation(object sender, RoutedEventArgs e)
+        private void deleteConversation(object sender, ExecutedRoutedEventArgs e)
         {
             var owner = Window.GetWindow(this);
             if (MessageBox.Show(owner, "Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
@@ -289,21 +304,24 @@ namespace SandRibbon.Components
             presenter.ContentTemplate = (DataTemplate)FindResource(dataTemplateResourceKey);
             originalContext = sentContext.Clone();
         }
-        private void renameConversation(object sender, RoutedEventArgs e)
+        private void renameConversation(object sender, ExecutedRoutedEventArgs e)
         {
+            editInProgress = true;
             if (originalContext != null)
             {
                 var item = SearchResults.ItemContainerGenerator.ContainerFromItem(originalContext);
                 cancelEdit(item, null);
             }
-            assignTemplate("rename", sender);
+            assignTemplate("rename", e.OriginalSource);
         }
-        private void shareConversation(object sender, RoutedEventArgs e)
+        private void shareConversation(object sender, ExecutedRoutedEventArgs e)
         {
-            assignTemplate("share", sender);
+            editInProgress = true;
+            assignTemplate("share", e.OriginalSource);
         }
         private void cancelEdit(object sender, RoutedEventArgs e)
         {
+            editInProgress = false;
             if (sender == null)
                 return;
 
@@ -328,6 +346,7 @@ namespace SandRibbon.Components
         }
         private void saveEdit(object sender, RoutedEventArgs e)
         {
+            editInProgress = false;
             var details = SearchConversationDetails.HydrateFromServer(context(sender) as SearchConversationDetails);
             
             var errors = errorsFor(details);

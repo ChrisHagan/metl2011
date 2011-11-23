@@ -103,7 +103,7 @@ namespace SandRibbon.Components
         {
             var conversationJid = e.Parameter as string;
             var details = ClientFactory.Connection().DetailsOf(conversationJid);
-            if (details.isDeleted || !details.VisibleToUser(Globals.credentials))
+            if (details.isDeleted || !details.UserHasPermission(Globals.credentials))
             {
                 // remove the conversation from the menu list
                 UpdateConversationDetails(details);

@@ -178,7 +178,7 @@ namespace MeTLLib.DataTypes
             }
         }
  
-        public bool VisibleToUser(Credentials credentials)
+        public bool UserHasPermission(Credentials credentials)
         {
             if (!(credentials.authorizedGroups.Select(g => g.groupKey).Contains(Subject))
                 && Subject != "Unrestricted"

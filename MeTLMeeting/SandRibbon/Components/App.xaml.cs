@@ -37,6 +37,19 @@ namespace SandRibbon
         public static bool isStaging = false;
         public static bool isExternal = false;
         public static DateTime AccidentallyClosing = DateTime.Now;
+
+        private static SplashScreen splashScreen;
+
+        public static void ShowSplashScreen()
+        {
+            splashScreen = new SplashScreen("resources/splashScreen.png");
+            splashScreen.Show(false);
+        }
+        public static void CloseSplashScreen()
+        {
+            splashScreen.Close(TimeSpan.Zero);
+        }
+
         public static void Login(String username, String password)
         {
             string finalUsername = username;
@@ -115,14 +128,14 @@ namespace SandRibbon
 #else
             isStaging = false;
 #endif
-            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Loaded, (DispatcherOperationCallback)delegate { CloseSplashScreen(); return null; }, this);
+            //Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Loaded, (DispatcherOperationCallback)delegate { CloseSplashScreen(); return null; }, this);
             Trace.Listeners.Add(new CouchTraceListener());
             base.OnStartup(e);
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.Current.Exit += new ExitEventHandler(Current_Exit);
-           // mark("App.onStartup finished");
+            // mark("App.onStartup finished");
         }
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -161,14 +174,14 @@ namespace SandRibbon
         {
             Logger.Crash(e);
         }
-        private void CloseSplashScreen()
+        /*private void CloseSplashScreen()
         {
             // signal process to close splash screen
             using (var closeSplashEvent = new EventWaitHandle(false, EventResetMode.ManualReset, "CloseSplashScreenWithoutFadeEventSplashScreenStarter"))
             {
                 closeSplashEvent.Set();
             }
-        }
+        }*/
         private void AnyTextBoxGetsFocus(object sender, RoutedEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)delegate

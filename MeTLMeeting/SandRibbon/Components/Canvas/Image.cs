@@ -999,8 +999,14 @@ namespace SandRibbon.Components.Canvas
             var image = new System.Windows.Controls.Image();
             var jpgFrame = BitmapFrame.Create(uri);
             image.Source = jpgFrame;
+            // images with a high dpi eg 300 were being drawn relatively small compared to images of similar size with dpi ~100
+            // which is correct but not what people expect.
+            // image size is determined from dpi
             image.Height = jpgFrame.Height;
             image.Width = jpgFrame.Width;
+            // image size will match reported size
+            //image.Height = jpgFrame.PixelHeight;
+            //image.Width = jpgFrame.PixelWidth;
             image.Stretch = Stretch.Uniform;
             image.StretchDirection = StretchDirection.Both;
             image.Margin = new Thickness(5);
@@ -1009,9 +1015,12 @@ namespace SandRibbon.Components.Canvas
         public static FileType GetFileType(string fileName)
         {
             string extension = System.IO.Path.GetExtension(fileName).ToLower();
-            if (extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".gif" || extension == ".png" || extension == ".dib")
+            var imageExtensions = new List<string>() { ".jpg", ".jpeg", ".bmp", ".gif", ".png", ".dib" };
+            var videoExtensions = new List<string>() { ".wmv" };
+
+            if (imageExtensions.Contains(extension))
                 return FileType.Image;
-            if (extension == ".wmv")
+            if (videoExtensions.Contains(extension))
                 return FileType.Video;
             return FileType.NotSupported;
         }

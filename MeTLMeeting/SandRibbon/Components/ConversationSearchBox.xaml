@@ -8,6 +8,11 @@
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     x:Name="root">
+    <UserControl.CommandBindings>
+        <CommandBinding Command="{x:Static components:ConversationSearchBox.RenameConversation}"  CanExecute="CheckEditAllowed" Executed="renameConversation"/>
+        <CommandBinding Command="{x:Static components:ConversationSearchBox.ShareConversation}" CanExecute="CheckEditAllowed" Executed="shareConversation"/>
+        <CommandBinding Command="{x:Static components:ConversationSearchBox.DeleteConversation}" CanExecute="CheckEditAllowed" Executed="deleteConversation"/>
+    </UserControl.CommandBindings>
     <UserControl.Resources>
         <LinearGradientBrush StartPoint="0.3,0.5" EndPoint="0.8,0.5" x:Key="backgroundColor">
             <GradientStop Color="#666a7f" Offset="0" />
@@ -23,9 +28,9 @@
         <DataTemplate x:Key="nonAuthorOptions" />
         <DataTemplate x:Key="authorOptions">
             <StackPanel x:Name="conversationOptions" Orientation="Horizontal" HorizontalAlignment="Right">
-                <dict:Button x:Name="renameConversation" Icon="\Resources\Edit.png" Text="Rename" InternalButtonSize="Medium" Click="renameConversation" />
-                <dict:Button x:Name="shareConversation" Icon="\Resources\Share.png" Text="Share" InternalButtonSize="Medium" Click="shareConversation" />
-                <dict:Button x:Name="deleteConversation" Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Click="deleteConversation"/>
+                <dict:Button x:Name="renameConversation" Icon="\Resources\Edit.png" Text="Rename" InternalButtonSize="Medium" Command="{x:Static components:ConversationSearchBox.RenameConversation}" />
+                <dict:Button x:Name="shareConversation" Icon="\Resources\Share.png" Text="Share" InternalButtonSize="Medium" Command="{x:Static components:ConversationSearchBox.ShareConversation}" />
+                <dict:Button x:Name="deleteConversation" Icon="\Resources\sexyDelete.png" Text="Delete" InternalButtonSize="Medium"  Command="{x:Static components:ConversationSearchBox.DeleteConversation}"/>
             </StackPanel>
         </DataTemplate>
         <Style TargetType="Border" x:Key="thinBlack">

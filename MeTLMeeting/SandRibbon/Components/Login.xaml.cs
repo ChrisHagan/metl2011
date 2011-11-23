@@ -26,6 +26,9 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             this.DataContext = this;
+
+            SandRibbon.App.CloseSplashScreen();
+
             RetrieveReleaseNotes();
             Commands.AddWindowEffect.ExecuteAsync(null);
             Version = ConfigurationProvider.instance.getMetlVersion();
@@ -91,6 +94,7 @@ namespace SandRibbon.Components
         private void LoginFailed()
         {
             canLoginAgain = true;
+            username.Focus();
         }
         private void checkLoginPending(object sender, CanExecuteRoutedEventArgs e)
         {
