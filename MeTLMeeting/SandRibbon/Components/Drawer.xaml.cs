@@ -20,7 +20,7 @@ namespace SandRibbon.Components
         {
             switch (level.code)
             {
-                case 3:
+                case PedagogyCode.CollaborativePresentation:
                     controls.Visibility = Visibility.Visible;
                     break;
                 default:

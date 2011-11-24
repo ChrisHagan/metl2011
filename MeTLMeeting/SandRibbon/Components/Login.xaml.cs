@@ -85,7 +85,7 @@ namespace SandRibbon.Components
                 }
                 var options = ClientFactory.Connection().UserOptionsFor(identity.name);
                 Commands.SetUserOptions.Execute(options);
-                Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(options.pedagogyLevel));
+                Commands.SetPedagogyLevel.Execute(Pedagogicometer.level((Pedagogicometry.PedagogyCode)options.pedagogyLevel));
                 this.Visibility = Visibility.Collapsed;
             });
             App.mark("Login knows identity");

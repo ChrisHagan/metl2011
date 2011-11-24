@@ -18,13 +18,12 @@ namespace SandRibbon.Components.Sandpit
         {
             InitializeComponent();
             instance = this;
-            var i = 0;
             allPedagogies = new[] { 
-                new PedagogyLevel{ code = i++, label= "Whiteboard" },
-                new PedagogyLevel{ code = i++, label= "Survey Respondent" },
-                new PedagogyLevel{ code = i++, label= "Responsive Presentation" },
-                new PedagogyLevel{ code = i++, label= "Collaborative Presentation" },
-                new PedagogyLevel{ code = i++, label= "Crowdsourced Conversation" }};
+                new PedagogyLevel{ code = PedagogyCode.Whiteboard,                  label= "Whiteboard" },
+                new PedagogyLevel{ code = PedagogyCode.SurveyRespondent,            label= "Survey Respondent" },
+                new PedagogyLevel{ code = PedagogyCode.ResponsivePresentation,      label= "Responsive Presentation" },
+                new PedagogyLevel{ code = PedagogyCode.CollaborativePresentation,   label= "Collaborative Presentation" },
+                new PedagogyLevel{ code = PedagogyCode.CrowdsourcedConversation,    label= "Crowdsourced Conversation" }};
             pedagogies.ItemsSource = allPedagogies;
         }
         public static void SetDefaultPedagogyLevel()
@@ -42,11 +41,11 @@ namespace SandRibbon.Components.Sandpit
         {
             Commands.SetPedagogyLevel.ExecuteAsync(level);
         }
-        public static void SetPedagogyLevel(int code)
+        public static void SetPedagogyLevel(PedagogyCode code)
         {
             SetPedagogyLevel(level(code));
         }
-        public static PedagogyLevel level(int level)
+        public static PedagogyLevel level(PedagogyCode level)
         {
             return allPedagogies.Where(p => p.code == level).Single();
         }

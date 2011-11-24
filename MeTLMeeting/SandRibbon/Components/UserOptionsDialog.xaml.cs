@@ -28,7 +28,7 @@ namespace SandRibbon.Components
             Commands.SetUserOptions.Execute(DataContext);
             //this should be wired to a new command - SaveUserOptions, which is commented out in SandRibbonInterop.Commands
             //Commands.SaveUserOptions.Execute(DataContext);
-            var level = Pedagogicometer.level(((UserOptions)DataContext).pedagogyLevel);
+            var level = Pedagogicometer.level((Pedagogicometry.PedagogyCode)((UserOptions)DataContext).pedagogyLevel);
             Trace.TraceInformation("SetPedagogy {0}",level.label);
             Commands.SetPedagogyLevel.Execute(level);
             // ChangeLanguage commented out for 182 staging release. Causing a crash.

@@ -48,24 +48,24 @@ namespace SandRibbon.Providers
         }
         public PedagogyLevel getMeTLPedagogyLevel()
         {
-            int level;
+            PedagogyCode level;
             var type = getMeTLType();
             switch (type)
             {
                 case Globals.METL:
-                    level = 2;
+                    level = PedagogyCode.ResponsivePresentation;
                     break;
                 case Globals.METLPRESENTER:
-                    level = 2;
+                    level = PedagogyCode.ResponsivePresentation;
                     break;
                 case Globals.METLCOLLABORATOR:
-                    level = 3;
+                    level = PedagogyCode.CollaborativePresentation;
                     break;
                 case Globals.METLDEMONSTRATOR:
-                    level = 3;
+                    level = PedagogyCode.CollaborativePresentation;
                     break;
                 default:
-                    level = 2;
+                    level = PedagogyCode.ResponsivePresentation;
                     break;
             }
             Commands.MeTLType.ExecuteAsync(type);

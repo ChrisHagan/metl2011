@@ -20,6 +20,7 @@ using System.Windows.Automation.Provider;
 using SandRibbon.Providers;
 using SandRibbon.Components.Canvas;
 using MeTLLib.DataTypes;
+using SandRibbon.Components.Pedagogicometry;
 
 namespace SandRibbon.Components
 {
@@ -472,7 +473,7 @@ namespace SandRibbon.Components
         {
             try
             {
-                if (Globals.pedagogy.code < 3) return;
+                if (Globals.pedagogy.code < PedagogyCode.CollaborativePresentation) return;
                 privacyOverlay = new SolidColorBrush { Color = color, Opacity = 0.2 };
                 privacyAdorner.Fill = privacyOverlay;
                 RemovePrivateRegion(vertices);

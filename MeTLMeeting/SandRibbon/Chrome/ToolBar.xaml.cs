@@ -35,7 +35,7 @@ namespace SandRibbon.Chrome
         }
         private void SetPedagogyLevel(PedagogyLevel level) 
         { 
-            foreach(var i in Enumerable.Range(0,level.code+1)){
+            foreach(var i in Enumerable.Range(0, ((int)level.code) + 1)){
                 switch (i)
                 {
                     case 0:

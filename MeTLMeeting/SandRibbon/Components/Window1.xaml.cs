@@ -147,6 +147,18 @@ namespace SandRibbon
             getDefaultSystemLanguage();
         }
 
+        [System.STAThreadAttribute()]
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public static void Main()
+        {
+            // want to customise the main function so we'll create one here instead of the automatically generated one from app.g.cs
+            SandRibbon.App.ShowSplashScreen();
+            SandRibbon.App app = new SandRibbon.App();
+
+            app.InitializeComponent();
+            app.Run();
+        }
+
         private void AddWndProcHook()
         {
             var source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
@@ -597,9 +609,9 @@ namespace SandRibbon
         }
         private void UpdateUIFromConversation(ConversationDetails details)
         {
-            if (Permissions.InferredTypeOf(details.Permissions).ValueEquals(Permissions.TUTORIAL_PERMISSIONS) && Globals.pedagogy != Pedagogicometer.level(3))
+            if (Permissions.InferredTypeOf(details.Permissions).ValueEquals(Permissions.TUTORIAL_PERMISSIONS) && Globals.pedagogy != Pedagogicometer.level(PedagogyCode.CollaborativePresentation))
             {
-                Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(3));
+                Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(PedagogyCode.CollaborativePresentation));
             }
         }
         private void UpdateConversationDetails(ConversationDetails details)
@@ -959,7 +971,7 @@ namespace SandRibbon
             {
                 List<FrameworkElement> homeGroups = new List<FrameworkElement>();
                 List<FrameworkElement> tabs = new List<FrameworkElement>();
-                foreach (var i in Enumerable.Range(0, level.code + 1))
+                foreach (var i in Enumerable.Range(0, ((int)level.code) + 1))
                 {
                     switch (i)
                     {
