@@ -347,7 +347,7 @@ namespace SandRibbon.Components
         private void saveEdit(object sender, RoutedEventArgs e)
         {
             editInProgress = false;
-            var details = SearchConversationDetails.HydrateFromServer(context(sender) as SearchConversationDetails);
+            var details = SearchConversationDetails.HydrateFromServer(context(sender));
             
             var errors = errorsFor(details);
             if (string.IsNullOrEmpty(errors))

@@ -201,6 +201,7 @@ namespace SandRibbon.Utils
             catch (COMException)
             {
                 MessageBox.Show("MeTL requires Microsoft PowerPoint to be installed to import a presentation", "MeTL2011", MessageBoxButton.OK, MessageBoxImage.Error);
+                Commands.HideProgressBlocker.ExecuteAsync(null);
             }
 
             return null;
@@ -600,7 +601,7 @@ namespace SandRibbon.Utils
                                                     new XAttribute("background", true),
                                                     new XAttribute("snapshot", file)));
                         }
-                        catch (COMException e)
+                        catch (COMException)
                         {
                            //such a bad shape, didn't export gracefully, Continue looping through others. 
                         }

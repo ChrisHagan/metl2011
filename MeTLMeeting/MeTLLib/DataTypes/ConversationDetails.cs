@@ -24,6 +24,10 @@ namespace MeTLLib.DataTypes
         private static readonly string RELEVANCE_TAG = "relevance";
         private static readonly string LASTMODIFIED_TAG = "modified";
 
+        public SearchConversationDetails(ConversationDetails conv) : base(conv.Title, conv.Jid, conv.Author, conv.Slides, conv.Permissions, conv.Subject)
+        {
+            Created = conv.Created;
+        }
         public SearchConversationDetails(string title, string author, string created, int relevance, string restriction, string jid, string lastModified):base(title, jid, author, new List<Slide>(), Permissions.Empty, restriction)
         {
             this.relevance = relevance;
@@ -64,6 +68,13 @@ namespace MeTLLib.DataTypes
             return cd;
         }
 
+        public static SearchConversationDetails HydrateFromServer(ConversationDetails con)
+        {
+            if (con == null)
+                throw new ArgumentNullException();
+
+            return HydrateFromServer(new SearchConversationDetails(con));
+        }
         public static SearchConversationDetails HydrateFromServer(SearchConversationDetails scd)
         {
             if (scd == null) 

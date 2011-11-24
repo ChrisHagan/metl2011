@@ -78,10 +78,12 @@ namespace SandRibbon
                 isExternal = true;
             try
             {
+                App.mark("start network controller and log in");
                 controller = new NetworkController();
                 MeTLLib.ClientFactory.Connection().Connect(finalUsername, password);
+                App.mark("finished logging in");
             }
-            catch (TriedToStartMeTLWithNoInternetException e)
+            catch (TriedToStartMeTLWithNoInternetException)
             {
                 MessageBox.Show("MeTL cannot contact the server.  Please check your internet connection.");
             }
@@ -100,7 +102,7 @@ namespace SandRibbon
             return s;
         }
         public static void mark(string msg) {
-            //Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
+            Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
             //MessageBox.Show(String.Format("{0} : {1}", msg, DateTime.Now - AccidentallyClosing));
         }
         static App()
