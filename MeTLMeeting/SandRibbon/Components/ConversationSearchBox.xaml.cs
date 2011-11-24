@@ -118,7 +118,7 @@ namespace SandRibbon.Components
             });
         }
 
-        private void setMyConversationVisibility()
+        /*private void setMyConversationVisibility()
         {
             Dispatcher.adoptAsync(()=>
                                       {
@@ -128,7 +128,7 @@ namespace SandRibbon.Components
                                           if (mine.Visibility == Visibility.Collapsed)
                                               find.IsChecked = true;
                                       });
-        }
+        }*/
         private bool canSetPermissions(object arg)
         {
             return this.Visibility == Visibility.Collapsed;
@@ -217,7 +217,7 @@ namespace SandRibbon.Components
                    this.Visibility = Visibility.Visible;
                }
                GetListCollectionView().Refresh();
-               setMyConversationVisibility();
+               //setMyConversationVisibility();
         }
         private static bool shouldShowConversation(ConversationDetails conversation)
         {
@@ -278,8 +278,7 @@ namespace SandRibbon.Components
             if (MessageBox.Show(owner, "Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 var details = (MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext;
-                details.Subject = "Deleted";
-                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+                MeTLLib.ClientFactory.Connection().DeleteConversation(details);
             }
         }
         private void mode_Checked(object sender, RoutedEventArgs e)

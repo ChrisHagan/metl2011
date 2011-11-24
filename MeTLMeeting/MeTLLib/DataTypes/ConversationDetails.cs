@@ -221,7 +221,7 @@ namespace MeTLLib.DataTypes
         {
             get
             {
-                return new ConversationDetails("", "", "", new List<Slide>(), Permissions.Empty, "", new DateTime(), new DateTime());
+                return new ConversationDetails(String.Empty, String.Empty, String.Empty, new List<Slide>(), Permissions.Empty, String.Empty, new DateTime(), new DateTime());
             }
         }
         public override int GetHashCode()

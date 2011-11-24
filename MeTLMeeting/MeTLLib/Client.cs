@@ -94,6 +94,7 @@ namespace MeTLLib
         ConversationDetails AppendSlideAfter(int slide, string Jid, Slide.TYPE type);
         ConversationDetails UpdateConversationDetails(ConversationDetails details);
         ConversationDetails CreateConversation(ConversationDetails details);
+        ConversationDetails DeleteConversation(ConversationDetails details);
         ConversationDetails DetailsOf(String jid);
         void SneakInto(string room);
         void SneakOutOf(string room);
@@ -509,6 +510,16 @@ namespace MeTLLib
         {
             return tryUntilConnected<ConversationDetails>(()=>
                 conversationDetailsProvider.Create(details));
+        }
+        public ConversationDetails DeleteConversation(ConversationDetails details)
+        {
+            if (details != null)
+            { 
+                details.Subject = "Deleted";
+                return UpdateConversationDetails(details);
+            }
+
+            return ConversationDetails.Empty;
         }
         public ConversationDetails AppendSlide(string Jid)
         {

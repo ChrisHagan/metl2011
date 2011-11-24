@@ -155,22 +155,26 @@ namespace SandRibbon.Utils
             var worker = new Thread(new ParameterizedThreadStart(
                 delegate
                 {
+                    var success = false;
                     progress(PowerpointImportProgress.IMPORT_STAGE.DESCRIBED, 0, 0);
                     switch (spec.Type)
                     {
                         case PowerpointImportType.HighDefImage:
                             Trace.TraceInformation("ImportingPowerpoint HighDef {0}", spec.File);
-                            LoadPowerpointAsFlatSlides(spec.File, conversation, spec.Magnification);
+                            success = LoadPowerpointAsFlatSlides(spec.File, conversation, spec.Magnification);
                             break;
                         case PowerpointImportType.Image:
                             Trace.TraceInformation("ImportingPowerpoint NormalDef {0}", spec.File);
-                            LoadPowerpointAsFlatSlides(spec.File, conversation, spec.Magnification);
+                            success = LoadPowerpointAsFlatSlides(spec.File, conversation, spec.Magnification);
                             break;
                         case PowerpointImportType.Shapes:
                             Trace.TraceInformation("ImportingPowerpoint Flexible {0}", spec.File);
-                            LoadPowerpoint(spec.File, conversation);
+                            success = LoadPowerpoint(spec.File, conversation);
                             break;
                     }
+
+                    if (!success)
+                        ClientFactory.Connection().DeleteConversation(conversation);
                 }));
             worker.SetApartmentState(ApartmentState.STA);
             worker.Start();
@@ -207,11 +211,13 @@ namespace SandRibbon.Utils
             return null;
         }
 
-        public void LoadPowerpointAsFlatSlides(string file, ConversationDetails conversation, int MagnificationRating)
+        public bool LoadPowerpointAsFlatSlides(string file, ConversationDetails conversation, int MagnificationRating)
         {
+            var success = false;
+
             var app = GetPowerPointApplication();
             if (app == null)
-                return;
+                return success;
 
             var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
             var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
@@ -293,7 +299,10 @@ namespace SandRibbon.Utils
             var index = 0;
             conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide(startingId++,Globals.me,MeTLLib.DataTypes.Slide.TYPE.SLIDE,index++,float.Parse(d.Attribute("defaultWidth").Value),float.Parse(d.Attribute("defaultHeight").Value))).ToList();
             ClientFactory.Connection().UpdateConversationDetails(conversation);
-            UploadFromXml(xml, conversation); 
+            UploadFromXml(xml, conversation);
+            success = true;
+
+            return success;
         }
 
         private void UploadFromXml(XElement xml, ConversationDetails conversation)
@@ -344,12 +353,16 @@ namespace SandRibbon.Utils
         {
             Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalSlides, imageSource));
         }
-        public void LoadPowerpoint(string file, ConversationDetails conversation)
+        public bool LoadPowerpoint(string file, ConversationDetails conversation)
         {
-            Presentation ppt = null;
+            var success = false;
             try
             {
-                ppt = new ApplicationClass().Presentations.Open(file, TRUE, FALSE, FALSE);
+                var app = GetPowerPointApplication();
+                if (app == null)
+                    return success;
+    
+                var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
                 var provider = ClientFactory.Connection();
                 var xml = new XElement("presentation");
                 xml.Add(new XAttribute("name", conversation.Title));
@@ -357,26 +370,35 @@ namespace SandRibbon.Utils
                     conversation.Tag = "unTagged";
                 currentConversation = conversation.Jid;
                 conversation.Author = Globals.me;
-                foreach (var slide in ppt.Slides)
+                try
                 {
-                    importSlide(conversation, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
-                    progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, -1, ppt.Slides.Count);//All the consumers count for themselves
+                    foreach (var slide in ppt.Slides)
+                    {
+                        importSlide(conversation, xml, (Microsoft.Office.Interop.PowerPoint.Slide)slide);
+                        progress(PowerpointImportProgress.IMPORT_STAGE.EXTRACTED_IMAGES, -1, ppt.Slides.Count);//All the consumers count for themselves
+                    }
+                    var startingId = conversation.Slides.First().id;
+                    var index = 0;
+                    conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide
+                    (startingId++, Globals.me, MeTLLib.DataTypes.Slide.TYPE.SLIDE, index++, float.Parse(d.Attribute("defaultWidth").Value), float.Parse(d.Attribute("defaultHeight").Value))).ToList();
+                    provider.UpdateConversationDetails(conversation);
+                    UploadFromXml(xml, conversation);
+                    success = true;
                 }
-                var startingId = conversation.Slides.First().id;
-                var index = 0;
-                conversation.Slides = xml.Descendants("slide").Select(d => new MeTLLib.DataTypes.Slide
-                (startingId++, Globals.me, MeTLLib.DataTypes.Slide.TYPE.SLIDE, index++, float.Parse(d.Attribute("defaultWidth").Value), float.Parse(d.Attribute("defaultHeight").Value))).ToList();
-                provider.UpdateConversationDetails(conversation);
-                UploadFromXml(xml, conversation);
+                catch (COMException e)
+                {
+                    Logger.Crash(e);
+                }
+                finally
+                {
+                    ppt.Close();
+                }
             }
             catch (Exception e) {
                 Logger.Crash(e);
             }
-            finally
-            {
-                if(ppt != null)
-                    ppt.Close();
-            }
+
+            return success;
         }
         
         private void sendSlide(int id, XElement slide)
