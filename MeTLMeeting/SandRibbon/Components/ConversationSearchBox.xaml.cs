@@ -119,7 +119,7 @@ namespace SandRibbon.Components
 
         private static void FillSearchResultsInBackground(Dispatcher dispatcher, ObservableCollection<ConversationDetails> collection, string searchString)
         {
-            var conversations = ClientFactory.Connection().ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).Where(conv => !conv.isDeleted).ToList();
+            var conversations = ClientFactory.Connection().ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
             Action del = () => { collection.Clear(); conversations.ForEach(cd => collection.Add(cd)); };
             dispatcher.Invoke(del, DispatcherPriority.Background);
         }
@@ -282,7 +282,7 @@ namespace SandRibbon.Components
             var owner = Window.GetWindow(this);
             if (MessageBox.Show(owner, "Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                var details = (MeTLLib.DataTypes.ConversationDetails)((FrameworkElement)sender).DataContext;
+                var details = context(e.OriginalSource);
                 MeTLLib.ClientFactory.Connection().DeleteConversation(details);
             }
         }
