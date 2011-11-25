@@ -26,14 +26,15 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if(ConversationDetails.Empty.Equals(details)) return;
-            if (details.Subject.ToLower() == "deleted" && details.Jid == Globals.location.activeConversation)
+            if (details.IsEmpty) return;
+
+            if (details.isDeleted && details.Jid == Globals.location.activeConversation)
             {
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
             }
-            setMyConversationVisibility();
+            //setMyConversationVisibility();
         }
         private void ShowConversationSearchBox(object mode)
         {
@@ -49,7 +50,7 @@ namespace SandRibbon.Components
                 separator2.Visibility = Visibility.Visible;
             }
             openCorrectTab((string)mode);
-            setMyConversationVisibility();
+            //setMyConversationVisibility();
             App.mark("Conversation Search is open for business");
         }
         private void openMyConversations()

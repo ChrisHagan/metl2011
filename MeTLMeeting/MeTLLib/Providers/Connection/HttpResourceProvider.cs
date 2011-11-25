@@ -25,6 +25,7 @@ namespace MeTLLib.Providers.Connection
         {
             this.client = new WebClientWithTimeout();
             this.client.Credentials = credentials;
+            this.client.Proxy = null;
         }
         public long getSize(Uri resource)
         {
@@ -37,7 +38,7 @@ namespace MeTLLib.Providers.Connection
                 var response = request.GetResponse();
                 return response.ContentLength;
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 return -1;
             }
@@ -53,7 +54,7 @@ namespace MeTLLib.Providers.Connection
                 var response = request.GetResponse();
                 return true;
             }
-            catch (WebException we)
+            catch (WebException)
             {
                 return false;
             }

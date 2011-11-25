@@ -27,7 +27,7 @@ namespace MeTLLib.Providers
                 var options = Encoding.UTF8.GetString(resourceProvider.secureGetData(path));
                 return UserOptions.ReadXml(options);
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
                 return UserOptions.DEFAULT;

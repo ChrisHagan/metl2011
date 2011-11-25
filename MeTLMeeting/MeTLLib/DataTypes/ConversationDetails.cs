@@ -217,16 +217,19 @@ namespace MeTLLib.DataTypes
                 && (foreignConversationDetails.Tag == Tag)
                 && (foreignConversationDetails.Title == Title));
         }
+        
+        public ConversationDetails() : this(String.Empty, String.Empty, String.Empty, new List<Slide>(), Permissions.Empty, String.Empty, new DateTime(), new DateTime())
+        {
+        }
+
+        //private static readonly ConversationDetails empty = new ConversationDetails();
         public static ConversationDetails Empty
         {
-            get
-            {
-                return new ConversationDetails(String.Empty, String.Empty, String.Empty, new List<Slide>(), Permissions.Empty, String.Empty, new DateTime(), new DateTime());
-            }
+            get { return new ConversationDetails(); }
         }
         public override int GetHashCode()
         {
-            if (Jid == null) return 0;
+            if (string.IsNullOrEmpty(Jid)) return 0;
             return Jid.GetHashCode();
         }
         private static readonly string TITLE_TAG = "title";

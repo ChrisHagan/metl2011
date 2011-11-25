@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Threading;
 using System.Windows.Threading;
 using System.Windows.Automation.Peers;
+using MeTLLib;
 
 namespace SandRibbon.Components
 {
@@ -111,13 +112,17 @@ namespace SandRibbon.Components
 
         private void FillSearchResults(string searchString)
         {
-            searchResults.Clear();
-            MeTLLib.ClientFactory.Connection().ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).ForEach(cd => {
-                if (cd.Subject.ToLower() != "deleted")
-                    searchResults.Add(cd);
-            });
+            var dispatcher = Dispatcher.CurrentDispatcher;
+            var worker = new Thread(() => FillSearchResultsInBackground(dispatcher, searchResults, searchString));
+            worker.Start();
         }
 
+        private static void FillSearchResultsInBackground(Dispatcher dispatcher, ObservableCollection<ConversationDetails> collection, string searchString)
+        {
+            var conversations = ClientFactory.Connection().ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS).Where(conv => !conv.isDeleted).ToList();
+            Action del = () => { collection.Clear(); conversations.ForEach(cd => collection.Add(cd)); };
+            dispatcher.Invoke(del, DispatcherPriority.Background);
+        }
         /*private void setMyConversationVisibility()
         {
             Dispatcher.adoptAsync(()=>
