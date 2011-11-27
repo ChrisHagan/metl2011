@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
@@ -13,15 +12,38 @@ using MeTLLib.DataTypes;
 using MeTLLib;
 using SandRibbon.Components.Sandpit;
 using System.Threading;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace SandRibbon.Components
 {
+    public class CredentialRule : ValidationRule
+    {
+        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+        {
+            var credential = (string)value;
+            if (string.IsNullOrEmpty(credential))
+            {
+                return new ValidationResult(false, "Please enter a valid username.");
+            }
+
+            return new ValidationResult(true, null);
+        }
+    }
+
+    public class UserCredentials
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
     public partial class Login : UserControl
     {
         private bool canLoginAgain = true;
         public static RoutedCommand CheckAuthentication = new RoutedCommand();
         public static RoutedCommand LoginPending = new RoutedCommand();
         public string Version { get; set; }
+        private UserCredentials credentials = new UserCredentials();
         public Login()
         {
             InitializeComponent();
@@ -94,7 +116,6 @@ namespace SandRibbon.Components
         private void LoginFailed()
         {
             canLoginAgain = true;
-            username.Focus();
         }
         private void checkLoginPending(object sender, CanExecuteRoutedEventArgs e)
         {

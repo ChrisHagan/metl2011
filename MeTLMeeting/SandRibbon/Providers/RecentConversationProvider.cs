@@ -69,7 +69,7 @@ namespace SandRibbon.Providers
                 }
                 recentDocs.Save(RECENT_DOCUMENTS);
             }
-            catch (IOException e)
+            catch (IOException)
             {
             }
         }

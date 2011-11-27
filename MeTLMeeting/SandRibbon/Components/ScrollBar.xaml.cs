@@ -61,7 +61,7 @@ namespace SandRibbon.Components
         }
         private void updateScrollBarButtonDistances()
         {
-            if (scroll != null && scroll.ActualWidth != null && scroll.ActualHeight != null)
+            if (scroll != null)
             {
                 HScroll.LargeChange = scroll.ActualWidth;
                 VScroll.LargeChange = scroll.ActualHeight;

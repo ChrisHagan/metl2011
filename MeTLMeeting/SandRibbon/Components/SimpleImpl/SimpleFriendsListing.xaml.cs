@@ -29,7 +29,6 @@ namespace SandRibbon.Components
                 return value;
             }
         }
-        private static ColorAnimation pulser;
         public static FriendToDisplayConverter friendToDisplayConverter = new FriendToDisplayConverter();
         public static ObservableCollection<Friend> friendsList = new ObservableCollection<Friend>();
         private const string ANONYMOUS_PIC = @"\Resources\AnonHead.png";

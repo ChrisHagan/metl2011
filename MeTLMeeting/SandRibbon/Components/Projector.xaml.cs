@@ -129,7 +129,7 @@ namespace SandRibbon.Components
             {
                 ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(null, null, PreParserAvailable, Globals.location.currentSlide.ToString());
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
             stack.handwriting.me = "projector";
@@ -158,7 +158,6 @@ namespace SandRibbon.Components
                                      }
                                  });
         }
-        private static Stroke strokeInProgress;
         private static Projector instance;
         private static DrawingAttributes currentAttributes = new DrawingAttributes();
         private static DrawingAttributes deleteAttributes = new DrawingAttributes();

@@ -58,7 +58,7 @@ namespace SandRibbon
             try {
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
-            catch (Exception e) {
+            catch (Exception) {
                 Console.WriteLine("Window1 constructor couldn't find app appropriate icon");
             }
             //create
@@ -465,7 +465,7 @@ namespace SandRibbon
                     scroll.ScrollToVerticalOffset(scroll.VerticalOffset + moveDelta.Y * VZoomRatio);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {//out of range exceptions and the like 
             }
         }
@@ -1027,7 +1027,7 @@ namespace SandRibbon
                     var y = Int32.Parse((string)aY.FindResource("preferredDisplayIndex"));
                     return x - y;
                 }
-                catch (FormatException e)
+                catch (FormatException)
                 {
                     return 0;
                 }

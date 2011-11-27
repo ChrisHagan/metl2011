@@ -852,6 +852,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\WarningIconMine.png" />
     <Resource Include="Resources\visualize.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

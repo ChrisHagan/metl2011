@@ -47,8 +47,8 @@ namespace SandRibbon.Components.Canvas
     }
     public abstract class AbstractCanvas : InkCanvas
     {
-        private static readonly string TMP_PATH = "tmp\\";
         /* Awesomium comment out
+        private static readonly string TMP_PATH = "tmp\\";
         public static void deleteTempFiles(){
             deltree(TMP_PATH);
         }

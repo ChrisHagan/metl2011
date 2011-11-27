@@ -156,7 +156,7 @@ namespace SandRibbon.Utils
                         {
                             collaborationLevel = Globals.conversationDetails.Permissions.studentCanPublish ? "Enabled" : "Disabled";
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             collaborationLevel = "None";
                         }
@@ -164,7 +164,7 @@ namespace SandRibbon.Utils
                         {
                             versionNumber = ConfigurationProvider.instance.getMetlVersion();
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             versionNumber = "Unknown";
                         }
@@ -179,7 +179,7 @@ namespace SandRibbon.Utils
                         };
                         db.SaveArbitraryDocument<LogMessage>(msg);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         //what should we do if we cannot save to couch?
                         //ALL IS LOST

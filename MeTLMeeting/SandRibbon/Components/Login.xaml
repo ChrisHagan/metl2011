@@ -3,6 +3,24 @@
     xmlns:sr="clr-namespace:SandRibbon"
     xmlns:components="clr-namespace:SandRibbon.Components"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <components:UserCredentials x:Key="credentials"/>
+        
+        <ControlTemplate x:Key="validationTemplate">
+            <DockPanel>
+                <Image Stretch="None" Source="\Resources\WarningIconMine.png"/>
+                <AdornedElementPlaceholder/>
+            </DockPanel>
+        </ControlTemplate>
+        <Style x:Key="inputInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(ValidationErrors)[0].ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <UserControl.CommandBindings>
         <CommandBinding Command="{x:Static components:Login.CheckAuthentication}"  CanExecute="checkAuthenticationAttemptIsPlausible" Executed="attemptAuthentication"/>
         <CommandBinding Command="{x:Static components:Login.LoginPending}" CanExecute="checkLoginPending"/>
@@ -62,9 +80,19 @@
                                         </Grid.RowDefinitions>
                                         <Button x:Name="hiddenButton" Visibility="Collapsed" Command="{x:Static components:Login.LoginPending}" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
                                         <Label Content="username (eg fgsmi3)" FontWeight="bold" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
-                                        <TextBox x:Name="username" Grid.Row="0" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                                        <TextBox x:Name="username" Grid.Row="0" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
+                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                                                 Style="{StaticResource inputInError}">
+                                            <TextBox.Text>
+                                                <Binding Path="Username" Source="{StaticResource credentials}" UpdateSourceTrigger="PropertyChanged">
+                                                    <Binding.ValidationRules>
+                                                        <components:CredentialRule />
+                                                    </Binding.ValidationRules>
+                                                </Binding>
+                                            </TextBox.Text>
+                                        </TextBox>
                                         <Label Content="password" FontWeight="bold" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"/>
-                                        <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"/>
+                                        <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" />
                                     </Grid>
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
                                         <CheckBox VerticalAlignment="Center" x:Name="rememberMe">Stay signed in</CheckBox>
@@ -81,7 +109,7 @@
                                     <ScrollViewer x:Name="releaseNotesViewer" Visibility="Collapsed" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" MaxWidth="400" MaxHeight="200">
                                         <StackPanel>
                                             <Label Content="Announcements" FontWeight="bold"/>
-                                            <TextBlock x:Name="ReleaseNotes" TextWrapping="Wrap"/>
+                                            <TextBlock x:Name="ReleaseNotes" TextWrapping="Wrap" Text="Retrieving release notes..."/>
                                         </StackPanel>
                                     </ScrollViewer>
                                     <StackPanel Orientation="Horizontal">

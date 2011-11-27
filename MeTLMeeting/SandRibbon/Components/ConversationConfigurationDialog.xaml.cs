@@ -22,7 +22,6 @@ namespace SandRibbon.Components
         private ConversationDetails details;
         private ConversationConfigurationMode dialogMode;
         public enum ConversationConfigurationMode { CREATE, EDIT, IMPORT, DELETE }
-        private int magnification = 2;
         private PowerPointLoader.PowerpointImportType importType;
         private string importFile;
         private string conversationJid;

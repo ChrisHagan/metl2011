@@ -65,7 +65,6 @@ namespace SandRibbon.Components.ResourceDictionaries
             Video_Play(sender, new RoutedEventArgs());
             Video_Pause(sender, new RoutedEventArgs());
         }
-        private bool MouseDown = false;
         private bool Updating = true;
         private bool isPaused = false;
         public void sliderMouseDown(object sender, EventArgs e)

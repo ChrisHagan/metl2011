@@ -108,7 +108,7 @@ namespace SandRibbon.Components.Canvas
             canEdit = base.canEdit;
             if (privacy == "private") canEdit = true;
         }
-        private bool canEdit
+        private new bool canEdit
         {
             get { return base.canEdit; }
             set

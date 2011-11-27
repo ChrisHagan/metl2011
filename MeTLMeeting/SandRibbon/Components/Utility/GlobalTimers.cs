@@ -28,7 +28,7 @@ namespace SandRibbon.Components.Utility
                                                       currentSlide = 0;
                                                   }
                                               }
-                                              catch (Exception e)
+                                              catch (Exception)
                                               {
 
                                               }

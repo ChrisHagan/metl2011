@@ -102,7 +102,7 @@ namespace SandRibbon
             return s;
         }
         public static void mark(string msg) {
-            Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
+            //Console.WriteLine("{0} : {1}", msg, DateTime.Now - AccidentallyClosing);
             //MessageBox.Show(String.Format("{0} : {1}", msg, DateTime.Now - AccidentallyClosing));
         }
         static App()
