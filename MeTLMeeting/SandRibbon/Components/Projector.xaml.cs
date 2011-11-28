@@ -78,10 +78,10 @@ namespace SandRibbon.Components
 
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if(ConversationDetails.Empty.Equals(details)) return;
+            if (details.IsEmpty) return;
             conversationLabel.Text = details.Title;
             
-            if (((details.Subject.ToLower() == "deleted" || Globals.authorizedGroups.Where(g=>g.groupKey == details.Subject).Count() == 0) && details.Jid == Globals.location.activeConversation) || String.IsNullOrEmpty(Globals.location.activeConversation))
+            if (((details.isDeleted || Globals.authorizedGroups.Where(g=>g.groupKey == details.Subject).Count() == 0) && details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode()) || String.IsNullOrEmpty(Globals.location.activeConversation))
             {
                 shutdown(null);
             }

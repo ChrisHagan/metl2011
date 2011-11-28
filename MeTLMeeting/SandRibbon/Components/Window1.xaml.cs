@@ -616,10 +616,10 @@ namespace SandRibbon
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (ConversationDetails.Empty.Equals(details)) return;
+            if (details.IsEmpty) return;
             Dispatcher.adopt(delegate
                                  {
-                                    if (details.Jid == Globals.location.activeConversation || String.IsNullOrEmpty(Globals.location.activeConversation))
+                                    if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() || String.IsNullOrEmpty(Globals.location.activeConversation))
                                     {
                                          UpdateTitle(details);
                                          UpdateUIFromConversation(details);

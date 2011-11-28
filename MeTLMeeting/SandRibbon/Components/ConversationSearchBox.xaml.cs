@@ -209,14 +209,15 @@ namespace SandRibbon.Components
         }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
-               if (ConversationDetails.Empty.Equals(details)) return;
-               foreach ( var result in searchResults.Where(c => c.Jid == details.Jid).ToList())
+               if (details.IsEmpty) return;
+
+               foreach (var result in searchResults.Where(c => c.Jid.GetHashCode() == details.Jid.GetHashCode()).ToList())
                    searchResults.Remove(result);
-               if (details.Subject.ToLower() != "deleted" && !details.Equals(ConversationDetails.Empty))
+               if (details.isDeleted && !details.IsEmpty)
                    searchResults.Add(details);
-               else if (details.Jid == Globals.location.activeConversation)
+               else if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode())
                    currentConversation.Visibility = Visibility.Collapsed;
-               if ((!(shouldShowConversation(details)) && details.Jid == Globals.conversationDetails.Jid) || details.isDeleted)
+               if ((!(shouldShowConversation(details)) && details.Jid.GetHashCode() == Globals.conversationDetails.Jid.GetHashCode()) || details.isDeleted)
                {
                    Commands.RequerySuggested();
                    this.Visibility = Visibility.Visible;
@@ -267,7 +268,7 @@ namespace SandRibbon.Components
             if (originalContext != null)
             {
                 foreach (var result in SearchResults.ItemsSource)
-                    if (((ConversationDetails)result).Jid == originalContext.Jid)
+                    if (((ConversationDetails)result).Jid.GetHashCode() == originalContext.Jid.GetHashCode())
                         ((ConversationDetails)result).Title = originalContext.Title;
                 originalContext = null;
             }

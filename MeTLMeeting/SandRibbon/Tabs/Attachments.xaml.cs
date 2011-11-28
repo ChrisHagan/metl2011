@@ -44,7 +44,7 @@ namespace SandRibbon.Tabs
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (ConversationDetails.Empty.Equals(details)) return;
-            if(details.Jid == Globals.location.activeConversation && details.Subject.ToLower() == "deleted")
+            if(details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() && details.isDeleted)
                 clearOutAttachments(null);
         }
         private void clearOutAttachments(object obj)

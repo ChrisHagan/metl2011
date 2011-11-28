@@ -81,7 +81,7 @@ namespace SandRibbon.Tabs
             catch (NotSetException)
             {
             }
-            if (details.Jid == Globals.location.activeConversation && details.Subject.ToLower() == "deleted")
+            if (details.IsJidEqual(Globals.location.activeConversation) && details.isDeleted)
             {
                 Globals.quiz.answers.Clear();
                 Globals.quiz.activeQuizzes.Clear();

@@ -284,7 +284,7 @@ namespace SandRibbon.Components
         
         private void conversationDetailsAvailable(object sender, ConversationDetailsAvailableEventArgs e)
         {
-            if (e.conversationDetails != null && e.conversationDetails.Jid == ClientFactory.Connection().location.activeConversation)
+            if (e.conversationDetails != null && e.conversationDetails.Jid.GetHashCode() == ClientFactory.Connection().location.activeConversation.GetHashCode())
                 Commands.UpdateConversationDetails.Execute(e.conversationDetails);
             else 
             {

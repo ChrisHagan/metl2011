@@ -87,20 +87,32 @@ namespace SandRibbon.Components
 
         private void RetrieveReleaseNotes()
         {
-            ThreadPool.QueueUserWorkItem(_arg =>
+            var retriever = new BackgroundWorker();
+            retriever.DoWork += (object sender, DoWorkEventArgs e) => 
+            { 
+                var bw = sender as BackgroundWorker;
+
+                e.Result = new WebClient().DownloadString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
+                if (bw.CancellationPending)
+                    e.Cancel = true;
+            };
+
+            retriever.RunWorkerCompleted += (object sender, RunWorkerCompletedEventArgs e) =>
             {
-                var notes = new WebClient().DownloadString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
-                Dispatcher.adoptAsync(delegate
+                if (e.Error == null)
                 {
+                    var notes = e.Result as string;
                     if (!string.IsNullOrEmpty(notes))
                     {
                         ReleaseNotes.Text = notes;
                         releaseNotesViewer.Visibility = Visibility.Visible;
+                        return;
                     }
-                    else
-                        releaseNotesViewer.Visibility = Visibility.Collapsed;
-                });
-            });
+                }
+                releaseNotesViewer.Visibility = Visibility.Collapsed;
+            };
+
+            retriever.RunWorkerAsync();
         }
         private void loaded(object sender, RoutedEventArgs e)
         {

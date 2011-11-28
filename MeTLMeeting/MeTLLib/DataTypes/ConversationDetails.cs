@@ -98,7 +98,7 @@ namespace MeTLLib.DataTypes
         {
             get 
             {
-                return Subject.ToLower() == "deleted";
+                return Subject.ToLower().GetHashCode() == "deleted".GetHashCode();
             }
         }
        public bool IsEmpty
@@ -189,6 +189,12 @@ namespace MeTLLib.DataTypes
             }
         }
  
+        public bool IsJidEqual(string thatJid)
+        {
+            // Microsoft says we can use GetHashCode to safely compare two strings
+            return Jid.GetHashCode() == thatJid.GetHashCode();
+        }
+
         public bool UserHasPermission(Credentials credentials)
         {
             if (!(credentials.authorizedGroups.Select(g => g.groupKey).Contains(Subject))
@@ -200,7 +206,7 @@ namespace MeTLLib.DataTypes
         public override bool Equals(object obj)
         {
             if (obj == null || !(obj is ConversationDetails)) return false;
-            return ((ConversationDetails)obj).Jid == Jid;
+            return ((ConversationDetails)obj).Jid.GetHashCode() == Jid.GetHashCode();
         }
         public bool ValueEquals(object obj)
         {
