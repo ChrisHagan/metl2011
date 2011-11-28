@@ -2,23 +2,25 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:sr="clr-namespace:SandRibbon"
     xmlns:components="clr-namespace:SandRibbon.Components"
+    xmlns:utility="clr-namespace:SandRibbon.Components.Utility"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
-        <components:UserCredentials x:Key="credentials"/>
-        
-        <ControlTemplate x:Key="validationTemplate">
-            <DockPanel>
-                <Image Stretch="None" Source="\Resources\WarningIconMine.png"/>
-                <AdornedElementPlaceholder/>
-            </DockPanel>
-        </ControlTemplate>
-        <Style x:Key="inputInError" TargetType="{x:Type TextBox}">
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="true">
-                    <Setter Property="ToolTip"
-                            Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(ValidationErrors)[0].ErrorContent}" />
-                </Trigger>
-            </Style.Triggers>
+        <Style x:Key="ErrorStyle">
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <DockPanel LastChildFill="True">
+                            <Border Background="Red" DockPanel.Dock="Right" Margin="5,0,0,0" Width="20" Height="20" CornerRadius="10"
+                                    ToolTip="{Binding ElementName=customAdorner, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}">
+                                <TextBlock Text="!" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
+                            </Border>
+                            <AdornedElementPlaceholder Name="customAdorner" VerticalAlignment="Center">
+                                <Border BorderBrush="Red" BorderThickness="1" />
+                            </AdornedElementPlaceholder>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>            
         </Style>
     </UserControl.Resources>
     <UserControl.CommandBindings>
@@ -68,8 +70,8 @@
                                 </StackPanel>
                             </Border>
                             <Border x:Name="usernameAndPassword" Padding="5" Background="{StaticResource BackgroundBlueGradient}" CornerRadius="4" BorderBrush="DarkGray" BorderThickness="1">
-                                <StackPanel >
-                                    <Grid>
+                                <StackPanel>
+                                    <Grid Name="credentialsGrid">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="150"/>
                                             <ColumnDefinition MinWidth="150"/>
@@ -77,22 +79,25 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="25"/>
                                             <RowDefinition Height="25"/>
+                                            <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <Button x:Name="hiddenButton" Visibility="Collapsed" Command="{x:Static components:Login.LoginPending}" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
-                                        <Label Content="username (eg fgsmi3)" FontWeight="bold" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
-                                        <TextBox x:Name="username" Grid.Row="0" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
-                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
-                                                 Style="{StaticResource inputInError}">
-                                            <TextBox.Text>
-                                                <Binding Path="Username" Source="{StaticResource credentials}" UpdateSourceTrigger="PropertyChanged">
-                                                    <Binding.ValidationRules>
-                                                        <components:CredentialRule />
-                                                    </Binding.ValidationRules>
-                                                </Binding>
-                                            </TextBox.Text>
-                                        </TextBox>
-                                        <Label Content="password" FontWeight="bold" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"/>
-                                        <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" />
+                                        <Label Target="{Binding ElementName=username}" Content="_Username (eg fgsmi3)" FontWeight="bold" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
+                                        <Label Target="{Binding ElementName=password}" Content="_Password" FontWeight="bold" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"/>
+
+                                        <TextBox x:Name="username" Grid.Row="0" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" 
+                                                 Validation.Error="ValidationErrorHandler"
+                                                 Style="{StaticResource ErrorStyle}"
+                                                 Text="{Binding UpdateSourceTrigger=LostFocus, Path=Username,
+                                                        ValidatesOnDataErrors=True, NotifyOnValidationError=True}"/>
+                                        <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
+                                                     Validation.Error="ValidationErrorHandler"
+                                                     Style="{StaticResource ErrorStyle}"
+                                                     utility:PasswordBoxBinder.BindPassword="true" utility:PasswordBoxBinder.BoundPassword="{Binding Path=Password, 
+                                                     Mode=TwoWay, UpdateSourceTrigger=LostFocus, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"/>
+                                        <Label Name="loginErrors" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,5,0,5" Background="LightPink"
+                                                Content="Your log on attempt failed. Please try again." BorderBrush="Red" BorderThickness="1" Foreground="Red" 
+                                                Visibility="Collapsed" HorizontalAlignment="Right"/>
                                     </Grid>
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
                                         <CheckBox VerticalAlignment="Center" x:Name="rememberMe">Stay signed in</CheckBox>

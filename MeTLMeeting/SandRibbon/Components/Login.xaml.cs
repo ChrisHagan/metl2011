@@ -1,40 +1,50 @@
-﻿using System.Net;
+﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Net;
+using System.Threading;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Providers;
-using System.Diagnostics;
 using System.Windows.Navigation;
-using MeTLLib.DataTypes;
 using MeTLLib;
+using MeTLLib.DataTypes;
+using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Sandpit;
-using System.Threading;
-using System.Collections.Generic;
-using System.Globalization;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
-    public class CredentialRule : ValidationRule
-    {
-        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
-        {
-            var credential = (string)value;
-            if (string.IsNullOrEmpty(credential))
-            {
-                return new ValidationResult(false, "Please enter a valid username.");
-            }
-
-            return new ValidationResult(true, null);
-        }
-    }
-
-    public class UserCredentials
+    public class UserCredentials : IDataErrorInfo
     {
         public string Username { get; set; }
         public string Password { get; set; }
+
+        public string Error
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public string this[string credential]
+        {
+            get
+            {
+                string result = null; // doesn't make sense, should be initialised to an empty string but the compiler complains
+                if (credential == "Username")
+                {
+                    if (string.IsNullOrEmpty(Username))
+                        result = "Please enter your username";
+                }
+                if (credential == "Password")
+                {
+                    if (string.IsNullOrEmpty(Password))
+                        result = "Please enter your password";
+                }
+                return result;
+            }
+        }
     }
 
     public partial class Login : UserControl
@@ -44,10 +54,12 @@ namespace SandRibbon.Components
         public static RoutedCommand LoginPending = new RoutedCommand();
         public string Version { get; set; }
         private UserCredentials credentials = new UserCredentials();
+        private int numErrorsOfCredentials = 0;
         public Login()
         {
             InitializeComponent();
             this.DataContext = this;
+            credentialsGrid.DataContext = credentials;
 
             SandRibbon.App.CloseSplashScreen();
 
@@ -64,6 +76,15 @@ namespace SandRibbon.Components
             }
             Loaded += loaded;
         }
+        
+        private void ValidationErrorHandler(object sender, ValidationErrorEventArgs e)
+        {
+            if (e.Action == ValidationErrorEventAction.Added)
+                numErrorsOfCredentials++;
+            else
+                numErrorsOfCredentials--;
+        }
+
         private void RetrieveReleaseNotes()
         {
             ThreadPool.QueueUserWorkItem(_arg =>
@@ -87,11 +108,12 @@ namespace SandRibbon.Components
         }
         private void checkAuthenticationAttemptIsPlausible(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = username != null && username.Text.Length > 0 && password != null && password.Password.Length > 0 && canLoginAgain;
+            e.CanExecute = /*numErrorsOfCredentials == 0 &&*/ canLoginAgain;
         }
         private void attemptAuthentication(object sender, ExecutedRoutedEventArgs e)
         {
             canLoginAgain = false;
+            loginErrors.Visibility = Visibility.Collapsed;
             App.Login(username.Text.ToLower(), password.Password);
         }
         private void SetIdentity(Credentials identity)
@@ -116,6 +138,11 @@ namespace SandRibbon.Components
         private void LoginFailed()
         {
             canLoginAgain = true;
+            loginErrors.Visibility = Visibility.Visible;
+            username.Text = string.Empty;
+            password.Password = string.Empty;
+
+            username.Focus();
         }
         private void checkLoginPending(object sender, CanExecuteRoutedEventArgs e)
         {

@@ -70,7 +70,7 @@ namespace SandRibbon.Components
                     }
                     else
                     {
-                        System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
+                        //System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
                         Commands.LoginFailed.Execute(null);
                     }
                 }
