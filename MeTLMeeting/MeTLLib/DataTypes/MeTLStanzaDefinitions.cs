@@ -1167,6 +1167,7 @@ namespace MeTLLib.DataTypes
                 agsXMPP.Factory.ElementFactory.AddElementType(TAG, METL_NS, typeof(Quiz));
             }
             public static string TAG = "quiz";
+            public static string CREATED = "created";
             public static readonly string TITLE = "title";
             public static readonly string QUESTION = "question";
             public static readonly string AUTHOR = "author";
@@ -1193,7 +1194,14 @@ namespace MeTLLib.DataTypes
             {
                 get
                 {
-                    var quiz = new QuizQuestion(long.Parse(GetTag(ID)), GetTag(TITLE), GetTag(AUTHOR), GetTag(QUESTION), new List<Option>());
+                    long created;
+                    if (HasTag(CREATED))
+                        created = long.Parse(GetTag(CREATED));
+                    else
+                    {
+                        created = DateTimeFactory.Now().Ticks;
+                    }
+                    var quiz = new QuizQuestion(long.Parse(GetTag(ID)),created, GetTag(TITLE), GetTag(AUTHOR), GetTag(QUESTION), new List<Option>());
                     quiz.url = HasTag(URL) ? "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL))) : "none";
                     foreach (var node in ChildNodes)
                     {
@@ -1205,6 +1213,7 @@ namespace MeTLLib.DataTypes
                 set
                 {
 
+                    SetTag(CREATED, value.created.ToString());
                     SetTag(TITLE, value.title);
                     SetTag(QUESTION, value.question);
                     SetTag(AUTHOR, value.author);

@@ -54,7 +54,7 @@ namespace SandRibbon.Quizzing
         }
         private void CreateQuizQuestion(object sender, ExecutedRoutedEventArgs e)
         {
-            var quiz = new QuizQuestion(SandRibbonObjects.DateTimeFactory.Now().Ticks, quizTitle.Text, Globals.me, question.Text, new List<Option>());
+            var quiz = new QuizQuestion(SandRibbonObjects.DateTimeFactory.Now().Ticks, SandRibbonObjects.DateTimeFactory.Now().Ticks, quizTitle.Text, Globals.me, question.Text, new List<Option>());
             quiz.url = url;
             foreach (object obj in quizQuestions.Items)
             {

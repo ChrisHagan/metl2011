@@ -40,13 +40,23 @@ namespace SandRibbon.Quizzing
             : this()
         {
             DataContext = thisQuiz;
+            Edit.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
         }
+
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selection = ((Option)e.AddedItems[0]);
             Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.id,Globals.me,selection.name));
             Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.id);
             this.Close();
+        }
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            var editQuiz = new EditQuiz(question);
+            editQuiz.Show();
+            this.closeMe(null);
+
         }
     }
     public class TitleConverter : IValueConverter 

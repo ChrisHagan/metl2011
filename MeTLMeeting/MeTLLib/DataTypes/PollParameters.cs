@@ -22,6 +22,11 @@ namespace MeTLLib.DataTypes
     }
     public class QuizQuestion
     {
+        public QuizQuestion(long Id, long created, string Title, string Author, string Question, List<Option> Options)
+            : this(Id, Title, Author, Question, Options)
+        {
+            this.created = created;
+        }
         public QuizQuestion(long Id, string Title, string Author, string Question, List<Option> Options)
         {
             id = Id;
@@ -35,6 +40,7 @@ namespace MeTLLib.DataTypes
         {
             url = Url;
         }
+        public long created;
         public string title { get; set; }
         public string url { get; set; }
         public string question { get; set; }
