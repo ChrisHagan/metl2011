@@ -245,7 +245,7 @@ namespace SandRibbon
         {
             Trace.TraceInformation("UserOptionsDialog_Show");
             if (mustBeLoggedIn(null))
-                new UserOptionsDialog().Show();
+                new UserOptionsDialog().ShowDialog();
             else MessageBox.Show("You must be logged in to edit your options");
         }
         private void ListenToAudio(int jid) {
