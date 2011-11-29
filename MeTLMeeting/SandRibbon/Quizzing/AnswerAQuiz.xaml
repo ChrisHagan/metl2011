@@ -8,43 +8,46 @@
     MaxHeight="600"
     Title="Answer Quiz">
     <Border Background="{StaticResource BackgroundBlueGradient}">
-        <ScrollViewer>
-            <StackPanel Orientation="Vertical">
-                <Grid Margin="10 10 10 30">
-                    <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
-                    <StackPanel>
-                        <Grid>
-                            <quiz:GoldPlaque/>
-                            <TextBlock Margin="4" MaxWidth="300"
-                                TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=title}"
-                                       HorizontalAlignment="Center" />
-                        </Grid>
+        <DockPanel>
+            <Button x:Name="Edit" Visibility="Collapsed" DockPanel.Dock="Bottom" Click="Edit_Click">Edit quiz</Button>
+            <ScrollViewer DockPanel.Dock="Top">
+                <StackPanel Orientation="Vertical">
+                    <Grid Margin="10 10 10 30">
+                        <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
+                        <StackPanel>
+                            <Grid>
+                                <quiz:GoldPlaque/>
+                                <TextBlock Margin="4" MaxWidth="300"
+                                    TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=title}"
+                                           HorizontalAlignment="Center" />
+                            </Grid>
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                                <TextBlock MaxHeight="300"
-                                           FontWeight="Bold" TextWrapping="WrapWithOverflow" 
-                                           Text="{Binding Path=question}" HorizontalAlignment="Center" />
-                            </ScrollViewer>
-                            <Image Grid.Column="1" Source="{Binding Path=url}" MaxWidth="300" MaxHeight="300"/>
-                        </Grid>
-                    </StackPanel>
-                </Grid>
-                <ListBox x:Name="quizOptions" SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" x:Name="quizAnswers">
-                                <quiz:QuizButton />
-                                <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </StackPanel>
-        </ScrollViewer>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <TextBlock MaxHeight="300"
+                                               FontWeight="Bold" TextWrapping="WrapWithOverflow" 
+                                               Text="{Binding Path=question}" HorizontalAlignment="Center" />
+                                </ScrollViewer>
+                                <Image Grid.Column="1" Source="{Binding Path=url}" MaxWidth="300" MaxHeight="300"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                    <ListBox x:Name="quizOptions" SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" x:Name="quizAnswers">
+                                    <quiz:QuizButton />
+                                    <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
     </Border>
 </Window>

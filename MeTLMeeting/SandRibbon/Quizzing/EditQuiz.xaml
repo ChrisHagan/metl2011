@@ -1,0 +1,60 @@
+﻿<Window x:Class="SandRibbon.Quizzing.EditQuiz"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:q="clr-namespace:SandRibbon.Quizzing"
+        xmlns:SandRibbon="clr-namespace:SandRibbon" Title="EditQuiz" Height="300" Width="300">
+    <Window.Resources>
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        </ResourceDictionary>
+    </Window.Resources>
+    <Border Background="{StaticResource BackgroundBlueGradient}">
+        <DockPanel>
+            <Border DockPanel.Dock="Bottom" Padding="10" Background="{StaticResource BackgroundBlueGradient}" >
+                <Grid>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:Name="quizCommitButton" Content="Create" Click="quizCommitButton_Click"/>
+                        <Button Command="" Content="Cancel"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label FontWeight="Bold" Grid.Row="0">Title</Label>
+                        <TextBox FontWeight="Bold" Grid.Row="1" Width="300" x:Name="quizTitle" Text="{Binding Path=EditedQuiz.title}" />
+                        <Label FontWeight="Bold" Grid.Row="2">Question (optional)</Label>
+                        <TextBox FontWeight="Bold" Grid.Row="3" Width="300" x:Name="quizQuestion" Text="{Binding Path=EditedQuiz.question}" />
+                        <Label Foreground="Red" Grid.Row="4" Width="300" Visibility="{Binding Path=TitleError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a title"/>
+                    </Grid>
+                    <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{Binding Path=Options}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <q:GoldPlaque />
+                                    <StackPanel Orientation="Horizontal">
+                                        <q:QuizButton />
+                                        <TextBox x:Name="quizAnswer" 
+                                                 Margin="0 5 20 5" 
+                                                 MinWidth="80" 
+                                                 Width="300" 
+                                                 MaxWidth="400" 
+                                                 Text="{Binding Path=optionText}" 
+                                                 LostFocus="TextBox_LostFocus" TextWrapping="WrapWithOverflow"/>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Label Foreground="Red" Grid.Row="4" Width="300" Visibility="{Binding Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="A quiz needs at least 2 options."/>
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+    </Border>
+</Window>

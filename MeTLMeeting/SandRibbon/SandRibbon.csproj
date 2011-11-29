@@ -302,6 +302,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Quizzing\EditQuiz.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Quizzing\GoldPlaque.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -654,6 +658,9 @@
     </Compile>
     <Compile Include="Quizzing\CreateAQuiz.xaml.cs">
       <DependentUpon>CreateAQuiz.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Quizzing\EditQuiz.xaml.cs">
+      <DependentUpon>EditQuiz.xaml</DependentUpon>
     </Compile>
     <Compile Include="Quizzing\GoldPlaque.xaml.cs">
       <DependentUpon>GoldPlaque.xaml</DependentUpon>
