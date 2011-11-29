@@ -7,6 +7,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Providers;
+using SandRibbon.Components.Canvas;
 
 namespace SandRibbon.Components
 {
@@ -42,7 +43,14 @@ namespace SandRibbon.Components
             }
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(setPedagogy));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
+            Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
             DataContext = this;
+        }
+
+        private void UpdatePrivacyFromSelectedTextBox(TextInformation info)
+        {
+            string setPrivacy = info.isPrivate ? "private" : "public";
+            Commands.SetPrivacy.ExecuteAsync(setPrivacy);
         }
 
         private void updateConversationDetails(ConversationDetails details)

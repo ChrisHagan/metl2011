@@ -662,8 +662,10 @@ namespace SandRibbon.Components.Canvas
                     info.strikethrough = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
                     info.underline = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "underline";
                 }
+                info.isPrivate = myTextBox.tag().privacy.ToLower() == "private" ? true : false; 
             }
-             Commands.TextboxFocused.ExecuteAsync(info);
+            Commands.TextboxFocused.ExecuteAsync(info);
+
         }
         private void box_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
