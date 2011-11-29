@@ -38,7 +38,7 @@ namespace MeTLLib.Providers.Connection
         [Inject]
         public HttpResourceProvider resourceProvider { private get; set; }
         private JabberWire instance;
-        private object instanceLock = new object();
+        private static object instanceLock = new object();
         public JabberWire wire()
         {
             lock (instanceLock)
