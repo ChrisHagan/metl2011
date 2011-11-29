@@ -21,7 +21,7 @@ namespace MeTLLib.Providers.Structure
         private JabberWire _wire;
         [Inject]
         public MeTLGenericAddress searchServer { private get; set; }
-        private object wireLock = new object();
+        private static object wireLock = new object();
         private JabberWire wire{
             get {
                 lock (wireLock)

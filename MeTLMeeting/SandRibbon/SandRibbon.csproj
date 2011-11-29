@@ -180,6 +180,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Components\CircularProgressBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Components\colorCodedUsers.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -547,6 +551,9 @@
     </Compile>
     <Compile Include="Components\blacklistController.xaml.cs">
       <DependentUpon>blacklistController.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\CircularProgressBar.xaml.cs">
+      <DependentUpon>CircularProgressBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\colorCodedUsers.xaml.cs">
       <DependentUpon>colorCodedUsers.xaml</DependentUpon>

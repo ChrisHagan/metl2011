@@ -165,7 +165,7 @@ namespace SandRibbon
             source.AddHook(WndProc);
         }
 
-        private object extendLock = new object();
+        private static object extendLock = new object();
         private void CheckForExtendedDesktop()
         {
             lock (extendLock)

@@ -13,10 +13,10 @@ namespace UITestFramework
     public class PropertyExpression : INotifyPropertyChanged
     {
         private AutomationProperty propertyName;
-        private string propertyValue = String.Empty;
+        private string propertyValue;
         private PropertyExpressionOperator propertyOperator = PropertyExpressionOperator.EqualTo;
 
-        private object notifyLock = new Object();
+        private static object notifyLock = new Object();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -102,7 +102,7 @@ namespace UITestFramework
 
     /*public class PropertyExpressionCollection : ICollection<PropertyExpression>, INotifyCollectionChanged
     {
-        private object notifyLock = new Object();
+        private static object notifyLock = new Object();
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
