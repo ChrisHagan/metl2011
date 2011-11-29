@@ -293,6 +293,48 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
+    class BoolToVisibilityWithHidden : IValueConverter
+    {
+        #region Properties
+        /// <summary>
+        /// Converter will return Visibility.Collapsed when value is true, otherwise will return Visibility.Hidden
+        /// </summary>
+        public bool Collapse { get; set; }
+        /// <summary>
+        /// Converter will negate value before converting to Visibility
+        /// </summary>
+        public bool Negate { get; set; }
+        #endregion
+ 
+        #region IValueConverter Members
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            bool booleanToConvert = (bool)value;
+             
+            if (booleanToConvert != Negate)
+            {
+                return Visibility.Visible;
+            }
+            else
+            {
+                if (Collapse)
+                    return Visibility.Collapsed;
+                else
+                    return Visibility.Hidden;
+            }
+        }
+ 
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            Visibility visibilityToConvert = (Visibility)value;
+ 
+                if (visibilityToConvert == Visibility.Visible)
+                    return !Negate;
+                else
+                    return Negate;
+        }
+        #endregion
+    }
     public class IndexInThisCollectionConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

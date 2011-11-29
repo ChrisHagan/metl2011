@@ -136,11 +136,6 @@ namespace SandRibbon.Components
     }
     public class SeparatorConversation : ConversationDetails
     {
-        public string Title
-        {
-            get { return base.Title; }
-            set { base.Title = value; }
-        }
         public SeparatorConversation(string label)
             : base(label == null ? "" : label, "", "", new List<Slide>(), new Permissions("", false, false, false), "")
         {

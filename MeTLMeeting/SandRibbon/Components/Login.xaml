@@ -100,6 +100,9 @@
                                                 Visibility="Collapsed" HorizontalAlignment="Right"/>
                                     </Grid>
                                     <Grid>
+                                        <Grid.Resources>
+                                            <sr:BoolToVisibilityWithHidden x:Key="boolToVisibility" Collapse="False" Negate="True" />
+                                        </Grid.Resources>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
@@ -110,8 +113,9 @@
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <components:CircularProgressBar x:Name="progressBar" HorizontalAlignment="Left" VerticalAlignment="Center" Height="20" Margin="20,0" 
-                                                                        Grid.Column="0" Grid.Row="0" Visibility="Hidden"/>
-                                        <TextBlock x:Name="loggingInMessage" HorizontalAlignment="Left" VerticalAlignment="Center" FontStyle="Italic" Grid.Column="1" Margin="0,0,10,0" Grid.Row="0" Text="Logging you in..." Visibility="Hidden"/>
+                                                                        Grid.Column="0" Grid.Row="0" Visibility="{Binding ElementName=username, Path=IsEnabled, Converter={StaticResource boolToVisibility}}"/>
+                                        <TextBlock x:Name="loggingInMessage" HorizontalAlignment="Left" VerticalAlignment="Center" FontStyle="Italic" Grid.Column="1" Margin="0,0,10,0" Grid.Row="0" Text="Logging you in..." 
+                                                   Visibility="{Binding ElementName=username, Path=IsEnabled, Converter={StaticResource boolToVisibility}}"/>
                                         <CheckBox VerticalAlignment="Center" x:Name="rememberMe" Grid.Column="2" Grid.Row="0" Margin="0,0,10,0">Keep logged in</CheckBox>
                                         <Button x:Name="submit" HorizontalAlignment="Right" VerticalAlignment="Center" Command="{x:Static components:Login.CheckAuthentication}" Grid.Column="3" Grid.Row="0">Login</Button>
                                     </Grid>

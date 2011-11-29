@@ -124,8 +124,6 @@ namespace SandRibbon.Components
         }
         private void attemptAuthentication(object sender, ExecutedRoutedEventArgs e)
         {
-            progressBar.Visibility = Visibility.Visible;
-            loggingInMessage.Visibility = Visibility.Visible;
             canLoginAgain = false;
             loginErrors.Visibility = Visibility.Collapsed;
             App.Login(username.Text.ToLower(), password.Password);
@@ -151,8 +149,6 @@ namespace SandRibbon.Components
         }
         private void LoginFailed()
         {
-            progressBar.Visibility = Visibility.Hidden;
-            loggingInMessage.Visibility = Visibility.Hidden;
             canLoginAgain = true;
             loginErrors.Visibility = Visibility.Visible;
             username.Text = string.Empty;
