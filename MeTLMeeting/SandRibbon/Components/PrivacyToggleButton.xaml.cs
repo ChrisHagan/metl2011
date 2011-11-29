@@ -15,7 +15,8 @@ namespace SandRibbon.Components
             InitializeComponent();
             System.Windows.Controls.Canvas.SetLeft(privacyButtons, bounds.Right);
             System.Windows.Controls.Canvas.SetTop(privacyButtons, bounds.Top);
-            privacyButtons.Height = bounds.Height;
+            // no longer clip the bottom of the adorner buttons to the bottom of the element it is bound to
+            //privacyButtons.Height = bounds.Height;
             if (mode.showDelete)
                 deleteButton.Visibility = Visibility.Visible;
             else
