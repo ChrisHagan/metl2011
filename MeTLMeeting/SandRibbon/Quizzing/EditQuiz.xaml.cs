@@ -39,6 +39,7 @@ namespace SandRibbon.Quizzing
             Options = new ObservableCollection<Option>(EditedQuiz.options);
             TitleError = false;
             OptionError = false;
+            ensureQuizHasAnEmptyOption();
         }
         private const int alphabetLength = 26;
         public void ensureQuizHasAnEmptyOption()
@@ -52,7 +53,7 @@ namespace SandRibbon.Quizzing
             }
             else
             {
-                foreach (var o in emptyOptions)
+                foreach (var o in emptyOptions.Skip(1))
                     Options.Remove(o);
                     
             }
@@ -109,6 +110,39 @@ namespace SandRibbon.Quizzing
             if (editedQuiz.options.Count < 2)
                 OptionError = true;
             return !(OptionError && TitleError);
+        }
+
+        private void CloseEdit(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void quizAnswer_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var optionContainer = GetQuestionContainerFromItem(sender);
+            if (optionContainer != null) 
+                optionContainer.Opacity = 1;
+        }
+
+        private void quizAnswer_Loaded(object sender, RoutedEventArgs e)
+        {
+            var optionContainer = GetQuestionContainerFromItem(sender);
+            if (optionContainer != null)
+            {
+                var option = (optionContainer.DataContext as Option);
+                if (String.IsNullOrEmpty(option.optionText) && Options.IndexOf(option) > 0)
+                    optionContainer.Opacity = 0.5;
+            }
+        }
+        private FrameworkElement GetQuestionContainerFromItem(object itemContainer)
+        {
+            if (itemContainer is FrameworkElement)
+            {
+                var currentOption = (itemContainer as FrameworkElement).DataContext;    
+                return quizQuestions.ItemContainerGenerator.ContainerFromItem(currentOption) as FrameworkElement; 
+            }
+
+            return null;
         }
     }
 }
