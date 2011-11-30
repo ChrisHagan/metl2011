@@ -16,6 +16,7 @@ namespace SandRibbon
 {
     public class Converters
     {
+        public static SubmissionCountConverter submissionCountConverter = new SubmissionCountConverter();
         public static OptionTextFromQuizOption quizOptionsFromQuizQuestionConverter = new OptionTextFromQuizOption();
         public static privacyToBoolConverter privacyToBoolConverter = new privacyToBoolConverter();
         public static availablePenTitleConverter availablePenTitleConverter = new availablePenTitleConverter();
@@ -534,6 +535,18 @@ namespace SandRibbon
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return value;
+        }
+    }
+    public class SubmissionCountConverter: IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return string.Format("Submissions ({0})", ((int) value).ToString());
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
     public class QuizPositionConverter : IMultiValueConverter

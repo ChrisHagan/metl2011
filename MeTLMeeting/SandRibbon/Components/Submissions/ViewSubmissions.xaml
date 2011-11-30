@@ -15,15 +15,25 @@
             <Grid MaxHeight="450">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition MaxWidth="325"/>
+                    <ColumnDefinition MaxWidth="325"/>
                     <ColumnDefinition MinWidth="500"/>
                 </Grid.ColumnDefinitions>
-                <ListBox Grid.Column="0" x:Name="submissions" SelectionMode="Single" Background ="Transparent" 
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel IsItemsHost="True" />
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
+                <ListBox Grid.Column="0" x:Name="Buckets" SelectionMode="Single" Background="Transparent" SelectedIndex="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Path=submissionList}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Path=Count, Converter={x:Static SandRibbon:Converters.submissionCountConverter}}"></TextBlock>
+                                <TextBlock Margin="10 0 0 0 " Text="{Binding Path=From}"/>
+                                <TextBlock Margin="10 0 0 0 " Text="{Binding Path=To}"/>
+                            </StackPanel>
+                                
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox Grid.Column="1" x:Name="submissions" SelectionMode="Single" Background ="Transparent" 
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ItemsSource="{Binding ElementName=Buckets, Path=SelectedItem.submissions}" >
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Viewbox Width="100" Height="100">
@@ -32,7 +42,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <Grid x:Name="GridContainer" Grid.Column="1" Width="Auto" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <Grid x:Name="GridContainer" Grid.Column="2" Width="Auto" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                     <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top" 
                            Content="{Binding 
                                         ElementName=submissions, 
