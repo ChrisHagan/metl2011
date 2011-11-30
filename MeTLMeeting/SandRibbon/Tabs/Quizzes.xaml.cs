@@ -123,7 +123,8 @@ namespace SandRibbon.Tabs
                 if (Globals.quiz.activeQuizzes.Any(q => q.id == quiz.id))
                 {
                     QuizQuestion oldQuiz = Globals.quiz.activeQuizzes.Where(q => q.id == quiz.id).First();
-                    Globals.quiz.activeQuizzes.Remove(oldQuiz);
+                    if(quiz.created >= oldQuiz.created)
+                        Globals.quiz.activeQuizzes.Remove(oldQuiz);
                 }
                 if (!Globals.quiz.answers.ContainsKey(quiz.id))
                     Globals.quiz.answers[quiz.id] = new ObservableCollection<QuizAnswer>();
