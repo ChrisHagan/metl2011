@@ -989,6 +989,7 @@ namespace SandRibbon
                             tabs.Add(new Tabs.ConversationManagement());
                             RHSDrawerDefinition.Width = new GridLength(180);
                             homeGroups.Add(new ZoomControlsHost());
+                            homeGroups.Add(new CollaborationControlsHost());
                             homeGroups.Add(new MiniMap());
                             break;
                         case 3:

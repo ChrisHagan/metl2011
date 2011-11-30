@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:SandRibbon="clr-namespace:SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    Topmost="True"
     Title="View Submissions"
     x:Name="viewSubmissions"
     SizeToContent="WidthAndHeight">

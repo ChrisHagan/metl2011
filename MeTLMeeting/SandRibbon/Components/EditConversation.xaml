@@ -27,7 +27,7 @@
     </Window.Resources>
     <DockPanel Background="{StaticResource BackgroundBlueGradient}">
         <StackPanel DockPanel.Dock="Bottom"  Orientation="Horizontal">
-            <Button Click="save">Publish</Button>
+            <Button Click="save">Apply</Button>
             <Button Click="first">Move to the start</Button>
             <Button Click="last">Move to the end</Button>
             <Button Click="cancel">Cancel</Button>

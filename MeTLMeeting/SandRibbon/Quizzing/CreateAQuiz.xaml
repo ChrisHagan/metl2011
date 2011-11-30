@@ -9,6 +9,7 @@
     ShowInTaskbar="False"
     x:Name="createAQuiz"
     MaxHeight="600"
+    Topmost="True"
     WindowStartupLocation="CenterOwner"
     Closing="createAQuiz_Closing"
     Loaded="createAQuiz_Loaded"
