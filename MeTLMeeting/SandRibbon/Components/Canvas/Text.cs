@@ -332,7 +332,7 @@ namespace SandRibbon.Components.Canvas
             canEdit = base.canEdit;
             if (privacy == "private") canEdit = true;
         }
-        private bool canEdit
+        private new bool canEdit
         {
             get { return base.canEdit; }
             set
@@ -691,6 +691,7 @@ namespace SandRibbon.Components.Canvas
                 ClearAdorners();
                 var myText = undoText.Clone().ToString();
                 dirtyTextBoxWithoutHistory(mybox);
+                mybox.TextChanged -= SendNewText;
                 mybox.Text = myText;
                 sendTextWithoutHistory(mybox, mybox.tag().privacy);
                 mybox.TextChanged += SendNewText;
@@ -699,6 +700,7 @@ namespace SandRibbon.Components.Canvas
             {
                 ClearAdorners();
                 var myText = redoText;
+                mybox.TextChanged -= SendNewText;
                 mybox.Text = myText;
                 dirtyTextBoxWithoutHistory(mybox);
                 sendTextWithoutHistory(mybox, mybox.tag().privacy);

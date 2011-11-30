@@ -32,6 +32,7 @@ namespace SandRibbon
         #region SurroundingServers
         #endregion
         private PowerPointLoader loader;
+        private UndoHistory undoHistory;
         public string CurrentProgress { get; set; }
         public static RoutedCommand ProxyMirrorExtendedDesktop = new RoutedCommand();
         public string log
@@ -145,6 +146,7 @@ namespace SandRibbon
             WorkspaceStateProvider.RestorePreviousSettings();
             RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
             getDefaultSystemLanguage();
+            undoHistory = new UndoHistory();
         }
 
         [System.STAThreadAttribute()]

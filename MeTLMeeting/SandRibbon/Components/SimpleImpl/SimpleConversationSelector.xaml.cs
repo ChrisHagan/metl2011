@@ -47,8 +47,8 @@ namespace SandRibbon.Components
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (ConversationDetails.Empty.Equals(details)) return;
-            if (recentConversations.Where(c => c.Jid == details.Jid).Count() == 0) return;
-            if (details.Subject.ToLower() == "deleted")
+            if (recentConversations.Where(c => c.IsJidEqual(details.Jid)).Count() == 0) return;
+            if (details.isDeleted)
                 recentConversations = recentConversations.Where(c => c.Jid != details.Jid);
             else
                 recentConversations.Where(c => c.Jid == details.Jid).First().Title = details.Title;
@@ -62,7 +62,7 @@ namespace SandRibbon.Components
                 if (potentialConversations != null && potentialConversations.Count() > 0)
                 {
                     recentConversations = potentialConversations.Where(c => 
-                        c.IsValid && c.Subject != "Deleted");
+                        c.IsValid && c.isDeleted);
                     conversations.ItemsSource = recentConversations.Take(6);
                 }
             });
