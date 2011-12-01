@@ -179,6 +179,23 @@ namespace SandRibbon
         }
     }
 
+    public class ErrorContentConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var errors = value as ReadOnlyObservableCollection<ValidationError>;
+
+            if (errors == null) return String.Empty;
+
+            return errors.Count > 0 ? errors[0].ErrorContent : String.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class availablePenTitleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -293,7 +310,7 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
-    class BoolToVisibilityWithHidden : IValueConverter
+    public class BoolToVisibilityWithHidden : IValueConverter
     {
         #region Properties
         /// <summary>

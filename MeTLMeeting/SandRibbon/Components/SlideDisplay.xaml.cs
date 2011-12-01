@@ -10,6 +10,8 @@ using MeTLLib.DataTypes;
 using System.Collections.Generic;
 using MeTLLib.Providers.Connection;
 using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows;
 
 namespace SandRibbon.Components
 {
@@ -74,6 +76,7 @@ namespace SandRibbon.Components
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
             Display(Globals.conversationDetails);
         }
+
         private void resetLocationLocals(object _unused)
         {
             currentSlideId = -1;

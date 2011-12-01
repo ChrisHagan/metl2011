@@ -5,22 +5,26 @@
     xmlns:utility="clr-namespace:SandRibbon.Components.Utility"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
+        <sr:ErrorContentConverter x:Key="errorConverter"/>
         <Style x:Key="ErrorStyle">
-            <Setter Property="Validation.ErrorTemplate">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <DockPanel LastChildFill="True">
-                            <Border Background="Red" DockPanel.Dock="Right" Margin="5,0,0,0" Width="20" Height="20" CornerRadius="10"
-                                    ToolTip="{Binding ElementName=customAdorner, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}">
-                                <TextBlock Text="!" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
-                            </Border>
-                            <AdornedElementPlaceholder Name="customAdorner" VerticalAlignment="Center">
-                                <Border BorderBrush="Red" BorderThickness="1" />
-                            </AdornedElementPlaceholder>
-                        </DockPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>            
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="Validation.ErrorTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <DockPanel LastChildFill="True">
+                                    <Border Background="Red" DockPanel.Dock="Right" Margin="5,0,0,0" Width="20" Height="20" CornerRadius="10">
+                                        <TextBlock Text="!" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White"/>
+                                    </Border>
+                                    <AdornedElementPlaceholder Name="customAdorner" VerticalAlignment="Center">
+                                        <Border BorderBrush="Red" BorderThickness="1" />
+                                    </AdornedElementPlaceholder>
+                                </DockPanel>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>            
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
     <UserControl.CommandBindings>
@@ -89,7 +93,8 @@
                                                  Validation.Error="ValidationErrorHandler"
                                                  Style="{StaticResource ErrorStyle}"
                                                  Text="{Binding UpdateSourceTrigger=LostFocus, Path=Username,
-                                                        ValidatesOnDataErrors=True, NotifyOnValidationError=True}"/>
+                                                        ValidatesOnDataErrors=True, NotifyOnValidationError=True}">
+                                        </TextBox>
                                         <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                                                      Validation.Error="ValidationErrorHandler"
                                                      Style="{StaticResource ErrorStyle}"

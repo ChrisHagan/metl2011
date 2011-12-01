@@ -429,6 +429,7 @@ namespace SandRibbon.Components.Canvas
         }
         protected override void HandlePaste()
         {
+            
             if (Clipboard.ContainsImage())
             {
                 var tmpFile = "tmpImage";

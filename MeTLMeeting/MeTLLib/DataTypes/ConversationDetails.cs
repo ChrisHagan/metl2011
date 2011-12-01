@@ -191,6 +191,9 @@ namespace MeTLLib.DataTypes
  
         public bool IsJidEqual(string thatJid)
         {
+            if (!String.IsNullOrEmpty(Jid) && String.IsNullOrEmpty(thatJid))
+                return false;
+
             // Microsoft says we can use GetHashCode to safely compare two strings
             return Jid.GetHashCode() == thatJid.GetHashCode();
         }
