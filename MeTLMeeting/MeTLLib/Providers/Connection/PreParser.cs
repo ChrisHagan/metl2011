@@ -108,6 +108,10 @@ namespace MeTLLib.Providers.Connection
             Commands.AllContentSent.Execute(location.currentSlide);
             Trace.TraceInformation(string.Format("{1} regurgitate finished {0}", DateTimeFactory.Now(), this.location.currentSlide));
         }
+        public override void actOnStatusRecieved(MeTLStanzas.TeacherStatusStanza status)
+        {
+            return; //do nothing
+        }
         public override void actOnFileResource(MeTLStanzas.FileResource resource){
             files.Add(resource.fileResource);
         }

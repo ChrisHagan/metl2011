@@ -358,6 +358,20 @@ namespace MeTLLib.DataTypes
         public static Permissions TUTORIAL_PERMISSIONS = new Permissions("tutorial", true, true, false);
         public static Permissions MEETING_PERMISSIONS = new Permissions("meeting", true, true, true);
         public static Permissions Empty { get { return new Permissions("", false, false, false); } }
+        public void applyTuteStyle()
+        {
+            Label = "tutorial";
+            studentCanOpenFriends = true;
+            studentCanPublish = true;
+            usersAreCompulsorilySynced = false;
+        }
+        public void applyLectureStyle()
+        {
+            Label = "lecture";
+            studentCanOpenFriends = false;
+            studentCanPublish = false;
+            usersAreCompulsorilySynced = true;
+        }
         private static readonly Permissions[] OPTIONS = new[]{
             LECTURE_PERMISSIONS,
             LABORATORY_PERMISSIONS,
@@ -373,16 +387,22 @@ namespace MeTLLib.DataTypes
         private static string ALLSYNC = "usersAreCompulsorilySynced";
         public string conversationGroup = "";
         private static string CONVERSATIONGROUP = "conversationGroup";
+        public bool NavigationLocked;
+        private static string NAVIGATIONLOCKED = "navigationlocked";
         public static Permissions ReadXml(XElement doc)
         {
             var studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).Value);
             var studentCanOpenFriends = Boolean.Parse(doc.Element(CANFRIEND).Value);
             var usersAreCompulsorilySynced = Boolean.Parse(doc.Element(ALLSYNC).Value);
-            return new Permissions(null, studentCanOpenFriends, studentCanPublish, usersAreCompulsorilySynced);
+            var permission = new Permissions(null, studentCanOpenFriends, studentCanPublish, usersAreCompulsorilySynced);
+            if (doc.Element(NAVIGATIONLOCKED) != null)
+                permission.NavigationLocked = Boolean.Parse(doc.Element(NAVIGATIONLOCKED).Value);
+            return permission;
         }
         public XElement WriteXml()
         {
             return new XElement(PERMISSIONS_TAG,
+                new XElement(NAVIGATIONLOCKED, NavigationLocked),
                 new XElement(CANSHOUT, studentCanPublish),
                 new XElement(CANFRIEND, studentCanOpenFriends),
                 new XElement(ALLSYNC, usersAreCompulsorilySynced));

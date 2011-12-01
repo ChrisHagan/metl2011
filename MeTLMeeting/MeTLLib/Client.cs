@@ -68,6 +68,7 @@ namespace MeTLLib
     }
     public interface IClientBehaviour
     {
+        void AskForTeachersStatus(string teacher, string where);
         void Connect(string username, string password);
         bool Disconnect();
         void SendTextBox(TargettedTextBox textbox);
@@ -168,6 +169,10 @@ namespace MeTLLib
             LeaveConversation(location.activeConversation);    
             wire.location = Location.Empty;
         }
+        public void AskForTeachersStatus(string teacher, string jid)
+        {
+           wire.AskForTeacherStatus(teacher, jid); 
+        }
         public void Connect(string username, string password)
         {
             var credentials = authorisationProvider.attemptAuthentication(username, password);
@@ -188,6 +193,14 @@ namespace MeTLLib
         }
         #endregion
         #region sendStanzas
+        public void SendTeacherStatus(TeacherStatus status)
+        {
+             Action work = delegate
+            {
+                wire.SendTeacherStatus(status);
+            };
+            tryIfConnected(work);
+        }
         public void SendTextBox(TargettedTextBox textbox)
         {
             Action work = delegate

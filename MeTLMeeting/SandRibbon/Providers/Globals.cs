@@ -17,6 +17,45 @@ namespace SandRibbon.Providers
 
         private static Size canvasSize = new Size();
         private static QuizData quizData = new QuizData();
+        public static bool AuthorOnline(string author)
+        {
+            return PresenceListing.Keys.Where(k => k.Contains(author)).Count() > 0;
+        }
+        public static bool AuthorInRoom(string author, string jid)
+        {
+            
+            var authorStatus = PresenceListing.Keys.Where(k => k.Contains(author));
+            if (authorStatus.Count() == 0)
+                return false;
+            var rooms = authorStatus.Aggregate(new List<string>(), (acc, item) =>
+                                                                       {
+                                                                           acc.AddRange(PresenceListing[item]);
+                                                                           return acc;
+                                                                       });
+            return rooms.Contains(jid);
+        }
+        public static void UpdatePresenceListing(MeTLPresence presence)
+        {
+            if (!PresenceListing.ContainsKey(presence.Who))
+            {
+                if(presence.Joining)
+                    PresenceListing.Add(presence.Who, new List<string> {presence.Where});
+            }
+            else
+            {
+                if (presence.Joining)
+                {
+                    var list = PresenceListing[presence.Who];
+                    list.Add(presence.Where);
+                    PresenceListing[presence.Who] = list.Distinct().ToList();
+                }
+                else
+                {
+                    PresenceListing[presence.Who].Remove(presence.Where);
+                }
+            }
+        }
+        public static Dictionary<string, List<string>> PresenceListing = new Dictionary<string, List<string>>();  
         public static bool isAuthor
         {
             get
@@ -171,5 +210,6 @@ namespace SandRibbon.Providers
                 return (bool)Commands.RememberMe.LastValue();
             }
         }
+
     }
 }

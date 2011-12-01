@@ -19,7 +19,6 @@ namespace SandRibbon.Quizzing
             set { SetValue(EditedQuizProperty, value); }
 
         }
-
         public static readonly DependencyProperty OptionErrorProperty = DependencyProperty.Register("OptionError", typeof (bool), typeof (EditQuiz));
         public bool OptionError { 
             get { return (bool) GetValue(OptionErrorProperty); }

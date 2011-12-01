@@ -4,6 +4,25 @@ using System.IO;
 
 namespace MeTLLib.DataTypes
 {
+    public class TeacherStatus
+    {
+        public string Teacher;
+        public string Conversation;
+        public string Slide;
+        public bool Joining;
+        public TeacherStatus()
+        {
+            Joining = true;
+        }
+    }
+    public class MeTLPresence
+    {
+        public string Who;
+        public string Where;
+        public bool Joining;
+
+    }
+
     public class UserOptions
     {
         public int pedagogyLevel { get; set; }

@@ -98,6 +98,7 @@ namespace MeTLLib.Providers.Connection
         protected const string SUBMISSION = "/SUBMISSION";
         protected const string UPDATE_CONVERSATION_DETAILS = "/UPDATE_CONVERSATION_DETAILS";
         protected const string SYNC_MOVE = "/SYNC_MOVE";
+        protected const string TEACHER_IN_CONVERSATION = "/TEACHER_IN_CONVERSATION";
         protected const string GO_TO_SLIDE = "/GO_TO_SLIDE";
         protected const string WAKEUP = "/WAKEUP";
         protected const string SLEEP = "/SLEEP";
@@ -219,6 +220,7 @@ namespace MeTLLib.Providers.Connection
             conn.OnAuthError += OnAuthError;
             conn.OnLogin += OnLogin;
             conn.OnMessage += OnMessage;
+            conn.OnPresence += OnPresence;
             conn.OnSocketError += HandlerError;
             conn.OnSocketError += Disconnect;
             conn.OnError += HandlerError;
@@ -230,6 +232,8 @@ namespace MeTLLib.Providers.Connection
             conn.OnWriteXml += WriteXml;
 #endif
         }
+
+
         private void SendNewBubble(TargettedBubbleContext selection)
         {
             stanza(new MeTLStanzas.Bubble(selection));
@@ -286,6 +290,11 @@ namespace MeTLLib.Providers.Connection
             receiveEvents.statusChanged(true, this.credentials);
             joinRooms();
             catchUpDisconnectedWork();
+        }
+
+        private void OnPresence(object sender, Presence pres)
+        {
+            receiveEvents.receivePresence(new MeTLPresence{Joining = pres.Type.ToString().ToLower() != "unavailable", Who=pres.From.Resource, Where = pres.From.User});
         }
         private void OnMessage(object sender, Message message)
         {
@@ -463,6 +472,7 @@ namespace MeTLLib.Providers.Connection
         {
             try
             {
+                Console.WriteLine("Jabberwire::JoinRoom => Joining room {0}", room);
                 var alias = credentials.name + conn.Resource;
                 new MucManager(conn).JoinRoom(room, alias, true);
             }
@@ -607,6 +617,11 @@ namespace MeTLLib.Providers.Connection
         {
             stanza(Globals.location.activeConversation, new MeTLStanzas.ScreenshotSubmission(submission));
         }
+        public void AskForTeacherStatus(string teacher, string where)
+        {
+            Console.WriteLine("Jabberwire:AskTeacherForStatus => sending on global");
+            command(TEACHER_IN_CONVERSATION + " "+ where);
+        }
         public void SendSyncMoveTo(int where)
         {
             command(location.activeConversation, SYNC_MOVE + " " + where);
@@ -644,6 +659,10 @@ namespace MeTLLib.Providers.Connection
         private void SendChat(TargettedTextBox message)
         {
             stanza(location.activeConversation, new MeTLStanzas.TextBox(message));
+        }
+        public void SendTeacherStatus(TeacherStatus status)
+        {
+            stanza("global", new MeTLStanzas.TeacherStatusStanza(status));
         }
         public void SendTextbox(TargettedTextBox box)
         {
@@ -700,6 +719,9 @@ namespace MeTLLib.Providers.Connection
                 var parts = message.Split(new[] { " " }, 2, StringSplitOptions.RemoveEmptyEntries);
                 switch (parts[0].ToUpper())
                 {
+                    case TEACHER_IN_CONVERSATION:
+                        handleTeacherInConversation(parts);
+                        break;
                     case SYNC_MOVE:
                         handleSyncMoveReceived(parts);
                         break;
@@ -753,10 +775,10 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceError("wire received inappropriate jid in updateSlideCollection: " + e.Message);
             }
         }
-        public virtual void handleGoToConversation(string[] parts)
+        /*public virtual void handleGoToConversation(string[] parts)
         {
             JoinConversation(parts[1]);
-        }
+        }*/
         public virtual void handleGoToSlide(string[] parts)
         {
             var id = Int32.Parse(parts[1]);
@@ -796,6 +818,8 @@ namespace MeTLLib.Providers.Connection
         }
         public void ActOnUntypedMessage(Element message)
         {
+            foreach(var status in message.SelectElements<MeTLStanzas.TeacherStatusStanza>(true))
+                actOnStatusRecieved(status);
             foreach (var ink in message.SelectElements<MeTLStanzas.Ink>(true))
                 actOnStrokeReceived(ink.Stroke);
             foreach (var submission in message.SelectElements<MeTLStanzas.ScreenshotSubmission>(true))
@@ -817,6 +841,12 @@ namespace MeTLLib.Providers.Connection
             foreach (var file in message.SelectElements<MeTLStanzas.FileResource>(true))
                 actOnFileResource(file.injectDependencies(metlServerAddress));
         }
+
+        public virtual void actOnStatusRecieved(MeTLStanzas.TeacherStatusStanza status)
+        {
+            receiveEvents.teacherStatusRecieved(status.status);
+        }
+
         public virtual void actOnFileResource(MeTLStanzas.FileResource resource)
         {
             receiveEvents.receiveFileResource(resource.fileResource);
@@ -900,6 +930,7 @@ namespace MeTLLib.Providers.Connection
         }
         public void JoinConversation(string room)
         {
+            /*
             if (location.activeConversation != null)
             {
                 var muc = new MucManager(conn);
@@ -910,7 +941,13 @@ namespace MeTLLib.Providers.Connection
             location.activeConversation = room;
             var cd = conversationDetailsProvider.DetailsOf(room);
             location.availableSlides = cd.Slides.Select(s => s.id).ToList();
+             * */
             joinRooms();
+        }
+        private void handleTeacherInConversation(string[] parts)
+        {
+            var where = parts[1];
+            receiveEvents.teacherStatusRequest(where, "");
         }
         private void handleSyncMoveReceived(string[] parts)
         {

@@ -75,6 +75,8 @@ namespace SandRibbon
     }
     public class Commands
     {
+        public static DefaultableCompositeCommand RequestTeacherStatus = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ReceiveTeacherStatus = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetStackVisibility = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendNewSlideOrder = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ChangeLanguage = new DefaultableCompositeCommand();
@@ -261,6 +263,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand MoveToPrevious = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand MoveToNext = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetConversationPermissions = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ToggleNavigationLock = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand JoinConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand LeaveConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand LeaveLocation = new DefaultableCompositeCommand();

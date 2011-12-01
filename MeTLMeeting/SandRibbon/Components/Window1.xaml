@@ -7,7 +7,7 @@
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     xmlns:my="clr-namespace:SandRibbon"
     xmlns:chrome="clr-namespace:SandRibbon.Chrome"
-    xmlns:sandpit="clr-namespace:SandRibbon.Components.Sandpit"
+    Foreground="Black"
     AllowDrop="True"
     Title="MeTL 2011"
     x:Name="ribbonWindow"

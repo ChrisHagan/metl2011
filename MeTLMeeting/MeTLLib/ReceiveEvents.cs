@@ -13,6 +13,9 @@ namespace MeTLLib
     #region EventHandlers
     public class MeTLLibEventHandlers
     {
+        public delegate void TeacherStatusRequestEventHandler(object sender, TeacherStatusRequestEventArgs e);
+        public delegate void TeacherStatusReceivedEventHandler(object sender, TeacherStatusRequestEventArgs e);
+        public delegate void PresenceAvailableEventHandler(object sender, PresenceAvailableEventArgs e);
         public delegate void SubmissionAvailableEventHandler(object sender, SubmissionAvailableEventArgs e);
         public delegate void SlideCollectionUpdatedEventHandler(object sender, SlideCollectionUpdatedEventArgs e);
         public delegate void FileAvailableEventHandler(object sender, FileAvailableEventArgs e);
@@ -36,6 +39,8 @@ namespace MeTLLib
     }
     #endregion
     #region EventArgs
+    public class TeacherStatusRequestEventArgs : EventArgs { public TeacherStatus status; } 
+    public class PresenceAvailableEventArgs : EventArgs { public MeTLPresence presence; }
     public class SubmissionAvailableEventArgs : EventArgs { public TargettedSubmission submission;}
     public class FileAvailableEventArgs : EventArgs { public TargettedFile file;}
     public class SlideCollectionUpdatedEventArgs : EventArgs { public Int32 Conversation;}
@@ -59,6 +64,7 @@ namespace MeTLLib
     #endregion
     public interface IReceiveEvents
     {
+        void receivePresence(MeTLPresence presence);
         void receiveSubmission(TargettedSubmission ts);
         void receiveQuiz(QuizQuestion qq);
         void receiveUpdatedSlideCollection(Int32 conversationJid);
@@ -84,6 +90,11 @@ namespace MeTLLib
         void receiveConversationDetails(ConversationDetails cd);
         void statusChanged(bool isConnected, Credentials credentials);
         void syncMoveRequested(int where);
+        void teacherStatusRequest(string where, string who);
+        void teacherStatusRecieved(TeacherStatus status);
+        event MeTLLibEventHandlers.TeacherStatusReceivedEventHandler TeacherStatusReceived;
+        event MeTLLibEventHandlers.TeacherStatusRequestEventHandler TeacherStatusRequest;
+        event MeTLLibEventHandlers.PresenceAvailableEventHandler PresenceAvailable;
         event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
         event MeTLLibEventHandlers.SlideCollectionUpdatedEventHandler SlideCollectionUpdated;
         event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
@@ -115,6 +126,7 @@ namespace MeTLLib
     {
         public ProductionReceiveEvents()
         {
+            this.PresenceAvailable += (sender, args) => { } ;
             this.AutoshapeAvailable += (sender, args) => { };
             this.BubbleAvailable += (sender, args) => { };
             this.SlideCollectionUpdated += (sender, args) => { };
@@ -139,6 +151,8 @@ namespace MeTLLib
             this.SubmissionAvailable += (sender, args) => { };
             this.TextBoxAvailable += (sender, args) => { };
             this.VideoAvailable += (sender, args) => { };
+            this.TeacherStatusRequest += (sender, args) => { };
+            this.TeacherStatusReceived += (sender, args)=> { };
             this.SyncMoveRequested += (sender, SyncMoveRequestedEventArgs) => { };
             Commands.ServersDown.RegisterCommand(new DelegateCommand<String>(ServersDown));
         }
@@ -146,6 +160,7 @@ namespace MeTLLib
             Trace.TraceError("CRASH: (Fixed) MeTLLib::ProductionReceiveEvents:ServersDown {0}", url);
             statusChanged(false, null);
         }
+
         void IReceiveEvents.receiveSubmission(TargettedSubmission ts)
         {
             SubmissionAvailable(this, new SubmissionAvailableEventArgs { submission = ts });
@@ -165,6 +180,10 @@ namespace MeTLLib
         void IReceiveEvents.receiveFileResource(TargettedFile tf)
         {
             FileAvailable(this, new FileAvailableEventArgs { file = tf });
+        }
+        void IReceiveEvents.receivePresence(MeTLPresence presence)
+        {
+            PresenceAvailable(this, new PresenceAvailableEventArgs {presence = presence});
         }
         void IReceiveEvents.receiveStroke(TargettedStroke ts)
         {
@@ -249,8 +268,29 @@ namespace MeTLLib
             SyncMoveRequested(this, new SyncMoveRequestedEventArgs{where = where});
         }
 
+        public void teacherStatusRequest(string where, string who)
+        {
+            TeacherStatusRequest(this, new TeacherStatusRequestEventArgs
+                                           {
+                                               status = new TeacherStatus
+                                                            {
+                                                                Conversation = where,
+                                                                Slide = where,
+                                                                Teacher = who
+                                                            }
+                                           });
+        }
+
+        public void teacherStatusRecieved(TeacherStatus status)
+        {
+            TeacherStatusReceived(this, new TeacherStatusRequestEventArgs{status = status});
+        }
+        public event MeTLLibEventHandlers.TeacherStatusReceivedEventHandler TeacherStatusReceived;
 
         #region Events
+
+        public event MeTLLibEventHandlers.TeacherStatusRequestEventHandler TeacherStatusRequest;
+        public event MeTLLibEventHandlers.PresenceAvailableEventHandler PresenceAvailable;
         public event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
         public event MeTLLibEventHandlers.SlideCollectionUpdatedEventHandler SlideCollectionUpdated;
         public event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
@@ -278,6 +318,8 @@ namespace MeTLLib
         public event MeTLLibEventHandlers.DirtyElementAvailableEventHandler DirtyAutoShapeAvailable;
         #endregion Events
         #region VirtualEventSubscribers
+        protected virtual void onPresenceAvailable(PresenceAvailableEventArgs e)
+        { PresenceAvailable(this, e); }
         protected virtual void onSubmissionAvailable(SubmissionAvailableEventArgs e)
         { SubmissionAvailable(this, e); }
         protected virtual void onSlideCollectionUpdated(SlideCollectionUpdatedEventArgs e)

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
@@ -13,10 +11,7 @@ using System.Windows.Shapes;
 using agsXMPP.Xml.Dom;
 using System.Collections.Generic;
 using Path = System.IO.Path;
-using MeTLLib.DataTypes;
 using MeTLLib.Providers;
-using Microsoft.Practices.Composite.Presentation.Commands;
-using Ninject;
 using System.Threading;
 using MeTLLib.Providers.Connection;
 using System.Diagnostics;
@@ -42,12 +37,13 @@ namespace MeTLLib.DataTypes
             new MeTLStanzas.DirtyImage();
             new MeTLStanzas.LiveWindow();
             new MeTLStanzas.QuizOption();
-            new MeTLStanzas.ScreenshotSubmission();
             new MeTLStanzas.FileResource();
             new MeTLStanzas.QuizResponse();
             new MeTLStanzas.DirtyElement();
             new MeTLStanzas.DirtyAutoshape();
             new MeTLStanzas.DirtyLiveWindow();
+            new MeTLStanzas.TeacherStatusStanza();
+            new MeTLStanzas.ScreenshotSubmission();
         }
     }
     public class WormMove
@@ -417,7 +413,47 @@ namespace MeTLLib.DataTypes
         public static readonly string slideTag = "slide";
         public static readonly string answererTag = "answerer";
         public static readonly string identityTag = "identity";
+    
+        public class TeacherStatusStanza: Element
+        {
+            static TeacherStatusStanza()
+            {
+                agsXMPP.Factory.ElementFactory.AddElementType(TeacherStatusStanza.TAG, METL_NS, typeof(TeacherStatusStanza));
+            }
+            public static readonly string TAG = "teacherstatus";
+            public TeacherStatusStanza()
+            {
+                this.Namespace = METL_NS;
+                this.TagName = TAG;
+            }
+            public TeacherStatusStanza(TeacherStatus status)
+                : this()
+            {
+                this.status = status;
+            }
 
+            public static readonly string whereTag = "where";
+
+            public TeacherStatus status
+            {
+                get
+                {
+                    return new TeacherStatus
+                               {
+                                   Conversation = GetTag(whereTag),
+                                   Teacher = GetTag(identityTag),
+                                   Slide = GetTag(slideTag)
+                               };
+                }
+                set
+                {
+                    SetTag(identityTag, value.Teacher);
+                    SetTag(slideTag, value.Slide);
+                    SetTag(whereTag, value.Conversation);
+
+                }
+            }
+        }
         public class AutoShape : Element
         {
             static AutoShape()

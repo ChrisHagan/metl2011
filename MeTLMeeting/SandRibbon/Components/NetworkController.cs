@@ -97,6 +97,7 @@ namespace SandRibbon.Components
         #region commands
         private void registerCommands()
         {
+            Commands.RequestTeacherStatus.RegisterCommand(new DelegateCommand<TeacherStatus>(RequestTeacherStatus));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
@@ -124,6 +125,10 @@ namespace SandRibbon.Components
             Commands.SendSyncMove.RegisterCommand(new DelegateCommand<int>(sendSyncMove));
             Commands.SendNewSlideOrder.RegisterCommand(new DelegateCommand<int>(sendNewSlideOrder));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(LeaveLocation));
+        }
+        private void RequestTeacherStatus(TeacherStatus obj)
+        {
+            client.AskForTeachersStatus(obj.Teacher, obj.Conversation);
         }
         private void sendNewSlideOrder(int conversationJid)
         {
@@ -234,6 +239,8 @@ namespace SandRibbon.Components
         #region events
         private void attachToClient()
         {
+            client.events.TeacherStatusReceived += teacherStatusReceived;
+            client.events.TeacherStatusRequest += teacherStatusRequest;
             client.events.AutoshapeAvailable += autoShapeAvailable;
             client.events.BubbleAvailable += bubbleAvailable;
             client.events.ChatAvailable += chatAvailable;
@@ -254,12 +261,41 @@ namespace SandRibbon.Components
             client.events.QuizQuestionAvailable += quizQuestionAvailable;
             client.events.StrokeAvailable += strokeAvailable;
             client.events.SubmissionAvailable += submissionAvailable;
+            client.events.PresenceAvailable += presenceAvailable;
             client.events.TextBoxAvailable += textBoxAvailable;
             client.events.VideoAvailable += videoAvailable;
             client.events.SyncMoveRequested += syncMoveRequested;
             client.events.StatusChanged += statusChanged;
             client.events.SlideCollectionUpdated += slideCollectionChanged;
         }
+        private void teacherStatusReceived(object sender, TeacherStatusRequestEventArgs e)
+        {
+            Commands.ReceiveTeacherStatus.Execute(e.status);
+        }
+        private void teacherStatusRequest(object sender, TeacherStatusRequestEventArgs e)
+        {
+            if(e.status.Conversation == Globals.conversationDetails.Jid && Globals.isAuthor)
+            {
+                client.SendTeacherStatus(new TeacherStatus
+                                             {
+                                                 Joining = true,
+                                                 Teacher = Globals.me,
+                                                 Conversation = Globals.conversationDetails.Jid,
+                                                 Slide = Globals.location.currentSlide.ToString()
+                                             });
+            }
+        }
+        private void presenceAvailable(object sender, PresenceAvailableEventArgs e)
+        {
+           Commands.ReceiveTeacherStatus.Execute(new TeacherStatus
+           {
+               Conversation = e.presence.Where,
+               Joining = e.presence.Joining,
+               Slide = e.presence.Where,
+               Teacher = e.presence.Who
+           });
+        }
+
         private void slideCollectionChanged(object sender, SlideCollectionUpdatedEventArgs e)
         {
             Commands.UpdateNewSlideOrder.Execute(e.Conversation);
@@ -288,10 +324,7 @@ namespace SandRibbon.Components
                 Commands.UpdateConversationDetails.Execute(e.conversationDetails);
             else 
             {
-                App.Current.Dispatcher.adopt(() =>
-                {
-                    Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails);
-                });
+                App.Current.Dispatcher.adopt(() => Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails));
             }
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)

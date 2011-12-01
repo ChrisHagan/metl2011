@@ -396,7 +396,7 @@
     <Style TargetType="{x:Type dict:RadioButton}">
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
         <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>
-        <Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/>
+        <!--Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/-->
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type dict:RadioButton}">
@@ -507,7 +507,7 @@
     <Style TargetType="{x:Type dict:Button}">
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
         <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>
-        <Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/>
+        <!--Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/-->
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type dict:Button}">
@@ -683,7 +683,7 @@
     <Style TargetType="{x:Type dict:CheckBox}">
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
         <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>
-        <Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/>
+        <!--Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/-->
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type dict:CheckBox}">
@@ -789,7 +789,7 @@
     <Style TargetType="{x:Type dict:DoubleButton}">
         <Setter Property="ToolTipService.InitialShowDelay" Value="{StaticResource ToolTipDelay}"/>
         <Setter Property="ToolTipService.ShowDuration" Value="{StaticResource ToolTipDuration}"/>
-        <Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/>
+        <!--Setter Property="ParentActiveVariant" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"/-->
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type dict:DoubleButton}">

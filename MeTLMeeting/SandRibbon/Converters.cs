@@ -40,6 +40,8 @@ namespace SandRibbon
         public static Fraction fraction = new Fraction();
         public static ProgressAsColor progressColor = new ProgressAsColor();
         public static MultiplyConverter multiply = new MultiplyConverter();
+        public static FogOfWarConverter FogOfWar = new FogOfWarConverter();
+        public static SlideFocusableConverter SlideFocusable = new SlideFocusableConverter();
         public static DivideConverter divide = new DivideConverter();
         public static RandomConverter random = new RandomConverter();
         public static StringToIntConverter parseInt = new StringToIntConverter();
@@ -749,6 +751,44 @@ namespace SandRibbon
                                     Type[] targetTypes,
                                     object parameter,
                                     CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class SlideFocusableConverter:IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var currentIndex = (int) values[0];
+            var locked = (bool) values[1];
+            var maxIndex = (int) values[2];
+            if(maxIndex == -1)
+                return true;
+            if (locked && currentIndex > maxIndex)
+                return false;
+            return true;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class FogOfWarConverter:IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var currentIndex = (int) values[0];
+            var locked = (bool) values[1];
+            var maxIndex = (int) values[2];
+            if(maxIndex == -1)
+                return Visibility.Collapsed;
+            if (locked && currentIndex > maxIndex)
+                return Visibility.Visible;
+            return Visibility.Collapsed;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

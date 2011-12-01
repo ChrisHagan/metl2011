@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Interfaces;
@@ -50,9 +51,25 @@ namespace SandRibbon.Components
     }
     public partial class SlideDisplay : UserControl, ISlideDisplay
     {
+        private int myMaxSlideIndex;
+        public static readonly DependencyProperty TeachersCurrentSlideIndexProperty =
+            DependencyProperty.Register("TeachersCurrentSlideIndex", typeof (int), typeof (SlideDisplay), new PropertyMetadata(default(int)));
 
+        public int TeachersCurrentSlideIndex
+        {
+            get { return (int) GetValue(TeachersCurrentSlideIndexProperty); }
+            set { SetValue(TeachersCurrentSlideIndexProperty, value); }
+        }
+        public static readonly DependencyProperty IsNavigationLockedProperty =
+            DependencyProperty.Register("IsNavigationLocked", typeof (bool), typeof (SlideDisplay), new PropertyMetadata(default(bool)));
+
+        public bool IsNavigationLocked
+        {
+            get { return (bool) GetValue(IsNavigationLockedProperty); }
+            set { SetValue(IsNavigationLockedProperty, value); }
+        }
         public int currentSlideId = -1;
-        public ObservableCollection<Slide> thumbnailList = new ObservableCollection<Slide>();
+        public ObservableCollection<Slide> thumbnailList { get; set; } 
         public static Dictionary<int, PreParser> parsers = new Dictionary<int, PreParser>();
         public static Dictionary<int, PreParser> privateParsers = new Dictionary<int, PreParser>();
         public static SlideIndexConverter SlideIndex;
@@ -60,23 +77,66 @@ namespace SandRibbon.Components
         private bool moveTo;
         public SlideDisplay()
         {
+            thumbnailList = new ObservableCollection<Slide>();
             SlideIndex = new SlideIndexConverter(thumbnailList);
             SlideToThumb = new SlideToThumbConverter();
+            myMaxSlideIndex = -1;
+            TeachersCurrentSlideIndex = -1;
+            IsNavigationLocked = calculateNavigationLocked();
             InitializeComponent();
-            slides.ItemsSource = thumbnailList;
-            Commands.SyncedMoveRequested.RegisterCommand(new DelegateCommand<int>(MoveToTeacher));
+            DataContext = this;
+            Commands.SyncedMoveRequested.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveToTeacher));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(Display));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
             Commands.MoveToPrevious.RegisterCommand(new DelegateCommand<object>(moveToPrevious, isPrevious));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
+            Commands.ReceiveTeacherStatus.RegisterCommandToDispatcher(new DelegateCommand<TeacherStatus>(receivedStatus));
             Commands.EditConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(EditConversation));
             Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
             Display(Globals.conversationDetails);
         }
 
+        private void receivedStatus(TeacherStatus status)
+        {
+            Globals.UpdatePresenceListing(new MeTLPresence
+                                              {
+                                                  Joining = true,
+                                                  Who = status.Teacher,
+                                                  Where = status.Conversation
+                                              });
+            if (status.Conversation == Globals.location.activeConversation && status.Teacher == Globals.conversationDetails.Author)
+            {
+                TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, status.Slide);
+                
+                IsNavigationLocked = calculateNavigationLocked();
+            }
+        }
+
+        private int calculateTeacherSlideIndex(int myIndex, string jid)
+        {
+                try
+                {
+                    var index = indexOf(Int32.Parse(jid));
+                    if (myIndex > index)
+                        return myIndex;
+                    return index;
+                }
+                catch(Exception e)
+                {
+                    return 0;
+                }
+        }
+
+        private bool calculateNavigationLocked()
+        {
+            return !Globals.isAuthor &&
+                   Globals.conversationDetails.Permissions.NavigationLocked &&
+                   Globals.AuthorOnline(Globals.conversationDetails.Author) &&
+                   Globals.AuthorInRoom(Globals.conversationDetails.Author, Globals.conversationDetails.Jid);
+        }
         private void resetLocationLocals(object _unused)
         {
             currentSlideId = -1;
@@ -113,11 +173,12 @@ namespace SandRibbon.Components
             {
                 if (isSlideInSlideDisplay(slide))
                 {
+                    myMaxSlideIndex = calculateMaxIndex(myMaxSlideIndex, indexOf(slide));
                     var currentSlide = (Slide)slides.SelectedItem;
                     if (currentSlide == null || currentSlide.id != slide)
                     {
                         currentSlideId = slide;
-                        slides.SelectedIndex = indexOf(slide);
+                        slides.SelectedIndex = myMaxSlideIndex;
                         slides.ScrollIntoView(slides.SelectedItem);
                     }
                 }
@@ -125,8 +186,16 @@ namespace SandRibbon.Components
             Commands.RequerySuggested(Commands.MoveToNext);
             Commands.RequerySuggested(Commands.MoveToPrevious);
         }
+
+        private int calculateMaxIndex(int myIndex, int index)
+        {
+            return myIndex > index ? myIndex : index;
+        }
+
         private void MoveToTeacher(int where)
         {
+
+            TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
             if (Globals.isAuthor) return;
             if (!Globals.synched) return;
             var slide = Globals.slide;
@@ -164,6 +233,7 @@ namespace SandRibbon.Components
         private void reorderSlides(int conversationJid)
         {
             if (Globals.conversationDetails.Jid != conversationJid.ToString()) return;
+            IsNavigationLocked = calculateNavigationLocked();
             var details = Globals.conversationDetails;
             thumbnailList.Clear();
             foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
@@ -191,7 +261,8 @@ namespace SandRibbon.Components
                 thumbnailList.Clear();
                 return;
             }
-
+            Commands.RequestTeacherStatus.Execute(new TeacherStatus{Conversation = Globals.conversationDetails.Jid, Slide="0", Teacher = Globals.conversationDetails.Author});
+            IsNavigationLocked = calculateNavigationLocked();
             if (thumbnailList.Count == 0)
             {
                 foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))

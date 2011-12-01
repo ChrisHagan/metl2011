@@ -104,7 +104,7 @@ namespace SandRibbon
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
-
+            Commands.ToggleNavigationLock.RegisterCommand(new DelegateCommand<object>(toggleNavigationLock));
             Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(SetConversationPermissions, CanSetConversationPermissions));
             Commands.AddWindowEffect.RegisterCommand(new DelegateCommand<object>(AddWindowEffect));
             Commands.RemoveWindowEffect.RegisterCommandToDispatcher(new DelegateCommand<object>(RemoveWindowEffect));
@@ -909,6 +909,21 @@ namespace SandRibbon
         {
             return target.Visibility;
         }
+        public void toggleNavigationLock(object _obj)
+        {
+            try
+            {
+                var details = Globals.conversationDetails;
+                if (details == null)
+                    return;
+                details.Permissions.NavigationLocked = !details.Permissions.NavigationLocked;
+                MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
+            }
+            catch (NotSetException)
+            {
+                return;
+            }   
+        }
         private void SetConversationPermissions(object obj)
         {
             var style = (string)obj;
@@ -917,16 +932,10 @@ namespace SandRibbon
                 var details = Globals.conversationDetails;
                 if (details == null)
                     return;
-
-                foreach (var s in new[]
-                                      {
-                                          Permissions.LABORATORY_PERMISSIONS,
-                                          Permissions.TUTORIAL_PERMISSIONS,
-                                          Permissions.LECTURE_PERMISSIONS,
-                                          Permissions.MEETING_PERMISSIONS
-                                      })
-                    if (s.Label == style)
-                        details.Permissions = s;
+                if(style == "lecture")
+                    details.Permissions.applyLectureStyle();
+                else
+                    details.Permissions.applyTuteStyle();
                 MeTLLib.ClientFactory.Connection().UpdateConversationDetails(details);
             }
             catch (NotSetException)

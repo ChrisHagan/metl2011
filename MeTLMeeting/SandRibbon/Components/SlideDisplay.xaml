@@ -19,6 +19,7 @@
         <components:SlideNavigationControls x:Name="NavigationControls" Grid.Row="0"/>
         <ListBox
              x:Name="slides"
+             ItemsSource="{Binding Path=thumbnailList}"
              Grid.Row="1"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
              ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -57,6 +58,16 @@
                             </MultiBinding>
                         </Setter.Value>
                     </Setter>
+                    
+                    <Setter Property="Focusable">
+                        <Setter.Value>
+                             <MultiBinding Converter="{x:Static my:Converters.SlideFocusable}">
+                                <Binding Path="index"/>
+                                <Binding ElementName="SlideMeasure" Path="IsNavigationLocked"/>
+                                <Binding ElementName="SlideMeasure" Path="TeachersCurrentSlideIndex"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
                     <Setter Property="Width" Value="Auto"/>
                     <Setter Property="HorizontalAlignment" Value="Stretch"/>
                     <Setter Property="Template">
@@ -85,6 +96,15 @@
                                                 BorderThickness="1">
                                             <Label Content="{Binding Path=index, Converter={x:Static components:SlideDisplay.SlideIndex}}"/>
                                         </Border>
+                                        <Image Source="/Resources/FogOfWar.png">
+                                            <Image.Visibility>
+                                                <MultiBinding Converter="{x:Static my:Converters.FogOfWar}">
+                                                    <Binding Path="index"/>
+                                                    <Binding ElementName="SlideMeasure" Path="IsNavigationLocked"/>
+                                                    <Binding ElementName="SlideMeasure" Path="TeachersCurrentSlideIndex"/>
+                                                </MultiBinding>
+                                            </Image.Visibility>
+                                        </Image>
                                     </Grid>
                                 </Border>
                                 <ControlTemplate.Triggers>
