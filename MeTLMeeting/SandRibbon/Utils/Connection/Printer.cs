@@ -59,7 +59,8 @@ namespace SandRibbon.Utils.Connection
             foreach (var image in images)
             {
                 var imageToAdd = image.Value.imageSpecification.forceEvaluationForPrinting();
-                imageToAdd.Margin = new Thickness(5, 5, 5, 5);
+                // This caused bug#656 which may very well happen again if the image has been given a margin somewhere
+                //imageToAdd.Margin = new Thickness(5, 5, 5, 5);
                 if (image.Value.privacy == "public" || image.Value.target == "presentationSpace")
                 {
                     Panel.SetZIndex(imageToAdd, image.Value.privacy == "public" ? 1 : 2);
