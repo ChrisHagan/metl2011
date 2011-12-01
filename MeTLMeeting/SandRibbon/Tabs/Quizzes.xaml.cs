@@ -66,7 +66,7 @@ namespace SandRibbon.Tabs
         }
         private void updateConversationDetails(ConversationDetails details)
         {
-            if (ConversationDetails.Empty.Equals(details)) return;
+            if (details.IsEmpty) return;
             try
             {
                 if (Globals.isAuthor)
@@ -146,7 +146,9 @@ namespace SandRibbon.Tabs
         {
             var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
             Commands.BlockInput.ExecuteAsync("Answering a Quiz.");
-            new AnswerAQuiz(thisQuiz).ShowDialog();
+            var answerAQuiz = new AnswerAQuiz(thisQuiz);
+            answerAQuiz.Owner = Window.GetWindow(this);
+            answerAQuiz.ShowDialog();
         }
         private void importQuizSnapshot(string filename)
         {
@@ -170,7 +172,9 @@ namespace SandRibbon.Tabs
         private void OpenResults(object sender, ExecutedRoutedEventArgs e)
         {
             Commands.BlockInput.ExecuteAsync("Viewing a quiz.");
-            new ViewQuizResults(Globals.quiz.answers, Globals.quiz.activeQuizzes).ShowDialog();
+            var viewQuizResults = new ViewQuizResults(Globals.quiz.answers, Globals.quiz.activeQuizzes);
+            viewQuizResults.Owner = Window.GetWindow(this);
+            viewQuizResults.ShowDialog();
         }
     }
 }

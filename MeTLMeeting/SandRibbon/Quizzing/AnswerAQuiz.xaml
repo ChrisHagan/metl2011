@@ -3,7 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     WindowStyle="ToolWindow"
-    Topmost="True"
     x:Name="answerAQuiz"
     MaxHeight="600"
     Title="Answer Quiz">

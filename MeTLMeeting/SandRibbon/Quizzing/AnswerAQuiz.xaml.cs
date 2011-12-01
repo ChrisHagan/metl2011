@@ -46,8 +46,16 @@ namespace SandRibbon.Quizzing
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selection = ((Option)e.AddedItems[0]);
-            Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.id,Globals.me,selection.name));
-            Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.id);
+            if (!Globals.isAuthor)
+            {
+                Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.id, Globals.me, selection.name));
+                Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.id);
+            }
+            else
+            {
+                Trace.TraceInformation("Owner ChoseQuizAnswer {0} {1}, not sending", selection.name, question.id);
+            }
+            
             this.Close();
         }
 
@@ -56,9 +64,10 @@ namespace SandRibbon.Quizzing
             QuizQuestion newQuiz = new QuizQuestion(question.id, question.created, question.title, question.author, question.question, question.options);
             newQuiz.url = "none";
             var editQuiz = new EditQuiz(newQuiz);
-            editQuiz.Show();
-            this.closeMe(null);
+            editQuiz.Owner = Window.GetWindow(this);
+            editQuiz.ShowDialog();
 
+            this.closeMe(null);
         }
     }
     public class TitleConverter : IValueConverter 
