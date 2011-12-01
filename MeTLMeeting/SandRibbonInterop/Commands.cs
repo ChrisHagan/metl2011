@@ -242,6 +242,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SetLayer = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand UpdateForeignConversationDetails = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand RememberMe = new DefaultableCompositeCommand(false);
+        public static DefaultableCompositeCommand ClipboardManager = new DefaultableCompositeCommand();
         #endregion
         public static DefaultableCompositeCommand Undo = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand Redo = new DefaultableCompositeCommand();

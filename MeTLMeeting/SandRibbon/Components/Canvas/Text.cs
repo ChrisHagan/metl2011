@@ -31,7 +31,7 @@ namespace SandRibbon.Components.Canvas
         public bool strikethrough;
         public Color color;
     }
-    public class Text : AbstractCanvas
+    public class Text : AbstractCanvas, IClipboardHandler
     {
         private readonly double defaultSize = 10.0;
         private readonly FontFamily defaultFamily = new FontFamily("Arial");
@@ -874,11 +874,26 @@ namespace SandRibbon.Components.Canvas
             };
 
         }
-        protected override void HandlePaste()
+
+        public bool CanHandleClipboardPaste()
+        {
+            return Clipboard.ContainsText();
+        }
+
+        public bool CanHandleClipboardCut()
+        {
+            return true;
+        }
+
+        public bool CanHandleClipboardCopy()
+        {
+            return true;
+        }
+
+        public void OnClipboardPaste()
         {
             try
             {
-                if (!Clipboard.ContainsText()) return;
                 if (myTextBox != null)
                 {
                     var text = Clipboard.GetText();
@@ -946,6 +961,21 @@ namespace SandRibbon.Components.Canvas
             {
 
             }
+        }
+
+        public void OnClipboardCopy()
+        {
+
+        }
+
+        public void OnClipboardCut()
+        {
+
+        }
+
+        protected override void HandlePaste()
+        {
+            Commands.ClipboardManager.Execute(ClipboardAction.Paste);
         }
         protected override void HandleCopy()
         {

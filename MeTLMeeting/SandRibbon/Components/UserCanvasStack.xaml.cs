@@ -18,6 +18,8 @@ namespace SandRibbon.Components
     public partial class UserCanvasStack
     {
         public Grid stack;
+        private ClipboardManager clipboardManager = new ClipboardManager();
+
         public UserCanvasStack()
         {
             InitializeComponent();
@@ -27,6 +29,11 @@ namespace SandRibbon.Components
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.Credentials>(loggedIn));
             Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<MeTLLib.DataTypes.ConversationDetails>(UpdateConversationDetails));
             Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(MoveTo));
+            Commands.ClipboardManager.RegisterCommand(new DelegateCommand<ClipboardAction>((action) => clipboardManager.OnClipboardAction(action)));
+
+            clipboardManager.RegisterHandler(ClipboardAction.Paste, text.OnClipboardPaste, text.CanHandleClipboardPaste);
+            clipboardManager.RegisterHandler(ClipboardAction.Paste, handwriting.OnClipboardPaste, handwriting.CanHandleClipboardPaste);
+            clipboardManager.RegisterHandler(ClipboardAction.Paste, images.OnClipboardPaste, images.CanHandleClipboardPaste);
         }
         private List<Stroke> getStrokesRelevantTo(IEnumerable<String> ids)
         {

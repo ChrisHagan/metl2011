@@ -17,7 +17,7 @@ using System.Diagnostics;
 
 namespace SandRibbon.Components.Canvas
 {
-    public class HandWriting : AbstractCanvas
+    public class HandWriting : AbstractCanvas, IClipboardHandler
     {
         public HandWriting()
         {
@@ -209,7 +209,7 @@ namespace SandRibbon.Components.Canvas
         {
             return filter(base.GetSelectedStrokes(), Globals.me, true);
         }
-        public StrokeCollection GetSelectedStrokes()
+        public new StrokeCollection GetSelectedStrokes()
         {
             return filter(base.GetSelectedStrokes(), Globals.me);
         }
@@ -555,7 +555,22 @@ namespace SandRibbon.Components.Canvas
         {
         }
 
-        protected override void HandlePaste()
+        public bool CanHandleClipboardPaste()
+        {
+            return true;
+        }
+
+        public bool CanHandleClipboardCopy()
+        {
+            return true;
+        }
+
+        public bool CanHandleClipboardCut()
+        {
+            return true;
+        }
+
+        public void OnClipboardPaste()
         {
             var strokesBeforePaste = Strokes.Select(s => s).ToList();
             Paste();
@@ -571,6 +586,21 @@ namespace SandRibbon.Components.Canvas
             if(EditingMode == InkCanvasEditingMode.Select)
                 Select(selection);
             addAdorners();
+        }
+
+        public void OnClipboardCut()
+        {
+
+        }
+
+        public void OnClipboardCopy()
+        {
+
+        }
+
+        protected override void HandlePaste()
+        {
+            Commands.ClipboardManager.Execute(ClipboardAction.Paste);
         }
         protected override void HandleCopy()
         {

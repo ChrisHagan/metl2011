@@ -38,7 +38,7 @@ namespace SandRibbon.Components.Canvas
     public class ImageInformation : TagInformation
     {
     }
-    public class Image : AbstractCanvas
+    public class Image : AbstractCanvas, IClipboardHandler
     {
         public Image()
         {
@@ -427,36 +427,62 @@ namespace SandRibbon.Components.Canvas
                 Children.Clear();
             });
         }
+
+        public bool CanHandleClipboardPaste()
+        {
+            return Clipboard.ContainsImage();
+        }
+
+        public bool CanHandleClipboardCut()
+        {
+            return true;
+        }
+
+        public bool CanHandleClipboardCopy()
+        {
+            return true;
+        }
+
+        public void OnClipboardPaste()
+        {
+            var tmpFile = "tmpImage";
+            using (FileStream fileStream = new FileStream(tmpFile, FileMode.OpenOrCreate))
+            {
+                var frame = BitmapFrame.Create(Clipboard.GetImage());
+                JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                encoder.Frames.Add(frame);
+                encoder.QualityLevel = 100;
+                encoder.Save(fileStream);
+            }
+            if (File.Exists(tmpFile))
+            {
+                var uri = MeTLLib.ClientFactory.Connection().NoAuthUploadResource(new System.Uri(tmpFile, UriKind.RelativeOrAbsolute), currentSlide);
+                var image = new System.Windows.Controls.Image
+                {
+                    Source = new BitmapImage(uri)
+                };
+                image.tag(new ImageTag(Globals.me, privacy, generateId(), false, -1));
+                SetLeft(image, 15);
+                SetTop(image, 15);
+                Commands.SendImage.ExecuteAsync(new TargettedImage
+                (currentSlide, Globals.me, target, privacy, image));
+            }
+            else MessageBox.Show("Sorry, your file could not be pasted.  Try dragging and dropping, or selecting with the add image button.");
+        }
+
+        public void OnClipboardCopy()
+        {
+
+        }
+
+        public void OnClipboardCut()
+        {
+
+        }
+
         protected override void HandlePaste()
         {
-            
-            if (Clipboard.ContainsImage())
-            {
-                var tmpFile = "tmpImage";
-                using (FileStream fileStream = new FileStream(tmpFile, FileMode.OpenOrCreate))
-                {
-                    var frame = BitmapFrame.Create(Clipboard.GetImage());
-                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-                    encoder.Frames.Add(frame);
-                    encoder.QualityLevel = 100;
-                    encoder.Save(fileStream);
-                }
-                if (File.Exists(tmpFile))
-                {
-                    var uri = MeTLLib.ClientFactory.Connection().NoAuthUploadResource(new System.Uri(tmpFile, UriKind.RelativeOrAbsolute), currentSlide);
-                    var image = new System.Windows.Controls.Image
-                    {
-                        Source = new BitmapImage(uri)
-                    };
-                    image.tag(new ImageTag(Globals.me, privacy, generateId(), false, -1));
-                    SetLeft(image, 15);
-                    SetTop(image, 15);
-                    Commands.SendImage.ExecuteAsync(new TargettedImage
-                    (currentSlide, Globals.me, target, privacy, image));
-                }
-
-                else MessageBox.Show("Sorry, your file could not be pasted.  Try dragging and dropping, or selecting with the add image button.");
-            }
+            Commands.ClipboardManager.Execute(ClipboardAction.Paste);
         }
 
         protected override void HandleCopy()
