@@ -15,6 +15,8 @@ using System.Threading;
 using System.Windows.Threading;
 using System.Windows.Automation.Peers;
 using MeTLLib;
+using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace SandRibbon.Components
 {
@@ -112,17 +114,29 @@ namespace SandRibbon.Components
 
         private void FillSearchResults(string searchString)
         {
-            var dispatcher = Dispatcher.CurrentDispatcher;
-            var worker = new Thread(() => FillSearchResultsInBackground(dispatcher, searchResults, searchString));
-            worker.Start();
+            var search = new BackgroundWorker();
+            search.DoWork += (object sender, DoWorkEventArgs e) =>
+            {
+                var bw = sender as BackgroundWorker;
+                e.Result = ClientFactory.Connection().ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
+            };
+
+            search.RunWorkerCompleted += (object sender, RunWorkerCompletedEventArgs e) =>
+            {
+                if (e.Error == null)
+                {
+                    var conversations = e.Result as List<SearchConversationDetails>;
+                    if (conversations != null)
+                    {
+                        searchResults.Clear();
+                        conversations.ForEach(cd => searchResults.Add(cd));
+                    }
+                }
+            };
+
+            search.RunWorkerAsync();
         }
 
-        private static void FillSearchResultsInBackground(Dispatcher dispatcher, ObservableCollection<ConversationDetails> collection, string searchString)
-        {
-            var conversations = ClientFactory.Connection().ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
-            Action del = () => { collection.Clear(); conversations.ForEach(cd => collection.Add(cd)); };
-            dispatcher.Invoke(del, DispatcherPriority.Background);
-        }
         /*private void setMyConversationVisibility()
         {
             Dispatcher.adoptAsync(()=>
