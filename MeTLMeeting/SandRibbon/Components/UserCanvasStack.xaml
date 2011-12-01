@@ -9,6 +9,17 @@
             <Setter Property="my:AttachedInputBindings.InputBindings">
                 <Setter.Value>
                     <InputBindingCollection>
+                        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
+                        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
+                        <KeyBinding Key="C" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Copy}" />
+                        <KeyBinding Key="X" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Cut}" />
+                        <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Paste}" />
+                        <KeyBinding Key="P" Modifiers="Ctrl" Command="{x:Static api:Commands.PrintConversation}"/>
+                        <KeyBinding Key="B" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleBold}"/>
+                        <KeyBinding Key="I" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleItalic}"/>
+                        <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
+                        <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
+                        <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
                         <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
                         <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
                     </InputBindingCollection>
@@ -17,6 +28,17 @@
         </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
+        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
+        <KeyBinding Key="C" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Copy}" />
+        <KeyBinding Key="X" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Cut}" />
+        <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Paste}" />
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{x:Static api:Commands.PrintConversation}"/>
+        <KeyBinding Key="B" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleBold}"/>
+        <KeyBinding Key="I" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleItalic}"/>
+        <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
+        <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
+        <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
         <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
         <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
     </UserControl.InputBindings>

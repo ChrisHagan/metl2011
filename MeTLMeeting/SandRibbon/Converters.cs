@@ -180,6 +180,23 @@ namespace SandRibbon
         }
     }
 
+    public class ErrorContentConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var errors = value as ReadOnlyObservableCollection<ValidationError>;
+
+            if (errors == null) return String.Empty;
+
+            return errors.Count > 0 ? errors[0].ErrorContent : String.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class availablePenTitleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -294,7 +311,7 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
-    class BoolToVisibilityWithHidden : IValueConverter
+    public class BoolToVisibilityWithHidden : IValueConverter
     {
         #region Properties
         /// <summary>
@@ -559,7 +576,7 @@ namespace SandRibbon
                 var list = ((ObservableCollection<MeTLLib.DataTypes.QuizQuestion>)values[1]);
                 return string.Format("Quiz: {0}", list.IndexOf((MeTLLib.DataTypes.QuizQuestion)values[0]) + 1);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Unknown";
             }
@@ -953,7 +970,7 @@ namespace SandRibbon
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if ((double)value != null && (double)value < 360 && (double)value > 0)
+            if (value != null && (double)value < 360 && (double)value > 0)
             {
                 return (double)value;
             }
@@ -977,7 +994,7 @@ namespace SandRibbon
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if ((double)value != null && (double)value < 256 && (double)value > 0)
+            if (value != null && (double)value < 256 && (double)value > 0)
             {
                 return (double)value;
             }

@@ -63,6 +63,15 @@ namespace SandRibbon
             DefaultValue = arg;
             base.Execute(arg);
         }
+
+        public override void RegisterCommand(ICommand command)
+        {
+#if DEBUG
+            if (RegisteredCommands.Contains(command))
+                Debug.Fail("Command is already registered");
+#endif
+            base.RegisterCommand(command);
+        }
     }
     public class Commands
     {

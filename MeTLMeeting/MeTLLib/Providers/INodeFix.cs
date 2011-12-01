@@ -25,7 +25,7 @@ namespace MeTLLib.Providers
                 var uri = new Uri(source);
                 return uri.PathAndQuery;
             }
-            catch (UriFormatException e) {
+            catch (UriFormatException) {
                 return source;
             }
         }

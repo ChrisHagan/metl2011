@@ -8,9 +8,11 @@ namespace SandRibbon.Utils
         public static bool mustBeInConversation()
         {
             var details = Globals.conversationDetails;
-            if (ConversationDetails.Empty.Equals(details)) return false;
-            if(details.Subject != "Deleted" && details.Jid != "")
-                    return true;
+            if (details.IsEmpty) 
+                return false;
+            if (!details.isDeleted && !details.IsJidEqual(""))
+                return true;
+
             return false;
         }
     }

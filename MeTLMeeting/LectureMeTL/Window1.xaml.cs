@@ -37,7 +37,7 @@ namespace LectureMeTL
                 if (pingResponse.Status == IPStatus.Success)
                     CanConnect = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show("MeTL cannot contact the server.  Please check that you are connected to the internet.");
             }

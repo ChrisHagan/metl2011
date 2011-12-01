@@ -429,6 +429,7 @@ namespace SandRibbon.Components.Canvas
         }
         protected override void HandlePaste()
         {
+            
             if (Clipboard.ContainsImage())
             {
                 var tmpFile = "tmpImage";
@@ -510,8 +511,11 @@ namespace SandRibbon.Components.Canvas
         }
         private IEnumerable<UIElement> filterMyImages(IEnumerable<UIElement> elements)
         {
-           // if (inMeeting() || Globals.isAuthor) return elements;
-            if (true || inMeeting()) return elements;
+            #if ENABLE_BANHAMMER
+                if (inMeeting() || Globals.isAuthor) return elements;
+            #else
+                if (inMeeting()) return elements;
+            #endif
             var myImages = new List<UIElement>();
             foreach (UIElement image in elements)
             {
@@ -907,7 +911,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (filename.StartsWith("http")) return true;
             var info = new FileInfo(filename);
-            if (size != null && info.Length > size * MEGABYTE)
+            if (info.Length > size * MEGABYTE)
             {
                 return false;
             }

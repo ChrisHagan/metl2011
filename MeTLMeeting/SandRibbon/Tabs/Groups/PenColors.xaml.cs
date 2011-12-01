@@ -668,7 +668,6 @@ new StylusPoint[]{new StylusPoint(17.6666666666667,86,0.5f),new StylusPoint(18,8
                     internalupdate = false;
                 }
             }
-            private string xamlcolorname;
             public string XAMLColorName { get; set; }
             private Color colorvalue { get; set; }
             public Color ColorValue

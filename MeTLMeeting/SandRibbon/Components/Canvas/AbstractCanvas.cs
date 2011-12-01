@@ -85,6 +85,8 @@ namespace SandRibbon.Components.Canvas
             }
         }
 
+        private static bool commandsRegistered = false;
+
         private bool affectedByPrivacy { get { return target == "presentationSpace"; } }
         public string privacy { get { return affectedByPrivacy ? actualPrivacy : defaultPrivacy; } }
         public delegate void ChildrenChangedHandler(DependencyObject visualAdded, DependencyObject visualRemoved);
@@ -93,7 +95,6 @@ namespace SandRibbon.Components.Canvas
             : base()
         {
             
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             DragOver += ImageDragOver;
             Drop += ImagesDrop;
             PreviewKeyDown += AbstractCanvas_KeyDown;
@@ -103,8 +104,6 @@ namespace SandRibbon.Components.Canvas
                 HandleCopy()));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) =>
                                                                             HandleCut()));
-            
-            SelectionChanged += new EventHandler(AbstractCanvas_SelectionChanged);
             Loaded += (_sender, _args) => this.Dispatcher.adoptAsync(delegate
             {
                 if (target == null)
@@ -115,14 +114,20 @@ namespace SandRibbon.Components.Canvas
                     //context = getContext();
                 }
             });
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
-            Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(ClearSelectionOnLayerChanged));
-            Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
-            Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<object>(ItemsPrivacyChange));
 
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideAdorners));
+            // only want these registered once
+            if (!commandsRegistered)
+            {
+                commandsRegistered = true;
+                Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
+                Commands.MoveTo.RegisterCommand(new DelegateCommand<object>(moveTo));
+                Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(ClearSelectionOnLayerChanged));
+                Commands.DoWithCurrentSelection.RegisterCommand(new DelegateCommand<Action<SelectedIdentity>>(DoWithCurrentSelection));
+                Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<object>(ItemsPrivacyChange));
+    
+                Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideAdorners));
+            }
         }
-
 
         protected static void abosoluteizeElements(List<UIElement> selectedElements)
         {
@@ -175,9 +180,6 @@ namespace SandRibbon.Components.Canvas
                 }
                 catch (Exception) { }
             }
-        }
-        protected void AbstractCanvas_SelectionChanged(object sender, EventArgs e)
-        {
         }
         public abstract void showPrivateContent();
         public abstract void hidePrivateContent();
