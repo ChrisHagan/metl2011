@@ -55,7 +55,6 @@ namespace SandRibbon.Components.Canvas
         // End Awesomium comment out
         */
         public string defaultPrivacy;
-        public string actualPrivacy;
         public string target;
         public bool canEdit;
         private int setSlide = -1;
@@ -88,7 +87,7 @@ namespace SandRibbon.Components.Canvas
         private static bool commandsRegistered = false;
 
         private bool affectedByPrivacy { get { return target == "presentationSpace"; } }
-        public string privacy { get { return affectedByPrivacy ? actualPrivacy : defaultPrivacy; } }
+        public string privacy { get { return affectedByPrivacy ? Globals.privacy: defaultPrivacy; } }
         public delegate void ChildrenChangedHandler(DependencyObject visualAdded, DependencyObject visualRemoved);
         public event ChildrenChangedHandler ChildrenChanged;
         public AbstractCanvas()
@@ -110,7 +109,6 @@ namespace SandRibbon.Components.Canvas
                 {
                     target = (string)FindResource("target");
                     defaultPrivacy = (string)FindResource("defaultPrivacy");
-                    actualPrivacy = defaultPrivacy;
                     //context = getContext();
                 }
             });
@@ -199,10 +197,9 @@ namespace SandRibbon.Components.Canvas
         {
             Dispatcher.adoptAsync(delegate
                                          {
-                                             actualPrivacy = p;
                                              try
                                              {
-                                                 var canEdit = actualPrivacy == "private" ||
+                                                 var canEdit = p == "private" ||
                                                                Globals.conversationDetails.Permissions.studentCanPublish ||
                                                                Globals.conversationDetails.Author == Globals.me;
                                                  SetCanEdit(canEdit);
