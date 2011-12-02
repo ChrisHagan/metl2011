@@ -1,18 +1,19 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Net.NetworkInformation;
 using System.Security.Authentication;
+using System.Threading;
 using agsXMPP;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.x.muc;
 using agsXMPP.Xml.Dom;
-using Microsoft.Practices.Composite.Presentation.Commands;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Structure;
-using System.Diagnostics;
+using MeTLLib.Utilities;
+using Microsoft.Practices.Composite.Presentation.Commands;
 using Ninject;
-using System.Threading;
-using System.Net.NetworkInformation;
 
 namespace MeTLLib.Providers.Connection
 {
@@ -41,7 +42,7 @@ namespace MeTLLib.Providers.Connection
         private static object instanceLock = new object();
         public JabberWire wire()
         {
-            lock (instanceLock)
+            using (DdMonitor.Lock(instanceLock))
             {
                 if (credentials == null) throw new InvalidOperationException("The JabberWireFactory does not yet have credentials to create a wire");
                 if (instance == null)

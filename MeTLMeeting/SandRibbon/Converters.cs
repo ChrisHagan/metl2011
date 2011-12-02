@@ -1059,7 +1059,7 @@ namespace SandRibbon
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if ((double)value != null && (double)value < 256 && (double)value > 0)
+            if (value != null && (double)value < 256 && (double)value > 0)
             {
                 double dblValue = System.Convert.ToDouble(value);
                 return (int)dblValue;

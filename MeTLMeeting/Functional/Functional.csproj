@@ -110,6 +110,7 @@
     <Compile Include="ConversationEditingInMultipleUserSpace.cs" />
     <Compile Include="CreateConversationTests.cs" />
     <Compile Include="EditConversationTests.cs" />
+    <Compile Include="FindConflictingReferences.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchConversationTests.cs" />
     <Compile Include="ShutdownTests.cs" />

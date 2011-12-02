@@ -274,7 +274,7 @@ namespace SandRibbon.Components.Canvas
                 deleteSelectedItems(null);
             }
         }
-        protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
+        protected new void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
         {
             if (!Globals.conversationDetails.Permissions.studentCanPublish && !Globals.isAuthor)
             {

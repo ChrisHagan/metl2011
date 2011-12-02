@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using MeTLLib.Providers.Connection;
 using MeTLLib.DataTypes;
+using MeTLLib.Utilities;
 using Ninject;
 
 namespace MeTLLib.Providers.Structure
@@ -22,9 +23,11 @@ namespace MeTLLib.Providers.Structure
         [Inject]
         public MeTLGenericAddress searchServer { private get; set; }
         private static object wireLock = new object();
-        private JabberWire wire{
-            get {
-                lock (wireLock)
+        private JabberWire wire
+        {
+            get 
+            {
+                using (DdMonitor.Lock(wireLock))
                 {
                     if (_wire == null)
                         _wire = jabberWireFactory.wire();
@@ -43,7 +46,6 @@ namespace MeTLLib.Providers.Structure
         {
             get { return string.Format("https://{0}:{1}", server.host, HTTP_PORT); }
         }
-        private readonly string RESOURCE = "Resource";
         private readonly string STRUCTURE = "Structure";
         private readonly string UPLOAD = "upload_nested.yaws";
         private string NEXT_AVAILABLE_ID
@@ -51,7 +53,6 @@ namespace MeTLLib.Providers.Structure
             get { return string.Format("{0}/primarykey.yaws", ROOT_ADDRESS); }
         }
         private readonly string DETAILS = "details.xml";
-        private readonly string SUMMARY = "summary.xml";
         public bool isAccessibleToMe(string jid)
         {
             var myGroups = Globals.authorizedGroups.Select(g => g.groupKey);

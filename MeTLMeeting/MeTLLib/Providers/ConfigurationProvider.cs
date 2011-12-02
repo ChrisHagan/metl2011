@@ -15,7 +15,6 @@ namespace MeTLLib.Providers
         private static string server;
         private static string stagingServer;
         private static object instanceLock = new object();
-        private static ConfigurationProvider instanceProperty;
         public bool isStaging = false;
         public string SERVER
         {

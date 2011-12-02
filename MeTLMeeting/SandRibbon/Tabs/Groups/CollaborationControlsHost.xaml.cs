@@ -20,7 +20,7 @@ namespace SandRibbon.Tabs.Groups
         {
             InitializeComponent();
             DataContext = this;
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>(joinConversation));
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(joinConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<object>(updateConversationDetails));
         }
         private void updateConversationDetails(object obj)

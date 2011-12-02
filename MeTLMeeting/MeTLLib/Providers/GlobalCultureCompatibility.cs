@@ -31,7 +31,7 @@ namespace MeTLLib.Providers
             }
             return System.DateTime.Now;
         }
-        public string ToString()
+        public override string ToString()
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
             return base.ToString();

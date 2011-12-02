@@ -90,7 +90,7 @@ namespace MeTLLib.DataTypes
         {
             autoshape = Autoshape;
         }
-        public bool ValueEquals(object obj)
+        public new bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedAutoShape)) return false;
             return (((TargettedElement)this).ValueEquals((TargettedElement)obj) && ((TargettedAutoShape)obj).autoshape.ValueEquals(autoshape));
@@ -106,7 +106,7 @@ namespace MeTLLib.DataTypes
             url = Url;
             time = Time;
         }
-        public bool ValueEquals(object obj)
+        public new bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedSubmission)) return false;
             return (((TargettedElement)this).ValueEquals((TargettedElement)obj) && ((TargettedSubmission)obj).url == url && ((TargettedSubmission)obj).time == time);
@@ -133,7 +133,7 @@ namespace MeTLLib.DataTypes
             startingColor = strokeStartingColor;
         }
 
-        public bool ValueEquals(object obj)
+        public new bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedStroke)) return false;
             return (((TargettedElement)this).ValueEquals((TargettedElement)obj) && ((TargettedStroke)obj).stroke.Equals(stroke) && ((TargettedStroke)obj).startingChecksum == startingChecksum);
@@ -150,7 +150,7 @@ namespace MeTLLib.DataTypes
             context = Context;
             thoughtSlide = ThoughtSlide;
         }
-        public bool ValueEquals(object obj)
+        public new bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedBubbleContext)) return false;
             var foreignContext = (TargettedBubbleContext)obj;
@@ -170,7 +170,7 @@ namespace MeTLLib.DataTypes
             name = Name;
             conversationJid = slide - ((Slide % 1000) % 400);
         }
-        public bool ValueEquals(object obj)
+        public new bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedFile)) return false;
             var foreignFile = (TargettedFile)obj;
@@ -203,13 +203,14 @@ namespace MeTLLib.DataTypes
         public MeTLStanzas.Image imageSpecification;
         public MeTLServerAddress server;
         private IWebClient downloader;
-        private HttpResourceProvider provider;
+        private HttpResourceProvider provider; 
         public string id;
         public void injectDependencies(MeTLServerAddress server, IWebClient downloader, HttpResourceProvider provider)
         {
             if (imageSpecification == null) imageSpecification = new MeTLStanzas.Image(this);
             this.server = server;
             this.downloader = downloader;
+            this.provider = provider;
             imageSpecification.injectDependencies(server, downloader, provider);
         }
         public System.Windows.Controls.Image image
@@ -258,7 +259,7 @@ namespace MeTLLib.DataTypes
         }
         public MeTLServerAddress server;
         public HttpResourceProvider resourceProvider;
-        public bool ValueEquals(object obj)
+        public new bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedVideo)) return false;
             var foreign = (TargettedVideo)obj;
@@ -326,7 +327,7 @@ namespace MeTLLib.DataTypes
             boxSpecification = BoxSpecification;
             identity = Identity;
         }
-        public bool ValueEquals(object obj)
+        public new bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedTextBox)) return false;
             var foreign = (TargettedTextBox)obj;
@@ -356,7 +357,7 @@ namespace MeTLLib.DataTypes
                 {
                     internalIdentity = value.tag().id;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     if (String.IsNullOrEmpty(identity))
                         identity = string.Format("{0}:{1}", author, DateTimeFactory.Now());
@@ -376,7 +377,7 @@ namespace MeTLLib.DataTypes
             identifier = Identifier;
         }
         public string identifier;
-        public bool ValueEquals(object obj)
+        public new bool ValueEquals(object obj)
         {
             if (obj == null || !(obj is TargettedDirtyElement)) return false;
             var foreign = (TargettedDirtyElement)obj;
@@ -476,11 +477,11 @@ namespace MeTLLib.DataTypes
             private string StrokeThicknessTag = "strokethickness";
             private string ForegroundTag = "foreground";
             private string BackgroundTag = "background";
-            private string ThicknessTag = "thickness";
-            private string HeightTag = "height";
-            private string WidthTag = "width";
-            private string XTag = "x";
-            private string YTag = "y";
+            //private string ThicknessTag = "thickness";
+            //private string HeightTag = "height";
+            //private string WidthTag = "width";
+            //private string XTag = "x";
+            //private string YTag = "y";
             public TargettedAutoShape autoshape
             {
                 get
@@ -661,7 +662,7 @@ namespace MeTLLib.DataTypes
             private string highlighterTag = "highlight";
             private string sumTag = "checksum";
             private string startingSumTag = "startingSum";
-            private string startingColorTag = "startingColor";
+            //private string startingColorTag = "startingColor";
 
             public TargettedStroke Stroke
             {
@@ -693,7 +694,7 @@ namespace MeTLLib.DataTypes
                     {
                         startingSum = value.stroke.startingSum();
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         startingSum = value.stroke.sum().checksum;
                     }

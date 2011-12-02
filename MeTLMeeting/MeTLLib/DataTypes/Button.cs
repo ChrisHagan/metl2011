@@ -45,20 +45,20 @@ namespace MeTLLib.DataTypes
         public static readonly DependencyProperty PathDataProperty =
             DependencyProperty.Register("PathData", typeof(PathGeometry), typeof(Thumb), new UIPropertyMetadata(null));
 
-        public Brush Background
+        public new Brush Background
         {
             get { return (Brush)GetValue(BackgroundProperty); }
             set { SetValue(BackgroundProperty, value); }
         }
-        public static readonly DependencyProperty BackgroundProperty =
+        public static new readonly DependencyProperty BackgroundProperty =
             DependencyProperty.Register("Background", typeof(Brush), typeof(Thumb), new UIPropertyMetadata(Brushes.Transparent));
 
-        public Brush Foreground
+        public new Brush Foreground
         {
             get { return (Brush)GetValue(ForegroundProperty); }
             set { SetValue(ForegroundProperty, value); }
         }
-        public static readonly DependencyProperty ForegroundProperty =
+        public new static readonly DependencyProperty ForegroundProperty =
             DependencyProperty.Register("Foreground", typeof(Brush), typeof(Thumb), new UIPropertyMetadata(Brushes.Black));
 
         public System.Double StrokeThickness
@@ -231,16 +231,16 @@ namespace MeTLLib.DataTypes
             get { return (double)GetValue(YProperty); }
             set { SetValue(YProperty, value); }
         }
-        public static readonly DependencyProperty WidthProperty =
+        public static new readonly DependencyProperty WidthProperty =
             DependencyProperty.Register("Width", typeof(double), typeof(Thumb), new UIPropertyMetadata((double)0));
-        public double Width
+        public new double Width
         {
             get { return (double)GetValue(WidthProperty); }
             set { SetValue(WidthProperty, value); }
         }
-        public static readonly DependencyProperty HeightProperty =
+        public new static readonly DependencyProperty HeightProperty =
             DependencyProperty.Register("Height", typeof(double), typeof(Thumb), new UIPropertyMetadata((double)0));
-        public double Height
+        public new double Height
         {
             get { return (double)GetValue(HeightProperty); }
             set { SetValue(HeightProperty, value); }

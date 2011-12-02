@@ -11,8 +11,6 @@ using MeTLLib.DataTypes;
 using System.Collections.Generic;
 using MeTLLib.Providers.Connection;
 using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows;
 
 namespace SandRibbon.Components
 {
@@ -124,7 +122,7 @@ namespace SandRibbon.Components
                         return myIndex;
                     return index;
                 }
-                catch(Exception e)
+                catch(Exception)
                 {
                     return 0;
                 }

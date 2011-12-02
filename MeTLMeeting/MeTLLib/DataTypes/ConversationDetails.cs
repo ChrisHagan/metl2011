@@ -304,7 +304,7 @@ namespace MeTLLib.DataTypes
                     new XElement(DEFAULT_HEIGHT, s.defaultHeight),
                     new XElement(DEFAULT_WIDTH, s.defaultWidth),
                     new XElement(EXPOSED_TAG, s.exposed.ToString()),
-                    new XElement(TYPE_TAG, (s.type == null ? Slide.TYPE.SLIDE : s.type).ToString())))
+                    new XElement(TYPE_TAG, s.type.ToString())))
                     , blacklist.Select(b => new XElement(BLACKLIST_TAG, b)));
         }
         public event PropertyChangedEventHandler PropertyChanged;
@@ -386,7 +386,7 @@ namespace MeTLLib.DataTypes
         public bool usersAreCompulsorilySynced = true;
         private static string ALLSYNC = "usersAreCompulsorilySynced";
         public string conversationGroup = "";
-        private static string CONVERSATIONGROUP = "conversationGroup";
+        //private static string CONVERSATIONGROUP = "conversationGroup";
         public bool NavigationLocked;
         private static string NAVIGATIONLOCKED = "navigationlocked";
         public static Permissions ReadXml(XElement doc)
@@ -414,6 +414,10 @@ namespace MeTLLib.DataTypes
         {
             if (obj == null || !(obj is Slide)) return false;
             return ((Slide)obj).id == id;
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
         public bool ValueEquals(object obj)
         {

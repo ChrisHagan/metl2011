@@ -156,14 +156,14 @@ namespace MeTLLib.Providers.Connection
         public override void actOnAutoShapeReceived(TargettedAutoShape autoshape)
         {
             return;
-            try
+            /*try
             {
                 autoshapes[(string)autoshape.autoshape.Tag] = autoshape;
             }
             catch (NullReferenceException)
             {
                 Trace.TraceError("Null reference in collecting autoshape from preparser");
-            }
+            }*/
         }
         public override void actOnStrokeReceived(TargettedStroke stroke)
         {

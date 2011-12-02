@@ -23,6 +23,7 @@ using MeTLLib.Providers.Connection;
 using System.Windows.Media.Imaging;
 using System.Windows.Interop;
 using SandRibbon.Components.Sandpit;
+using System.Threading;
 
 namespace SandRibbon
 {
@@ -167,16 +168,23 @@ namespace SandRibbon
             source.AddHook(WndProc);
         }
 
-        private static object extendLock = new object();
+        private static int checkExtendedInProgress = 0;
         private void CheckForExtendedDesktop()
         {
-            lock (extendLock)
+            if (1 == Interlocked.Increment(ref checkExtendedInProgress))
             {
-                var screenCount = System.Windows.Forms.Screen.AllScreens.Count();
-                if (Projector.Window == null && screenCount > 1)
-                    Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
-                else if (Projector.Window != null && screenCount == 1)
-                    Projector.Window.Close();
+                try
+                {
+                    var screenCount = System.Windows.Forms.Screen.AllScreens.Count();
+                    if (Projector.Window == null && screenCount > 1)
+                        Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
+                    else if (Projector.Window != null && screenCount == 1)
+                        Projector.Window.Close();
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref checkExtendedInProgress, 0);
+                }
             }
         }
 

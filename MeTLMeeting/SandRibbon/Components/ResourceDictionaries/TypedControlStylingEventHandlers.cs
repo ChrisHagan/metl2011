@@ -66,18 +66,18 @@ namespace SandRibbon.Components.ResourceDictionaries
             Video_Pause(sender, new RoutedEventArgs());
         }
         private bool Updating = true;
-        private bool isPaused = false;
+        //private bool isPaused = false;
         public void sliderMouseDown(object sender, EventArgs e)
         {
             var MediaElement = ((MeTLLib.DataTypes.Video)((FrameworkElement)sender).DataContext).MediaElement;
             Updating = false;
-            if (MediaElement.Clock.IsPaused)
-                isPaused = true;
+            /*if (MediaElement.Clock.IsPaused)
+                isPaused = true;*/
         }
         public void sliderMouseUp(object sender, EventArgs e)
         {
             var MediaElement = ((MeTLLib.DataTypes.Video)((FrameworkElement)sender).DataContext).MediaElement;
-            isPaused = false;
+            //isPaused = false;
             var currentPosition = MediaElement.Position;
             Updating = true;
             MediaElement.Clock.Controller.Seek(currentPosition, System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);

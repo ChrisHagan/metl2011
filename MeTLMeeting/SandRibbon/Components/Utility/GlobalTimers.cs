@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using MeTLLib.Utilities;
 
 namespace SandRibbon.Components.Utility
 {
@@ -11,7 +12,7 @@ namespace SandRibbon.Components.Utility
         private static object locker = new object();
         public static void SetSyncTimer(Action timedAction, int slide)
         {
-            lock (locker)
+            using (DdMonitor.Lock(locker))
             {
                 currentSlide = slide;
                 currentAction = timedAction;
@@ -21,18 +22,20 @@ namespace SandRibbon.Components.Utility
                                           {
                                               try
                                               {
-                                                  lock (locker)
+                                                  using (DdMonitor.Lock(locker))
                                                   {
-                                                      if(currentAction != null)
+                                                      if (currentAction != null)
                                                           currentAction();
                                                       currentSlide = 0;
                                                   }
                                               }
                                               catch (Exception)
                                               {
-
                                               }
-                                              SyncTimer = null;
+                                              finally
+                                              {
+                                                  SyncTimer = null;
+                                              }
                                           },null, 500, Timeout.Infinite );
         }
         public static int getSlide()
