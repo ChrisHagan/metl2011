@@ -140,6 +140,7 @@ namespace SandRibbon.Components
         }
         private void leaveAllRooms(object _obj)
         {
+            detachFromClient(); // don't care about events anymore
             client.LeaveAllRooms();
         }
         private void LeaveConversation(string Jid)
@@ -267,6 +268,38 @@ namespace SandRibbon.Components
             client.events.SyncMoveRequested += syncMoveRequested;
             client.events.StatusChanged += statusChanged;
             client.events.SlideCollectionUpdated += slideCollectionChanged;
+        }
+
+        private void detachFromClient()
+        {
+            client.events.TeacherStatusReceived -= teacherStatusReceived;
+            client.events.TeacherStatusRequest -= teacherStatusRequest;
+            client.events.AutoshapeAvailable -= autoShapeAvailable;
+            client.events.BubbleAvailable -= bubbleAvailable;
+            client.events.ChatAvailable -= chatAvailable;
+            client.events.CommandAvailable -= commandAvailable;
+            client.events.ConversationDetailsAvailable -= conversationDetailsAvailable;
+            client.events.DirtyAutoShapeAvailable -= dirtyAutoshapeAvailable;
+            client.events.DirtyImageAvailable -= dirtyImageAvailable;
+            client.events.DirtyLiveWindowAvailable -= dirtyLiveWindowAvailable;
+            client.events.DirtyStrokeAvailable -= dirtyStrokeAvailable;
+            client.events.DirtyTextBoxAvailable -= dirtyTextBoxAvailable;
+            client.events.DirtyVideoAvailable -= dirtyVideoAvailable;
+            client.events.DiscoAvailable -= discoAvailable;
+            client.events.FileAvailable -= fileAvailable;
+            client.events.ImageAvailable -= imageAvailable;
+            client.events.LiveWindowAvailable -= liveWindowAvailable;
+            client.events.PreParserAvailable -= preParserAvailable;
+            client.events.QuizAnswerAvailable -= quizAnswerAvailable;
+            client.events.QuizQuestionAvailable -= quizQuestionAvailable;
+            client.events.StrokeAvailable -= strokeAvailable;
+            client.events.SubmissionAvailable -= submissionAvailable;
+            client.events.PresenceAvailable -= presenceAvailable;
+            client.events.TextBoxAvailable -= textBoxAvailable;
+            client.events.VideoAvailable -= videoAvailable;
+            client.events.SyncMoveRequested -= syncMoveRequested;
+            client.events.StatusChanged -= statusChanged;
+            client.events.SlideCollectionUpdated -= slideCollectionChanged;
         }
         private void teacherStatusReceived(object sender, TeacherStatusRequestEventArgs e)
         {
