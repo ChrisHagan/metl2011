@@ -89,13 +89,13 @@
                                         <Label Target="{Binding ElementName=username}" Content="_Username (eg fgsmi3)" FontWeight="bold" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
                                         <Label Target="{Binding ElementName=password}" Content="_Password" FontWeight="bold" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"/>
 
-                                        <TextBox x:Name="username" Grid.Row="0" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}" 
+                                        <TextBox x:Name="username" Grid.Row="0" Grid.Column="1" IsEnabled="True" 
                                                  Validation.Error="ValidationErrorHandler"
                                                  Style="{StaticResource ErrorStyle}"
                                                  Text="{Binding UpdateSourceTrigger=LostFocus, Path=Username,
                                                         ValidatesOnDataErrors=True, NotifyOnValidationError=True}">
                                         </TextBox>
-                                        <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
+                                        <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" IsEnabled="True"
                                                      Validation.Error="ValidationErrorHandler"
                                                      Style="{StaticResource ErrorStyle}"
                                                      utility:PasswordBoxBinder.BindPassword="true" utility:PasswordBoxBinder.BoundPassword="{Binding Path=Password, 
