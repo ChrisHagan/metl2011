@@ -85,10 +85,10 @@ namespace SandRibbon.Components.Submissions
                    Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
                    var image = (TargettedSubmission) item;
                    Commands.ImageDropped.ExecuteAsync(new ImageDrop { 
-                         filename = image.url.ToString (), 
-                         target = "presentationSpace",
-                         point = new Point (0, 0),
-                         position = 1
+                         Filename = image.url.ToString (), 
+                         Target = "presentationSpace",
+                         Point = new Point (0, 0),
+                         Position = 1
 
                      });
                });

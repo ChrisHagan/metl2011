@@ -7,7 +7,7 @@ namespace SandRibbon.Utils
 {
     public class UndoHistory
     {
-        private class HistoricalAction
+        public class HistoricalAction
         {
             public Action undo;
             public Action redo;

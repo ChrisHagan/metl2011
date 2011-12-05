@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using MeTLLib.DataTypes;
+using SandRibbon.Components;
 using SandRibbon.Components.Pedagogicometry;
 using SandRibbon.Components.Canvas;
 using System.Drawing;
+using TextInformation = SandRibbon.Components.TextInformation;
 
 namespace SandRibbon.Providers
 {
@@ -55,7 +57,11 @@ namespace SandRibbon.Providers
                 }
             }
         }
-        public static Dictionary<string, List<string>> PresenceListing = new Dictionary<string, List<string>>();  
+        public static Dictionary<string, List<string>> PresenceListing = new Dictionary<string, List<string>>();
+        public static string PUBLIC = "public";
+        public static string PRIVATE = "private";
+        public static string PROJECTOR = "projector";
+
         public static bool isAuthor
         {
             get

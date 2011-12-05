@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="SandRibbon.Components.CollapsedCanvasStack"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:my="clr-namespace:SandRibbon"
+    xmlns:canvas="clr-namespace:SandRibbon.Components.Canvas"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop" >
+     <UserControl.Resources>
+        <Style TargetType="{x:Type canvas:MeTLTextBox}">
+            <Setter Property="my:AttachedInputBindings.InputBindings">
+                <Setter.Value>
+                    <InputBindingCollection>
+                        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
+                        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
+                        <KeyBinding Key="C" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Copy}" />
+                        <KeyBinding Key="X" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Cut}" />
+                        <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Paste}" />
+                        <KeyBinding Key="P" Modifiers="Ctrl" Command="{x:Static api:Commands.PrintConversation}"/>
+                        <KeyBinding Key="B" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleBold}"/>
+                        <KeyBinding Key="I" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleItalic}"/>
+                        <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
+                        <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
+                        <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
+                        <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
+                        <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
+                    </InputBindingCollection>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{x:Static api:Commands.Undo}" />
+        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{x:Static api:Commands.Redo}" />
+        <KeyBinding Key="C" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Copy}" />
+        <KeyBinding Key="X" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Cut}" />
+        <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static ApplicationCommands.Paste}" />
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{x:Static api:Commands.PrintConversation}"/>
+        <KeyBinding Key="B" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleBold}"/>
+        <KeyBinding Key="I" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleItalic}"/>
+        <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
+        <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
+        <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
+        <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
+        <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
+    </UserControl.InputBindings>
+    <Grid MinHeight="540" MinWidth="720"  x:Name="canvasStack" Background="White">
+        <InkCanvas x:Name="OtherWork" Background="Transparent" EditingMode="None"/>
+        <InkCanvas x:Name="MyWork" Background="Transparent"/>
+    </Grid>
+</UserControl>

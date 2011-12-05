@@ -21,7 +21,7 @@ using System.Diagnostics;
 
 namespace SandRibbon.Components.Canvas
 {
-    public class TextInformation : TagInformation
+    internal class TextInformation : TagInformation
     {
         public double size;
         public FontFamily family;

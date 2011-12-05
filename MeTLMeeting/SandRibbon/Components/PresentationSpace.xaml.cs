@@ -50,6 +50,7 @@ namespace SandRibbon.Components
             Commands.AllStaticCommandsAreRegistered();
         }
         private void VisualizeContent(object obj) {
+          /*
             var authors = new List<string>();
             authors.AddRange(stack.handwriting.getSelectedAuthors());
             authors.AddRange(stack.text.GetSelectedAuthors());
@@ -67,9 +68,11 @@ namespace SandRibbon.Components
             foreach (var elem in stack.images.GetSelectedElements())
                 stack.images.applyShadowEffectTo((FrameworkElement)elem, authorColor[((System.Windows.Controls.Image)elem).tag().author]);
             new colorCodedUsers(authorColor).ShowDialog();
+           * */
         }
         private void BanHammerSelectedItems(object obj)
         {
+            /*
             var authors = new List<string>();
             authors.AddRange(stack.handwriting.getSelectedAuthors());
             authors.AddRange(stack.text.GetSelectedAuthors());
@@ -82,6 +85,7 @@ namespace SandRibbon.Components
             }
             ClientFactory.Connection().UpdateConversationDetails(details);
             Commands.SetPrivacyOfItems.Execute("private");
+             * */
         }
 
         private void setUpSyncDisplay(int slide)
@@ -216,19 +220,21 @@ namespace SandRibbon.Components
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
             BeginInit();
-            stack.handwriting.ReceiveStrokes(parser.ink);
-            stack.images.ReceiveImages(parser.images.Values);
+            stack.ReceiveStrokes(parser.ink);
+            stack.ReceiveImages(parser.images.Values);
             foreach (var text in parser.text.Values)
-                stack.text.doText(text);
+                stack.DoText(text);
+           /*
             foreach (var video in parser.videos)
             {
+                
                 var srVideo = ((MeTLLib.DataTypes.TargettedVideo)video.Value).video;
                 srVideo.VideoWidth = srVideo.MediaElement.NaturalVideoWidth;
                 srVideo.VideoHeight = srVideo.MediaElement.NaturalVideoHeight;
                 srVideo.MediaElement.LoadedBehavior = MediaState.Manual;
                 srVideo.MediaElement.ScrubbingEnabled = true;
                 stack.images.AddVideo(srVideo);
-            } 
+            }*/ 
             EndInit();
         }
         private void MirrorPresentationSpace(Window1 parent)
@@ -522,8 +528,9 @@ namespace SandRibbon.Components
             var clone = new InkCanvas();
             clone.Height = ActualHeight;
             clone.Width = ActualWidth;
-            foreach(var stroke in stack.handwriting.Strokes.Where(s=>s.tag().privacy == "public"))
+            foreach(var stroke in stack.PublicStrokes)
                 clone.Strokes.Add(stroke.Clone());
+            /*
             foreach(var canvas in new AbstractCanvas[]{stack.images, stack.text})
                 foreach (var child in canvas.Children)
                 {
@@ -531,6 +538,7 @@ namespace SandRibbon.Components
                     if (fe.privacy() == "public")
                         clone.Children.Add(viewFor(fe));
                 }
+             * */
             var size = new Size(ActualWidth,ActualHeight);
             clone.Measure(size);
             clone.Arrange(new Rect(size));
@@ -538,14 +546,16 @@ namespace SandRibbon.Components
         }
         private FrameworkElement cloneAll(){
             var clone = new InkCanvas();
-            foreach(var stroke in stack.handwriting.Strokes)
+            foreach(var stroke in stack.AllStrokes)
                 clone.Strokes.Add(stroke.Clone());
+            /*
             foreach(var canvas in new AbstractCanvas[]{stack.images, stack.text})
                 foreach (var child in canvas.Children)
                 {
                     var fe = (FrameworkElement)child;
                     clone.Children.Add(viewFor(fe));
                 }
+             */
             var size = new Size(ActualWidth,ActualHeight);
             clone.Measure(size);
             clone.Arrange(new Rect(size));

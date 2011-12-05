@@ -8,6 +8,7 @@
         <core:String x:Key="target">presentationSpace</core:String>
     </UserControl.Resources>
     
-        <components:UserCanvasStack x:Name="stack"/>
-   
+        <!--components:UserCanvasStack x:Name="stack"/-->
+        <components:CollapsedCanvasStack x:Name="stack" />
+
 </UserControl>
