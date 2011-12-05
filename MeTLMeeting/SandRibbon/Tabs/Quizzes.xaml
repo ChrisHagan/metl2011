@@ -86,8 +86,9 @@
                                         <Border Background="{StaticResource BackgroundBlueGradient}" CornerRadius="2" BorderThickness="1" BorderBrush="DarkBlue">
                                             <Button x:Name="quiz" Click="quiz_Click" MaxWidth="100" >
                                                 <Button.ToolTip>
-                                                    <dict:MeTLImageToolTip TitleText="View quiz" ImageSource="\Resources\Ribbon-Quiz.png"
-                                                                                            ContentText="{Binding Path=title}"/>
+                                                    <dict:MeTLImageToolTip TitleText="View quiz" 
+                                                                           ImageSource="\Resources\Ribbon-Quiz.png"
+                                                                           ContentText="{Binding Path=question}"/>
                                                 </Button.ToolTip>
                                                 <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
                                                     <StackPanel Orientation="Horizontal">
@@ -101,7 +102,7 @@
                                                             </Label.Content>
                                                         </Label>
                                                     </StackPanel>
-                                                    <TextBlock FontSize="8" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/>
+                                                    <!--<TextBlock FontSize="8" FontWeight="Regular" TextWrapping="WrapWithOverflow" Text="{Binding Path=title}"/> -->
                                                 </StackPanel>
                                             </Button>
                                         </Border>

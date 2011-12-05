@@ -554,6 +554,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Components\Autoscroller.cs" />
     <Compile Include="Components\BackStageNav.xaml.cs">
       <DependentUpon>BackStageNav.xaml</DependentUpon>
     </Compile>

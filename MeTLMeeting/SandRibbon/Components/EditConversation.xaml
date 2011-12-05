@@ -38,16 +38,16 @@
             Width="Auto"
             ScrollViewer.HorizontalScrollBarVisibility="Visible" 
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
-    		x:Name="activeSlides"   
+    		x:Name="activeSlides"
     		local:DragDropHelper.IsDragSource="true" local:DragDropHelper.IsDropTarget="true" local:DragDropHelper.DragDropTemplate="{StaticResource slideDragTemplate}">
-                
-                 <ListBox.ItemsPanel>
+                <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="AllowDrop" Value="True"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
@@ -56,7 +56,7 @@
                                         Padding="5" Background="{StaticResource BackgroundBlueGradient}"
                                         SnapsToDevicePixels="true" CornerRadius="2">
                                         <Grid>
-                                            <Image Height="90" Width="90">
+                                            <Image Height="90" Width="90" components:SelectorExtenders.IsAutoscroll="True">
                                                 <Image.Source>
                                                     <MultiBinding Converter="{x:Static components:EditConversation.SlideToThumb}">
                                                         <Binding RelativeSource="{RelativeSource Self}" />
@@ -68,6 +68,7 @@
                                                     HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                     VerticalAlignment="Bottom" 
                                                     BorderThickness="1">
+                                                <Label Content="{Binding Path=index, Converter={x:Static components:EditConversation.SlideIndex}}"/>
                                             </Border>
                                         </Grid>
                                     </Border>
