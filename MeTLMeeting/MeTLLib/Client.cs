@@ -171,7 +171,8 @@ namespace MeTLLib
         }
         public void AskForTeachersStatus(string teacher, string jid)
         {
-           wire.AskForTeacherStatus(teacher, jid); 
+            Action work = () => wire.AskForTeacherStatus(teacher, jid);
+            tryIfConnected(work);
         }
         public void Connect(string username, string password)
         {
@@ -195,7 +196,7 @@ namespace MeTLLib
         #region sendStanzas
         public void SendTeacherStatus(TeacherStatus status)
         {
-             Action work = delegate
+            Action work = delegate
             {
                 wire.SendTeacherStatus(status);
             };

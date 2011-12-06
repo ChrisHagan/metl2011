@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Xml.Linq;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using Microsoft.Win32;
@@ -72,6 +73,7 @@ namespace SandRibbon.Components
         private string target;
         private string defaultPrivacy;
         private bool _canEdit;
+        private ClipboardManager clipboardManager = new ClipboardManager();
         private bool canEdit
         {
             get { return _canEdit; }
@@ -135,6 +137,9 @@ namespace SandRibbon.Components
             Commands.SetDrawingAttributes.RegisterCommandToDispatcher(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args)));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (sender, args) => HandleCopy(args)));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) => HandleCut(args)));
             Loaded += (_sender, _args) => this.Dispatcher.adoptAsync(delegate
             {
                 if (target == null)
@@ -143,6 +148,10 @@ namespace SandRibbon.Components
                     defaultPrivacy = (string)FindResource("defaultPrivacy");
                 }
             });
+            Commands.ClipboardManager.RegisterCommand(new DelegateCommand<ClipboardAction>((action) => clipboardManager.OnClipboardAction(action)));
+            clipboardManager.RegisterHandler(ClipboardAction.Paste, OnClipboardPaste, CanHandleClipboardPaste);
+            clipboardManager.RegisterHandler(ClipboardAction.Cut, OnClipboardCut, CanHandleClipboardCut);
+            clipboardManager.RegisterHandler(ClipboardAction.Copy, OnClipboardCopy, CanHandleClipboardCopy);
         }
         private void keyPressed(object sender, KeyEventArgs e)
         {
@@ -182,11 +191,12 @@ namespace SandRibbon.Components
         }
         private UndoHistory.HistoricalAction deleteSelectedImages(List<UIElement> selectedElements)
         {
+            if (selectedElements.Where(i => i is Image).Count() == 0) return new UndoHistory.HistoricalAction(()=> { }, ()=> { }, 0);
              Action undo = () =>
                 {
                     foreach (var element in selectedElements)
                     {
-                       if (MyWork.Children.ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id).Count() == 0)
+                       if (MyWork.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id).Count() == 0)
                             MyWork.Children.Add(element);
                         sendThisElement(element);
                     }
@@ -196,8 +206,8 @@ namespace SandRibbon.Components
                 {
                     foreach (var element in selectedElements)
                     {
-                        if (MyWork.Children.ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id).Count() > 0)
-                            MyWork.Children.Remove(MyWork.Children.ToList().Where(i =>((Image)i).tag().id == ((Image)element).tag().id ).First());
+                        if (MyWork.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id).Count() > 0)
+                            MyWork.Children.Remove(MyWork.ImageChildren().ToList().Where(i =>((Image)i).tag().id == ((Image)element).tag().id ).First());
                         dirtyThisElement(element);
                     }
                 };
@@ -218,7 +228,7 @@ namespace SandRibbon.Components
         }
         private UndoHistory.HistoricalAction deleteSelectedText(List<UIElement> elements)
         {
-            var selectedElements = elements.Where(t => ((MeTLTextBox)t).tag().author == Globals.me).Select(b => ((MeTLTextBox)b).clone()).ToList();
+            var selectedElements = elements.Where(t => t is MeTLTextBox && ((MeTLTextBox)t).tag().author == Globals.me).Select(b => ((MeTLTextBox)b).clone()).ToList();
             Action undo = () =>
                               {
                                   var selection = new List<UIElement>();
@@ -264,7 +274,7 @@ namespace SandRibbon.Components
             Dispatcher.adopt(() =>
                                  {
                                      selectedStrokes = MyWork.GetSelectedStrokes();
-                                     selectedElements = GetSelectedClonedImages().Where(i=> ((System.Windows.Controls.Image)i).tag().author == Globals.me).ToList();
+                                     selectedElements = MyWork.GetSelectedElements().ToList();
                                  });
             var ink = deleteSelectedInk(selectedStrokes);
             var images = deleteSelectedImages(selectedElements);
@@ -470,7 +480,7 @@ namespace SandRibbon.Components
                   foreach (var box in startingText)
                   {
                       selection.Add(box);
-                      sendBox(box);
+                      sendBox(applyDefaultAttributes(box));
                   }
               };
             Action redo = () =>
@@ -483,7 +493,7 @@ namespace SandRibbon.Components
                   foreach (var box in mySelectedElements)
                   {
                       selection.Add(box);
-                      sendBox(box); 
+                      sendBox(applyDefaultAttributes(box));
                   }
               };
             return new UndoHistory.HistoricalAction(undo, redo, 0);
@@ -540,7 +550,6 @@ namespace SandRibbon.Components
                                       {
                                           ClearAdorners();
                                           AddAdorners();
-                                          if (MyWork.GetSelectedElements().Count == 0 && myTextBox != null) return;
                                           myTextBox = null;
                                           if (MyWork.GetSelectedElements().Count == 1 && MyWork.GetSelectedElements()[0] is MeTLTextBox)
                                               myTextBox = ((MeTLTextBox)MyWork.GetSelectedElements()[0]);
@@ -660,10 +669,10 @@ namespace SandRibbon.Components
         {
              foreach(var stroke in strokes)
              {
-                if(stroke.tag().privacy == Globals.PUBLIC)
-                    MyWork.Strokes.Remove(new PrivateAwareStroke(stroke, target));
-                else
-                    MyWork.Strokes.Remove(new PrivateAwareStroke(stroke, target));
+                 if (stroke.tag().privacy == Globals.PUBLIC)
+                     MyWork.Strokes = new StrokeCollection(MyWork.Strokes.Where(s => s.sum().checksum != stroke.sum().checksum));
+                 else
+                     OtherWork.Strokes = new StrokeCollection(OtherWork.Strokes.Where(s => s.sum().checksum != stroke.sum().checksum));
                  doMyStrokeRemovedExceptHistory(stroke);
             }
         }
@@ -1440,8 +1449,18 @@ namespace SandRibbon.Components
             box.BorderBrush = new SolidColorBrush(Colors.Transparent);
             box.Background = new SolidColorBrush(Colors.Transparent);
             box.Focusable = canEdit && canFocus;
+            box.ContextMenu = new ContextMenu {IsEnabled = true};
+            box.ContextMenu.IsEnabled = false;
+            box.ContextMenu.IsOpen = false;
+            box.PreviewMouseRightButtonUp += new MouseButtonEventHandler(box_PreviewMouseRightButtonUp);
             return box;
         }
+
+        private void box_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+        }
+
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
             if (originalText == null) return; 
@@ -1670,11 +1689,10 @@ namespace SandRibbon.Components
             dirtyTextBoxWithoutHistory(box);
             myTextBox = null;
         }
-
         private void sendBox(MeTLTextBox box)
         {
             myTextBox = box;
-            if(MyWork.Children.ToList().Where(c => ((MeTLTextBox)c).tag().id == box.tag().id).ToList().Count == 0)
+            if(MyWork.Children.ToList().Where(c => c is MeTLTextBox &&((MeTLTextBox)c).tag().id == box.tag().id).ToList().Count == 0)
                 MyWork.Children.Add(box);
             box.TextChanged += SendNewText;
             box.PreviewTextInput += box_PreviewTextInput;
@@ -1744,12 +1762,12 @@ namespace SandRibbon.Components
         {
             for (var i = 0; i < MyWork.Children.Count; i++)
             {
-                if (MyWork.Children[i] is TextBox && ((TextBox)MyWork.Children[i]).Tag.ToString() == tag)
+                if (MyWork.Children[i] is TextBox && ((TextBox)MyWork.Children[i]).tag().id.ToString() == tag)
                     MyWork.Children.Remove(MyWork.Children[i]);
             }
            for (var i = 0; i < OtherWork.Children.Count; i++)
             {
-                if (OtherWork.Children[i] is TextBox && ((TextBox)OtherWork.Children[i]).Tag.ToString() == tag)
+                if (OtherWork.Children[i] is TextBox && ((TextBox)OtherWork.Children[i]).tag().id.ToString() == tag)
                     OtherWork.Children.Remove(OtherWork.Children[i]);
             }
         }
@@ -1764,10 +1782,12 @@ namespace SandRibbon.Components
         {
             if (((MeTLTextBox)sender).tag().author != Globals.me) return; //cannot edit other peoples textboxes
             myTextBox = (MeTLTextBox)sender;
+            if (myTextBox == null) 
+                return;
             updateTools();
             requeryTextCommands();
-            MyWork.Select(new List<UIElement>());
             originalText = myTextBox.Text;
+            MyWork.Select(new List<UIElement>());
             Commands.ChangeTextMode.Execute("None");
         }
         private void updateTools()
@@ -1880,7 +1900,7 @@ namespace SandRibbon.Components
         }
         public bool CanHandleClipboardPaste()
         {
-            return Clipboard.ContainsText();
+           return true;
         }
 
         public bool CanHandleClipboardCut()
@@ -1895,76 +1915,20 @@ namespace SandRibbon.Components
 
         public void OnClipboardPaste()
         {
+            HandlePaste(null);
+            /*
             try
             {
-                if (myTextBox != null)
-                {
-                    var text = Clipboard.GetText();
-                    var undoText = myTextBox.Text;
-                    var caret = myTextBox.CaretIndex;
-                    var redoText = myTextBox.Text.Insert(myTextBox.CaretIndex, text);
-                    var currentTextBox = myTextBox.clone();
-                    Action undo = () =>
-                    {
-                        var box = ((MeTLTextBox)MyWork.Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
-                        box.TextChanged -= SendNewText;
-                        box.Text = undoText;
-                        box.CaretIndex = caret;
-                        sendTextWithoutHistory(box, box.tag().privacy);
-                        box.TextChanged += SendNewText;
-                    };
-                    Action redo = () =>
-                    {
-                        ClearAdorners();
-                        var box = ((MeTLTextBox)MyWork.Children.ToList().Where(c => ((MeTLTextBox)c).tag().id ==  currentTextBox.tag().id).FirstOrDefault());
-                        box.TextChanged -= SendNewText;
-                        // 1. Get visible canvas size
-                        // 2. If the text being pasted will cause the text box width to be larger than the visible canvas width, wrap the text by inserting 
-                        // carriage-returns in the appropriate place.
-                        // Problems: What's the width of text? Dependant on font style, weighting and size.
-                        //         : Where to insert the carriage-returns? Wrap on spaces? Would it work to just set the width of the text box and let it handle
-                        //           the wrapping?
- 
-                        box.Text = redoText; 
-                        if (box.Width > this.ActualWidth)
-                        {
-                            box.Width = (this.ActualWidth - InkCanvas.GetLeft(box)) * 0.95; // Decrease by a further 5%
-                        }
-
-                        box.CaretIndex = caret + text.Length;
-                        sendTextWithoutHistory(box, box.tag().privacy);
-                        box.TextChanged += SendNewText;
-                    };
-                    redo();
-                    UndoHistory.Queue(undo, redo);
-                }
-                else
-                {
-                    MeTLTextBox box = createNewTextbox();
-                    MyWork.Children.Add(box);
-                    InkCanvas.SetLeft(box, 15);
-                    InkCanvas.SetTop(box, 15);
-                    box.TextChanged -= SendNewText;
-                    box.Text = Clipboard.GetText();
-                    box.TextChanged += SendNewText;
-                    Action undo = () =>
-                                      {
-                                          dirtyTextBoxWithoutHistory(box);
-                                      };
-                         
-                    Action redo = () =>
-                                   {
-                                       sendTextWithoutHistory(box, box.tag().privacy);
-                                   };
-                    UndoHistory.Queue(undo, redo);
-                    redo();
-                }
+             
             }
             catch (Exception)
             {
 
             }
+            AddAdorners();
+            */
         }
+
         public MeTLTextBox createNewTextbox()
         {
             var box = new MeTLTextBox();
@@ -1987,15 +1951,330 @@ namespace SandRibbon.Components
         }
         public void OnClipboardCopy()
         {
-
+            HandleCopy(null);
         }
 
         public void OnClipboardCut()
         {
+            HandleCut(null);
+        }
+        public void HandleInkPasteUndo(List<Stroke> newStrokes)
+        {
+            var selection = new StrokeCollection();
+            ClearAdorners();
+            foreach (var stroke in newStrokes)
+            {
+                if(MyWork.Strokes.Contains(stroke))
+                {
+                    selection.Remove(stroke);
+                    doMyStrokeRemoved(stroke);
+                }
+            }
+        }
+        public void HandleInkPasteRedo(List<Stroke> newStrokes)
+        {
+            var selection = new StrokeCollection();
+            ClearAdorners();
+            foreach (var stroke in newStrokes)
+            {
+                if(!MyWork.Strokes.Contains(stroke))
+                {
+                    selection.Add(stroke);
+                    doMyStrokeAdded(stroke, stroke.tag().privacy);
+                }
+            }
+        }
+        private void HandleImagePasteRedo(List<String> selectedImages)
+        {
+            foreach (var imageSource in selectedImages)
+            {
+                var tmpFile = "tmpImage";
+                using (FileStream fileStream = new FileStream(tmpFile, FileMode.OpenOrCreate))
+                {
+                    var frame = BitmapFrame.Create(new Uri(imageSource, UriKind.RelativeOrAbsolute));
+                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                    encoder.Frames.Add(frame);
+                    encoder.QualityLevel = 100;
+                    encoder.Save(fileStream);
+                }
+                if (File.Exists(tmpFile))
+                {
+                    var uri =
+                        MeTLLib.ClientFactory.Connection().NoAuthUploadResource(
+                            new Uri(tmpFile, UriKind.RelativeOrAbsolute), Globals.slide);
+                    var image = new Image
+                                    {
+                                        Source = new BitmapImage(uri)
+                                    };
+                    image.tag(new ImageTag(Globals.me, privacy, generateId(), false, -1));
+                    InkCanvas.SetLeft(image, 15);
+                    InkCanvas.SetTop(image, 15);
+                    Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, target, privacy, image));
+                }
+                else
+                    MessageBox.Show( "Sorry, your file could not be pasted.  Try dragging and dropping, or selecting with the add image button.");
+            }
+        }
+        private void HandleImagePasteUndo(List<String> selectedImages)
+        {
+            var imagesToDelete = new List<UIElement>();
+            foreach(var image in selectedImages)
+            {
+                var matchingImages = MyWork.Children.ToList().Where(i => i is Image).Where(i => ((Image) (i)).Source.ToString() == image).ToList();
+                if(matchingImages.Count > 0)
+                    imagesToDelete.AddRange(matchingImages);
+            }
+            deleteSelectedImages(imagesToDelete);
+        }
+        private void HandleTextPasteRedo(List<string> selectedText, MeTLTextBox currentBox)
+        {
+            foreach (var text in selectedText)
+            {
+                if (currentBox!= null)
+                {
+                    var caret = currentBox.CaretIndex;
+                    var redoText = currentBox.Text.Insert(currentBox.CaretIndex, text);
+                    ClearAdorners();
+                    var box = ((MeTLTextBox) MyWork.TextChildren().ToList().Where(c => ((MeTLTextBox) c).tag().id == currentBox.tag().id). FirstOrDefault());
+                    box.TextChanged -= SendNewText;
+                    box.Text = redoText;
+                    if (box.Width > 540)
+                        box.Width = 540;
+                    box.CaretIndex = caret + text.Length;
+                    sendTextWithoutHistory(box, box.tag().privacy);
+                    box.TextChanged += SendNewText;
+                }
+                else
+                {
+                    MeTLTextBox box = createNewTextbox();
+                    MyWork.Children.Add(box);
+                    InkCanvas.SetLeft(box, 15);
+                    InkCanvas.SetTop(box, 15);
+                    box.TextChanged -= SendNewText;
+                    box.Text = text;
+                    box.TextChanged += SendNewText;
+                    sendTextWithoutHistory(box, box.tag().privacy);
+                }
+            }
+        }
+        private void HandleTextPasteUndo(List<string> selectedText, MeTLTextBox currentBox)
+        {
+            foreach (var text in selectedText)
+            {
+                if (currentBox!= null)
+                {
+                    var undoText = currentBox.Text;
+                    var caret = currentBox.CaretIndex;
+                    var currentTextBox = currentBox.clone();
+                    var box = ((MeTLTextBox) MyWork.Children.ToList().Where( c => ((MeTLTextBox) c).tag().id == currentTextBox.tag().id). FirstOrDefault());
+                    box.TextChanged -= SendNewText;
+                    box.Text = undoText;
+                    box.CaretIndex = caret;
+                    sendTextWithoutHistory(box, box.tag().privacy);
+                    box.TextChanged += SendNewText;
+                }
+                else
+                {
+                    MeTLTextBox box = createNewTextbox();
+                    MyWork.Children.Add(box);
+                    InkCanvas.SetLeft(box, 15);
+                    InkCanvas.SetTop(box, 15);
+                    box.TextChanged -= SendNewText;
+                    box.Text = Clipboard.GetText();
+                    box.TextChanged += SendNewText;
+                    dirtyTextBoxWithoutHistory(box);
+                }
+            }
+        }
+        protected void HandlePaste(object _args)
+        {
+            if (!Clipboard.ContainsData(MeTLClipboardData.Type)) return;
+            var data = (MeTLClipboardData) Clipboard.GetData(MeTLClipboardData.Type);
+            var currentBox = myTextBox.clone();
+            Action undo = () =>
+                              {
+                                  ClearAdorners();
+                                  HandleInkPasteUndo(data.Ink.ToList());
+                                  HandleImagePasteUndo(data.Images.ToList());
+                                  HandleTextPasteUndo(data.Text.ToList(), currentBox);
+                                  AddAdorners();
+                              };
+            Action redo = () =>
+                              {
+                                  ClearAdorners();
+                                  HandleInkPasteRedo(data.Ink.ToList());
+                                  HandleImagePasteRedo(data.Images.ToList());
+                                  HandleTextPasteRedo(data.Text.ToList(), currentBox);
+                                  AddAdorners();
+                              };
+            UndoHistory.Queue(undo, redo);
+            redo();
+        }
+        private List<string> HandleTextCopyRedo(List<UIElement> selectedBoxes, string selectedText)
+        {
+            var clipboardText = new List<string>();
+            if (selectedText != String.Empty && selectedText.Length > 0)
+                clipboardText.Add(selectedText);
+            else
+                clipboardText.AddRange(selectedBoxes.Where(b => b is MeTLTextBox).Select(b => ((MeTLTextBox) b).Text));
+            return clipboardText;
+        }
+        private List<string> HandleImageCopyRedo(List<UIElement> selectedImages)
+        {
+            var clipboardImages = new List<String>();
+            clipboardImages.AddRange(selectedImages.Where(i => i is Image).Select(i => ((Image)i).Source.ToString()).ToList());
+            return clipboardImages;
+        }
+        private List<Stroke> HandleStrokeCopyRedo(List<Stroke> selectedStrokes)
+        {
+            return selectedStrokes;
+        }
+        protected void HandleCopy(object _args)
+        {
+           //text 
+            var selectedElements = MyWork.GetSelectedElements().ToList();
+            var selectedStrokes = MyWork.GetSelectedStrokes().Select((s => s.Clone())).ToList();
+            string selectedText = "";
+            if(myTextBox != null)
+                selectedText = myTextBox.SelectedText;
+
+            Action undo = () => Clipboard.GetData(typeof (MeTLClipboardData).ToString());
+            Action redo = () =>
+                              {
+                                  var images = HandleImageCopyRedo(selectedElements);
+                                  var text = HandleTextCopyRedo(selectedElements, selectedText);
+                                  var copiedStrokes = HandleStrokeCopyRedo(selectedStrokes);
+                                  Clipboard.SetData(MeTLClipboardData.Type,new MeTLClipboardData(text,images,copiedStrokes));
+                              };
+            UndoHistory.Queue(undo, redo);
+            redo();
 
         }
+        private void HandleImageCutUndo(IEnumerable<Image> selectedImages)
+        {
+                var selection = new List<UIElement>();
+                foreach (var element in selectedImages)
+                {
 
-
+                    if (!MyWork.ImageChildren().Contains(element))
+                        MyWork.Children.Add(element);
+                    sendThisElement(element);
+                    selection.Add(element);
+                }
+                MyWork.Select(selection);
+        }
+        private List<string> HandleImageCutRedo(IEnumerable<UIElement> selectedImages)
+        {
+            var clipboardImages = new List<String>();
+            foreach (var element in selectedImages.Where(e => e is Image))
+            {
+                var img = (Image)element;
+                ApplyPrivacyStylingToElement(img, img.tag().privacy);
+                clipboardImages.Add(img.Source.ToString());
+                Commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, target, img.tag().privacy, img.tag().id));
+            }
+            return clipboardImages;
+        }
+        protected void HandleTextCutUndo(List<UIElement> selectedElements, MeTLTextBox currentTextBox)
+        {
+            if (currentTextBox != null && currentTextBox.SelectionLength > 0)
+            {
+                var selection = currentTextBox.SelectedText;
+                var text = currentTextBox.Text;
+                var start = currentTextBox.SelectionStart;
+                var length = currentTextBox.SelectionLength;
+                var activeTextbox = ((MeTLTextBox) MyWork.TextChildren().ToList().Where( c => ((MeTLTextBox) c).tag().id == currentTextBox.tag().id). FirstOrDefault());
+                activeTextbox.Text = text;
+                activeTextbox.CaretIndex = start + length;
+                if (!alreadyHaveThisTextBox(activeTextbox))
+                     sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
+            }
+            else
+            {
+                var mySelectedElements = selectedElements.Where(t => t is MeTLTextBox).Select(t => ((MeTLTextBox) t).clone());
+                foreach (var box in mySelectedElements)
+                   sendBox(box.toMeTLTextBox());
+            }
+        }
+        protected List<string> HandleTextCutRedo(List<UIElement> elements, MeTLTextBox currentTextBox)
+        {
+            var clipboardText = new List<string>();
+            if (currentTextBox != null && currentTextBox.SelectionLength > 0)
+            {
+                var selection = currentTextBox.SelectedText;
+                var start = currentTextBox.SelectionStart;
+                var length = currentTextBox.SelectionLength;
+                clipboardText.Add(selection);
+                var activeTextbox = ((MeTLTextBox) MyWork.TextChildren().ToList().Where( c => ((MeTLTextBox) c).tag().id == currentTextBox.tag().id). FirstOrDefault());
+                if (activeTextbox == null) return clipboardText;
+                activeTextbox.Text = activeTextbox.Text.Remove(start, length);
+                activeTextbox.CaretIndex = start;
+                if (activeTextbox.Text.Length == 0)
+                {
+                    ClearAdorners();
+                    myTextBox = null;
+                    dirtyTextBoxWithoutHistory(currentTextBox);
+                }
+            }
+            else
+            {
+                var listToCut = new List<MeTLTextBox>();
+                var selectedElements = elements.Where(t => t is MeTLTextBox).Select(tb => ((MeTLTextBox)tb).clone()).ToList();
+                foreach (MeTLTextBox box in selectedElements)
+                {
+                    clipboardText.Add(box.Text);
+                    listToCut.Add(box);
+                }
+                myTextBox = null;
+                foreach (var element in listToCut)
+                   dirtyTextBoxWithoutHistory(element);
+            }
+            return clipboardText;
+        }
+        private void HandleInkCutUndo(IEnumerable<Stroke> strokesToCut)
+        {
+            foreach (var s in strokesToCut)
+            {
+                MyWork.Strokes.Add(s);
+                doMyStrokeAddedExceptHistory(s, s.tag().privacy);
+            }
+        }
+        private List<Stroke> HandleInkCutRedo(IEnumerable<Stroke> selectedStrokes)
+        {
+            var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(Globals.slide, stroke.tag().author, target, stroke.tag().privacy, stroke.sum().checksum.ToString())).ToList();
+            foreach (var element in listToCut)
+                Commands.SendDirtyStroke.Execute(element);
+            return selectedStrokes.ToList().ToList().ToList().ToList().ToList().ToList().ToList().ToList().ToList();
+        }
+        protected void HandleCut(object _args)
+        {
+            var strokesToCut = MyWork.GetSelectedStrokes().Select(s => s.Clone());
+            var currentTextBox = myTextBox.clone();
+            var selectedElements = MyWork.GetSelectedElements().ToList();
+            Action redo = () =>
+            {
+                ClearAdorners();
+                var text = HandleTextCutRedo(selectedElements, currentTextBox);
+                var images = HandleImageCutRedo(selectedElements);
+                var ink = HandleInkCutRedo(strokesToCut);
+                Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(text, images, ink));
+                AddAdorners();
+            };
+            Action undo = () =>
+            {
+                ClearAdorners();
+                if(Clipboard.ContainsData(MeTLClipboardData.Type))
+                {
+                    var data = (MeTLClipboardData)Clipboard.GetData(MeTLClipboardData.Type);
+                    HandleTextCutUndo(data.Text.Select(t => applyDefaultAttributes(new MeTLTextBox{Text = t})) as List<UIElement>, currentTextBox);
+                    //HandleImageCutUndo(data.Images.Select(i => new Image{Source = i}));
+                    //HandleInkCutUndo(data.Ink);
+                }
+                AddAdorners();
+            };
+            redo();
+            UndoHistory.Queue(undo, redo);
+        }
         #endregion
         private void MoveTo(int _slide)
         {
@@ -2067,7 +2346,7 @@ namespace SandRibbon.Components
         {
             return canvas.Children.ToList().Where(t => t is Image);
         }
-        public static IEnumerable<UIElement> GetSelectedImagesBoxes(this InkCanvas canvas)
+        public static IEnumerable<UIElement> GetSelectedImages(this InkCanvas canvas)
         {
             return canvas.GetSelectedElements().Where(i => i is Image);
         }
@@ -2087,6 +2366,7 @@ namespace SandRibbon.Components
         }
         public static MeTLTextBox clone(this MeTLTextBox box)
         {
+            if (box == null) return null;
             var newBox = new MeTLTextBox();
             newBox.Text = box.Text;
             newBox.TextAlignment = box.TextAlignment;
@@ -2096,6 +2376,8 @@ namespace SandRibbon.Components
             newBox.Foreground = box.Foreground;
             newBox.Background = box.Background;
             newBox.tag(box.tag());
+            newBox.CaretIndex = box.CaretIndex;
+            newBox.SelectedText = box.SelectedText;
             InkCanvas.SetLeft(newBox, InkCanvas.GetLeft(box));
             InkCanvas.SetTop(newBox, InkCanvas.GetTop(box));
 
@@ -2192,5 +2474,174 @@ namespace SandRibbon.Components
             else
                base.DrawCore(drawingContext, drawingAttributes);
         }
+        
+    }
+    public class MeTLInkCanvas:InkCanvas
+    {
+       public MeTLInkCanvas():base()
+       {
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args)));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (sender, args) => HandleCopy(args)));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) => HandleCut(args)));          
+       }
+
+        private void HandleCut(ExecutedRoutedEventArgs args)
+        {
+            Commands.ClipboardManager.Execute(ClipboardAction.Cut);
+        }
+
+        private void HandleCopy(ExecutedRoutedEventArgs args)
+        {
+            Commands.ClipboardManager.Execute(ClipboardAction.Copy);
+        }
+
+        private void HandlePaste(ExecutedRoutedEventArgs args)
+        {
+            Commands.ClipboardManager.Execute(ClipboardAction.Paste);
+        }
+    }
+
+    [Serializable()]
+    public class MeTLClipboardData
+    {
+        public IEnumerable<String> Text;
+        public IEnumerable<String> Images;
+        public IEnumerable<String> _InkAsString;
+        public static string Type = "MeTLClipboardData";
+
+        public MeTLClipboardData(IEnumerable<string> text, IEnumerable<string> images, List<Stroke> ink)
+        {
+            Text = text;
+            Images = images;
+            Ink = ink;
+        }
+        private string pointsTag = "points";
+        private string colorTag = "color";
+        private string thicknessTag = "thickness";
+        private string highlighterTag = "highlight";
+        private string sumTag = "checksum";
+        private string startingSumTag = "startingSum";
+        public static readonly string privacyTag = "privacy";
+        public static readonly string authorTag = "author";
+
+        public List<Stroke> Ink
+        {
+        get
+        {
+            var strokes = new List<Stroke>();
+            foreach (var xmlStrokeString in _InkAsString)
+            {
+                var XmlStroke = XElement.Parse(xmlStrokeString);
+                var stroke = new Stroke(stringToPoints(XmlStroke.Attribute(pointsTag).Value),
+                                        new DrawingAttributes {Color = stringToColor(XmlStroke.Attribute(colorTag).Value)});
+
+                stroke.DrawingAttributes.IsHighlighter = Boolean.Parse(XmlStroke.Attribute(highlighterTag).Value);
+                stroke.DrawingAttributes.Width = Double.Parse(XmlStroke.Attribute(thicknessTag).Value);
+                stroke.DrawingAttributes.Height = Double.Parse(XmlStroke.Attribute(thicknessTag).Value);
+                stroke.AddPropertyData(stroke.sumId(), Double.Parse(XmlStroke.Attribute(sumTag).Value ));
+                stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Attribute(startingSumTag).Value));
+                stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Attribute(sumTag).Value));
+                stroke.tag(new StrokeTag(
+                               XmlStroke.Attribute(authorTag).Value, XmlStroke.Attribute(privacyTag).Value,
+                               XmlStroke.Attribute(startingSumTag) == null
+                                   ? stroke.sum().checksum
+                                   : Double.Parse(XmlStroke.Attribute(startingSumTag).Value),
+                               Boolean.Parse(XmlStroke.Attribute(highlighterTag).Value)));
+                strokes.Add(stroke);
+            }
+            return strokes;
+        }
+        set
+        {
+            var data = new List<string>();
+            foreach (var stroke in value)
+            {
+                double startingSum;
+                try
+                {
+                    startingSum = stroke.startingSum();
+                }
+                catch (Exception)
+                {
+                    startingSum = stroke.sum().checksum;
+                }
+                string sum = stroke.sum().checksum.ToString();
+                data.Add(new XElement("stroke", new object[]
+                                                      {
+                                                          new XAttribute(sumTag, sum),
+                                                          new XAttribute(startingSumTag, startingSum),
+                                                          new XAttribute(pointsTag, strokeToPoints(stroke)),
+                                                          new XAttribute(colorTag, strokeToColor(stroke)),
+                                                          new XAttribute(thicknessTag,
+                                                                         stroke.DrawingAttributes.Width.ToString()),
+                                                          new XAttribute(highlighterTag,
+                                                                         stroke.DrawingAttributes.IsHighlighter.ToString
+                                                                             ()),
+                                                          new XAttribute(authorTag, stroke.tag().author),
+                                                          new XAttribute(privacyTag, stroke.tag().privacy)
+                                                      }).ToString());
+
+            }
+            _InkAsString = data;
+        }
+       }
+       public static string strokeToPoints(Stroke s)
+            {
+                return string.Join(" ", s.StylusPoints.Select(
+                    p => string.Format("{0} {1} {2}",
+                        Math.Round(p.X, 1),
+                        Math.Round(p.Y, 1),
+                        (int)(255 * p.PressureFactor))).ToArray());
+            }
+            public static StylusPointCollection stringToPoints(string s)
+            {
+                var pointInfo = s.Split(' ');
+                if (pointInfo.Count() % 3 != 0) throw new InvalidDataException("The point info in a compressed string must be in groups of three numbers, x, y and pressure.");
+                var points = new StylusPointCollection();
+                foreach (var p in pointInfo)
+                {
+                    Double.Parse(p);
+                }
+                for (int i = 0; i < pointInfo.Count(); )
+                {
+                    points.Add(new StylusPoint
+                    {
+                        X = Double.Parse(pointInfo[i++]),
+                        Y = Double.Parse(pointInfo[i++]),
+                        PressureFactor = (float)((Double.Parse(pointInfo[i++]) / 255.0))
+                    });
+                }
+                return points;
+            }
+            public static string strokeToColor(Stroke s)
+            {
+                return colorToString(s.DrawingAttributes.Color);
+            }
+            public static string colorToString(Color color)
+            {
+                return string.Format("{0} {1} {2} {3}", color.R, color.G, color.B, color.A);
+            }
+            public static Color stringToColor(string s)
+            {
+                try
+                {
+                    if (s.StartsWith("#"))
+                    {
+                        return (Color)ColorConverter.ConvertFromString(s);
+                    }
+                    var colorInfo = s.Split(' ');
+                    if (colorInfo.Count() % 4 != 0) throw new InvalidDataException("The color info in a compressed stroke should consist of four integers between 0 and 255 (bytes), space separated and representing RGBA in that order.");
+                    return new Color
+                    {
+                        R = Byte.Parse(colorInfo[0]),
+                        G = Byte.Parse(colorInfo[1]),
+                        B = Byte.Parse(colorInfo[2]),
+                        A = Byte.Parse(colorInfo[3])
+                    };
+                }
+                catch (Exception) {
+                    return Colors.Black;
+                }
+            }
     }
 }

@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:my="clr-namespace:SandRibbon"
     xmlns:canvas="clr-namespace:SandRibbon.Components.Canvas"
-    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop" >
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop" xmlns:Components="clr-namespace:SandRibbon.Components">
      <UserControl.Resources>
         <Style TargetType="{x:Type canvas:MeTLTextBox}">
             <Setter Property="my:AttachedInputBindings.InputBindings">
@@ -44,6 +44,6 @@
     </UserControl.InputBindings>
     <Grid MinHeight="540" MinWidth="720"  x:Name="canvasStack" Background="White">
         <InkCanvas x:Name="OtherWork" Background="Transparent" EditingMode="None"/>
-        <InkCanvas x:Name="MyWork" Background="Transparent"/>
+        <Components:MeTLInkCanvas x:Name="MyWork" Background="Transparent"/>
     </Grid>
 </UserControl>
