@@ -1,10 +1,15 @@
 ﻿<Window x:Class="SandRibbon.Components.EditConversation"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sr="clr-namespace:SandRibbon"
         xmlns:components="clr-namespace:SandRibbon.Components"
-        xmlns:local="clr-namespace:SandRibbon.Components.Utility.DragDrop"> 
+        xmlns:local="clr-namespace:SandRibbon.Components.Utility.DragDrop"
+        Title="Edit Conversation [Consider the effects of this on your students]"
+        MinWidth="800"
+        MinHeight="200"
+        Width="800"
+        Height="200"> 
     <Window.Resources>
-
         <DataTemplate x:Key="slideDragTemplate">
             <DataTemplate.Resources>
                 <Style TargetType="Image">
@@ -14,7 +19,7 @@
                 </Style>
             </DataTemplate.Resources>
             <StackPanel>
-                <Image Height="50" Width="50">
+                <Image Height="90" Width="90">
                     <Image.Source>
                         <MultiBinding Converter="{x:Static components:SlideDisplay.SlideToThumb}">
                             <Binding RelativeSource="{RelativeSource Self}" />
@@ -25,29 +30,31 @@
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
-    <DockPanel Background="{StaticResource BackgroundBlueGradient}">
-        <StackPanel DockPanel.Dock="Bottom"  Orientation="Horizontal">
-            <Button Click="save">Apply</Button>
-            <Button Click="first">Move to the start</Button>
-            <Button Click="last">Move to the end</Button>
-            <Button Click="cancel">Cancel</Button>
-        </StackPanel>
-        <StackPanel Orientation="Vertical">
+    <Grid Background="{StaticResource BackgroundBlueGradient}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
             <ListBox Background="AliceBlue"
             Height="100"
             Width="Auto"
             ScrollViewer.HorizontalScrollBarVisibility="Visible" 
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
-    		x:Name="activeSlides"   
-    		local:DragDropHelper.IsDragSource="true" local:DragDropHelper.IsDropTarget="true" local:DragDropHelper.DragDropTemplate="{StaticResource slideDragTemplate}">
-                
-                 <ListBox.ItemsPanel>
+            x:Name="activeSlides"
+            local:DragDropHelper.IsDragSource="true" local:DragDropHelper.IsDropTarget="true" local:DragDropHelper.DragDropTemplate="{StaticResource slideDragTemplate}">
+                <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="AllowDrop" Value="True"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
@@ -56,7 +63,7 @@
                                         Padding="5" Background="{StaticResource BackgroundBlueGradient}"
                                         SnapsToDevicePixels="true" CornerRadius="2">
                                         <Grid>
-                                            <Image Height="90" Width="90">
+                                            <Image Height="90" Width="90" components:SelectorExtenders.IsAutoscroll="True">
                                                 <Image.Source>
                                                     <MultiBinding Converter="{x:Static components:EditConversation.SlideToThumb}">
                                                         <Binding RelativeSource="{RelativeSource Self}" />
@@ -68,6 +75,7 @@
                                                     HorizontalAlignment="Right" Background="{StaticResource BackgroundBlueGradient}"
                                                     VerticalAlignment="Bottom" 
                                                     BorderThickness="1">
+                                                <Label Content="{Binding Path=index, Converter={x:Static components:EditConversation.SlideIndex}}"/>
                                             </Border>
                                         </Grid>
                                     </Border>
@@ -85,7 +93,19 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
-            <Label >Consider the effects of this on your students</Label>
         </StackPanel>
-    </DockPanel>
+        <DockPanel Grid.Row="1" Grid.Column="0" LastChildFill="True">
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <sr:NullToBooleanConverter Negate="True" x:Key="nullToBoolean"/>
+                </StackPanel.Resources>
+                <Button VerticalAlignment="Center" MinWidth="60" Click="first" IsEnabled="{Binding ElementName=activeSlides, Path=SelectedItem, Converter={StaticResource nullToBoolean}}">Move to the start</Button>
+                <Button VerticalAlignment="Center" MinWidth="60" Margin="10,0,0,0" Click="last" IsEnabled="{Binding ElementName=activeSlides, Path=SelectedItem, Converter={StaticResource nullToBoolean}}">Move to the end</Button>
+            </StackPanel>
+            <DockPanel DockPanel.Dock="Right">
+                <Button DockPanel.Dock="Right" VerticalAlignment="Center" MinWidth="60" Click="save">Apply</Button> 
+                <Button VerticalAlignment="Center" HorizontalAlignment="Right" MinWidth="60" Click="cancel">Cancel</Button>
+            </DockPanel>
+        </DockPanel>
+    </Grid>
 </Window>

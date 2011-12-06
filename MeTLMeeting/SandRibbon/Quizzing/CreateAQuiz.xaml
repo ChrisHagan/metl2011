@@ -35,9 +35,7 @@
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <Label FontWeight="Bold" Grid.Row="0">Title</Label>
-                        <TextBox FontWeight="Bold" Grid.Row="1" Width="300" x:Name="quizTitle" Text="{x:Static q:CreateAQuiz.PROMPT_TEXT}" />
-                        <Label FontWeight="Bold" Grid.Row="2">Question (optional)</Label>
+                        <Label FontWeight="Bold" Grid.Row="2">Question</Label>
                         <StackPanel  Grid.Row="3" x:Name="questionContainer" Orientation="Vertical">
                             <Grid>
                                 <Grid.ColumnDefinitions>

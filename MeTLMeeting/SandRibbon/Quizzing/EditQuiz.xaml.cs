@@ -29,6 +29,19 @@ namespace SandRibbon.Quizzing
             get { return (bool) GetValue(TitleErrorProperty); }
             set{SetValue(TitleErrorProperty, value);}
         }
+        public static readonly DependencyProperty ResultsExistProperty = DependencyProperty.Register("ResultsExist", typeof(bool), typeof(EditQuiz));
+        public bool ResultsExist 
+        {
+            get
+            {
+                return (bool)GetValue(ResultsExistProperty);
+            }
+            set
+            {
+                SetValue(ResultsExistProperty, value);
+            }
+        }
+
         public ObservableCollection<Option> Options { get; set; }
         public EditQuiz(QuizQuestion quiz)
         {
@@ -39,6 +52,7 @@ namespace SandRibbon.Quizzing
             TitleError = false;
             OptionError = false;
             ensureQuizHasAnEmptyOption();
+            ResultsExist = CheckResultsExist(quiz);
         }
         private const int alphabetLength = 26;
         public void ensureQuizHasAnEmptyOption()
@@ -56,6 +70,11 @@ namespace SandRibbon.Quizzing
                     Options.Remove(o);
                     
             }
+        }
+
+        public bool CheckResultsExist(QuizQuestion quizQuestion)
+        {
+            return Globals.quiz.answers.Where(answer => answer.Key == quizQuestion.id).FirstOrDefault().Value.Count > 0;
         }
 
         private string getOptionName(List<Option> options)

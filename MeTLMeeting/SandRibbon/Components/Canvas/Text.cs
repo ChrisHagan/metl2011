@@ -21,7 +21,7 @@ using System.Diagnostics;
 
 namespace SandRibbon.Components.Canvas
 {
-    internal class TextInformation : TagInformation
+    /*internal class TextInformation : TagInformation
     {
         public double size;
         public FontFamily family;
@@ -30,7 +30,7 @@ namespace SandRibbon.Components.Canvas
         public bool italics;
         public bool strikethrough;
         public Color color;
-    }
+    }*/
     public class Text : AbstractCanvas, IClipboardHandler
     {
         private readonly double defaultSize = 10.0;

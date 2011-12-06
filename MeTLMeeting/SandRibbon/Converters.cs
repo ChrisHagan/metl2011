@@ -302,6 +302,30 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
+    public class NullToBooleanConverter : IValueConverter
+    {
+        #region Properties
+        /// <summary>
+        /// Converter will negate value before converting to boolean
+        /// </summary>
+        public bool Negate { get; set; }
+        #endregion
+
+        #region IValueConverter members
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (Negate)
+                return value != null;
+            else
+                return value == null;
+        }
+
+        public object ConvertBack(object value, Type typeTarget, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+    }
     public class BoolToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -570,7 +594,6 @@ namespace SandRibbon
     }
     public class QuizPositionConverter : IMultiValueConverter
     {
-
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             try

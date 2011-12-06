@@ -10,7 +10,7 @@ namespace SandRibbon.Utils
             var details = Globals.conversationDetails;
             if (details.IsEmpty) 
                 return false;
-            if (!details.isDeleted && !details.IsJidEqual(""))
+            if (!details.isDeleted && !details.IsJidEqual(string.Empty))
                 return true;
 
             return false;
