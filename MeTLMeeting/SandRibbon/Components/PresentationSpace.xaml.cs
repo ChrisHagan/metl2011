@@ -530,15 +530,13 @@ namespace SandRibbon.Components
             clone.Width = ActualWidth;
             foreach(var stroke in stack.PublicStrokes)
                 clone.Strokes.Add(stroke.Clone());
-            /*
-            foreach(var canvas in new AbstractCanvas[]{stack.images, stack.text})
+            foreach(var canvas in new[]{stack.MyWork, stack.OtherWork})
                 foreach (var child in canvas.Children)
                 {
                     var fe = (FrameworkElement)child;
                     if (fe.privacy() == "public")
                         clone.Children.Add(viewFor(fe));
                 }
-             * */
             var size = new Size(ActualWidth,ActualHeight);
             clone.Measure(size);
             clone.Arrange(new Rect(size));
@@ -548,14 +546,12 @@ namespace SandRibbon.Components
             var clone = new InkCanvas();
             foreach(var stroke in stack.AllStrokes)
                 clone.Strokes.Add(stroke.Clone());
-            /*
-            foreach(var canvas in new AbstractCanvas[]{stack.images, stack.text})
+            foreach(var canvas in new[]{stack.MyWork, stack.OtherWork})
                 foreach (var child in canvas.Children)
                 {
                     var fe = (FrameworkElement)child;
                     clone.Children.Add(viewFor(fe));
                 }
-             */
             var size = new Size(ActualWidth,ActualHeight);
             clone.Measure(size);
             clone.Arrange(new Rect(size));

@@ -1095,10 +1095,12 @@ namespace SandRibbon
                             {
                                 encoder.Save(fs);
                             }
-                            Commands.PlaceQuizSnapshot.Execute(new SandRibbon.Components.Canvas.ImageDropParameters
+                            Commands.ImageDropped.Execute(new ImageDrop
                             {
-                                file = location,
-                                location = point()
+                                Filename = location,
+                                Point = point(),
+                                Position = 1,
+                                Target = "presentationSpace"
                             });
                         }
                     };

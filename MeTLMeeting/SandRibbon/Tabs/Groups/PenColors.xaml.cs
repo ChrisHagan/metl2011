@@ -298,6 +298,7 @@ namespace SandRibbon.Tabs.Groups
         public string preferredTab = "PenTools";
         public bool ShouldNotUpdateHSV;
         public bool ShouldNotUpdateRGB;
+        public DrawingAttributes currentAttributes;
         public CurrentColourValues currentColourValues = new CurrentColourValues();
 
         public Brush[] simpleColourSet = new Brush[] {
@@ -362,7 +363,9 @@ namespace SandRibbon.Tabs.Groups
         private void SetLayer(string layer)
         {
             if (layer == "Sketch")
-                Visibility = Visibility.Visible;
+            {
+                Commands.SetDrawingAttributes.ExecuteAsync(currentAttributes);
+            }
             else
                 Visibility = Visibility.Collapsed;
         }
@@ -438,6 +441,7 @@ namespace SandRibbon.Tabs.Groups
             {
                 var IndexNumber = listBox.Items.IndexOf(listBox.SelectedItem);
                 var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[IndexNumber])).Attributes);
+                currentAttributes = drawingAttributes;
                 Commands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
                 var msg = String.Format("Pen selected, Pen {0}, Colour {1}, Size {2}, isHighlighter {3}", IndexNumber.ToString(), drawingAttributes.Color.ToString(), drawingAttributes.Height.ToString(), drawingAttributes.IsHighlighter.ToString());
                 Trace.TraceInformation(msg);
@@ -495,6 +499,7 @@ namespace SandRibbon.Tabs.Groups
         {
             defaultColours.SelectedItem = defaultColours.Items[index];
             var drawingAttributes = (DrawingAttributes)(((DrawingAttributesEntry)(defaultColours.Items[index])).Attributes);
+            currentAttributes = drawingAttributes;
             Commands.SetDrawingAttributes.ExecuteAsync(drawingAttributes);
             ColourSettingPopup.IsOpen = false;
         }

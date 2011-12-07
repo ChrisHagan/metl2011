@@ -57,7 +57,6 @@ namespace SandRibbon.Components.Canvas
             Commands.ReceiveDirtyVideo.RegisterCommandToDispatcher<TargettedDirtyElement>(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyVideo));
             Commands.AddImage.RegisterCommandToDispatcher(new DelegateCommand<object>(addImageFromDisk));
             Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(uploadFile));
-            Commands.PlaceQuizSnapshot.RegisterCommand(new DelegateCommand<ImageDropParameters>(addImageFromQuizSnapshot));
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.ImageDropped.RegisterCommandToDispatcher(new DelegateCommand<ImageDrop>(imagedDropped));
             Commands.ReceiveDirtyLiveWindow.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyLiveWindow));
@@ -816,11 +815,7 @@ namespace SandRibbon.Components.Canvas
                                         }
                                     });
         }
-        private void addImageFromQuizSnapshot(ImageDropParameters parameters)
-        {
-            if (target == "presentationSpace" && me != "projector")
-                handleDrop(parameters.file, parameters.location, 1);
-        }
+      
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {
             const string filter = "Image files(*.jpeg;*.gif;*.bmp;*.jpg;*.png)|*.jpeg;*.gif;*.bmp;*.jpg;*.png|All files (*.*)|*.*";
@@ -1185,8 +1180,5 @@ namespace SandRibbon.Components.Canvas
     class ImageImpl : Image
     {
     }
-    class ImageDropParameters {
-        public string file { get; set; }
-        public Point location { get; set; }
-    }
+    
 }

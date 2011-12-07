@@ -56,10 +56,6 @@ namespace SandRibbon.Components
         public string Target;
         public int Position;
     }
-    class ImageDropParameters {
-        public string File { get; set; }
-        public Point Location { get; set; }
-    }
     public enum FileType
     {
         Video,
@@ -154,6 +150,8 @@ namespace SandRibbon.Components
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
             Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyText));
             
+            Commands.ImageDropped.RegisterCommandToDispatcher(new DelegateCommand<ImageDrop>(imagedDropped));
+            //Commands.PlaceQuizSnapshot.RegisterCommand(new DelegateCommand<ImageDropParameters>(addImageFromQuizSnapshot));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
@@ -366,13 +364,9 @@ namespace SandRibbon.Components
         }
         private void setInkCanvasMode(string modeString)
         {
-            if (!canEdit)
-                MyWork.EditingMode = InkCanvasEditingMode.None;
-            else
-            {
-                MyWork.EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
-                MyWork.UseCustomCursor = MyWork.EditingMode == InkCanvasEditingMode.Ink;
-            }
+            OtherWork.EditingMode = InkCanvasEditingMode.None;
+            MyWork.EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
+            MyWork.UseCustomCursor = MyWork.EditingMode == InkCanvasEditingMode.Ink;
         }
         private Double zoom = 1;
         private void ZoomChanged(Double zoom)
@@ -421,6 +415,7 @@ namespace SandRibbon.Components
             imageX = Clamp(e.NewRectangle.X, 0, e.NewRectangle.X);
             imageY = Clamp(e.NewRectangle.Y, 0, e.NewRectangle.Y);
             e.NewRectangle = new Rect(imageX, imageY, resizeWidth, resizeHeight);
+            
         }
         private double Clamp(double val, double min, double max)
         {
@@ -548,6 +543,7 @@ namespace SandRibbon.Components
                     text.undo();
                     images.undo();
                     AddAdorners();
+                    MyWork.Focus();
                 };
             Action redo = () =>
                 {
@@ -556,6 +552,7 @@ namespace SandRibbon.Components
                     text.redo();
                     images.redo();
                     AddAdorners();
+                    MyWork.Focus();
                 };
             redo(); 
             UndoHistory.Queue(undo, redo);
@@ -594,9 +591,10 @@ namespace SandRibbon.Components
             var selectedStrokes = MyWork.GetSelectedStrokes();
             var selectedElements = MyWork.GetSelectedElements();
             if (selectedElements.Count == 0 && selectedStrokes.Count == 0) return;
-            var publicStrokes = selectedStrokes.Where(s => s.tag().privacy.ToLower() == "public").ToList();
-            var publicElements = selectedElements.Where(i => (((i is Image) && ((Image)i).tag().privacy.ToLower() == "public")) || ((i is Video) && ((Video)i).tag().privacy.ToLower() == "public")).ToList();
-            var publicCount = publicStrokes.Count + publicElements.Count;
+            var publicStrokes = selectedStrokes.Where(s => s.tag().privacy.ToLower() == Globals.PUBLIC).ToList();
+            var publicImages = selectedElements.Where(i => (((i is Image) && ((Image)i).tag().privacy.ToLower() == Globals.PUBLIC))).ToList();
+            var publicText = selectedElements.Where(i => (((i is MeTLTextBox) && ((MeTLTextBox)i).tag().privacy.ToLower() == Globals.PUBLIC))).ToList();
+            var publicCount = publicStrokes.Count + publicImages.Count + publicText.Count;
             var allElementsCount = selectedStrokes.Count + selectedElements.Count;
             string privacyChoice;
             if (publicCount == 0)
@@ -841,7 +839,7 @@ namespace SandRibbon.Components
             ClearAdorners();
             if (me == Globals.PROJECTOR) return;
             var selectedElements = new List<UIElement>();
-            Dispatcher.adopt(() => selectedElements = GetSelectedClonedImages());
+            Dispatcher.adopt(() => selectedElements = MyWork.GetSelectedElements().ToList());
             var selectedStrokes = new List<Stroke>();
             Dispatcher.adopt(() => selectedStrokes = MyWork.GetSelectedStrokes().ToList());
             var oldPrivacy = determineOriginalPrivacy(newPrivacy);
@@ -1016,7 +1014,7 @@ namespace SandRibbon.Components
                 TargettedImage image1 = image;
                 if(image.author == me)
                     Dispatcher.adoptAsync(() => AddImage(MyWork, image1.image));
-                else
+                else if(image.privacy == Globals.PUBLIC)
                     Dispatcher.adoptAsync(() => AddImage(OtherWork, image1.image));
             }
             ensureAllImagesHaveCorrectPrivacy();
@@ -1127,11 +1125,23 @@ namespace SandRibbon.Components
                                         }
                                     });
         }
-        private void addImageFromQuizSnapshot(ImageDropParameters parameters)
+        private void imagedDropped(ImageDrop drop)
+        {
+            try
+            {
+                if (drop.Target.Equals(target) && me != "projector")
+                    handleDrop(drop.Filename, drop.Point, drop.Position);
+            }
+            catch (NotSetException)
+            {
+                //YAY
+            }
+        }
+       /* private void addImageFromQuizSnapshot(ImageDropParameters parameters)
         {
             if (target == "presentationSpace" && me != "projector")
                 handleDrop(parameters.File, parameters.Location, 1);
-        }
+        }*/
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {
             const string filter = "Image files(*.jpeg;*.gif;*.bmp;*.jpg;*.png)|*.jpeg;*.gif;*.bmp;*.jpg;*.png|All files (*.*)|*.*";

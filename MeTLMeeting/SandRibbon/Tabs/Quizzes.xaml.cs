@@ -4,10 +4,12 @@ using System.Windows;
 using System.Windows.Input;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Components;
 using SandRibbon.Quizzing;
 using SandRibbon.Providers;
 using MeTLLib.Providers.Connection;
 using SandRibbon.Components.Canvas;
+using ImageDrop = SandRibbon.Components.ImageDrop;
 
 namespace SandRibbon.Tabs
 {
@@ -156,10 +158,12 @@ namespace SandRibbon.Tabs
             onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
             {
                 Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
-                Commands.PlaceQuizSnapshot.ExecuteAsync(new ImageDropParameters
+                Commands.ImageDropped.ExecuteAsync(new ImageDrop
                 {
-                    file = filename,
-                    location = new Point(0,0)
+                    Filename = filename,
+                    Point = new Point(0,0),
+                    Position = 1,
+                    Target = "presentationSpace"
                 });
             });
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);

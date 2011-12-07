@@ -166,7 +166,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand DisplayQuizResults = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand QuizResultsAvailableForSnapshot = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand QuizResultsSnapshotAvailable = new DefaultableCompositeCommand();
-        public static DefaultableCompositeCommand PlaceQuizSnapshot = new DefaultableCompositeCommand();
+        //public static DefaultableCompositeCommand PlaceQuizSnapshot = new DefaultableCompositeCommand();
 
         #endregion
         #region InkCanvas
