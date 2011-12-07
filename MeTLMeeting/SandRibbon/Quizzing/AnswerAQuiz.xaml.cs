@@ -46,15 +46,8 @@ namespace SandRibbon.Quizzing
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selection = ((Option)e.AddedItems[0]);
-            if (!Globals.isAuthor)
-            {
-                Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.id, Globals.me, selection.name));
-                Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.id);
-            }
-            else
-            {
-                Trace.TraceInformation("Owner ChoseQuizAnswer {0} {1}, not sending", selection.name, question.id);
-            }
+            Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.id, Globals.me, selection.name));
+            Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.id);
             
             this.Close();
         }
