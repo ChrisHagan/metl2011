@@ -11,8 +11,7 @@ namespace MeTLLib.DataTypes
         // change to an injected field if needed
         private static EnglishAlphabetSequence alphabetSequence = new EnglishAlphabetSequence();
 
-        public Option(String Name, String OptionText, bool IsCorrect, Color Color)
-            : base()
+        public Option(String Name, String OptionText, bool IsCorrect, Color Color) : base()
         {
             name = Name;
             optionText = OptionText;
@@ -24,6 +23,11 @@ namespace MeTLLib.DataTypes
         private string _name;
         private bool _correct;
         private Color _color;
+
+        public Option DeepCopy()
+        {
+            return new Option((string)_name.Clone(), (string)_optionText.Clone(), _correct, _color);
+        }
 
         #region INotifyPropertyChanged members
         public event PropertyChangedEventHandler PropertyChanged;
@@ -126,6 +130,7 @@ namespace MeTLLib.DataTypes
             author = Author;
             question = Question;
             options = Options;
+            url = url == null ? String.Empty : url;
         }
         public QuizQuestion(long Id, string Title, string Author, string Question, List<Option> Options, string Url)
             : this(Id, Title, Author, Question, Options)
@@ -142,6 +147,16 @@ namespace MeTLLib.DataTypes
         /*public QuizQuestion(){
             options = new List<Option>();
         }*/
+        public QuizQuestion DeepCopy()
+        {
+            var quizQuestion = new QuizQuestion(id, title, author, question, new List<Option>());
+            foreach (var option in options)
+            {
+                quizQuestion.options.Add(option.DeepCopy());
+            }
+
+            return quizQuestion;
+        }
     }
     public class QuizAnswer
     {

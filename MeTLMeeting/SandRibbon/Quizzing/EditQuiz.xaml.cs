@@ -44,9 +44,10 @@ namespace SandRibbon.Quizzing
         #endregion
 
         public ObservableWithPropertiesCollection<Option> Options { get; private set; }
+
         public EditQuiz(QuizQuestion quiz)
         {
-            EditedQuiz = quiz;
+            EditedQuiz = quiz.DeepCopy();
             InitializeComponent();
             DataContext = this;
 
@@ -77,13 +78,13 @@ namespace SandRibbon.Quizzing
 
         private void updateOptionText(object sender, TextChangedEventArgs e)
         {
-            var text = ((TextBox)sender).Text;
+            /*var text = ((TextBox)sender).Text;
             var option = (Option)((FrameworkElement)sender).DataContext;
             if (!String.IsNullOrEmpty(text) || option.optionText != text)
             {
                 option.optionText = text;
                 AddNewEmptyOption();
-            }
+            }*/
         }
 
         public bool CheckResultsExist(QuizQuestion quizQuestion)
@@ -147,7 +148,7 @@ namespace SandRibbon.Quizzing
                     ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(obj)).Opacity = 0.5;
             CommandManager.InvalidateRequerySuggested();
         }
-
+        
         private void quizCommitButton_Click(object sender, RoutedEventArgs e)
         {
             EditedQuiz.options.Clear();
