@@ -136,7 +136,7 @@ namespace SandRibbon.Components
             Commands.ReceiveStroke.RegisterCommandToDispatcher(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.ReceiveStrokes.RegisterCommandToDispatcher(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
-
+            Commands.ZoomChanged.RegisterCommand(new DelegateCommand<double>(ZoomChanged));
 
             Commands.ReceiveImage.RegisterCommand(new DelegateCommand<IEnumerable<TargettedImage>>(ReceiveImages));
             Commands.ReceiveDirtyImage.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(ReceiveDirtyImage));
@@ -149,7 +149,10 @@ namespace SandRibbon.Components
             Commands.EstablishPrivileges.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
             Commands.SetTextCanvasMode.RegisterCommand(new DelegateCommand<string>(setInkCanvasMode));
             Commands.ReceiveDirtyText.RegisterCommand(new DelegateCommand<TargettedDirtyElement>(receiveDirtyText));
-            
+           
+ 
+            Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<Size>(new DelegateCommand<Size>(extendCanvasBySize));
+
             Commands.ImageDropped.RegisterCommandToDispatcher(new DelegateCommand<ImageDrop>(imagedDropped));
             //Commands.PlaceQuizSnapshot.RegisterCommand(new DelegateCommand<ImageDropParameters>(addImageFromQuizSnapshot));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
@@ -180,7 +183,11 @@ namespace SandRibbon.Components
         {
             e.CanExecute = MyWork.GetSelectedElements().Count > 0 || MyWork.GetSelectedStrokes().Count > 0 || myTextBox != null;
         }
-
+        private void extendCanvasBySize(Size newSize)
+        {
+            Height = newSize.Height;
+            Width = newSize.Width;
+        }
         private void keyPressed(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
@@ -2350,6 +2357,8 @@ namespace SandRibbon.Components
             MyWork.Children.Clear();
             OtherWork.Children.Clear();
             OtherWork.Strokes.Clear();
+            Height = Double.NaN;
+            Width = Double.NaN;
         }
         public string generateId()
         {
