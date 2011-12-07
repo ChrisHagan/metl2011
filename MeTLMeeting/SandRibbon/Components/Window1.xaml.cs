@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Divelements.SandRibbon;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using Microsoft.Win32;
 using SandRibbon.Components;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
@@ -255,7 +256,11 @@ namespace SandRibbon
         {
             Trace.TraceInformation("UserOptionsDialog_Show");
             if (mustBeLoggedIn(null))
-                new UserOptionsDialog().ShowDialog();
+            {
+                var userOptions = new UserOptionsDialog();
+                userOptions.Owner = Window.GetWindow(this);
+                userOptions.ShowDialog();
+            }
             else MeTLMessage.Warning("You must be logged in to edit your options");
         }
         private void ListenToAudio(int jid) {
@@ -1055,9 +1060,9 @@ namespace SandRibbon
         }
         private void presentVideo(object _arg)
         {
-            var chooseVideo = new System.Windows.Forms.OpenFileDialog();
-            var result = chooseVideo.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
+            var chooseVideo = new OpenFileDialog();
+            var result = chooseVideo.ShowDialog(Window.GetWindow(this));
+            if (result == true)
             {
                 var popup = new Window();
                 var sp = new StackPanel();

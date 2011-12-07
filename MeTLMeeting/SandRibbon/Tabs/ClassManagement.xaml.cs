@@ -22,7 +22,9 @@ namespace SandRibbon.Tabs
 
         private void ManageBlacklist(object sender, RoutedEventArgs e)
         {
-            new blacklistController().ShowDialog();
+            var blacklist = new blacklistController();
+            blacklist.Owner = Window.GetWindow(this);
+            blacklist.ShowDialog();
         }
     }
 }

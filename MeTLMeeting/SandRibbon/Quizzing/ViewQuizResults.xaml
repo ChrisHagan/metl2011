@@ -23,7 +23,7 @@
                         <DataTemplate>
                             <StackPanel>
                                 <Image Source="/Resources/Ribbon-Quiz.png" Height="100" Width="100"/>
-                                <TextBlock Text="{Binding Path=question, Converter={x:Static sr:Converters.stringTruncator}}" TextWrapping="WrapWithOverflow"/>
+                                <TextBlock Text="{Binding Path=question}" TextWrapping="WrapWithOverflow"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
