@@ -132,7 +132,6 @@ namespace SandRibbon.Quizzing
             return false;
         }
 
-        private const int alphabetLength = 26;
         private void AddNewEmptyOption()
         {
             if (!shouldAddNewEmptyOption()) return;
@@ -141,20 +140,14 @@ namespace SandRibbon.Quizzing
                 var container = ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(option)); 
                 if (container != null) container.Opacity = 1;
             }
-            var newName = "A";
-            var newIndex = 1;
+
+            var newIndex =  1;
+            var newName = Option.GetOptionNameFromIndex(0);
             if (options.Count > 0)
             {
-                var temp = new String(new[] { (char)(options.Last().name.ToCharArray()[options.Last().name.Length - 1] + 1) }).ToUpper();
-                if (temp.ToCharArray()[0] <= 90)
-                    newName = temp;
-
-                if (options.Count >= alphabetLength)
-                {
-                    var prefix = new string(new char[] { (char)("A".ToCharArray()[0] + ((options.Count / alphabetLength) - 1)) }).ToUpper();
-                    newName = string.Format("{0}{1}", prefix, newName);
-                }
-                newIndex = AllColors.all.IndexOf(options.Last().color) + 1;
+                var lastOption = options.Last();
+                newIndex = AllColors.all.IndexOf(lastOption.color) + 1; 
+                newName = Option.GetNextOptionName(lastOption.name);
             }
             var newOption = new Option(newName, String.Empty, false, AllColors.all.ElementAt(newIndex));
             if (shouldAddNewEmptyOption())
@@ -169,34 +162,13 @@ namespace SandRibbon.Quizzing
         {
             var owner = ((FrameworkElement)sender).DataContext;
             options.Remove((Option)owner);
-            var size = options.Count;
-            var newList = new List<Option>();
-            foreach (var obj in options)
-                newList.Add(obj);
-            options.Clear();
 
-            var name = "A";
-            foreach (var option in newList)
+            // relabel the option names
+            for (int i = 0; i < options.Count; i++)
             {
-                if (option.name == option.optionText)
-                    option.optionText = name;
-                option.name = name;
-                var temp = new String(new[] { (char)(name.ToCharArray()[name.Length - 1] + 1) }).ToUpper();
-                if (temp.ToCharArray()[0] <= 90)
-                    name = temp;
-                else
-                    name = "A";
-
-                if (options.Count + 1 >= alphabetLength)
-                {
-                    var offset = (options.Count / alphabetLength) - 1;
-                    if (offset < 0)
-                        offset = 0;
-                    var prefix = new string(new char[] { (char)("A".ToCharArray()[0] + offset) }).ToUpper();
-                    name = string.Format("{0}{1}", prefix, name);
-                }
-                options.Add(option);
+                options[i].name = Option.GetOptionNameFromIndex(i);
             }
+
             AddNewEmptyOption();
             foreach (var obj in options)
                 if (String.IsNullOrEmpty(obj.optionText))

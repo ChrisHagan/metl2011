@@ -5,9 +5,9 @@
         xmlns:components="clr-namespace:SandRibbon.Components"
         xmlns:local="clr-namespace:SandRibbon.Components.Utility.DragDrop"
         Title="Edit Conversation [Consider the effects of this on your students]"
-        MinWidth="800"
+        MinWidth="820"
         MinHeight="200"
-        Width="800"
+        Width="820"
         Height="200"> 
     <Window.Resources>
         <DataTemplate x:Key="slideDragTemplate">
@@ -41,8 +41,8 @@
 
         <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
             <ListBox Background="AliceBlue"
+            Width="790"
             Height="100"
-            Width="Auto"
             ScrollViewer.HorizontalScrollBarVisibility="Visible" 
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             x:Name="activeSlides"

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using MeTLLib;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 
@@ -12,12 +12,12 @@ namespace SandRibbon.Quizzing
 {
     public partial class EditQuiz : Window
     {
+        #region DependencyProperties
         public static readonly DependencyProperty EditedQuizProperty = DependencyProperty.Register("EditedQuiz", typeof (QuizQuestion), typeof(EditQuiz));
         public QuizQuestion EditedQuiz
         {
             get { return (QuizQuestion)GetValue(EditedQuizProperty); }
             set { SetValue(EditedQuizProperty, value); }
-
         }
         public static readonly DependencyProperty OptionErrorProperty = DependencyProperty.Register("OptionError", typeof (bool), typeof (EditQuiz));
         public bool OptionError { 
@@ -41,34 +41,48 @@ namespace SandRibbon.Quizzing
                 SetValue(ResultsExistProperty, value);
             }
         }
+        #endregion
 
-        public ObservableCollection<Option> Options { get; set; }
+        public ObservableWithPropertiesCollection<Option> Options { get; private set; }
         public EditQuiz(QuizQuestion quiz)
         {
             EditedQuiz = quiz;
             InitializeComponent();
             DataContext = this;
-            Options = new ObservableCollection<Option>(EditedQuiz.options);
+
+            Options = new ObservableWithPropertiesCollection<Option>(EditedQuiz.options);
+
             TitleError = false;
             OptionError = false;
             ensureQuizHasAnEmptyOption();
             ResultsExist = CheckResultsExist(quiz);
         }
-        private const int alphabetLength = 26;
+
         public void ensureQuizHasAnEmptyOption()
         {
             var emptyOptions = Options.Where(o => String.IsNullOrEmpty(o.optionText)).ToList();
             if (emptyOptions.Count() == 0)
             {
-                var newName = getOptionName(Options.ToList());
-                var newIndex = AllColors.all.IndexOf(Options.Last().color) + 1;
+                var lastOption = Options.Last();
+                var newName = Option.GetNextOptionName(lastOption.name);
+                var newIndex = AllColors.all.IndexOf(lastOption.color) + 1;
                 Options.Add(new Option(newName, String.Empty, false, AllColors.all.ElementAt(newIndex)));
             }
             else
             {
                 foreach (var o in emptyOptions.Skip(1))
                     Options.Remove(o);
-                    
+            }
+        }
+
+        private void updateOptionText(object sender, TextChangedEventArgs e)
+        {
+            var text = ((TextBox)sender).Text;
+            var option = (Option)((FrameworkElement)sender).DataContext;
+            if (!String.IsNullOrEmpty(text) || option.optionText != text)
+            {
+                option.optionText = text;
+                AddNewEmptyOption();
             }
         }
 
@@ -77,42 +91,69 @@ namespace SandRibbon.Quizzing
             return Globals.quiz.answers.Where(answer => answer.Key == quizQuestion.id).FirstOrDefault().Value.Count > 0;
         }
 
-        private string getOptionName(List<Option> options)
-        {
-            var newName = "A";
-            if (options.Count > 0)
-            {
-                var temp = new String(new[] {(char) (options.Last().name.ToCharArray()[options.Last().name.Length - 1] + 1)}).ToUpper();
-                if (temp.ToCharArray()[0] <= 90)
-                    newName = temp;
-
-                if (options.Count >= alphabetLength)
-                {
-                    var prefix = new string(new char[] {(char) ("A".ToCharArray()[0] + ((options.Count/alphabetLength) - 1))}).ToUpper();
-                    newName = string.Format("{0}{1}", prefix, newName);
-                }
-            }
-            return newName;
-        }
         private void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             ensureQuizHasAnEmptyOption();
         }
 
+        private bool shouldAddNewEmptyOption()
+        {
+            var emptyOptions = Options.Where(o => string.IsNullOrEmpty(o.optionText));
+            if (emptyOptions.Count() == 0) return true;
+            return false;
+        }
+
+        private void AddNewEmptyOption()
+        {
+            if (!shouldAddNewEmptyOption()) return;
+            foreach (var option in Options)
+            {
+                var container = ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(option)); 
+                if (container != null) container.Opacity = 1;
+            }
+
+            var newIndex =  1;
+            var newName = Option.GetOptionNameFromIndex(0);
+            if (Options.Count > 0)
+            {
+                var lastOption = Options.Last();
+                newIndex = AllColors.all.IndexOf(lastOption.color) + 1; 
+                newName = Option.GetNextOptionName(lastOption.name);
+            }
+            var newOption = new Option(newName, String.Empty, false, AllColors.all.ElementAt(newIndex));
+            if (shouldAddNewEmptyOption())
+            {
+                Options.Add(newOption);
+                var container = ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption));
+                if (container != null) container.Opacity = 0.5;
+            }
+            Commands.RequerySuggested();
+        }
+
+        private void RemoveQuizAnswer(object sender, RoutedEventArgs e)
+        {
+            var owner = ((FrameworkElement)sender).DataContext;
+            Options.Remove((Option)owner);
+
+            // relabel the option names
+            for (int i = 0; i < Options.Count; i++)
+            {
+                Options[i].name = Option.GetOptionNameFromIndex(i);
+            }
+
+            AddNewEmptyOption();
+            foreach (var obj in Options)
+                if (String.IsNullOrEmpty(obj.optionText))
+                    ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(obj)).Opacity = 0.5;
+            CommandManager.InvalidateRequerySuggested();
+        }
+
         private void quizCommitButton_Click(object sender, RoutedEventArgs e)
         {
             EditedQuiz.options.Clear();
-            foreach(var option in Options.Where(o => !string.IsNullOrEmpty(o.optionText)))
-            {
-                option.name = getOptionName(EditedQuiz.options.ToList());
-                int newIndex;
-                if (EditedQuiz.options.Count == 0)
-                    newIndex = 1;
-                else
-                    newIndex = AllColors.all.IndexOf(EditedQuiz.options.Last().color) + 1;
-                option.color = AllColors.all.ElementAt(newIndex);
-                EditedQuiz.options.Add(option);
-            }
+            EditedQuiz.options = null;
+
+            EditedQuiz.options = Options.Where(o => !string.IsNullOrEmpty(o.optionText)).ToList();
             EditedQuiz.created = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             if (validateQuiz(EditedQuiz))
             {

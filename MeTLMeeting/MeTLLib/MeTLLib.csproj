@@ -78,6 +78,8 @@
     <Compile Include="BaseModule.cs" />
     <Compile Include="DataTypes\QuizData.cs" />
     <Compile Include="DataTypes\UserOptions.cs" />
+    <Compile Include="ObservableWithPropertiesCollection.cs" />
+    <Compile Include="Providers\AlphabetProvider.cs" />
     <Compile Include="Providers\INodeFix.cs" />
     <Compile Include="Providers\UserOptionsProvider.cs" />
     <Compile Include="ReceiveEvents.cs" />

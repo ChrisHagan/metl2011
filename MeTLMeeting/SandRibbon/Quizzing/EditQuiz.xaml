@@ -1,6 +1,7 @@
 ﻿<Window x:Class="SandRibbon.Quizzing.EditQuiz"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:q="clr-namespace:SandRibbon.Quizzing"
+        xmlns:metl="clr-namespace:SandRibbon"
         Title="Edit A Quiz" MaxHeight="600">
     <Window.Resources>
         <ResourceDictionary>
@@ -28,11 +29,9 @@
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <Label FontWeight="Bold" Grid.Row="0">Title</Label>
-                        <TextBox FontWeight="Bold" Grid.Row="1" Width="300" x:Name="quizTitle" Text="{Binding Path=EditedQuiz.title}" />
-                        <Label FontWeight="Bold" Grid.Row="2">Question (optional)</Label>
-                        <TextBox FontWeight="Bold" Grid.Row="3" Width="300" x:Name="quizQuestion" Text="{Binding Path=EditedQuiz.question}" />
-                        <Label Foreground="Red" Grid.Row="4" Width="300" Visibility="{Binding Path=TitleError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a title"/>
+                        <Label FontWeight="Bold" Grid.Row="0">Question</Label>
+                        <TextBox FontWeight="Bold" Grid.Row="1" Width="300" x:Name="quizQuestion" Text="{Binding Path=EditedQuiz.question}" />
+                        <Label Foreground="Red" Grid.Row="4" Width="300" Visibility="{Binding Path=TitleError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
                         <Label Foreground="Red" Grid.Row="5" Width="300" Visibility="{Binding Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
                     </Grid>
                     <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{Binding Path=Options}">
@@ -47,10 +46,14 @@
                                                  MinWidth="80" 
                                                  Width="300" 
                                                  MaxWidth="400" 
+                                                 TextChanged="updateOptionText"         
                                                  Text="{Binding Path=optionText}" 
                                                  GotFocus="quizAnswer_GotFocus"
                                                  Loaded="quizAnswer_Loaded"
                                                  LostFocus="TextBox_LostFocus" TextWrapping="WrapWithOverflow"/>
+                                        <Button x:Name="quizAnswerDelete" Focusable="False" Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
+                                            <Image Height="20" Width="20"  Source="/Resources/Delete.png"/>
+                                        </Button>
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>

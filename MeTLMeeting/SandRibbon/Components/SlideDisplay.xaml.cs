@@ -249,7 +249,9 @@ namespace SandRibbon.Components
         }
         public void EditConversation(object _obj)
         {
-            new EditConversation().ShowDialog();
+            var editConversation = new EditConversation();
+            editConversation.Owner = Window.GetWindow(this);
+            editConversation.ShowDialog();
         }
         public void Display(ConversationDetails details)
         {//We only display the details of our current conversation (or the one we're entering)

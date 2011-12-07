@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Media;
-using System.Windows;
+using MeTLLib.Providers;
 
 namespace MeTLLib.DataTypes
 {
-    public class Option 
+    public class Option : INotifyPropertyChanged
     {
+        // change to an injected field if needed
+        private static EnglishAlphabetSequence alphabetSequence = new EnglishAlphabetSequence();
+
         public Option(String Name, String OptionText, bool IsCorrect, Color Color)
             : base()
         {
@@ -15,11 +19,99 @@ namespace MeTLLib.DataTypes
             correct = IsCorrect;
             color = Color;
         }
-        public String optionText { get; set; }
-        public String name { get; set; }
-        public bool correct { get; set; }
-        public Color color { get; set; }
+
+        private string _optionText;
+        private string _name;
+        private bool _correct;
+        private Color _color;
+
+        #region INotifyPropertyChanged members
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        #endregion
+
+        #region Properties
+        public String optionText 
+        {
+            get
+            {
+                return _optionText;
+            }
+            set
+            {
+                if (value != _optionText)
+                {
+                    _optionText = value;
+                    NotifyPropertyChanged("optionText");
+                }
+            }                
+        }
+        public String name 
+        { 
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                if (value != _name)
+                {
+                    _name = value;
+                    NotifyPropertyChanged("name");
+                }
+            }
+        }
+        public bool correct
+        {
+            get
+            {
+                return _correct;
+            }
+            set
+            {
+                if (value != _correct)
+                {
+                    _correct = value;
+                    NotifyPropertyChanged("correct");
+                }
+            }
+        }
+        public Color color 
+        { 
+            get
+            {
+                return _color;
+            }
+            set
+            {
+                if (value != _color)
+                {
+                    _color = value;
+                    NotifyPropertyChanged("color");
+                }
+            } 
+        }
+        #endregion
+
+        #region Generators
+        public static String GetOptionNameFromIndex(int index)
+        {
+            return alphabetSequence.GetEncoded((uint)index);
+        }
+        public static String GetNextOptionName(string currentOptionName)
+        {
+            return alphabetSequence.GetNext(currentOptionName);
+        }
+        #endregion
     }
+
     public class QuizQuestion
     {
         public QuizQuestion(long Id, long created, string Title, string Author, string Question, List<Option> Options)
