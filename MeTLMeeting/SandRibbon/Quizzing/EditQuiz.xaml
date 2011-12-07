@@ -29,10 +29,14 @@
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <Label FontWeight="Bold" Grid.Row="0">Question</Label>
-                        <TextBox FontWeight="Bold" Grid.Row="1" Width="300" x:Name="quizQuestion" Text="{Binding Path=EditedQuiz.question}" />
-                        <Label Foreground="Red" Grid.Row="4" Width="300" Visibility="{Binding Path=TitleError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
-                        <Label Foreground="Red" Grid.Row="5" Width="300" Visibility="{Binding Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label FontWeight="Bold" Grid.Row="0" Grid.Column="0">Question</Label>
+                        <TextBox FontWeight="Bold" Grid.Row="0" Grid.Column="1" Width="300" x:Name="quizQuestion" Text="{Binding Path=EditedQuiz.question}" TextWrapping="WrapWithOverflow"/>
+                        <Label Foreground="Red" Grid.Row="4" Grid.Column="1" Width="300" Visibility="{Binding Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
+                        <Label Foreground="Red" Grid.Row="5" Grid.Column="1" Width="300" Visibility="{Binding Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
                     </Grid>
                     <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{Binding Path=Options}">
                         <ItemsControl.ItemTemplate>

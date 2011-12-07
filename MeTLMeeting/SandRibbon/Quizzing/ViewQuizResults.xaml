@@ -1,6 +1,7 @@
 ﻿<Window x:Class="SandRibbon.Quizzing.ViewQuizResults"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="clr-namespace:SandRibbon"
     Title="View Quiz Results"
     x:Name="viewQuizResults"
     SizeToContent="WidthAndHeight">
@@ -22,8 +23,7 @@
                         <DataTemplate>
                             <StackPanel>
                                 <Image Source="/Resources/Ribbon-Quiz.png" Height="100" Width="100"/>
-                                <!--TextBlock Text="{Binding Path=title, Converter={x:Static SandRibbon:Converters.stringTruncator}}"/-->
-                                <TextBlock Text="{Binding Path=title}" TextWrapping="WrapWithOverflow"/>
+                                <TextBlock Text="{Binding Path=question, Converter={x:Static sr:Converters.stringTruncator}}" TextWrapping="WrapWithOverflow"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

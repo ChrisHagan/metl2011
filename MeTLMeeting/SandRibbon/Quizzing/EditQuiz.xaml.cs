@@ -24,10 +24,10 @@ namespace SandRibbon.Quizzing
             get { return (bool) GetValue(OptionErrorProperty); }
             set{SetValue(OptionErrorProperty, value);}
         }
-        public static readonly DependencyProperty TitleErrorProperty = DependencyProperty.Register("TitleError", typeof (bool), typeof (EditQuiz));
-        public bool TitleError { 
-            get { return (bool) GetValue(TitleErrorProperty); }
-            set{SetValue(TitleErrorProperty, value);}
+        public static readonly DependencyProperty QuestionErrorProperty = DependencyProperty.Register("QuestionError", typeof (bool), typeof (EditQuiz));
+        public bool QuestionError { 
+            get { return (bool)GetValue(QuestionErrorProperty); }
+            set{SetValue(QuestionErrorProperty, value);}
         }
         public static readonly DependencyProperty ResultsExistProperty = DependencyProperty.Register("ResultsExist", typeof(bool), typeof(EditQuiz));
         public bool ResultsExist 
@@ -44,15 +44,16 @@ namespace SandRibbon.Quizzing
         #endregion
 
         public ObservableWithPropertiesCollection<Option> Options { get; private set; }
+
         public EditQuiz(QuizQuestion quiz)
         {
-            EditedQuiz = quiz;
+            EditedQuiz = quiz.DeepCopy();
             InitializeComponent();
             DataContext = this;
 
             Options = new ObservableWithPropertiesCollection<Option>(EditedQuiz.options);
 
-            TitleError = false;
+            QuestionError = false;
             OptionError = false;
             ensureQuizHasAnEmptyOption();
             ResultsExist = CheckResultsExist(quiz);
@@ -77,13 +78,13 @@ namespace SandRibbon.Quizzing
 
         private void updateOptionText(object sender, TextChangedEventArgs e)
         {
-            var text = ((TextBox)sender).Text;
+            /*var text = ((TextBox)sender).Text;
             var option = (Option)((FrameworkElement)sender).DataContext;
             if (!String.IsNullOrEmpty(text) || option.optionText != text)
             {
                 option.optionText = text;
                 AddNewEmptyOption();
-            }
+            }*/
         }
 
         public bool CheckResultsExist(QuizQuestion quizQuestion)
@@ -147,7 +148,7 @@ namespace SandRibbon.Quizzing
                     ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(obj)).Opacity = 0.5;
             CommandManager.InvalidateRequerySuggested();
         }
-
+        
         private void quizCommitButton_Click(object sender, RoutedEventArgs e)
         {
             EditedQuiz.options.Clear();
@@ -164,11 +165,11 @@ namespace SandRibbon.Quizzing
 
         private bool validateQuiz(QuizQuestion editedQuiz)
         {
-            if (string.IsNullOrEmpty(editedQuiz.title))
-                TitleError = true;
+            if (string.IsNullOrEmpty(editedQuiz.question))
+                QuestionError = true;
             if (editedQuiz.options.Count < 2)
                 OptionError = true;
-            return !(OptionError && TitleError);
+            return !(OptionError && QuestionError);
         }
 
         private void CloseEdit(object sender, RoutedEventArgs e)

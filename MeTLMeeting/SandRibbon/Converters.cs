@@ -72,12 +72,22 @@ namespace SandRibbon
     }
     public class StringTruncatorConverter : IValueConverter
     {
-        #region IValueConverter Members
+        #region Properties
+        /// <summary>
+        /// Converter will truncate the string to the MaxWidth and append '...' if longer than the set MaxWidth, the default is 10 characters
+        /// </summary>
+        public int MaxWidth { get; set; }
+        #endregion
 
+        private int defaultMaxWidth = 10;
+
+        #region IValueConverter Members
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value.ToString().Length > 10)
-                return string.Format("{0}...", ((string)value).Substring(0, 10));
+            var maxWidth = MaxWidth != 0 ? MaxWidth : defaultMaxWidth;
+
+            if (value.ToString().Length > maxWidth)
+                return string.Format("{0}...", ((string)value).Substring(0, maxWidth));
             return value.ToString();
         }
 

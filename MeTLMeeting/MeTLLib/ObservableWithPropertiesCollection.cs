@@ -13,10 +13,15 @@ namespace MeTLLib
     {
         public ObservableWithPropertiesCollection() : base()
         {
-            this.CollectionChanged += ObservableWithPropertiesCollection_CollectionChanged;
+            RegisterHandlers();
         }
 
         public ObservableWithPropertiesCollection(List<T> initialiseList) : base(initialiseList)
+        {
+            RegisterHandlers();
+        }
+
+        void RegisterHandlers()
         {
             this.CollectionChanged += ObservableWithPropertiesCollection_CollectionChanged;
         }
