@@ -3,10 +3,21 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop">
-    <dict:RibbonPanel>
-        <dict:RadioButton Visibility="Collapsed" x:Name="View" ToolTip="{DynamicResource PenToolTip}" Icon="\Resources\MagnifyingGlassShiny.png" Text="View" Command="api:Commands.SetLayer" CommandParameter="View" />
-        <dict:RadioButton x:Name="Pen" ToolTip="{DynamicResource PenToolTip}" Icon="\Resources\RedPenShiny.png" Text="Ink" Command="api:Commands.SetLayer" CommandParameter="Sketch" IsChecked="True"/>
-        <dict:RadioButton x:Name="Text" ToolTip="{DynamicResource TextModeToolTip}" Icon="\Resources\TextMode.png" Text="Text" Command="api:Commands.SetLayer" CommandParameter="Text" />
-        <dict:RadioButton x:Name="Image" ToolTip="{DynamicResource ImageModeToolTip}" Icon="\Resources\ImageMode.png" Text="Image" Command="api:Commands.SetLayer" CommandParameter="Insert" />
-    </dict:RibbonPanel>
+    <StackPanel Orientation="Horizontal">
+        <dict:RibbonPanel>
+            <dict:RadioButton Visibility="Collapsed" x:Name="View" ToolTip="{DynamicResource PenToolTip}" Icon="\Resources\MagnifyingGlassShiny.png" Text="View" Command="api:Commands.SetLayer" CommandParameter="View" />
+            <dict:RadioButton x:Name="Pen" ToolTip="{DynamicResource PenToolTip}" Icon="\Resources\RedPenShiny.png" Text="Ink" Command="api:Commands.SetLayer" CommandParameter="Sketch" IsChecked="True"/>
+            <dict:RadioButton x:Name="Text" ToolTip="{DynamicResource TextModeToolTip}" Icon="\Resources\TextMode.png" Text="Text" Command="api:Commands.SetLayer" CommandParameter="Text" />
+            <dict:RadioButton x:Name="Image" ToolTip="{DynamicResource ImageModeToolTip}" Icon="\Resources\ImageMode.png" Text="Image" Command="api:Commands.SetLayer" CommandParameter="Insert" />
+        </dict:RibbonPanel>
+        <dict:RibbonPanel>
+            <dict:Button ToolTip="{DynamicResource CutToolTip}" Icon="..\..\Resources\cut.png" Text="Cut" InternalButtonSize="Small"/>
+            <dict:Button ToolTip="{DynamicResource PasteToolTip}" Icon="..\..\Resources\paste.png" Text="Paste"  InternalButtonSize="Small">
+                <CommandBinding Command="Paste" CanExecute="CommandBinding_CanExecute"/>
+            </dict:Button>
+            <dict:Button ToolTip="{DynamicResource CopyToolTip}" Icon="..\..\Resources\copy.png" Text="Copy" InternalButtonSize="Small">
+                <CommandBinding Command="Copy" CanExecute="CommandBinding_CanExecute"/>
+            </dict:Button>
+        </dict:RibbonPanel>
+    </StackPanel>
 </UserControl>

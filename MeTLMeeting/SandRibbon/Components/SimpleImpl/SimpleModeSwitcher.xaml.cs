@@ -38,5 +38,10 @@ namespace SandRibbon.Components.SimpleImpl
             Commands.SetLayer.ExecuteAsync("Sketch");
             Pen.IsChecked = true;
         }
+
+        private void CommandBinding_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
     }
 }

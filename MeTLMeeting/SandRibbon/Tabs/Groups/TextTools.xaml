@@ -6,11 +6,7 @@
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     Loaded="setUpTools">
     <StackPanel Orientation="Horizontal" x:Name="LayoutRoot">
-        <dict:RibbonPanel>
-            <dict:Button ToolTip="{DynamicResource CutToolTip}" Icon="..\..\Resources\cut.png" Text="Cut" Command="ApplicationCommands.Cut" InternalButtonSize="Small"/>
-            <dict:Button ToolTip="{DynamicResource PasteToolTip}" Icon="..\..\Resources\paste.png" Text="Paste" Command="ApplicationCommands.Paste" InternalButtonSize="Small"/>
-            <dict:Button ToolTip="{DynamicResource CopyToolTip}" Icon="..\..\Resources\copy.png" Text="Copy" Command="ApplicationCommands.Copy" InternalButtonSize="Small"/>
-        </dict:RibbonPanel>
+        
         <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
         <StackPanel>
             <StackPanel Height="30" Orientation="Horizontal">

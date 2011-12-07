@@ -83,25 +83,5 @@ namespace SandRibbon.Components
                 ElementBounds = bounds;
             }
         }
-        private void bubbleContent(object sender, RoutedEventArgs e)
-        {
-            var slide = Globals.slide;
-            var currentDetails = Globals.conversationDetails;
-            string target = null;
-            var selection = new List<SelectedIdentity>();
-            foreach(var registeredCommand in Commands.DoWithCurrentSelection.RegisteredCommands)
-                registeredCommand.Execute((Action<SelectedIdentity>)(id=>{
-                    target = id.target;
-                    selection.Add(id);
-                }));
-            if (selection.Count() > 0)
-            {
-                var details = MeTLLib.ClientFactory.Connection().AppendSlideAfter(Globals.slide, currentDetails.Jid, Slide.TYPE.THOUGHT);
-                var newSlide = details.Slides.Select(s => s.id).Max();
-                Commands.SendNewBubble.ExecuteAsync(new TargettedBubbleContext
-                (slide,Globals.me,target,"public",selection,newSlide));
-            }
-        }
-
     }
 }

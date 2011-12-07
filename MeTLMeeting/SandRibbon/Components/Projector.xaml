@@ -31,7 +31,7 @@
                     </MultiBinding> 
                 </ScrollViewer.Height>
                 <Grid>
-                    <components:UserCanvasStack x:Name="stack"/>
+                    <components:CollapsedCanvasStack x:Name="stack"/>
                     <!--<InkPresenter x:Name="liveInk" Width="{Binding ElementName=stack, Path=ActualWidth}"
                                     Height="{Binding ElementName=stack, Path=ActualHeight}" />-->
                 </Grid>

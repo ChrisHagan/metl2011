@@ -10,7 +10,6 @@ using MeTLLib.Providers.Connection;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using System.Collections.Generic;
-using SandRibbon.Components.Canvas;
 using MeTLLib.DataTypes;
 
 namespace SandRibbon.Components
@@ -46,40 +45,31 @@ namespace SandRibbon.Components
             scroll.ScrollToHorizontalOffset(e.HorizontalOffset);
             scroll.ScrollToVerticalOffset(e.VerticalOffset);
         }
-        private Rect getContentBounds()
-        {
-            return new List<AbstractCanvas> { stack.images, stack.text, stack.handwriting }
-                .Aggregate(new Rect(), (acc, item) =>
-                    {
-                        acc.Union(VisualTreeHelper.GetDescendantBounds(item));
-                        return acc;
-                    });
-        }
-        
+
         public Projector()
         {
             InitializeComponent();
-            instance = this;
             Loaded += Projector_Loaded;
             stack.SetEditable(false);
             Commands.SetDrawingAttributes.RegisterCommand(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<MeTLLib.Providers.Connection.PreParser>(PreParserAvailable));
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
-            Commands.SetInkCanvasMode.RegisterCommand(new DelegateCommand<string>(SetInkCanvasMode));
-            Commands.SetLayer.RegisterCommand(new DelegateCommand<object>(setLayer));
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<object>(setPedagogy));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>(shutdown));
             Commands.MoveTo.RegisterCommandToDispatcher(new DelegateCommand<object>(moveTo));
-            stack.handwriting.EditingModeChanged += modeChanged;
-            stack.images.EditingModeChanged += modeChanged;
-            stack.text.EditingModeChanged += modeChanged;
         }
-
+        private string generateTitle(ConversationDetails details)
+        {
+            var possibleIndex = details.Slides.Where(s => s.id == Globals.location.currentSlide);
+            int slideIndex = 1;
+            if(possibleIndex.Count() != 0)
+                slideIndex = possibleIndex.First().index + 1;
+            return string.Format("{0} Slide:{1}", details.Title, slideIndex);
+        }
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
-            conversationLabel.Text = details.Title;
+            conversationLabel.Text = generateTitle(details);
             
             if (((details.isDeleted || Globals.authorizedGroups.Where(g=>g.groupKey == details.Subject).Count() == 0) && details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode()) || String.IsNullOrEmpty(Globals.location.activeConversation))
             {
@@ -101,30 +91,16 @@ namespace SandRibbon.Components
         }
         private void moveTo(object obj)
         {
-            conversationLabel.Text = Globals.conversationDetails.Title;
+            conversationLabel.Text = generateTitle(Globals.conversationDetails);
+            
             stack.Flush();
-        }
-        void modeChanged(object sender, RoutedEventArgs e)
-        {
-            var canvas = (InkCanvas)sender;
-            if (canvas.EditingMode != InkCanvasEditingMode.None)
-                canvas.EditingMode = InkCanvasEditingMode.None;
         }
         private void Projector_Loaded(object sender, RoutedEventArgs e)
         {
             startProjector(null);
         }
-        private void setLayer(object obj)
-        {
-            Dispatcher.adoptAsync(() =>
-                                      {
-                                          foreach (var layer in stack.stack.Children)
-                                              ((UIElement) layer).Opacity = 1;
-                                      });
-        }
         private void startProjector(object obj)
         {
-            setProjectionLayers();
             try
             {
                 ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(null, null, PreParserAvailable, Globals.location.currentSlide.ToString());
@@ -132,47 +108,20 @@ namespace SandRibbon.Components
             catch (Exception)
             {
             }
-            stack.handwriting.me = "projector";
-            stack.images.me = "projector";
-            stack.text.me = "projector";
-            conversationLabel.Text = Globals.conversationDetails.Title;
+            stack.me = "projector";
+            conversationLabel.Text = generateTitle(Globals.conversationDetails);
         }
-        private void setProjectionLayers()
-        {
-            Dispatcher.adoptAsync(delegate
-                                 {
-                                     var projectorImages = stack.images;
-                                     var projectorText = stack.text;
-                                     var projectorHandwriting = stack.handwriting;
-                                     stack.canvasStack.Children.Clear();
-                                     stack.canvasStack.Children.Add(projectorImages);
-                                     stack.canvasStack.Children.Add(projectorText);
-                                     stack.canvasStack.Children.Add(projectorHandwriting);
-                                     foreach (
-                                         var canvas in
-                                             new List<InkCanvas>
-                                                 {stack.handwriting, stack.images, stack.text})
-                                     {
-                                         canvas.EditingMode = InkCanvasEditingMode.None;
-                                         canvas.Opacity = 1;
-                                     }
-                                 });
-        }
-        private static Projector instance;
         private static DrawingAttributes currentAttributes = new DrawingAttributes();
         private static DrawingAttributes deleteAttributes = new DrawingAttributes();
         private static Color deleteColor = Colors.Red;
-        private static string currentMode;
-        private static string privacy;
         public void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
             if (!isPrivate(parser))
             {
-                stack.handwriting.ReceiveStrokes(parser.ink);
-                stack.images.ReceiveImages(parser.images.Values);
-                stack.images.ReceiveVideos(parser.videos.Values);
+                stack.ReceiveStrokes(parser.ink);
+                stack.ReceiveImages(parser.images.Values);
                 foreach (var text in parser.text.Values)
-                    stack.text.doText(text);
+                    stack.DoText(text);
             }
         }
 
@@ -192,44 +141,12 @@ namespace SandRibbon.Components
             return false;
         }
 
-        private void SetInkCanvasMode(string mode)
-        {
-            currentMode = mode;
-        }
         private void SetDrawingAttributes(DrawingAttributes attributes)
         {
             currentAttributes = attributes;
             deleteAttributes = currentAttributes.Clone();
             deleteAttributes.Color = deleteColor;
         }
-        private void SetPrivacy(string privacy)
-        {
-            Projector.privacy = privacy;
-            //setProjectionLayers();
-        }
-        /*
-        public static void PenMoving(StylusPointCollection points)
-        {
-            GlobalTimers.resetSyncTimer();
-            if (instance == null) return;
-            if(privacy == "public")
-                if (strokeInProgress == null)
-                {
-                    bool erasing = currentMode == "EraseByStroke";
-                    strokeInProgress = new Stroke(points, erasing? deleteAttributes : currentAttributes);
-                    instance.liveInk.Strokes.Add(strokeInProgress);
-                }
-                else
-                    strokeInProgress.StylusPoints.Add(points);
-        }
-        public static void PenUp()
-        {
-            if (instance == null) return;
-            if(instance.liveInk.Strokes.Contains(strokeInProgress))
-                instance.liveInk.Strokes.Remove(strokeInProgress);
-            strokeInProgress = null;
-        }
-         * */
     }
     public class WidthCorrector : IMultiValueConverter
     {

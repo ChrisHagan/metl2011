@@ -50,6 +50,7 @@ namespace SandRibbon.Tabs.Groups
 
         private void MoveTo(object obj)
         {
+            ColourPickerBorder.BorderBrush = new SolidColorBrush(Colors.Black); 
             fontSize.SelectedItem = generateDefaultFontSize();
         }
 

@@ -597,6 +597,14 @@
                             <Setter TargetName="bg" Property="Orientation" Value="Horizontal"/>
                             <Setter TargetName="bg" Property="VerticalAlignment" Value="Top"/>
                         </Trigger>
+                        <Trigger Property="dict:Button.InternalButtonSize" Value="LargeIcon">
+                            <Setter TargetName="icon" Property="Width" Value="50"/>
+                            <Setter TargetName="icon" Property="Height" Value="50"/>
+                            <Setter TargetName="text" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="bg" Property="Orientation" Value="Horizontal"/>
+                            <Setter TargetName="bg" Property="Height" Value="50"/>
+                            <Setter TargetName="bg" Property="VerticalAlignment" Value="Top"/>
+                        </Trigger>
                         <Trigger Property="dict:Button.InternalButtonSize" Value="Small">
                             <Setter TargetName="icon" Property="Width" Value="15"/>
                             <Setter TargetName="icon" Property="Height" Value="15"/>
