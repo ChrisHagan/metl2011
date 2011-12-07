@@ -256,7 +256,7 @@ namespace SandRibbon
             Trace.TraceInformation("UserOptionsDialog_Show");
             if (mustBeLoggedIn(null))
                 new UserOptionsDialog().ShowDialog();
-            else MessageBox.Show("You must be logged in to edit your options");
+            else MeTLMessage.Warning("You must be logged in to edit your options");
         }
         private void ListenToAudio(int jid) {
             player.Source = new Uri("http://radar.adm.monash.edu:8500/MeTLStream1.m3u");
@@ -1121,6 +1121,7 @@ namespace SandRibbon
                 sp.Children.Add(buttons);
                 popup.Content = sp;
                 popup.Topmost = true;
+                popup.Owner = Window.GetWindow(this);
                 popup.Show();
             }
         }

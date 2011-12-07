@@ -17,6 +17,7 @@ using System.Windows.Automation.Peers;
 using MeTLLib;
 using System.ComponentModel;
 using System.Collections.Generic;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components
 {
@@ -295,7 +296,7 @@ namespace SandRibbon.Components
         private void deleteConversation(object sender, ExecutedRoutedEventArgs e)
         {
             var owner = Window.GetWindow(this);
-            if (MessageBox.Show(owner, "Really delete this conversation?", "Delete Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
             {
                 var details = context(e.OriginalSource);
                 MeTLLib.ClientFactory.Connection().DeleteConversation(details);

@@ -590,6 +590,7 @@
     <Compile Include="Components\Utility\DragDrop\DraggedAdorner.cs" />
     <Compile Include="Components\Utility\DragDrop\InsertionAdorner.cs" />
     <Compile Include="Components\Utility\DragDrop\Utilities.cs" />
+    <Compile Include="Components\Utility\MeTLMessage.cs" />
     <Compile Include="Components\Utility\MeTLVideoPlayer.xaml.cs">
       <DependentUpon>MeTLVideoPlayer.xaml</DependentUpon>
     </Compile>

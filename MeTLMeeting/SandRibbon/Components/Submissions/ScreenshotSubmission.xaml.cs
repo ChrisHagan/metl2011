@@ -8,6 +8,7 @@ using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using System.Diagnostics;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -113,7 +114,7 @@ namespace SandRibbon.Components.Submissions
                                  Commands.ScreenshotGenerated.UnregisterCommand(sendScreenshot);
                                  MeTLLib.ClientFactory.Connection().uploadAndSendSubmission(new MeTLStanzas.LocalSubmissionInformation
                                  (MeTLLib.ClientFactory.Connection().location.currentSlide,Globals.me,"submission","public",hostedFileName));
-                                 MessageBox.Show(Window.GetWindow(this), "Submission sent to " + Globals.conversationDetails.Author);
+                                 MeTLMessage.Information("Submission sent to " + Globals.conversationDetails.Author);
                              });
             Commands.ScreenshotGenerated.RegisterCommand(sendScreenshot);
             Commands.GenerateScreenshot.ExecuteAsync(new ScreenshotDetails

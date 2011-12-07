@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Windows.Threading;
 using SandRibbon.Components.Canvas;
 using System.Threading;
+using SandRibbon.Components.Utility;
 
 [assembly: UIPermission(SecurityAction.RequestMinimum)]
 
@@ -85,7 +86,7 @@ namespace SandRibbon
             }
             catch (TriedToStartMeTLWithNoInternetException)
             {
-                MessageBox.Show("MeTL cannot contact the server.  Please check your internet connection.");
+                MeTLMessage.Error("MeTL cannot contact the server.  Please check your internet connection.");
             }
         }
         public static void noop(object _arg)
@@ -142,7 +143,7 @@ namespace SandRibbon
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             doCrash((Exception)e.ExceptionObject);
-            MessageBox.Show(string.Format("We're sorry.  MeTL has encountered an unexpected error and has to close."));
+            MeTLMessage.Error("We're sorry.  MeTL has encountered an unexpected error and has to close.");
         }
         void Current_Exit(object sender, ExitEventArgs e)
         {

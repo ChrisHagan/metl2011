@@ -9,6 +9,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbon.Utils;
 using System.Windows.Forms;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components
 {
@@ -65,7 +66,7 @@ namespace SandRibbon.Components
                 {
                     if (WorkspaceStateProvider.savedStateExists())
                     {
-                        System.Windows.MessageBox.Show("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
+                        MeTLMessage.Error("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
                         Commands.LogOut.Execute(null);
                     }
                     else

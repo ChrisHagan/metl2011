@@ -1264,7 +1264,7 @@ namespace SandRibbon.Components
              
             if (fileNames.Length == 0)
             {
-                MessageBox.Show("Cannot drop this onto the canvas");
+                MeTLMessage.Information("Cannot drop this onto the canvas");
                 return;
             }
             Commands.SetLayer.ExecuteAsync("Insert");
@@ -1329,7 +1329,7 @@ namespace SandRibbon.Components
             string filename = unMangledFilename + ".MeTLFileUpload";
             if (filename.Length > 260)
             {
-                MessageBox.Show("Sorry, your filename is too long, must be less than 260 characters");
+                MeTLMessage.Warning("Sorry, your filename is too long, must be less than 260 characters");
                 return;
             }
             if (isFileLessThanXMB(unMangledFilename, fileSizeLimit))
@@ -1343,12 +1343,12 @@ namespace SandRibbon.Components
                      File.Delete(filename);
                  };
                 worker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
-                                                                                   (Action)(() => MessageBox.Show(string.Format("Finished uploading {0}.", unMangledFilename))));
+                                                                                   (Action)(() => MeTLMessage.Information(string.Format("Finished uploading {0}.", unMangledFilename))));
                 worker.RunWorkerAsync();
             }
             else
             {
-                MessageBox.Show(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
+                MeTLMessage.Warning(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
                 return;
             }
         }
@@ -1356,7 +1356,7 @@ namespace SandRibbon.Components
         {
             if (!isFileLessThanXMB(fileName, fileSizeLimit))
             {
-                MessageBox.Show(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
+                MeTLMessage.Warning(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
                 return;
             }
             Dispatcher.adopt(() =>
@@ -1368,7 +1368,7 @@ namespace SandRibbon.Components
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show("Sorry could not create an image from this file :" + fileName + "\n Error: " + e.Message);
+                    MeTLMessage.Warning("Sorry could not create an image from this file :" + fileName + "\n Error: " + e.Message);
                     return;
                 }
                 if (image == null)
@@ -2060,7 +2060,7 @@ namespace SandRibbon.Components
                     Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, target, privacy, image));
                 }
                 else
-                    MessageBox.Show( "Sorry, your file could not be pasted.  Try dragging and dropping, or selecting with the add image button.");
+                    MeTLMessage.Information("Sorry, your file could not be pasted.  Try dragging and dropping, or selecting with the add image button.");
             }
         }
         private void HandleImagePasteUndo(List<BitmapSource> selectedImages)

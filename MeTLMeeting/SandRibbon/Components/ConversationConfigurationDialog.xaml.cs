@@ -12,6 +12,7 @@ using SandRibbon.Utils;
 using MeTLLib.DataTypes;
 using System.IO;
 using Microsoft.Win32;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components
 {
@@ -68,7 +69,7 @@ namespace SandRibbon.Components
                     PopulateFields();
                     if (details == null)
                     {
-                        MessageBox.Show("No valid conversation currently selected.  Please ensure you are in a conversation you own when editing a conversation.");
+                        MeTLMessage.Warning("No valid conversation currently selected.  Please ensure you are in a conversation you own when editing a conversation.");
                         this.Close();
                     }
                     break;
@@ -206,7 +207,7 @@ namespace SandRibbon.Components
                         }
                         catch (Exception)
                         {
-                            MessageBox.Show("Sorry, MeTL encountered a problem while trying to import your PowerPoint.  If the conversation was created, please check whether it has imported correctly.");
+                            MeTLMessage.Error("Sorry, MeTL encountered a problem while trying to import your PowerPoint.  If the conversation was created, please check whether it has imported correctly.");
                             throw;
                         }
                         finally
@@ -216,7 +217,7 @@ namespace SandRibbon.Components
                     }
                     else
                     {
-                        MessageBox.Show("Sorry. I do not know what to do with that file format");
+                        MeTLMessage.Warning("Sorry. I do not know what to do with that file format");
                     }
                     break;
                 case ConversationConfigurationMode.CREATE:

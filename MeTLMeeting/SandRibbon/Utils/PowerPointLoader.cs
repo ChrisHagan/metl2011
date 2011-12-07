@@ -18,6 +18,7 @@ using SandRibbon.Providers;
 using MeTLLib;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Utils
 {
@@ -204,7 +205,7 @@ namespace SandRibbon.Utils
             }
             catch (COMException)
             {
-                MessageBox.Show("MeTL requires Microsoft PowerPoint to be installed to import a presentation", "MeTL2011", MessageBoxButton.OK, MessageBoxImage.Error);
+                MeTLMessage.Error("MeTL requires Microsoft PowerPoint to be installed to import a presentation");
                 Commands.HideProgressBlocker.ExecuteAsync(null);
             }
 

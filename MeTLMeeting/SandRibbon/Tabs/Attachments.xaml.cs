@@ -4,15 +4,16 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using Divelements.SandRibbon;
 using MeTLLib.DataTypes;
-using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Providers;
-using Button=System.Windows.Controls.Button;
 using MeTLLib.Providers.Connection;
+using Microsoft.Practices.Composite.Presentation.Commands;
+using Microsoft.Win32;
+using SandRibbon.Providers;
+using Button = System.Windows.Controls.Button;
 using MessageBox = System.Windows.MessageBox;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Tabs
 {
@@ -29,7 +30,6 @@ namespace SandRibbon.Tabs
     }
     public partial class Attachments :RibbonTab 
     {
-
         private ObservableCollection<FileInfo> files; 
         public Attachments()
         {
@@ -40,11 +40,12 @@ namespace SandRibbon.Tabs
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(clearOutAttachments));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            //Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(uploadFile));
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (ConversationDetails.Empty.Equals(details)) return;
-            if(details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode() && details.isDeleted)
+            if (details.IsEmpty) return;
+            if (details.IsJidEqual(Globals.location.activeConversation) && details.isDeleted)
                 clearOutAttachments(null);
         }
         private void clearOutAttachments(object obj)
@@ -81,7 +82,7 @@ namespace SandRibbon.Tabs
             saveFile.Filter = string.Format("{0} (*{1})|*{1}|All Files (*.*)|*.*", file.fileType, System.IO.Path.GetExtension(file.filename));
             saveFile.FilterIndex = 1;
             saveFile.RestoreDirectory = true;
-            if(saveFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if(saveFile.ShowDialog(Window.GetWindow(this)) == true)
             {
                 var backgroundWorker = new BackgroundWorker();
                 backgroundWorker.DoWork += (s, a) =>
@@ -94,7 +95,7 @@ namespace SandRibbon.Tabs
 
                                                };
                 backgroundWorker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
-                                                                                   (Action)(() => MessageBox.Show(string.Format("Finished downloading {0}.", saveFile.FileName))));
+                                                                                   (Action)(() => MeTLMessage.Information(string.Format("Finished downloading {0}.", saveFile.FileName))));
                 backgroundWorker.RunWorkerAsync();
             }
         }

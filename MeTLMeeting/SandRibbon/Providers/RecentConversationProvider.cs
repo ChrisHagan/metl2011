@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using MeTLLib.DataTypes;
+using SandRibbon.Components.Utility;
 
 //using SandRibbonObjects;
 
@@ -64,7 +65,7 @@ namespace SandRibbon.Providers
                         referencesToThisConversation.Single().SetAttributeValue("lastAccessTime", SandRibbonObjects.DateTimeFactory.Now().ToString());
                         break;
                     default:
-                        MessageBox.Show("Too many instances of " + document.Title + " in recent history.  Not listing.");
+                        MeTLMessage.Warning("Too many instances of " + document.Title + " in recent history.  Not listing.");
                         break;
                 }
                 recentDocs.Save(RECENT_DOCUMENTS);

@@ -26,6 +26,7 @@ using Rectangle = System.Windows.Shapes.Rectangle;
 using Size = System.Windows.Size;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -466,7 +467,8 @@ namespace SandRibbon.Components.Canvas
                 Commands.SendImage.ExecuteAsync(new TargettedImage
                 (currentSlide, Globals.me, target, privacy, image));
             }
-            else MessageBox.Show("Sorry, your file could not be pasted.  Try dragging and dropping, or selecting with the add image button.");
+            else 
+                MeTLMessage.Information("Sorry, your file could not be pasted.  Try dragging and dropping, or selecting with the add image button.");
         }
 
         public void OnClipboardCopy()
@@ -944,7 +946,7 @@ namespace SandRibbon.Components.Canvas
             string filename = unMangledFilename + ".MeTLFileUpload";
             if (filename.Length > 260)
             {
-                MessageBox.Show("Sorry, your filename is too long, must be less than 260 characters");
+                MeTLMessage.Information("Sorry, your filename is too long, must be less than 260 characters");
                 return;
             }
             if (isFileLessThanXMB(unMangledFilename, fileSizeLimit))
@@ -958,12 +960,12 @@ namespace SandRibbon.Components.Canvas
                      File.Delete(filename);
                  };
                 worker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
-                                                                                   (Action)(() => MessageBox.Show(string.Format("Finished uploading {0}.", unMangledFilename))));
+                                                                                   (Action)(() => MeTLMessage.Information(string.Format("Finished uploading {0}.", unMangledFilename))));
                 worker.RunWorkerAsync();
             }
             else
             {
-                MessageBox.Show(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
+                MeTLMessage.Information(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
                 return;
             }
         }
@@ -971,7 +973,7 @@ namespace SandRibbon.Components.Canvas
         {
             if (!isFileLessThanXMB(fileName, fileSizeLimit))
             {
-                MessageBox.Show(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
+                MeTLMessage.Information(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
                 return;
             }
             Dispatcher.adopt(() =>
@@ -983,7 +985,7 @@ namespace SandRibbon.Components.Canvas
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show("Sorry could not create an image from this file :" + fileName + "\n Error: " + e.Message);
+                    MeTLMessage.Warning("Sorry could not create an image from this file :" + fileName + "\n Error: " + e.Message);
                     return;
                 }
                 if (image == null)

@@ -11,6 +11,7 @@ using SandRibbon.Automation.AutomationPeers;
 using SandRibbon.Providers;
 using SandRibbonInterop.Interfaces;
 using MeTLLib.DataTypes;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components
 {
@@ -107,7 +108,7 @@ namespace SandRibbon.Components
             {
                 // remove the conversation from the menu list
                 UpdateConversationDetails(details);
-                MessageBox.Show(Window.GetWindow(this), String.Format("Conversation \"{0}\" is no longer available.", details.Title), "MeTL 2011", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MeTLMessage.Warning(String.Format("Conversation \"{0}\" is no longer available.", details.Title));
             }
             else
             {

@@ -16,6 +16,7 @@ using SandRibbon.Utils;
 using MeTLLib.DataTypes;
 using System.IO;
 using System.Xml;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components.Canvas
 {
@@ -312,7 +313,7 @@ namespace SandRibbon.Components.Canvas
              
             if (fileNames.Length == 0)
             {
-                MessageBox.Show("Cannot drop this onto the canvas");
+                MeTLMessage.Warning("Cannot drop this onto the canvas");
                 return;
             }
             Commands.SetLayer.ExecuteAsync("Insert");
