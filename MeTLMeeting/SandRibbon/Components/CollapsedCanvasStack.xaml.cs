@@ -830,7 +830,7 @@ namespace SandRibbon.Components
                                                      });
             Action undo = () =>
                               {
-                                  var mySelectedElements = selectedElements.Select(t => ((MeTLTextBox)t).clone());
+                                  var mySelectedElements = selectedElements.Where(t => t is MeTLTextBox).Select(t => ((MeTLTextBox)t).clone());
                                   foreach (MeTLTextBox box in mySelectedElements)
                                   {
                                       if(MyWork.Children.ToList().Where(tb => ((MeTLTextBox)tb).tag().id == box.tag().id).ToList().Count != 0)
@@ -855,17 +855,17 @@ namespace SandRibbon.Components
             var text = changeSelectedTextPrivacy(selectedElements, newPrivacy);
             Action redo = () =>
                               {
-                                  ClearAdorners();
                                   ink.redo();
                                   text.redo();
                                   images.redo();
+                                  ClearAdorners();
                               };
             Action undo = () =>
                               {
-                                  ClearAdorners();
                                   ink.undo();
                                   text.undo();
                                   images.undo();
+                                  ClearAdorners();
                               };
             redo();
             UndoHistory.Queue(undo, redo);
@@ -1920,6 +1920,7 @@ namespace SandRibbon.Components
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
             if (targettedBox.target != target) return;
+            if (targettedBox.box.Text.Length == 0) return;
             if (targettedBox.author == me && alreadyHaveThisTextBox(targettedBox.box.toMeTLTextBox()) && me != Globals.PROJECTOR)
             {
                 var box = textBoxFromId(targettedBox.identity);
@@ -2230,21 +2231,20 @@ namespace SandRibbon.Components
                 }
                 MyWork.Select(selection);
         }
-        private IEnumerable<BitmapSource> HandleImageCutRedo(IEnumerable<UIElement> selectedImages)
+        private IEnumerable<BitmapSource> HandleImageCutRedo(IEnumerable<Image> selectedImages)
         {
-            foreach (var element in selectedImages.Where(e => e is Image))
+            foreach (var img in selectedImages)
             {
-                var img = (Image)element;
                 ApplyPrivacyStylingToElement(img, img.tag().privacy);
+                MyWork.Children.Remove(img);
                 Commands.SendDirtyImage.Execute(new TargettedDirtyElement(Globals.slide, Globals.me, target, img.tag().privacy, img.tag().id));
             }
-            return selectedImages.Where(i => i is Image).Select(i => (BitmapSource)((Image)i).Source);
+            return selectedImages.Select(i => (BitmapSource)i.Source);
         }
-        protected void HandleTextCutUndo(List<UIElement> selectedElements, MeTLTextBox currentTextBox)
+        protected void HandleTextCutUndo(List<MeTLTextBox> selectedElements, MeTLTextBox currentTextBox)
         {
             if (currentTextBox != null && currentTextBox.SelectionLength > 0)
             {
-                var selection = currentTextBox.SelectedText;
                 var text = currentTextBox.Text;
                 var start = currentTextBox.SelectionStart;
                 var length = currentTextBox.SelectionLength;
@@ -2261,7 +2261,7 @@ namespace SandRibbon.Components
                    sendBox(box.toMeTLTextBox());
             }
         }
-        protected List<string> HandleTextCutRedo(List<UIElement> elements, MeTLTextBox currentTextBox)
+        protected List<string> HandleTextCutRedo(List<MeTLTextBox> elements, MeTLTextBox currentTextBox)
         {
             var clipboardText = new List<string>();
             if (currentTextBox != null && currentTextBox.SelectionLength > 0)
@@ -2316,12 +2316,14 @@ namespace SandRibbon.Components
             if (me == Globals.PROJECTOR) return;
             var strokesToCut = MyWork.GetSelectedStrokes().Select(s => s.Clone());
             var currentTextBox = myTextBox.clone();
-            var selectedElements = MyWork.GetSelectedElements().ToList();
+            var selectedImages = MyWork.GetSelectedImages().Select(i => ((Image)i).clone()).ToList();
+            var selectedText = MyWork.GetSelectedTextBoxes().Select(t => ((MeTLTextBox) t).clone()).ToList();
+
             Action redo = () =>
             {
                 ClearAdorners();
-                var text = HandleTextCutRedo(selectedElements, currentTextBox);
-                var images = HandleImageCutRedo(selectedElements);
+                var text = HandleTextCutRedo(selectedText, currentTextBox);
+                var images = HandleImageCutRedo(selectedImages);
                 var ink = HandleInkCutRedo(strokesToCut);
                 Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(text, images, ink));
                 AddAdorners();
@@ -2331,10 +2333,10 @@ namespace SandRibbon.Components
                 ClearAdorners();
                 if(Clipboard.ContainsData(MeTLClipboardData.Type))
                 {
-                    var data = (MeTLClipboardData)Clipboard.GetData(MeTLClipboardData.Type);
-                    HandleTextCutUndo(data.Text.Select(t => applyDefaultAttributes(new MeTLTextBox{Text = t})) as List<UIElement>, currentTextBox);
-                    //HandleImageCutUndo(data.Images.Select(i => new Image{Source = i}));
-                    HandleInkCutUndo(data.Ink);
+                    Clipboard.GetData(MeTLClipboardData.Type);
+                    HandleTextCutUndo(selectedText, currentTextBox);
+                    HandleImageCutUndo(selectedImages);
+                    HandleInkCutUndo(strokesToCut);
                 }
                 AddAdorners();
             };
@@ -2353,6 +2355,7 @@ namespace SandRibbon.Components
         }
         public void Flush()
         {
+            ClearAdorners();
             MyWork.Strokes.Clear();
             MyWork.Children.Clear();
             OtherWork.Children.Clear();
