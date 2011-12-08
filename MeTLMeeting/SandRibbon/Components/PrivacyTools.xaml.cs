@@ -49,7 +49,7 @@ namespace SandRibbon.Components
 
         private void UpdatePrivacyFromSelectedTextBox(TextInformation info)
         {
-            string setPrivacy = info.isPrivate ? "private" : "public";
+            string setPrivacy = info.IsPrivate ? "private" : "public";
             Commands.SetPrivacy.ExecuteAsync(setPrivacy);
         }
 

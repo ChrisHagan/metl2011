@@ -83,9 +83,9 @@ namespace SandRibbon.Components.Canvas
         {
             try
             {
-                currentColor = info.color;
-                currentFamily = info.family;
-                currentSize = info.size;
+                currentColor = info.Color;
+                currentFamily = info.Family;
+                currentSize = info.Size;
                 if (myTextBox != null)
                 {
                     var caret = myTextBox.CaretIndex;
@@ -171,16 +171,16 @@ namespace SandRibbon.Components.Canvas
         }
         private static void applyStylingTo(MeTLTextBox currentTextBox, TextInformation info)
         {
-            currentTextBox.FontStyle = info.italics ? FontStyles.Italic : FontStyles.Normal;
-            currentTextBox.FontWeight = info.bold ? FontWeights.Bold : FontWeights.Normal;
+            currentTextBox.FontStyle = info.Italics ? FontStyles.Italic : FontStyles.Normal;
+            currentTextBox.FontWeight = info.Bold ? FontWeights.Bold : FontWeights.Normal;
             currentTextBox.TextDecorations = new TextDecorationCollection();
-            if(info.underline)
+            if(info.Underline)
                 currentTextBox.TextDecorations = TextDecorations.Underline;
-            else if(info.strikethrough)
+            else if(info.Strikethrough)
                 currentTextBox.TextDecorations= TextDecorations.Strikethrough;
-            currentTextBox.FontSize = info.size;
-            currentTextBox.FontFamily = info.family;
-            currentTextBox.Foreground = new SolidColorBrush(info.color);
+            currentTextBox.FontSize = info.Size;
+            currentTextBox.FontFamily = info.Family;
+            currentTextBox.Foreground = new SolidColorBrush(info.Color);
         }
         private static TextInformation getInfoOfBox(MeTLTextBox box)
         {
@@ -193,13 +193,13 @@ namespace SandRibbon.Components.Canvas
             }
             return new TextInformation
                        {
-                           bold = box.FontWeight == FontWeights.Bold,
-                           italics = box.FontStyle == FontStyles.Italic,
-                           size = box.FontSize,
-                           underline = underline,
-                           strikethrough = strikethrough,
-                           family = box.FontFamily,
-                           color = ((SolidColorBrush) box.Foreground).Color
+                           Bold = box.FontWeight == FontWeights.Bold,
+                           Italics = box.FontStyle == FontStyles.Italic,
+                           Size = box.FontSize,
+                           Underline = underline,
+                           Strikethrough = strikethrough,
+                           Family = box.FontFamily,
+                           Color = ((SolidColorBrush) box.Foreground).Color
                        };
         }
         private void hideConversationSearchBox(object obj)
@@ -539,8 +539,8 @@ namespace SandRibbon.Components.Canvas
             box.Foreground = Brushes.Black;
             var info = new TextInformation
                            {
-                               family = box.FontFamily,
-                               size = box.FontSize,
+                               Family = box.FontFamily,
+                               Size = box.FontSize,
                            };
             Commands.TextboxFocused.ExecuteAsync(info);
             sendTextWithoutHistory(box, box.tag().privacy);
@@ -638,31 +638,31 @@ namespace SandRibbon.Components.Canvas
         {
             var info = new TextInformation
             {
-                family = defaultFamily,
-                size = defaultSize,
-                bold = false,
-                italics = false,
-                strikethrough = false,
-                underline = false,
-                color = Colors.Black
+                Family = defaultFamily,
+                Size = defaultSize,
+                Bold = false,
+                Italics = false,
+                Strikethrough = false,
+                Underline = false,
+                Color = Colors.Black
             };
             if (myTextBox != null)
             {
                 info = new TextInformation
                 {
-                    family = myTextBox.FontFamily,
-                    size = myTextBox.FontSize,
-                    bold = myTextBox.FontWeight == FontWeights.Bold,
-                    italics = myTextBox.FontStyle == FontStyles.Italic,
-                    color = ((SolidColorBrush)myTextBox.Foreground).Color
+                    Family = myTextBox.FontFamily,
+                    Size = myTextBox.FontSize,
+                    Bold = myTextBox.FontWeight == FontWeights.Bold,
+                    Italics = myTextBox.FontStyle == FontStyles.Italic,
+                    Color = ((SolidColorBrush)myTextBox.Foreground).Color
                 };
                 
                 if (myTextBox.TextDecorations.Count > 0)
                 {
-                    info.strikethrough = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
-                    info.underline = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "underline";
+                    info.Strikethrough = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "strikethrough";
+                    info.Underline = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "underline";
                 }
-                info.isPrivate = myTextBox.tag().privacy.ToLower() == "private" ? true : false; 
+                info.IsPrivate = myTextBox.tag().privacy.ToLower() == "private" ? true : false; 
             }
             Commands.TextboxFocused.ExecuteAsync(info);
 
