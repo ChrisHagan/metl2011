@@ -153,7 +153,6 @@ namespace SandRibbon.Components
             Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<Size>(new DelegateCommand<Size>(extendCanvasBySize));
 
             Commands.ImageDropped.RegisterCommandToDispatcher(new DelegateCommand<ImageDrop>(imagedDropped));
-            //Commands.PlaceQuizSnapshot.RegisterCommand(new DelegateCommand<ImageDropParameters>(addImageFromQuizSnapshot));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
@@ -190,9 +189,7 @@ namespace SandRibbon.Components
         private void keyPressed(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
-            {
                 deleteSelectedElements(null, null);
-            }
         }
         private void SetLayer(string newLayer)
         {
