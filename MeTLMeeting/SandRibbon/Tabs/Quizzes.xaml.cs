@@ -125,12 +125,13 @@ namespace SandRibbon.Tabs
                 if (Globals.quiz.activeQuizzes.Any(q => q.id == quiz.id))
                 {
                     QuizQuestion oldQuiz = Globals.quiz.activeQuizzes.Where(q => q.id == quiz.id).First();
-                    if(quiz.created >= oldQuiz.created)
+                    if(quiz.created >= oldQuiz.created || quiz.IsDeleted)
                         Globals.quiz.activeQuizzes.Remove(oldQuiz);
                 }
                 if (!Globals.quiz.answers.ContainsKey(quiz.id))
                     Globals.quiz.answers[quiz.id] = new ObservableCollection<QuizAnswer>();
-                Globals.quiz.activeQuizzes.Add(quiz);
+                if (!quiz.IsDeleted)
+                    Globals.quiz.activeQuizzes.Add(quiz);
                 quizzes.ScrollToEnd();
             });
         }

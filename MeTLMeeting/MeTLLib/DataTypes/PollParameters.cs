@@ -144,12 +144,21 @@ namespace MeTLLib.DataTypes
         public string author { get; set; }
         public List<Option> options { get; set; }
         public long id { get; set; }
+        public bool IsDeleted { get { return _deleted; } }
+
+        public void SetDeleted(bool deleted)
+        {
+            _deleted = deleted;
+        }
+
+        private bool _deleted = false;
         /*public QuizQuestion(){
             options = new List<Option>();
         }*/
         public QuizQuestion DeepCopy()
         {
             var quizQuestion = new QuizQuestion(id, title, author, question, new List<Option>());
+            quizQuestion._deleted = _deleted;
             foreach (var option in options)
             {
                 quizQuestion.options.Add(option.DeepCopy());

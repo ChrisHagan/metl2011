@@ -9,6 +9,7 @@ using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 using MeTLLib.Utilities;
 using System.Collections.Specialized;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components
 {
@@ -142,5 +143,15 @@ namespace SandRibbon.Components
                 activeSlides.ScrollIntoView(item);
             }
         }
+
+        /*private void deleteConversation(object sender, RoutedEventArgs e)
+        {
+            var owner = Window.GetWindow(this);
+            if (MeTLMessage.Question("Really delete this conversation?", owner) == MessageBoxResult.Yes)
+            {
+                MeTLLib.ClientFactory.Connection().DeleteConversation(Globals.conversationDetails);
+                Close();
+            }
+        }*/
     }
 }

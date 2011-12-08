@@ -1210,6 +1210,7 @@ namespace MeTLLib.DataTypes
             public static readonly string AUTHOR = "author";
             public static readonly string ID = "id";
             public static readonly string URL = "url";
+            public static readonly string IS_DELETED = "isdeleted";
 
             public Quiz()
             {
@@ -1227,6 +1228,17 @@ namespace MeTLLib.DataTypes
                 return this;
             }
             private MeTLServerAddress server;
+
+            private string ProcessedUrl()
+            {
+                string url = HasTag(URL) ? GetTag(URL) : "none";
+                if (url.ToLower() != "none")
+                {
+                    url = "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(url));
+                }
+                return url;
+            }
+
             public QuizQuestion parameters
             {
                 get
@@ -1239,7 +1251,10 @@ namespace MeTLLib.DataTypes
                         created = DateTimeFactory.Now().Ticks;
                     }
                     var quiz = new QuizQuestion(long.Parse(GetTag(ID)),created, GetTag(TITLE), GetTag(AUTHOR), GetTag(QUESTION), new List<Option>());
-                    quiz.url = HasTag(URL) ? "https://" + server.host + ":1188" + INodeFix.StemBeneath("/Resource/", INodeFix.StripServer(GetTag(URL))) : "none";
+                    quiz.url = ProcessedUrl();
+                    if (HasTag(IS_DELETED))
+                        quiz.SetDeleted(bool.Parse(GetTag(IS_DELETED)));
+                    
                     foreach (var node in ChildNodes)
                     {
                         if (node.GetType() == typeof(QuizOption))
@@ -1257,6 +1272,7 @@ namespace MeTLLib.DataTypes
                     SetTag(ID, value.id.ToString());
                     var url = INodeFix.StripServer(value.url);
                     SetTag(URL, url);
+                    SetTag(IS_DELETED, value.IsDeleted.ToString());
                     foreach (var option in value.options)
                     {
                         var optionElement = new QuizOption(option);

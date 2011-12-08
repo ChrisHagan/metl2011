@@ -7,6 +7,7 @@ using System.Windows.Input;
 using MeTLLib;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Quizzing
 {
@@ -90,6 +91,17 @@ namespace SandRibbon.Quizzing
         public bool CheckResultsExist(QuizQuestion quizQuestion)
         {
             return Globals.quiz.answers.Where(answer => answer.Key == quizQuestion.id).FirstOrDefault().Value.Count > 0;
+        }
+
+        private void deleteQuiz(object sender, RoutedEventArgs e)
+        {
+            var owner = Window.GetWindow(this);
+            if (MeTLMessage.Question("Really delete quiz?", owner) == MessageBoxResult.Yes)
+            {
+                EditedQuiz.SetDeleted(true);
+                Commands.SendQuiz.Execute(EditedQuiz);
+                this.Close();
+            }    
         }
 
         private void TextBox_LostFocus(object sender, RoutedEventArgs e)

@@ -295,7 +295,6 @@ namespace SandRibbon.Components
         }
         private void deleteConversation(object sender, ExecutedRoutedEventArgs e)
         {
-            var owner = Window.GetWindow(this);
             if (MeTLMessage.Question("Really delete this conversation?") == MessageBoxResult.Yes)
             {
                 var details = context(e.OriginalSource);

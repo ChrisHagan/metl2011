@@ -15,7 +15,7 @@
                         <Grid>
                             <quiz:GoldPlaque/>
                             <TextBlock Margin="4" MaxWidth="300"
-                                TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=question, Converter={x:Static sr:Converters.stringTruncator}}"
+                                TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=question}"
                                        HorizontalAlignment="Center" />
                         </Grid>
                         <Grid>

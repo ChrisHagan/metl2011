@@ -101,10 +101,11 @@
                 </StackPanel.Resources>
                 <Button VerticalAlignment="Center" MinWidth="60" Click="first" IsEnabled="{Binding ElementName=activeSlides, Path=SelectedItem, Converter={StaticResource nullToBoolean}}">Move to the start</Button>
                 <Button VerticalAlignment="Center" MinWidth="60" Margin="10,0,0,0" Click="last" IsEnabled="{Binding ElementName=activeSlides, Path=SelectedItem, Converter={StaticResource nullToBoolean}}">Move to the end</Button>
+                <!--<Button VerticalAlignment="Center" MinWidth="60" Content="Delete Conversation" Click="deleteConversation"/>-->
             </StackPanel>
             <DockPanel DockPanel.Dock="Right">
-                <Button DockPanel.Dock="Right" VerticalAlignment="Center" MinWidth="60" Click="save">Apply</Button> 
-                <Button VerticalAlignment="Center" HorizontalAlignment="Right" MinWidth="60" Click="cancel">Cancel</Button>
+                <Button DockPanel.Dock="Right" VerticalAlignment="Center" MinWidth="60" Click="cancel">Cancel</Button>
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center" MinWidth="60" Click="save">Apply</Button> 
             </DockPanel>
         </DockPanel>
     </Grid>

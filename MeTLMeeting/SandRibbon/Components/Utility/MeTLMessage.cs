@@ -13,34 +13,35 @@ namespace SandRibbon.Components.Utility
             return Application.Current.MainWindow;
         }
         
-        private static MessageBoxResult DisplayMessage(string message, MessageBoxImage image)
+        private static MessageBoxResult DisplayMessage(string message, MessageBoxImage image, Window owner)
         {
-            return DisplayMessage(message, image, MessageBoxButton.OK); 
+            return DisplayMessage(message, image, MessageBoxButton.OK, owner); 
         }
 
-        private static MessageBoxResult DisplayMessage(string message, MessageBoxImage image, MessageBoxButton button)
+        private static MessageBoxResult DisplayMessage(string message, MessageBoxImage image, MessageBoxButton button, Window owner)
         {
-            return MessageBox.Show(GetMainWindow(), message, "MeTL", button, image);
+            var dialogOwner = owner != null ? owner : GetMainWindow(); 
+            return MessageBox.Show(dialogOwner, message, "MeTL", button, image);
         }
 
-        public static MessageBoxResult Error(string message)
+        public static MessageBoxResult Error(string message, Window owner = null)
         {
-            return DisplayMessage(message, MessageBoxImage.Error);
+            return DisplayMessage(message, MessageBoxImage.Error, owner);
         }
 
-        public static MessageBoxResult Warning(string message)
+        public static MessageBoxResult Warning(string message, Window owner = null)
         {
-            return DisplayMessage(message, MessageBoxImage.Warning);
+            return DisplayMessage(message, MessageBoxImage.Warning, owner);
         }
 
-        public static MessageBoxResult Information(string message)
+        public static MessageBoxResult Information(string message, Window owner = null)
         {
-            return DisplayMessage(message, MessageBoxImage.Information);
+            return DisplayMessage(message, MessageBoxImage.Information, owner);
         }
 
-        public static MessageBoxResult Question(string message)
+        public static MessageBoxResult Question(string message, Window owner = null)
         {
-            return DisplayMessage(message, MessageBoxImage.Question, MessageBoxButton.YesNo);
+            return DisplayMessage(message, MessageBoxImage.Question, MessageBoxButton.YesNo, owner);
         }
     }
 }
