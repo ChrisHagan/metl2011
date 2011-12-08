@@ -3,10 +3,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:SandRibbon="clr-namespace:SandRibbon"
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
-    Topmost="True"
+    xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     Title="View Submissions"
     x:Name="viewSubmissions"
     SizeToContent="WidthAndHeight">
+    <Window.Resources>
+        <CollectionViewSource Source="{Binding ElementName=Buckets, Path=SelectedItem.submissions}" x:Key="sortedSubmissionsView">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="time"/>
+            </CollectionViewSource.SortDescriptions>     
+        </CollectionViewSource>
+    </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ImportSubmission}" Executed="importSubmission" CanExecute="canImportSubmission"/>
     </Window.CommandBindings>
@@ -24,7 +31,7 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <TextBlock Text="{Binding Path=Count, Converter={x:Static SandRibbon:Converters.submissionCountConverter}}"></TextBlock>
+                                <TextBlock Text="{Binding BindsDirectlyToSource=True, Converter={x:Static SandRibbon:Converters.submissionCountConverter}}"></TextBlock>
                                 <TextBlock Margin="10 0 0 0 " Text="{Binding Path=From}"/>
                                 <TextBlock Margin="10 0 0 0 " Text="{Binding Path=To}"/>
                             </StackPanel>
@@ -34,7 +41,7 @@
                 </ListBox>
                 <ListBox Grid.Column="1" x:Name="submissions" SelectionMode="Single" Background ="Transparent" 
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         ItemsSource="{Binding ElementName=Buckets, Path=SelectedItem.submissions}" >
+                         ItemsSource="{Binding Source={StaticResource sortedSubmissionsView}}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Viewbox Width="100" Height="100">

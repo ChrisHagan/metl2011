@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using MeTLLib.DataTypes;
+using SandRibbon.Components.Submissions;
 
 namespace SandRibbon
 {
@@ -594,7 +595,12 @@ namespace SandRibbon
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return string.Format("Submissions ({0})", ((int) value).ToString());
+            var bucket = value as SubmissionBucket;
+            if (bucket != null)
+            {
+                return string.Format("{1}Submissions ({0})", bucket.Count.ToString(), bucket.IsAllSubmissionsBucket ? "All " : String.Empty);        
+            }
+            return String.Empty; 
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
