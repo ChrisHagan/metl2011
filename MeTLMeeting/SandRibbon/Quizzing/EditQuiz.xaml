@@ -22,7 +22,7 @@
                 <StackPanel Orientation="Vertical">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition/>
+                            <RowDefinition Height="25"/>
                             <RowDefinition/>
                             <RowDefinition/>
                             <RowDefinition/>
