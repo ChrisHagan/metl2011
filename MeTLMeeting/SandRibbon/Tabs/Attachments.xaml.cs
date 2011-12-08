@@ -14,6 +14,7 @@ using SandRibbon.Providers;
 using Button = System.Windows.Controls.Button;
 using MessageBox = System.Windows.MessageBox;
 using SandRibbon.Components.Utility;
+using System.Collections.Generic;
 
 namespace SandRibbon.Tabs
 {
@@ -40,7 +41,7 @@ namespace SandRibbon.Tabs
             Commands.PreParserAvailable.RegisterCommand(new DelegateCommand<PreParser>(preparserAvailable));
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(clearOutAttachments));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-            //Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(uploadFile));
+            Commands.FileUpload.RegisterCommand(new DelegateCommand<object>(uploadFile));
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
@@ -213,5 +214,64 @@ namespace SandRibbon.Tabs
                     return "\\resources\\mimeTypes\\unknown.png";
             }
         }
+        private void uploadFile(object _obj)
+        {
+            addResourceFromDisk("All files (*.*)|*.*", (files) =>
+                                    {
+                                        foreach (var file in files)
+                                        {
+                                            uploadFileForUse(file);
+                                        }
+                                    });
+        }
+      
+        private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
+        {
+            const string filter = "Image files(*.jpeg;*.gif;*.bmp;*.jpg;*.png)|*.jpeg;*.gif;*.bmp;*.jpg;*.png|All files (*.*)|*.*";
+            addResourceFromDisk(filter, withResources);
+        }
+
+        private void addResourceFromDisk(string filter, Action<IEnumerable<string>> withResources)
+        {
+            {
+                string initialDirectory = "c:\\";
+                foreach (var path in new[] { Environment.SpecialFolder.MyPictures, Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })
+                    try
+                    {
+                        initialDirectory = Environment.GetFolderPath(path);
+                        break;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                var fileBrowser = new OpenFileDialog
+                                             {
+                                                 InitialDirectory = initialDirectory,
+                                                 Filter = filter,
+                                                 FilterIndex = 1,
+                                                 RestoreDirectory = true
+                                             };
+                //DisableDragDrop(); 
+                var dialogResult = fileBrowser.ShowDialog(Window.GetWindow(this));
+                //EnableDragDrop();
+
+                if (dialogResult ?? false)
+                    withResources(fileBrowser.FileNames);
+            }
+        }
+
+        /*private void DisableDragDrop()
+        {
+            DragOver -= ImageDragOver;
+            Drop -= ImagesDrop;
+            DragOver += ImageDragOverCancel;
+        }*/
+
+        /*private void EnableDragDrop()
+        {
+            DragOver -= ImageDragOverCancel;
+            DragOver += ImageDragOver;
+            Drop += ImagesDrop;
+        }*/
     }
 }
