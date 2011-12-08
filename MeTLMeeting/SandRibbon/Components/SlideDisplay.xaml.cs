@@ -177,7 +177,7 @@ namespace SandRibbon.Components
                     if (currentSlide == null || currentSlide.id != slide)
                     {
                         currentSlideId = slide;
-                        slides.SelectedIndex = myMaxSlideIndex;
+                        slides.SelectedIndex = indexOf(slide);
                         slides.ScrollIntoView(slides.SelectedItem);
                     }
                 }
