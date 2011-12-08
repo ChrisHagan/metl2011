@@ -15,6 +15,7 @@ using Button = System.Windows.Controls.Button;
 using MessageBox = System.Windows.MessageBox;
 using SandRibbon.Components.Utility;
 using System.Collections.Generic;
+using MeTLLib.Providers;
 
 namespace SandRibbon.Tabs
 {
@@ -260,6 +261,48 @@ namespace SandRibbon.Tabs
             }
         }
 
+        private const int KILOBYTE = 1024;
+        private const int MEGABYTE = 1024 * KILOBYTE;
+        private bool isFileLessThanXMB(string filename, int size)
+        {
+            if (filename.StartsWith("http")) return true;
+            var info = new System.IO.FileInfo(filename);
+            if (info.Length > size * MEGABYTE)
+            {
+                return false;
+            }
+            return true;
+        }
+        private int fileSizeLimit = 50;
+        private void uploadFileForUse(string unMangledFilename)
+        {
+            string filename = unMangledFilename + ".MeTLFileUpload";
+            if (filename.Length > 260)
+            {
+                MeTLMessage.Information("Sorry, your filename is too long, must be less than 260 characters");
+                return;
+            }
+            if (isFileLessThanXMB(unMangledFilename, fileSizeLimit))
+            {
+                var worker = new BackgroundWorker();
+                worker.DoWork += (s, e) =>
+                 {
+                     var target = "presentationSpace"; // looks like this can be "presentationSpace" or "notepad"
+                     System.IO.File.Copy(unMangledFilename, filename);
+                     MeTLLib.ClientFactory.Connection().UploadAndSendFile(
+                         new MeTLStanzas.LocalFileInformation(Globals.slide, Globals.me, target, "public", filename, System.IO.Path.GetFileNameWithoutExtension(filename), false, new System.IO.FileInfo(filename).Length, SandRibbonObjects.DateTimeFactory.Now().Ticks.ToString()));
+                     System.IO.File.Delete(filename);
+                 };
+                worker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
+                                                                                   (Action)(() => MeTLMessage.Information(string.Format("Finished uploading {0}.", unMangledFilename))));
+                worker.RunWorkerAsync();
+            }
+            else
+            {
+                MeTLMessage.Information(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
+                return;
+            }
+        }
         /*private void DisableDragDrop()
         {
             DragOver -= ImageDragOver;
