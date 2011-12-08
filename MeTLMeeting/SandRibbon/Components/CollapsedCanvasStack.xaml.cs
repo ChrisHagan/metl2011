@@ -250,6 +250,7 @@ namespace SandRibbon.Components
             Action undo = () =>
                 {
                     addStrokes(selectedStrokes.ToList());
+
                     if(MyWork.EditingMode == InkCanvasEditingMode.Select)
                         MyWork.Select(selectedStrokes);
                     
