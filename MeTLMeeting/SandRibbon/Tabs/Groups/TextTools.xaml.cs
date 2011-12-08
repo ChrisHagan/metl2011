@@ -58,13 +58,13 @@ namespace SandRibbon.Tabs.Groups
         {
             fontSize.SelectionChanged -= fontSizeSelected;
             fontFamily.SelectionChanged -= fontFamilySelected;
-            TextBoldButton.IsChecked = info.bold;
-            TextItalicButton.IsChecked = info.italics;
-            TextUnderlineButton.IsChecked = info.underline;
-            TextStrikethroughButton.IsChecked = info.strikethrough;
-            ColourPickerBorder.BorderBrush = new SolidColorBrush(info.color);
-            fontSize.SelectedItem = info.size;
-            fontFamily.SelectedItem = info.family.ToString();
+            TextBoldButton.IsChecked = info.Bold;
+            TextItalicButton.IsChecked = info.Italics;
+            TextUnderlineButton.IsChecked = info.Underline;
+            TextStrikethroughButton.IsChecked = info.Strikethrough;
+            ColourPickerBorder.BorderBrush = new SolidColorBrush(info.Color);
+            fontSize.SelectedItem = info.Size;
+            fontFamily.SelectedItem = info.Family.ToString();
             fontSize.SelectionChanged += fontSizeSelected;
             fontFamily.SelectionChanged += fontFamilySelected;
 
@@ -75,13 +75,13 @@ namespace SandRibbon.Tabs.Groups
             if (fontSize == null || fontFamily == null || fontFamily.SelectedItem == null || ColourPickerBorder == null || ColourPickerBorder.BorderBrush == null || TextBoldButton == null || TextItalicButton == null || TextUnderlineButton == null || TextStrikethroughButton == null) return;
             var info = new TextInformation
             {
-                size = (double)fontSize.SelectedItem,
-                family = new FontFamily(fontFamily.SelectedItem.ToString()),
-                bold =  TextBoldButton.IsChecked == true,
-                italics = TextItalicButton.IsChecked == true,
-                underline = TextUnderlineButton.IsChecked == true,
-                strikethrough = TextStrikethroughButton.IsChecked == true,
-                color = ((SolidColorBrush) ColourPickerBorder.BorderBrush).Color
+                Size = (double)fontSize.SelectedItem,
+                Family = new FontFamily(fontFamily.SelectedItem.ToString()),
+                Bold =  TextBoldButton.IsChecked == true,
+                Italics = TextItalicButton.IsChecked == true,
+                Underline = TextUnderlineButton.IsChecked == true,
+                Strikethrough = TextStrikethroughButton.IsChecked == true,
+                Color = ((SolidColorBrush) ColourPickerBorder.BorderBrush).Color
             };
             Globals.currentTextInfo = info;
             Commands.UpdateTextStyling.Execute(info);
