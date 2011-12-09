@@ -14,6 +14,11 @@
         <CommandBinding Command="{x:Static components:ConversationSearchBox.DeleteConversation}" CanExecute="CheckEditAllowed" Executed="deleteConversation"/>
     </UserControl.CommandBindings>
     <UserControl.Resources>
+        <!--<CollectionViewSource Source="{Binding searchResultsObserver}" Filter="isWhatWeWereLookingFor" x:Key="sortedConversationsView">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="LastModified" Direction="Descending"/>
+            </CollectionViewSource.SortDescriptions>     
+        </CollectionViewSource>-->
         <LinearGradientBrush StartPoint="0.3,0.5" EndPoint="0.8,0.5" x:Key="backgroundColor">
             <GradientStop Color="#666a7f" Offset="0" />
             <GradientStop Color="#535368" Offset="1" />

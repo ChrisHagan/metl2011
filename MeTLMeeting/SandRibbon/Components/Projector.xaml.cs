@@ -64,7 +64,7 @@ namespace SandRibbon.Components
             int slideIndex = 1;
             if(possibleIndex.Count() != 0)
                 slideIndex = possibleIndex.First().index + 1;
-            return string.Format("{0} Slide:{1}", details.Title, slideIndex);
+            return string.Format("{0} Page:{1}", details.Title, slideIndex);
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
