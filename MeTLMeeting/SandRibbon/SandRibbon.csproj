@@ -800,7 +800,9 @@
     <Compile Include="Utils\Connection\Printer.cs" />
     <Compile Include="Utils\CursorExtensions.cs" />
     <Compile Include="Utils\CursorHelper.cs" />
+    <Compile Include="Utils\FileHelper.cs" />
     <Compile Include="Utils\Logger.cs" />
+    <Compile Include="Utils\OpenFileForUpload.cs" />
     <Compile Include="Utils\OverlayAdorner.cs" />
     <Compile Include="Utils\PowerPointLoader.cs" />
     <Compile Include="Effects.cs" />
