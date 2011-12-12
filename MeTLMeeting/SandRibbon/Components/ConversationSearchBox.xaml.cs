@@ -66,7 +66,7 @@ namespace SandRibbon.Components
         public static HideErrorsIfEmptyConverter HideErrorsIfEmpty = new HideErrorsIfEmptyConverter();
         public static IsMeConverter isMe = new IsMeConverter();
         public static HideIfNotCurrentConversation hideIfNotCurrentConversation = new HideIfNotCurrentConversation();
-        private ObservableCollection<MeTLLib.DataTypes.ConversationDetails> searchResults = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
+        private ObservableCollection<MeTLLib.DataTypes.ConversationDetails> searchResultsObserver = new ObservableCollection<MeTLLib.DataTypes.ConversationDetails>();
         protected static string activeConversation;
         public string Errors
         {
@@ -79,6 +79,7 @@ namespace SandRibbon.Components
         public string Version { get; set; }
         private static string me;
         private System.Threading.Timer refreshTimer;
+        private ListCollectionView sortedConversations;
         public ConversationSearchBox()
         {
             InitializeComponent();
@@ -92,11 +93,11 @@ namespace SandRibbon.Components
             Commands.BackstageModeChanged.RegisterCommand(new DelegateCommand<string>(BackstageModeChanged));
             Version = ConfigurationProvider.instance.getMetlVersion();
             versionNumber.DataContext = Version;
-            SearchResults.ItemsSource = searchResults;
+            sortedConversations = CollectionViewSource.GetDefaultView(this.searchResultsObserver) as ListCollectionView;
+            sortedConversations.Filter = isWhatWeWereLookingFor;
+            sortedConversations.CustomSort = new ConversationComparator();
+            SearchResults.ItemsSource = searchResultsObserver;
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg=> me = Globals.me));
-            var view = GetListCollectionView();
-            view.Filter = isWhatWeWereLookingFor;
-            view.CustomSort = new ConversationComparator();
             refreshTimer = new Timer(delegate { FillSearchResultsFromInput(); });
             App.mark("Initialized conversation search");
         }
@@ -106,6 +107,9 @@ namespace SandRibbon.Components
             Dispatcher.Invoke((Action)delegate
             {
                 var trimmedSearchInput = SearchInput.Text.Trim();
+                if (String.IsNullOrEmpty(trimmedSearchInput) && backstageNav.currentMode == "mine")
+                    trimmedSearchInput = Globals.me;
+
                 if (!String.IsNullOrEmpty(trimmedSearchInput))
                 {
                     FillSearchResults(trimmedSearchInput);
@@ -118,19 +122,21 @@ namespace SandRibbon.Components
             var search = new BackgroundWorker();
             search.DoWork += (object sender, DoWorkEventArgs e) =>
             {
+                Commands.BlockSearch.ExecuteAsync(null);
                 var bw = sender as BackgroundWorker;
                 e.Result = ClientFactory.Connection().ConversationsFor(searchString, SearchConversationDetails.DEFAULT_MAX_SEARCH_RESULTS);
             };
 
             search.RunWorkerCompleted += (object sender, RunWorkerCompletedEventArgs e) =>
             {
+                Commands.UnblockSearch.ExecuteAsync(null);
                 if (e.Error == null)
                 {
                     var conversations = e.Result as List<SearchConversationDetails>;
                     if (conversations != null)
                     {
-                        searchResults.Clear();
-                        conversations.ForEach(cd => searchResults.Add(cd));
+                        searchResultsObserver.Clear();
+                        conversations.ForEach(cd => searchResultsObserver.Add(cd));
                     }
                 }
             };
@@ -158,7 +164,7 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(() =>
             {
                 updateLiveButton(mode);
-                GetListCollectionView().Refresh();
+                RefreshSortedConversationsList();
             });
             string searchButtonText;
             switch (mode)
@@ -187,7 +193,7 @@ namespace SandRibbon.Components
         }
         private void clearState(){
             SearchInput.Text = "";
-            GetListCollectionView().Refresh();
+            RefreshSortedConversationsList();
             SearchInput.SelectionStart = 0;
         }
         private void ShowConversationSearchBox(object o)
@@ -226,43 +232,57 @@ namespace SandRibbon.Components
         {
                if (details.IsEmpty) return;
 
-               foreach (var result in searchResults.Where(c => c.Jid.GetHashCode() == details.Jid.GetHashCode()).ToList())
-                   searchResults.Remove(result);
+               /*foreach (var result in searchResultsObserver.Where(c => c.IsJidEqual(details.Jid)).ToList())
+                   searchResultsObserver.Remove(result);*/
                if (details.isDeleted && !details.IsEmpty)
-                   searchResults.Add(details);
-               else if (details.Jid.GetHashCode() == Globals.location.activeConversation.GetHashCode())
+                   searchResultsObserver.Add(details);
+               else if (details.IsJidEqual(Globals.location.activeConversation))
                    currentConversation.Visibility = Visibility.Collapsed;
-               if ((!(shouldShowConversation(details)) && details.Jid.GetHashCode() == Globals.conversationDetails.Jid.GetHashCode()) || details.isDeleted)
+               if ((!(shouldShowConversation(details)) && details.IsJidEqual(Globals.conversationDetails.Jid)) || details.isDeleted)
                {
                    Commands.RequerySuggested();
                    this.Visibility = Visibility.Visible;
                }
-               GetListCollectionView().Refresh();
+               RefreshSortedConversationsList(); 
                //setMyConversationVisibility();
         }
         private static bool shouldShowConversation(ConversationDetails conversation)
         {
             return conversation.UserHasPermission(Globals.credentials);
         }
-        private ListCollectionView GetListCollectionView()
+        private void RefreshSortedConversationsList()
         {
-            return (ListCollectionView)CollectionViewSource.GetDefaultView(this.searchResults);
+            if (sortedConversations != null)
+                sortedConversations.Refresh();
         }
-        private bool isWhatWeWereLookingFor(object o)
+        private bool isWhatWeWereLookingFor(object sender)
         {
-            var conversation = (ConversationDetails)o;
-            if (!shouldShowConversation(conversation)) 
-                return false;
-            if (backstageNav.currentMode == "currentConversation")
-                if(conversation.Jid != activeConversation) 
+            var conversation = sender as ConversationDetails;
+            if (conversation != null)
+            {
+                if (!shouldShowConversation(conversation))
+                { 
                     return false;
-            var author = conversation.Author.ToLower();
-            var title = conversation.Title.ToLower();
-            var searchField = new[] { author, title };
-            var searchQuery = SearchInput.Text.ToLower().Trim();
-            if (backstageNav.currentMode == "find" && searchQuery.Length == 0) return false;
-            if (backstageNav.currentMode == "mine" && author != Globals.me) return false;
-            return searchQuery.Split(' ').All(token => searchField.Any(field => field.Contains(token)));
+                }
+                if (backstageNav.currentMode == "currentConversation" && conversation.IsJidEqual(activeConversation))
+                {
+                    return false;
+                }
+                var author = conversation.Author.ToLower();
+                var title = conversation.Title.ToLower();
+                var searchField = new[] { author, title };
+                var searchQuery = SearchInput.Text.ToLower().Trim();
+                if (backstageNav.currentMode == "find" && searchQuery.Length == 0)
+                {
+                    return false;
+                }
+                if (backstageNav.currentMode == "mine" && author != Globals.me)
+                {
+                    return false;
+                }
+                return searchQuery.Split(' ').All(token => searchField.Any(field => field.Contains(token)));
+            }
+            return false;
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
@@ -271,7 +291,7 @@ namespace SandRibbon.Components
         }
         private void searchConversations_Click(object sender, RoutedEventArgs e)
         {
-            GetListCollectionView().Refresh();
+            RefreshSortedConversationsList();
         }
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -283,7 +303,7 @@ namespace SandRibbon.Components
             if (originalContext != null)
             {
                 foreach (var result in SearchResults.ItemsSource)
-                    if (((ConversationDetails)result).Jid.GetHashCode() == originalContext.Jid.GetHashCode())
+                    if (((ConversationDetails)result).IsJidEqual(originalContext.Jid))
                         ((ConversationDetails)result).Title = originalContext.Title;
                 originalContext = null;
             }
@@ -354,7 +374,7 @@ namespace SandRibbon.Components
             proposedDetails.Title = proposedDetails.Title.Trim();
             var thisTitleIsASCII = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(proposedDetails.Title)).Equals(proposedDetails.Title);
             var thisIsAValidTitle = !String.IsNullOrEmpty(proposedDetails.Title.Trim());
-            var titleAlreadyUsed = searchResults.Except(new[]{proposedDetails}).Any(c => c.Title.Equals(proposedDetails.Title, StringComparison.InvariantCultureIgnoreCase));
+            var titleAlreadyUsed = searchResultsObserver.Except(new[]{proposedDetails}).Any(c => c.Title.Equals(proposedDetails.Title, StringComparison.InvariantCultureIgnoreCase));
             var errorText = String.Empty;
             if (proposedDetails.Title.Length > 110) errorText += "Conversation titles have a maximum length of 110 characters";
             if (!thisTitleIsASCII)
@@ -404,9 +424,9 @@ namespace SandRibbon.Components
     public class ConversationComparator : System.Collections.IComparer
     {
         public int Compare(object x, object y) {
-            var dis = (MeTLLib.DataTypes.ConversationDetails)x;
-            var dat = (MeTLLib.DataTypes.ConversationDetails)y;
-            return -1 * dis.Created.CompareTo(dat.Created);
+            var dis = (MeTLLib.DataTypes.SearchConversationDetails)x;
+            var dat = (MeTLLib.DataTypes.SearchConversationDetails)y;
+            return -1 * dis.LastModified.CompareTo(dat.LastModified);
         }
     }
 

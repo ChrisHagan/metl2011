@@ -103,6 +103,9 @@ namespace SandRibbon
             Commands.BlockInput.RegisterCommand(new DelegateCommand<string>(BlockInput));
             Commands.UnblockInput.RegisterCommand(new DelegateCommand<object>(UnblockInput));
 
+            Commands.BlockSearch.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => BlockSearch()));
+            Commands.UnblockSearch.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => UnblockSearch()));
+
             Commands.DummyCommandToProcessCanExecute.RegisterCommand(new DelegateCommand<object>(App.noop, conversationSearchMustBeClosed));
             Commands.ImageDropped.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.SendQuiz.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
@@ -505,6 +508,17 @@ namespace SandRibbon
         {
             Dispatcher.adoptAsync((HideProgressBlocker));
         }
+
+        private void BlockSearch()
+        {
+            SearchBlocker.Visibility = Visibility.Visible; 
+        }
+
+        private void UnblockSearch()
+        {
+            SearchBlocker.Visibility = Visibility.Collapsed;
+        }
+
         private void SetZoomRect(Rect viewbox)
         {
             scroll.Width = viewbox.Width;

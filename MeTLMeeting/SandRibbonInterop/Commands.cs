@@ -280,6 +280,8 @@ namespace SandRibbon
         public static DefaultableCompositeCommand EditConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand BlockInput = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand UnblockInput = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand BlockSearch = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand UnblockSearch = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand CanEdit = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand PrintConversation = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand HideProgressBlocker = new DefaultableCompositeCommand();

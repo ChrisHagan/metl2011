@@ -166,7 +166,11 @@ namespace MeTLLib.Providers.Structure
                                group conversation by conversation.Jid into convGroup
                                select new { Jid = convGroup.Key, LastModified = convGroup.Max(c => c.LastModified) });
 
-                return results.Where(conv => lastModified.Contains(new { Jid = conv.Jid, LastModified = conv.LastModified }) && !conv.isDeleted).OrderBy(conv => conv.relevance).OrderByDescending(conv2 => conv2.Created).Take(maxResults);
+                return results.Where(conv => lastModified.Contains(new { Jid = conv.Jid, LastModified = conv.LastModified }) && !conv.isDeleted)
+                    .OrderBy(conv => conv.relevance)
+                    .ThenByDescending(conv3 => conv3.LastModified)
+                    .ThenByDescending(conv2 => conv2.Created)
+                    .Take(maxResults);
             }
             catch (Exception)
             {
