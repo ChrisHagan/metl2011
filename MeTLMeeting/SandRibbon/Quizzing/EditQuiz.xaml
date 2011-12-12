@@ -12,6 +12,9 @@
         <DockPanel>
             <Border DockPanel.Dock="Bottom" Padding="10" Background="{StaticResource BackgroundBlueGradient}" >
                 <Grid>
+                    <StackPanel HorizontalAlignment="Left">
+                        <Button FontWeight="Bold" Grid.Row="0" Grid.Column="2" Content="Delete Quiz" Click="deleteQuiz"/>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button x:Name="quizCommitButton" Content="Save Changes" Click="quizCommitButton_Click"/>
                         <Button Click="CloseEdit" Content="Cancel"/>
@@ -36,7 +39,6 @@
                         </Grid.ColumnDefinitions>
                         <Label FontWeight="Bold" Grid.Row="0" Grid.Column="0">Question</Label>
                         <TextBox FontWeight="Bold" Grid.Row="0" Grid.Column="1" Width="300" x:Name="quizQuestion" Text="{Binding Path=EditedQuiz.question}" TextWrapping="WrapWithOverflow"/>
-                        <Button FontWeight="Bold" Grid.Row="0" Grid.Column="2" Content="Delete Quiz" Click="deleteQuiz"/>
                         <Label Foreground="Red" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
                         <Label Foreground="Red" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
                     </Grid>

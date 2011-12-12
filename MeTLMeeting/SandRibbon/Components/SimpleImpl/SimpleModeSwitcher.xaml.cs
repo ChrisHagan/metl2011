@@ -46,12 +46,6 @@ namespace SandRibbon.Components.SimpleImpl
         {
             e.CanExecute = true;
         }
-
-        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
-
         private void CutButtonClick(object sender, RoutedEventArgs e)
         {
             ApplicationCommands.Cut.Execute(null, null);
