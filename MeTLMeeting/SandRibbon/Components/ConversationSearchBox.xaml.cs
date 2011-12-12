@@ -21,6 +21,27 @@ using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components
 {
+    [ValueConversion(typeof(int), typeof(string))]
+    public class SearchResultsCountToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int)
+            {
+                if ((int)value == 0)
+                    return "No conversations match your search.";
+                else
+                    return String.Format("Found {0} results.", (int)value);
+            }
+            return String.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return DependencyProperty.UnsetValue;
+        }
+    }
+
     public partial class ConversationSearchBox : UserControl
     {
         public class HideIfNotCurrentConversation : IValueConverter {
@@ -114,6 +135,8 @@ namespace SandRibbon.Components
                 {
                     FillSearchResults(trimmedSearchInput);
                 }
+                else
+                    searchResultsObserver.Clear();
             });
         }
 
