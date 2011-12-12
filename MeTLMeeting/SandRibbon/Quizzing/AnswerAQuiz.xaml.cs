@@ -2,7 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Components;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
@@ -40,7 +43,7 @@ namespace SandRibbon.Quizzing
             : this()
         {
             DataContext = thisQuiz;
-            Edit.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
+            TeacherControls.Visibility = Globals.isAuthor ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -50,8 +53,21 @@ namespace SandRibbon.Quizzing
             Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.id);
             
             this.Close();
+       }
+       public void DisplayQuiz(object sender, RoutedEventArgs e)
+       {
+            var quiz = SnapshotHost;
+            quiz.UpdateLayout();
+            var dpi = 96;
+            var dimensions = new Rect(0, 0, quiz.ActualWidth, quiz.ActualHeight);
+            var bitmap = new RenderTargetBitmap((int)quiz.ActualWidth, (int)quiz.ActualHeight, dpi, dpi, PixelFormats.Default);
+            var dv = new DrawingVisual();
+            using (var context = dv.RenderOpen())
+                context.DrawRectangle(new VisualBrush(quiz), null, dimensions);
+            bitmap.Render(dv);
+            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+            this.Close();
         }
-
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
             QuizQuestion newQuiz = new QuizQuestion(question.id, question.created, question.title, question.author, question.question, question.options);

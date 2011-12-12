@@ -8,9 +8,12 @@
     Title="Answer Quiz">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
-            <Button x:Name="Edit" Visibility="Collapsed" DockPanel.Dock="Bottom" Click="Edit_Click">Edit quiz</Button>
+            <StackPanel x:Name="TeacherControls" Visibility="Collapsed" DockPanel.Dock="Bottom">
+                <Button Click="Edit_Click">Edit quiz</Button>
+                <Button Click="DisplayQuiz">Display quiz</Button>
+            </StackPanel>
             <ScrollViewer DockPanel.Dock="Top">
-                <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical" x:Name="SnapshotHost">
                     <Grid Margin="10 10 10 30">
                         <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
                         <StackPanel>
