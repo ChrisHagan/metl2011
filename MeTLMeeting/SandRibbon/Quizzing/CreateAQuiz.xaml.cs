@@ -28,7 +28,7 @@ namespace SandRibbon.Quizzing
         {
             InitializeComponent();
             question.Text = string.Format("Quiz {0}", count + 1);
-            options.First().color = AllColors.all[0];
+            options.First().color = Colors.White;
             question.GotFocus += selectAll;
             question.GotMouseCapture += selectAll;
             question.GotKeyboardFocus += selectAll;
@@ -131,6 +131,10 @@ namespace SandRibbon.Quizzing
             if (emptyOptions.Count() == 0) return true;
             return false;
         }
+        private Color generateColor(int index)
+        {
+            return index%2 == 0 ? Colors.White : (Color) ColorConverter.ConvertFromString("#FF4682B4");
+        }
 
         private void AddNewEmptyOption()
         {
@@ -146,10 +150,10 @@ namespace SandRibbon.Quizzing
             if (options.Count > 0)
             {
                 var lastOption = options.Last();
-                newIndex = AllColors.all.IndexOf(lastOption.color) + 1; 
+                newIndex = options.IndexOf(lastOption) + 1; 
                 newName = Option.GetNextOptionName(lastOption.name);
             }
-            var newOption = new Option(newName, String.Empty, false, AllColors.all.ElementAt(newIndex));
+            var newOption = new Option(newName, String.Empty, false, generateColor(newIndex));
             if (shouldAddNewEmptyOption())
             {
                 options.Add(newOption);

@@ -624,10 +624,10 @@ namespace SandRibbon
         }
         private void UpdateUIFromConversation(ConversationDetails details)
         {
-            if (Permissions.InferredTypeOf(details.Permissions).ValueEquals(Permissions.TUTORIAL_PERMISSIONS) && Globals.pedagogy != Pedagogicometer.level(PedagogyCode.CollaborativePresentation))
+       /*     if (Permissions.InferredTypeOf(details.Permissions).ValueEquals(Permissions.TUTORIAL_PERMISSIONS) && Globals.pedagogy != Pedagogicometer.level(PedagogyCode.CollaborativePresentation))
             {
                 Commands.SetPedagogyLevel.Execute(Pedagogicometer.level(PedagogyCode.CollaborativePresentation));
-            }
+            }*/
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {

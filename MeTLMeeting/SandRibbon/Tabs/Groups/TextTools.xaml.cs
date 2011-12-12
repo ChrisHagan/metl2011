@@ -5,8 +5,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Divelements.SandRibbon;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Components;
-using SandRibbon.Components.Canvas;
 using SandRibbon.Providers;
 using SandRibbonInterop.Interfaces;
 using TextInformation = SandRibbon.Components.TextInformation;
