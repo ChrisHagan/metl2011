@@ -1,4 +1,7 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace SandRibbon.Components.SimpleImpl
@@ -42,6 +45,26 @@ namespace SandRibbon.Components.SimpleImpl
         private void CommandBinding_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
+        }
+
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
+
+        private void CutButtonClick(object sender, RoutedEventArgs e)
+        {
+            ApplicationCommands.Cut.Execute(null, null);
+        }
+
+        private void PasteClick(object sender, RoutedEventArgs e)
+        {
+            ApplicationCommands.Paste.Execute(null, null);
+        }
+
+        private void CopyClick(object sender, RoutedEventArgs e)
+        {
+            ApplicationCommands.Copy.Execute(null, null);
         }
     }
 }

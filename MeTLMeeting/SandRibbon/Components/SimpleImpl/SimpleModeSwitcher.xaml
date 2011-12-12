@@ -11,10 +11,9 @@
             <dict:RadioButton x:Name="Image" ToolTip="{DynamicResource ImageModeToolTip}" Icon="\Resources\ImageMode.png" Text="Image" Command="api:Commands.SetLayer" CommandParameter="Insert" />
         </dict:RibbonPanel>
         <dict:RibbonPanel>
-            <dict:Button ToolTip="{DynamicResource CutToolTip}" Icon="..\..\Resources\cut.png" Text="Cut" Command="ApplicationCommands.Cut" InternalButtonSize="Small">
-            </dict:Button>
-            <dict:Button ToolTip="{DynamicResource PasteToolTip}" Icon="..\..\Resources\paste.png" Text="Paste" Command="ApplicationCommands.Paste" InternalButtonSize="Small"/>
-            <dict:Button ToolTip="{DynamicResource CopyToolTip}" Icon="..\..\Resources\copy.png" Text="Copy" Command="ApplicationCommands.Copy" InternalButtonSize="Small"/>
+            <dict:Button ToolTip="{DynamicResource CutToolTip}" Icon="..\..\Resources\cut.png" Text="Cut" Click="CutButtonClick" InternalButtonSize="Small"/>
+            <dict:Button ToolTip="{DynamicResource PasteToolTip}" Icon="..\..\Resources\paste.png" Text="Paste" Click="PasteClick" InternalButtonSize="Small"/>
+            <dict:Button ToolTip="{DynamicResource CopyToolTip}" Icon="..\..\Resources\copy.png" Text="Copy" Click="CopyClick"  InternalButtonSize="Small"/>
         </dict:RibbonPanel>
     </StackPanel>
 </UserControl>
