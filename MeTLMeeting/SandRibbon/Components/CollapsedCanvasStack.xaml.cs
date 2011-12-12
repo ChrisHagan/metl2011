@@ -76,18 +76,7 @@ namespace SandRibbon.Components
         private MeTLTextBox myTextBox;
         private string _target;
         private string _defaultPrivacy;
-        private bool _canEdit;
         private readonly ClipboardManager clipboardManager = new ClipboardManager();
-        private bool CanEdit
-        {
-            get { return _canEdit; }
-            set
-            {
-                _canEdit = value;
-                Commands.RequerySuggested(Commands.SetInkCanvasMode);
-            }
-        }
-
         private string _me = String.Empty;
         public string me
         {
@@ -346,7 +335,6 @@ namespace SandRibbon.Components
             if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adoptAsync(delegate
                   {
-                       CanEdit = Globals.isAuthor || details.Permissions.studentCanPublish;
                        var newStrokes = new StrokeCollection( MyWork.Strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
                        MyWork.Strokes.Clear();
                        MyWork.Strokes.Add(newStrokes);
@@ -365,8 +353,7 @@ namespace SandRibbon.Components
         }
         private void SetPrivacy(string privacy)
         {
-            CanEdit = privacy == Globals.PRIVATE || Globals.conversationDetails.Permissions.studentCanPublish || Globals.conversationDetails.Author == Globals.me;
-            AllowDrop = CanEdit;
+            AllowDrop = true;
         }
         private void setInkCanvasMode(string modeString)
         {
@@ -1025,11 +1012,14 @@ namespace SandRibbon.Components
         {
             foreach (var image in images)
             {
-                TargettedImage image1 = image;
-                if(image.author == me)
-                    Dispatcher.adoptAsync(() => AddImage(MyWork, image1.image));
-                else if(image.privacy == Globals.PUBLIC)
-                    Dispatcher.adoptAsync(() => AddImage(OtherWork, image1.image));
+                if (image.slide == Globals.slide)
+                {
+                    TargettedImage image1 = image;
+                    if (image.author == me)
+                        Dispatcher.adoptAsync(() => AddImage(MyWork, image1.image));
+                    else if (image.privacy == Globals.PUBLIC)
+                        Dispatcher.adoptAsync(() => AddImage(OtherWork, image1.image));
+                }
             }
             ensureAllImagesHaveCorrectPrivacy();
         }
@@ -1164,7 +1154,7 @@ namespace SandRibbon.Components
 
         private void addResourceFromDisk(string filter, Action<IEnumerable<string>> withResources)
         {
-            if (_target == "presentationSpace" && CanEdit && me != "projector")
+            if (_target == "presentationSpace" && me != "projector")
             {
                 string initialDirectory = "c:\\";
                 foreach (var path in new[] { Environment.SpecialFolder.MyPictures, Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })
@@ -1451,7 +1441,6 @@ namespace SandRibbon.Components
         private void placeCursor(object sender, MouseButtonEventArgs e)
         {
             if (MyWork.EditingMode != InkCanvasEditingMode.None) return;
-            if (!CanEdit) return;
             var pos = e.GetPosition(this);
             MeTLTextBox box = createNewTextbox();
             AddTextBoxToCanvas(box);
@@ -1504,7 +1493,7 @@ namespace SandRibbon.Components
             box.BorderThickness = new Thickness(0);
             box.BorderBrush = new SolidColorBrush(Colors.Transparent);
             box.Background = new SolidColorBrush(Colors.Transparent);
-            box.Focusable = CanEdit && CanFocus;
+            box.Focusable = CanFocus;
             box.ContextMenu = new ContextMenu {IsEnabled = true};
             box.ContextMenu.IsEnabled = false;
             box.ContextMenu.IsOpen = false;
@@ -2380,7 +2369,6 @@ namespace SandRibbon.Components
 
         public void SetEditable(bool b)
         {
-            CanEdit = b;
         }
     }
     public class MeTLTextBox : TextBox

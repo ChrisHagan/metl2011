@@ -586,6 +586,7 @@ namespace MeTLLib.Providers.Connection
         {
             try
             {
+                leaveRooms();
                 new MucManager(conn).LeaveRoom(
                     new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
                 var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
