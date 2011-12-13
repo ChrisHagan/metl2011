@@ -1245,4 +1245,56 @@ namespace SandRibbon
             throw new NotImplementedException();
         }
     }
+
+    [ValueConversion(typeof(int), typeof(Visibility))]
+    public class IntegerToVisibilityConverter : IValueConverter
+    {
+        #region Properties
+
+        /// <summary>
+        /// Converter will return Visibility.Collapsed instead of Visibility.Hidden when value is below threshold 
+        /// </summary>
+        public bool Collapse { get; set; }
+        /// <summary>
+        /// Threshold to convert to Visibility, equal and below threshold will be hidden/collapsed, above threshold is visible  
+        /// </summary>
+        public int Threshold { get; set; }
+        /// <summary>
+        /// Negate the behaviour
+        /// </summary>
+        public bool Negate { get; set; }
+
+        #endregion
+
+        #region IValueConverter Members
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int)
+            {
+                if ((int)value <= Threshold)
+                {
+                    if (Negate)
+                        return Visibility.Visible;
+
+                    return Collapse ? Visibility.Collapsed : Visibility.Hidden;
+                }
+                else
+                {
+                    if (Negate)                    
+                        return Collapse ? Visibility.Collapsed : Visibility.Hidden;
+
+                    return Visibility.Visible;
+                }
+            }
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return DependencyProperty.UnsetValue;
+        }
+
+        #endregion // IValueConverter Members
+    }
 }

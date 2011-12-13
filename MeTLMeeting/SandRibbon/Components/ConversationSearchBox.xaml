@@ -19,6 +19,9 @@
                 <scm:SortDescription PropertyName="LastModified" Direction="Descending"/>
             </CollectionViewSource.SortDescriptions>     
         </CollectionViewSource>-->
+
+        <components:SearchResultsCountToStringConverter x:Key="SearchResultsCountToStringConverter" />
+        
         <LinearGradientBrush StartPoint="0.3,0.5" EndPoint="0.8,0.5" x:Key="backgroundColor">
             <GradientStop Color="#666a7f" Offset="0" />
             <GradientStop Color="#535368" Offset="1" />
@@ -169,6 +172,8 @@
                   VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Auto">
             <StackPanel x:Name="searchBoxTotalWidth" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 20 0 0">
+                <TextBlock x:Name="SearchResultsText" Margin="0,4" Foreground="LightSlateGray" 
+                           Text="{Binding ElementName=SearchResults, Path=Items.Count, Converter={StaticResource SearchResultsCountToStringConverter}}"/>
                 <TextBox x:Name="SearchInput" AcceptsReturn="False" AcceptsTab="True"
                      MinWidth="600"
                      TextChanged="SearchInput_TextChanged"
