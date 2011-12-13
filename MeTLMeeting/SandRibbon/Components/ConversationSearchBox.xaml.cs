@@ -31,7 +31,7 @@ namespace SandRibbon.Components
                 if ((int)value == 0)
                     return "No conversations match your search.";
                 else
-                    return String.Format("Found {0} results.", (int)value);
+                    return String.Format("Found {0} result{1}.", (int)value, (int)value > 1 ? "s" : String.Empty);
             }
             return String.Empty;
         }
