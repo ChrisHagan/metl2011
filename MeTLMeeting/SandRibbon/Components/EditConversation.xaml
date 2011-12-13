@@ -46,6 +46,7 @@
             ScrollViewer.HorizontalScrollBarVisibility="Visible" 
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             x:Name="activeSlides"
+            DragOver="PageList_DragOver"
             local:DragDropHelper.IsDragSource="true" local:DragDropHelper.IsDropTarget="true" local:DragDropHelper.DragDropTemplate="{StaticResource slideDragTemplate}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -63,7 +64,7 @@
                                         Padding="5" Background="{StaticResource BackgroundBlueGradient}"
                                         SnapsToDevicePixels="true" CornerRadius="2">
                                         <Grid>
-                                            <Image Height="90" Width="90" components:SelectorExtenders.IsAutoscroll="True">
+                                            <Image Height="90" Width="90">
                                                 <Image.Source>
                                                     <MultiBinding Converter="{x:Static components:EditConversation.SlideToThumb}">
                                                         <Binding RelativeSource="{RelativeSource Self}" />

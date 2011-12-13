@@ -133,8 +133,8 @@
             </Grid.ColumnDefinitions>
             <Border Grid.Row="1" Grid.Column="1" Width="200" Height="70" Background="White" BorderBrush="Black" BorderThickness="2" CornerRadius="10" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <DockPanel>
-                   <components:CircularProgressBar DockPanel.Dock="Left" VerticalAlignment="Center" Height="20" Margin="20"/>
-                   <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Text="Searching..."></TextBlock>
+                   <components:CircularProgressBar DockPanel.Dock="Left" VerticalAlignment="Center" Height="20" Margin="20,0,20,0"/>
+                   <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Height="20" Text="Searching..."></TextBlock>
                 </DockPanel>
             </Border>
         </Grid>
