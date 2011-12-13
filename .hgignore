@@ -36,7 +36,6 @@ syntax: glob
 
 *_ReSharper*
 
-*.Designer.*
 *.suo
 *.user
 *.filters
