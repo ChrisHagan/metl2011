@@ -91,10 +91,16 @@ namespace SandRibbon.Components
             retriever.DoWork += (object sender, DoWorkEventArgs e) => 
             { 
                 var bw = sender as BackgroundWorker;
+                try
+                {
+                    e.Result = new WebClient().DownloadString( "http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
+                    if (bw.CancellationPending)
+                        e.Cancel = true;
+                }
+                catch(WebException)
+                {
 
-                e.Result = new WebClient().DownloadString("http://metl.adm.monash.edu.au/MeTL/MeTLPresenterReleaseNotes.txt");
-                if (bw.CancellationPending)
-                    e.Cancel = true;
+                }
             };
 
             retriever.RunWorkerCompleted += (object sender, RunWorkerCompletedEventArgs e) =>

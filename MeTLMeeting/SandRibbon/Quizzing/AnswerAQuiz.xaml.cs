@@ -54,13 +54,26 @@ namespace SandRibbon.Quizzing
             
             this.Close();
        }
-       public void DisplayQuiz(object sender, RoutedEventArgs e)
+       enum DefaultSlideDimensions
        {
+           Width = 720,
+           Height = 540
+       }
+       private Rect ScaleQuizHeightToDefaultSlideHeight(FrameworkElement quiz)
+       {
+          // use the same scaling factor for width to maintain aspect ratio
+          var scalingFactor = quiz.ActualHeight / (double)DefaultSlideDimensions.Height;
+          var scaledWidth = quiz.ActualWidth / scalingFactor;
+          var scaledHeight = quiz.ActualHeight / scalingFactor;
+          return new Rect(0, 0, scaledWidth, scaledHeight);
+       }
+       public void DisplayQuiz(object sender, RoutedEventArgs e)
+        {
             var quiz = SnapshotHost;
             quiz.UpdateLayout();
             var dpi = 96;
-            var dimensions = new Rect(0, 0, quiz.ActualWidth, quiz.ActualHeight);
-            var bitmap = new RenderTargetBitmap((int)quiz.ActualWidth, (int)quiz.ActualHeight, dpi, dpi, PixelFormats.Default);
+            var dimensions = ScaleQuizHeightToDefaultSlideHeight(quiz);
+            var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
             var dv = new DrawingVisual();
             using (var context = dv.RenderOpen())
                 context.DrawRectangle(new VisualBrush(quiz), null, dimensions);
