@@ -50,14 +50,28 @@ namespace SandRibbon.Quizzing
                                      QuizResults.Children.Add(assessQuizzes[thisQuiz.id]);
                                  });
         }
+        enum DefaultSlideDimensions
+        {
+            Width = 720,
+            Height = 540
+        }
+        private Rect ScaleQuizHeightToDefaultSlideHeight(AssessAQuiz quiz)
+        {
+            // use the same scaling factor for width to maintain aspect ratio
+            var scalingFactor = quiz.ActualHeight / (double)DefaultSlideDimensions.Height;
+            var scaledWidth = quiz.ActualWidth / scalingFactor;
+            var scaledHeight = quiz.ActualHeight / scalingFactor;
+            return new Rect(0, 0, scaledWidth, scaledHeight);
+        }
+
         private void DisplayResults(object sender, RoutedEventArgs e)
         {
             var quiz = (AssessAQuiz)QuizResults.Children[0];
             quiz.TimestampLabel.Text = "Results collected at:\r\n" + SandRibbonObjects.DateTimeFactory.Now().ToLocalTime().ToString();
             quiz.SnapshotHost.UpdateLayout();
             var dpi = 96;
-            var dimensions = new Rect(0, 0, quiz.ActualWidth, quiz.ActualHeight);
-            var bitmap = new RenderTargetBitmap((int)quiz.ActualWidth, (int)quiz.ActualHeight, dpi, dpi, PixelFormats.Default);
+            var dimensions = ScaleQuizHeightToDefaultSlideHeight(quiz);
+            var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
             var dv = new DrawingVisual();
             using (var context = dv.RenderOpen())
                 context.DrawRectangle(new VisualBrush(quiz.SnapshotHost), null, dimensions);
