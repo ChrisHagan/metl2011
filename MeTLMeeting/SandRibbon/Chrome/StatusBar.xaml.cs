@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Properties;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 
@@ -36,7 +37,7 @@ namespace SandRibbon.Chrome
                 Dispatcher.adopt(() =>
                 {
                     var details = Globals.conversationDetails;
-                    StatusLabel.Text = details.IsEmpty?"MeTL 2011":string.Format(
+                    StatusLabel.Text = details.IsEmpty ? Strings.Global_ProductName : string.Format(
                             "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
                             Globals.privacy,
                             MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,

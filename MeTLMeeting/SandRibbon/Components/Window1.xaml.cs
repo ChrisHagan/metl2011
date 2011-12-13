@@ -25,6 +25,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Interop;
 using SandRibbon.Components.Sandpit;
 using System.Threading;
+using SandRibbon.Properties;
 
 namespace SandRibbon
 {
@@ -57,7 +58,7 @@ namespace SandRibbon
             Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
             Commands.SetPedagogyLevel.DefaultValue = ConfigurationProvider.instance.getMeTLPedagogyLevel();
             Commands.MeTLType.DefaultValue = Globals.METL;
-            Title = "MeTL 2011";
+            Title = Strings.Global_ProductName;
             try {
                 Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
             }
@@ -556,7 +557,7 @@ namespace SandRibbon
         {
             var permissionLabel = Permissions.InferredTypeOf(details.Permissions).Label;
             if (details.Equals(ConversationDetails.Empty))
-                return "MeTL 2011";
+                return Strings.Global_ProductName;
             return string.Format("Collaboration {0}  -  {1}'s \"{2}\" - MeTL", (permissionLabel == "tutorial") ? "ENABLED" : "DISABLED", details.Author, details.Title);
         }
         private void MoveTo(int slide)
@@ -665,7 +666,7 @@ namespace SandRibbon
             if (Globals.conversationDetails != null && mustBeInConversation(null))
                 Title = messageFor(Globals.conversationDetails);
             else
-                Title = "MeTL 2011";
+                Title = Strings.Global_ProductName;
         }
         private DelegateCommand<object> canOpenFriendsOverride;
         private void applyPermissions(Permissions permissions)
