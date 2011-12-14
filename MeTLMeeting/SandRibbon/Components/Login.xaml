@@ -92,14 +92,16 @@
                                         <TextBox x:Name="username" Grid.Row="0" Grid.Column="1" IsEnabled="True" 
                                                  Validation.Error="ValidationErrorHandler"
                                                  Style="{StaticResource ErrorStyle}"
-                                                 Text="{Binding UpdateSourceTrigger=LostFocus, Path=Username,
-                                                        ValidatesOnDataErrors=True, NotifyOnValidationError=True}">
+                                                 Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=Username,
+                                                        ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
+                                                 TextChanged="hideLoginErrors">
                                         </TextBox>
                                         <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" IsEnabled="True"
                                                      Validation.Error="ValidationErrorHandler"
                                                      Style="{StaticResource ErrorStyle}"
                                                      utility:PasswordBoxBinder.BindPassword="true" utility:PasswordBoxBinder.BoundPassword="{Binding Path=Password, 
-                                                     Mode=TwoWay, UpdateSourceTrigger=LostFocus, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"/>
+                                                     Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
+                                                     PasswordChanged="hideLoginErrors"/>
                                         <Label Name="loginErrors" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,5,0,5" Background="PapayaWhip"
                                                 Content="Your log on attempt failed. Please try again." BorderBrush="Red" BorderThickness="1" Foreground="Red" 
                                                 Visibility="Collapsed" HorizontalAlignment="Right"/>

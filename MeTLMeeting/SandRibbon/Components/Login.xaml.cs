@@ -120,6 +120,12 @@ namespace SandRibbon.Components
 
             retriever.RunWorkerAsync();
         }
+
+        private void hideLoginErrors(object sender, RoutedEventArgs e)
+        {
+            loginErrors.Visibility = Visibility.Collapsed;
+        }
+        
         private void loaded(object sender, RoutedEventArgs e)
         {
             username.Focus();
@@ -157,10 +163,8 @@ namespace SandRibbon.Components
         {
             canLoginAgain = true;
             loginErrors.Visibility = Visibility.Visible;
-            username.Text = string.Empty;
-            password.Password = string.Empty;
-
-            username.Focus();
+            password.SelectAll();
+            password.Focus();
         }
         private void checkLoginPending(object sender, CanExecuteRoutedEventArgs e)
         {
