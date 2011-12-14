@@ -1573,14 +1573,10 @@ namespace SandRibbon.Components
         {
             foreach (FrameworkElement element in selectedElements)
             {
-                if(InkCanvas.GetLeft(element) < 0)
-                    InkCanvas.SetLeft(element, (element is TextBox) ? 0 : 0 + ((element.Width != element.ActualWidth) ? ((element.Width - element.ActualWidth)/2) : 0));
-                else
-                    InkCanvas.SetLeft(element, (element is TextBox) ? InkCanvas.GetLeft(element) : InkCanvas.GetLeft(element) + ((element.Width != element.ActualWidth) ? ((element.Width - element.ActualWidth)/2) : 0));
-                if(InkCanvas.GetTop(element) < 0)
-                    InkCanvas.SetTop(element, (element is TextBox) ? 0 : 0 + ((element.Height != element.ActualHeight) ? ((element.Height - element.ActualHeight)/2) : 0));
-                else
-                    InkCanvas.SetTop(element, (element is TextBox) ? InkCanvas.GetTop(element) : InkCanvas.GetTop(element) + ((element.Height != element.ActualHeight) ? ((element.Height - element.ActualHeight)/2) : 0));
+                if (InkCanvas.GetLeft(element) < 0)
+                    InkCanvas.SetLeft(element, 10);
+                if (InkCanvas.GetTop(element) < 0)
+                    InkCanvas.SetTop(element, 10);
 
             }
             return selectedElements;
