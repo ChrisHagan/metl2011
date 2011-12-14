@@ -31,6 +31,7 @@ public class AutoScroller
     private double testvoffset;
 
     private Canvas _targetCanvas;
+    private Panel _targetPanel;
     /// <summary>
     /// Sets the canvas where objects are dragged/dropped. If null, it will default to the child of TargetScrollViewer when AutoScroll is set to Mode.Drag.
     /// </summary>
@@ -51,6 +52,19 @@ public class AutoScroller
         }
     }
 
+    public Panel TargetPanel
+    {
+        get
+        {
+            return _targetPanel;
+        }
+        set
+        {
+            _targetPanel = value;
+            DraggableObjects = new ObservableCollection<FrameworkElement>();
+            
+        }
+    }
     /// <summary>
     /// Sets the mode of automatic scrolling for the targetted ScrollViewer. 
     /// </summary>

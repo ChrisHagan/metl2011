@@ -7,8 +7,9 @@
         Title="Edit Conversation [Consider the effects of this on your students]"
         MinWidth="820"
         MinHeight="200"
+        Height="200"
         Width="820"
-        Height="200"> 
+        ResizeMode="NoResize">
     <Window.Resources>
         <DataTemplate x:Key="slideDragTemplate">
             <DataTemplate.Resources>
@@ -43,10 +44,10 @@
             <ListBox Background="AliceBlue"
             Width="790"
             Height="100"
+            Margin="10,0,10,0"
             ScrollViewer.HorizontalScrollBarVisibility="Visible" 
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             x:Name="activeSlides"
-            DragOver="PageList_DragOver"
             local:DragDropHelper.IsDragSource="true" local:DragDropHelper.IsDropTarget="true" local:DragDropHelper.DragDropTemplate="{StaticResource slideDragTemplate}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
