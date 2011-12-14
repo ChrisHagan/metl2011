@@ -825,8 +825,8 @@ namespace SandRibbon.Components
                                   var mySelectedElements = selectedElements.Where(t => t is MeTLTextBox).Select(t => ((MeTLTextBox)t).clone());
                                   foreach (MeTLTextBox box in mySelectedElements)
                                   {
-                                      if(MyWork.Children.ToList().Where(tb => ((MeTLTextBox)tb).tag().id == box.tag().id).ToList().Count != 0)
-                                          dirtyTextBoxWithoutHistory((MeTLTextBox)MyWork.Children.ToList().Where(tb => ((MeTLTextBox)tb).tag().id == box.tag().id).ToList().First());
+                                      if(MyWork.TextChildren().ToList().Where(tb => ((MeTLTextBox)tb).tag().id == box.tag().id).ToList().Count != 0)
+                                          dirtyTextBoxWithoutHistory((MeTLTextBox)MyWork.TextChildren().ToList().Where(tb => ((MeTLTextBox)tb).tag().id == box.tag().id).ToList().First());
                                       sendTextWithoutHistory(box, box.tag().privacy);
 
                                   }
@@ -1481,7 +1481,6 @@ namespace SandRibbon.Components
                                       });
 
         }
-
         private void addBoxToOtherCanvas(MeTLTextBox box)
         {
             var boxToAdd = applyDefaultAttributes(box);
