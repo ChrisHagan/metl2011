@@ -261,7 +261,6 @@ namespace SandRibbon.Components
                                       selection.Add(box);
                                       if(!alreadyHaveThisTextBox(box))
                                           AddTextBoxToCanvas(box);
-                                      box.TextChanged += SendNewText;
                                       box.PreviewTextInput += box_PreviewTextInput;
                                       sendTextWithoutHistory(box, box.tag().privacy);
                                   }
@@ -1492,6 +1491,7 @@ namespace SandRibbon.Components
 
         private MeTLTextBox applyDefaultAttributes(MeTLTextBox box)
         {
+            box.TextChanged -= SendNewText;
             box.AcceptsReturn = true;
             box.TextWrapping = TextWrapping.WrapWithOverflow;
             box.GotFocus += textboxGotFocus;
@@ -1520,6 +1520,7 @@ namespace SandRibbon.Components
         private void SendNewText(object sender, TextChangedEventArgs e)
         {
             if (_originalText == null) return; 
+            if(me == Globals.PROJECTOR) return;
             var box = (MeTLTextBox)sender;
             var undoText = _originalText.Clone().ToString();
             var redoText = box.Text.Clone().ToString();
@@ -1549,6 +1550,7 @@ namespace SandRibbon.Components
             UndoHistory.Queue(undo, redo);
 
 
+            mybox.TextChanged -= SendNewText;
             mybox.Text = redoText;
             mybox.TextChanged += SendNewText;
             if (TypingTimer == null)
@@ -1747,7 +1749,6 @@ namespace SandRibbon.Components
             myTextBox = box;
             if(MyWork.Children.ToList().Where(c => c is MeTLTextBox &&((MeTLTextBox)c).tag().id == box.tag().id).ToList().Count == 0)
                 AddTextBoxToCanvas(box);
-            box.TextChanged += SendNewText;
             box.PreviewTextInput += box_PreviewTextInput;
             sendTextWithoutHistory(box, box.tag().privacy);
         }
