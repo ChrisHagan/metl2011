@@ -177,7 +177,7 @@ namespace SandRibbon.Components.ResourceDictionaries
     }
     public enum InternalButtonSize
     {
-        Small, Medium, Large, LargeIcon
+        Small, Medium,MediumNoText, Large, LargeIcon
     }
     public class CheckBox : System.Windows.Controls.CheckBox
     {

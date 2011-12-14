@@ -15,9 +15,11 @@
         <sr:GroupVariant Variant="Collapsed" Priority="7"/>
     </sr:RibbonGroup.Variants>
     <dict:RibbonPanel>
-      <dict:Button x:Name="tutorialStyle" ToolTip="{DynamicResource CreateTutorialToolTip}" Text="Tutorial Style" Icon="\Resources\Collaborate.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="tutorial" ToolTipService.ShowDuration="10000" />
-      <dict:Button x:Name="lectureStyle"  ToolTip="{DynamicResource CreateLectureToolTip}" Text="Lecture Style" Icon="\Resources\NoCollaborate.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="lecture" ToolTipService.ShowDuration="10000" />
-      <dict:RadioButton x:Name="navigationLock" Text="Navigation Lock" Icon="\Resources\SyncRed.png" Command="{x:Static api:Commands.ToggleNavigationLock}" IsChecked="{Binding Path=NavigationIsLocked}"/>
+        <StackPanel>
+            <dict:Button Width="30" x:Name="tutorialStyle" ToolTip="{DynamicResource CreateTutorialToolTip}" Text="Tutorial Style" Icon="\Resources\Collaborate.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="tutorial" ToolTipService.ShowDuration="10000" InternalButtonSize="MediumNoText" />
+            <dict:Button Width="30" x:Name="lectureStyle"  ToolTip="{DynamicResource CreateLectureToolTip}" Text="Lecture Style" Icon="\Resources\NoCollaborate.png" Command="{x:Static api:Commands.SetConversationPermissions}" CommandParameter="lecture" ToolTipService.ShowDuration="10000" InternalButtonSize="MediumNoText"/>
+        </StackPanel>
+        <dict:RadioButton x:Name="navigationLock" Text="Navigation Lock" Icon="\Resources\SyncRed.png" Command="{x:Static api:Commands.ToggleNavigationLock}" IsChecked="{Binding Path=NavigationIsLocked}"/>
     </dict:RibbonPanel>
 </sr:RibbonGroup>        
     

@@ -112,6 +112,7 @@ namespace SandRibbon.Components
         {
             if (!Globals.synched) return;
             if(!inConversation) return;
+            if (slide == Globals.slide) return;
             try
             {
                 if (Globals.conversationDetails.Author == Globals.me) return;
