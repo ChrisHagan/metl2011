@@ -488,7 +488,7 @@ namespace SandRibbon.Components
             Trace.TraceInformation("MovedTextbox");
             var startingText = boxesAtTheStart.Where(b=> b is MeTLTextBox).Select(b=> ((MeTLTextBox)b).clone()).ToList();
             List<UIElement> selectedElements = elements.Where(b=> b is MeTLTextBox).ToList();
-            abosoluteizeElements(selectedElements);
+            absoluteizeElements(selectedElements);
             Action undo = () =>
               {
                   ClearAdorners();
@@ -521,12 +521,11 @@ namespace SandRibbon.Components
         }
         private void SelectionMovedOrResized(object sender, EventArgs e)
         {
-            var selectedElements = MyWork.GetSelectedElements();
+            var selectedStrokes = absoluteizeStrokes(MyWork.GetSelectedStrokes().ToList()).Select(s => s.Clone()).ToList();
+            var selectedElements = absoluteizeElements(MyWork.GetSelectedElements().ToList());
             var startingSelectedImages = imagesAtStartOfTheMove.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
-            var selectedStrokes = MyWork.GetSelectedStrokes().Select(stroke => stroke.Clone()).ToList();
             Trace.TraceInformation("MovingStrokes {0}", string.Join(",", selectedStrokes.Select(s => s.sum().checksum.ToString()).ToArray()));
             var undoStrokes = strokesAtTheStart.Select(stroke => stroke.Clone()).ToList();
-            abosoluteizeStrokes(selectedStrokes);
             var ink = InkSelectionMovedOrResized(selectedStrokes, undoStrokes);
             var images = ImageSelectionMovedOrResized(selectedElements, startingSelectedImages);
             var text = TextMovedOrResized(selectedElements, _boxesAtTheStart);
@@ -866,18 +865,29 @@ namespace SandRibbon.Components
             redo();
             UndoHistory.Queue(undo, redo);
         }
-     protected static void abosoluteizeStrokes(List<Stroke> selectedElements)
+     protected static List<Stroke> absoluteizeStrokes(List<Stroke> selectedElements)
         {
             foreach (var stroke in selectedElements)
             {
                 if (stroke.GetBounds().Top < 0)
-                    stroke.GetBounds().Offset(0, Math.Abs(stroke.GetBounds().Top));
+                {
+                    var top = Math.Abs(stroke.GetBounds().Top);
+                    var strokeCollection = new StylusPointCollection();
+                    foreach(var point in stroke.StylusPoints.Clone())
+                        strokeCollection.Add(new StylusPoint(point.X, point.Y + top));
+                    stroke.StylusPoints = strokeCollection;
+                }
                 if (stroke.GetBounds().Left < 0)
-                    stroke.GetBounds().Offset(Math.Abs(stroke.GetBounds().Left), 0);
-                if (stroke.GetBounds().Left < 0 && stroke.GetBounds().Top < 0)
-                    stroke.GetBounds().Offset(Math.Abs(stroke.GetBounds().Left), Math.Abs(stroke.GetBounds().Top));
+                {
+                    var left = Math.Abs(stroke.GetBounds().Left);
+                    var strokeCollection = new StylusPointCollection();
+                    foreach(var point in stroke.StylusPoints.Clone())
+                        strokeCollection.Add(new StylusPoint(point.X + left, point.Y));
+                    stroke.StylusPoints = strokeCollection;
+                }
             }
-           
+            return selectedElements;
+
         }
         private void singleStrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
         {
@@ -1559,7 +1569,7 @@ namespace SandRibbon.Components
             }
 
         }
-        protected static void abosoluteizeElements(List<UIElement> selectedElements)
+        protected static List<UIElement> absoluteizeElements(List<UIElement> selectedElements)
         {
             foreach (FrameworkElement element in selectedElements)
             {
@@ -1573,6 +1583,7 @@ namespace SandRibbon.Components
                     InkCanvas.SetTop(element, (element is TextBox) ? InkCanvas.GetTop(element) : InkCanvas.GetTop(element) + ((element.Height != element.ActualHeight) ? ((element.Height - element.ActualHeight)/2) : 0));
 
             }
+            return selectedElements;
         }
         private void resetTextbox(object obj)
         {
