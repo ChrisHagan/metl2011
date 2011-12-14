@@ -13,53 +13,6 @@ using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components
 {
-    public class SelectorExtenders : DependencyObject
-    {
-        public static bool GetIsAutoscroll(DependencyObject obj)
-        {
-            return (bool)obj.GetValue(IsAutoscrollProperty);
-        }
-
-        public static void SetIsAutoscroll(DependencyObject obj, bool value)
-        {
-            obj.SetValue(IsAutoscrollProperty, value);
-        }
-
-        public static readonly DependencyProperty IsAutoscrollProperty =
-            DependencyProperty.RegisterAttached("IsAutoscroll", typeof(bool), typeof(SelectorExtenders), new UIPropertyMetadata(default(bool), OnIsAutoscrollChanged));
-
-        public static void OnIsAutoscrollChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
-        {
-            var currentIsAutoscroll = (bool)e.NewValue;
-            var element = s as FrameworkElement;
-            var container = UIHelper.FindVisualParent<ListBoxItem>(element);
-            
-            var autoscroller = new DragEventHandler(
-                (object sender, DragEventArgs args) => 
-                {
-                    var imageControl = sender as Image;
-                    ScrollViewer scrollViewer = UIHelper.FindVisualParent<ScrollViewer>(imageControl);
-
-                    const double tolerance = 10;
-                    const double offset = 3;
-                    double horizontalPos = args.GetPosition(imageControl).X;
-
-                    if (horizontalPos < tolerance)
-                    {
-                        scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - offset);
-                    }
-                    else if (horizontalPos > imageControl.ActualHeight - tolerance)
-                    {
-                        scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset + offset);
-                    }
-                });
-
-            if (currentIsAutoscroll)
-                container.DragOver += autoscroller;
-            else
-                container.DragOver -= autoscroller; 
-        }
-    }
     /// <summary>
     /// Interaction logic for EditConversation.xaml
     /// </summary>
@@ -79,25 +32,6 @@ namespace SandRibbon.Components
             loadConversation(Globals.conversationDetails.Slides);
         }
 
-        private void PageList_DragOver(object sender, DragEventArgs e)
-        {
-            var listBox = sender as ListBox;
-            var scrollViewer = UIHelper.FindVisualChild<ScrollViewer>(listBox);
-
-            const double tolerance = 10;
-            const double offset = 3;
-            double horizontalPos = e.GetPosition(listBox).X;
-
-            if (horizontalPos < tolerance) // left of list
-            {
-                scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - offset); // scroll left
-            }
-            else if (horizontalPos > listBox.ActualWidth - tolerance) // right of visible list
-            {
-                scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset + offset);
-            }
-        }
-
         private void loadConversation(List<Slide> slides)
         {
             activeSlideList.Clear();
@@ -108,6 +42,7 @@ namespace SandRibbon.Components
                 ThumbnailProvider.thumbnail(image, slide.id);
             }
         }
+
         private void cancel(object sender, RoutedEventArgs e)
         {
             Close();

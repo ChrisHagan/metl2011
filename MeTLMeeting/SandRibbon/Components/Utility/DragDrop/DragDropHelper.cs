@@ -42,6 +42,57 @@ namespace SandRibbon.Components.Utility.DragDrop
             }
         }
 
+        private ScrollViewer scrollViewer;
+        private ScrollViewer ScrollViewer
+        {
+            get
+            {
+                if (scrollViewer == null)
+                {
+                    scrollViewer = UIHelper.FindVisualChild<ScrollViewer>(targetItemsControl);
+                }
+
+                return scrollViewer;
+            }
+        }
+
+        internal void ScrollIfRequired(Point mouseLocation)
+        {
+            if (this.ScrollViewer != null)
+            {
+                double scrollOffset = 0.0;
+
+                // Yes, that's really meant to be ViewportHeight. Not sure whether the StackPanel is doing something crazy to the ScrollViewer or what
+                // but the ViewportWidth value doesn't look correct.
+                // find the offset in the horizontal direction
+                if (this.ScrollViewer.ViewportHeight - mouseLocation.X < 20.0)
+                {
+                    scrollOffset = 1.0;
+                }
+                else if (mouseLocation.X < 20.0)
+                {
+                    scrollOffset = -1.0;
+                }
+
+                // Scroll the tree left or right 
+                if (scrollOffset != 0.0)
+                {
+                    scrollOffset += this.ScrollViewer.HorizontalOffset;
+
+                    if (scrollOffset < 0.0)
+                    {
+                        scrollOffset = 0.0;
+                    }
+                    else if (scrollOffset > this.ScrollViewer.ScrollableWidth)
+                    {
+                        scrollOffset = this.ScrollViewer.ScrollableWidth;
+                    }
+
+                    this.ScrollViewer.ScrollToHorizontalOffset(scrollOffset);
+                }
+            } 
+        }
+
         public static bool GetIsDragSource(DependencyObject obj)
         {
             return (bool)obj.GetValue(IsDragSourceProperty);
@@ -130,6 +181,7 @@ namespace SandRibbon.Components.Utility.DragDrop
 
         private void DragSource_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            this.scrollViewer = null;
             this.sourceItemsControl = (ItemsControl)sender;
             Visual visual = e.OriginalSource as Visual;
 
@@ -177,6 +229,7 @@ namespace SandRibbon.Components.Utility.DragDrop
                     this.topWindow.DragLeave -= TopWindow_DragLeave;
                     
                     this.draggedData = null;
+
                 }
             }
         }
@@ -197,7 +250,7 @@ namespace SandRibbon.Components.Utility.DragDrop
             if (draggedItem != null)
             {
                 // Dragged Adorner is created on the first enter only.
-                ShowDraggedAdorner(e.GetPosition(this.topWindow));
+                //ShowDraggedAdorner(e.GetPosition(this.topWindow));
                 CreateInsertionAdorner();
             }
             e.Handled = true;
@@ -211,7 +264,7 @@ namespace SandRibbon.Components.Utility.DragDrop
             if (draggedItem != null)
             {
                 // Dragged Adorner is only updated here - it has already been created in DragEnter.
-                ShowDraggedAdorner(e.GetPosition(this.topWindow));
+                //ShowDraggedAdorner(e.GetPosition(this.topWindow));
                 UpdateInsertionAdornerPosition();
             }
             e.Handled = true;
@@ -272,26 +325,6 @@ namespace SandRibbon.Components.Utility.DragDrop
                 {
                     this.hasVerticalOrientation = Utilities.HasVerticalOrientation(this.targetItemsControl.ItemContainerGenerator.ContainerFromIndex(0) as FrameworkElement);
                     this.targetItemContainer = targetItemsControl.ContainerFromElement((DependencyObject)e.OriginalSource) as FrameworkElement;
-
-                    // try some autoscrolling
-                    var control = e.OriginalSource as FrameworkElement;
-                    if (control != null)
-                    {
-                        ScrollViewer scrollViewer = UIHelper.FindVisualParent<ScrollViewer>(control);
-                        
-                        const double tolerance = 10;
-                        const double offset = 3;
-                        double horizontalPos = e.GetPosition(control).X;
-                        
-                        if (horizontalPos < tolerance)
-                        {
-                            scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - offset);
-                        }
-                        else if (horizontalPos > control.ActualHeight - tolerance)
-                        {
-                            scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset + offset);
-                        }
-                    }
 
                     if (this.targetItemContainer != null)
                     {
@@ -369,14 +402,15 @@ namespace SandRibbon.Components.Utility.DragDrop
 
         private void TopWindow_DragEnter(object sender, DragEventArgs e)
         {
-            ShowDraggedAdorner(e.GetPosition(this.topWindow));
+            //ShowDraggedAdorner(e.GetPosition(this.topWindow));
             e.Effects = DragDropEffects.None;
             e.Handled = true;
         }
 
         private void TopWindow_DragOver(object sender, DragEventArgs e)
         {
-            ShowDraggedAdorner(e.GetPosition(this.topWindow));
+            ScrollIfRequired(e.GetPosition(this.targetItemsControl));
+            //ShowDraggedAdorner(e.GetPosition(this.topWindow));
             e.Effects = DragDropEffects.None;
             e.Handled = true;
         }
