@@ -14,7 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <ManifestCertificateThumbprint>92A8DCF0C5848E3213E9D1DFB78667A731CC4919</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>19CA40E60BBFBC44BC1A0B2716F3FE31A6A4B07B</ManifestCertificateThumbprint>
     <ManifestKeyFile>
     </ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
@@ -45,11 +45,11 @@
     <UpdateUrl>http://metl.adm.monash.edu.au/MeTLStaging/</UpdateUrl>
     <ProductName>MeTL Staging</ProductName>
     <PublisherName>Monash University eEducation Centre</PublisherName>
-    <MinimumRequiredVersion>1.0.0.221</MinimumRequiredVersion>
+    <MinimumRequiredVersion>1.0.0.228</MinimumRequiredVersion>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>223</ApplicationRevision>
+    <ApplicationRevision>228</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -59,7 +59,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
