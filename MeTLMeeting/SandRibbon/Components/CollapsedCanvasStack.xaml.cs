@@ -141,7 +141,8 @@ namespace SandRibbon.Components
  
             Commands.ExtendCanvasBySize.RegisterCommandToDispatcher<Size>(new DelegateCommand<Size>(extendCanvasBySize));
 
-            Commands.ImageDropped.RegisterCommandToDispatcher(new DelegateCommand<ImageDrop>(imagedDropped));
+            Commands.ImageDropped.RegisterCommandToDispatcher(new DelegateCommand<ImageDrop>(imageDropped));
+            Commands.ImagesDropped.RegisterCommandToDispatcher(new DelegateCommand<List<ImageDrop>>(imagesDropped));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
             Commands.SetLayer.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(SetLayer));
             Commands.DeleteSelectedItems.RegisterCommandToDispatcher(new DelegateCommand<object>(deleteSelectedItems));
@@ -177,6 +178,7 @@ namespace SandRibbon.Components
         }
         private void keyPressed(object sender, KeyEventArgs e)
         {
+            
             if (e.Key == Key.Delete)
                 deleteSelectedElements(null, null);
         }
@@ -1129,7 +1131,12 @@ namespace SandRibbon.Components
                                         }
                                     });
         }
-        private void imagedDropped(ImageDrop drop)
+        private void imagesDropped(List<ImageDrop> images)
+        {
+            foreach(var image in images)
+                imageDropped(image);
+        }
+        private void imageDropped(ImageDrop drop)
         {
             try
             {
@@ -1141,11 +1148,6 @@ namespace SandRibbon.Components
                 //YAY
             }
         }
-       /* private void addImageFromQuizSnapshot(ImageDropParameters parameters)
-        {
-            if (target == "presentationSpace" && me != "projector")
-                handleDrop(parameters.File, parameters.Location, 1);
-        }*/
         private void addResourceFromDisk(Action<IEnumerable<string>> withResources)
         {
             const string filter = "Image files(*.jpeg;*.gif;*.bmp;*.jpg;*.png)|*.jpeg;*.gif;*.bmp;*.jpg;*.png|All files (*.*)|*.*";
@@ -1212,34 +1214,32 @@ namespace SandRibbon.Components
         protected void ImagesDrop(object sender, DragEventArgs e)
         {
             if (me == Globals.PROJECTOR) return;
-            var tempImagePath = "temporaryDragNDropFileData.bmp";
-            bool needsToRemoveTempFile = false;
             var validFormats = e.Data.GetFormats();
             var fileNames = new string[0];
-            var allTypes = validFormats.Select(vf => {
-                var outputData = "";
-                try
-                {
-                    var rawData = e.Data.GetData(vf);
-                    if (rawData is MemoryStream)
-                    {
-                        outputData = System.Text.Encoding.UTF8.GetString(((MemoryStream)e.Data.GetData(vf)).ToArray());
-                    }
-                    else if (rawData is String)
-                    {
-                        outputData = (String)rawData;
-                    }
-                    else if (rawData is Byte[])
-                    {
-                        outputData = System.Text.Encoding.UTF8.GetString((Byte[])rawData);
-                    }
-                    else throw new Exception("data was in an unexpected format: (" + outputData.GetType() + ") - "+outputData);
-                }
-                catch (Exception ex)
-                {
-                    outputData = "getData failed with exception (" + ex.Message + ")";
-                }
-                return vf + ":  "+ outputData;
+            validFormats.Select(vf => {
+                                          var outputData = "";
+                                          try
+                                          {
+                                              var rawData = e.Data.GetData(vf);
+                                              if (rawData is MemoryStream)
+                                              {
+                                                  outputData = System.Text.Encoding.UTF8.GetString(((MemoryStream)e.Data.GetData(vf)).ToArray());
+                                              }
+                                              else if (rawData is String)
+                                              {
+                                                  outputData = (String)rawData;
+                                              }
+                                              else if (rawData is Byte[])
+                                              {
+                                                  outputData = System.Text.Encoding.UTF8.GetString((Byte[])rawData);
+                                              }
+                                              else throw new Exception("data was in an unexpected format: (" + outputData.GetType() + ") - "+outputData);
+                                          }
+                                          catch (Exception ex)
+                                          {
+                                              outputData = "getData failed with exception (" + ex.Message + ")";
+                                          }
+                                          return vf + ":  "+ outputData;
             }).ToList();
             if (validFormats.Contains(DataFormats.FileDrop))
             {

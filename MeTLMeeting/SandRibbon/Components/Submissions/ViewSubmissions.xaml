@@ -16,10 +16,14 @@
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static api:Commands.ImportSubmission}" Executed="importSubmission" CanExecute="canImportSubmission"/>
+        <CommandBinding Command="{x:Static api:Commands.ImportSubmissions}" Executed="importAllSubmissionsInBucket"/>
     </Window.CommandBindings>
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
-            <Button DockPanel.Dock="Bottom" x:Name="importSelectedSubmission" ToolTip="{DynamicResource DisplaySubmissionToolTip}" Command="{x:Static api:Commands.ImportSubmission}" HorizontalAlignment="Right">Display submission</Button>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" >
+                <Button x:Name="importSelectedSubmission" ToolTip="{DynamicResource DisplaySubmissionToolTip}" Command="{x:Static api:Commands.ImportSubmission}" HorizontalAlignment="Right">Display submission</Button>
+                <Button  ToolTip="{DynamicResource DisplaySubmissionToolTip}" Command="{x:Static api:Commands.ImportSubmissions}" HorizontalAlignment="Right">Display all submission</Button>
+            </StackPanel>
             <Grid MaxHeight="450">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition MaxWidth="325"/>

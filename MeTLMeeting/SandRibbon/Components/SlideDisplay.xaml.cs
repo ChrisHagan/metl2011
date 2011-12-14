@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Interfaces;
 using SandRibbon.Components.Utility;
@@ -27,7 +28,6 @@ namespace SandRibbon.Components
             if (value is int)
                 return ((int)value) + 1;
             else return "?";
-            //return collection.IndexOf((Slide)value) + 1;
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -38,7 +38,7 @@ namespace SandRibbon.Components
     {
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            var source = (System.Windows.Controls.Image)values[0];
+            var source = (Image)values[0];
             var id = (int)values[1];
             ThumbnailProvider.thumbnail(source, id);
             return null;
@@ -84,6 +84,7 @@ namespace SandRibbon.Components
             IsNavigationLocked = calculateNavigationLocked();
             InitializeComponent();
             DataContext = this;
+            slides.PreviewKeyDown += new KeyEventHandler(KeyPressed);
             Commands.SyncedMoveRequested.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveToTeacher));
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(Display));
@@ -96,6 +97,14 @@ namespace SandRibbon.Components
             Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
             Display(Globals.conversationDetails);
+        }
+
+        private static void KeyPressed(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.PageUp || e.Key == Key.PageDown)
+            {
+                e.Handled = true;
+            }
         }
 
         private void receivedStatus(TeacherStatus status)

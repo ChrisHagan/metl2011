@@ -128,6 +128,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand SendScreenshotSubmission = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveScreenshotSubmission = new DefaultableCompositeCommand();
         public static RoutedCommand ImportSubmission = new RoutedCommand();
+        public static RoutedCommand ImportSubmissions = new RoutedCommand();
         public static RoutedCommand SaveFile = new RoutedCommand();
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecute = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand DummyCommandToProcessCanExecuteForPrivacyTools = new DefaultableCompositeCommand();
@@ -189,6 +190,7 @@ namespace SandRibbon
         #endregion
         #region ImageCanvas
         public static DefaultableCompositeCommand ImageDropped = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand ImagesDropped = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand AddVideo = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SendVideo = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ReceiveVideo = new DefaultableCompositeCommand();

@@ -65,6 +65,7 @@ namespace SandRibbon
             catch (Exception) {
                 Console.WriteLine("Window1 constructor couldn't find app appropriate icon");
             }
+            PreviewKeyDown += new KeyEventHandler(KeyPressed); 
             //create
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(ImportPowerpoint));
             Commands.ImportPowerpoint.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
@@ -153,6 +154,18 @@ namespace SandRibbon
             RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
+        }
+
+        private void KeyPressed(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.PageUp)
+            {
+                scroll.ScrollToVerticalOffset(scroll.VerticalOffset - 540);
+            }
+            if (e.Key == Key.PageDown)
+            {
+                scroll.ScrollToVerticalOffset(scroll.VerticalOffset + 540);
+            }
         }
 
         [System.STAThreadAttribute()]

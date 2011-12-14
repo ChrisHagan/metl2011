@@ -26,6 +26,7 @@ namespace SandRibbon.Components
 {
     public partial class PresentationSpace
     {
+        private bool inConversation;
         public PresentationSpace()
         {
             privacyOverlay = new SolidColorBrush { Color = Colors.Red, Opacity = 0.2 };
@@ -47,8 +48,27 @@ namespace SandRibbon.Components
             Commands.GenerateScreenshot.RegisterCommand(new DelegateCommand<ScreenshotDetails>(SendScreenShot));
             Commands.BanhammerSelectedItems.RegisterCommand(new DelegateCommand<object>(BanHammerSelectedItems));
             Commands.VisualizeContent.RegisterCommandToDispatcher(new DelegateCommand<object>(VisualizeContent));
+            Commands.ShowConversationSearchBox.RegisterCommand(new DelegateCommand<object>(showConversationSearch));
+            Commands.HideConversationSearchBox.RegisterCommand(new DelegateCommand<object>(hideConversationSearch));
             Commands.AllStaticCommandsAreRegistered();
+            inConversation = true;
         }
+
+        private void hideConversationSearch(object obj)
+        {
+            inConversation = true;
+        }
+
+        private void showConversationSearch(object obj)
+        {
+            inConversation = false;
+        }
+
+        private void KeyPressed(object sender, KeyEventArgs e)
+        {
+
+        }
+
         private void VisualizeContent(object obj) {
           /*
             var authors = new List<string>();
@@ -91,7 +111,7 @@ namespace SandRibbon.Components
         private void setUpSyncDisplay(int slide)
         {
             if (!Globals.synched) return;
-
+            if(!inConversation) return;
             try
             {
                 if (Globals.conversationDetails.Author == Globals.me) return;

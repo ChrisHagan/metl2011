@@ -209,6 +209,33 @@ namespace SandRibbon.Components.Submissions
             Commands.AddSlide.ExecuteAsync(null);
             this.Close();
         }
+        private void importAllSubmissionsInBucket(object sender, ExecutedRoutedEventArgs e)
+        {
+             var items = submissions.Items;
+            DelegateCommand<PreParser> onPreparserAvailable = null;
+            onPreparserAvailable = new DelegateCommand<PreParser>((parser) =>
+               {
+                   Commands.PreParserAvailable.UnregisterCommand(onPreparserAvailable);
+                   var imagesToDrop = new List<ImageDrop>();
+                   var height = 0;
+                   foreach(var elem in items)
+                   {
+                       var image = (TargettedSubmission) elem;
+                       imagesToDrop.Add( new ImageDrop
+                           {
+                               Filename = image.url.ToString(),
+                               Target = "presentationSpace",
+                               Point = new Point(0, height),
+                               Position = 1
+                           });
+                       height += 540;
+                   }
+                   Commands.ImagesDropped.ExecuteAsync(imagesToDrop);
+
+               });
+            Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
+            Commands.AddSlide.ExecuteAsync(null);
+        }
         private void canImportSubmission(object sender, CanExecuteRoutedEventArgs e)
         {
             if (submissions != null)
