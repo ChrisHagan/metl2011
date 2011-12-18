@@ -217,5 +217,18 @@ namespace SandRibbon.Providers
             }
         }
 
+        private static StoredUIState _storedUIState;
+        public static StoredUIState StoredUIState
+        {
+            get
+            {
+                if (_storedUIState == null)
+                {
+                    _storedUIState = new StoredUIState();
+                }
+
+                return _storedUIState;
+            }
+        }
     }
 }

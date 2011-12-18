@@ -1012,15 +1012,22 @@ namespace SandRibbon
             Commands.UnregisterAllCommands();
             Dispatcher.adoptAsync(() =>
             {
+                foreach (RibbonTab tab in ribbon.Tabs)
+                {
+                    tab.Items.Clear();
+                }
                 ribbon.Tabs.Clear();
                 privacyTools.Children.Clear();
                 RHSDrawerDefinition.Width = new GridLength(0);
             });
         }
+
         public void SetupUI(PedagogyLevel level)
         {
             Dispatcher.adoptAsync(() =>
             {
+                Commands.SaveUIState.Execute(null);
+
                 List<FrameworkElement> homeGroups = new List<FrameworkElement>();
                 List<FrameworkElement> tabs = new List<FrameworkElement>();
                 foreach (var i in Enumerable.Range(0, ((int)level.code) + 1))
@@ -1066,6 +1073,8 @@ namespace SandRibbon
                 ribbon.SelectedTab = home;
                 if (!ribbon.IsMinimized && currentConversationSearchBox.Visibility == Visibility.Visible)
                     ribbon.ToggleMinimize();
+
+                Commands.RestoreUIState.Execute(null);
             });
             CommandManager.InvalidateRequerySuggested();
             Commands.RequerySuggested();

@@ -662,6 +662,7 @@
     <Compile Include="DispatcherExtensions.cs" />
     <Compile Include="Providers\Colors.cs" />
     <Compile Include="Providers\ColourInformationProvider.cs" />
+    <Compile Include="Providers\StoredUIState.cs" />
     <Compile Include="Providers\ThumbnailProvider.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
     <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">

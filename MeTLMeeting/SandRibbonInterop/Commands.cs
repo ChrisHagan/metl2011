@@ -66,10 +66,6 @@ namespace SandRibbon
 
         public override void RegisterCommand(ICommand command)
         {
-#if DEBUG
-            if (RegisteredCommands.Contains(command))
-                Debug.Fail("Command is already registered");
-#endif
             base.RegisterCommand(command);
         }
     }
@@ -253,6 +249,8 @@ namespace SandRibbon
         public static RoutedCommand ProxyJoinConversation = new RoutedCommand();
         public static DefaultableCompositeCommand ChangeTab = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetRibbonAppearance = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand SaveUIState = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand RestoreUIState = new DefaultableCompositeCommand();
         #region ConversationLevel
         public static DefaultableCompositeCommand SyncedMoveRequested = new DefaultableCompositeCommand(0);
         public static DefaultableCompositeCommand SendSyncMove = new DefaultableCompositeCommand();

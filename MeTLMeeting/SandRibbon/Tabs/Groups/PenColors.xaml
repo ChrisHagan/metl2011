@@ -25,13 +25,14 @@
             </DrawingBrush>
         </StackPanel.Resources>
         <dict:RibbonPanel>
-            <dict:RadioButton x:Name="Draw" Visibility="Collapsed" ToolTip="{DynamicResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
-            <dict:RadioButton ToolTip="{DynamicResource SelectToolTip}"  Icon="\Resources\SelectInk.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
-            <dict:RadioButton ToolTip="{DynamicResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
+            <dict:RadioButton x:Name="drawRadio" Visibility="Collapsed" ToolTip="{DynamicResource PenToolTip}" Icon="\Resources\Inking.png" Text="Draw" Command="api:Commands.SetInkCanvasMode" CommandParameter="Ink" IsChecked="True"/>
+            <dict:RadioButton x:Name="selectRadio" ToolTip="{DynamicResource SelectToolTip}"  Icon="\Resources\SelectInk.png" Text="Select" Command="api:Commands.SetInkCanvasMode" CommandParameter="Select" />
+            <dict:RadioButton x:Name="eraseRadio" ToolTip="{DynamicResource EraserToolTip}" Icon="\Resources\ShinyEraser.png" Text="Erase" Command="api:Commands.SetInkCanvasMode" CommandParameter="EraseByStroke"/>
         </dict:RibbonPanel>
         <Button x:Name="hiddenButton" Visibility="Collapsed" Command="api:Commands.DummyCommandToProcessCanExecute" Tag="This button should always be collapsed.  It is only being used to redirect a canExecute Handler."/>
         <dict:PenColorsListBox x:Name="defaultColours" SelectionChanged="ChangeColorFromPreset" Background="Transparent" IsEnabled="{Binding ElementName=hiddenButton, Path=IsEnabled}"
                 ParentActiveVariant="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type sr:RibbonGroup}}, Path=ActiveVariant}"
+                ItemsSource="{Binding Path=currentColourValues}"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Padding="0" BorderBrush="Transparent">
             <dict:PenColorsListBox.ItemTemplate>
                 <DataTemplate>
@@ -208,6 +209,7 @@
                     <Label Content="Change the colour"/>
                     <ListBox x:Name="ColourChooser" Height="160" 
                              Background="Transparent"
+                             ItemsSource="{Binding Path=simpleColourSet}"
                              SelectionChanged="ChangeColour">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -230,6 +232,7 @@
                     <Label Content="Change the size"/>
                     <ListBox x:Name="SizeChooser" Height="40"
                              Background="Transparent" 
+                             ItemsSource="{Binding Path=simpleSizeSet}"
                              SelectionChanged="ChangeSize">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>

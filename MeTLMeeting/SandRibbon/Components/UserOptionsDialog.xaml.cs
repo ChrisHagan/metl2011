@@ -33,16 +33,19 @@ namespace SandRibbon.Components
             Commands.SetPedagogyLevel.Execute(level);
             // ChangeLanguage commented out for 182 staging release. Causing a crash.
             //Commands.ChangeLanguage.Execute(System.Windows.Markup.XmlLanguage.GetLanguage(((UserOptions)DataContext).language));
+
+
+            /* Unless there is a good reason to join a conversation we're already in this should stay commented out.
             try
             {
                 if (!String.IsNullOrEmpty(Globals.location.activeConversation))
                 {
-                    Commands.JoinConversation.Execute(Globals.location.activeConversation);
+                    //Commands.JoinConversation.Execute(Globals.location.activeConversation);
                 }
             }
             catch (NotSetException)
             {
-            }
+            }*/
 
             Close();
         }
