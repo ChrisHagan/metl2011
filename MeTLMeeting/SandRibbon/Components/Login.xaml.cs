@@ -138,7 +138,12 @@ namespace SandRibbon.Components
         {
             canLoginAgain = false;
             loginErrors.Visibility = Visibility.Collapsed;
-            App.Login(username.Text.ToLower(), password.Password);
+
+            var worker = new BackgroundWorker();
+            var usernameText = username.Text.ToLower();
+            var passwordText = password.Password;
+            worker.DoWork += (_unused1, _unused2) => { App.Login(usernameText, passwordText); };
+            worker.RunWorkerAsync();
         }
         private void SetIdentity(Credentials identity)
         {
@@ -162,9 +167,11 @@ namespace SandRibbon.Components
         private void LoginFailed()
         {
             canLoginAgain = true;
+            CommandManager.InvalidateRequerySuggested();
             loginErrors.Visibility = Visibility.Visible;
             password.SelectAll();
             password.Focus();
+            
         }
         private void checkLoginPending(object sender, CanExecuteRoutedEventArgs e)
         {

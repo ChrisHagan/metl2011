@@ -10,6 +10,7 @@ using System.Diagnostics;
 using Ninject;
 using System.Text;
 using System.Xml.Linq;
+using System.Threading;
 
 namespace MeTLLib.Providers
 {

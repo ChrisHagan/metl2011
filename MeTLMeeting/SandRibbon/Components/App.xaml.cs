@@ -81,12 +81,15 @@ namespace SandRibbon
             {
                 App.mark("start network controller and log in");
                 controller = new NetworkController();
-                MeTLLib.ClientFactory.Connection().Connect(finalUsername, password);
+                if (!MeTLLib.ClientFactory.Connection().Connect(finalUsername, password))
+                {
+                    Commands.LoginFailed.Execute(null);
+                }
                 App.mark("finished logging in");
             }
             catch (TriedToStartMeTLWithNoInternetException)
             {
-                MeTLMessage.Error("MeTL cannot contact the server.  Please check your internet connection.");
+                Commands.NoNetworkConnectionAvailable.Execute(null);
             }
         }
         public static void noop(object _arg)
@@ -118,8 +121,16 @@ namespace SandRibbon
             //Asserting new permission set to all referenced assemblies
             set.Assert();
         }
-        private void LogOut(object _Unused)
+        private void NoNetworkConnectionAvailable()
         {
+            MeTLMessage.Error("MeTL cannot contact the server.  Please check your internet connection.");
+        }
+        private void LogOut(object showErrorMessage)
+        {
+            if (showErrorMessage != null && (bool)showErrorMessage)
+            {
+                MeTLMessage.Error("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
+            }
             Trace.TraceInformation("LoggingOut");
             WorkspaceStateProvider.ClearSettings();
             Application.Current.Shutdown();
@@ -135,6 +146,7 @@ namespace SandRibbon
             Trace.Listeners.Add(new CouchTraceListener());
             base.OnStartup(e);
             Commands.LogOut.RegisterCommandToDispatcher(new DelegateCommand<object>(LogOut));
+            Commands.NoNetworkConnectionAvailable.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { NoNetworkConnectionAvailable(); }));
             DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             Application.Current.Exit += new ExitEventHandler(Current_Exit);

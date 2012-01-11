@@ -237,6 +237,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand LogOut = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand LoginFailed = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetIdentity = new DefaultableCompositeCommand(Credentials.Empty);
+        public static DefaultableCompositeCommand NoNetworkConnectionAvailable = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand EstablishPrivileges = new DefaultableCompositeCommand();
         public static RoutedCommand CloseApplication = new RoutedCommand();
         public static DefaultableCompositeCommand SetLayer = new DefaultableCompositeCommand();

@@ -69,7 +69,7 @@ namespace MeTLLib
     public interface IClientBehaviour
     {
         void AskForTeachersStatus(string teacher, string where);
-        void Connect(string username, string password);
+        bool Connect(string username, string password);
         bool Disconnect();
         void SendTextBox(TargettedTextBox textbox);
         void SendStroke(TargettedStroke stroke);
@@ -80,6 +80,7 @@ namespace MeTLLib
         void SendDirtyImage(TargettedDirtyElement tde);
         void SendDirtyVideo(TargettedDirtyElement tde);
         void SendSubmission(TargettedSubmission ts);
+        void SendStanza(string where, Element stanza);
         void SendQuizAnswer(QuizAnswer qa);
         void SendQuizQuestion(QuizQuestion qq);
         void SendFile(TargettedFile tf);
@@ -174,16 +175,18 @@ namespace MeTLLib
             Action work = () => wire.AskForTeacherStatus(teacher, jid);
             tryIfConnected(work);
         }
-        public void Connect(string username, string password)
+        public bool Connect(string username, string password)
         {
             var credentials = authorisationProvider.attemptAuthentication(username, password);
             if (credentials.isValid)
             {
                 jabberWireFactory.credentials = credentials;
                 wire = jabberWireFactory.wire();
+                return true;
             }
             else {
                 events.statusChanged(false,credentials);
+                return false;
             }
         }
         public bool Disconnect()

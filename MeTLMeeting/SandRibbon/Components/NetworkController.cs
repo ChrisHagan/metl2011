@@ -66,14 +66,12 @@ namespace SandRibbon.Components
                 {
                     if (WorkspaceStateProvider.savedStateExists())
                     {
-                        MeTLMessage.Error("MeTL was unable to connect as your saved details were corrupted. Relaunch MeTL to try again.");
-                        Commands.LogOut.Execute(null);
+                        Commands.LogOut.Execute(true);
                     }
-                    else
+                    /*else
                     {
-                        //System.Windows.MessageBox.Show("MeTL was unable to connect.  Please verify your details and try again.");
-                        Commands.LoginFailed.Execute(null);
-                    }
+                        MeTLMessage.Error("MeTL was unable to connect.  Please verify your details and try again.");
+                    }*/
                 }
                 client.events.StatusChanged -= checkValidity;
             };
