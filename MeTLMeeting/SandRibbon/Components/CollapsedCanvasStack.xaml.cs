@@ -149,6 +149,8 @@ namespace SandRibbon.Components
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.SetDrawingAttributes.RegisterCommandToDispatcher(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+
+            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideAdorners));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args), canExecute));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (sender, args) => HandleCopy(args), canExecute));
@@ -175,6 +177,11 @@ namespace SandRibbon.Components
         {
             Height = newSize.Height;
             Width = newSize.Width;
+        }
+        private void hideAdorners(object obj)
+        {
+            MyWork.Select(new UIElement[]{});
+            ClearAdorners();
         }
         private void keyPressed(object sender, KeyEventArgs e)
         {
