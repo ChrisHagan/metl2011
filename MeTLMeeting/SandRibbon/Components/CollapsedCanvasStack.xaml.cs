@@ -184,7 +184,7 @@ namespace SandRibbon.Components
         }
         private void SetLayer(string newLayer)
         {
-            if (me.ToLower() == "projector") return;
+            if (me.ToLower() == Globals.PROJECTOR) return;
             switch (newLayer)
             {
                 case "Text":
@@ -608,7 +608,7 @@ namespace SandRibbon.Components
         private void SetDrawingAttributes(DrawingAttributes logicalAttributes)
         {
             if (logicalAttributes == null) return;
-            if (me.ToLower() == "projector") return;
+            if (me.ToLower() == Globals.PROJECTOR) return;
             var zoomCompensatedAttributes = logicalAttributes.Clone();
             try
             {
@@ -1037,11 +1037,9 @@ namespace SandRibbon.Components
 
         private void AddImage(InkCanvas canvas, Image image)
         {
-            if(!existsOnCanvas(canvas, image))
-            {
-                Panel.SetZIndex(image, 1);
-                canvas.Children.Add(image);
-            }
+            if (canvas.ImageChildren().Any(i => ((Image) i).tag().id == image.tag().id)) return;
+            Panel.SetZIndex(image, 1);
+            canvas.Children.Add(image);
         }
         public void ReceiveDirtyImage(TargettedDirtyElement element)
         {
@@ -1069,7 +1067,12 @@ namespace SandRibbon.Components
         }
         private bool existsOnCanvas(InkCanvas canvas, Image testImage)
         {
-            return canvas.Children.OfType<Image>().Any(image => imageCompare(image, testImage));
+            var exists = false;
+            Dispatcher.adopt(delegate
+                                 {
+                                    exists = canvas.Children.OfType<Image>().Any(image => imageCompare(image, testImage));
+                                 });
+            return exists;
         }
         private static bool imageCompare(Image image, Image currentImage)
         {
@@ -1149,7 +1152,7 @@ namespace SandRibbon.Components
         {
             try
             {
-                if (drop.Target.Equals(_target) && me != "projector")
+                if (drop.Target.Equals(_target) && me != Globals.PROJECTOR)
                     handleDrop(drop.Filename, drop.Point, drop.Position);
             }
             catch (NotSetException)
@@ -1165,7 +1168,7 @@ namespace SandRibbon.Components
 
         private void addResourceFromDisk(string filter, Action<IEnumerable<string>> withResources)
         {
-            if (_target == "presentationSpace" && me != "projector")
+            if (_target == "presentationSpace" && me != Globals.PROJECTOR)
             {
                 string initialDirectory = "c:\\";
                 foreach (var path in new[] { Environment.SpecialFolder.MyPictures, Environment.SpecialFolder.MyDocuments, Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolder.MyComputer })
@@ -1393,8 +1396,11 @@ namespace SandRibbon.Components
                 Action undo = () =>
                                   {
                                       ClearAdorners();
-                                      if (MyWork.Children.Contains(myImage))
-                                          MyWork.Children.Remove(myImage);
+                                      if (MyWork.ImageChildren().Any(i => ((Image)i).tag().id == myImage.tag().id))
+                                      {
+                                          var imageToRemove = MyWork.ImageChildren().First(i => ((Image) (i)).tag().id == myImage.tag().id);
+                                          MyWork.Children.Remove(imageToRemove);
+                                      }
                                       dirtyThisElement(myImage);
                                   };
                 Action redo = () =>
@@ -1971,19 +1977,7 @@ namespace SandRibbon.Components
         public void OnClipboardPaste()
         {
             HandlePaste(null);
-            /*
-            try
-            {
-             
-            }
-            catch (Exception)
-            {
-
-            }
-            AddAdorners();
-            */
         }
-
         public MeTLTextBox createNewTextbox()
         {
             var box = new MeTLTextBox();
@@ -1991,7 +1985,7 @@ namespace SandRibbon.Components
                         {
                             author = Globals.me,
                             privacy = privacy,
-                            id = string.Format("{0}:{1}", Globals.me, SandRibbonObjects.DateTimeFactory.Now())
+                            id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now())
                         });
             box.FontFamily = _currentFamily;
             box.FontSize = _currentSize;

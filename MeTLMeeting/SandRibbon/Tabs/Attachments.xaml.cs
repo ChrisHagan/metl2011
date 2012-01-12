@@ -101,8 +101,6 @@ namespace SandRibbon.Tabs
                                                    var sourceBytes = new WebClient { Credentials = new NetworkCredential("exampleUsername", "examplePassword") }.DownloadData(file.url);
                                                    stream.Write(sourceBytes, 0, sourceBytes.Count());
                                                    stream.Close();
-                                               
-
                                                };
                 backgroundWorker.RunWorkerCompleted += (s, a) => Dispatcher.Invoke(DispatcherPriority.Send,
                                                                                    (Action)(() => MeTLMessage.Information(string.Format("Finished downloading {0}.", saveFile.FileName))));

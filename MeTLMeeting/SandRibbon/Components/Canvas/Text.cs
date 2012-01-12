@@ -112,11 +112,7 @@ namespace SandRibbon.Components.Canvas
                                       {
                                           ClearAdorners();
                                           var currentInfo = info;
-                                          var activeTextbox =
-                                              ((MeTLTextBox)
-                                               Children.ToList().Where(
-                                                   c => ((MeTLTextBox)c).tag().id == currentTextBox.tag().id).
-                                                   FirstOrDefault());
+                                          var activeTextbox = ((MeTLTextBox) Children.ToList().FirstOrDefault(c => ((MeTLTextBox)c).tag().id == currentTextBox.tag().id));
                                           activeTextbox.TextChanged -= SendNewText;
                                           applyStylingTo(activeTextbox, currentInfo);
                                           Commands.TextboxFocused.ExecuteAsync(currentInfo);
