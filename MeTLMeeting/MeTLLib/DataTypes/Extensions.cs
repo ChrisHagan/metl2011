@@ -250,7 +250,10 @@ namespace MeTLLib.DataTypes
         public static StrokeTag tag(this Stroke stroke, StrokeTag tag)
         {
             stroke.AddPropertyData(STROKE_TAG_GUID, tag.author);
-            stroke.AddPropertyData(STROKE_PRIVACY_GUID, tag.privacy);
+            var privacy = "private";
+            if (!string.IsNullOrEmpty(tag.privacy))
+                privacy = tag.privacy;
+            stroke.AddPropertyData(STROKE_PRIVACY_GUID, privacy);
             stroke.AddPropertyData(IS_HIGHLIGHTER, tag.isHighlighter);
             return tag;
         }

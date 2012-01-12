@@ -166,18 +166,6 @@ namespace SandRibbon.Components
 
             search.RunWorkerAsync();
         }
-
-        /*private void setMyConversationVisibility()
-        {
-            Dispatcher.adoptAsync(()=>
-                                      {
-
-                                          mine.Visibility =
-                                              searchResults.ToList().Where(c => c.Author == Globals.me && c.Subject.ToLower() != "deleted").Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
-                                          if (mine.Visibility == Visibility.Collapsed)
-                                              find.IsChecked = true;
-                                      });
-        }*/
         private bool canSetPermissions(object arg)
         {
             return this.Visibility == Visibility.Collapsed;
@@ -254,11 +242,8 @@ namespace SandRibbon.Components
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
                if (details.IsEmpty) return;
-
-               /*foreach (var result in searchResultsObserver.Where(c => c.IsJidEqual(details.Jid)).ToList())
-                   searchResultsObserver.Remove(result);*/
                if (details.isDeleted && !details.IsEmpty)
-                   searchResultsObserver.Add(details);
+                   searchResultsObserver.Add(new SearchConversationDetails(details));
                else if (details.IsJidEqual(Globals.location.activeConversation))
                    currentConversation.Visibility = Visibility.Collapsed;
                if ((!(shouldShowConversation(details)) && details.IsJidEqual(Globals.conversationDetails.Jid)) || details.isDeleted)
@@ -267,7 +252,6 @@ namespace SandRibbon.Components
                    this.Visibility = Visibility.Visible;
                }
                RefreshSortedConversationsList(); 
-               //setMyConversationVisibility();
         }
         private static bool shouldShowConversation(ConversationDetails conversation)
         {
@@ -284,13 +268,11 @@ namespace SandRibbon.Components
             if (conversation != null)
             {
                 if (!shouldShowConversation(conversation))
-                { 
                     return false;
-                }
+                if (conversation.isDeleted)
+                    return false;
                 if (backstageNav.currentMode == "currentConversation" && conversation.IsJidEqual(activeConversation))
-                {
                     return false;
-                }
                 var author = conversation.Author.ToLower();
                 var title = conversation.Title.ToLower();
                 var searchField = new[] { author, title };
