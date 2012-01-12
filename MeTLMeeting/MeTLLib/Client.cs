@@ -178,7 +178,7 @@ namespace MeTLLib
         public bool Connect(string username, string password)
         {
             var credentials = authorisationProvider.attemptAuthentication(username, password);
-            if (credentials.isValid)
+            if (credentials != null && credentials.isValid)
             {
                 jabberWireFactory.credentials = credentials;
                 wire = jabberWireFactory.wire();

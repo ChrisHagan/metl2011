@@ -26,23 +26,22 @@ namespace MeTLLib.Providers
         }
         public Credentials attemptAuthentication(string username, string password)
         {
-            if (String.IsNullOrEmpty(username)) throw new ArgumentNullException("username", "Argument cannot be null");
-            if (String.IsNullOrEmpty(password)) throw new ArgumentNullException("password", "Argument cannot be null");
-            string AuthcateUsername = username;
-            string AuthcatePassword = password;
-            var token = login(AuthcateUsername, AuthcatePassword);
-            if (token.authenticated)
+            if (!String.IsNullOrEmpty(username) && !String.IsNullOrEmpty(password))
             {
-                var eligibleGroups = token.groups;
-                var credentials = new Credentials(AuthcateUsername, AuthcatePassword, eligibleGroups);
-                Globals.credentials = credentials;
-                return credentials;
+                string AuthcateUsername = username;
+                string AuthcatePassword = password;
+                var token = login(AuthcateUsername, AuthcatePassword);
+                if (token.authenticated)
+                {
+                    var eligibleGroups = token.groups;
+                    var credentials = new Credentials(AuthcateUsername, AuthcatePassword, eligibleGroups);
+                    Globals.credentials = credentials;
+                    return credentials;
+                }
             }
-            else
-            {
-                Trace.TraceError("Failed to Login.");
-                return new Credentials(username, "", new List<AuthorizedGroup>());
-            }
+
+            Trace.TraceError("Failed to Login.");
+            return Credentials.Empty;
         }
         public class AuthToken
         {
