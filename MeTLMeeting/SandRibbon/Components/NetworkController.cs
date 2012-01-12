@@ -10,6 +10,7 @@ using SandRibbon.Providers;
 using SandRibbon.Utils;
 using System.Windows.Forms;
 using SandRibbon.Components.Utility;
+using Application = System.Windows.Application;
 
 namespace SandRibbon.Components
 {
@@ -356,7 +357,7 @@ namespace SandRibbon.Components
                 Commands.UpdateConversationDetails.Execute(e.conversationDetails);
             else 
             {
-                App.Current.Dispatcher.adopt(() => Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails));
+                Application.Current.Dispatcher.adopt(() => Commands.UpdateForeignConversationDetails.Execute(e.conversationDetails));
             }
         }
         private void dirtyAutoshapeAvailable(object sender, DirtyElementAvailableEventArgs e)

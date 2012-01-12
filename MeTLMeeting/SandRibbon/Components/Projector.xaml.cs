@@ -88,7 +88,9 @@ namespace SandRibbon.Components
             //when you change pedagogy all the commands are deregistered this will restart the projector
             if(Window != null)
                 Window.Close();
+            Commands.CheckExtendedDesktop.Execute(null);
         }
+
         private void moveTo(object obj)
         {
             conversationLabel.Text = generateTitle(Globals.conversationDetails);

@@ -21,8 +21,7 @@ namespace SandRibbon.Quizzing
         private string url = "none";
         public static ObservableCollection<Option> options = new ObservableCollection<Option>
                                                      {
-                                                         new Option("A",String.Empty,false,Colors.Blue)/*,
-                                                         new Option("B",String.Empty,false,Colors.Red)*/
+                                                         new Option("A",String.Empty,false,Colors.Blue)
                                                      };
         public CreateAQuiz(int count)
         {
@@ -171,6 +170,7 @@ namespace SandRibbon.Quizzing
             for (int i = 0; i < options.Count; i++)
             {
                 options[i].name = Option.GetOptionNameFromIndex(i);
+                options[i].color = generateColor(i);
             }
 
             AddNewEmptyOption();

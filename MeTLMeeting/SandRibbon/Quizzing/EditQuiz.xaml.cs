@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using MeTLLib;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
@@ -67,8 +68,8 @@ namespace SandRibbon.Quizzing
             {
                 var lastOption = Options.Last();
                 var newName = Option.GetNextOptionName(lastOption.name);
-                var newIndex = AllColors.all.IndexOf(lastOption.color) + 1;
-                Options.Add(new Option(newName, String.Empty, false, AllColors.all.ElementAt(newIndex)));
+                var newIndex = Options.IndexOf(lastOption) + 1;
+                Options.Add(new Option(newName, String.Empty, false, generateColor(newIndex)));
             }
             else
             {
@@ -76,7 +77,10 @@ namespace SandRibbon.Quizzing
                     Options.Remove(o);
             }
         }
-
+        private Color generateColor(int index)
+        {
+            return index%2 == 0 ? Colors.White : (Color) ColorConverter.ConvertFromString("#FF4682B4");
+        }
         private void updateOptionText(object sender, TextChangedEventArgs e)
         {
             /*var text = ((TextBox)sender).Text;
@@ -130,10 +134,10 @@ namespace SandRibbon.Quizzing
             if (Options.Count > 0)
             {
                 var lastOption = Options.Last();
-                newIndex = AllColors.all.IndexOf(lastOption.color) + 1; 
+                newIndex = Options.IndexOf(lastOption) + 1; 
                 newName = Option.GetNextOptionName(lastOption.name);
             }
-            var newOption = new Option(newName, String.Empty, false, AllColors.all.ElementAt(newIndex));
+            var newOption = new Option(newName, String.Empty, false, generateColor(newIndex));
             if (shouldAddNewEmptyOption())
             {
                 Options.Add(newOption);
@@ -152,6 +156,7 @@ namespace SandRibbon.Quizzing
             for (int i = 0; i < Options.Count; i++)
             {
                 Options[i].name = Option.GetOptionNameFromIndex(i);
+                Options[i].color = generateColor(i);
             }
 
             AddNewEmptyOption();

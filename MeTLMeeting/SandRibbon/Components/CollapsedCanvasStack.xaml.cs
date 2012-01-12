@@ -299,16 +299,18 @@ namespace SandRibbon.Components
 
         private void deleteSelectedElements(object _sender, ExecutedRoutedEventArgs _handler)
         {
-            var selectedElements = new List<UIElement>();
+            var selectedImages = new List<UIElement>();
+            var selectedText = new List<UIElement>();
             var selectedStrokes = new StrokeCollection();
             Dispatcher.adopt(() =>
                                  {
                                      selectedStrokes = MyWork.GetSelectedStrokes();
-                                     selectedElements = MyWork.GetSelectedElements().ToList();
+                                     selectedImages = MyWork.GetSelectedImages().ToList();
+                                     selectedText = MyWork.GetSelectedTextBoxes().ToList();
                                  });
             var ink = deleteSelectedInk(selectedStrokes);
-            var images = deleteSelectedImages(selectedElements);
-            var text = deleteSelectedText(selectedElements);
+            var images = deleteSelectedImages(selectedImages);
+            var text = deleteSelectedText(selectedText);
             Action undo = () =>
                 {
                     ink.undo();
@@ -320,8 +322,7 @@ namespace SandRibbon.Components
                 };
             Action redo = () =>
                 {
-                    // set keyboard focus to the current canvas so the help button does not grey out
-                    Keyboard.Focus(this);
+                    Keyboard.Focus(this); // set keyboard focus to the current canvas so the help button does not grey out
                     ink.redo();
                     text.redo();
                     images.redo();
@@ -1014,12 +1015,11 @@ namespace SandRibbon.Components
         }
         private void dirtyThisElement(UIElement element)
         {
-            var thisImage = (Image)element;
-            var dirtyElement = new TargettedDirtyElement(Globals.slide, Globals.me, _target,thisImage.tag().privacy, thisImage.tag().id );
             switch (element.GetType().ToString())
             {
                 case "System.Windows.Controls.Image":
                     var image = (Image)element;
+                    var dirtyElement = new TargettedDirtyElement(Globals.slide, Globals.me, _target,image.tag().privacy, image.tag().id );
                     ApplyPrivacyStylingToElement(image, image.tag().privacy);
                     Commands.SendDirtyImage.Execute(dirtyElement);
                     break;
@@ -2082,38 +2082,31 @@ namespace SandRibbon.Components
             }
             deleteSelectedImages(imagesToDelete);
         }
-        private void HandleTextPasteRedo(List<string> selectedText, MeTLTextBox currentBox)
+        private void HandleTextPasteRedo(List<MeTLTextBox> selectedText, MeTLTextBox currentBox)
         {
-            foreach (var text in selectedText)
+            foreach (var textBox in selectedText)
             {
                 if (currentBox!= null)
                 {
                     var caret = currentBox.CaretIndex;
-                    var redoText = currentBox.Text.Insert(currentBox.CaretIndex, text);
+                    var redoText = currentBox.Text.Insert(currentBox.CaretIndex, textBox.Text);
                     ClearAdorners();
                     var box = ((MeTLTextBox) MyWork.TextChildren().ToList().Where(c => ((MeTLTextBox) c).tag().id == currentBox.tag().id). FirstOrDefault());
                     box.TextChanged -= SendNewText;
                     box.Text = redoText;
                     box.MaxWidth = 540;
-                    box.CaretIndex = caret + text.Length;
+                    box.CaretIndex = caret + textBox.Text.Length;
                     sendTextWithoutHistory(box, box.tag().privacy);
                     box.TextChanged += SendNewText;
                 }
                 else
                 {
-                    MeTLTextBox box = createNewTextbox();
-                    AddTextBoxToCanvas(box);
-                    InkCanvas.SetLeft(box, pos.X);
-                    InkCanvas.SetTop(box, pos.Y);
-                    pos = new Point(15, 15);
-                    box.TextChanged -= SendNewText;
-                    box.Text = text;
-                    box.TextChanged += SendNewText;
-                    sendTextWithoutHistory(box, box.tag().privacy);
+                    AddTextBoxToCanvas(textBox);
+                    sendTextWithoutHistory(textBox, textBox.tag().privacy);
                 }
             }
         }
-        private void HandleTextPasteUndo(List<string> selectedText, MeTLTextBox currentBox)
+        private void HandleTextPasteUndo(List<MeTLTextBox> selectedText, MeTLTextBox currentBox)
         {
             foreach (var text in selectedText)
             {
@@ -2122,7 +2115,7 @@ namespace SandRibbon.Components
                     var undoText = currentBox.Text;
                     var caret = currentBox.CaretIndex;
                     var currentTextBox = currentBox.clone();
-                    var box = ((MeTLTextBox) MyWork.TextChildren().ToList().Where( c => ((MeTLTextBox) c).tag().id == currentTextBox.tag().id). FirstOrDefault());
+                    var box = ((MeTLTextBox) MyWork.TextChildren().ToList().FirstOrDefault(c => ((MeTLTextBox) c).tag().id == currentTextBox.tag().id));
                     box.TextChanged -= SendNewText;
                     box.Text = undoText;
                     box.CaretIndex = caret;
@@ -2130,31 +2123,40 @@ namespace SandRibbon.Components
                     box.TextChanged += SendNewText;
                 }
                 else
-                {
-                    MeTLTextBox box = createNewTextbox();
-                    AddTextBoxToCanvas(box);
-                    InkCanvas.SetLeft(box, 15);
-                    InkCanvas.SetTop(box, 15);
-                    box.TextChanged -= SendNewText;
-                    box.Text = Clipboard.GetText();
-                    box.TextChanged += SendNewText;
-                    dirtyTextBoxWithoutHistory(box);
-                }
+                    dirtyTextBoxWithoutHistory(text);
             }
+        }
+        private List<MeTLTextBox> createPastedBoxes(List<string> selectedText)
+        {
+            var boxes = new List<MeTLTextBox>();
+            foreach (var text in selectedText)
+            {
+                MeTLTextBox box = createNewTextbox();
+                InkCanvas.SetLeft(box, pos.X);
+                InkCanvas.SetTop(box, pos.Y);
+                pos = new Point(15, 15);
+                box.TextChanged -= SendNewText;
+                box.Text = text;
+                box.TextChanged += SendNewText;
+                boxes.Add(box);
+            }
+            return boxes;
         }
         protected void HandlePaste(object _args)
         {
             if (me == Globals.PROJECTOR) return;
             var currentBox = myTextBox.clone();
+
             if (Clipboard.ContainsData(MeTLClipboardData.Type))
             {
                 var data = (MeTLClipboardData) Clipboard.GetData(MeTLClipboardData.Type);
+                var boxes = createPastedBoxes(data.Text.ToList());
                 Action undo = () =>
                                   {
                                       ClearAdorners();
                                       HandleInkPasteUndo(data.Ink.ToList());
                                       HandleImagePasteUndo(data.Images.ToList());
-                                      HandleTextPasteUndo(data.Text.ToList(), currentBox);
+                                      HandleTextPasteUndo(boxes, currentBox);
                                       AddAdorners();
                                   };
                 Action redo = () =>
@@ -2162,7 +2164,7 @@ namespace SandRibbon.Components
                                       ClearAdorners();
                                       HandleInkPasteRedo(data.Ink.ToList());
                                       HandleImagePasteRedo(data.Images.ToList());
-                                      HandleTextPasteRedo(data.Text.ToList(), currentBox);
+                                      HandleTextPasteRedo(boxes, currentBox);
                                       AddAdorners();
                                   };
                 UndoHistory.Queue(undo, redo);
@@ -2172,8 +2174,9 @@ namespace SandRibbon.Components
             {
                 if(Clipboard.ContainsText())
                 {
-                    Action undo = () => HandleTextPasteUndo(new List<string>{Clipboard.GetText()}, currentBox);
-                    Action redo = () => HandleTextPasteRedo(new List<string>{Clipboard.GetText()}, currentBox);
+                    var boxes = createPastedBoxes(new List<string> {Clipboard.GetText()});
+                    Action undo = () => HandleTextPasteUndo(boxes, currentBox);
+                    Action redo = () => HandleTextPasteRedo(boxes, currentBox);
                     UndoHistory.Queue(undo, redo);
                     redo();
                 }
