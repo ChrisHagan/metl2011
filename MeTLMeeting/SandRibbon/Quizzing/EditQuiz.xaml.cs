@@ -83,18 +83,19 @@ namespace SandRibbon.Quizzing
         }
         private void updateOptionText(object sender, TextChangedEventArgs e)
         {
-            /*var text = ((TextBox)sender).Text;
+            var text = ((TextBox)sender).Text;
             var option = (Option)((FrameworkElement)sender).DataContext;
             if (!String.IsNullOrEmpty(text) || option.optionText != text)
             {
                 option.optionText = text;
                 AddNewEmptyOption();
-            }*/
+            }
+            ((TextBox) sender).Focus();
         }
 
         public bool CheckResultsExist(QuizQuestion quizQuestion)
         {
-            return Globals.quiz.answers.Where(answer => answer.Key == quizQuestion.id).FirstOrDefault().Value.Count > 0;
+            return Globals.quiz.answers.FirstOrDefault(answer => answer.Key == quizQuestion.id).Value.Count > 0;
         }
 
         private void deleteQuiz(object sender, RoutedEventArgs e)
