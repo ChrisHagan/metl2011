@@ -268,7 +268,7 @@ namespace SandRibbon.Components
                                       selection.Add(box);
                                       if(!alreadyHaveThisTextBox(box))
                                           AddTextBoxToCanvas(box);
-                                      box.PreviewTextInput += box_PreviewTextInput;
+                                      box.PreviewKeyDown += box_PreviewTextInput;
                                       sendTextWithoutHistory(box, box.tag().privacy);
                                   }
                               };
@@ -1508,7 +1508,7 @@ namespace SandRibbon.Components
             box.TextWrapping = TextWrapping.WrapWithOverflow;
             box.GotFocus += textboxGotFocus;
             box.LostFocus += textboxLostFocus;
-            box.PreviewTextInput += box_PreviewTextInput;
+            box.PreviewKeyDown += box_PreviewTextInput;
             box.TextChanged += SendNewText;
             box.IsUndoEnabled = false;
             box.UndoLimit = 0;
@@ -1761,7 +1761,7 @@ namespace SandRibbon.Components
             myTextBox = box;
             if(MyWork.Children.ToList().Where(c => c is MeTLTextBox &&((MeTLTextBox)c).tag().id == box.tag().id).ToList().Count == 0)
                 AddTextBoxToCanvas(box);
-            box.PreviewTextInput += box_PreviewTextInput;
+            box.PreviewKeyDown += box_PreviewTextInput;
             sendTextWithoutHistory(box, box.tag().privacy);
         }
         public void sendTextWithoutHistory(MeTLTextBox box, string thisPrivacy)
@@ -1789,9 +1789,10 @@ namespace SandRibbon.Components
             RemoveTextboxWithTag(box.tag().id);
             Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(Globals.slide, box.tag().author, _target, box.tag().privacy, box.tag().id));
         }
-        private void box_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        private void box_PreviewTextInput(object sender, KeyEventArgs e)
         {
             _originalText = ((MeTLTextBox)sender).Text;
+            Console.WriteLine("|{0}|", _originalText);
             e.Handled = false;
         }
         
@@ -1992,7 +1993,7 @@ namespace SandRibbon.Components
                         {
                             author = Globals.me,
                             privacy = privacy,
-                            id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now())
+                            id = string.Format("{0}:{1}", Globals.me, DateTimeFactory.Now().Ticks)
                         });
             box.FontFamily = _currentFamily;
             box.FontSize = _currentSize;
@@ -2336,7 +2337,6 @@ namespace SandRibbon.Components
                 var images = HandleImageCutRedo(selectedImages);
                 var ink = HandleInkCutRedo(strokesToCut);
                 Clipboard.SetData(MeTLClipboardData.Type, new MeTLClipboardData(text, images, ink));
-                AddAdorners();
             };
             Action undo = () =>
             {
@@ -2348,7 +2348,6 @@ namespace SandRibbon.Components
                     HandleImageCutUndo(selectedImages);
                     HandleInkCutUndo(strokesToCut);
                 }
-                AddAdorners();
             };
             redo();
             UndoHistory.Queue(undo, redo);
