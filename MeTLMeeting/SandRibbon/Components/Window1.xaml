@@ -35,7 +35,11 @@
         <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
         <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
         <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
+        <KeyBinding Key="Up" Command="{x:Static api:Commands.MoveToPrevious}" />
+        <KeyBinding Key="PageUp" Command="{x:Static api:Commands.MoveToPrevious}" />
         <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
+        <KeyBinding Key="Down" Command="{x:Static api:Commands.MoveToNext}" />
+        <KeyBinding Key="PageDown" Command="{x:Static api:Commands.MoveToNext}" />
         <KeyBinding Key="Delete" Command="{x:Static api:Commands.DeleteSelectedItems}"/>
     </sr:RibbonWindow.InputBindings>
     <sr:RibbonWindow.Ribbon>

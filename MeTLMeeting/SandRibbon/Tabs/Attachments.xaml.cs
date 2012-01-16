@@ -67,6 +67,7 @@ namespace SandRibbon.Tabs
             if (!Globals.conversationDetails.IsJidEqual(fileInfo.conversationJid.ToString())) return;
             Dispatcher.adoptAsync(() => {
                                             var fileInfoFileType = FileHelper.DetermineFileTypeFromExtension(fileInfo.name);
+                                            if (files.Select(f => f.url).Contains(fileInfo.url)) return;
                                             files.Add(new FileInfo
                                                      {
                                                          fileType = fileInfoFileType,

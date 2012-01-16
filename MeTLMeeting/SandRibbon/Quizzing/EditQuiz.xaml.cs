@@ -115,7 +115,7 @@ namespace SandRibbon.Quizzing
                   QuestionError = true;
               if (editedQuiz.options.Count < 2)
                   OptionError = true;
-              return !(OptionError && QuestionError);
+              return !(OptionError || QuestionError);
           }
 
           private void CloseEdit(object sender, RoutedEventArgs e)
