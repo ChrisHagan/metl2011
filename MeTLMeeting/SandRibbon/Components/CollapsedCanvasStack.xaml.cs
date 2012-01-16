@@ -1759,7 +1759,7 @@ namespace SandRibbon.Components
         private void sendBox(MeTLTextBox box)
         {
             myTextBox = box;
-            if(MyWork.Children.ToList().Where(c => c is MeTLTextBox &&((MeTLTextBox)c).tag().id == box.tag().id).ToList().Count == 0)
+            if(!MyWork.Children.ToList().Any(c => c is MeTLTextBox &&((MeTLTextBox)c).tag().id == box.tag().id))
                 AddTextBoxToCanvas(box);
             box.PreviewKeyDown += box_PreviewTextInput;
             sendTextWithoutHistory(box, box.tag().privacy);
