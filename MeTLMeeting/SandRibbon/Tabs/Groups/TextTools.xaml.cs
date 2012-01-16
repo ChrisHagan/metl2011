@@ -17,6 +17,7 @@ namespace SandRibbon.Tabs.Groups
         private List<string> fontList = new List<string> { "Arial", "Times New Roman", "Lucida", "Palatino Linotype", "Verdana", "Wingdings" };
         public TextTools()
         {
+            loadFonts();
             InitializeComponent();
             fontFamily.ItemsSource = fontList;
             fontSize.ItemsSource = fontSizes;
@@ -29,6 +30,12 @@ namespace SandRibbon.Tabs.Groups
             Commands.ToggleBold.RegisterCommand(new DelegateCommand<object>(togglebold));
             Commands.ToggleItalic.RegisterCommand(new DelegateCommand<object>(toggleItalic));
             Commands.ToggleUnderline.RegisterCommand(new DelegateCommand<object>(toggleUnderline));
+        }
+        private void loadFonts()
+        {
+            fontList = new List<string>();
+            foreach(var font in System.Drawing.FontFamily.Families)
+                fontList.Add(font.Name.ToString());
         }
         private void togglebold(object obj)
         {

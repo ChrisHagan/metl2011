@@ -162,14 +162,17 @@ namespace SandRibbon.Utils
                     {
                         case PowerpointImportType.HighDefImage:
                             Trace.TraceInformation("ImportingPowerpoint HighDef {0}", spec.File);
+                            Logger.Log(string.Format("ImportingPowerpoint HighDef {0}", spec.File));
                             success = LoadPowerpointAsFlatSlides(spec.File, conversation, spec.Magnification);
                             break;
                         case PowerpointImportType.Image:
                             Trace.TraceInformation("ImportingPowerpoint NormalDef {0}", spec.File);
+                            Logger.Log(string.Format("ImportingPowerpoint NormalDef {0}", spec.File));
                             success = LoadPowerpointAsFlatSlides(spec.File, conversation, spec.Magnification);
                             break;
                         case PowerpointImportType.Shapes:
                             Trace.TraceInformation("ImportingPowerpoint Flexible {0}", spec.File);
+                            Logger.Log(string.Format("ImportingPowerpoint Flexible {0}", spec.File));
                             success = LoadPowerpoint(spec.File, conversation);
                             break;
                     }

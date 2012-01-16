@@ -167,8 +167,21 @@ namespace SandRibbon.Components
             clipboardManager.RegisterHandler(ClipboardAction.Paste, OnClipboardPaste, CanHandleClipboardPaste);
             clipboardManager.RegisterHandler(ClipboardAction.Cut, OnClipboardCut, CanHandleClipboardCut);
             clipboardManager.RegisterHandler(ClipboardAction.Copy, OnClipboardCopy, CanHandleClipboardCopy);
+            MyWork.MouseMove += mouseMove;
+            MyWork.StylusMove += stylusMove;
         }
 
+        private void stylusMove(object sender, StylusEventArgs e)
+        {
+            GlobalTimers.resetSyncTimer();
+        }
+        private void mouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                GlobalTimers.resetSyncTimer();
+            }
+        }
         private void canExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = MyWork.GetSelectedElements().Count > 0 || MyWork.GetSelectedStrokes().Count > 0 || myTextBox != null;
@@ -1792,7 +1805,6 @@ namespace SandRibbon.Components
         private void box_PreviewTextInput(object sender, KeyEventArgs e)
         {
             _originalText = ((MeTLTextBox)sender).Text;
-            Console.WriteLine("|{0}|", _originalText);
             e.Handled = false;
         }
         
@@ -2132,6 +2144,7 @@ namespace SandRibbon.Components
             var boxes = new List<MeTLTextBox>();
             foreach (var text in selectedText)
             {
+                System.Threading.Thread.Sleep(2);
                 MeTLTextBox box = createNewTextbox();
                 InkCanvas.SetLeft(box, pos.X);
                 InkCanvas.SetTop(box, pos.Y);
