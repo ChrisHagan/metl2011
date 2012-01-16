@@ -228,7 +228,7 @@ namespace SandRibbon.Quizzing
             // relabel the option names
             for (int i = 0; i < options.Count; i++)
             {
-                options[i].name = Option.GetOptionNameFromIndex(i);
+                //options[i].name = Option.GetOptionNameFromIndex(i);
                 options[i].color = generateColor(i);
             }
 
