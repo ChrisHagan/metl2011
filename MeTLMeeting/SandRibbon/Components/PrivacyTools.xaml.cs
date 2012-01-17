@@ -64,7 +64,12 @@ namespace SandRibbon.Components
             Dispatcher.adopt(() =>
                                   {
                                       if ((details.Permissions.studentCanPublish && !details.blacklist.Contains(Globals.me))|| Globals.isAuthor)
+                                      {
                                           publicMode.IsEnabled = true;
+                                          var privacy = Globals.isAuthor ? Globals.PUBLIC : Globals.PRIVATE;
+                                          SetPrivacy(privacy);
+                                      }
+
                                       else
                                       {
                                           publicMode.IsEnabled = false;
