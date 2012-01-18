@@ -331,7 +331,6 @@ namespace SandRibbon.Components
                     text.undo();
                     images.undo();
                     ClearAdorners();
-                    AddAdorners();
                     MyWork.Focus();
                 };
             Action redo = () =>
@@ -341,7 +340,6 @@ namespace SandRibbon.Components
                     text.redo();
                     images.redo();
                     ClearAdorners();
-                    AddAdorners();
                     MyWork.Focus();
                 };
          

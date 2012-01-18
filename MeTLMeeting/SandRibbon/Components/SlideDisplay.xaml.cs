@@ -230,7 +230,11 @@ namespace SandRibbon.Components
         }
         private bool isNext(object _object)
         {
-            return (slides != null && slides.SelectedIndex < thumbnailList.Count() - 1);
+            var normalNav = slides != null && slides.SelectedIndex < thumbnailList.Count() - 1;
+            var slideLockNav = (IsNavigationLocked && slides.SelectedIndex < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex));
+            var canNav = normalNav && slideLockNav;
+            return canNav;
+
         }
         private void moveToNext(object _object)
         {
