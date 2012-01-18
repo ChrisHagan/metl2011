@@ -21,6 +21,7 @@ using SandRibbon.Providers;
 using SandRibbon.Components.Canvas;
 using MeTLLib.DataTypes;
 using SandRibbon.Components.Pedagogicometry;
+using Image = System.Windows.Controls.Image;
 
 namespace SandRibbon.Components
 {
@@ -556,7 +557,17 @@ namespace SandRibbon.Components
                 {
                     var fe = (FrameworkElement)child;
                     if (fe.privacy() == "public")
+                    {
+                      if(child is Image)
+                      {
+                        var image = (Image) child;
+                        var e = viewFor((FrameworkElement)child);
+                        Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 1);
+                        clone.Children.Add(e);
+                      }
+                      else
                         clone.Children.Add(viewFor(fe));
+                    }
                 }
             var size = new Size(ActualWidth,ActualHeight);
             clone.Measure(size);
@@ -571,7 +582,15 @@ namespace SandRibbon.Components
                 foreach (var child in canvas.Children)
                 {
                     var fe = (FrameworkElement)child;
-                    clone.Children.Add(viewFor(fe));
+                    if(child is Image)
+                    {
+                        var image = (Image) child;
+                        var e = viewFor((FrameworkElement)child);
+                        Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 1);
+                        clone.Children.Add(e);
+                    }
+                    else
+                      clone.Children.Add(viewFor(fe));
                 }
             var size = new Size(ActualWidth,ActualHeight);
             clone.Measure(size);
