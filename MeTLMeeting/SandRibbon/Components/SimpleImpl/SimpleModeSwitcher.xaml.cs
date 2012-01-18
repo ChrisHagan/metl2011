@@ -112,17 +112,17 @@ namespace SandRibbon.Components.SimpleImpl
         }
         private void CutButtonClick(object sender, RoutedEventArgs e)
         {
-            ApplicationCommands.Cut.Execute(null, null);
+            Commands.ClipboardManager.Execute(ClipboardAction.Cut);
         }
 
         private void PasteClick(object sender, RoutedEventArgs e)
         {
-            ApplicationCommands.Paste.Execute(null, null);
+            Commands.ClipboardManager.Execute(ClipboardAction.Paste);
         }
 
         private void CopyClick(object sender, RoutedEventArgs e)
         {
-            ApplicationCommands.Copy.Execute(null, null);
+            Commands.ClipboardManager.Execute(ClipboardAction.Copy);
         }
     }
 }

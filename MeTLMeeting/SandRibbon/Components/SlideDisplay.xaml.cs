@@ -101,10 +101,11 @@ namespace SandRibbon.Components
 
         private static void KeyPressed(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.PageUp || e.Key == Key.PageDown)
-            {
-                e.Handled = true;
-            }
+            if(e.Key == Key.PageUp || e.Key == Key.Up)
+                Commands.MoveToPrevious.Execute(null);
+            if (e.Key == Key.PageDown || e.Key == Key.Down)
+                Commands.MoveToNext.Execute(null);
+            e.Handled = true;
         }
 
         private void receivedStatus(TeacherStatus status)

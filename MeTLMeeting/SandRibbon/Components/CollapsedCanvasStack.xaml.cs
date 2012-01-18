@@ -201,6 +201,11 @@ namespace SandRibbon.Components
             
             if (e.Key == Key.Delete)
                 deleteSelectedElements(null, null);
+            if(e.Key == Key.PageUp || e.Key == Key.Up)
+                Commands.MoveToPrevious.Execute(null);
+            if (e.Key == Key.PageDown || e.Key == Key.Down)
+                Commands.MoveToNext.Execute(null);
+            e.Handled = true;
         }
         private void SetLayer(string newLayer)
         {

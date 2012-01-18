@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.IO;
 using Microsoft.Practices.Composite.Presentation.Commands;
@@ -14,10 +15,21 @@ namespace SandRibbon.Components
         public SlideNavigationControls()
         {
             InitializeComponent();
+            this.PreviewKeyDown += KeyPressed;
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.SetSync.RegisterCommand(new DelegateCommand<bool>(SetSync));
             Commands.SetSync.Execute(false);
         }
+
+        private void KeyPressed(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.PageUp || e.Key == Key.Up)
+                Commands.MoveToPrevious.Execute(null);
+            if (e.Key == Key.PageDown || e.Key == Key.Down)
+                Commands.MoveToNext.Execute(null);
+            e.Handled = true;
+        }
+
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (ConversationDetails.Empty.Equals(details)) return;
