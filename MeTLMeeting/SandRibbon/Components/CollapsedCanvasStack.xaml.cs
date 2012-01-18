@@ -214,6 +214,7 @@ namespace SandRibbon.Components
                 case "Insert":
                     MyWork.EditingMode = InkCanvasEditingMode.Select;
                     MyWork.UseCustomCursor = MyWork.EditingMode == InkCanvasEditingMode.Ink;
+                    MyWork.Cursor = Cursors.Arrow;
                     break;
             }
             _focusable = newLayer == "Text";
@@ -383,6 +384,7 @@ namespace SandRibbon.Components
             OtherWork.EditingMode = InkCanvasEditingMode.None;
             MyWork.EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
             MyWork.UseCustomCursor = MyWork.EditingMode == InkCanvasEditingMode.Ink;
+
         }
         private Double zoom = 1;
         private void ZoomChanged(Double zoom)
