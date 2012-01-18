@@ -42,7 +42,7 @@ namespace SandRibbon.Components
                 Commands.SetPrivacy.ExecuteAsync("Private");
             }
             Commands.SetPedagogyLevel.RegisterCommand(new DelegateCommand<PedagogyLevel>(setPedagogy));
-            Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
+            //Commands.UpdateConversationDetails.RegisterCommand(new DelegateCommand<ConversationDetails>(updateConversationDetails));
             Commands.TextboxFocused.RegisterCommandToDispatcher(new DelegateCommand<TextInformation>(UpdatePrivacyFromSelectedTextBox));
             DataContext = this;
         }

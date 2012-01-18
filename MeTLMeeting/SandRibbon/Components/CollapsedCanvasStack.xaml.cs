@@ -1902,8 +1902,8 @@ namespace SandRibbon.Components
                     info.Underline = myTextBox.TextDecorations.First().Location.ToString().ToLower() == "underline";
                 }
                 info.IsPrivate = myTextBox.tag().privacy.ToLower() == "private" ? true : false; 
+                Commands.TextboxFocused.ExecuteAsync(info);
             }
-            Commands.TextboxFocused.ExecuteAsync(info);
 
         }
         private bool checkCanvasForBox(InkCanvas canvas, MeTLTextBox box)
