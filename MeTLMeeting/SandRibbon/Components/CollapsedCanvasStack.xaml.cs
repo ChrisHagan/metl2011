@@ -379,6 +379,7 @@ namespace SandRibbon.Components
         }
         private void setInkCanvasMode(string modeString)
         {
+            if (me == Globals.PROJECTOR) return;
             OtherWork.EditingMode = InkCanvasEditingMode.None;
             MyWork.EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
             MyWork.UseCustomCursor = MyWork.EditingMode == InkCanvasEditingMode.Ink;
