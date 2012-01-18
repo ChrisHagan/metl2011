@@ -151,6 +151,7 @@ namespace SandRibbon.Components
         }
         private void JoinConversation(object obj)
         {
+            myMaxSlideIndex = -1;
             thumbnailList.Clear();
         }
 
@@ -231,7 +232,7 @@ namespace SandRibbon.Components
         private bool isNext(object _object)
         {
             var normalNav = slides != null && slides.SelectedIndex < thumbnailList.Count() - 1;
-            var slideLockNav = (IsNavigationLocked && slides.SelectedIndex < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex));
+            var slideLockNav = Globals.isAuthor || ((IsNavigationLocked && slides.SelectedIndex < Math.Max(myMaxSlideIndex, TeachersCurrentSlideIndex) || !IsNavigationLocked));
             var canNav = normalNav && slideLockNav;
             return canNav;
 
@@ -246,6 +247,8 @@ namespace SandRibbon.Components
         {
             if (Globals.conversationDetails.Jid != conversationJid.ToString()) return;
             IsNavigationLocked = calculateNavigationLocked();
+            Commands.RequerySuggested(Commands.MoveToNext);
+            Commands.RequerySuggested(Commands.MoveToPrevious);
             var details = Globals.conversationDetails;
             thumbnailList.Clear();
             foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
@@ -277,6 +280,8 @@ namespace SandRibbon.Components
             }
             Commands.RequestTeacherStatus.Execute(new TeacherStatus{Conversation = Globals.conversationDetails.Jid, Slide="0", Teacher = Globals.conversationDetails.Author});
             IsNavigationLocked = calculateNavigationLocked();
+            Commands.RequerySuggested(Commands.MoveToNext);
+            Commands.RequerySuggested(Commands.MoveToPrevious);
             if (thumbnailList.Count == 0)
             {
                 foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))

@@ -73,10 +73,12 @@ namespace SandRibbon.Quizzing
             QuestionError = false;
             OptionError = false;
             ResultsExist = CheckResultsExist(quiz);
+            AddNewEmptyOption();
         }
 
         private void loadOptions()
         {
+            options.Clear();
             foreach(var option in EditedQuiz.options)
                 options.Add(option);
         }
@@ -108,21 +110,20 @@ namespace SandRibbon.Quizzing
                   this.Close();
               }
           }
-
           private bool validateQuiz(QuizQuestion editedQuiz)
           {
+              QuestionError = false;
+              OptionError = false;
               if (string.IsNullOrEmpty(editedQuiz.question))
                   QuestionError = true;
               if (editedQuiz.options.Count < 2)
                   OptionError = true;
               return !(OptionError || QuestionError);
           }
-
           private void CloseEdit(object sender, RoutedEventArgs e)
           {
               Close();
           }
-
         private void QuizButton_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (sender is FrameworkElement)
