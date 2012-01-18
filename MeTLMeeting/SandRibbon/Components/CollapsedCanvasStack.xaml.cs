@@ -2049,6 +2049,7 @@ namespace SandRibbon.Components
             {
                 if(!MyWork.Strokes.Contains(stroke))
                 {
+                    stroke.tag(new StrokeTag(stroke.tag().author, privacy, stroke.tag().startingSum, stroke.tag().isHighlighter));
                     selection.Add(stroke);
                     doMyStrokeAdded(stroke, stroke.tag().privacy);
                 }
@@ -2115,6 +2116,7 @@ namespace SandRibbon.Components
                 }
                 else
                 {
+                    textBox.tag(new TextTag(textBox.tag().author, privacy, textBox.tag().id));
                     AddTextBoxToCanvas(textBox);
                     sendTextWithoutHistory(textBox, textBox.tag().privacy);
                 }
