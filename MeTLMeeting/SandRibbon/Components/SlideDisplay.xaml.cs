@@ -213,7 +213,12 @@ namespace SandRibbon.Components
             // don't move if we're already on the slide requested
             if (where == slide) return;
 
-            var action = (Action)(() => Dispatcher.adoptAsync(() => Commands.MoveTo.ExecuteAsync(where)));
+            var action = (Action)(() => Dispatcher.adoptAsync(() =>
+                                                                  {
+                                                                      var index = Globals.conversationDetails.Slides.First(s => s.id == where).index;
+                                                                      slides.SelectedIndex = index;
+                                                                      slides.ScrollIntoView(slides.SelectedItem);
+                                                                  }));
             GlobalTimers.SetSyncTimer(action, slide);
         }
         private bool slideInConversation(int slide)

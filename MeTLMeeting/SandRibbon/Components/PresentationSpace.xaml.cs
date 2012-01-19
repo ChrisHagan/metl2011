@@ -604,8 +604,17 @@ namespace SandRibbon.Components
              * one of them way a NaN, and adding a NaN to any number makes a NaN.  So, that's why these "SetTop" and "SetLeft"
              * are so horrible.
             */
-            InkCanvas.SetTop(rect, (element is TextBox)?InkCanvas.GetTop(element):InkCanvas.GetTop(element) + ((element.Height != element.ActualHeight)?((element.Height - element.ActualHeight) / 2):0));
-            InkCanvas.SetLeft(rect, (element is TextBox)?InkCanvas.GetLeft(element):InkCanvas.GetLeft(element) + ((element.Width != element.ActualWidth) ? ((element.Width - element.ActualWidth) / 2) : 0));
+            var left = InkCanvas.GetLeft(element);
+            var top= InkCanvas.GetTop(element);
+            if(element is Image)
+            {
+                if(!Double.IsNaN(element.Height) && element.Height != element.ActualHeight)
+                  top += ((element.Height - element.ActualHeight)/2);
+                if (!Double.IsNaN(element.Width) && element.Width != element.ActualWidth)
+                    left += ((element.Width - element.ActualWidth)/2); 
+            }
+                InkCanvas.SetTop(rect, top);
+                InkCanvas.SetLeft(rect,left);
             return rect;
         }
         protected override AutomationPeer OnCreateAutomationPeer()
