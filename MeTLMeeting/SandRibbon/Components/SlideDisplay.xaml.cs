@@ -153,6 +153,7 @@ namespace SandRibbon.Components
         private void JoinConversation(object obj)
         {
             myMaxSlideIndex = -1;
+            TeachersCurrentSlideIndex = -1;
             thumbnailList.Clear();
         }
 

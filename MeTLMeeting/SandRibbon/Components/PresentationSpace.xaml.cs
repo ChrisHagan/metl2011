@@ -147,16 +147,9 @@ namespace SandRibbon.Components
             try
             {
                 if (Globals.conversationDetails == null)
-                {
                     Commands.SetPrivacy.ExecuteAsync("private");
-                }
-                else
-                {
-                    if (Globals.conversationDetails.Author == Globals.me || Globals.conversationDetails.Permissions.studentCanPublish)
+                else if (Globals.conversationDetails.Author == Globals.me) 
                         Commands.SetPrivacy.ExecuteAsync("public");
-                    else
-                        Commands.SetPrivacy.ExecuteAsync("private");
-                }
             }
             catch (NotSetException)
             {

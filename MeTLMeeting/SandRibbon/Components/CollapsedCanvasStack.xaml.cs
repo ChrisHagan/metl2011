@@ -198,14 +198,12 @@ namespace SandRibbon.Components
         }
         private void keyPressed(object sender, KeyEventArgs e)
         {
-            
             if (e.Key == Key.Delete)
                 deleteSelectedElements(null, null);
             if(e.Key == Key.PageUp || e.Key == Key.Up)
                 Commands.MoveToPrevious.Execute(null);
             if (e.Key == Key.PageDown || e.Key == Key.Down)
                 Commands.MoveToNext.Execute(null);
-            e.Handled = true;
         }
         private void SetLayer(string newLayer)
         {
@@ -361,20 +359,27 @@ namespace SandRibbon.Components
             if (ConversationDetails.Empty.Equals(details)) return;
             Dispatcher.adoptAsync(delegate
                   {
-                       var newStrokes = new StrokeCollection( MyWork.Strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
-                       MyWork.Strokes.Clear();
-                       MyWork.Strokes.Add(newStrokes);
-                       foreach (Image image in MyWork.ImageChildren())
-                           ApplyPrivacyStylingToElement(image, image.tag().privacy);
-                       foreach (var item in MyWork.TextChildren())
-                       {
-                           MeTLTextBox box;
-                           if (item.GetType() == typeof(TextBox))
-                               box = ((TextBox)item).toMeTLTextBox();
-                           else
-                               box = (MeTLTextBox)item;
-                           ApplyPrivacyStylingToElement(box, box.tag().privacy);
-                       }
+                      var newStrokes = new StrokeCollection( MyWork.Strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
+                      MyWork.Strokes.Clear();
+                      MyWork.Strokes.Add(newStrokes);
+                      foreach (Image image in MyWork.ImageChildren())
+                          ApplyPrivacyStylingToElement(image, image.tag().privacy);
+                      foreach (var item in MyWork.TextChildren())
+                      {
+                          MeTLTextBox box;
+                          if (item.GetType() == typeof(TextBox))
+                              box = ((TextBox)item).toMeTLTextBox();
+                          else
+                              box = (MeTLTextBox)item;
+                          ApplyPrivacyStylingToElement(box, box.tag().privacy);
+                          
+                      }
+                      if (myTextBox != null)
+                      {
+                          myTextBox.Focus();
+                          Keyboard.Focus(myTextBox);
+                      }
+
                   });
         }
         private void SetPrivacy(string privacy)
