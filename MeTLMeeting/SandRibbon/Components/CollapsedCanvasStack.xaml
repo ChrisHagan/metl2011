@@ -20,8 +20,6 @@
                         <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static api:Commands.ToggleUnderline}"/>
                         <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomIn}"/>
                         <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{x:Static api:Commands.ZoomOut}"/>
-                        <KeyBinding Key="Prior" Command="{x:Static api:Commands.MoveToPrevious}" />
-                        <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
                     </InputBindingCollection>
                 </Setter.Value>
             </Setter>

@@ -23,10 +23,16 @@ namespace SandRibbon.Components
 
         private void KeyPressed(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.PageUp || e.Key == Key.Up)
-                Commands.MoveToPrevious.Execute(null);
+            if (e.Key == Key.PageUp || e.Key == Key.Up)
+            {
+                if(Commands.MoveToPrevious.CanExecute(null))
+                  Commands.MoveToPrevious.Execute(null);
+            }
             if (e.Key == Key.PageDown || e.Key == Key.Down)
-                Commands.MoveToNext.Execute(null);
+            {
+                if(Commands.MoveToNext.CanExecute(null))
+                  Commands.MoveToNext.Execute(null);
+            }
             e.Handled = true;
         }
 

@@ -83,13 +83,12 @@ namespace SandRibbon.Quizzing
         }
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            QuizQuestion newQuiz = new QuizQuestion(question.id, question.created, question.title, question.author, question.question, question.options);
-            newQuiz.url = "none";
+            var newQuiz = new QuizQuestion(question.id, question.created, question.title, question.author,
+                                           question.question, question.options) {url = "none"};
             var editQuiz = new EditQuiz(newQuiz);
             editQuiz.Owner = Window.GetWindow(this);
             editQuiz.ShowDialog();
-
-            this.closeMe(null);
+            closeMe(null);
         }
     }
     public class TitleConverter : IValueConverter 

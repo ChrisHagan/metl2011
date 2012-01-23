@@ -101,13 +101,12 @@ namespace SandRibbon.Components
 
         private static void KeyPressed(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.PageUp || e.Key == Key.Up)
+            if((e.Key == Key.PageUp || e.Key == Key.Up) && Commands.MoveToPrevious.CanExecute(null))
                 Commands.MoveToPrevious.Execute(null);
-            if (e.Key == Key.PageDown || e.Key == Key.Down)
+            if ((e.Key == Key.PageDown || e.Key == Key.Down)&& Commands.MoveToNext.CanExecute(null))
                 Commands.MoveToNext.Execute(null);
             e.Handled = true;
         }
-
         private void receivedStatus(TeacherStatus status)
         {
             Globals.UpdatePresenceListing(new MeTLPresence
@@ -206,8 +205,10 @@ namespace SandRibbon.Components
         private void MoveToTeacher(int where)
         {
 
-            TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
             if (Globals.isAuthor) return;
+            TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
+            Commands.RequerySuggested(Commands.MoveToNext);
+            Commands.RequerySuggested(Commands.MoveToPrevious);
             if (!Globals.synched) return;
             var slide = Globals.slide;
             // don't move if we're already on the slide requested

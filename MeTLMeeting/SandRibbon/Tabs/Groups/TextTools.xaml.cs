@@ -35,7 +35,7 @@ namespace SandRibbon.Tabs.Groups
         {
             fontList = new List<string>();
             foreach(var font in System.Drawing.FontFamily.Families)
-                fontList.Add(font.Name.ToString());
+                fontList.Add(font.Name);
         }
         private void togglebold(object obj)
         {
