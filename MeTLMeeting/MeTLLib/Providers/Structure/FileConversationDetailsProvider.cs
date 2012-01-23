@@ -153,7 +153,16 @@ namespace MeTLLib.Providers.Structure
             }
         }
         private object cacheLock = new object();
-       
+        private class LastModifiedConversation
+        {
+            public string Jid;
+            public string lastModified;
+            public LastModifiedConversation(string jid, string modified)
+            {
+                Jid = jid;
+                lastModified = modified;
+            }
+        }
         public IEnumerable<SearchConversationDetails> ConversationsFor(String query, int maxResults)
         {
             try
@@ -162,17 +171,21 @@ namespace MeTLLib.Providers.Structure
                 var data = secureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
 
-                var lastModified = (from conversation in results
+               var filteredConversations = (from conversation in results
                                group conversation by conversation.Jid into convGroup
                                select new { Jid = convGroup.Key, LastModified = convGroup.Max(c => c.LastModified) });
 
-                return results.Where(conv => lastModified.Contains(new { Jid = conv.Jid, LastModified = conv.LastModified }) && !conv.isDeleted)
-                    .OrderBy(conv => conv.relevance)
-                    .ThenByDescending(conv3 => conv3.LastModified)
-                    .ThenByDescending(conv2 => conv2.Created)
-                    .Take(maxResults);
+                //var filtered = results.Where(c => filteredConversations.Contains(new { Jid = c.Jid, LastModified = c.LastModified})).Distinct();
+                
+                var conversations = results.Where(c => !c.isDeleted)
+                    .OrderByDescending(c => c.relevance)
+                    .ThenByDescending(c => c.LastModified)
+                    .ThenByDescending(c => c.Created).ToList();
+                var jids = conversations.Select(c => c.Jid).Distinct().ToList();
+                var filtered = jids.Select(jid => conversations.First(c => c.Jid == jid)).Take(maxResults);
+                return filtered;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return new List<SearchConversationDetails>();
             }
