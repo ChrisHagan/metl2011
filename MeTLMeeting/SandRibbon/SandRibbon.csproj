@@ -683,6 +683,7 @@
     <Compile Include="Quizzing\QuizButton.xaml.cs">
       <DependentUpon>QuizButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Quizzing\ResizeHelper.cs" />
     <Compile Include="Quizzing\ViewQuizResults.xaml.cs">
       <DependentUpon>ViewQuizResults.xaml</DependentUpon>
     </Compile>
