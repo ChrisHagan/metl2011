@@ -150,7 +150,7 @@ namespace SandRibbon.Components
             Commands.SetPrivacyOfItems.RegisterCommand(new DelegateCommand<string>(changeSelectedItemsPrivacy));
             Commands.SetDrawingAttributes.RegisterCommandToDispatcher(new DelegateCommand<DrawingAttributes>(SetDrawingAttributes));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-
+            Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>((_unused) => { JoinConversation(); }));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideAdorners));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args), canExecute));
@@ -170,6 +170,15 @@ namespace SandRibbon.Components
             clipboardManager.RegisterHandler(ClipboardAction.Copy, OnClipboardCopy, CanHandleClipboardCopy);
             MyWork.MouseMove += mouseMove;
             MyWork.StylusMove += stylusMove;
+        }
+
+        private void JoinConversation()
+        {
+            if (myTextBox != null)
+            {
+                myTextBox.LostFocus -= textboxLostFocus;
+                myTextBox = null;
+            }
         }
 
         private void stylusMove(object sender, StylusEventArgs e)
