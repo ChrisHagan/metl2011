@@ -164,6 +164,7 @@ namespace SandRibbon.Tabs
                     Filename = filename,
                     Point = new Point(0,0),
                     Position = 1,
+                    OverridePoint = false,
                     Target = "presentationSpace"
                 });
             });

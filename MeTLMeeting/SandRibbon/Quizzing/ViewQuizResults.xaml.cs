@@ -9,6 +9,7 @@ using SandRibbon.Components;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using System;
 
 
 namespace SandRibbon.Quizzing
@@ -50,22 +51,19 @@ namespace SandRibbon.Quizzing
                                      QuizResults.Children.Add(assessQuizzes[thisQuiz.id]);
                                  });
         }
-        enum DefaultSlideDimensions
-        {
-            Width = 720,
-            Height = 540
-        }
         private Rect ScaleQuizHeightToDefaultSlideHeight(AssessAQuiz quiz)
         {
-            // use the same scaling factor for width to maintain aspect ratio
-            var scalingFactor = quiz.ActualHeight / (double)DefaultSlideDimensions.Height;
-            var scaledWidth = quiz.ActualWidth / scalingFactor;
+            // use the same scaling factor to maintain aspect ratio, using the dominant side
+            var scalingFactor = Math.Max(quiz.ActualHeight / (double)Globals.DefaultCanvasSize.Height, quiz.ActualWidth / (double)Globals.DefaultCanvasSize.Width);
             var scaledHeight = quiz.ActualHeight / scalingFactor;
+            var scaledWidth = quiz.ActualWidth / scalingFactor;
+
             return new Rect(0, 0, scaledWidth, scaledHeight);
         }
 
         private void DisplayResults(object sender, RoutedEventArgs e)
         {
+            this.Hide();
             var quiz = (AssessAQuiz)QuizResults.Children[0];
             quiz.TimestampLabel.Text = "Results collected at:\r\n" + SandRibbonObjects.DateTimeFactory.Now().ToLocalTime().ToString();
             quiz.SnapshotHost.UpdateLayout();

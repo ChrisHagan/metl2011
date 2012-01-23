@@ -10,6 +10,12 @@ using TextInformation = SandRibbon.Components.TextInformation;
 
 namespace SandRibbon.Providers
 {
+    enum DefaultPageDimensions
+    {
+        Width = 720,
+        Height = 540
+    }
+
     public class Globals
     {
         public const string METLCOLLABORATOR = "MeTL Collaborator";
@@ -91,6 +97,13 @@ namespace SandRibbon.Providers
                 }
             }
 
+        }
+        public static Size DefaultCanvasSize
+        {
+            get
+            {
+                return new Size((int)DefaultPageDimensions.Width, (int)DefaultPageDimensions.Height);
+            }
         }
         public static Size CanvasSize
         {

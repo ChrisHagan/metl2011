@@ -4,6 +4,7 @@
     xmlns:sr="clr-namespace:SandRibbon"
     Title="View Quiz Results"
     x:Name="viewQuizResults"
+    ResizeMode="NoResize"
     SizeToContent="WidthAndHeight">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
@@ -30,7 +31,7 @@
                 </ListBox>
                 <Grid Grid.Column="1">
                     <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top">Preview</Label>
-                    <StackPanel x:Name="QuizResults" MaxHeight="600"/>
+                    <StackPanel x:Name="QuizResults" MaxHeight="600" Width="720" MaxWidth="720"/>
                     <Border VerticalAlignment="Bottom" Background="{StaticResource BackgroundBlueGradient}" >
                         <Button Content="Display results" Click="DisplayResults"  Padding="0 10 0 0 "/>
                     </Border>

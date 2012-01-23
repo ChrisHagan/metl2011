@@ -54,6 +54,7 @@ namespace SandRibbon.Components
         public Point Point;
         public string Target;
         public int Position;
+        public bool OverridePoint;
     }
     public enum FileType
     {
@@ -1161,7 +1162,7 @@ namespace SandRibbon.Components
             {
                 int i = 0;
                 foreach (var file in files)
-                    handleDrop(file, new Point(0, 0), i++);
+                    handleDrop(file, new Point(0, 0), true, i++);
             });
         }
         private void uploadFile(object _obj)
@@ -1184,7 +1185,7 @@ namespace SandRibbon.Components
             try
             {
                 if (drop.Target.Equals(_target) && me != Globals.PROJECTOR)
-                    handleDrop(drop.Filename, drop.Point, drop.Position);
+                    handleDrop(drop.Filename, drop.Point, drop.OverridePoint, drop.Position);
             }
             catch (NotSetException)
             {
@@ -1316,8 +1317,8 @@ namespace SandRibbon.Components
             for (var i = 0; i < fileNames.Count(); i++)
             {
                 var filename = fileNames[i];
-                var image = createImageFromUri(new Uri(filename, UriKind.RelativeOrAbsolute));
-                handleDrop(filename, pos, i);
+                var image = createImageFromUri(new Uri(filename, UriKind.RelativeOrAbsolute), true);
+                handleDrop(filename, pos, true, i);
                 pos.X += image.Width + 30;
                 if (image.Height > height) height = image.Height;
                 if ((i + 1) % 4 == 0)
@@ -1335,17 +1336,20 @@ namespace SandRibbon.Components
             e.Handled = true;
         }
 
-        public void handleDrop(string fileName, Point pos, int count)
+        public void handleDrop(string fileName, Point pos, bool overridePoint, int count)
         {
-            if (pos.X < 50)
-                pos.X = 50;
-            if (pos.Y < 50)
-                pos.Y = 50;
+            if (overridePoint)
+            {
+                if (pos.X < 50)
+                    pos.X = 50;
+                if (pos.Y < 50)
+                    pos.Y = 50;
+            }
             FileType type = GetFileType(fileName);
             switch (type)
             {
                 case FileType.Image:
-                    dropImageOnCanvas(fileName, pos, count);
+                    dropImageOnCanvas(fileName, pos, count, overridePoint);
                     break;
                 case FileType.Video:
                     break;
@@ -1395,7 +1399,7 @@ namespace SandRibbon.Components
                 return;
             }
         }
-        public void dropImageOnCanvas(string fileName, Point pos, int count)
+        public void dropImageOnCanvas(string fileName, Point pos, int count, bool setMargin)
         {
             if (!isFileLessThanXMB(fileName, fileSizeLimit))
             {
@@ -1407,7 +1411,7 @@ namespace SandRibbon.Components
                 System.Windows.Controls.Image image = null;
                 try
                 {
-                    image = createImageFromUri(new Uri(fileName, UriKind.RelativeOrAbsolute));
+                    image = createImageFromUri(new Uri(fileName, UriKind.RelativeOrAbsolute), setMargin);
                 }
                 catch (Exception e)
                 {
@@ -1416,6 +1420,12 @@ namespace SandRibbon.Components
                 }
                 if (image == null)
                     return;
+                // center the image if there is no margin set. this is only used for dropping quiz result images on the canvas
+                if (!setMargin)
+                {
+                    pos.X = (Globals.DefaultCanvasSize.Width / 2) - (image.Width / 2);
+                    pos.Y = (Globals.DefaultCanvasSize.Height / 2) - (image.Height / 2);
+                }
                 InkCanvas.SetLeft(image, pos.X);
                 InkCanvas.SetTop(image, pos.Y);
                 image.tag(new ImageTag(Globals.me, privacy, generateId(), false, 0));
@@ -1450,7 +1460,7 @@ namespace SandRibbon.Components
                 MyWork.Children.Add(image);
             });
         }
-        public static System.Windows.Controls.Image createImageFromUri(Uri uri)
+        public static System.Windows.Controls.Image createImageFromUri(Uri uri, bool setMargin)
         {
             var image = new System.Windows.Controls.Image();
             var jpgFrame = BitmapFrame.Create(uri);
@@ -1465,7 +1475,10 @@ namespace SandRibbon.Components
             //image.Width = jpgFrame.PixelWidth;
             image.Stretch = Stretch.Uniform;
             image.StretchDirection = StretchDirection.Both;
-            image.Margin = new Thickness(5);
+            if (setMargin)
+            {
+                image.Margin = new Thickness(5);
+            }
             return image;
         }
         public static FileType GetFileType(string fileName)

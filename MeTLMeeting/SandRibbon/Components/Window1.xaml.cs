@@ -151,7 +151,6 @@ namespace SandRibbon
             AddWindowEffect(null);
             ribbon.Loaded += ribbon_Loaded;
             WorkspaceStateProvider.RestorePreviousSettings();
-            RibbonApplicationPopup.Closed += ApplicationButtonPopup_Closed;
             getDefaultSystemLanguage();
             undoHistory = new UndoHistory();
         }
@@ -226,10 +225,6 @@ namespace SandRibbon
             {
                 Logger.Crash(e);
             }
-        }
-        private void ApplicationButtonPopup_Closed(object sender, EventArgs e)
-        {
-            Trace.TraceInformation("ApplicationButtonPopup_Closed");
         }
         #region helpLinks
         private void OpenEULABrowser(object sender, RoutedEventArgs e)
