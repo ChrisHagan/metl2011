@@ -36,38 +36,31 @@ namespace SandRibbon.Utils.Connection
         {
         }
         //Please not that notepad is current disabled. the code has been left in as it does not interfere with the execution.
-        public IEnumerable<UserCanvasStack> ToVisualWithNotes()
+        public IEnumerable<MeTLInkCanvas> ToVisualWithNotes()
         {
             return createVisual();
         }
-        public IEnumerable<UserCanvasStack> ToVisuaWithoutNotes()
+        public IEnumerable<MeTLInkCanvas> ToVisuaWithoutNotes()
         {
             var canvases = createVisual();
             return new[] { canvases.First() };
         }
-        private IEnumerable<UserCanvasStack> createVisual()
+        private IEnumerable<MeTLInkCanvas> createVisual()
         {
-            var publicCanvas = new UserCanvasStack();
-            var privateCanvas = new UserCanvasStack();
+            var canvas = new MeTLInkCanvas();
             foreach (var stroke in ink)
             {
                 if ((stroke.privacy == "public" || stroke.target == "presentationSpace"))
-                    publicCanvas.handwriting.Strokes.Add(stroke.stroke);
-                else if (stroke.target == "notepad")
-                    privateCanvas.handwriting.Strokes.Add(stroke.stroke);
+                    canvas.Strokes.Add(stroke.stroke);
             }
             foreach (var image in images)
             {
                 var imageToAdd = image.Value.imageSpecification.forceEvaluationForPrinting();
-                // This caused bug#656 which may very well happen again if the image has been given a margin somewhere
-                //imageToAdd.Margin = new Thickness(5, 5, 5, 5);
                 if (image.Value.privacy == "public" || image.Value.target == "presentationSpace")
                 {
-                    Panel.SetZIndex(imageToAdd, image.Value.privacy == "public" ? 1 : 2);
-                    publicCanvas.images.Children.Add(imageToAdd);
+                    Panel.SetZIndex(imageToAdd, image.Value.privacy == "public" ? 2 : 3);
+                    canvas.Children.Add(imageToAdd);
                 }
-                else if (image.Value.target == "notepad")
-                    privateCanvas.images.Children.Add(imageToAdd);
             }
             foreach (var box in text)
             {
@@ -76,20 +69,16 @@ namespace SandRibbon.Utils.Connection
                 textbox.BorderBrush = new SolidColorBrush(Colors.Transparent);
                 textbox.Background = new SolidColorBrush(Colors.Transparent);
                 if (box.Value.privacy == "public" || box.Value.target == "presentationSpace")
-                    publicCanvas.text.Children.Add(textbox);
-                else if (box.Value.target == "notepad")
-                    privateCanvas.text.Children.Add(textbox);
+                {
+                    Panel.SetZIndex(textbox, 1);
+                    canvas.Children.Add(textbox);
+                }
             }
             var tempPrinter = new PrintDialog();
             var size = new Size(tempPrinter.PrintableAreaWidth, tempPrinter.PrintableAreaHeight);
-            foreach(var canvas in new[]{publicCanvas, privateCanvas})
-            {
                 canvas.Measure(size);
                 canvas.Arrange(new Rect(new Point(0,0), size));
-            }
-            if (privateCanvas.images.Children.Count == 0 & privateCanvas.text.Children.Count == 0 && privateCanvas.handwriting.Strokes.Count == 0)
-                return new[] { publicCanvas };
-            return new[] { publicCanvas, privateCanvas };
+            return new[] { canvas };
         }
         public override void actOnQuizReceived(MeTLLib.DataTypes.QuizQuestion quizDetails)
         {
@@ -190,7 +179,7 @@ namespace SandRibbon.Utils.Connection
         private void ShowPrintDialogWithNotes(IEnumerable<PrintParser> parsers)
         {
             var visuals = parsers.Select(p => p.ToVisualWithNotes())
-                                 .Aggregate(new List<UserCanvasStack>(),
+                                 .Aggregate(new List<MeTLInkCanvas>(),
                                                            (acc, item) =>
                                                            {
                                                                acc.AddRange(item);
@@ -201,7 +190,7 @@ namespace SandRibbon.Utils.Connection
         private void ShowPrintDialogWithoutNotes(IEnumerable<PrintParser> parsers)
         {
             var visuals = parsers.Select(p => p.ToVisuaWithoutNotes())
-                                 .Aggregate(new List<UserCanvasStack>(),
+                                 .Aggregate(new List<MeTLInkCanvas>(),
                                                            (acc, item) =>
                                                            {
                                                                acc.AddRange(item);
@@ -209,7 +198,7 @@ namespace SandRibbon.Utils.Connection
                                                            });
             HandlePrint(visuals);
         }
-        private void HandlePrint(List<SandRibbon.Components.UserCanvasStack> visuals)
+        private void HandlePrint(IEnumerable<MeTLInkCanvas> visuals)
         {
             Application.Current.Dispatcher.adoptAsync((System.Action)delegate
               {
@@ -239,9 +228,9 @@ namespace SandRibbon.Utils.Connection
                   Commands.HideProgressBlocker.Execute(null);
               });
         }
-        private UserCanvasStack visuallyAdjustedVisual(UserCanvasStack visual)
+        private MeTLInkCanvas visuallyAdjustedVisual(MeTLInkCanvas visual)
         {
-            foreach (var box in visual.text.Children)
+            foreach (var box in visual.TextChildren())
             {
                 var textbox = (TextBox)box;
                 var testSize = new Size(textbox.ActualWidth, textbox.ActualHeight);

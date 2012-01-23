@@ -202,12 +202,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\Drawer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\DrawerSplitter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -454,12 +448,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\Notepad.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Tabs\Groups\TextTools.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -479,12 +467,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ResourceDictionaries\ToolTips.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\UserCanvasStack.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -626,9 +608,6 @@
     <Compile Include="Components\ConversationSearchBox.xaml.cs">
       <DependentUpon>ConversationSearchBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Drawer.xaml.cs">
-      <DependentUpon>Drawer.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\DrawerSplitter.xaml.cs">
       <DependentUpon>DrawerSplitter.xaml</DependentUpon>
     </Compile>
@@ -752,18 +731,12 @@
     <Compile Include="Components\SimpleImpl\SimplePenTools.xaml.cs">
       <DependentUpon>SimplePenTools.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Notepad.xaml.cs">
-      <DependentUpon>Notepad.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Tabs\Groups\TextTools.xaml.cs" />
     <Compile Include="Tabs\Groups\ToolBox.xaml.cs">
       <DependentUpon>ToolBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\SyncDisplay.xaml.cs">
       <DependentUpon>SyncDisplay.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\UserCanvasStack.xaml.cs">
-      <DependentUpon>UserCanvasStack.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Utility\GlobalTimers.cs" />
     <Compile Include="Components\Utility\RadialPanel.cs" />
