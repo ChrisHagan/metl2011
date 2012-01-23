@@ -8,7 +8,6 @@ using SandRibbon.Components;
 using SandRibbon.Quizzing;
 using SandRibbon.Providers;
 using MeTLLib.Providers.Connection;
-using SandRibbon.Components.Canvas;
 using ImageDrop = SandRibbon.Components.ImageDrop;
 
 namespace SandRibbon.Tabs

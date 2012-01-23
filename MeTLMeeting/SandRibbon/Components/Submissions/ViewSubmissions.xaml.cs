@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Practices.Composite.Presentation.Commands;
-using SandRibbon.Components.Canvas;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
 using System.Diagnostics;

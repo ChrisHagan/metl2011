@@ -4,7 +4,6 @@ using System.Linq;
 using MeTLLib.DataTypes;
 using SandRibbon.Components;
 using SandRibbon.Components.Pedagogicometry;
-using SandRibbon.Components.Canvas;
 using System.Drawing;
 using TextInformation = SandRibbon.Components.TextInformation;
 

@@ -600,11 +600,6 @@
     <Compile Include="Chrome\ToolBar.xaml.cs">
       <DependentUpon>ToolBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Canvas\AbstractCanvas.cs" />
-    <Compile Include="Components\Canvas\ViewCanvas.cs" />
-    <Compile Include="Components\Canvas\HandWriting.cs" />
-    <Compile Include="Components\Canvas\Image.cs" />
-    <Compile Include="Components\Canvas\Text.cs" />
     <Compile Include="Components\ConversationSearchBox.xaml.cs">
       <DependentUpon>ConversationSearchBox.xaml</DependentUpon>
     </Compile>

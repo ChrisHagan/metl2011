@@ -18,7 +18,6 @@ using SandRibbon.Components.Utility;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using SandRibbon.Providers;
-using SandRibbon.Components.Canvas;
 using MeTLLib.DataTypes;
 using SandRibbon.Components.Pedagogicometry;
 using Image = System.Windows.Controls.Image;
@@ -132,18 +131,7 @@ namespace SandRibbon.Components
         private void UpdateConversationDetails(ConversationDetails details)
         {
             if (details.IsEmpty) return;
-            if (string.IsNullOrEmpty(details.Jid) || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject)))
-            {
-                foreach (FrameworkElement child in stack.canvasStack.Children)
-                {
-                    if (child is AbstractCanvas)
-                    {
-                        ((AbstractCanvas)child).Strokes.Clear();
-                        ((AbstractCanvas)child).Children.Clear();
-                    }
-                }
-                return;
-            }
+            if (string.IsNullOrEmpty(details.Jid) || !(Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject))) return;
             try
             {
                 if (Globals.conversationDetails == null)

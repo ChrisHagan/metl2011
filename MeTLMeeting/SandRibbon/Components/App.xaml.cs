@@ -12,7 +12,6 @@ using SandRibbon.Components;
 using System.Security;
 using System.Diagnostics;
 using System.Windows.Threading;
-using SandRibbon.Components.Canvas;
 using System.Threading;
 using SandRibbon.Components.Utility;
 
