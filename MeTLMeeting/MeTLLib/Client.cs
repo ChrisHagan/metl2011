@@ -349,7 +349,8 @@ namespace MeTLLib
                 catch (Exception e)
                 {
                     Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendImage: {0}",e.Message);
-                    UploadAndSendImage(lii);
+                    // rethrow the exeception so the action will be requeued
+                    throw e;
                 }
             };
             tryIfConnected(work);

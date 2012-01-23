@@ -1437,11 +1437,11 @@ namespace SandRibbon.Components
                 }
                 if (image == null)
                     return;
-                // center the image if there is no margin set. this is only used for dropping quiz result images on the canvas
+                // center the image horizonally if there is no margin set. this is only used for dropping quiz result images on the canvas
                 if (!setMargin)
                 {
-                    pos.X = (Globals.DefaultCanvasSize.Width / 2) - (image.Width / 2);
-                    pos.Y = (Globals.DefaultCanvasSize.Height / 2) - (image.Height / 2);
+                    pos.X = (Globals.DefaultCanvasSize.Width / 2) - ((image.Width + (Globals.QuizMargin * 2)) / 2);
+                    //pos.Y = (Globals.DefaultCanvasSize.Height / 2) - (image.Height / 2);
                 }
                 InkCanvas.SetLeft(image, pos.X);
                 InkCanvas.SetTop(image, pos.Y);
@@ -1495,6 +1495,10 @@ namespace SandRibbon.Components
             if (setMargin)
             {
                 image.Margin = new Thickness(5);
+            }
+            else
+            {
+                image.Margin = new Thickness(Globals.QuizMargin);
             }
             return image;
         }

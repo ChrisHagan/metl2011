@@ -12,7 +12,8 @@ namespace SandRibbon.Quizzing
         public static Rect ScaleMajorAxisToCanvasSize(FrameworkElement element)
         {
             // use the same scaling factor to maintain aspect ratio, using the dominant side
-            var scalingFactor = Math.Max(element.ActualHeight / (double)Globals.DefaultCanvasSize.Height, element.ActualWidth / (double)Globals.DefaultCanvasSize.Width);
+            var scalingFactor = Math.Max((element.ActualHeight + (Globals.QuizMargin * 2)) / (double)Globals.DefaultCanvasSize.Height, 
+                (element.ActualWidth + (Globals.QuizMargin * 2)) / (double)Globals.DefaultCanvasSize.Width);
             var scaledHeight = element.ActualHeight / scalingFactor;
             var scaledWidth = element.ActualWidth / scalingFactor;
 
