@@ -17,6 +17,52 @@ using Ninject;
 
 namespace MeTLLib.Providers.Connection
 {
+    public class ActionsAfterReloginQueue
+    {
+        private static Object queueLock = new Object();
+        private readonly Queue<Action> actionsAfterRelogin = null;
+
+        public ActionsAfterReloginQueue()
+        {
+            actionsAfterRelogin = new Queue<Action>();
+        }
+
+        public int Count
+        {
+            get
+            {
+                lock (queueLock)
+                {
+                    return actionsAfterRelogin.Count;
+                }
+            }
+        }
+
+        public Action Peek()
+        {
+            lock (queueLock)
+            {
+                return (Action)actionsAfterRelogin.Peek();
+            }
+        }
+        
+        public void Enqueue(Action action)
+        {
+            lock (queueLock)
+            {
+                actionsAfterRelogin.Enqueue(action);
+            }
+        }
+
+        public Action Dequeue()
+        {
+            lock (queueLock)
+            {
+                return actionsAfterRelogin.Dequeue();
+            }
+        }
+    }
+
     public class JabberWireFactory
     {
         public Credentials credentials { private get; set; }
@@ -193,7 +239,10 @@ namespace MeTLLib.Providers.Connection
         private void networkAvailabilityChanged(object sender, EventArgs e)
         {
             if (NetworkInterface.GetIsNetworkAvailable())
+            {
                 receiveEvents.statusChanged(true, this.credentials);
+                catchUpDisconnectedWork();
+            }
             else
                 receiveEvents.statusChanged(false, this.credentials);
         }
@@ -345,26 +394,63 @@ namespace MeTLLib.Providers.Connection
             receiveEvents.statusChanged(false, credentials);
             Reset("OnClose");
         }
-        private static Queue<Action> actionsAfterRelogin = new Queue<Action>();
+        private static ActionsAfterReloginQueue actionsAfterRelogin = new ActionsAfterReloginQueue();
         public void AddActionToReloginQueue(Action action)
         {
             receiveEvents.statusChanged(false, credentials);
             actionsAfterRelogin.Enqueue(action);
         }
+
+        private static int catchUpDisconnectedWorkInProgress = 0;
         private void catchUpDisconnectedWork() 
         {
-            while (IsConnected() && actionsAfterRelogin.Count > 0)
+            if (1 == Interlocked.Increment(ref catchUpDisconnectedWorkInProgress))
             {
-                var item = (Action)actionsAfterRelogin.Peek();//Do not alter the queue, we might be back here any second
                 try
                 {
-                    System.Windows.Threading.Dispatcher.CurrentDispatcher.adopt(item);
-                    actionsAfterRelogin.Dequeue();//We only lift it off the top after successful execution.
-                }
-                catch (Exception e)
+                    var catchUpTimer = new System.Timers.Timer(500);
+                    catchUpTimer.Elapsed += catchUpTimer_Elapsed;
+                    catchUpTimer.Start();
+               }
+                finally
                 {
-                    Trace.TraceError("CRASH: MeTLLib::Providers:JabberWire:AttemptReloginAfter Failed to execute item on relogin-queue.  Exception: " + e.Message);
-                    break;
+                    Interlocked.Exchange(ref catchUpDisconnectedWorkInProgress, 0);
+                }
+            }
+        }
+
+        private static int catchUpTimerElapsedInProgress = 0;
+        private void catchUpTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            // guard against timer being called again while in progress
+            if (1 == Interlocked.Increment(ref catchUpTimerElapsedInProgress))
+            {
+                try
+                {
+                    while (IsConnected() && actionsAfterRelogin.Count > 0)
+                    {
+                        var item = (Action)actionsAfterRelogin.Peek();//Do not alter the queue, we might be back here any second
+                        try
+                        {
+                            System.Windows.Threading.Dispatcher.CurrentDispatcher.adopt(item);
+                            actionsAfterRelogin.Dequeue(); //We only lift it off the top after successful execution.
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.TraceError("CRASH: MeTLLib::Providers:JabberWire:AttemptReloginAfter Failed to execute item on relogin-queue.  Exception: " + ex.Message);
+                            break;
+                        }
+                    }
+        
+                    if (actionsAfterRelogin.Count == 0)
+                    {
+                        var catchUpTimer = sender as System.Timers.Timer;
+                        catchUpTimer.Stop();
+                    }
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref catchUpTimerElapsedInProgress, 0);
                 }
             }
         }

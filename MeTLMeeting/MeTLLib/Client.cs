@@ -342,9 +342,11 @@ namespace MeTLLib
                 {
                     var newPath = resourceUploader.uploadResource(lii.slide.ToString(), lii.file, false);
                     Image newImage = lii.image;
-                    newImage.tag(lii.image.tag());
-                    newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
-                    wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newImage));
+                    newImage.Dispatcher.adopt(() => {
+                        newImage.tag(lii.image.tag());
+                        newImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(newPath);
+                        wire.SendImage(new TargettedImage(lii.slide, lii.author, lii.target, lii.privacy, newImage));
+                    });
                 }
                 catch (Exception e)
                 {

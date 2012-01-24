@@ -1416,7 +1416,7 @@ namespace SandRibbon.Components
                 return;
             }
         }
-        public void dropImageOnCanvas(string fileName, Point pos, int count, bool setMargin)
+        public void dropImageOnCanvas(string fileName, Point pos, int count, bool useDefaultMargin)
         {
             if (!isFileLessThanXMB(fileName, fileSizeLimit))
             {
@@ -1428,7 +1428,7 @@ namespace SandRibbon.Components
                 System.Windows.Controls.Image image = null;
                 try
                 {
-                    image = createImageFromUri(new Uri(fileName, UriKind.RelativeOrAbsolute), setMargin);
+                    image = createImageFromUri(new Uri(fileName, UriKind.RelativeOrAbsolute), useDefaultMargin);
                 }
                 catch (Exception e)
                 {
@@ -1438,7 +1438,7 @@ namespace SandRibbon.Components
                 if (image == null)
                     return;
                 // center the image horizonally if there is no margin set. this is only used for dropping quiz result images on the canvas
-                if (!setMargin)
+                if (!useDefaultMargin)
                 {
                     pos.X = (Globals.DefaultCanvasSize.Width / 2) - ((image.Width + (Globals.QuizMargin * 2)) / 2);
                     //pos.Y = (Globals.DefaultCanvasSize.Height / 2) - (image.Height / 2);
@@ -1477,7 +1477,7 @@ namespace SandRibbon.Components
                 MyWork.Children.Add(image);
             });
         }
-        public static System.Windows.Controls.Image createImageFromUri(Uri uri, bool setMargin)
+        public static System.Windows.Controls.Image createImageFromUri(Uri uri, bool useDefaultMargin)
         {
             var image = new System.Windows.Controls.Image();
             var jpgFrame = BitmapFrame.Create(uri);
@@ -1492,7 +1492,7 @@ namespace SandRibbon.Components
             //image.Width = jpgFrame.PixelWidth;
             image.Stretch = Stretch.Uniform;
             image.StretchDirection = StretchDirection.Both;
-            if (setMargin)
+            if (useDefaultMargin)
             {
                 image.Margin = new Thickness(5);
             }
