@@ -128,8 +128,18 @@ namespace SandRibbon.Components
             Dispatcher.Invoke((Action)delegate
             {
                 var trimmedSearchInput = SearchInput.Text.Trim();
-                if (String.IsNullOrEmpty(trimmedSearchInput) && backstageNav.currentMode == "mine")
-                    trimmedSearchInput = Globals.me;
+                if (String.IsNullOrEmpty(trimmedSearchInput)) 
+                {
+                    if (backstageNav.currentMode == "mine")
+                        trimmedSearchInput = Globals.me;
+                    else if (backstageNav.currentMode == "currentConversation")
+                    {
+                        searchResultsObserver.Clear();
+                        searchResultsObserver.Add(Globals.conversationDetails);
+                        RefreshSortedConversationsList();
+                        return;
+                    }
+                }
 
                 if (!String.IsNullOrEmpty(trimmedSearchInput))
                 {
@@ -272,7 +282,7 @@ namespace SandRibbon.Components
                 if (conversation.isDeleted)
                     return false;
                 if (backstageNav.currentMode == "currentConversation" && conversation.IsJidEqual(activeConversation))
-                    return false;
+                    return true;
                 var author = conversation.Author.ToLower();
                 var title = conversation.Title.ToLower();
                 var searchField = new[] { author, title };
