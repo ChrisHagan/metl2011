@@ -324,7 +324,9 @@ namespace SandRibbon.Components
             {
                 var details = context(e.OriginalSource);
                 MeTLLib.ClientFactory.Connection().DeleteConversation(details);
+
             }
+            FillSearchResultsFromInput();
         }
         private void mode_Checked(object sender, RoutedEventArgs e)
         {
