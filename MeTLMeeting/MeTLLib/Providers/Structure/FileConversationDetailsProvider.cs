@@ -183,10 +183,6 @@ namespace MeTLLib.Providers.Structure
                 return new List<SearchConversationDetails>();
             }
         }
-        private List<ConversationDetails> RestrictToAccessible(IEnumerable<ConversationDetails> summary, IEnumerable<string> myGroups)
-        {
-            return summary.ToList();
-        }
         public ConversationDetails Create(ConversationDetails details)
         {
             if (details.Slides.Count == 0)

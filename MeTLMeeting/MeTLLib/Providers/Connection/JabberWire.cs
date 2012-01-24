@@ -399,9 +399,10 @@ namespace MeTLLib.Providers.Connection
                             disconnectSocket();
                             openConnection();
                             break;
-                        //case XmppConnectionState.Authenticating:
-                        //    openConnection();
-                        //    break;
+                        case XmppConnectionState.Authenticating:
+                            disconnectSocket();
+                            openConnection();
+                            break;
                     }
                 else
                 {

@@ -50,6 +50,7 @@ namespace SandRibbon.Components
     public class NetworkController
     {
         private ClientConnection client;
+        private Action deregister;
         public NetworkController()
         {
             App.mark("NetworkController instantiating");
@@ -62,6 +63,7 @@ namespace SandRibbon.Components
                     attachToClient();
                     Commands.AllStaticCommandsAreRegistered();
                     Commands.SetIdentity.ExecuteAsync(e.credentials);
+                    client.events.StatusChanged -= checkValidity;
                 }
                 else
                 {
@@ -69,14 +71,14 @@ namespace SandRibbon.Components
                     {
                         Commands.LogOut.Execute(true);
                     }
-                    /*else
-                    {
-                        MeTLMessage.Error("MeTL was unable to connect.  Please verify your details and try again.");
-                    }*/
                 }
-                client.events.StatusChanged -= checkValidity;
             };
+            deregister = () => { client.events.StatusChanged -= checkValidity; };
             client.events.StatusChanged += checkValidity;
+        }
+        public void Deregister()
+        {
+            deregister();
         }
         private ClientConnection buildServerSpecificClient()
         //This throws the TriedToStartMeTLWithNoInternetException if in prod mode without any network connection.

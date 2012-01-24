@@ -79,6 +79,8 @@ namespace SandRibbon
             try
             {
                 App.mark("start network controller and log in");
+                if(controller != null)
+                    controller.Deregister();
                 controller = new NetworkController();
                 if (!MeTLLib.ClientFactory.Connection().Connect(finalUsername, password))
                 {
@@ -88,6 +90,7 @@ namespace SandRibbon
             }
             catch (TriedToStartMeTLWithNoInternetException)
             {
+                Commands.LoginFailed.Execute(null);
                 Commands.NoNetworkConnectionAvailable.Execute(null);
             }
         }

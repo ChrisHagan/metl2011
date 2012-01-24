@@ -142,7 +142,7 @@ namespace SandRibbon.Components
             var worker = new BackgroundWorker();
             var usernameText = username.Text.ToLower();
             var passwordText = password.Password;
-            worker.DoWork += (_unused1, _unused2) => { App.Login(usernameText, passwordText); };
+            worker.DoWork += (_unused1, _unused2) => App.Login(usernameText, passwordText);
             worker.RunWorkerAsync();
         }
         private void SetIdentity(Credentials identity)
