@@ -170,12 +170,12 @@ namespace MeTLLib.Providers.Structure
                 var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", searchServer.Uri.AbsoluteUri, query)), UriKind.Absolute);
                 var data = secureGetString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
-                var conversations = results.Where(c => !c.isDeleted)
-                    .OrderByDescending(c => c.relevance)
+                var deletedConversationJids = results.Where(c => c.isDeleted).Select(c => c.Jid);
+                var conversations = results.OrderByDescending(c => c.relevance)
                     .ThenByDescending(c => c.LastModified)
                     .ThenByDescending(c => c.Created).ToList();
                 var jids = conversations.Select(c => c.Jid).Distinct().ToList();
-                var filtered = jids.Select(jid => conversations.First(c => c.Jid == jid)).Take(maxResults);
+                var filtered = jids.Where(jid => !deletedConversationJids.Contains(jid)).Select(jid => conversations.First(c => c.Jid == jid)).Take(maxResults);
                 return filtered;
             }
             catch (Exception e)
