@@ -20,7 +20,11 @@
                         <Grid>
                             <quiz:GoldPlaque/>
                             <TextBlock Margin="4" 
-                                TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=question}"
+                                TextWrapping="WrapWithOverflow" 
+                                       FontWeight="Bold" 
+                                       FontSize="14" 
+                                       FontFamily="Verdana" 
+                                       Text="{Binding Path=question}"
                                        HorizontalAlignment="Center" />
                         </Grid>
                         <Grid>
@@ -33,12 +37,12 @@
                     </StackPanel>
                 </Grid>
                 <ListBox x:Name="quizOptions" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                         SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}" MaxWidth="720" Width="720" MaxHeight="600">
+                         SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}" MaxWidth="720" Width="700" MaxHeight="600">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal"  x:Name="quizAnswers">
                                 <quiz:QuizButton />
-                                <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}" />
+                                <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}"  MaxWidth="680"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
