@@ -6,14 +6,14 @@
     x:Name="viewQuizResults"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight">
-    <Border Background="{StaticResource BackgroundBlueGradient}">
+    <Border x:Name="QuizResultsBorder" Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition MaxWidth="125"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <ListBox x:Name="quizzes" SelectionMode="Single" Background ="Transparent"  
+                <ListBox x:Name="quizzes" SelectionMode="Single" Background="Transparent" Margin="5"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionChanged="QuizChanged">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -32,7 +32,7 @@
                 <Grid Grid.Column="1">
                     <Label Height="35" HorizontalAlignment="Center" VerticalAlignment="Top">Preview</Label>
                     <StackPanel x:Name="QuizResults" MaxHeight="600" Width="720" MaxWidth="720"/>
-                    <Border VerticalAlignment="Bottom" Background="{StaticResource BackgroundBlueGradient}" >
+                    <Border x:Name="QuizBorder" VerticalAlignment="Bottom" Background="{StaticResource BackgroundBlueGradient}" >
                         <Button Content="Display results" Click="DisplayResults"  Padding="0 10 0 0 "/>
                     </Border>
                 </Grid>

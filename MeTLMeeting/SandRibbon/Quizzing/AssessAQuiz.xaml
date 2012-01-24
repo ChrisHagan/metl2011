@@ -67,7 +67,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <TextBlock x:Name="TimestampLabel" FontFamily="Verdana" FontSize="10" Foreground="DarkBlue" Background="Transparent" Width="Auto" HorizontalAlignment="Stretch" Margin="10"/>
+                <TextBlock x:Name="TimestampLabel" FontFamily="Verdana" FontSize="10" Foreground="Black" Background="Transparent" Width="Auto" HorizontalAlignment="Stretch" Margin="10"/>
                 </StackPanel>
             </ScrollViewer>
         </DockPanel>

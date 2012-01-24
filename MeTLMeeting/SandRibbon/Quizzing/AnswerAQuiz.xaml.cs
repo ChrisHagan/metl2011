@@ -14,6 +14,8 @@ namespace SandRibbon.Quizzing
 {
     public partial class AnswerAQuiz : Window
     {
+        private Thickness quizOptionsBorderThickness;
+
         public static TitleConverter TitleConverter = new TitleConverter();
         public static QuestionConverter QuestionConverter = new QuestionConverter();
         private MeTLLib.DataTypes.QuizQuestion question
@@ -54,8 +56,22 @@ namespace SandRibbon.Quizzing
             
             this.Close();
        }
+
+        private void PrepareForRender()
+        {
+            quizOptionsBorderThickness = quizOptions.BorderThickness;
+            quizOptions.BorderThickness = new Thickness(0);
+        }
+
+        private void RestoreAfterRender()
+        {
+            quizOptions.BorderThickness = quizOptionsBorderThickness;
+        }
+        
        public void DisplayQuiz(object sender, RoutedEventArgs e)
         {
+            PrepareForRender();
+
             var quiz = SnapshotHost;
             quiz.UpdateLayout();
             var dpi = 96;
@@ -66,6 +82,8 @@ namespace SandRibbon.Quizzing
                 context.DrawRectangle(new VisualBrush(quiz), null, dimensions);
             bitmap.Render(dv);
             Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+
+            RestoreAfterRender();
             this.Close();
         }
         private void Edit_Click(object sender, RoutedEventArgs e)

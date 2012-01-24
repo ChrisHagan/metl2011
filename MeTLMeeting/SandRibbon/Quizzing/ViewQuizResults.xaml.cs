@@ -16,6 +16,7 @@ namespace SandRibbon.Quizzing
 {
     public partial class ViewQuizResults : Window
     {
+        private Brush quizBorderBackground;
         private Dictionary<long, ObservableCollection<QuizAnswer>> answers = new Dictionary<long, ObservableCollection<QuizAnswer>>();
         private Dictionary<long, AssessAQuiz> assessQuizzes = new Dictionary<long, AssessAQuiz>();
         private ObservableCollection<QuizQuestion> activeQuizes = new ObservableCollection<QuizQuestion>();
@@ -52,8 +53,27 @@ namespace SandRibbon.Quizzing
                                  });
         }
 
+        private void PrepareForRender()
+        {
+            var quiz = (AssessAQuiz)QuizResults.Children[0];
+            quizBorderBackground = QuizBorder.Background;
+            QuizBorder.Background = Brushes.Transparent;
+            QuizResultsBorder.Background = Brushes.Transparent;
+            quiz.SnapshotHost.Background = Brushes.Transparent;
+        }
+
+        private void RestoreAfterRender()
+        {
+            var quiz = (AssessAQuiz)QuizResults.Children[0];
+            QuizBorder.Background = quizBorderBackground;
+            QuizResultsBorder.Background = quizBorderBackground;
+            quiz.SnapshotHost.Background = quizBorderBackground;
+        }
+
         private void DisplayResults(object sender, RoutedEventArgs e)
         {
+            PrepareForRender();
+
             this.Hide();
             var quiz = (AssessAQuiz)QuizResults.Children[0];
             quiz.TimestampLabel.Text = "Results collected at:\r\n" + SandRibbonObjects.DateTimeFactory.Now().ToLocalTime().ToString();
@@ -67,6 +87,9 @@ namespace SandRibbon.Quizzing
             bitmap.Render(dv);
             quiz.TimestampLabel.Text = "";
             Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+
+            RestoreAfterRender();
+
             Trace.TraceInformation("DisplayingQuiz");
             this.Close();
         }
