@@ -24,7 +24,7 @@
                         <DataTemplate>
                             <StackPanel>
                                 <Image Source="/Resources/Ribbon-Quiz.png" Height="100" Width="100"/>
-                                <TextBlock Text="{Binding Path=question}" TextWrapping="WrapWithOverflow"/>
+                                <TextBlock Text="{Binding Path=question}" />
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

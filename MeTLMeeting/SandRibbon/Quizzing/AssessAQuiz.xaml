@@ -42,7 +42,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <quiz:QuizButton />
                                             <StackPanel>
-                                                <TextBlock MaxWidth="250" TextWrapping="WrapWithOverflow" Text="{Binding Path=tooltip}"/>
+                                                <TextBlock MaxWidth="250" TextWrapping="WrapWithOverflow" Text="{Binding Path=tooltip}" FontSize="12" FontFamily="Verdana" FontWeight="Bold" />
                                                 <StackPanel Orientation="Horizontal">
                                                     <Label FontWeight="Bold" Content="{Binding percentage}" HorizontalAlignment="Left" />
                                                     <Label FontWeight="Bold" Content="{Binding count, Converter={x:Static sr:Converters.BracketingConverter}}" HorizontalAlignment="Right"/>

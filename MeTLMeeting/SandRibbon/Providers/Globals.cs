@@ -97,7 +97,7 @@ namespace SandRibbon.Providers
             }
 
         }
-        public static int QuizMargin { get { return 40; } }
+        public static int QuizMargin { get { return 30; } }
         public static Size DefaultCanvasSize
         {
             get

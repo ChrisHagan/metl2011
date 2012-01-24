@@ -42,7 +42,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal"  x:Name="quizAnswers">
                                 <quiz:QuizButton />
-                                <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}"  MaxWidth="680"/>
+                                <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}" FontSize="12" FontFamily="Verdana" FontWeight="Bold" MaxWidth="680"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
