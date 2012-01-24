@@ -199,9 +199,9 @@ namespace SandRibbon.Components.Submissions
                    Commands.ImageDropped.ExecuteAsync(new ImageDrop { 
                          Filename = image.url.ToString (), 
                          Target = "presentationSpace",
-                         Point = new Point (0, 0),
-                         Position = 1
-
+                         Point = new Point(0, 0),
+                         Position = 1,
+                         OverridePoint = false
                      });
                });
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);

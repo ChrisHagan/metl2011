@@ -21,6 +21,7 @@ using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using SandRibbon.Components.Pedagogicometry;
 using Image = System.Windows.Controls.Image;
+using SandRibbon.Quizzing;
 
 namespace SandRibbon.Components
 {
@@ -162,19 +163,16 @@ namespace SandRibbon.Components
         private string generateScreenshot(ScreenshotDetails details)
         {
             var dpi = 96;
-            var ratio = ActualWidth / ActualHeight;
-            int targetWidth = 1024;
-            int targetHeight = (int)(targetWidth / ratio);
             var file = "";
             Dispatcher.adopt(() =>
             {
-                var bitmap = new RenderTargetBitmap(targetWidth ,targetHeight, dpi, dpi, PixelFormats.Default);
+                var targetSize = ResizeHelper.ScaleMajorAxisToCanvasSize(stack);
+                var bitmap = new RenderTargetBitmap((int)targetSize.Width ,(int)targetSize.Height, dpi, dpi, PixelFormats.Default);
                 var dv = new DrawingVisual();
                 using (var context = dv.RenderOpen())
                 {
                     var visual = details.showPrivate ? cloneAll() : clonePublicOnly();
-                    context.DrawRectangle(new VisualBrush(visual), null,
-                                          new Rect(new Point(), new Size(targetWidth, targetHeight)));
+                    context.DrawRectangle(new VisualBrush(visual), null, targetSize);
                     context.DrawText(new FormattedText(
                                             details.message, 
                                             CultureInfo.CurrentCulture, 
@@ -198,27 +196,6 @@ namespace SandRibbon.Components
                 }
             });
             return file;
-        }
-        private Rect measureToAspect(double width, double height, double max)
-        {
-            var dominantSide = height > width ? height : width;
-            var scalingFactor = max / dominantSide;
-            return new Rect(0, 0, width * scalingFactor, height * scalingFactor);
-        }
-        private RenderTargetBitmap generateCapture(int side)
-        {
-            var dpi = 96;
-            var dimensions = measureToAspect(ActualWidth, ActualHeight, side);
-            RenderTargetBitmap bitmap = null;
-            Dispatcher.adopt(() =>
-            {
-                bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
-                var dv = new DrawingVisual();
-                using (var context = dv.RenderOpen())
-                    context.DrawRectangle(new VisualBrush(stack), null, dimensions);
-                bitmap.Render(dv);
-            });
-            return bitmap;
         }
         private void PreParserAvailable(MeTLLib.Providers.Connection.PreParser parser)
         {
