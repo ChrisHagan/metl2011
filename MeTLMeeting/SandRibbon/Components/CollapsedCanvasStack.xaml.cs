@@ -241,6 +241,9 @@ namespace SandRibbon.Components
                     MyWork.UseCustomCursor = MyWork.EditingMode == InkCanvasEditingMode.Ink;
                     MyWork.Cursor = Cursors.Arrow;
                     break;
+                case "Sketch":
+                    MyWork.UseCustomCursor = true;
+                    break;
             }
             _focusable = newLayer == "Text";
             setLayerForTextFor(MyWork);
@@ -673,7 +676,7 @@ namespace SandRibbon.Components
                 visualAttributes.Width = logicalAttributes.Width * 2;
                 visualAttributes.Height = logicalAttributes.Height * 2;
                 MyWork.UseCustomCursor = true;
-                Cursor = CursorExtensions.generateCursor(visualAttributes);
+                MyWork.Cursor = CursorExtensions.generateCursor(visualAttributes);
             }
             catch (Exception e) {
                 Trace.TraceInformation("Cursor failed (no crash):", e.Message);
@@ -1726,8 +1729,6 @@ namespace SandRibbon.Components
                                             }).FirstOrDefault());
                                           if (activeTextbox != null)
                                           {
-                                              activeTextbox.TextChanged -= SendNewText;
-                                              applyStylingTo(activeTextbox, currentInfo);
                                               Commands.TextboxFocused.ExecuteAsync(currentInfo);
                                               AddAdorners();
                                               sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
