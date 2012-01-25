@@ -588,7 +588,6 @@ namespace SandRibbon.Components
             var text = TextMovedOrResized(selectedElements, _boxesAtTheStart);
             Action undo = () =>
                 {
-                   
                     ClearAdorners();
                     ink.undo();
                     text.undo();
@@ -2537,6 +2536,10 @@ namespace SandRibbon.Components
             newBox.Background = box.Background;
             newBox.tag(box.tag());
             newBox.CaretIndex = box.CaretIndex;
+            newBox.Width = box.Width;
+            newBox.Height = box.Height;
+            newBox.MaxWidth = box.MaxWidth;
+            newBox.MaxHeight = box.MaxHeight;
             InkCanvas.SetLeft(newBox, InkCanvas.GetLeft(box));
             InkCanvas.SetTop(newBox, InkCanvas.GetTop(box));
 
