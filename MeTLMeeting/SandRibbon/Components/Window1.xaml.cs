@@ -377,7 +377,11 @@ namespace SandRibbon
                         ClientFactory.Connection().getHistoryProvider().Retrieve<PreParser>(
                                     null,
                                     null,
-                                    (parser) => Commands.PreParserAvailable.Execute(parser),
+                                    (parser) =>
+                                        {
+                                            Commands.PreParserAvailable.Execute(parser);
+                                            hideReconnectingDialog();
+                                        },
                                     jid);
                     }
                 }
@@ -389,10 +393,6 @@ namespace SandRibbon
                 {
                     Logger.Log(string.Format("CRASH: (Fixed) Window1::Reconnecting crashed {0}", e.Message));
                     Commands.UpdateConversationDetails.Execute(ConversationDetails.Empty);
-                }
-                finally
-                {
-                    hideReconnectingDialog();
                 }
             }
             else
