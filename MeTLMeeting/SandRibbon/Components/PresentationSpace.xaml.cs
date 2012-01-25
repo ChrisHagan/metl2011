@@ -64,12 +64,6 @@ namespace SandRibbon.Components
         {
             inConversation = false;
         }
-
-        private void KeyPressed(object sender, KeyEventArgs e)
-        {
-
-        }
-
         private void VisualizeContent(object obj) {
           /*
             var authors = new List<string>();

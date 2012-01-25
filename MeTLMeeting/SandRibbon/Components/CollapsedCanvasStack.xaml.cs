@@ -196,13 +196,17 @@ namespace SandRibbon.Components
         {
             e.CanExecute = MyWork.GetSelectedElements().Count > 0 || MyWork.GetSelectedStrokes().Count > 0 || myTextBox != null;
         }
+
         private void extendCanvasBySize(Size newSize)
         {
             Height = newSize.Height;
             Width = newSize.Width;
         }
+
+        private InkCanvasEditingMode currentMode;
         private void hideAdorners(object obj)
         {
+            currentMode = MyWork.EditingMode;
             MyWork.Select(new UIElement[]{});
             ClearAdorners();
         }
@@ -369,6 +373,7 @@ namespace SandRibbon.Components
         }
         private void HideConversationSearchBox(object obj)
         {
+            MyWork.EditingMode = currentMode;
             AddAdorners();
         }
         private void UpdateConversationDetails(ConversationDetails details)
