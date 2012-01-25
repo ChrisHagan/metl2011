@@ -134,7 +134,8 @@ namespace SandRibbon.Tabs.Groups
             if (currentItem - 1 >= 0)
             {
                 fontSize.SelectedIndex = currentItem - 1;
-                sendValues();
+                // value is sent over the network in the selected index changed event handler 
+                //sendValues();
             }
         }
         private void increaseFont(object sender, RoutedEventArgs e)
@@ -144,7 +145,8 @@ namespace SandRibbon.Tabs.Groups
             if (currentItem + 1 < fontSizes.Count())
             {
                 fontSize.SelectedIndex = currentItem + 1;
-                sendValues();
+                // value is sent over the network in the selected index changed event handler 
+                //sendValues();
             }
         }
         private void fontSizeSelected(object sender, SelectionChangedEventArgs e)

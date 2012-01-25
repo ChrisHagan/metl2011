@@ -622,7 +622,7 @@ namespace SandRibbon.Components
 
         private void selectionChanged(object sender, EventArgs e)
         {
-            Dispatcher.adoptAsync(() =>
+            Dispatcher.adopt(() =>
                                       {
                                           ClearAdorners();
                                           if (MyWork.GetSelectedTextBoxes().Count() > 0)
@@ -1717,13 +1717,22 @@ namespace SandRibbon.Components
                                       {
                                           ClearAdorners();
                                           var currentInfo = oldInfo;
-                                          var activeTextbox = ((MeTLTextBox) MyWork.Children.ToList().Where( c => ((MeTLTextBox)c).tag().id == currentTextBox.tag().id). FirstOrDefault());
-                                          activeTextbox.TextChanged -= SendNewText;
-                                          applyStylingTo(activeTextbox, currentInfo);
-                                          Commands.TextboxFocused.ExecuteAsync(currentInfo);
-                                          AddAdorners();
-                                          sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
-                                          activeTextbox.TextChanged += SendNewText;
+                                          var activeTextbox = ((MeTLTextBox)MyWork.Children.ToList().Where(c => 
+                                            { 
+                                                if (c is MeTLTextBox) 
+                                                    return ((MeTLTextBox)c).tag().id == currentTextBox.tag().id; 
+                                                else 
+                                                    return false; 
+                                            }).FirstOrDefault());
+                                          if (activeTextbox != null)
+                                          {
+                                              activeTextbox.TextChanged -= SendNewText;
+                                              applyStylingTo(activeTextbox, currentInfo);
+                                              Commands.TextboxFocused.ExecuteAsync(currentInfo);
+                                              AddAdorners();
+                                              sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
+                                              activeTextbox.TextChanged += SendNewText;
+                                          }
                                       };
                     Action redo = () =>
                                       {
@@ -1740,10 +1749,12 @@ namespace SandRibbon.Components
                                       };
                     UndoHistory.Queue(undo, redo);
                     redo();
+                    /*
                     myTextBox.GotFocus -= textboxGotFocus;
                     myTextBox.CaretIndex = caret;
                     myTextBox.Focus();
                     myTextBox.GotFocus += textboxGotFocus;
+                    */
                 }
                 else if (MyWork.GetSelectedElements().Count > 0)
                 {
@@ -1918,7 +1929,6 @@ namespace SandRibbon.Components
             updateTools();
             requeryTextCommands();
             _originalText = myTextBox.Text;
-            MyWork.Select(new List<UIElement>());
             Commands.ChangeTextMode.Execute("None");
         }
         private void updateTools()
