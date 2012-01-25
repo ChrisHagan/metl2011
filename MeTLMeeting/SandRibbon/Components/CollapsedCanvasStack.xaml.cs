@@ -152,7 +152,7 @@ namespace SandRibbon.Components
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<object>((_unused) => { JoinConversation(); }));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideAdorners));
-            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(hideConversationSearchBox));
+            Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (sender, args) => HandlePaste(args), canExecute));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (sender, args) => HandleCopy(args), canExecute));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (sender, args) => HandleCut(args), canExecute));
@@ -367,7 +367,7 @@ namespace SandRibbon.Components
             redo();
             UndoHistory.Queue(undo, redo);
         }
-        private void hideConversationSearchBox(object obj)
+        private void HideConversationSearchBox(object obj)
         {
             AddAdorners();
         }
@@ -1631,12 +1631,13 @@ namespace SandRibbon.Components
                                                     {
                                                         sendTextWithoutHistory((MeTLTextBox)sender, privacy);
                                                         TypingTimer = null;
+                                                        GlobalTimers.ExecuteSync();
                                                     });
                 }, null, 600, Timeout.Infinite);
             }
             else
             {
-                GlobalTimers.resetSyncTimer();
+                GlobalTimers.stopTimer();
                 TypingTimer.Change(600, Timeout.Infinite);
             }
 

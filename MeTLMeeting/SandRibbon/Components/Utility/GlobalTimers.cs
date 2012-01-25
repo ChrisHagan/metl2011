@@ -14,10 +14,12 @@ namespace SandRibbon.Components.Utility
         {
             using (DdMonitor.Lock(locker))
             {
+                syncActive = true;
                 currentSlide = slide;
                 currentAction = timedAction;
             }
             if(SyncTimer == null)
+            {
                 SyncTimer = new Timer(delegate
                                           {
                                               try
@@ -26,6 +28,7 @@ namespace SandRibbon.Components.Utility
                                                   {
                                                       if (currentAction != null)
                                                           currentAction();
+                                                      syncActive = false;
                                                       currentSlide = 0;
                                                   }
                                               }
@@ -36,13 +39,37 @@ namespace SandRibbon.Components.Utility
                                               {
                                                   SyncTimer = null;
                                               }
-                                          },null, 500, Timeout.Infinite );
+                                          },null, 500, Timeout.Infinite );}
+        }
+        public static void stopTimer()
+        {
+            if (1 == Interlocked.Increment(ref syncTimerChangeCounter))
+            {
+                if (SyncTimer != null)
+                {
+                    SyncTimer.Dispose();
+                    SyncTimer = null;
+                }
+                Interlocked.Exchange(ref syncTimerChangeCounter, 0);
+            }
+        }
+        public static void ExecuteSync()
+        {
+            using(DdMonitor.Lock(locker))
+            {
+                if(syncActive)
+                {
+                    currentAction();
+                    syncActive = false;
+                }
+            }
         }
         public static int getSlide()
         {
             return currentSlide;
         }
         private static int syncTimerChangeCounter = 0;
+        private static bool syncActive;
         public static void resetSyncTimer()
         {
             if (1 == Interlocked.Increment(ref syncTimerChangeCounter))
