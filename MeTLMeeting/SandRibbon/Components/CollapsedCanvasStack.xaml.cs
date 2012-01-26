@@ -214,13 +214,13 @@ namespace SandRibbon.Components
         {
             if (e.Key == Key.Delete)
                 deleteSelectedElements(null, null);
-            if (e.Key == Key.PageUp || e.Key == Key.Up)
+            if (e.Key == Key.PageUp || (e.Key == Key.Up && myTextBox == null))
             {
                 if(Commands.MoveToPrevious.CanExecute(null))
                   Commands.MoveToPrevious.Execute(null);
                 e.Handled = true;
             }
-            if (e.Key == Key.PageDown || e.Key == Key.Down)
+            if (e.Key == Key.PageDown || (e.Key == Key.Down && myTextBox == null))
             {
                 if(Commands.MoveToNext.CanExecute(null))
                   Commands.MoveToNext.Execute(null);

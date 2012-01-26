@@ -57,6 +57,7 @@ namespace SandRibbon.Utils
                 "MeTL Presenter.exe Warning: 0 :", 
                 "MeTL Presenter.exe Info: 0 :", 
                 "MeTL Presenter.exe Information: 0 :", 
+                "MeTL Staging.vshost.exe Information: 0 : ",
                 "Error loading thumbnail:"};
         public static readonly string POST_LOG = "http://madam.adm.monash.edu.au:5984/metl_log";
         private static readonly string DB_NAME = "metl_log";
