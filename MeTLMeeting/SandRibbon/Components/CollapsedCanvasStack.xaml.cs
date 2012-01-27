@@ -1633,7 +1633,6 @@ namespace SandRibbon.Components
             box.ContextMenu.IsEnabled = false;
             box.ContextMenu.IsOpen = false;
             box.PreviewMouseRightButtonUp += box_PreviewMouseRightButtonUp;
-            box.MaxWidth = 540;
             return box;
         }
 
@@ -2142,10 +2141,10 @@ namespace SandRibbon.Components
             ClearAdorners();
             foreach (var stroke in newStrokes)
             {
-                if(MyWork.Strokes.Contains(stroke))
+                if(MyWork.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
                 {
-                    selection.Remove(stroke);
-                    doMyStrokeRemoved(stroke);
+                    selection = new StrokeCollection(selection.Where(s => s.sum().checksum != stroke.sum().checksum));
+                    doMyStrokeRemovedExceptHistory(stroke);
                 }
             }
         }
@@ -2159,7 +2158,7 @@ namespace SandRibbon.Components
                 {
                     stroke.tag(new StrokeTag(stroke.tag().author, privacy, stroke.tag().startingSum, stroke.tag().isHighlighter));
                     selection.Add(stroke);
-                    doMyStrokeAdded(stroke, stroke.tag().privacy);
+                    doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
                 }
             }
         }
@@ -2205,6 +2204,12 @@ namespace SandRibbon.Components
             }
             deleteSelectedImages(imagesToDelete);
         }
+        private MeTLTextBox setWidthOf(MeTLTextBox box)
+        {
+            if (box.Text.Length > 540)
+                box.Width = 540;
+            return box;
+        }
         private void HandleTextPasteRedo(List<MeTLTextBox> selectedText, MeTLTextBox currentBox)
         {
             foreach (var textBox in selectedText)
@@ -2217,16 +2222,17 @@ namespace SandRibbon.Components
                     var box = ((MeTLTextBox) MyWork.TextChildren().ToList().Where(c => ((MeTLTextBox) c).tag().id == currentBox.tag().id). FirstOrDefault());
                     box.TextChanged -= SendNewText;
                     box.Text = redoText;
-                    box.MaxWidth = 540;
                     box.CaretIndex = caret + textBox.Text.Length;
+                    box = setWidthOf(box);
                     sendTextWithoutHistory(box, box.tag().privacy);
                     box.TextChanged += SendNewText;
                 }
                 else
                 {
                     textBox.tag(new TextTag(textBox.tag().author, privacy, textBox.tag().id));
-                    AddTextBoxToCanvas(textBox);
-                    sendTextWithoutHistory(textBox, textBox.tag().privacy);
+                    var box = setWidthOf(textBox);
+                    AddTextBoxToCanvas(box);
+                    sendTextWithoutHistory(box, box.tag().privacy);
                 }
             }
         }
@@ -2586,8 +2592,10 @@ namespace SandRibbon.Components
             newBox.CaretIndex = box.CaretIndex;
             newBox.Width = box.Width;
             newBox.Height = box.Height;
-            newBox.MaxWidth = box.MaxWidth;
             newBox.MaxHeight = box.MaxHeight;
+            //newBox.SelectedText = box.SelectedText;
+            newBox.SelectionLength = box.SelectionLength;
+            newBox.SelectionStart = box.SelectionStart;
             InkCanvas.SetLeft(newBox, InkCanvas.GetLeft(box));
             InkCanvas.SetTop(newBox, InkCanvas.GetTop(box));
 
