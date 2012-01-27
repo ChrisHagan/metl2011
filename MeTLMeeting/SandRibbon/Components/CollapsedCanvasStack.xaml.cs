@@ -2540,6 +2540,9 @@ namespace SandRibbon.Components
             newBox.Height = box.Height;
             newBox.MaxWidth = box.MaxWidth;
             newBox.MaxHeight = box.MaxHeight;
+            newBox.SelectedText = box.SelectedText;
+            newBox.SelectionLength = box.SelectionLength;
+            newBox.SelectionStart = box.SelectionStart;
             InkCanvas.SetLeft(newBox, InkCanvas.GetLeft(box));
             InkCanvas.SetTop(newBox, InkCanvas.GetTop(box));
 
