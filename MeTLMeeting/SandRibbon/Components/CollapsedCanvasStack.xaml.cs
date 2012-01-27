@@ -2093,10 +2093,10 @@ namespace SandRibbon.Components
             ClearAdorners();
             foreach (var stroke in newStrokes)
             {
-                if(MyWork.Strokes.Contains(stroke))
+                if(MyWork.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
                 {
-                    selection.Remove(stroke);
-                    doMyStrokeRemoved(stroke);
+                    selection = new StrokeCollection(selection.Where(s => s.sum().checksum != stroke.sum().checksum));
+                    doMyStrokeRemovedExceptHistory(stroke);
                 }
             }
         }
@@ -2110,7 +2110,7 @@ namespace SandRibbon.Components
                 {
                     stroke.tag(new StrokeTag(stroke.tag().author, privacy, stroke.tag().startingSum, stroke.tag().isHighlighter));
                     selection.Add(stroke);
-                    doMyStrokeAdded(stroke, stroke.tag().privacy);
+                    doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
                 }
             }
         }
