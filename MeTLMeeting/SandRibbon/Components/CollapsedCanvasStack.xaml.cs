@@ -62,6 +62,14 @@ namespace SandRibbon.Components
         Image,
         NotSupported
     }
+
+    public class TimerWithTag : System.Timers.Timer
+    {
+        public TimerWithTag(double interval) : base(interval) { }
+
+        public object Tag { get; set; }
+    }
+
     public partial class CollapsedCanvasStack : IClipboardHandler
     {
         List<MeTLTextBox> _boxesAtTheStart = new List<MeTLTextBox>();
@@ -73,6 +81,7 @@ namespace SandRibbon.Components
         private const bool CanFocus = true;
         private bool _focusable = true;
         public static Timer TypingTimer;
+        private static TimerWithTag resizeTimer;
         private string _originalText;
         private MeTLTextBox myTextBox;
         private string _target;
@@ -170,6 +179,10 @@ namespace SandRibbon.Components
             clipboardManager.RegisterHandler(ClipboardAction.Copy, OnClipboardCopy, CanHandleClipboardCopy);
             MyWork.MouseMove += mouseMove;
             MyWork.StylusMove += stylusMove;
+
+            /*resizeTimer = new TimerWithTag(500);
+            resizeTimer.Elapsed += ResizeTimer_Elapsed;
+            resizeTimer.AutoReset = false;*/
         }
 
         private void JoinConversation()
@@ -181,17 +194,52 @@ namespace SandRibbon.Components
             }
         }
 
+        private void ResizeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            var position = (Point)(sender as TimerWithTag).Tag;
+
+            if (position != null)
+            {
+                this.Dispatcher.adopt(() =>
+                {
+                    if (position.X > ActualWidth - 20)
+                    {
+                        Width = ActualWidth + 10;
+                    }
+    
+                    if (position.Y > ActualHeight - 20)
+                    {
+                        Height = ActualHeight + 10;
+                    }
+                });
+            }
+        }
+
+        private void ResizeOnMove(Point position)
+        {
+            resizeTimer.Tag = position;
+            if (!resizeTimer.Enabled)
+            {
+                resizeTimer.Start();
+            }
+        }
+
         private void stylusMove(object sender, StylusEventArgs e)
         {
             GlobalTimers.resetSyncTimer();
+
+            //ResizeOnMove(e.GetPosition(this));
         }
         private void mouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 GlobalTimers.resetSyncTimer();
+
+                //ResizeOnMove(e.GetPosition(this));
             }
         }
+
         private void canExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = MyWork.GetSelectedElements().Count > 0 || MyWork.GetSelectedStrokes().Count > 0 || myTextBox != null;

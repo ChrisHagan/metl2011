@@ -553,6 +553,7 @@
     <Compile Include="Components\ClipboardHandler.cs" />
     <Compile Include="Components\CollapsedCanvasStack.xaml.cs">
       <DependentUpon>CollapsedCanvasStack.xaml</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\colorCodedUsers.xaml.cs">
       <DependentUpon>colorCodedUsers.xaml</DependentUpon>
