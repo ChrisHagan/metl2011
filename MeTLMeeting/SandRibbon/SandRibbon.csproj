@@ -43,11 +43,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://metl.adm.monash.edu.au/MeTLStaging/</InstallUrl>
-    <UpdateUrl>http://metl.adm.monash.edu.au/MeTLStaging/</UpdateUrl>
-    <ProductName>MeTL Staging</ProductName>
     <PublisherName>Monash University eEducation Centre</PublisherName>
-    <MinimumRequiredVersion>$(ApplicationVersion)</MinimumRequiredVersion>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
@@ -1142,7 +1138,9 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>echo Cleaning publish directory
+    <PostBuildEvent>
+    </PostBuildEvent>
+    <PreBuildEvent>echo Cleaning publish directory
 if not exist $(ProjectDir)\publish\nul goto nopublish
 cd $(ProjectDir)\publish
 del /S /Q *.*
@@ -1150,8 +1148,6 @@ echo Completed.
 goto success
 :nopublish
 echo Publish directory does not exist, skipping.
-:success</PostBuildEvent>
-    <PreBuildEvent>
-    </PreBuildEvent>
+:success</PreBuildEvent>
   </PropertyGroup>
 </Project>
