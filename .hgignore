@@ -24,6 +24,8 @@ syntax: glob
 
 *.baml
 
+*.log
+
 *\bin\*
 *\obj\*
 *\Release\*
