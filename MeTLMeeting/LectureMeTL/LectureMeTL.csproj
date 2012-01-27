@@ -16,8 +16,9 @@
     <WarningLevel>4</WarningLevel>
     <ApplicationIcon>MeTLPresenterIcon.ico</ApplicationIcon>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <ManifestCertificateThumbprint>9D376C83EF21D14B39A43F622E49CEC028B51018</ManifestCertificateThumbprint>
-    <ManifestKeyFile>LectureMeTL_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>19CA40E60BBFBC44BC1A0B2716F3FE31A6A4B07B</ManifestCertificateThumbprint>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <FileUpgradeFlags>
