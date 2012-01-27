@@ -27,13 +27,14 @@ namespace SandRibbon.Components
             {
                 if(Commands.MoveToPrevious.CanExecute(null))
                   Commands.MoveToPrevious.Execute(null);
+                e.Handled = true;
             }
             if (e.Key == Key.PageDown || e.Key == Key.Down)
             {
                 if(Commands.MoveToNext.CanExecute(null))
                   Commands.MoveToNext.Execute(null);
+                e.Handled = true;
             }
-            e.Handled = true;
         }
 
         private void UpdateConversationDetails(ConversationDetails details)
