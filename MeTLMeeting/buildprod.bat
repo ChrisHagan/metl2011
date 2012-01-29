@@ -2,12 +2,12 @@
 echo **********************************
 echo * MeTL Production BuildScript
 echo **********************************
-echo.
-echo Setting ApplicationRevision to %1
-echo.
 
 IF "%1"=="" GOTO ERROR
 
+echo.
+echo Setting ApplicationRevision to %1
+echo.
 echo Grabbing latest from source control
 echo.
 
