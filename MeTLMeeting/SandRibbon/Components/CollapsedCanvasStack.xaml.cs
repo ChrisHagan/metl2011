@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using MeTLLib.DataTypes;
@@ -26,6 +27,7 @@ using Color = System.Windows.Media.Color;
 using ColorConverter = System.Windows.Media.ColorConverter;
 using FontFamily = System.Windows.Media.FontFamily;
 using Image = System.Windows.Controls.Image;
+using Path = System.IO.Path;
 using Pen = System.Windows.Media.Pen;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
@@ -118,7 +120,18 @@ namespace SandRibbon.Components
                 MouseUp += (c, args) => placeCursor(this, args);
             };
         }
-        
+
+        private void testInkCanvasCoords()
+        {
+            var rect = new Rectangle();
+            rect.Fill = Brushes.Red;
+            rect.Width = 50;
+            rect.Height = 50;
+            InkCanvas.SetLeft(rect, 0);
+            InkCanvas.SetTop(rect, 0);
+            MyWork.Children.Add(rect);
+        }
+
         void MyWork_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             pos = e.GetPosition(this);
@@ -183,6 +196,8 @@ namespace SandRibbon.Components
             /*resizeTimer = new TimerWithTag(500);
             resizeTimer.Elapsed += ResizeTimer_Elapsed;
             resizeTimer.AutoReset = false;*/
+
+            testInkCanvasCoords();
         }
 
         private void JoinConversation()
@@ -260,7 +275,7 @@ namespace SandRibbon.Components
         }
         private void keyPressed(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete)
+            if (e.Key == Key.Delete && myTextBox == null)
                 deleteSelectedElements(null, null);
             if (e.Key == Key.PageUp || (e.Key == Key.Up && myTextBox == null))
             {
@@ -1701,9 +1716,9 @@ namespace SandRibbon.Components
             foreach (FrameworkElement element in selectedElements)
             {
                 if (InkCanvas.GetLeft(element) < 0)
-                    InkCanvas.SetLeft(element, 10);
+                    InkCanvas.SetLeft(element, 0);
                 if (InkCanvas.GetTop(element) < 0)
-                    InkCanvas.SetTop(element, 10);
+                    InkCanvas.SetTop(element, 0);
 
             }
             return selectedElements;
@@ -2311,7 +2326,7 @@ namespace SandRibbon.Components
                     UndoHistory.Queue(undo, redo);
                     redo();
                 }
-                if(Clipboard.ContainsImage())
+                else if(Clipboard.ContainsImage())
                 {
                     Action undo = () => HandleImagePasteUndo(new List<BitmapSource>{Clipboard.GetImage()});
                     Action redo = () =>  HandleImagePasteRedo(new List<BitmapSource>{Clipboard.GetImage()});
