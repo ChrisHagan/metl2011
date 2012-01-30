@@ -510,6 +510,12 @@ namespace SandRibbon.Components
             if (e.NewRectangle.Width == e.OldRectangle.Width && e.NewRectangle.Height == e.OldRectangle.Height)
                 return;
 
+            // following code is image specific
+            if (strokesAtTheStart.Count != 0)
+                return;
+            if (_boxesAtTheStart.Count != 0)
+                return;
+
             Rect imageCanvasRect = new Rect(new Size(ActualWidth, ActualHeight));
 
             double resizeWidth;
@@ -529,8 +535,16 @@ namespace SandRibbon.Components
 
             imageX = Clamp(e.NewRectangle.X, 0, e.NewRectangle.X);
             imageY = Clamp(e.NewRectangle.Y, 0, e.NewRectangle.Y);
+
+            // ensure image is being resized uniformly
+            if (e.NewRectangle.Width != e.OldRectangle.Width)
+                resizeHeight = resizeWidth;
+            else if (e.NewRectangle.Height != e.OldRectangle.Height)
+                resizeWidth = resizeHeight;
+            else
+                resizeWidth = resizeHeight;
+
             e.NewRectangle = new Rect(imageX, imageY, resizeWidth, resizeHeight);
-            
         }
         private double Clamp(double val, double min, double max)
         {
@@ -542,7 +556,6 @@ namespace SandRibbon.Components
         }
         private UndoHistory.HistoricalAction ImageSelectionMovedOrResized(IEnumerable<UIElement> elements, List<Image> startingElements)
         {
-
             var selectedElements = elements.Where(i => i is Image).Select(i => ((Image) i).clone()); 
             Action undo = () =>
                 {
@@ -566,7 +579,7 @@ namespace SandRibbon.Components
                 };
             Action redo = () =>
                 {
-                    var selection = new List<UIElement>();
+                    //var selection = new List<UIElement>();
                     var mySelectedImages = selectedElements.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
                     foreach (var element in startingElements)
                     {
@@ -576,10 +589,12 @@ namespace SandRibbon.Components
                     }
                     foreach (var element in mySelectedImages)
                     { 
-                        selection.Add(element);
-                        if (MyWork.Children.ToList().Where(i =>i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
+                        //selection.Add(element);
+                        if (MyWork.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
+                        {
                            MyWork.Children.Add(element);
-                        sendThisElement(element);
+                        }
+                       sendThisElement(element);
                   }
                 };           
             return new UndoHistory.HistoricalAction(undo, redo, 0);
