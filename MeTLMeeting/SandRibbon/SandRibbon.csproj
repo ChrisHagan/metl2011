@@ -1136,7 +1136,7 @@
   </Target>
   <Target Name="AfterBuild">
 	  <Copy SourceFiles="..\$(WebPage)" DestinationFolder="Publish" />
-	  <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationVersion" Replacement="$(ApplicationVersion)" Path="Publish" Files="$(WebPage)"/>
+	  <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="Publish" Files="$(WebPage)"/>
   </Target>
   <PropertyGroup>
     <PostBuildEvent>
