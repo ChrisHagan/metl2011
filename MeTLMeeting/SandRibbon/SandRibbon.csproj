@@ -1135,7 +1135,7 @@
     <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Release' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Presenter" AssemblyDescription="MeTL Presenter" AssemblyProduct="MeTL Presenter" />
   </Target>
   <Target Name="AfterBuild">
-	  <MSBuild.ExtensionPack.FileSystem.RoboCopy Source="..\$(WebPage)" Destination="Publish" Files="$(WebPage)" />
+	  <Copy SourceFiles="..\$(WebPage)" DestinationFolder="Publish" />
 	  <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationVersion" Replacement="$(ApplicationVersion)" Path="Publish" Files="$(WebPage)"/>
   </Target>
   <PropertyGroup>
