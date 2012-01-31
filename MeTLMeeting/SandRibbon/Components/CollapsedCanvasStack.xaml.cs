@@ -31,6 +31,7 @@ using Path = System.IO.Path;
 using Pen = System.Windows.Media.Pen;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
+using System.Windows.Media.Animation;
 
 namespace SandRibbon.Components
 {
@@ -74,6 +75,8 @@ namespace SandRibbon.Components
 
     public partial class CollapsedCanvasStack : IClipboardHandler
     {
+        private Rectangle resizeZone = new Rectangle();
+
         List<MeTLTextBox> _boxesAtTheStart = new List<MeTLTextBox>();
         private Color _currentColor = Colors.Black;
         private const double DefaultSize = 24.0;
@@ -83,7 +86,7 @@ namespace SandRibbon.Components
         private const bool CanFocus = true;
         private bool _focusable = true;
         public static Timer TypingTimer;
-        private static TimerWithTag resizeTimer;
+        //private static DispatcherTimer resizeTimer;
         private string _originalText;
         private MeTLTextBox myTextBox;
         private string _target;
@@ -112,24 +115,15 @@ namespace SandRibbon.Components
             MyWork.SelectionMoved += SelectionMovedOrResized;
             MyWork.SelectionResizing += SelectionMovingOrResizing;
             MyWork.SelectionResized += SelectionMovedOrResized;
+            MyWork.SizeChanged += resizeDebugHelper;
             MyWork.AllowDrop = true;
             MyWork.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(MyWork_PreviewMouseLeftButtonUp);
             MyWork.Drop += ImagesDrop;
             Loaded += (a, b) =>
             {
                 MouseUp += (c, args) => placeCursor(this, args);
+                InitResizeDebugHelper();
             };
-        }
-
-        private void testInkCanvasCoords()
-        {
-            var rect = new Rectangle();
-            rect.Fill = Brushes.Red;
-            rect.Width = 50;
-            rect.Height = 50;
-            InkCanvas.SetLeft(rect, 0);
-            InkCanvas.SetTop(rect, 0);
-            MyWork.Children.Add(rect);
         }
 
         void MyWork_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -192,12 +186,8 @@ namespace SandRibbon.Components
             clipboardManager.RegisterHandler(ClipboardAction.Copy, OnClipboardCopy, CanHandleClipboardCopy);
             MyWork.MouseMove += mouseMove;
             MyWork.StylusMove += stylusMove;
-
-            /*resizeTimer = new TimerWithTag(500);
-            resizeTimer.Elapsed += ResizeTimer_Elapsed;
-            resizeTimer.AutoReset = false;*/
-
-            testInkCanvasCoords();
+            MyWork.MouseLeave += (sender, args) => MouseOrStylusLeave(sender, args.GetPosition(this));
+            MyWork.StylusLeave += (sender, args) => MouseOrStylusLeave(sender, args.GetPosition(this));
         }
 
         private void JoinConversation()
@@ -209,50 +199,83 @@ namespace SandRibbon.Components
             }
         }
 
-        private void ResizeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        // debug
+        private void ResizeZoneHighlightOnOver(Point position)
         {
-            var position = (Point)(sender as TimerWithTag).Tag;
+            Rect resizeRect = new Rect(new Point(InkCanvas.GetLeft(resizeZone), InkCanvas.GetTop(resizeZone)), new Size(resizeZone.Width, resizeZone.Height));
 
-            if (position != null)
-            {
-                this.Dispatcher.adopt(() =>
-                {
-                    if (position.X > ActualWidth - 20)
-                    {
-                        Width = ActualWidth + 10;
-                    }
-    
-                    if (position.Y > ActualHeight - 20)
-                    {
-                        Height = ActualHeight + 10;
-                    }
-                });
-            }
+            if (resizeRect.Contains(position))
+                resizeZone.Fill = debugInRange;
+            else
+                resizeZone.Fill = debugOutOfRange;
+        }
+
+        private static Brush debugOutOfRange = new SolidColorBrush(new Color{ R = 255, B = 170, G = 200, A = 80});
+        private static Brush debugInRange = new SolidColorBrush(new Color { R = 255, B = 170, G = 200, A = 200});
+        private const int debugResizeWidth = 10;
+        private const int debugResizeBuffer = 50;
+        private void InitResizeDebugHelper()
+        {
+            if (me == Globals.PROJECTOR) return;
+
+            resizeZone.Fill = debugOutOfRange;
+            resizeZone.Height = ActualHeight;
+            resizeZone.Width = debugResizeWidth;
+
+            if (!MyWork.Children.Contains(resizeZone))
+                MyWork.Children.Add(resizeZone);
+            InkCanvas.SetLeft(resizeZone, MyWork.ActualWidth - resizeZone.Width);
+            InkCanvas.SetTop(resizeZone, 0);
+        }
+
+        private void resizeDebugHelper(object sender, SizeChangedEventArgs e)
+        {
+            if (me == Globals.PROJECTOR) return;
+
+            if (!MyWork.Children.Contains(resizeZone))
+                MyWork.Children.Add(resizeZone);
+            InkCanvas.SetLeft(resizeZone, MyWork.ActualWidth - resizeZone.Width);
+            InkCanvas.SetTop(resizeZone, 0);
         }
 
         private void ResizeOnMove(Point position)
         {
-            resizeTimer.Tag = position;
-            if (!resizeTimer.Enabled)
+            if (me == Globals.PROJECTOR) return;
+
+            Rect resizeRect = new Rect(new Point(InkCanvas.GetLeft(resizeZone), InkCanvas.GetTop(resizeZone)), new Size(resizeZone.Width, resizeZone.Height));
+
+            if (resizeRect.Contains(position))
             {
-                resizeTimer.Start();
+                if (Double.IsNaN(Width))
+                    Width = ActualWidth;
+                var extendRight = new DoubleAnimation();
+                extendRight.To = ActualWidth + debugResizeWidth + debugResizeBuffer;
+                extendRight.DecelerationRatio = 0.6;
+                extendRight.Duration = TimeSpan.FromMilliseconds(500);
+                BeginAnimation(WidthProperty, extendRight);
             }
+        }
+
+        private void MouseOrStylusLeave(object sender, Point position)
+        {
+            ResizeZoneHighlightOnOver(position);
         }
 
         private void stylusMove(object sender, StylusEventArgs e)
         {
             GlobalTimers.resetSyncTimer();
 
-            //ResizeOnMove(e.GetPosition(this));
+            ResizeZoneHighlightOnOver(e.GetPosition(this));
+            ResizeOnMove(e.GetPosition(this));
         }
         private void mouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 GlobalTimers.resetSyncTimer();
-
-                //ResizeOnMove(e.GetPosition(this));
+                ResizeOnMove(e.GetPosition(this));
             }
+            ResizeZoneHighlightOnOver(e.GetPosition(this));
         }
 
         private void canExecute(object sender, CanExecuteRoutedEventArgs e)
