@@ -16,7 +16,7 @@ namespace Functional
             metlWindow = MeTL.GetMainWindow();
         }
 
-        private void WaitForSearchTextboxEnabled()
+        private void WaitForSearchScreen()
         {
             var control = new UITestHelper(metlWindow);
             control.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_TEXTBOX));
@@ -25,6 +25,15 @@ namespace Functional
             Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
         }
         
+        private void WaitForLoginError()
+        {
+            var control = new UITestHelper(metlWindow);
+            control.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_LOGIN_ERROR_LABEL));
+
+            var success = control.WaitForControlExist();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+        }
+
         [TestMethod]
         public void LoginWithValidCredentials()
         {
@@ -35,7 +44,18 @@ namespace Functional
             var loginScreen = new Login(metlWindow.AutomationElement).username(user).password(pass);
             loginScreen.submit();
 
-            WaitForSearchTextboxEnabled();
+            WaitForSearchScreen();
+        }
+
+        [TestMethod]
+        public void LoginWithInvalidCredentials()
+        {
+            var user = "lsdflkjsdf";
+            var pass = "lksadflkj";
+
+            var loginScreen = new Login(metlWindow.AutomationElement).username(user).password(pass);
+
+            WaitForLoginError();
         }
 
         [TestMethod]
@@ -48,7 +68,7 @@ namespace Functional
             var loginScreen = new Login(metlWindow.AutomationElement).username(user).password(pass);
             loginScreen.remember().submit();
 
-            WaitForSearchTextboxEnabled();
+            WaitForSearchScreen();
         }
 
         [TestMethod]
@@ -60,7 +80,7 @@ namespace Functional
             var success = loggingIn.WaitForControlExist();
             Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
 
-            WaitForSearchTextboxEnabled();
+            WaitForSearchScreen();
         }
     }
 }

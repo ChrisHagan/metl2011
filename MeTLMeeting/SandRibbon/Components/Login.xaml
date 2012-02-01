@@ -102,7 +102,7 @@
                                                      utility:PasswordBoxBinder.BindPassword="true" utility:PasswordBoxBinder.BoundPassword="{Binding Path=Password, 
                                                      Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
                                                      PasswordChanged="hideLoginErrors"/>
-                                        <Label Name="loginErrors" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,5,0,5" Background="PapayaWhip"
+                                        <Label x:Name="loginErrors" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5,5,0,5" Background="PapayaWhip"
                                                 Content="Your log on attempt failed. Please try again." BorderBrush="Red" BorderThickness="1" Foreground="Red" 
                                                 Visibility="Collapsed" HorizontalAlignment="Right"/>
                                     </Grid>
