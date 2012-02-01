@@ -80,8 +80,8 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <!-- Configuration specific settings -->
-    <AssemblyName>MeTL Presenter</AssemblyName>
-    <ProductName>MeTL Presenter</ProductName>
+    <AssemblyName>MeTL</AssemblyName>
+    <ProductName>MeTL</ProductName>
     <InstallUrl>http://metl.adm.monash.edu.au/MeTL2011/</InstallUrl>
     <UpdateUrl>http://metl.adm.monash.edu.au/MeTL2011/</UpdateUrl>
   </PropertyGroup>
@@ -1132,7 +1132,7 @@
       <AssemblyInfoFiles Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Debug' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Staging" AssemblyDescription="MeTL Staging" AssemblyProduct="MeTL Staging" />
-    <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Release' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Presenter" AssemblyDescription="MeTL Presenter" AssemblyProduct="MeTL Presenter" />
+    <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Release' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL" AssemblyDescription="MeTL" AssemblyProduct="MeTL" />
   </Target>
   <Target Name="AfterBuild">
     <Copy SourceFiles="..\$(WebPage)" DestinationFolder="Publish" />
