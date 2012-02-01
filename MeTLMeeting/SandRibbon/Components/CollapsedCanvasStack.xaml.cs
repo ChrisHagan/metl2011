@@ -2206,6 +2206,7 @@ namespace SandRibbon.Components
                     box = setWidthOf(box);
                     sendTextWithoutHistory(box, box.tag().privacy);
                     box.TextChanged += SendNewText;
+                    myTextBox = null;
                 }
                 else
                 {
@@ -2261,11 +2262,13 @@ namespace SandRibbon.Components
             if (Clipboard.ContainsData(MeTLClipboardData.Type))
             {
                 var data = (MeTLClipboardData) Clipboard.GetData(MeTLClipboardData.Type);
+                var currentChecksums = MyWork.Strokes.Select(s => s.sum().checksum);
+                var ink = data.Ink.Where(s => !currentChecksums.Contains(s.sum().checksum));
                 var boxes = createPastedBoxes(data.Text.ToList());
                 Action undo = () =>
                                   {
                                       ClearAdorners();
-                                      HandleInkPasteUndo(data.Ink.ToList());
+                                      HandleInkPasteUndo(ink.ToList());
                                       HandleImagePasteUndo(data.Images.ToList());
                                       HandleTextPasteUndo(boxes, currentBox);
                                       AddAdorners();
@@ -2273,7 +2276,7 @@ namespace SandRibbon.Components
                 Action redo = () =>
                                   {
                                       ClearAdorners();
-                                      HandleInkPasteRedo(data.Ink.ToList());
+                                      HandleInkPasteRedo(ink.ToList());
                                       HandleImagePasteRedo(data.Images.ToList());
                                       HandleTextPasteRedo(boxes, currentBox);
                                       AddAdorners();

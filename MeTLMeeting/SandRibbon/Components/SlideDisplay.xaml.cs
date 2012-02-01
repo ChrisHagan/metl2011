@@ -100,6 +100,7 @@ namespace SandRibbon.Components
             var paste = new CompositeCommand();
             paste.RegisterCommand(new DelegateCommand<object>(HandlePaste));
             slides.InputBindings.Add(new KeyBinding(paste, Key.V, ModifierKeys.Control));
+            InputBindings.Add(new KeyBinding(paste, Key.V, ModifierKeys.Control));
         }
 
         private void HandlePaste(object obj)
