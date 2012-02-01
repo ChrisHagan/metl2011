@@ -221,7 +221,7 @@ namespace SandRibbon.Components
         }
         private void keyPressed(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && myTextBox == null)
+            if (e.Key == Key.Delete  && (MyWork.GetSelectedElements().Count > 0 || MyWork.GetSelectedStrokes().Count >0))//&& myTextBox == null)
                 deleteSelectedElements(null, null);
             if (e.Key == Key.PageUp || (e.Key == Key.Up && myTextBox == null))
             {
