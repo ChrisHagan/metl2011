@@ -41,5 +41,5 @@ GOTO :EOF
 :ERROR
 echo BuildScript Help v0.1b
 echo.
-echo %0 [version number] [nopublish]
+echo %0 [version number] [nopublish] [noremote]
 echo.
