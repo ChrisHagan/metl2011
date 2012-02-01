@@ -26,13 +26,22 @@ namespace Functional
             workingDirectory = currentDirectory.Remove(currentDirectory.IndexOf(baseDirectory) + baseDirectory.Length) + @"\SandRibbon\bin\Debug";
         }
 
+        public static UITestHelper GetEnabledMainWindow()
+        {
+            var metlWindow = GetMainWindow();
+
+            var success = metlWindow.WaitForControlEnabled();
+            Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
+
+            return metlWindow;
+        }
+
         public static UITestHelper GetMainWindow()
         {
             var metlWindow = new UITestHelper();
             metlWindow.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
 
-            var success = metlWindow.WaitForControlEnabled();
-            Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
+            metlWindow.Find();
 
             return metlWindow;
         }
@@ -54,7 +63,7 @@ namespace Functional
             metlProcess.StartInfo.UseShellExecute = false;
             metlProcess.StartInfo.LoadUserProfile = true;
             metlProcess.StartInfo.WorkingDirectory = workingDirectory;
-            metlProcess.StartInfo.FileName = workingDirectory + @"\MeTL Presenter.exe";
+            metlProcess.StartInfo.FileName = workingDirectory + @"\MeTL Staging.exe";
             metlProcess.Start();
 
             int waitTime = 0;
@@ -71,7 +80,16 @@ namespace Functional
 
             try
             {
-                metlWindow = AutomationElement.FromHandle(metlProcess.MainWindowHandle);
+                while (metlWindow == null)
+                {
+                    metlWindow = AutomationElement.RootElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
+
+                    if (waitTime > MAX_WAIT_TIME)
+                        Assert.Fail(ErrorMessages.UNABLE_TO_FIND_EXECUTABLE);
+    
+                    Thread.Sleep(WAIT_INCREMENT);
+                    waitTime += WAIT_INCREMENT;
+                }
             }
             catch (ElementNotAvailableException)
             {

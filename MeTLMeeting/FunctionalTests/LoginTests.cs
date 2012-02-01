@@ -28,9 +28,9 @@ namespace Functional
         [TestMethod]
         public void LoginWithValidCredentials()
         {
-            // TODO: This needs to be data-driven, and not using personal details 
-            var user = "jpjor1";
-            var pass = "h3lp1nh4nd";
+            // TODO: This needs to be data-driven
+            var user = "eecrole";
+            var pass = "cleareight6";
 
             var loginScreen = new Login(metlWindow.AutomationElement).username(user).password(pass);
             loginScreen.submit();
@@ -39,11 +39,14 @@ namespace Functional
         }
 
         [TestMethod]
+          
+
+        [TestMethod]
         public void LoginAndSaveCredentials()
         {
-            // TODO: This needs to be data-driven, and not using personal details 
-            var user = "jpjor1";
-            var pass = "h3lp1nh4nd";
+            // TODO: This needs to be data-driven
+            var user = "eecrole";
+            var pass = "cleareight6";
 
             var loginScreen = new Login(metlWindow.AutomationElement).username(user).password(pass);
             loginScreen.remember().submit();
