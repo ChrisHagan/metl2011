@@ -482,13 +482,16 @@ namespace SandRibbon.Components
             imageX = Clamp(e.NewRectangle.X, 0, e.NewRectangle.X);
             imageY = Clamp(e.NewRectangle.Y, 0, e.NewRectangle.Y);
 
-            // ensure image is being resized uniformly
+            // ensure image is being resized uniformly maintaining aspect ratio
+            var aspectRatio = e.OldRectangle.Width / e.OldRectangle.Height;
             if (e.NewRectangle.Width != e.OldRectangle.Width)
-                resizeHeight = resizeWidth;
+            {
+                resizeHeight = resizeWidth / aspectRatio;
+            }
             else if (e.NewRectangle.Height != e.OldRectangle.Height)
-                resizeWidth = resizeHeight;
+                resizeWidth = resizeHeight * aspectRatio;
             else
-                resizeWidth = resizeHeight;
+                resizeWidth = resizeHeight * aspectRatio;
 
             e.NewRectangle = new Rect(imageX, imageY, resizeWidth, resizeHeight);
         }
@@ -525,7 +528,6 @@ namespace SandRibbon.Components
                 };
             Action redo = () =>
                 {
-                    //var selection = new List<UIElement>();
                     var mySelectedImages = selectedElements.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
                     foreach (var element in startingElements)
                     {
@@ -535,7 +537,6 @@ namespace SandRibbon.Components
                     }
                     foreach (var element in mySelectedImages)
                     { 
-                        //selection.Add(element);
                         if (MyWork.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
                         {
                            MyWork.Children.Add(element);
