@@ -39,9 +39,6 @@ namespace Functional
         }
 
         [TestMethod]
-          
-
-        [TestMethod]
         public void LoginAndSaveCredentials()
         {
             // TODO: This needs to be data-driven

@@ -107,14 +107,12 @@ namespace SandRibbon.Components
             MyWork.SelectionMoved += SelectionMovedOrResized;
             MyWork.SelectionResizing += SelectionMovingOrResizing;
             MyWork.SelectionResized += SelectionMovedOrResized;
-            MyWork.SizeChanged += resizeDebugHelper;
             MyWork.AllowDrop = true;
             MyWork.PreviewMouseLeftButtonUp += new MouseButtonEventHandler(MyWork_PreviewMouseLeftButtonUp);
             MyWork.Drop += ImagesDrop;
             Loaded += (a, b) =>
             {
                 MouseUp += (c, args) => placeCursor(this, args);
-                InitResizeDebugHelper();
             };
         }
 
@@ -178,8 +176,6 @@ namespace SandRibbon.Components
             clipboardManager.RegisterHandler(ClipboardAction.Copy, OnClipboardCopy, CanHandleClipboardCopy);
             MyWork.MouseMove += mouseMove;
             MyWork.StylusMove += stylusMove;
-            MyWork.MouseLeave += (sender, args) => MouseOrStylusLeave(sender, args.GetPosition(this));
-            MyWork.StylusLeave += (sender, args) => MouseOrStylusLeave(sender, args.GetPosition(this));
         }
 
         private void JoinConversation()
@@ -191,45 +187,10 @@ namespace SandRibbon.Components
             }
         }
 
-        private void ResizeZoneHighlightOnOver(Point position)
-        private static Brush debugInRange = new SolidColorBrush(new Color { R = 255, B = 170, G = 200, A = 200});
-        private const int debugResizeWidth = 10;
-        private const int debugResizeBuffer = 50;
-        private void InitResizeDebugHelper()
-            resizeZone.Height = ActualHeight;
-            resizeZone.Width = debugResizeWidth;
-
-            if (!MyWork.Children.Contains(resizeZone))
-                MyWork.Children.Add(resizeZone);
-            InkCanvas.SetLeft(resizeZone, MyWork.ActualWidth - resizeZone.Width);
-            InkCanvas.SetTop(resizeZone, 0);
-
-        private void resizeDebugHelper(object sender, SizeChangedEventArgs e)
-        {
-            if (me == Globals.PROJECTOR) return;
-
-            if (!MyWork.Children.Contains(resizeZone))
-                MyWork.Children.Add(resizeZone);
-            InkCanvas.SetLeft(resizeZone, MyWork.ActualWidth - resizeZone.Width);
-            InkCanvas.SetTop(resizeZone, 0);
-            Rect resizeRect = new Rect(new Point(InkCanvas.GetLeft(resizeZone), InkCanvas.GetTop(resizeZone)), new Size(resizeZone.Width, resizeZone.Height));
-
-            if (resizeRect.Contains(position))
-                    Width = ActualWidth;
-                var extendRight = new DoubleAnimation();
-                extendRight.To = ActualWidth + debugResizeWidth + debugResizeBuffer;
-                extendRight.DecelerationRatio = 0.6;
-                extendRight.Duration = TimeSpan.FromMilliseconds(500);
-                BeginAnimation(WidthProperty, extendRight);
-        private void MouseOrStylusLeave(object sender, Point position)
-        {
-            ResizeZoneHighlightOnOver(position);
-        }
 
         private void stylusMove(object sender, StylusEventArgs e)
         {
             GlobalTimers.resetSyncTimer();
-            ResizeOnMove(e.GetPosition(this));
         }
 
         private void mouseMove(object sender, MouseEventArgs e)
@@ -238,7 +199,6 @@ namespace SandRibbon.Components
             {
                 GlobalTimers.resetSyncTimer();
             }
-            ResizeZoneHighlightOnOver(e.GetPosition(this));
         }
 
         private void canExecute(object sender, CanExecuteRoutedEventArgs e)
