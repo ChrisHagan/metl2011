@@ -66,6 +66,15 @@ namespace Functional
         public void SwitchToSearchMyConversations()
         {
             new ApplicationPopup(metlWindow.AutomationElement).SearchMyConversation();
+
+            var filter = new UITestHelper(metlWindow);
+            filter.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "searchConversations"));
+
+            var success = filter.WaitForControlVisible();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
+            var filterButton = filter.AutomationElement;
+            Assert.AreEqual("Filter my Conversations", filterButton.Current.Name, ErrorMessages.EXPECTED_CONTENT);
         }
     }
 }
