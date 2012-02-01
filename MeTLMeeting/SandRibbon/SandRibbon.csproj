@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <!-- set up the path for the msbuild extension pack -->
-	<MSBuildExtensionsPath>..\..\MSBuildExtensions\</MSBuildExtensionsPath>
+    <MSBuildExtensionsPath>..\..\MSBuildExtensions\</MSBuildExtensionsPath>
     <TPath>$(MSBuildExtensionsPath)\ExtensionPack\MSBuild.ExtensionPack.tasks</TPath>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -35,7 +35,7 @@
     <UpgradeBackupLocation />
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
-	<PublishDir>publish\</PublishDir>
+    <PublishDir>publish\</PublishDir>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -578,6 +578,7 @@
     <Compile Include="Components\UserOptionsDialog.xaml.cs">
       <DependentUpon>UserOptionsDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Utility\CanvasExtensions.cs" />
     <Compile Include="Components\Utility\DragDrop\DataSource.cs" />
     <Compile Include="Components\Utility\DragDrop\DragDropHelper.cs" />
     <Compile Include="Components\Utility\DragDrop\DraggedAdorner.cs" />
@@ -1135,8 +1136,8 @@
     <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Release' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Presenter" AssemblyDescription="MeTL Presenter" AssemblyProduct="MeTL Presenter" />
   </Target>
   <Target Name="AfterBuild">
-	  <Copy SourceFiles="..\$(WebPage)" DestinationFolder="Publish" />
-	  <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="Publish" Files="$(WebPage)"/>
+    <Copy SourceFiles="..\$(WebPage)" DestinationFolder="Publish" />
+    <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="Publish" Files="$(WebPage)" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>

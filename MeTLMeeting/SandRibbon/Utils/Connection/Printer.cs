@@ -9,6 +9,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using SandRibbon.Components;
+using SandRibbon.Components.Utility;
 using PrintDialog = System.Windows.Controls.PrintDialog;
 using MeTLLib.DataTypes;
 using MeTLLib;

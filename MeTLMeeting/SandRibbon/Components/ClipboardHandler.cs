@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Ink;
+using System.Windows.Media.Imaging;
+using System.Xml.Linq;
+using MeTLLib.DataTypes;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components
 {
@@ -51,5 +57,102 @@ namespace SandRibbon.Components
                     handler.ClipboardAction();
             }
         }
+    }
+    [Serializable()]
+    public class MeTLClipboardData
+    {
+        private IEnumerable<byte[]> _imagesAsBytes;
+        public IEnumerable<String> _InkAsString;
+        public static string Type = "MeTLClipboardData";
+        public MeTLClipboardData(IEnumerable<string> text, IEnumerable<BitmapSource> images, List<Stroke> ink)
+        {
+            Text = text;
+            Images = images;
+            Ink = ink;
+        }
+
+        public IEnumerable<String> Text;
+        public IEnumerable<BitmapSource> Images
+        {
+            get { 
+                var images = new List<BitmapSource>();
+                foreach(var bytes in _imagesAsBytes)
+                {
+                    var image = new BitmapImage();
+                    var stream = new MemoryStream(bytes);
+                    image.BeginInit();
+                    image.StreamSource = stream;
+                    image.EndInit();
+                    image.Freeze();
+                    images.Add(image);
+                }
+                return images;
+            }
+            set
+            {
+                var bytes = new List<byte[]>();
+                foreach (var image in value)
+                {
+                    MemoryStream memStream = new MemoryStream();              
+                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create((BitmapSource)image));
+                    encoder.Save(memStream);
+                    bytes.Add(memStream.GetBuffer());
+                    
+                }
+                _imagesAsBytes =bytes;
+            }
+        }
+        
+        private string pointsTag = "points";
+        private string colorTag = "color";
+        private string thicknessTag = "thickness";
+        private string highlighterTag = "highlight";
+        private string sumTag = "checksum";
+        private string startingSumTag = "startingSum";
+        public static readonly string privacyTag = "privacy";
+        public static readonly string authorTag = "author";
+        private string metl_ns = "{monash:metl}";
+        public List<Stroke> Ink
+        {
+          get
+          {
+              var strokes = new List<Stroke>();
+              foreach (var xmlStrokeString in _InkAsString)
+              {
+                  var XmlStroke = XElement.Parse(xmlStrokeString);
+                  var stroke = new Stroke(MeTLStanzas.Ink.stringToPoints(XmlStroke.Element(metl_ns + pointsTag).Value), new DrawingAttributes {Color = MeTLStanzas.Ink.stringToColor(XmlStroke.Element(metl_ns + colorTag).Value)})
+                                   {
+                                       DrawingAttributes =
+                                           {
+                                               IsHighlighter = Boolean.Parse(XmlStroke.Element(metl_ns + highlighterTag).Value),
+                                               Width = Double.Parse(XmlStroke.Element(metl_ns + thicknessTag).Value),
+                                               Height = Double.Parse(XmlStroke.Element(metl_ns + thicknessTag).Value)
+                                           }
+                                   };
+                  stroke.AddPropertyData(stroke.sumId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value ));
+                  stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value));
+                  stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value));
+                  stroke.tag(new StrokeTag( XmlStroke.Element(metl_ns + authorTag).Value, XmlStroke.Element(metl_ns + privacyTag).Value, XmlStroke.Element(metl_ns + startingSumTag) == null ? stroke.sum().checksum : Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value), Boolean.Parse(XmlStroke.Element(metl_ns  + highlighterTag).Value)));
+                  strokes.Add(stroke);
+              }
+              return strokes;
+          }
+          set
+          {
+              var data = new List<string>();
+              foreach(var stroke in value)
+              {
+                  var xShift = stroke.StylusPoints.First().X;
+                  var yShift = stroke.StylusPoints.First().Y;
+                  var newStroke = stroke.Clone();
+                  newStroke.tag(new StrokeTag(newStroke.tag().author, newStroke.tag().privacy, newStroke.sum().checksum, newStroke.tag().isHighlighter));
+                  //this code will translate all strokes to a 0,0 starting point
+                  //newStroke.StylusPoints = new StylusPointCollection(stroke.StylusPoints.Select(p => new StylusPoint((p.X - xShift), (p.Y - yShift), p.PressureFactor)));
+                  data.Add(new MeTLStanzas.Ink(new TargettedStroke(Globals.slide,  newStroke.tag().author, "PresentationSpace", newStroke.tag().privacy,newStroke)).ToString());
+              }
+              _InkAsString = data;
+          }
+       }
     }
 }
