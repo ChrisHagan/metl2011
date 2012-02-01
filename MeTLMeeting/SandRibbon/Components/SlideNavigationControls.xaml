@@ -6,7 +6,7 @@ xmlns:quizzing="clr-namespace:SandRibbon.Quizzing"
     Height="{Binding ElementName=nav, Path=ActualHeight}"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Components="clr-namespace:SandRibbon.Components">
     <UserControl.InputBindings>
-        <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static api:Commands.ClipboardManager}" CommandParameter="{x:Static Components:ClipboardAction.Cut}"/>
+        <KeyBinding Key="V" Modifiers="Ctrl" Command="{x:Static api:Commands.ClipboardManager}" CommandParameter="{x:Static Components:ClipboardAction.Paste}"/>
     </UserControl.InputBindings>
         <Grid>
         <quizzing:GoldPlaque Height="Auto"/>

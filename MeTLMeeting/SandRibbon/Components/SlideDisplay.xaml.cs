@@ -97,15 +97,28 @@ namespace SandRibbon.Components
             Commands.UpdateNewSlideOrder.RegisterCommandToDispatcher(new DelegateCommand<int>(reorderSlides));
             Commands.LeaveLocation.RegisterCommand(new DelegateCommand<object>(resetLocationLocals));
             Display(Globals.conversationDetails);
+            var paste = new CompositeCommand();
+            paste.RegisterCommand(new DelegateCommand<object>(HandlePaste));
+            slides.InputBindings.Add(new KeyBinding(paste, Key.V, ModifierKeys.Control));
+        }
+
+        private void HandlePaste(object obj)
+        {
+            Commands.ClipboardManager.Execute(ClipboardAction.Paste);
         }
 
         private static void KeyPressed(object sender, KeyEventArgs e)
         {
             if((e.Key == Key.PageUp || e.Key == Key.Up) && Commands.MoveToPrevious.CanExecute(null))
+            {
                 Commands.MoveToPrevious.Execute(null);
+                e.Handled = true;
+            }
             if ((e.Key == Key.PageDown || e.Key == Key.Down)&& Commands.MoveToNext.CanExecute(null))
+            {
                 Commands.MoveToNext.Execute(null);
-            e.Handled = true;
+                e.Handled = true;
+            }
         }
         private void receivedStatus(TeacherStatus status)
         {
