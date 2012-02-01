@@ -19,7 +19,7 @@ namespace Functional
             {
                 new ApplicationPopup(window).Quit();
 
-                var control = new UITestHelper(window);
+                var control = new UITestHelper(UITestHelper.RootElement, window);
                 control.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
 
                 var success = control.WaitForControlNotExist();
@@ -34,7 +34,7 @@ namespace Functional
                 metlWindows = MeTL.GetAllMainWindows();
             Assert.IsTrue(metlWindows.Count == 1, ErrorMessages.EXPECTED_ONE_INSTANCE);
 
-            var metlWindow = new UITestHelper(metlWindows[0]);
+            var metlWindow = new UITestHelper(UITestHelper.RootElement, metlWindows[0]);
             metlWindow.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
             metlWindow.Find();
 
@@ -51,7 +51,7 @@ namespace Functional
                 metlWindows = MeTL.GetAllMainWindows();
             Assert.IsTrue(metlWindows.Count == 1, ErrorMessages.EXPECTED_ONE_INSTANCE);
 
-            var metlWindow = new UITestHelper(metlWindows[0]);
+            var metlWindow = new UITestHelper(UITestHelper.RootElement, metlWindows[0]);
             metlWindow.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
             metlWindow.Find();
 

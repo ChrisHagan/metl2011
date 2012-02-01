@@ -12,7 +12,7 @@ namespace Functional
         [TestMethod]
         public void StartOneInstance()
         {
-            var metl = new UITestHelper(MeTL.StartProcess());
+            var metl = new UITestHelper(UITestHelper.RootElement, MeTL.StartProcess());
             metl.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
 
             var success = metl.WaitForControlEnabled();
@@ -25,7 +25,7 @@ namespace Functional
             var propertyExpression = new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW);
             foreach (var i in Enumerable.Range(0,2))
             {
-                var metl = new UITestHelper(MeTL.StartProcess());
+                var metl = new UITestHelper(UITestHelper.RootElement, MeTL.StartProcess());
                 metl.SearchProperties.Add(propertyExpression);
 
                 var success = metl.WaitForControlEnabled();

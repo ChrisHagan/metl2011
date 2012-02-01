@@ -30,7 +30,7 @@ namespace Functional
             var control = new UITestHelper(metlWindow);
             control.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_LOGIN_ERROR_LABEL));
 
-            var success = control.WaitForControlExist();
+            var success = control.WaitForControlVisible();
             Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
         }
 
@@ -54,6 +54,7 @@ namespace Functional
             var pass = "lksadflkj";
 
             var loginScreen = new Login(metlWindow.AutomationElement).username(user).password(pass);
+            loginScreen.submit();
 
             WaitForLoginError();
         }

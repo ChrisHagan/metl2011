@@ -9,6 +9,8 @@ namespace UITestFramework
     public class UITestHelper
     {
         public delegate bool WaitCondition(AutomationElement element);
+
+        public static UITestHelper RootElement = new UITestHelper();
         
         private const int sleepIncrement = 100;
         private const int defaultTimeout = 30 * 1000;
@@ -19,25 +21,47 @@ namespace UITestFramework
         #region Constructors
         public UITestHelper()
         {
-            parentElement = AutomationElement.RootElement;
+            matchingElement = parentElement = AutomationElement.RootElement;
         }
+        
+        public UITestHelper(AutomationElement parent, AutomationElement child) : this(parent)
+        {
+            matchingElement = child; 
+        }
+
+        public UITestHelper(UITestHelper parent, AutomationElement child) : this(parent)
+        {
+            matchingElement = child;
+        }
+
         public UITestHelper(AutomationElement parent)
         {
             if (parent == null)
-                throw new ArgumentNullException();
+                parent = AutomationElement.RootElement;
 
-            matchingElement = parentElement = parent;
+            parentElement = parent;
         }
+
         public UITestHelper(UITestHelper parent)
         {
             if (parent == null)
-                throw new ArgumentNullException();
+                parent = new UITestHelper(AutomationElement.RootElement);
 
-            matchingElement = parentElement = parent.AutomationElement;
+            parentElement = parent.AutomationElement;
         }
         #endregion
 
         #region Helpers
+        private static WaitCondition elementIsValid = (uiControl) =>
+        {
+            return ElementIsCurrent(uiControl);
+        };
+
+        private static WaitCondition elementIsInvalid = (uiControl) =>
+        {
+            return !ElementIsCurrent(uiControl);
+        };
+
         private TreeScope DetermineScopeFromParent()
         {
             return parentElement.Equals(AutomationElement.RootElement) ? TreeScope.Children : TreeScope.Element | TreeScope.Descendants;
@@ -69,16 +93,28 @@ namespace UITestFramework
                 Find(); 
             else
             {
-                try
-                {
-                    var processId = matchingElement.Current.ProcessId;
-                }
-                catch (ElementNotAvailableException)
-                {
+                if (!ElementIsCurrent(matchingElement))
                     Find();
-                }
             }
         }
+
+        private static bool ElementIsCurrent(AutomationElement element)
+        {
+            bool current = true;
+            try
+            {
+                // find out whether the element is available by trying to retrieve a current property
+                // hacky but works. it would be preferable if there was a specific property on the AutomationElement to check
+                var unused = element != null ? element.GetCurrentPropertyValue(AutomationElement.IsEnabledProperty, true) : null;
+            }
+            catch (ElementNotAvailableException)
+            {
+                current = false;
+            }
+
+            return element != null && current;
+        }
+
         #endregion // Helpers
 
         public void Find()
@@ -111,7 +147,7 @@ namespace UITestFramework
                 return false;
             }
 
-            return returnCondition(uiControl);
+            return returnCondition(uiControl) && totalTime < defaultTimeout;
         }
 
         /// returns true if control is enabled before time-out; otherwise, false.
@@ -122,12 +158,18 @@ namespace UITestFramework
                 return !(uiControl != null && (bool)uiControl.GetCurrentPropertyValue(AutomationElement.IsEnabledProperty) == true);
             };
 
-            WaitCondition returnCondition = (uiControl) =>
+            return WaitForControl(loopCondition, elementIsValid);
+        }
+
+        /// returns true if control is completely visible ie. entirely scrolled into view; otherwise, false.
+        public bool WaitForControlVisible()
+        {
+            WaitCondition loopCondition = (uiControl) =>
             {
-                return uiControl != null;
+                return !(uiControl != null && (bool)uiControl.GetCurrentPropertyValue(AutomationElement.IsOffscreenProperty) == false);
             };
 
-            return WaitForControl(loopCondition, returnCondition);
+            return WaitForControl(loopCondition, elementIsValid);
         }
 
         /// returns true if control is not found before time-out; otherwise, false.
@@ -135,15 +177,10 @@ namespace UITestFramework
         {
             WaitCondition loopCondition = (uiControl) =>
             {
-                return uiControl != null;                
+                return ElementIsCurrent(uiControl);                
             };
 
-            WaitCondition returnCondition = (uiControl) =>
-            {
-                return uiControl == null;
-            };
-
-            return WaitForControl(loopCondition, returnCondition); 
+            return WaitForControl(loopCondition, elementIsInvalid); 
         }
 
         /// <summary>
@@ -156,12 +193,7 @@ namespace UITestFramework
                 return uiControl == null;
             };
 
-            WaitCondition returnCondition = (uiControl) =>
-            {
-                return uiControl != null;
-            };
-
-            return WaitForControl(loopCondition, returnCondition);
+            return WaitForControl(loopCondition, elementIsValid);
         }
 
         /// <summary>
@@ -169,12 +201,7 @@ namespace UITestFramework
         /// </summary>
         public bool WaitForControlCondition(WaitCondition condition)
         {
-            WaitCondition returnCondition = (uiControl) =>
-            {
-                return uiControl != null;
-            };
-            
-            return WaitForControl(condition, returnCondition);
+            return WaitForControl(condition, elementIsValid);
         }
         #endregion
 
@@ -201,8 +228,7 @@ namespace UITestFramework
 
                 return null;
             }
-
-            set
+            private set
             {
                 matchingElement = value;
             }
@@ -214,7 +240,6 @@ namespace UITestFramework
             {
                 return AutomationElement.Value();
             }
-
             set
             {
                 AutomationElement.Value(value);
