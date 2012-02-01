@@ -34,8 +34,8 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <TargetFrameworkProfile />
-    <PublishUrl>publish\</PublishUrl>
     <PublishDir>publish\</PublishDir>
+    <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -563,7 +563,6 @@
     <Compile Include="Components\ClipboardHandler.cs" />
     <Compile Include="Components\CollapsedCanvasStack.xaml.cs">
       <DependentUpon>CollapsedCanvasStack.xaml</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\colorCodedUsers.xaml.cs">
       <DependentUpon>colorCodedUsers.xaml</DependentUpon>

@@ -26,14 +26,14 @@ namespace UITestFramework
             if (parent == null)
                 throw new ArgumentNullException();
 
-            parentElement = parent;
+            matchingElement = parentElement = parent;
         }
         public UITestHelper(UITestHelper parent)
         {
             if (parent == null)
                 throw new ArgumentNullException();
 
-            parentElement = parent.AutomationElement;
+            matchingElement = parentElement = parent.AutomationElement;
         }
         #endregion
 
@@ -62,7 +62,24 @@ namespace UITestFramework
 
             return properties;
         }
-        #endregion
+
+        private void DetermineMatchingElement()
+        {
+            if (matchingElement == null)
+                Find(); 
+            else
+            {
+                try
+                {
+                    var processId = matchingElement.Current.ProcessId;
+                }
+                catch (ElementNotAvailableException)
+                {
+                    Find();
+                }
+            }
+        }
+        #endregion // Helpers
 
         public void Find()
         {
@@ -81,7 +98,7 @@ namespace UITestFramework
             {
                 do
                 {
-                    Find();
+                    DetermineMatchingElement();
                     uiControl = matchingElement;
 
                     totalTime += sleepIncrement;

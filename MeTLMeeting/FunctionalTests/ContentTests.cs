@@ -13,11 +13,12 @@ namespace Functional
         public void Setup()
         {
             var control = new UITestHelper();
-            var success = control.WaitForControlEnabled(Constants.ID_METL_MAIN_WINDOW);
+            var success = control.WaitForControlEnabled();
             Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
 
-            if (metlWindow == null)
+            /*if (metlWindow == null)
                 metlWindow = MeTL.GetMainWindow();
+            */
 
             Assert.IsNotNull(metlWindow, ErrorMessages.EXPECTED_MAIN_WINDOW); 
         }
