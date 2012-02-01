@@ -2194,7 +2194,7 @@ namespace SandRibbon.Components
         {
             foreach (var textBox in selectedText)
             {
-                if (currentBox!= null)
+                if (currentBox!= null )
                 {
                     var caret = currentBox.CaretIndex;
                     var redoText = currentBox.Text.Insert(currentBox.CaretIndex, textBox.Text);
@@ -2368,11 +2368,18 @@ namespace SandRibbon.Components
                 var text = currentTextBox.Text;
                 var start = currentTextBox.SelectionStart;
                 var length = currentTextBox.SelectionLength;
-                var activeTextbox = ((MeTLTextBox) MyWork.TextChildren().ToList().Where( c => ((MeTLTextBox) c).tag().id == currentTextBox.tag().id). FirstOrDefault());
+                if(!MyWork.TextChildren().Select(t => ((MeTLTextBox)t).tag().id).Contains(currentTextBox.tag().id))
+                {
+                    var box = applyDefaultAttributes(currentTextBox);
+                    box.tag(new TextTag(box.tag().author, box.tag().privacy, generateId()));
+                    MyWork.Children.Add(box);
+
+                }
+                var activeTextbox = ((MeTLTextBox) MyWork.TextChildren().ToList().FirstOrDefault(c => ((MeTLTextBox) c).tag().id == currentTextBox.tag().id));
                 activeTextbox.Text = text;
                 activeTextbox.CaretIndex = start + length;
-                if (!alreadyHaveThisTextBox(activeTextbox))
-                     sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);
+                sendTextWithoutHistory(currentTextBox, currentTextBox.tag().privacy);   
+              
             }
             else
             {
