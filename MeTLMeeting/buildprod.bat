@@ -1,4 +1,4 @@
-@echo off
+REM @echo off
 echo **********************************
 echo * MeTL Production BuildScript
 echo **********************************

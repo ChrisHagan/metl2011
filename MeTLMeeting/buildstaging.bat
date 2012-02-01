@@ -11,7 +11,12 @@ echo.
 echo Grabbing latest from source control
 echo.
 
+IF /I "%3"=="noremote" GOTO UPDATE ELSE GOTO PULL
+
+:PULL
 hg pull
+
+:UPDATE
 hg update -C
 
 echo Building...
