@@ -107,8 +107,10 @@ namespace UITestFramework
                 // hacky but works. it would be preferable if there was a specific property on the AutomationElement to check
                 var unused = element != null ? element.GetCurrentPropertyValue(AutomationElement.IsEnabledProperty, true) : null;
             }
-            catch (ElementNotAvailableException)
+            // used to be ElementNotAvailableException but depending on the lifecycle of the element it may throw a different exception
+            catch (Exception) 
             {
+                // handle ElementNotAvailableException, InvalidOperationException, COMException separately?
                 current = false;
             }
 
