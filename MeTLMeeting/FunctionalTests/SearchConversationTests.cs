@@ -21,7 +21,7 @@ namespace Functional
         {
             var search = new ConversationSearcher(metlWindow.AutomationElement);
 
-            search.searchField("TEST_FindAndJoinConversationOwned");
+            search.searchField("CITestSearchTests");
             search.Search();
 
             var results = new UITestHelper(metlWindow);
@@ -29,7 +29,7 @@ namespace Functional
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
-            search.JoinFirstFound();
+            search.JoinQueried("CITestSearchTests");
         }
 
         [TestMethod]

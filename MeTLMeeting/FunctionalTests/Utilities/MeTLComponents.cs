@@ -584,6 +584,35 @@ namespace Functional
             
             return this;
         }
+        public ConversationSearcher JoinQueried(string query)
+        {
+            _searchResults = _parent.Descendant("SearchResults");
+            var buttons = _searchResults.Descendants(typeof(Button));
+
+            if (buttons.Count <= 1)
+                Assert.Fail(ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
+
+            var success = false;
+            foreach (AutomationElement button in buttons)
+            {
+                var conversation = button.WalkAllElements(query);
+                if (conversation != null)
+                {
+                    success = true;
+                    button.Invoke();
+                    break;
+                }
+            }
+
+            Assert.IsTrue(success, ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
+
+            // wait until we've finished joining the conversation before returning
+            var canvas = new UITestHelper(_parent);
+            canvas.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_USER_CANVAS_STACK));
+            canvas.WaitForControlEnabled();
+            
+            return this;
+        }
         public ConversationSearcher GetResults()
         {
             _searchResults = _parent.Descendant("SearchResults");
