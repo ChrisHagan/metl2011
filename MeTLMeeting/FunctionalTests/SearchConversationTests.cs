@@ -21,7 +21,7 @@ namespace Functional
         {
             var search = new ConversationSearcher(metlWindow.AutomationElement);
 
-            search.searchField("CITestSearchTests");
+            search.searchField("CITestSearchTestsOwner");
             search.Search();
 
             var results = new UITestHelper(metlWindow);
@@ -29,7 +29,7 @@ namespace Functional
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
-            search.JoinQueried("CITestSearchTests");
+            search.JoinQueried("CITestSearchTestsOwner");
         }
 
         [TestMethod]
@@ -37,7 +37,7 @@ namespace Functional
         {
             var search = new ConversationSearcher(metlWindow.AutomationElement);
 
-            search.searchField("TEST_FindAndJoinConversationNotOwned");
+            search.searchField("CITestSearchTestsNonOwner");
             search.Search();
 
             var results = new UITestHelper(metlWindow);
@@ -45,7 +45,7 @@ namespace Functional
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
-            search.JoinFirstFound();
+            search.JoinQueried("CITestSearchTestsNonOwner");
         }
 
         [TestMethod]
