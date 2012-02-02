@@ -89,7 +89,7 @@ namespace SandRibbon.Quizzing
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
             var newQuiz = new QuizQuestion(question.id, question.created, question.title, question.author,
-                                           question.question, question.options) {url = "none"};
+                                           question.question, question.options) {url = question.url};
             var editQuiz = new EditQuiz(newQuiz);
             editQuiz.Owner = Window.GetWindow(this);
             editQuiz.ShowDialog();

@@ -159,6 +159,7 @@ namespace MeTLLib.DataTypes
         {
             var quizQuestion = new QuizQuestion(id, title, author, question, new List<Option>());
             quizQuestion._deleted = _deleted;
+            quizQuestion.url = url;
             foreach (var option in options)
             {
                 quizQuestion.options.Add(option.DeepCopy());

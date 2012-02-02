@@ -510,15 +510,19 @@ namespace SandRibbon.Components
                     var fe = (FrameworkElement)child;
                     if (fe.privacy() == "public")
                     {
-                      if(child is Image)
-                      {
-                        var image = (Image) child;
-                        var e = viewFor((FrameworkElement)child);
-                        Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 1);
-                        clone.Children.Add(e);
-                      }
-                      else
-                        clone.Children.Add(viewFor(fe));
+                        if (child is Image)
+                        {
+                            var image = (Image)child;
+                            var e = viewFor((FrameworkElement)child);
+                            Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 2);
+                            clone.Children.Add(e);
+                        }
+                        else
+                        {
+                            var e = viewFor(fe);
+                            Panel.SetZIndex(e, 4);
+                            clone.Children.Add(e);
+                        }
                     }
                 }
             var size = new Size(ActualWidth,ActualHeight);
@@ -542,7 +546,11 @@ namespace SandRibbon.Components
                         clone.Children.Add(e);
                     }
                     else
-                      clone.Children.Add(viewFor(fe));
+                    {
+                        var e = viewFor(fe);
+                        Panel.SetZIndex(e, 4);
+                        clone.Children.Add(e);
+                    }
                 }
             var size = new Size(ActualWidth,ActualHeight);
             clone.Measure(size);
