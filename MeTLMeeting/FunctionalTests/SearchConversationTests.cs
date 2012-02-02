@@ -33,6 +33,23 @@ namespace Functional
         }
 
         [TestMethod]
+        public void SearchForDeletedConversation()
+        {
+            var search = new ConversationSearcher(metlWindow.AutomationElement);
+
+            search.searchField("CITestSearchTestsDeleted");
+            search.Search();
+
+            var results = new UITestHelper(metlWindow);
+            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "SearchResults"));
+
+            results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
+
+            var success = search.IsEmptyResult();
+            Assert.IsTrue(success, ErrorMessages.EXPECTED_NO_RESULTS);
+        }
+
+        [TestMethod]
         public void SearchForHavePermissionAndJoin()
         {
             var search = new ConversationSearcher(metlWindow.AutomationElement);

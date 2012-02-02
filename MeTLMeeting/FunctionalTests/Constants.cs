@@ -26,5 +26,6 @@ namespace Functional
         public const string VERSION_MISMATCH = "MeTL version does not match with provided.";
         public const string UNABLE_TO_FIND_CONVERSATION = "Unable to find searched conversation.";
         public const string EXPECTED_CONTENT = "Expected element to have specified content.";
+        public const string EXPECTED_NO_RESULTS = "Expected to find no matching conversations.";
     }
 }
