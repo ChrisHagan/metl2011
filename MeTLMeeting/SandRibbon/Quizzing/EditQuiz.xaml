@@ -5,7 +5,7 @@
         xmlns:metl="clr-namespace:SandRibbon" 
         xmlns:SandRibbon="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
         xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries" 
-        Title="Edit A Quiz" MaxHeight="600">
+        Title="Edit A Quiz" MaxHeight="400">
     <Window.Resources>
         <ResourceDictionary>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

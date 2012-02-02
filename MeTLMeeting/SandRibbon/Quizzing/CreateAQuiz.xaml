@@ -8,7 +8,7 @@
     Title="Create a Quiz" 
     ShowInTaskbar="False"
     x:Name="createAQuiz"
-    MaxHeight="600"
+    MaxHeight="400"
     WindowStartupLocation="CenterOwner"
     Closing="createAQuiz_Closing"
     Loaded="createAQuiz_Loaded"
