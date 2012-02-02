@@ -21,15 +21,15 @@ namespace Functional
         {
             var search = new ConversationSearcher(metlWindow.AutomationElement);
 
-            search.searchField("CITestSearchTestsOwner");
+            search.searchField(TestConstants.OWNER_CONVERSATION_TITLE);
             search.Search();
 
             var results = new UITestHelper(metlWindow);
-            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "SearchResults"));
+            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
-            search.JoinQueried("CITestSearchTestsOwner");
+            search.JoinQueried(TestConstants.OWNER_CONVERSATION_TITLE);
         }
 
         [TestMethod]
@@ -37,11 +37,11 @@ namespace Functional
         {
             var search = new ConversationSearcher(metlWindow.AutomationElement);
 
-            search.searchField("CITestSearchTestsDeleted");
+            search.searchField(TestConstants.DELETED_CONVERSATION_TITLE);
             search.Search();
 
             var results = new UITestHelper(metlWindow);
-            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "SearchResults"));
+            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
@@ -54,15 +54,15 @@ namespace Functional
         {
             var search = new ConversationSearcher(metlWindow.AutomationElement);
 
-            search.searchField("CITestSearchTestsNonOwner");
+            search.searchField(TestConstants.NONOWNER_CONVERSATION_TITLE);
             search.Search();
 
             var results = new UITestHelper(metlWindow);
-            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "SearchResults"));
+            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
-            search.JoinQueried("CITestSearchTestsNonOwner");
+            search.JoinQueried(TestConstants.NONOWNER_CONVERSATION_TITLE);
         }
 
         [TestMethod]
@@ -70,11 +70,11 @@ namespace Functional
         {
             var search = new ConversationSearcher(metlWindow.AutomationElement);
 
-            search.searchField("TEST_FindAndJoinConversationOwned");
+            search.searchField(TestConstants.OWNER_CONVERSATION_TITLE);
             search.Search();
 
             var results = new UITestHelper(metlWindow);
-            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "SearchResults"));
+            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
         }
@@ -85,7 +85,7 @@ namespace Functional
             new ApplicationPopup(metlWindow.AutomationElement).SearchMyConversation();
 
             var filter = new UITestHelper(metlWindow);
-            filter.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "searchConversations"));
+            filter.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_SEARCH_ALL_CONVERSATIONS_BUTTON));
 
             var success = filter.WaitForControlVisible();
             Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
