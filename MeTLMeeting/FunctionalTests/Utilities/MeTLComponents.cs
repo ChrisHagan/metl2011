@@ -231,6 +231,12 @@ namespace Functional
             {
             }
         }
+        public void RecentConversations()
+        {
+            open();
+            var popup = _parent.Descendant(typeof(Popup));
+            var menuItems = popup.Descendants(typeof(ListBoxItem));
+        }
         public void Quit()
         {
             open();

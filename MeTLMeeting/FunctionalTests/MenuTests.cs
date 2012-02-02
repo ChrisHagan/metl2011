@@ -11,10 +11,9 @@ namespace FunctionalTests
         public void RecentConversationsPopulatedWithCurrentConversation()
         {
             var metlWindow = MeTL.GetMainWindow();
-            new ApplicationPopup(metlWindow.AutomationElement).open();
+            new ApplicationPopup(metlWindow.AutomationElement).RecentConversations();
 
-            var recent = metlWindow.AutomationElement.Descendant("PART_RecentDocumentsControl");
-            recent.WalkAllElements("CITestsSearchTestOwner");
+            //CITestsSearchTestOwner
         }
     }
 }
