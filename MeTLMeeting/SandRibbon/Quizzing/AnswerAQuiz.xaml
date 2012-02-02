@@ -6,6 +6,7 @@
     x:Name="answerAQuiz"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
+    MaxHeight="500"
     Title="Answer Quiz">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
@@ -13,41 +14,43 @@
                 <Button Click="Edit_Click">Edit quiz</Button>
                 <Button Click="DisplayQuiz">Display quiz</Button>
             </StackPanel>
-            <StackPanel DockPanel.Dock="Top" Orientation="Vertical" x:Name="SnapshotHost">
-                <Grid Margin="10 10 10 30">
-                    <StackPanel MaxHeight="600" Width="720" MaxWidth="720">
-                        <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
-                        <Grid>
-                            <quiz:GoldPlaque/>
-                            <TextBlock Margin="4" 
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
+                <StackPanel DockPanel.Dock="Top" Orientation="Vertical" x:Name="SnapshotHost">
+                    <Grid Margin="10 10 10 30">
+                        <StackPanel MaxHeight="400" Width="720" MaxWidth="720">
+                            <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
+                            <Grid>
+                                <quiz:GoldPlaque/>
+                                <TextBlock Margin="4" 
                                 TextWrapping="WrapWithOverflow" 
                                        FontWeight="Bold" 
                                        FontSize="14" 
                                        FontFamily="Verdana" 
                                        Text="{Binding Path=question}"
                                        HorizontalAlignment="Center" />
-                        </Grid>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Image Grid.Column="1" Source="{Binding Path=url}" MaxWidth="300" MaxHeight="300"/>
-                        </Grid>
-                    </StackPanel>
-                </Grid>
-                <ListBox x:Name="quizOptions" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="1" Source="{Binding Path=url}" MaxWidth="300" MaxHeight="300"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                    <ListBox x:Name="quizOptions" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                          SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}" MaxWidth="720" Width="700" MaxHeight="600">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal"  x:Name="quizAnswers">
-                                <quiz:QuizButton />
-                                <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}" FontSize="12" FontFamily="Verdana" FontWeight="Bold" MaxWidth="640"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </StackPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal"  x:Name="quizAnswers">
+                                    <quiz:QuizButton />
+                                    <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}" FontSize="12" FontFamily="Verdana" FontWeight="Bold" MaxWidth="640"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </ScrollViewer>
         </DockPanel>
     </Border>
 </Window>

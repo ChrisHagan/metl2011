@@ -5,7 +5,7 @@
         xmlns:metl="clr-namespace:SandRibbon" 
         xmlns:SandRibbon="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
         xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries" 
-        Title="Edit A Quiz" MaxHeight="400">
+        Title="Edit A Quiz" MaxHeight="500">
     <Window.Resources>
         <ResourceDictionary>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -54,7 +54,7 @@
                                     <q:GoldPlaque PreviewMouseDown="QuizButton_PreviewMouseUp" />
                                     <StackPanel Orientation="Horizontal">
                                         <q:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" />
-                                        <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextWrapping="WrapWithOverflow"/>
+                                        <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" MaxHeight="300" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextWrapping="WrapWithOverflow" AcceptsReturn="True"/>
                                         <Button x:Name="quizAnswerDelete" Focusable="False" Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
                                             <Image Height="20" Width="20"  Source="/Resources/Delete.png"/>
                                         </Button>

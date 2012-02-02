@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="clr-namespace:SandRibbon"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
-    MaxHeight="400"
+    MaxHeight="500"
     >
     <Border x:Name="allResults" >
         <DockPanel>
