@@ -2308,8 +2308,7 @@ namespace SandRibbon.Components
             var clipboardText = new List<string>();
             if (selectedText != String.Empty && selectedText.Length > 0)
                 clipboardText.Add(selectedText);
-            else
-                clipboardText.AddRange(selectedBoxes.Where(b => b is MeTLTextBox).Select(b => ((MeTLTextBox) b).Text));
+            clipboardText.AddRange(selectedBoxes.Where(b => b is MeTLTextBox).Select(b => ((MeTLTextBox) b).Text).Where(t => t != selectedText));
             return clipboardText;
         }
         private IEnumerable<BitmapSource> HandleImageCopyRedo(List<UIElement> selectedImages)
