@@ -1,2 +1,4 @@
 @echo off
-tskill "MeTL Presenter" 2> nul
+tskill "MeTL Staging" 2> nul
+
+cmd /c "exit /b 0"

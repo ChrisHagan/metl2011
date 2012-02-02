@@ -619,6 +619,14 @@ namespace Functional
             Assert.AreNotEqual(Rect.Empty, _searchResults.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty));
             return this;
         }
+
+        public bool IsEmptyResult()
+        {
+            _searchResults = _parent.Descendant("SearchResults");
+            var buttons = _searchResults.Descendants(typeof(Button));
+
+            return (buttons.Count <= 1);
+        }
     }
     public class SlideNavigation 
     {
