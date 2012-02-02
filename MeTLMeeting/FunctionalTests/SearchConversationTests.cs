@@ -21,7 +21,7 @@ namespace Functional
         {
             var search = new ConversationSearcher(metlWindow.AutomationElement);
 
-            search.searchField("TEST_FindAndJoinConversationOwned");
+            search.searchField("CITestSearchTestsOwner");
             search.Search();
 
             var results = new UITestHelper(metlWindow);
@@ -29,7 +29,7 @@ namespace Functional
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
-            search.JoinFirstFound();
+            search.JoinQueried("CITestSearchTestsOwner");
         }
 
         [TestMethod]
@@ -37,7 +37,7 @@ namespace Functional
         {
             var search = new ConversationSearcher(metlWindow.AutomationElement);
 
-            search.searchField("TEST_FindAndJoinConversationNotOwned");
+            search.searchField("CITestSearchTestsNonOwner");
             search.Search();
 
             var results = new UITestHelper(metlWindow);
@@ -45,7 +45,7 @@ namespace Functional
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
-            search.JoinFirstFound();
+            search.JoinQueried("CITestSearchTestsNonOwner");
         }
 
         [TestMethod]
@@ -66,6 +66,15 @@ namespace Functional
         public void SwitchToSearchMyConversations()
         {
             new ApplicationPopup(metlWindow.AutomationElement).SearchMyConversation();
+
+            var filter = new UITestHelper(metlWindow);
+            filter.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "searchConversations"));
+
+            var success = filter.WaitForControlVisible();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
+            var filterButton = filter.AutomationElement;
+            Assert.AreEqual("Filter my Conversations", filterButton.Current.Name, ErrorMessages.EXPECTED_CONTENT);
         }
     }
 }
