@@ -1,4 +1,5 @@
-﻿using Functional;
+﻿using System.Windows.Automation;
+using Functional;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UITestFramework;
 
@@ -11,9 +12,17 @@ namespace FunctionalTests
         public void RecentConversationsPopulatedWithCurrentConversation()
         {
             var metlWindow = MeTL.GetMainWindow();
-            new ApplicationPopup(metlWindow.AutomationElement).RecentConversations();
+            var success = false;
+            foreach (AutomationElement recent in new ApplicationPopup(metlWindow.AutomationElement).RecentConversations())
+            {
+                if (recent.WalkAllElements(TestConstants.OWNER_CONVERSATION_TITLE) != null)
+                {
+                    success = true;
+                    break;
+                }
+            }
 
-            //CITestsSearchTestOwner
+            Assert.IsTrue(success, ErrorMessages.CONVERSATION_MISSING_FROM_RECENT);
         }
     }
 }

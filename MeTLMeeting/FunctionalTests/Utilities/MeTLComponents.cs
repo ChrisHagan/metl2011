@@ -231,11 +231,11 @@ namespace Functional
             {
             }
         }
-        public void RecentConversations()
+        public AutomationElementCollection RecentConversations()
         {
             open();
             var popup = _parent.Descendant(typeof(Popup));
-            var menuItems = popup.Descendants(typeof(ListBoxItem));
+            return popup.Descendants(typeof(ListBoxItem));
         }
         public void Quit()
         {

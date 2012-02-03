@@ -111,7 +111,7 @@ namespace SandRibbon.Components
             {
             }
             stack.me = "projector";
-            stack.MyWork.EditingMode = InkCanvasEditingMode.None;
+            stack.Work.EditingMode = InkCanvasEditingMode.None;
             conversationLabel.Text = generateTitle(Globals.conversationDetails);
         }
         private static DrawingAttributes currentAttributes = new DrawingAttributes();
