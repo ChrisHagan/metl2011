@@ -1557,6 +1557,7 @@ namespace SandRibbon.Components
         private void placeCursor(object sender, MouseButtonEventArgs e)
         {
             if (Work.EditingMode != InkCanvasEditingMode.None) return;
+            if(me == Globals.PROJECTOR) return;
             var pos = e.GetPosition(this);
             MeTLTextBox box = createNewTextbox();
             AddTextBoxToCanvas(box);
