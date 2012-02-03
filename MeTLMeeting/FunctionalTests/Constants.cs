@@ -7,6 +7,8 @@ namespace Functional
 {
     class TestConstants
     {
+        public const string OWNER_USERNAME = "eecrole";
+        public const string OWNER_PASSWORD = "cleareight6";
         public const string OWNER_CONVERSATION_TITLE = "CITestSearchTestsOwner";
         public const string NONOWNER_CONVERSATION_TITLE = "CITestSearchTestsNonOwner";
         public const string DELETED_CONVERSATION_TITLE = "CITestSearchTestsDeleted";

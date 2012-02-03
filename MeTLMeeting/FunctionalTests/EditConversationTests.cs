@@ -19,8 +19,14 @@ namespace Functional
         {
             var editConversation = new ConversationEditScreen(metlWindow.AutomationElement);
 
-            editConversation.ChangeGroup("jpjor1");
+            editConversation.ChangeGroup(TestConstants.OWNER_USERNAME);
             editConversation.Save();
+        }
+
+        [TestMethod]
+        public void ChangePrivacyToUnrestricted()
+        {
+            
         }
 
         [TestMethod]

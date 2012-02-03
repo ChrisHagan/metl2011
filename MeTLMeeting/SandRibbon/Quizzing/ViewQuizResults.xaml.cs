@@ -79,7 +79,7 @@ namespace SandRibbon.Quizzing
             quiz.TimestampLabel.Text = "Results collected at:\r\n" + SandRibbonObjects.DateTimeFactory.Now().ToLocalTime().ToString();
             quiz.SnapshotHost.UpdateLayout();
             var dpi = 96;
-            var dimensions = ResizeHelper.ScaleMajorAxisToCanvasSize(quiz);
+            var dimensions = ResizeHelper.ScaleMajorAxisToCanvasSize(quiz.SnapshotHost);
             var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
             var dv = new DrawingVisual();
             using (var context = dv.RenderOpen())

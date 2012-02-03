@@ -39,7 +39,7 @@
                         </StackPanel>
                     </Grid>
                     <ListBox x:Name="quizOptions" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                         SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}" MaxWidth="720" Width="700" MaxHeight="600">
+                         SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}" MaxWidth="720" Width="700">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal"  x:Name="quizAnswers">
