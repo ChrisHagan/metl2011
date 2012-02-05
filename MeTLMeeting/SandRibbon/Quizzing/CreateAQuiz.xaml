@@ -45,20 +45,22 @@
                                 <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled">
                                     <TextBox MaxHeight="300" MinWidth="100" Width="300" x:Name="question" AcceptsReturn="True" TextWrapping="WrapWithOverflow"></TextBox>
                                 </ScrollViewer>
-                                <Grid Grid.Column="1" x:Name="questionSnapshotContainer">
-                                    <dict:Button x:Name="screenshot" Click="screenshotAsAQuestion" ToolTip="{DynamicResource AttachCurrentSlideToQuizToolTip}" Icon="/Resources/AttachSnapshot.png" Text="Attach Current Page"/>
+                                <Grid  Grid.Column="1" x:Name="questionSnapshotContainer">
+                                    <dict:Button IsTabStop="False" x:Name="screenshot" Click="screenshotAsAQuestion" ToolTip="{DynamicResource AttachCurrentSlideToQuizToolTip}" Icon="/Resources/AttachSnapshot.png" Text="Attach Current Page"/>
                                 </Grid>
                             </Grid>
                         </StackPanel>
                     </Grid>
-                    <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{x:Static q:CreateAQuiz.options}" Loaded="TextBox_GotFocus">
+                    <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{x:Static q:CreateAQuiz.options}" Loaded="TextBox_GotFocus" IsTabStop="False">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid>
-                                    <q:GoldPlaque PreviewMouseDown="QuizButton_PreviewMouseUp" />
-                                    <StackPanel Orientation="Horizontal">
-                                        <q:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" />
-                                        <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextWrapping="WrapWithOverflow"/>
+                                <Grid KeyboardNavigation.IsTabStop="False">
+                                    <q:GoldPlaque PreviewMouseDown="QuizButton_PreviewMouseUp" IsTabStop="False"/>
+                                    <StackPanel Orientation="Horizontal" KeyboardNavigation.IsTabStop="False"> 
+                                        <q:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" IsTabStop="False"/>
+                                        <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" TextChanged="updateOptionText" 
+                                                 Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" 
+                                                 GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextWrapping="WrapWithOverflow" TabIndex="0"/>
                                         <Button x:Name="quizAnswerDelete" Focusable="False" Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
                                             <Image Height="20" Width="20"  Source="/Resources/Delete.png"/>
                                         </Button>
