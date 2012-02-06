@@ -583,11 +583,32 @@ namespace Functional
 
             buttons[1].Invoke();
 
-            // wait until we've finished joining the conversation before returning
-            var canvas = new UITestHelper(_parent);
-            canvas.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_USER_CANVAS_STACK));
-            canvas.WaitForControlEnabled();
+            WaitUntilConversationJoined();
             
+            return this;
+        }
+        public ConversationSearcher SelectConversation(string query)
+        {
+            _searchResults = _parent.Descendant("SearchResults");
+            var buttons = _searchResults.Descendants(typeof(Button));
+
+            if (buttons.Count <= 1)
+                Assert.Fail(ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
+
+            var success = false;
+            foreach (AutomationElement button in buttons)
+            {
+                var conversation = button.WalkAllElements(query);
+                if (conversation != null)
+                {
+                    success = true;
+                    button.SetFocus();
+                    break;
+                }
+            }
+
+            Assert.IsTrue(success, ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
+
             return this;
         }
         public ConversationSearcher JoinQueried(string query)
@@ -612,13 +633,21 @@ namespace Functional
 
             Assert.IsTrue(success, ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
 
-            // wait until we've finished joining the conversation before returning
-            var canvas = new UITestHelper(_parent);
-            canvas.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_USER_CANVAS_STACK));
-            canvas.WaitForControlEnabled();
+            WaitUntilConversationJoined();
             
             return this;
         }
+
+        private void WaitUntilConversationJoined()
+        {
+            // wait until we've finished joining the conversation before returning
+            var addPage = new UITestHelper(_parent);
+            addPage.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "addSlideButton"));
+            var success = addPage.WaitForControlEnabled();
+
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+        }
+
         public ConversationSearcher GetResults()
         {
             _searchResults = _parent.Descendant("SearchResults");
@@ -755,11 +784,11 @@ namespace Functional
         public ConversationEditScreen(AutomationElement parent)
         {
             _parent = parent;
-            _rename = _parent.Descendant("renameConversation");
-            _share = _parent.Descendant("shareConversation");
-            _delete = _parent.Descendant("deleteConversation");
+            _rename = _parent.Descendant(Constants.ID_METL_CONVERSATION_RENAME_BUTTON);
+            _share = _parent.Descendant(Constants.ID_METL_CONVERSATION_SHARE_BUTTON);
+            _delete = _parent.Descendant(Constants.ID_METL_CONVERSATION_DELETE_BUTTON);
 
-            _returnToCurrent = _parent.Descendant("current");
+            _returnToCurrent = _parent.Descendant(Constants.ID_METL_CURRENT_CONVERSATION_BUTTON);
         }
 
         public ConversationEditScreen Rename(string conversationTitle)
@@ -788,10 +817,43 @@ namespace Functional
 
         public ConversationEditScreen ChangeGroup(string groupName)
         {
-            _share.Invoke();
+            var shareButton = new UITestHelper(_share);
+            shareButton.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SHARE_BUTTON));
+
+            var success = shareButton.WaitForControlEnabled();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+            shareButton.AutomationElement.Invoke();
+
+            var authList = new UITestHelper(_parent);
+            authList.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "groupsList"));
+
+            success = authList.WaitForControlVisible();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
+            _groups = authList.AutomationElement; //_parent.Descendant("groupsList");
+            _groups.SelectListItem(groupName);
+
+            return this;
+        }
+        public ConversationEditScreen IsGroupSelected(string groupName, out bool isSelected)
+        {
+            var shareButton = new UITestHelper(_share);
+            shareButton.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SHARE_BUTTON));
+
+            var success = shareButton.WaitForControlEnabled();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+            shareButton.AutomationElement.Invoke();
+
+            var authList = new UITestHelper(_parent);
+            authList.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "groupsList"));
+
+            success = authList.WaitForControlVisible();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
+            _groups = authList.AutomationElement; //_parent.Descendant("groupsList");
 
             _groups = _parent.Descendant("groupsList");
-            _groups.SelectListItem(groupName);
+            isSelected = _groups.IsListItemSelected(groupName);
 
             return this;
         }
@@ -802,9 +864,22 @@ namespace Functional
             return this;
         }
 
+        private void WaitUntilConversationJoined()
+        {
+            // wait until we've finished joining the conversation before returning
+            var addPage = new UITestHelper(_parent);
+            addPage.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "addSlideButton"));
+            addPage.WaitForControlEnabled();
+        }
         public ConversationEditScreen ReturnToCurrent()
         {
-            _returnToCurrent.Invoke();
+            var returnButton = new UITestHelper(_parent);
+            returnButton.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CURRENT_CONVERSATION_BUTTON));
+
+            returnButton.WaitForControlEnabled();
+            returnButton.AutomationElement.Invoke();
+
+            WaitUntilConversationJoined();
 
             return this;
         }

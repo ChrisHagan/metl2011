@@ -2,6 +2,7 @@
 using UITestFramework;
 using System.Windows.Automation;
 using System.Windows;
+using System.Threading;
 
 namespace Functional
 {
@@ -63,6 +64,14 @@ namespace Functional
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
             search.JoinQueried(TestConstants.NONOWNER_CONVERSATION_TITLE);
+        }
+
+        [TestMethod]
+        public void HighlightConversationCurrentlyJoined()
+        {
+            //Thread.Sleep(200);
+            var search = new ConversationSearcher(metlWindow.AutomationElement);
+            search.SelectConversation(TestConstants.OWNER_CONVERSATION_TITLE);
         }
 
         [TestMethod]

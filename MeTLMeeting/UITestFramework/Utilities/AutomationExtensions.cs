@@ -76,7 +76,8 @@ namespace UITestFramework
             ((TogglePattern)element.GetCurrentPattern(TogglePattern.Pattern)).Toggle();
             return element;
         }
-        public static AutomationElement SelectListItem(this AutomationElement element, String itemText)
+
+        private static AutomationElement FindListItem(AutomationElement element, String itemText)
         {
             if ((element == null) || (String.IsNullOrEmpty(itemText)))
             {
@@ -84,8 +85,30 @@ namespace UITestFramework
             }
         
             var propertyCondition = new PropertyCondition(AutomationElement.NameProperty, itemText, PropertyConditionFlags.IgnoreCase);
-            var firstMatch = element.FindFirst(TreeScope.Children, propertyCondition);
-        
+            return element.FindFirst(TreeScope.Children, propertyCondition);
+        }
+
+        public static bool IsListItemSelected(this AutomationElement element, String itemText)
+        {
+            AutomationElement firstMatch = FindListItem(element, itemText);
+            var isSelected = false;
+            if (firstMatch != null)
+            {
+                try
+                {
+                    var selectionItemPattern = firstMatch.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                    isSelected = selectionItemPattern.Current.IsSelected;
+                }
+                catch (InvalidOperationException)
+                {
+                }
+            }
+
+            return isSelected;
+        }
+        public static AutomationElement SelectListItem(this AutomationElement element, String itemText)
+        {
+            AutomationElement firstMatch = FindListItem(element, itemText);
             if (firstMatch != null)
             {
                 try
