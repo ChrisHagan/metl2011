@@ -11,6 +11,7 @@ using System.Windows;
 using System.Diagnostics;
 using System.IO;
 using UITestFramework;
+using SandRibbon.Components;
 
 namespace Functional
 {
@@ -641,9 +642,8 @@ namespace Functional
         private void WaitUntilConversationJoined()
         {
             // wait until we've finished joining the conversation before returning
-            var addPage = new UITestHelper(_parent);
-            addPage.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "addSlideButton"));
-            var success = addPage.WaitForControlEnabled();
+            var canvasStack = new UITestHelper(_parent, _parent.Descendant(typeof(CollapsedCanvasStack)));
+            var success = canvasStack.WaitForControlEnabled();
 
             Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
         }

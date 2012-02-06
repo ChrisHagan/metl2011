@@ -2,6 +2,7 @@
 using UITestFramework;
 using System.Windows.Automation;
 using System.Windows;
+using SandRibbon.Components;
 
 namespace Functional
 {
@@ -91,8 +92,14 @@ namespace Functional
         [TestMethod]
         public void AddPageToConversation()
         {
-            new SlideNavigation(metlWindow.AutomationElement).Add();
-            // TODO: Check that there are now two pages in the conversation
+            var navi = new SlideNavigation(metlWindow.AutomationElement);
+            navi.Add();
+
+            var canvasStack = metlWindow.AutomationElement.Descendant(typeof(CollapsedCanvasStack));
+            var canvasSize = ((Rect)canvasStack.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)).Size;
+            var expectSize = new Size(TestConstants.DEFAULT_CANVAS_WIDTH, TestConstants.DEFAULT_CANVAS_HEIGHT); 
+            Assert.AreEqual(expectSize, canvasSize);
+            // TODO: Check to make sure the page count is +1
         }
     }
 }

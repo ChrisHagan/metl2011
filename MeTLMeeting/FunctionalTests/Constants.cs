@@ -13,6 +13,9 @@ namespace Functional
         public const string NONOWNER_CONVERSATION_TITLE = "CITestSearchTestsNonOwner";
         public const string DELETED_CONVERSATION_TITLE = "CITestSearchTestsDeleted";
         public const string AUTH_GROUP_UNRESTRICTED = "Unrestricted";
+
+        public const int DEFAULT_CANVAS_WIDTH = 892;
+        public const int DEFAULT_CANVAS_HEIGHT = 669;
     }
     class Constants
     {
