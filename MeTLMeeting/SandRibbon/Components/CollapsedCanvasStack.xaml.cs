@@ -29,6 +29,8 @@ using Image = System.Windows.Controls.Image;
 using Path = System.IO.Path;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 
 namespace SandRibbon.Components
 {
@@ -2501,6 +2503,11 @@ namespace SandRibbon.Components
         }
         public void SetEditable(bool b)
         {
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new CollapsedCanvasStackAutomationPeer(this);
         }
     }
 }

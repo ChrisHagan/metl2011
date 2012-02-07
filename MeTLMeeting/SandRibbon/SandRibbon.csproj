@@ -562,6 +562,7 @@
       <DependentUpon>CircularProgressBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\ClipboardHandler.cs" />
+    <Compile Include="Components\CollapsedCanvasAutomationPeer.cs" />
     <Compile Include="Components\CollapsedCanvasStack.xaml.cs">
       <DependentUpon>CollapsedCanvasStack.xaml</DependentUpon>
     </Compile>

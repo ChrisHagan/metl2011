@@ -92,14 +92,19 @@ namespace Functional
         [TestMethod]
         public void AddPageToConversation()
         {
+            var slideDisplay = metlWindow.AutomationElement.Descendant(typeof(SlideDisplay));
+            var rangeValue = slideDisplay.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
+            var currentCount = rangeValue.Current.Maximum;
+
             var navi = new SlideNavigation(metlWindow.AutomationElement);
+
             navi.Add();
 
-            var canvasStack = metlWindow.AutomationElement.Descendant(typeof(CollapsedCanvasStack));
-            var canvasSize = ((Rect)canvasStack.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)).Size;
-            var expectSize = new Size(TestConstants.DEFAULT_CANVAS_WIDTH, TestConstants.DEFAULT_CANVAS_HEIGHT); 
-            Assert.AreEqual(expectSize, canvasSize);
-            // TODO: Check to make sure the page count is +1
+            slideDisplay = metlWindow.AutomationElement.Descendant(typeof(SlideDisplay));
+            rangeValue = slideDisplay.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
+            var newCount = rangeValue.Current.Maximum;
+    
+            Assert.AreEqual(currentCount + 1, newCount);
         }
     }
 }

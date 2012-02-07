@@ -13,6 +13,10 @@ using System.Collections.Generic;
 using MeTLLib.Providers.Connection;
 using System.Windows.Data;
 using SandRibbon.Utils;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
+using System.Windows.Automation;
+using System.Collections.Specialized;
 
 namespace SandRibbon.Components
 {
@@ -52,13 +56,59 @@ namespace SandRibbon.Components
     {
         private int myMaxSlideIndex;
         public static readonly DependencyProperty TeachersCurrentSlideIndexProperty =
-            DependencyProperty.Register("TeachersCurrentSlideIndex", typeof (int), typeof (SlideDisplay), new PropertyMetadata(default(int)));
+            DependencyProperty.Register("TeachersCurrentSlideIndex", typeof(int), typeof(SlideDisplay), new PropertyMetadata(default(int), new PropertyChangedCallback(OnTeachersCurrentSlideIndexChanged)));
 
         public int TeachersCurrentSlideIndex
         {
             get { return (int) GetValue(TeachersCurrentSlideIndexProperty); }
             set { SetValue(TeachersCurrentSlideIndexProperty, value); }
         }
+
+        private static void OnTeachersCurrentSlideIndexChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            var slideDisplay = (SlideDisplay)obj;
+
+            var oldValue = (int)args.OldValue;
+            var newValue = (int)args.NewValue;
+
+            #region Automation events
+            if (AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged))
+            {
+                var peer = UIElementAutomationPeer.FromElement(slideDisplay) as SlideDisplayAutomationPeer;
+
+                if (peer != null)
+                {
+                    peer.RaisePropertyChangedEvent(
+                        RangeValuePatternIdentifiers.ValueProperty,
+                        (double)oldValue,
+                        (double)newValue);
+                }
+            }
+            #endregion
+
+            var e = new RoutedPropertyChangedEventArgs<int>(oldValue, newValue, ValueChangedEvent);
+            slideDisplay.OnValueChanged(e);
+        }
+
+        protected virtual void OnValueChanged(RoutedPropertyChangedEventArgs<int> args)
+        {
+            RaiseEvent(args);
+        }
+
+        #region Events
+
+        public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
+            "ValueChanged", RoutingStrategy.Bubble,
+            typeof(RoutedPropertyChangedEventHandler<int>), typeof(SlideDisplay));
+
+        public event RoutedPropertyChangedEventHandler<int> ValueChanged
+        {
+            add { AddHandler(ValueChangedEvent, value); }
+            remove { RemoveHandler(ValueChangedEvent, value); }
+        }
+
+        #endregion
+
         public static readonly DependencyProperty IsNavigationLockedProperty =
             DependencyProperty.Register("IsNavigationLocked", typeof (bool), typeof (SlideDisplay), new PropertyMetadata(default(bool)));
 
@@ -77,6 +127,7 @@ namespace SandRibbon.Components
         public SlideDisplay()
         {
             thumbnailList = new ObservableCollection<Slide>();
+            thumbnailList.CollectionChanged += OnThumbnailCollectionChanged;
             SlideIndex = new SlideIndexConverter(thumbnailList);
             SlideToThumb = new SlideToThumbConverter();
             myMaxSlideIndex = -1;
@@ -101,6 +152,15 @@ namespace SandRibbon.Components
             paste.RegisterCommand(new DelegateCommand<object>(HandlePaste));
             slides.InputBindings.Add(new KeyBinding(paste, Key.V, ModifierKeys.Control));
             InputBindings.Add(new KeyBinding(paste, Key.V, ModifierKeys.Control));
+        }
+
+        private void OnThumbnailCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var thumbnails = sender as ObservableCollection<Slide>;
+            if (e.NewItems != null && e.NewItems.Count != 0)
+            {
+                LastSlideIndex = thumbnails.Count;
+            }
         }
 
         private void HandlePaste(object obj)
@@ -216,6 +276,21 @@ namespace SandRibbon.Components
             return myIndex > index ? myIndex : index;
         }
 
+        public static readonly DependencyProperty LastSlideIndexProperty = DependencyProperty.Register( "LastSlideIndex", typeof(int), typeof(SlideDisplay)); 
+        public int LastSlideIndex
+        {
+            get { return (int)GetValue(LastSlideIndexProperty); }
+            set { SetValue(LastSlideIndexProperty, value); }
+        }
+
+        private const int defaultFirstSlideIndex = 0;
+        public static readonly DependencyProperty FirstSlideIndexProperty = DependencyProperty.Register( "FirstSlideIndex", typeof(int), typeof(SlideDisplay), new PropertyMetadata(defaultFirstSlideIndex)); 
+        public int FirstSlideIndex
+        {
+            get { return (int)GetValue(FirstSlideIndexProperty); }
+            set { SetValue(FirstSlideIndexProperty, value); }
+        }
+
         private void MoveToTeacher(int where)
         {
 
@@ -259,6 +334,13 @@ namespace SandRibbon.Components
             return canNav;
 
         }
+
+        public void MoveToSlide(int slideIndex)
+        {
+            slides.SelectedIndex = slideIndex;
+            slides.ScrollIntoView(slides.SelectedItem);
+        }
+
         private void moveToNext(object _object)
         {
             var nextIndex = slides.SelectedIndex + 1;
@@ -362,6 +444,95 @@ namespace SandRibbon.Components
         {
             if (Globals.isAuthor && Globals.synched)
                 Commands.SendSyncMove.ExecuteAsync(currentSlideId);
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new SlideDisplayAutomationPeer(this);
+        }
+    }
+
+    public class SlideDisplayAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
+    {
+        public SlideDisplayAutomationPeer(SlideDisplay control) : base(control)
+        {
+        }
+
+        protected override string GetClassNameCore()
+        {
+            return "SlideDisplay";
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.Slider;
+        }
+
+        public override object GetPattern(PatternInterface patternInterface)
+        {
+            if (patternInterface == PatternInterface.RangeValue)
+            {
+                return this;
+            }
+            return base.GetPattern(patternInterface);
+        }
+
+        #region IRangeValueProvider members
+    
+        bool IRangeValueProvider.IsReadOnly
+        {
+            get { return !IsEnabled(); }
+        }
+
+        double IRangeValueProvider.LargeChange
+        {
+            get { return 1; }
+        }
+
+        double IRangeValueProvider.Maximum
+        {
+            get { return (double)Control.LastSlideIndex; }
+        }
+
+        double IRangeValueProvider.Minimum
+        {
+            get { return (double)Control.FirstSlideIndex; }
+        }
+
+        void IRangeValueProvider.SetValue(double value)
+        {
+            if (!IsEnabled())
+            {
+                throw new ElementNotEnabledException();
+            }
+
+            var slideIndex = (int)value;
+            if (slideIndex < Control.FirstSlideIndex || slideIndex > Control.LastSlideIndex)
+            {
+                throw new ArgumentOutOfRangeException("value");
+            }
+
+            Control.MoveToSlide(slideIndex);
+        }
+
+        double IRangeValueProvider.SmallChange
+        {
+            get { return 1; }
+        }
+
+        double IRangeValueProvider.Value
+        {
+            get { return (double)Control.TeachersCurrentSlideIndex; }
+        }
+
+        #endregion
+
+        private SlideDisplay Control
+        {
+            get
+            {
+                return (SlideDisplay)base.Owner;
+            }
         }
     }
 }

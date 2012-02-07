@@ -129,6 +129,9 @@
     <None Include="OrderedTests\Case010.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="OrderedTests\Case011.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="OrderedTests\TextContentTests.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -137,6 +140,10 @@
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
       <Project>{4AA915ED-26DB-4F8F-AC7E-9CAB5DF7F7CD}</Project>
       <Name>MeTLLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SandRibbonInterop\SandRibbonInterop.csproj">
+      <Project>{936C46AC-5A2F-4476-A89C-52537260DBE4}</Project>
+      <Name>SandRibbonInterop</Name>
     </ProjectReference>
     <ProjectReference Include="..\SandRibbon\SandRibbon.csproj">
       <Project>{0213D150-6485-4F40-AF80-5AC5E8BB10CC}</Project>
