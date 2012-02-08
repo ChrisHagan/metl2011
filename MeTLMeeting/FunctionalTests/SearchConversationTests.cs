@@ -30,7 +30,24 @@ namespace Functional
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
+            /*if (search.GetResultsCount() == 0)
+            {
+                CreateAndRenameConversation();
+            }*/
+
             search.JoinQueried(TestConstants.OWNER_CONVERSATION_TITLE);
+        }
+
+        private void CreateAndRenameConversation()
+        {
+            // create a new conversation with the name of the computer appended
+            new ApplicationPopup(metlWindow.AutomationElement).CreateConversation();
+
+            SwitchToSearchCurrentConversation();
+
+            var edit = new ConversationEditScreen(metlWindow.AutomationElement);
+
+            edit.Rename(TestConstants.OWNER_CONVERSATION_TITLE).Save();
         }
 
         [TestMethod]
@@ -101,6 +118,18 @@ namespace Functional
 
             var filterButton = filter.AutomationElement;
             Assert.AreEqual("Filter my Conversations", filterButton.Current.Name, ErrorMessages.EXPECTED_CONTENT);
+        }
+
+        [TestMethod]
+        public void SwitchToSearchCurrentConversation()
+        {
+            new ApplicationPopup(metlWindow.AutomationElement).SearchMyConversation();
+
+            var currentConversation = new UITestHelper(metlWindow);
+            currentConversation.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_SEARCH_CURRENT_CONVERSATION_BUTTON));
+
+            currentConversation.Find();
+            currentConversation.AutomationElement.Select();
         }
     }
 }

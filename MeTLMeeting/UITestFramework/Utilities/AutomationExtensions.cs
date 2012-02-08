@@ -148,7 +148,7 @@ namespace UITestFramework
                     return elementNode;
 
                 WalkAllElements(elementNode, elementName);
-                elementNode = TreeWalker.ControlViewWalker.GetNextSibling(elementNode);
+                elementNode = TreeWalker.RawViewWalker.GetNextSibling(elementNode);
             }
 
             return null;

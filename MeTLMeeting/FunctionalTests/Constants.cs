@@ -9,7 +9,21 @@ namespace Functional
     {
         public const string OWNER_USERNAME = "eecrole";
         public const string OWNER_PASSWORD = "cleareight6";
-        public const string OWNER_CONVERSATION_TITLE = "CITestSearchTestsOwner";
+
+        private const string ownerConversationTitlePrefix = "CITestSearchTestsOwner";
+        private static string ownerConversationTitle;
+        public static string OWNER_CONVERSATION_TITLE
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(ownerConversationTitle))
+                {
+                    ownerConversationTitle = ownerConversationTitlePrefix + System.Net.Dns.GetHostName();
+                }
+                return ownerConversationTitlePrefix;
+            }
+        }
+
         public const string NONOWNER_CONVERSATION_TITLE = "CITestSearchTestsNonOwner";
         public const string DELETED_CONVERSATION_TITLE = "CITestSearchTestsDeleted";
         public const string AUTH_GROUP_UNRESTRICTED = "Unrestricted";
@@ -24,6 +38,7 @@ namespace Functional
         public const string ID_METL_CONVERSATION_SEARCH_RESULTS = "SearchResults";
         public const string ID_METL_CONVERSATION_RENAME_BUTTON = "renameConversationButton";
         public const string ID_METL_CONVERSATION_SHARE_BUTTON = "shareConversationButton";
+        public const string ID_METL_CONVERSATION_BUTTON = "conversationButton";
         public const string ID_METL_CONVERSATION_DELETE_BUTTON = "deleteConversationButton";
         public const string ID_METL_VERSION_LABEL = "VersionLabel";
         public const string ID_METL_LOGGING_IN_LABEL = "LoggingInLabel";
@@ -32,6 +47,7 @@ namespace Functional
         public const string ID_METL_USER_CANVAS_STACK = "canvas";
         public const string ID_METL_CANVAS_VIEW_BOX = "canvasViewBox";
         public const string ID_METL_SEARCH_ALL_CONVERSATIONS_BUTTON = "searchConversations";
+        public const string ID_METL_SEARCH_CURRENT_CONVERSATION_BUTTON = "currentConversation";
         public const string ID_METL_AUTH_GROUPS_LISTBOX = "groupsList";
         public const string ID_METL_CURRENT_CONVERSATION_BUTTON = "currentConversationButton";
     }

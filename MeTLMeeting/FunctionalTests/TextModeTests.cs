@@ -55,7 +55,7 @@ namespace Functional
                 Keyboard.Press(Key.Delete);
             }
 
-            Assert.IsTrue(canvas.FindTextboxes().Count == 0);
+            Assert.AreEqual(0, canvas.FindTextboxes().Count);
         }
 
         private void SelectTextbox(AutomationElement textbox)

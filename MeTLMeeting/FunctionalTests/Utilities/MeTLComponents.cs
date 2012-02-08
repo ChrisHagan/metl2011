@@ -695,6 +695,12 @@ namespace Functional
 
             return (buttons.Count <= 1);
         }
+        
+        public int GetResultsCount()
+        {
+            var resultsParent = _parent.WalkAllElements("conversationSearchResults");
+            return resultsParent != null ? resultsParent.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, "conversationButton")).Count : 0;
+        }
     }
     public class SlideNavigation 
     {
