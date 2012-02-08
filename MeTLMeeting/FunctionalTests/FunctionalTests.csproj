@@ -132,7 +132,7 @@
     <None Include="OrderedTests\Case011.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="OrderedTests\TextContentTests.orderedtest">
+    <None Include="OrderedTests\Case012.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

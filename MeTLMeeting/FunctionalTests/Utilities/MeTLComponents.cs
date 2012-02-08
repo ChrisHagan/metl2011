@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using UITestFramework;
 using SandRibbon.Components;
+using Microsoft.Test.Input;
 
 namespace Functional
 {
@@ -370,6 +371,38 @@ namespace Functional
             _handwriting = _stack.Descendant("handwriting");
             _text = _stack.Descendant("text");
             _images = _stack.Descendant("images");
+        }
+    }
+
+    public class CollapsedCanvasStack
+    {
+        private AutomationElement canvas;
+
+        public CollapsedCanvasStack(AutomationElement parent)
+        {
+            canvas = parent.Descendant(typeof(SandRibbon.Components.CollapsedCanvasStack));
+        }
+
+        public Rect BoundingRectangle
+        {
+            get 
+            {
+                Rect boundingRect = Rect.Empty;
+                try
+                {
+                    boundingRect = canvas.Current.BoundingRectangle;
+                }
+                catch (ElementNotAvailableException)
+                {
+                }
+
+                return boundingRect;
+            }
+        }
+
+        public AutomationElementCollection FindTextboxes()
+        {
+            return canvas.Descendants(typeof(SandRibbon.Components.Utility.MeTLTextBox));
         }
     }
 
@@ -916,7 +949,60 @@ namespace Functional
 
         public HomeTabScreen ActivateTextMode()
         {
-            _textButton.Select();
+            var textButton = new UITestHelper(_parent, _textButton);
+            textButton.AutomationElement.Select();
+
+            Mouse.MoveTo(textButton.AutomationElement.GetClickablePoint().ToDrawingPoint());
+            Mouse.Click(MouseButton.Left);
+
+            textButton.WaitForControlCondition((uiControl) => 
+            { 
+                var selection = uiControl.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                return (selection != null && selection.Current.IsSelected == false);
+            });
+
+            return this;
+        }
+
+        public HomeTabScreen TextInsertMode()
+        {
+            var textInput = new UITestHelper(_parent);
+            textInput.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "type"));
+            textInput.WaitForControlVisible();
+
+            textInput.AutomationElement.Select();
+
+            var clickPoint = textInput.AutomationElement.GetClickablePoint();
+            Mouse.MoveTo(new System.Drawing.Point((int)clickPoint.X, (int)clickPoint.Y));
+            Mouse.Click(MouseButton.Left);
+
+            textInput.WaitForControlCondition((uiControl) => 
+            { 
+                var selection = uiControl.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                return (selection != null && selection.Current.IsSelected == false);
+            });
+
+            return this;    
+        }
+
+        public HomeTabScreen TextSelectMode()
+        {
+            var textInput = new UITestHelper(_parent);
+            textInput.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "select"));
+            textInput.WaitForControlVisible();
+
+            textInput.AutomationElement.Select();
+
+            var clickPoint = textInput.AutomationElement.GetClickablePoint();
+            Mouse.MoveTo(new System.Drawing.Point((int)clickPoint.X, (int)clickPoint.Y));
+            Mouse.Click(MouseButton.Left);
+
+            textInput.WaitForControlCondition((uiControl) => 
+            { 
+                var selection = uiControl.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                return (selection != null && selection.Current.IsSelected == false);
+            });
+
             return this;
         }
 

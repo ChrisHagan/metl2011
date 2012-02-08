@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
+using System.Windows.Automation.Peers;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 using SandRibbonObjects;
@@ -53,7 +54,30 @@ namespace SandRibbon.Components.Utility
             ApplicationCommands.Redo.Execute(null, Application.Current.MainWindow);
             Commands.Redo.Execute(null);
         }
+
+        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
+        {
+            return new MeTLTextBoxAutomationPeer(this); 
+        }
     }
+
+    public class MeTLTextBoxAutomationPeer : TextBoxAutomationPeer
+    {
+        public MeTLTextBoxAutomationPeer(MeTLTextBox owner) : base(owner)
+        {
+        }
+
+        protected override string GetClassNameCore()
+        {
+            return "MeTLTextBox";
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return base.GetAutomationControlTypeCore();
+        }
+    }
+
     public static class InkCanvasExtensions
     {
         public static IEnumerable<UIElement> TextChildren(this InkCanvas canvas)
@@ -199,7 +223,7 @@ namespace SandRibbon.Components.Utility
         }
         
     }
-    public class MeTLInkCanvas:InkCanvas
+    public class MeTLInkCanvas : InkCanvas
     {
        public MeTLInkCanvas():base()
        {
@@ -222,6 +246,27 @@ namespace SandRibbon.Components.Utility
         {
             Commands.ClipboardManager.Execute(ClipboardAction.Paste);
         }
-    }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new MeTLInkCanvasAutomationPeer(this);
+        }
+    }
+    
+    public class MeTLInkCanvasAutomationPeer : InkCanvasAutomationPeer
+    {
+        public MeTLInkCanvasAutomationPeer(MeTLInkCanvas owner) : base(owner)
+        {
+        }
+
+        protected override string GetClassNameCore()
+        {
+            return "MeTLInkCanvas";
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return base.GetAutomationControlTypeCore();
+        }
+    }
 }

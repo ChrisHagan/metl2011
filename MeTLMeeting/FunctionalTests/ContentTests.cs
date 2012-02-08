@@ -7,26 +7,18 @@ namespace Functional
     [TestClass]
     public class ContentTests
     {
-        private AutomationElement metlWindow;
-
+        private UITestHelper metlWindow;
+        
         [TestInitialize]
         public void Setup()
         {
-            var control = new UITestHelper();
-            var success = control.WaitForControlEnabled();
-            Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
-
-            /*if (metlWindow == null)
-                metlWindow = MeTL.GetMainWindow();
-            */
-
-            Assert.IsNotNull(metlWindow, ErrorMessages.EXPECTED_MAIN_WINDOW); 
+            metlWindow = MeTL.GetMainWindow();
         }
 
         [TestMethod]
         public void CreateNewConversation()
         {
-            new ApplicationPopup(metlWindow).CreateConversation();
+            new ApplicationPopup(metlWindow.AutomationElement).CreateConversation();
         }
     }
 }

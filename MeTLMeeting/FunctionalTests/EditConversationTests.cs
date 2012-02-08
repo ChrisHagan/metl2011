@@ -17,7 +17,6 @@ namespace Functional
             metlWindow = MeTL.GetMainWindow();
         }
 
-
         [TestMethod]
         public void ChangePrivacyToOnlyOwner()
         {
@@ -92,19 +91,21 @@ namespace Functional
         [TestMethod]
         public void AddPageToConversation()
         {
-            var slideDisplay = metlWindow.AutomationElement.Descendant(typeof(SlideDisplay));
-            var rangeValue = slideDisplay.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
+            var slideDisplay = new UITestHelper(metlWindow, metlWindow.AutomationElement.Descendant(typeof(SlideDisplay)));
+            var rangeValue = slideDisplay.AutomationElement.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
             var currentCount = rangeValue.Current.Maximum;
 
             var navi = new SlideNavigation(metlWindow.AutomationElement);
 
             navi.Add();
 
-            slideDisplay = metlWindow.AutomationElement.Descendant(typeof(SlideDisplay));
-            rangeValue = slideDisplay.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
-            var newCount = rangeValue.Current.Maximum;
+            slideDisplay.WaitForControlCondition((uiControl) =>
+            {
+                var range = uiControl.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
+                return range.Current.Maximum == currentCount;
+            });
     
-            Assert.AreEqual(currentCount + 1, newCount);
+            Assert.AreEqual(currentCount + 1, rangeValue.Current.Maximum);
         }
     }
 }
