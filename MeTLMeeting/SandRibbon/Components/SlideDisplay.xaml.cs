@@ -305,9 +305,21 @@ namespace SandRibbon.Components
 
             var action = (Action)(() => Dispatcher.adoptAsync(() =>
                                                                   {
-                                                                      var index = Globals.conversationDetails.Slides.First(s => s.id == where).index;
-                                                                      slides.SelectedIndex = index;
-                                                                      slides.ScrollIntoView(slides.SelectedItem);
+                                                                      int index = 0;
+                                                                      var success = true;
+                                                                      try
+                                                                      {
+                                                                          index = Globals.conversationDetails.Slides.First(s => s.id == where).index;
+                                                                      }
+                                                                      catch (Exception)
+                                                                      {
+                                                                          success = false;
+                                                                      }
+                                                                      if (success)
+                                                                      {
+                                                                          slides.SelectedIndex = index;
+                                                                          slides.ScrollIntoView(slides.SelectedItem);
+                                                                      }
                                                                   }));
             GlobalTimers.SetSyncTimer(action, slide);
         }

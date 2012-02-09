@@ -404,6 +404,11 @@ namespace Functional
         {
             return canvas.Descendants(typeof(SandRibbon.Components.Utility.MeTLTextBox));
         }
+
+        public AutomationElementCollection FindInkStrokes()
+        {
+            return canvas.Descendants("StrokeVisual");
+        }
     }
 
     public class Quiz
@@ -949,7 +954,18 @@ namespace Functional
 
         public HomeTabScreen ActivatePenMode()
         {
-            _inkButton.Select();
+            var inkButton = new UITestHelper(_parent, _inkButton);
+            inkButton.AutomationElement.Select();
+
+            Mouse.MoveTo(inkButton.AutomationElement.GetClickablePoint().ToDrawingPoint());
+            Mouse.Click(MouseButton.Left);
+
+            inkButton.WaitForControlCondition((uiControl) => 
+            { 
+                var selection = uiControl.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                return (selection != null && selection.Current.IsSelected == false);
+            });
+
             return this;
         }
 
@@ -1012,6 +1028,26 @@ namespace Functional
             return this;
         }
 
+        public HomeTabScreen PenSelectMode()
+        {
+            var penInput = new UITestHelper(_parent);
+            penInput.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "selectRadio"));
+            penInput.WaitForControlVisible();
+
+            penInput.AutomationElement.Select();
+
+            var clickPoint = penInput.AutomationElement.GetClickablePoint();
+            Mouse.MoveTo(new System.Drawing.Point((int)clickPoint.X, (int)clickPoint.Y));
+            Mouse.Click(MouseButton.Left);
+
+            penInput.WaitForControlCondition((uiControl) => 
+            { 
+                var selection = uiControl.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                return (selection != null && selection.Current.IsSelected == false);
+            });
+
+            return this;
+        }
         public HomeTabScreen ActivateImageMode()
         {
             _imageButton.Select();

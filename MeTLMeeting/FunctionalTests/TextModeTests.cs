@@ -33,11 +33,15 @@ namespace Functional
             Mouse.MoveTo(SelectRandomPoint(canvas));
             Mouse.Click(MouseButton.Left);
 
+            Thread.Sleep(100);
+
             var textboxes = canvas.FindTextboxes();
             if (textboxes.Count > 0)
             {
                 textboxes[0].Value("Lorem ipsum");
             }
+
+            Thread.Sleep(100);
 
             Assert.AreEqual(numTextboxes + 1, textboxes.Count);
         }
@@ -69,13 +73,15 @@ namespace Functional
             Mouse.Down(MouseButton.Left);
 
             Mouse.MoveTo(bounding.TopRight.ToDrawingPoint());
-            Thread.Sleep(5);
+            Thread.Sleep(10);
             Mouse.MoveTo(bounding.BottomRight.ToDrawingPoint());
-            Thread.Sleep(5);
+            Thread.Sleep(10);
             Mouse.MoveTo(bounding.BottomLeft.ToDrawingPoint());
-            Thread.Sleep(5);
+            Thread.Sleep(10);
             Mouse.MoveTo(bounding.TopLeft.ToDrawingPoint());
-            Thread.Sleep(5);
+            Thread.Sleep(10);
+            Mouse.MoveTo(bounding.TopRight.ToDrawingPoint());
+            Thread.Sleep(10);
 
             Mouse.Up(MouseButton.Left);
         }
@@ -83,6 +89,8 @@ namespace Functional
         private System.Drawing.Point SelectRandomPoint(CollapsedCanvasStack canvas)
         {
             var bounds = canvas.BoundingRectangle;
+            bounds.Inflate(-40, -40);
+
             var random = new Random();
 
             var randX = (int)(bounds.X + random.NextDouble() * bounds.Width);

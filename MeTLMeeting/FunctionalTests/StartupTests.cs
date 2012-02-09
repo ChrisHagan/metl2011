@@ -12,6 +12,8 @@ namespace Functional
         [TestMethod]
         public void StartOneInstance()
         {
+            Assert.AreEqual(0, MeTL.GetAllMainWindows().Count);
+
             var metl = new UITestHelper(UITestHelper.RootElement, MeTL.StartProcess());
             metl.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
 

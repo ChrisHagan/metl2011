@@ -33,6 +33,12 @@ namespace UITestFramework
             Assert.IsNotNull(result, string.Format("{0}[{1}s] unexpectedly null", element.GetCurrentPropertyValue(AutomationElement.AutomationIdProperty), type.Name));
             return result;
         }
+        public static AutomationElementCollection Descendants(this AutomationElement element, string className)
+        {
+            var result = element.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, className));
+            Assert.IsNotNull(result, string.Format("{0}[{1}s] unexpectedly null", element.GetCurrentPropertyValue(AutomationElement.AutomationIdProperty), className));
+            return result;
+        }
         public static IEnumerable<AutomationElement> Descendants(this AutomationElement element)
         {
             var result = new AutomationElement[1024];

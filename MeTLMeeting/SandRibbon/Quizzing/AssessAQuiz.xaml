@@ -53,7 +53,7 @@
                                     <Grid Height="40" Grid.Column="1" HorizontalAlignment="Left" MaxWidth="300">
                                         <Grid.Width>
                                             <MultiBinding Converter="{x:Static sr:Converters.multiply}">
-                                                <Binding ElementName="allResults" Path="ActualWidth" />
+                                                <Binding RelativeSource="{x:Static RelativeSource.Self}" Path="MaxWidth" />
                                                 <Binding Path="proportion" />
                                             </MultiBinding>
                                         </Grid.Width>
