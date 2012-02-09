@@ -18,9 +18,7 @@ namespace SandRibbon.Quizzing
         {
             DataContext = question;
             represent(answers, question);
-            answers.CollectionChanged +=
-                (sender, args) =>
-                    represent(answers, question);
+            answers.CollectionChanged += (sender, args) => represent(answers, question);
         }
         private void represent(IEnumerable<MeTLLib.DataTypes.QuizAnswer> answers, MeTLLib.DataTypes.QuizQuestion question)
         {

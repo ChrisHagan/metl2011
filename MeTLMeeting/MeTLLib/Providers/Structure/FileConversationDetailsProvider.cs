@@ -174,10 +174,8 @@ namespace MeTLLib.Providers.Structure
                 var conversations = results.OrderByDescending(c => c.relevance)
                     .ThenByDescending(c => c.LastModified)
                     .ThenByDescending(c => c.Created).ToList();
-                var relevant = conversations.Where(c => c.relevance >= 3);
                 var jids = conversations.Select(c => c.Jid).Distinct().ToList();
                 var filtered = jids.Where(jid => !deletedConversationJids.Contains(jid)).Select(jid => conversations.First(c => c.Jid == jid)).Take(maxResults).ToList();
-                var titles = filtered.Select(c => c.Title);
                 return filtered;
             }
             catch (Exception e)

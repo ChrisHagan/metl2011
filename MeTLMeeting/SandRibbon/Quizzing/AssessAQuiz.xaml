@@ -50,17 +50,15 @@
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
-                                    <Grid Height="40" Grid.Column="1" HorizontalAlignment="Left" MaxWidth="300">
+                                    <Grid Height="40" Grid.Column="1" x:Name="bars" HorizontalAlignment="Left" MaxWidth="400">
                                         <Grid.Width>
                                             <MultiBinding Converter="{x:Static sr:Converters.multiply}">
-                                                <Binding RelativeSource="{x:Static RelativeSource.Self}" Path="MaxWidth" />
+                                                <Binding ElementName="bars" Path="MaxWidth" />
                                                 <Binding Path="proportion" />
                                             </MultiBinding>
                                         </Grid.Width>
-                                        <Rectangle Fill="{Binding Path=color, Converter={x:Static sr:Converters.ColorToBrushConverter}}" 
-                                       HorizontalAlignment="Stretch" Width="Auto" RadiusX="3" RadiusY="3" Stroke="Gray"/>
-                                        <Rectangle HorizontalAlignment="Stretch" Width="Auto" Fill="{StaticResource ShinyHighlightBrush}" 
-                                           RadiusX="3" RadiusY="3" />
+                                        <Rectangle Fill="{Binding Path=color, Converter={x:Static sr:Converters.ColorToBrushConverter}}" HorizontalAlignment="Stretch" Width="Auto" RadiusX="3" RadiusY="3" Stroke="Gray"/>
+                                        <Rectangle HorizontalAlignment="Stretch" Width="Auto" Fill="{StaticResource ShinyHighlightBrush}" RadiusX="3" RadiusY="3" />
                                     </Grid>
                                 </Grid>
                             </Grid>

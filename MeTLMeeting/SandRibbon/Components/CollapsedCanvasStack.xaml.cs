@@ -30,7 +30,6 @@ using Path = System.IO.Path;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
 using System.Windows.Automation.Peers;
-using System.Windows.Automation.Provider;
 
 namespace SandRibbon.Components
 {
@@ -67,7 +66,6 @@ namespace SandRibbon.Components
 
     public partial class CollapsedCanvasStack : IClipboardHandler
     {
-        private Rectangle resizeZone = new Rectangle();
 
         List<MeTLTextBox> _boxesAtTheStart = new List<MeTLTextBox>();
         private Color _currentColor = Colors.Black;
@@ -340,15 +338,9 @@ namespace SandRibbon.Components
 
         private void AddTextBoxToCanvas(MeTLTextBox box)
         {
-            //Panel.SetZIndex(box, 3);
+            Panel.SetZIndex(box, 3);
             AddTextboxToMyCanvas(box);
-            /*
-            if(box.tag().author == me)
-                AddTextboxToMyCanvas(box);
-            else
-            {
-                addBoxToOtherCanvas(box);
-            }*/
+            
         }
 
         private void deleteSelectedElements(object _sender, ExecutedRoutedEventArgs _handler)
@@ -1042,6 +1034,11 @@ namespace SandRibbon.Components
         {
             try
             {
+                if (e.Stroke.tag().author != me)
+                {
+                    e.Cancel = true;
+                    return;
+                }
                 Trace.TraceInformation("ErasingStroke {0}", e.Stroke.sum().checksum);
                 doMyStrokeRemoved(e.Stroke);
             }
@@ -1135,8 +1132,6 @@ namespace SandRibbon.Components
                     TargettedImage image1 = image;
                     if (image.author == me || image.privacy == Globals.PUBLIC)
                         Dispatcher.adoptAsync(() => AddImage(Work, image1.image));
-                  //  else if (image.privacy == Globals.PUBLIC)
-                  //      Dispatcher.adoptAsync(() => AddImage(OtherWork, image1.image));
                 }
             }
             ensureAllImagesHaveCorrectPrivacy();
@@ -1145,7 +1140,7 @@ namespace SandRibbon.Components
         private void AddImage(InkCanvas canvas, Image image)
         {
             if (canvas.ImageChildren().Any(i => ((Image) i).tag().id == image.tag().id)) return;
-            //Panel.SetZIndex(image, 1);
+            Panel.SetZIndex(image, 2);
             canvas.Children.Add(image);
         }
         public void ReceiveDirtyImage(TargettedDirtyElement element)

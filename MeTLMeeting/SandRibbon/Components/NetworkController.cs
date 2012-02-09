@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using MeTLLib;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
-using SandRibbon.Utils;
-using System.Windows.Forms;
-using SandRibbon.Components.Utility;
 using Application = System.Windows.Application;
 
 namespace SandRibbon.Components
