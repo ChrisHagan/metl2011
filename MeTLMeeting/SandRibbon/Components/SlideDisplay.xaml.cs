@@ -239,7 +239,7 @@ namespace SandRibbon.Components
         }
         private void addSlide(object _slide)
         {
-            var newSlide = MeTLLib.ClientFactory.Connection().AppendSlideAfter(Globals.slide, Globals.conversationDetails.Jid);
+            MeTLLib.ClientFactory.Connection().AppendSlideAfter(Globals.slide, Globals.conversationDetails.Jid);
             moveTo = true;
         }
         private bool isSlideInSlideDisplay(int slide)
@@ -300,9 +300,7 @@ namespace SandRibbon.Components
             Commands.RequerySuggested(Commands.MoveToPrevious);
             if (!Globals.synched) return;
             var slide = Globals.slide;
-            // don't move if we're already on the slide requested
-            if (where == slide) return;
-
+            if (where == slide) return; // don't move if we're already on the slide requested
             var action = (Action)(() => Dispatcher.adoptAsync(() =>
                                                                   {
                                                                       var index = Globals.conversationDetails.Slides.First(s => s.id == where).index;
@@ -400,7 +398,7 @@ namespace SandRibbon.Components
                     thumbnailList.Insert(newSlide.index, newSlide);
             }
             foreach (var slide in thumbnailList)
-           {
+            {
                 foreach (var relatedSlide in details.Slides.Where(s => s.id == slide.id))
                 {
                     if (slide.index != relatedSlide.index)
@@ -423,7 +421,6 @@ namespace SandRibbon.Components
         }
         private void slides_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var source = (ListBox)sender;
             var removedItems = e.RemovedItems;
             var addedItems = e.AddedItems;
             if (addedItems.Count > 0)
