@@ -345,6 +345,7 @@ namespace SandRibbon.Components
 
         private void deleteSelectedElements(object _sender, ExecutedRoutedEventArgs _handler)
         {
+            if (me == Globals.PROJECTOR) return;
             var selectedImages = new List<UIElement>();
             var selectedText = new List<UIElement>();
             var selectedStrokes = new StrokeCollection();
@@ -804,7 +805,6 @@ namespace SandRibbon.Components
                  doMyStrokeRemovedExceptHistory(stroke);
             }
         }
-
         public void deleteSelectedItems(object obj)
         {
             deleteSelectedElements(null, null); 
