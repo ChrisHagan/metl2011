@@ -303,20 +303,14 @@ namespace SandRibbon.Components
             if (where == slide) return; // don't move if we're already on the slide requested
             var action = (Action)(() => Dispatcher.adoptAsync(() =>
                                                                   {
-                                                                      int index = 0;
-                                                                      var success = true;
                                                                       try
                                                                       {
-                                                                          index = Globals.conversationDetails.Slides.First(s => s.id == where).index;
+                                                                          var index = Globals.conversationDetails.Slides.First(s => s.id == where).index;
+                                                                          slides.SelectedIndex = index;
+                                                                          slides.ScrollIntoView(slides.SelectedItem);
                                                                       }
                                                                       catch (Exception)
                                                                       {
-                                                                          success = false;
-                                                                      }
-                                                                      if (success)
-                                                                      {
-                                                                          slides.SelectedIndex = index;
-                                                                          slides.ScrollIntoView(slides.SelectedItem);
                                                                       }
                                                                   }));
             GlobalTimers.SetSyncTimer(action, slide);
