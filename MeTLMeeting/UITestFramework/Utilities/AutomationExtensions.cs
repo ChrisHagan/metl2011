@@ -159,5 +159,22 @@ namespace UITestFramework
 
             return null;
         }
+
+        public static AutomationElement WalkAllElements(this AutomationElement element, Condition condition)
+        {
+            AutomationElement elementNode = TreeWalker.RawViewWalker.GetFirstChild(element);
+        
+            while (elementNode != null)
+            {
+                var foundElement = elementNode.FindFirst(TreeScope.Element, condition);
+                if (foundElement != null)
+                    return foundElement;
+
+                WalkAllElements(elementNode, condition);
+                elementNode = TreeWalker.RawViewWalker.GetNextSibling(elementNode);
+            }
+
+            return null;
+        }
     }
 }

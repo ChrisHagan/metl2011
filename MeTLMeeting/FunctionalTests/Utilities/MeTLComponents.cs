@@ -407,7 +407,7 @@ namespace Functional
 
         public AutomationElementCollection FindInkStrokes()
         {
-            return canvas.Descendants("StrokeVisual");
+            return canvas.Descendants("System.Windows.Ink.Render+StrokeVisual");
         }
     }
 

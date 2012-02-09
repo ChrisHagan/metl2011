@@ -43,21 +43,13 @@ namespace FunctionalTests
         {
             homeTab.ActivatePenMode().PenSelectMode();
 
-            var inkStrokes = canvas.FindInkStrokes();
-            foreach (AutomationElement ink in inkStrokes)
-            {
-                SelectInkStroke(ink);
-
-                Keyboard.Press(Key.Delete);
-            }
-
-            canvas = new CollapsedCanvasStack(metlWindow.AutomationElement);
-            Assert.AreEqual(0, canvas.FindInkStrokes().Count);
+            SelectInkStroke(canvas.BoundingRectangle);
+            Keyboard.Press(Key.Delete);
         }
 
-        private void SelectInkStroke(AutomationElement element)
+        private void SelectInkStroke(System.Windows.Rect boundingRectangle)
         {
-            var bounding = element.Current.BoundingRectangle;
+            var bounding = boundingRectangle;
 
             bounding.Inflate(-20, -20);
 
