@@ -35,19 +35,13 @@ namespace Functional
             Assert.IsTrue(metlWindows.Count == 1, ErrorMessages.EXPECTED_ONE_INSTANCE);
 
             var metlWindow = new UITestHelper(UITestHelper.RootElement, metlWindows[0]);
-
-            Automation.AddAutomationEventHandler(WindowPattern.WindowClosedEvent, metlWindow.AutomationElement, TreeScope.Element, new AutomationEventHandler(OnWindowClosedEvent));
+            metlWindow.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
+            metlWindow.Find();
 
             new ApplicationPopup(metlWindow.AutomationElement).Quit();
-        }
 
-        private void OnWindowClosedEvent(object source, AutomationEventArgs e)
-        {
-            if (e.EventId != WindowPattern.WindowClosedEvent)
-            {
-                Assert.Fail(ErrorMessages.PROBLEM_SHUTTING_DOWN);
-            }
-            Automation.RemoveAllEventHandlers();
+            var success = metlWindow.WaitForControlNotExist();
+            Assert.IsTrue(success, ErrorMessages.PROBLEM_SHUTTING_DOWN);
         }
 
         [TestMethod]
