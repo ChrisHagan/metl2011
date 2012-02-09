@@ -8,7 +8,7 @@ using System.Windows.Automation.Provider;
 
 namespace SandRibbon.Components
 {
-    public class CollapsedCanvasStackAutomationPeer : FrameworkElementAutomationPeer, IRawElementProviderSimple
+    public class CollapsedCanvasStackAutomationPeer : FrameworkElementAutomationPeer
     {
         public CollapsedCanvasStackAutomationPeer(FrameworkElement owner) : base(owner)
         {
@@ -24,11 +24,6 @@ namespace SandRibbon.Components
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
             return AutomationControlType.Custom;
-        }
-
-        object IRawElementProviderSimple.GetPatternProvider(int patternId)
-        {
-            return null;
         }
     }
 }
