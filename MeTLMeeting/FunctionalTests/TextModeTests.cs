@@ -55,10 +55,12 @@ namespace Functional
             foreach (AutomationElement textbox in textboxes)
             {
                 SelectTextbox(textbox);
-
+                Thread.Sleep(500);
                 Keyboard.Press(Key.Delete);
+                Thread.Sleep(500);
             }
             
+            Thread.Sleep(500);
             Assert.AreEqual(0, canvas.FindTextboxes().Count);
         }
 
