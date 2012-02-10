@@ -2144,8 +2144,9 @@ namespace SandRibbon.Components
                 }
             }
         }
-        private void HandleImagePasteRedo(List<BitmapSource> selectedImages)
+        private List<Image> createImages(List<BitmapSource> selectedImages)
         {
+            var images = new List<Image>();
             foreach (var imageSource in selectedImages)
             {
                 var tmpFile = "tmpImage.jpg";
@@ -2169,22 +2170,20 @@ namespace SandRibbon.Components
                     image.tag(new ImageTag(Globals.me, privacy, generateId(), false, -1));
                     InkCanvas.SetLeft(image, 15);
                     InkCanvas.SetTop(image, 15);
-                    Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, privacy, image));
+                    images.Add(image);
                 }
-                else
-                    MeTLMessage.Information("Sorry, your file could not be pasted.  Try dragging and dropping, or selecting with the add image button.");
             }
+            return images;
         }
-        private void HandleImagePasteUndo(List<BitmapSource> selectedImages)
+        private void HandleImagePasteRedo(List<Image> selectedImages)
         {
-            var imagesToDelete = new List<UIElement>();
+            foreach (var image in selectedImages)
+                Commands.SendImage.ExecuteAsync(new TargettedImage(Globals.slide, Globals.me, _target, privacy, image));
+        }
+        private void HandleImagePasteUndo(List<Image> selectedImages)
+        {
             foreach(var image in selectedImages)
-            {
-                var matchingImages = Work.Children.ToList().Where(i => i is Image).Where(i => ((Image) (i)).Source.ToString() == image.ToString()).ToList();
-                if(matchingImages.Count > 0)
-                    imagesToDelete.AddRange(matchingImages);
-            }
-            deleteSelectedImages(imagesToDelete);
+                dirtyThisElement(image);
         }
         private MeTLTextBox setWidthOf(MeTLTextBox box)
         {
@@ -2267,11 +2266,12 @@ namespace SandRibbon.Components
                 var currentChecksums = Work.Strokes.Select(s => s.sum().checksum);
                 var ink = data.Ink.Where(s => !currentChecksums.Contains(s.sum().checksum));
                 var boxes = createPastedBoxes(data.Text.ToList());
+                var images = createImages(data.Images.ToList());
                 Action undo = () =>
                                   {
                                       ClearAdorners();
                                       HandleInkPasteUndo(ink.ToList());
-                                      HandleImagePasteUndo(data.Images.ToList());
+                                      HandleImagePasteUndo(images);
                                       HandleTextPasteUndo(boxes, currentBox);
                                       AddAdorners();
                                   };
@@ -2279,7 +2279,7 @@ namespace SandRibbon.Components
                                   {
                                       ClearAdorners();
                                       HandleInkPasteRedo(ink.ToList());
-                                      HandleImagePasteRedo(data.Images.ToList());
+                                      HandleImagePasteRedo(images);
                                       HandleTextPasteRedo(boxes, currentBox);
                                       AddAdorners();
                                   };
@@ -2298,8 +2298,8 @@ namespace SandRibbon.Components
                 }
                 else if(Clipboard.ContainsImage())
                 {
-                    Action undo = () => HandleImagePasteUndo(new List<BitmapSource>{Clipboard.GetImage()});
-                    Action redo = () =>  HandleImagePasteRedo(new List<BitmapSource>{Clipboard.GetImage()});
+                    Action undo = () => HandleImagePasteUndo(createImages(new List<BitmapSource>{Clipboard.GetImage()}));
+                    Action redo = () =>  HandleImagePasteRedo(createImages(new List<BitmapSource>{Clipboard.GetImage()}));
                     UndoHistory.Queue(undo, redo);
                     redo();
                 }
