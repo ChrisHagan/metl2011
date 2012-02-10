@@ -563,14 +563,15 @@ namespace SandRibbon.Components
                 Height = element.ActualHeight,
                 Fill=new VisualBrush(element)
             };
-            /* Okay, this bit is complicated.  The bounds of an image are the bounds of the element(x,y,height,width), 
+            /*
+             * Okay, this bit is complicated.  The bounds of an image are the bounds of the element(x,y,height,width), 
              * not the image, but the actualHeight of an image (which is calculated after drawing the image) which is 
              * the pixels of the imageData.  So, when an image is drawn with correct aspect ratio, it may be smaller
              * than the bounds, which means that the x and y will need to be adjusted by half the difference between the
              * height and the actual height.  However, this doesn't happen for textboxes, and if you apply the difference
              * one of them way a NaN, and adding a NaN to any number makes a NaN.  So, that's why these "SetTop" and "SetLeft"
              * are so horrible.
-            */
+             */
             var left = InkCanvas.GetLeft(element);
             var top= InkCanvas.GetTop(element);
             if(element is Image)
