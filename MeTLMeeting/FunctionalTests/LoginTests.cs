@@ -73,12 +73,11 @@ namespace Functional
             WaitForLoginError();
         }
 
-        [TestMethod]
+        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "|DataDirectory|\\UserCredentials.csv", "UserCredentials#csv", DataAccessMethod.Sequential), DeploymentItem("FunctionalTests\\UserCredentials.csv"), TestMethod]
         public void LoginAndSaveCredentials()
         {
-            // TODO: This needs to be data-driven
-            var user = "eecrole";
-            var pass = "cleareight6";
+            var user = testContext.DataRow["Username"].ToString();
+            var pass = testContext.DataRow["Password"].ToString();
 
             var loginScreen = new Login(metlWindow.AutomationElement).username(user).password(pass);
             loginScreen.remember().submit();

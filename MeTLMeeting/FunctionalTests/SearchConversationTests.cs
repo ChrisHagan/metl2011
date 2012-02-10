@@ -38,6 +38,30 @@ namespace Functional
             search.JoinQueried(TestConstants.OWNER_CONVERSATION_TITLE);
         }
 
+        [TestMethod]
+        public void SearchForOwnedAndRename()
+        {
+            var search = new ConversationSearcher(metlWindow.AutomationElement);
+
+            search.searchField(TestConstants.OWNER_CONVERSATION_TITLE);
+            search.Search();
+
+            var results = new UITestHelper(metlWindow);
+            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
+
+            results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
+
+            search.SelectConversation(TestConstants.OWNER_CONVERSATION_TITLE);
+
+            var edit = new ConversationEditScreen(metlWindow.AutomationElement);
+            edit.Rename(TestConstants.OWNER_CONVERSATION_TITLE + "renamed").Save();
+
+            search.SelectConversation(TestConstants.OWNER_CONVERSATION_TITLE + "renamed");
+
+            edit = new ConversationEditScreen(metlWindow.AutomationElement);
+            edit.Rename(TestConstants.OWNER_CONVERSATION_TITLE).Save();
+        }
+
         private void CreateAndRenameConversation()
         {
             // create a new conversation with the name of the computer appended

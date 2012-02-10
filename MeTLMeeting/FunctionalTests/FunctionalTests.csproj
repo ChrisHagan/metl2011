@@ -140,6 +140,9 @@
     <Content Include="UserCredentials.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="OrderedTests\Case015.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
