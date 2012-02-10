@@ -58,7 +58,7 @@ namespace Functional
 
                 Keyboard.Press(Key.Delete);
             }
-
+            
             Assert.AreEqual(0, canvas.FindTextboxes().Count);
         }
 

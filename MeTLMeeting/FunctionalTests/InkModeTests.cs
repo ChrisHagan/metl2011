@@ -34,8 +34,6 @@ namespace FunctionalTests
             homeTab.ActivatePenMode();
 
             DrawSpirographWaveOnCanvas(canvas);
-
-            Thread.Sleep(200);
         }
 
         [TestMethod]
