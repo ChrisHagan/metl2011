@@ -8,7 +8,6 @@ namespace Functional
     class TestConstants
     {
         public const string OWNER_USERNAME = "eecrole";
-        public const string OWNER_PASSWORD = "cleareight6";
 
         private const string ownerConversationTitlePrefix = "CITestSearchTestsOwner";
         private static string ownerConversationTitle;
@@ -20,17 +19,15 @@ namespace Functional
                 {
                     ownerConversationTitle = ownerConversationTitlePrefix + System.Net.Dns.GetHostName();
                 }
-                return ownerConversationTitlePrefix;
+                return ownerConversationTitle;
             }
         }
 
         public const string NONOWNER_CONVERSATION_TITLE = "CITestSearchTestsNonOwner";
         public const string DELETED_CONVERSATION_TITLE = "CITestSearchTestsDeleted";
         public const string AUTH_GROUP_UNRESTRICTED = "Unrestricted";
-
-        public const int DEFAULT_CANVAS_WIDTH = 892;
-        public const int DEFAULT_CANVAS_HEIGHT = 669;
     }
+
     class Constants
     {
         public const string ID_METL_MAIN_WINDOW = "ribbonWindow";

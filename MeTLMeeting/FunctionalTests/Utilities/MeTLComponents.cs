@@ -703,7 +703,7 @@ namespace Functional
         
         public int GetResultsCount()
         {
-            var resultsParent = _parent.WalkAllElements("conversationSearchResults");
+            var resultsParent = _parent.Descendant("SearchResults");
             return resultsParent != null ? resultsParent.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, "conversationButton")).Count : 0;
         }
     }

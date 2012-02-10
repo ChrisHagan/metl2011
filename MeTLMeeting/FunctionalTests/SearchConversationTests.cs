@@ -30,10 +30,10 @@ namespace Functional
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
-            /*if (search.GetResultsCount() == 0)
+            if (search.GetResultsCount() == 0)
             {
                 CreateAndRenameConversation();
-            }*/
+            }
 
             search.JoinQueried(TestConstants.OWNER_CONVERSATION_TITLE);
         }
