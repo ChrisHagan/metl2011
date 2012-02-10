@@ -42,29 +42,46 @@ namespace FunctionalTests
             homeTab.ActivatePenMode().PenSelectMode();
 
             SelectInkStroke(canvas.BoundingRectangle);
+
+            Thread.Sleep(500); // give some time for the canvas to select all the ink strokes
             Keyboard.Press(Key.Delete);
+
+            Thread.Sleep(500); // wait a bit before checking the count
+
+            Assert.AreEqual(0, canvas.NumberOfInkStrokes());
+        }
+
+        private List<System.Drawing.Point> PopulateCoords(System.Windows.Rect bounding)
+        {
+            var coords = new List<System.Drawing.Point>();
+
+            coords.Add(bounding.TopLeft.ToDrawingPoint());
+            coords.Add(bounding.TopRight.ToDrawingPoint());
+            coords.Add(bounding.BottomRight.ToDrawingPoint());
+            coords.Add(bounding.BottomLeft.ToDrawingPoint());
+            coords.Add(bounding.TopLeft.ToDrawingPoint());
+            coords.Add(bounding.TopRight.ToDrawingPoint());
+
+            return coords;
         }
 
         private void SelectInkStroke(System.Windows.Rect boundingRectangle)
         {
             var bounding = boundingRectangle;
 
-            bounding.Inflate(-20, -20);
+            bounding.Inflate(-5, -5);
+
+            var coords = PopulateCoords(bounding);
 
             // move around the bounding box in a clockwise direction
-            Mouse.MoveTo(bounding.TopLeft.ToDrawingPoint());
+            Mouse.MoveTo(coords.First());
             Mouse.Down(MouseButton.Left);
 
-            Mouse.MoveTo(bounding.TopRight.ToDrawingPoint());
-            Thread.Sleep(10);
-            Mouse.MoveTo(bounding.BottomRight.ToDrawingPoint());
-            Thread.Sleep(10);
-            Mouse.MoveTo(bounding.BottomLeft.ToDrawingPoint());
-            Thread.Sleep(10);
-            Mouse.MoveTo(bounding.TopLeft.ToDrawingPoint());
-            Thread.Sleep(10);
-            Mouse.MoveTo(bounding.TopRight.ToDrawingPoint());
-            Thread.Sleep(10);
+            foreach (var coord in coords.Skip(1))
+            {
+                Mouse.MoveTo(coord);
+                Thread.Sleep(100);
+            }
 
             Mouse.Up(MouseButton.Left);
         }

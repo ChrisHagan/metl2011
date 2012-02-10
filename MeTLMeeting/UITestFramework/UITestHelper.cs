@@ -14,6 +14,7 @@ namespace UITestFramework
         
         private const int sleepIncrement = 100;
         private const int defaultTimeout = 30 * 1000;
+        private int? customTimeout = null;
         private AutomationElement parentElement;
         private AutomationElement matchingElement;
         private List<PropertyExpression> searchProperties = new List<PropertyExpression>();
@@ -126,6 +127,14 @@ namespace UITestFramework
             matchingElement = parentElement.FindFirst(DetermineScopeFromParent(), GetPropertyConditions());
         }
 
+        private int TimeoutValue()
+        {
+            if (customTimeout.HasValue)
+                return customTimeout.Value;
+
+            return defaultTimeout;
+        }
+
         #region WaitForControl functions
         public bool WaitForControl(WaitCondition loopCondition, WaitCondition returnCondition)
         {
@@ -142,14 +151,14 @@ namespace UITestFramework
                     totalTime += sleepIncrement;
                     Thread.Sleep(sleepIncrement);
                 }
-                while (loopCondition(uiControl) && totalTime < defaultTimeout);
+                while (loopCondition(uiControl) && totalTime < TimeoutValue());
             }
             catch (ElementNotAvailableException)
             {
                 return false;
             }
 
-            return returnCondition(uiControl) && totalTime < defaultTimeout;
+            return returnCondition(uiControl) && totalTime < TimeoutValue();
         }
 
         /// returns true if control is enabled before time-out; otherwise, false.
@@ -245,6 +254,26 @@ namespace UITestFramework
             set
             {
                 AutomationElement.Value(value);
+            }
+        }
+
+        public int DefaultTimeout
+        {
+            get { return defaultTimeout; }
+        }
+
+        /// <summary>
+        /// Set the override Timeout value to wait for the condition in milliseconds
+        /// </summary>
+        public int OverrideTimeout
+        {
+            get
+            {
+                return customTimeout ?? -1;
+            }
+            set
+            {
+                customTimeout = value;                
             }
         }
         #endregion

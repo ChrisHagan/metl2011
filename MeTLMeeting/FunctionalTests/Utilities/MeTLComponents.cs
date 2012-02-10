@@ -405,9 +405,11 @@ namespace Functional
             return canvas.Descendants(typeof(SandRibbon.Components.Utility.MeTLTextBox));
         }
 
-        public AutomationElementCollection FindInkStrokes()
+        public int NumberOfInkStrokes()
         {
-            return canvas.Descendants("System.Windows.Ink.Render+StrokeVisual");
+            var valuePattern = canvas.GetCurrentPattern(ValuePattern.Pattern) as ValuePattern;
+
+            return Convert.ToInt32(valuePattern.Current.Value);
         }
     }
 

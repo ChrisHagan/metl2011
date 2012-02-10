@@ -35,6 +35,7 @@ namespace Functional
         {
             var results = new UITestHelper(metlWindow);
             results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
+            results.OverrideTimeout = 5000;
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
@@ -51,6 +52,7 @@ namespace Functional
         {
             var results = new UITestHelper(metlWindow);
             results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
+            results.OverrideTimeout = 5000;
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
@@ -67,6 +69,7 @@ namespace Functional
         {
             var results = new UITestHelper(metlWindow);
             results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
+            results.OverrideTimeout = 5000;
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
