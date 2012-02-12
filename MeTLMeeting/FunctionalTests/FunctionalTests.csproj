@@ -92,6 +92,7 @@
     <Compile Include="TextModeTests.cs" />
     <Compile Include="UITestHelperTest.cs" />
     <Compile Include="MenuTests.cs" />
+    <Compile Include="Utilities\MeTLComponentHelpers.cs" />
     <Compile Include="Utilities\MeTLComponents.cs" />
     <Compile Include="Utilities\UITestHelperExtensions.cs" />
     <Compile Include="Utilities\WpfExtensions.cs" />
