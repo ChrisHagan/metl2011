@@ -13,6 +13,7 @@ using System.IO;
 using UITestFramework;
 using SandRibbon.Components;
 using Microsoft.Test.Input;
+using FunctionalTests.Utilities;
 
 namespace Functional
 {
@@ -136,7 +137,7 @@ namespace Functional
             _lecture.Invoke();
         }
     }
-    public class ApplicationPopup
+    public class ApplicationPopup : ConversationAction
     {
         private AutomationElement _parent;
         public ApplicationPopup(AutomationElement parent)
@@ -198,6 +199,8 @@ namespace Functional
                 // invoke create new conversation
                 var menu = menuItems[0];
                 menu.Invoke();
+
+                WaitUntilConversationJoined(_parent);
             }
             catch (Exception) 
             {
@@ -584,7 +587,8 @@ namespace Functional
             }
         }
     }
-    public  class ConversationSearcher
+    
+    public class ConversationSearcher : ConversationAction
     {
         private AutomationElement _searchField;
         private AutomationElement _searchButton;
@@ -624,7 +628,7 @@ namespace Functional
 
             buttons[1].Invoke();
 
-            WaitUntilConversationJoined();
+            WaitUntilConversationJoined(_parent);
             
             return this;
         }
@@ -674,18 +678,9 @@ namespace Functional
 
             Assert.IsTrue(success, ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
 
-            WaitUntilConversationJoined();
+            WaitUntilConversationJoined(_parent);
             
             return this;
-        }
-
-        private void WaitUntilConversationJoined()
-        {
-            // wait until we've finished joining the conversation before returning
-            var canvasStack = new UITestHelper(_parent, _parent.Descendant(typeof(CollapsedCanvasStack)));
-            var success = canvasStack.WaitForControlEnabled();
-
-            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
         }
 
         public ConversationSearcher GetResults()
@@ -817,7 +812,7 @@ namespace Functional
         }
     }
 
-    public class ConversationEditScreen
+    public class ConversationEditScreen : ConversationAction
     {
         private AutomationElement _parent;
         private AutomationElement _rename;
@@ -910,13 +905,6 @@ namespace Functional
             return this;
         }
 
-        private void WaitUntilConversationJoined()
-        {
-            // wait until we've finished joining the conversation before returning
-            var addPage = new UITestHelper(_parent);
-            addPage.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "addSlideButton"));
-            addPage.WaitForControlEnabled();
-        }
         public ConversationEditScreen ReturnToCurrent()
         {
             var returnButton = new UITestHelper(_parent);
@@ -925,7 +913,7 @@ namespace Functional
             returnButton.WaitForControlEnabled();
             returnButton.AutomationElement.Invoke();
 
-            WaitUntilConversationJoined();
+            WaitUntilConversationJoined(_parent);
 
             return this;
         }
