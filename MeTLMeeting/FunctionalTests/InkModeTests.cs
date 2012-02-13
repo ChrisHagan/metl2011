@@ -55,11 +55,23 @@ namespace FunctionalTests
             SelectInkStroke(canvas.BoundingRectangle);
 
             Thread.Sleep(500); // give some time for the canvas to select all the ink strokes
+            DeleteInkStroke();
             Keyboard.Press(Key.Delete);
 
             Thread.Sleep(500); // wait a bit before checking the count
 
             Assert.AreEqual(0, canvas.NumberOfInkStrokes());
+        }
+
+        private void DeleteInkStroke()
+        {
+            var deleteButton = new UITestHelper(metlWindow);
+            deleteButton.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "deleteButton"));
+
+            var success = deleteButton.WaitForControlExist();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
+            deleteButton.AutomationElement.Invoke(); 
         }
 
         private List<System.Drawing.Point> PopulateCoords(System.Windows.Rect bounding)

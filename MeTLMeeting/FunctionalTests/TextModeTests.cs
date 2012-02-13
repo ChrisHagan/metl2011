@@ -57,7 +57,7 @@ namespace Functional
                 SelectTextbox(textbox);
                 Thread.Sleep(500);
                 //Keyboard.Press(Key.Delete);
-                DeleteTextbox(textbox);
+                DeleteTextbox();
                 Thread.Sleep(500);
             }
             
@@ -89,7 +89,7 @@ namespace Functional
             Mouse.Up(MouseButton.Left);
         }
 
-        private void DeleteTextbox(AutomationElement textbox)
+        private void DeleteTextbox()
         {
             var deleteButton = new UITestHelper(metlWindow);
             deleteButton.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "deleteButton"));
