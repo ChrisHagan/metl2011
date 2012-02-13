@@ -71,7 +71,6 @@ namespace SandRibbon.Quizzing
        public void DisplayQuiz(object sender, RoutedEventArgs e)
         {
             PrepareForRender();
-
             var quiz = SnapshotHost;
             quiz.UpdateLayout();
             var dpi = 96;

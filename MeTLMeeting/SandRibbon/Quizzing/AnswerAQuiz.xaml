@@ -15,7 +15,7 @@
                 <Button Click="DisplayQuiz">Display quiz</Button>
             </StackPanel>
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
-                <StackPanel DockPanel.Dock="Top" Orientation="Vertical" x:Name="SnapshotHost">
+                <StackPanel DockPanel.Dock="Top" Orientation="Vertical"  Background="{StaticResource BackgroundBlueGradient}" x:Name="SnapshotHost">
                     <Grid Margin="10 10 10 30">
                         <StackPanel MaxHeight="400" Width="720" MaxWidth="720">
                             <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
@@ -39,7 +39,7 @@
                         </StackPanel>
                     </Grid>
                     <ListBox x:Name="quizOptions" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                         SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}" MaxWidth="720" Width="700">
+                         SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}" MaxWidth="720" Width="700" Margin="0 0 0 10">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal"  x:Name="quizAnswers">

@@ -22,7 +22,7 @@
         <DockPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" >
                 <Button x:Name="importSelectedSubmission" ToolTip="{DynamicResource DisplaySubmissionToolTip}" Command="{x:Static api:Commands.ImportSubmission}" HorizontalAlignment="Right">Display submission</Button>
-                <Button  ToolTip="{DynamicResource DisplaySubmissionToolTip}" Command="{x:Static api:Commands.ImportSubmissions}" HorizontalAlignment="Right">Display all submission</Button>
+                <Button  ToolTip="{DynamicResource DisplaySubmissionToolTip}" Command="{x:Static api:Commands.ImportSubmissions}" HorizontalAlignment="Right">Display all submissions</Button>
             </StackPanel>
             <Grid MaxHeight="450">
                 <Grid.ColumnDefinitions>
