@@ -632,7 +632,62 @@ namespace Functional
             
             return this;
         }
+
         public ConversationSearcher SelectConversation(string query)
+        {
+            _searchResults = _parent.Descendant("SearchResults");
+
+            var searchResults = new UITestHelper(_parent, _searchResults);
+            searchResults.SearchProperties.Add(new PropertyExpression(AutomationElement.NameProperty, "SearchResults"));
+            var resultsReturned = searchResults.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
+
+            if (resultsReturned == false)
+                Assert.Fail(ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
+
+            var success = false;
+            var buttons = _searchResults.Descendants(typeof(Button));
+            foreach (AutomationElement button in buttons)
+            {
+                if (button.WalkAllElements(query) != null && (bool)button.GetCurrentPropertyValue(AutomationElement.IsKeyboardFocusableProperty) == true)
+                {
+                    success = true;                    
+                    button.SetFocus();
+                    break;
+                }
+            }
+
+            Assert.IsTrue(success, ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
+
+            return this;
+        }
+
+        /*public ConversationSearcher SelectConversation(string query)
+        {
+            _searchResults = _parent.Descendant("SearchResults");
+
+            var currentConversation = new UITestHelper(_searchResults);
+            currentConversation.SearchProperties.Add(new PropertyExpression(AutomationElement.IsOffscreenProperty, false));
+            currentConversation.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "currentConversationButton"));
+
+            if (currentConversation.WaitForControlEnabled() == false)
+                Assert.Fail(ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
+
+            var success = false;
+            currentConversation.WaitForControlCondition((uiControl) => { return TreeWalker.RawViewWalker.GetNextSibling(uiControl) == null; });
+            var conversationParent = TreeWalker.RawViewWalker.GetNextSibling(currentConversation.AutomationElement);
+            // make sure we've got the right one
+            if (conversationParent != null && conversationParent.WalkAllElements(query) != null)
+            {
+                success = true;
+                conversationParent.SetFocus();
+            }
+
+            Assert.IsTrue(success, ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
+
+            return this;
+        }*/
+
+        public bool ResultsContainQueried(string query)
         {
             _searchResults = _parent.Descendant("SearchResults");
             var buttons = _searchResults.Descendants(typeof(Button));
@@ -647,15 +702,13 @@ namespace Functional
                 if (conversation != null)
                 {
                     success = true;
-                    button.SetFocus();
                     break;
                 }
             }
 
-            Assert.IsTrue(success, ErrorMessages.UNABLE_TO_FIND_CONVERSATION);
-
-            return this;
+            return success;
         }
+
         public ConversationSearcher JoinQueried(string query)
         {
             _searchResults = _parent.Descendant("SearchResults");
@@ -913,7 +966,7 @@ namespace Functional
             returnButton.WaitForControlEnabled();
             returnButton.AutomationElement.Invoke();
 
-            WaitUntilConversationJoined(_parent);
+            WaitUntilConversationJoined(MeTL.GetMainWindow().AutomationElement);
 
             return this;
         }

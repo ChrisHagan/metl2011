@@ -3,6 +3,7 @@ using UITestFramework;
 using System.Windows.Automation;
 using System.Windows;
 using System.Threading;
+using System;
 
 namespace Functional
 {
@@ -30,7 +31,7 @@ namespace Functional
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
-            if (search.GetResultsCount() == 0)
+            if (!search.ResultsContainQueried(TestConstants.OWNER_CONVERSATION_TITLE))
             {
                 CreateAndRenameConversation();
             }
@@ -51,18 +52,22 @@ namespace Functional
 
             results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
 
+            if (!search.ResultsContainQueried(TestConstants.OWNER_CONVERSATION_TITLE))
+            {
+                CreateAndRenameConversation();
+            }
+
             search.SelectConversation(TestConstants.OWNER_CONVERSATION_TITLE);
+            var guid = Guid.NewGuid();
 
             var edit = new ConversationEditScreen(metlWindow.AutomationElement);
-            edit.Rename(TestConstants.OWNER_CONVERSATION_TITLE + "renamed").Save();
+            edit.Rename(TestConstants.OWNER_CONVERSATION_TITLE + "renamed" + guid).Save();
 
-            search.SelectConversation(TestConstants.OWNER_CONVERSATION_TITLE + "renamed");
-
-            edit = new ConversationEditScreen(metlWindow.AutomationElement);
-            edit.Rename(TestConstants.OWNER_CONVERSATION_TITLE).Save();
+            search.SelectConversation(TestConstants.OWNER_CONVERSATION_TITLE + "renamed" + guid);
         }
 
-        private void CreateAndRenameConversation()
+        [TestMethod]
+        public void CreateAndRenameConversation()
         {
             // create a new conversation with the name of the computer appended
             new ApplicationPopup(metlWindow.AutomationElement).CreateConversation();
@@ -110,7 +115,6 @@ namespace Functional
         [TestMethod]
         public void HighlightConversationCurrentlyJoined()
         {
-            //Thread.Sleep(200);
             var search = new ConversationSearcher(metlWindow.AutomationElement);
             search.SelectConversation(TestConstants.OWNER_CONVERSATION_TITLE);
         }
@@ -142,6 +146,11 @@ namespace Functional
 
             var filterButton = filter.AutomationElement;
             Assert.AreEqual("Filter my Conversations", filterButton.Current.Name, ErrorMessages.EXPECTED_CONTENT);
+
+            var results = new UITestHelper(metlWindow);
+            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
+
+            results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
         }
 
         [TestMethod]
@@ -152,8 +161,19 @@ namespace Functional
             var currentConversation = new UITestHelper(metlWindow);
             currentConversation.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_SEARCH_CURRENT_CONVERSATION_BUTTON));
 
-            currentConversation.Find();
+            var foundCurrent = currentConversation.WaitForControlExist();
+            Assert.IsTrue(foundCurrent, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
             currentConversation.AutomationElement.Select();
+
+            var filter = new UITestHelper(metlWindow);
+            filter.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_SEARCH_ALL_CONVERSATIONS_BUTTON));
+
+            var success = filter.WaitForControlVisible();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
+            var filterButton = filter.AutomationElement;
+            Assert.AreEqual("Search all Conversations", filterButton.Current.Name, ErrorMessages.EXPECTED_CONTENT);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace UITestFramework
     public class PropertyExpression : INotifyPropertyChanged
     {
         private AutomationProperty propertyName;
-        private string propertyValue;
+        private object propertyValue;
         private PropertyExpressionOperator propertyOperator = PropertyExpressionOperator.EqualTo;
 
         private static object notifyLock = new Object();
@@ -35,14 +35,14 @@ namespace UITestFramework
         {
         }
 
-        public PropertyExpression(AutomationProperty propertyName, string propertyValue)
+        public PropertyExpression(AutomationProperty propertyName, object propertyValue)
         {
             PropertyName = propertyName;
             PropertyValue = propertyValue;
             PropertyOperator = PropertyExpressionOperator.EqualTo;
         }
 
-        public PropertyExpression(AutomationProperty propertyName, string propertyValue, PropertyExpressionOperator propertyOperator)
+        public PropertyExpression(AutomationProperty propertyName, object propertyValue, PropertyExpressionOperator propertyOperator)
         {
             PropertyName = propertyName;
             PropertyValue = propertyValue;
@@ -66,7 +66,7 @@ namespace UITestFramework
             }
         }
 
-        public string PropertyValue
+        public object PropertyValue
         {
             get
             {

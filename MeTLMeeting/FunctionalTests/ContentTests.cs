@@ -14,11 +14,5 @@ namespace Functional
         {
             metlWindow = MeTL.GetMainWindow();
         }
-
-        [TestMethod]
-        public void CreateNewConversation()
-        {
-            new ApplicationPopup(metlWindow.AutomationElement).CreateConversation();
-        }
     }
 }
