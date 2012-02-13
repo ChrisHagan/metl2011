@@ -15,10 +15,10 @@
         <sr:GroupVariant Variant="Collapsed" Priority="7"/>
     </sr:RibbonGroup.Variants>
     <dict:RibbonPanel>
-        <dict:Button Command="{x:Static api:Commands.OriginalView}" Text="Show page" Icon="\Resources\ShowOriginal.png" ToolTip="{DynamicResource ShowSlideToolTip}"/>
-        <dict:Button Command="{x:Static api:Commands.FitToView}" Icon="\Resources\ShowAll.png" Text="Show all" ToolTip="{DynamicResource FitToViewToolTip}"/>
-        <dict:Button Command="{x:Static api:Commands.ExtendCanvasBothWays}" Text="Extend Page" Icon="\Resources\ExtendCanvas.png" ToolTip="{DynamicResource ExtendCanvasToolTip}"/>
-        <dict:Button x:Name="ZoomOut" Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}" />
-        <dict:Button x:Name="ZoomIn" Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}" />
+        <dict:Button AutomationProperties.AutomationId="OriginalView" Command="{x:Static api:Commands.OriginalView}" Text="Show page" Icon="\Resources\ShowOriginal.png" ToolTip="{DynamicResource ShowSlideToolTip}"/>
+        <dict:Button AutomationProperties.AutomationId="FitToView" Command="{x:Static api:Commands.FitToView}" Icon="\Resources\ShowAll.png" Text="Show all" ToolTip="{DynamicResource FitToViewToolTip}"/>
+        <dict:Button AutomationProperties.AutomationId="ExtendPage" Command="{x:Static api:Commands.ExtendCanvasBothWays}" Text="Extend Page" Icon="\Resources\ExtendCanvas.png" ToolTip="{DynamicResource ExtendCanvasToolTip}"/>
+        <dict:Button AutomationProperties.AutomationId="ZoomOut" x:Name="ZoomOut" Command="{x:Static api:Commands.ZoomOut}" Text="Zoom Out" Icon="\Resources\Ribbon-ZoomOut.png" ToolTip="{DynamicResource ZoomOutToolTip}" />
+        <dict:Button AutomationProperties.AutomationId="ZoomId" x:Name="ZoomIn" Command="{x:Static api:Commands.ZoomIn}" Text="Zoom In" Icon="\Resources\Ribbon-ZoomIn.png" ToolTip="{DynamicResource ZoomInToolTip}" />
     </dict:RibbonPanel>
 </sr:RibbonGroup>           

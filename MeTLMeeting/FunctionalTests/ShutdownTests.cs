@@ -41,7 +41,7 @@ namespace Functional
 
             new ApplicationPopup(metlWindow.AutomationElement).Quit();
 
-            Thread.Sleep(300);
+            Thread.Sleep(2000);
 
             // Waiting on the process causes a thread to wait, stopping the application from shutting down
             //var success = metlWindow.WaitForControlNotExist();

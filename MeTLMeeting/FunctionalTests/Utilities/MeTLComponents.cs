@@ -977,6 +977,7 @@ namespace Functional
         private AutomationElement _inkButton;
         private AutomationElement _textButton;
         private AutomationElement _imageButton;
+        private AutomationElement _extendButton;
 
         public HomeTabScreen(AutomationElement parent)
         {
@@ -1097,11 +1098,19 @@ namespace Functional
             return this;
         }
 
+        public HomeTabScreen ExtendPage()
+        {
+            _extendButton.Invoke();
+
+            return this;
+        }
+
         private void FindElements()
         {
             _inkButton = _parent.Descendant("Pen");
             _textButton = _parent.Descendant("Text");
             _imageButton = _parent.Descendant("Image");
+            _extendButton = _parent.Descendant("ExtendPage");
         }
     }
 }

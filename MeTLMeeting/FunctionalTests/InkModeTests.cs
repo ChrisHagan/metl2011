@@ -28,6 +28,17 @@ namespace FunctionalTests
             canvas = new CollapsedCanvasStack(metlWindow.AutomationElement);
         }
 
+        private void CollectRandomPoints()
+        {
+            
+        }
+
+        [TestMethod]
+        public void DrawRandomInkStrokes()
+        {
+            CollectRandomPoints();
+        }
+
         [TestMethod]
         public void InsertInkStrokesAtRandomPoint()
         {

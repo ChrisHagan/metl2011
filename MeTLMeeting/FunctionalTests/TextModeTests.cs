@@ -56,7 +56,8 @@ namespace Functional
             {
                 SelectTextbox(textbox);
                 Thread.Sleep(500);
-                Keyboard.Press(Key.Delete);
+                //Keyboard.Press(Key.Delete);
+                DeleteTextbox(textbox);
                 Thread.Sleep(500);
             }
             
@@ -86,6 +87,17 @@ namespace Functional
             Thread.Sleep(10);
 
             Mouse.Up(MouseButton.Left);
+        }
+
+        private void DeleteTextbox(AutomationElement textbox)
+        {
+            var deleteButton = new UITestHelper(metlWindow);
+            deleteButton.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "deleteButton"));
+
+            var success = deleteButton.WaitForControlExist();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
+            deleteButton.AutomationElement.Invoke(); 
         }
 
         private System.Drawing.Point SelectRandomPoint(CollapsedCanvasStack canvas)

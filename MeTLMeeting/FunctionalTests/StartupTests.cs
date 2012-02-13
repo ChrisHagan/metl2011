@@ -33,6 +33,14 @@ namespace Functional
                 var success = metl.WaitForControlEnabled();
                 Assert.IsTrue(success, ErrorMessages.EXPECTED_MAIN_WINDOW);
             }
+
+            var desktopBounds = AutomationElement.RootElement.Current.BoundingRectangle;
+            var windows = MeTL.GetAllMainWindows();
+            Assert.AreEqual(2, windows.Count);
+
+            // move each window into position
+            var transformPattern = windows[0].GetCurrentPattern(TransformPattern.Pattern) as TransformPattern;
+            //transformPattern.Resize()
         }
     }
 }

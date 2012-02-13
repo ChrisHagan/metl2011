@@ -10,11 +10,15 @@ namespace Functional
     public class EditConversationTests
     {
         private UITestHelper metlWindow;
-        
+        private HomeTabScreen homeTab;
+        private CollapsedCanvasStack canvas;
+
         [TestInitialize]
         public void Setup()
         {
             metlWindow = MeTL.GetMainWindow();
+            homeTab = new HomeTabScreen(metlWindow.AutomationElement).OpenTab();
+            canvas = new CollapsedCanvasStack(metlWindow.AutomationElement);
         }
 
         [TestMethod]
@@ -109,6 +113,27 @@ namespace Functional
             });
     
             Assert.AreEqual(currentCount + 1, rangeValue.Current.Maximum);
+        }
+
+        [TestMethod]
+        public void ExtendCanvasViaButton()
+        {
+            var originalSize = canvas.BoundingRectangle;
+
+            homeTab.ExtendPage();
+
+            var waitCanvas = new UITestHelper(metlWindow);
+            waitCanvas.SearchProperties.Add(new PropertyExpression(AutomationElement.ClassNameProperty, typeof(SandRibbon.Components.CollapsedCanvasStack).Name));
+
+            var success = waitCanvas.WaitForControlCondition((uiControl) => { return (Rect)uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty) == originalSize; });
+            
+            Assert.IsTrue(success);
+        }
+
+        [TestMethod]
+        public void ExtendCanvasViaContent()
+        {
+
         }
     }
 }
