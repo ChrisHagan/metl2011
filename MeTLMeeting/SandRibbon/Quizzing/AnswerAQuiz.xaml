@@ -30,11 +30,7 @@
                                        HorizontalAlignment="Center" />
                             </Grid>
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Grid.Column="1" Source="{Binding Path=url}" MaxWidth="300" MaxHeight="300"/>
+                                <Image Source="{Binding Path=url}" MaxWidth="300" MaxHeight="300"/>
                             </Grid>
                         </StackPanel>
                     </Grid>
