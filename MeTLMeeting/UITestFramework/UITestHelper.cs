@@ -11,6 +11,7 @@ namespace UITestFramework
         public delegate bool WaitCondition(AutomationElement element);
 
         public static UITestHelper RootElement = new UITestHelper();
+        public static int sleepMultiplier = 1;
         
         private const int sleepIncrement = 100;
         private const int defaultTimeout = 30 * 1000;
@@ -125,6 +126,11 @@ namespace UITestFramework
             Assert.IsTrue(searchProperties.Count > 0, "SearchProperties must be set before calling WaitForControl functions");
 
             matchingElement = parentElement.FindFirst(DetermineScopeFromParent(), GetPropertyConditions());
+        }
+
+        public static void Wait(TimeSpan time)
+        {
+            Thread.Sleep((int)time.TotalMilliseconds * sleepMultiplier);
         }
 
         private int TimeoutValue()
@@ -274,6 +280,21 @@ namespace UITestFramework
             set
             {
                 customTimeout = value;                
+            }
+        }
+
+        public int SleepMultiplier
+        {
+            get
+            {
+                return sleepMultiplier;
+            }
+            set
+            {
+                if (value < 1)
+                    throw new ArgumentOutOfRangeException();
+
+                sleepMultiplier = value;
             }
         }
         #endregion

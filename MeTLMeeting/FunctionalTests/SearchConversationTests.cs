@@ -4,6 +4,7 @@ using System.Windows.Automation;
 using System.Windows;
 using System.Threading;
 using System;
+using Microsoft.Test.Input;
 
 namespace Functional
 {
@@ -156,24 +157,47 @@ namespace Functional
         [TestMethod]
         public void SwitchToSearchCurrentConversation()
         {
+            var manualEvent = new ManualResetEvent(false);
+            var completedSearch = false;
+
+            var searchBox = new UITestHelper(metlWindow.AutomationElement);
+            searchBox.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "ConversationSearchBox"));
+            searchBox.Find();
+
+            Automation.AddAutomationEventHandler(AutomationElement.AsyncContentLoadedEvent, searchBox.AutomationElement, TreeScope.Element, (sender, args) => { completedSearch = true; manualEvent.Set(); });
+
             new ApplicationPopup(metlWindow.AutomationElement).SearchMyConversation();
+
+            UITestHelper.Wait(TimeSpan.FromSeconds(5));
+            
+            manualEvent.WaitOne(5000, false);
+            Assert.IsTrue(completedSearch);
 
             var currentConversation = new UITestHelper(metlWindow);
             currentConversation.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_SEARCH_CURRENT_CONVERSATION_BUTTON));
 
-            var foundCurrent = currentConversation.WaitForControlExist();
-            Assert.IsTrue(foundCurrent, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+            currentConversation.Find();
 
             currentConversation.AutomationElement.Select();
 
-            var filter = new UITestHelper(metlWindow);
-            filter.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_SEARCH_ALL_CONVERSATIONS_BUTTON));
+            UITestHelper.Wait(TimeSpan.FromSeconds(5));
 
-            var success = filter.WaitForControlVisible();
-            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+            /*var resultsText = new UITestHelper(metlWindow, metlWindow.AutomationElement.Descendant(Constants.ID_METL_SEARCH_RESULTS_TEXT));
+            resultsText.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_SEARCH_RESULTS_TEXT));
 
-            var filterButton = filter.AutomationElement;
-            Assert.AreEqual("Search all Conversations", filterButton.Current.Name, ErrorMessages.EXPECTED_CONTENT);
+            var correct = resultsText.WaitForControlCondition((uiControl) =>
+            {
+                if (uiControl.Current.Name == "Found 1 result.")
+                {
+                    return false;
+                }
+
+                return true;
+            });
+
+            Assert.IsTrue(correct);
+             */
         }
+        
     }
 }

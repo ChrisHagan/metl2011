@@ -43,6 +43,7 @@ namespace Functional
         public const string ID_METL_LOGOUT_AND_EXIT_BACKNAV_BUTTON = "LogoutAndExit";
         public const string ID_METL_USER_CANVAS_STACK = "canvas";
         public const string ID_METL_CANVAS_VIEW_BOX = "canvasViewBox";
+        public const string ID_METL_SEARCH_RESULTS_TEXT = "SearchResultsText";
         public const string ID_METL_SEARCH_ALL_CONVERSATIONS_BUTTON = "searchConversations";
         public const string ID_METL_SEARCH_CURRENT_CONVERSATION_BUTTON = "currentConversation";
         public const string ID_METL_AUTH_GROUPS_LISTBOX = "groupsList";

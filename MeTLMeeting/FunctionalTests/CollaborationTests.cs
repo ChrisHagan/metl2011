@@ -81,5 +81,35 @@ namespace FunctionalTests
 
             WaitForSearchScreen(currentWindow);
         }
+
+        [TestMethod]
+        public void AddTextToOwner()
+        {
+
+        }
+
+        [TestMethod]
+        public void AddInkToOwner()
+        {
+
+        }
+
+        [TestMethod]
+        public void AddTextToParticipant()
+        {
+
+        }
+
+        [TestMethod]
+        public void AddInkToParticipant()
+        {
+
+        }
+
+        [TestMethod]
+        public void JoinConversation()
+        {
+            
+        }
     }
 }

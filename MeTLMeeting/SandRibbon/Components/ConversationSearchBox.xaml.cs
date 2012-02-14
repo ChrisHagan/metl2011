@@ -18,6 +18,7 @@ using MeTLLib;
 using System.ComponentModel;
 using System.Collections.Generic;
 using SandRibbon.Components.Utility;
+using System.Windows.Automation;
 
 namespace SandRibbon.Components
 {
@@ -172,6 +173,17 @@ namespace SandRibbon.Components
                         conversations.ForEach(cd => searchResultsObserver.Add(cd));
                     }
                 }
+
+                #region Automation events
+                if (AutomationPeer.ListenerExists(AutomationEvents.AsyncContentLoaded))
+                {
+                    var peer = UIElementAutomationPeer.FromElement(this) as UIElementAutomationPeer;
+                    if (peer != null)
+                    {
+                        peer.RaiseAsyncContentLoadedEvent(new AsyncContentLoadedEventArgs(AsyncContentLoadedState.Completed, 100));
+                    }
+                }
+                #endregion
             };
 
             search.RunWorkerAsync();
