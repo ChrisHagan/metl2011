@@ -35,12 +35,20 @@ namespace Functional
             }
 
             var desktopBounds = AutomationElement.RootElement.Current.BoundingRectangle;
-            var windows = MeTL.GetAllMainWindows();
+            var windows = MeTL.GetAllMainWindows(2, true);
             Assert.AreEqual(2, windows.Count);
 
             // move each window into position
-            var transformPattern = windows[0].GetCurrentPattern(TransformPattern.Pattern) as TransformPattern;
-            //transformPattern.Resize()
+            var windowCount = 0;
+            foreach (AutomationElement window in windows)
+            {
+                var windowPattern = window.GetCurrentPattern(WindowPattern.Pattern) as WindowPattern;
+                windowPattern.SetWindowVisualState(WindowVisualState.Normal);
+
+                var transformPattern = window.GetCurrentPattern(TransformPattern.Pattern) as TransformPattern;
+                transformPattern.Resize(desktopBounds.Width / 2, desktopBounds.Height);
+                transformPattern.Move((desktopBounds.Width / 2) * windowCount++, 0);
+            }
         }
     }
 }

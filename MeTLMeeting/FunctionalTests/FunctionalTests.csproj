@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheckVersionTests.cs" />
+    <Compile Include="CollaborationTests.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ContentTests.cs" />
     <Compile Include="ConversationEditingInMultipleUserSpace.cs" />

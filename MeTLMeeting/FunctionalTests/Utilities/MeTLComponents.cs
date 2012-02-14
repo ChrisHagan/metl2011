@@ -49,9 +49,33 @@ namespace Functional
             return metlWindow;
         }
 
+        private static AutomationElementCollection FindAllWindows()
+        {
+            return AutomationElement.RootElement.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
+        }
+
         public static AutomationElementCollection GetAllMainWindows()
         {
-            var mainWindows = AutomationElement.RootElement.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, Constants.ID_METL_MAIN_WINDOW));
+            return GetAllMainWindows(0, false);
+        }
+        public static AutomationElementCollection GetAllMainWindows(int expectedCount, bool wait = false)
+        {
+            var mainWindows = FindAllWindows();
+
+            if (mainWindows.Count < expectedCount && wait)
+            {
+                int totalTime = 0;
+                int sleepIncrement = 100;
+                int maxTime = 5000;
+
+                while (mainWindows.Count < expectedCount && totalTime < maxTime)
+                {
+                    mainWindows = FindAllWindows();
+                    Thread.Sleep(sleepIncrement);
+
+                    totalTime += sleepIncrement;
+                }
+            }
 
             return mainWindows;
         }

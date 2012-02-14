@@ -54,7 +54,7 @@ namespace Functional
             var textboxes = canvas.FindTextboxes();
             foreach (AutomationElement textbox in textboxes)
             {
-                SelectTextbox(textbox);
+                SelectTextboxWithClick(textbox);
                 Thread.Sleep(500);
                 //Keyboard.Press(Key.Delete);
                 DeleteTextbox();
@@ -65,7 +65,16 @@ namespace Functional
             Assert.AreEqual(0, canvas.FindTextboxes().Count);
         }
 
-        private void SelectTextbox(AutomationElement textbox)
+        private void SelectTextboxWithClick(AutomationElement textbox)
+        {
+            var bounding = textbox.Current.BoundingRectangle;
+            var centreTextbox = new System.Drawing.Point((int)(bounding.X + bounding.Width / 2), (int)(bounding.Y + bounding.Height / 2));
+
+            Mouse.MoveTo(centreTextbox);
+            Mouse.Click(MouseButton.Left);
+        }
+
+        private void SelectTextboxWithMouse(AutomationElement textbox)
         {
             var bounding = textbox.Current.BoundingRectangle;
 
@@ -73,18 +82,12 @@ namespace Functional
 
             // move around the bounding box in a clockwise direction
             Mouse.MoveTo(bounding.TopLeft.ToDrawingPoint());
-            Mouse.Down(MouseButton.Left);
 
-            Mouse.MoveTo(bounding.TopRight.ToDrawingPoint());
-            Thread.Sleep(10);
-            Mouse.MoveTo(bounding.BottomRight.ToDrawingPoint());
-            Thread.Sleep(10);
-            Mouse.MoveTo(bounding.BottomLeft.ToDrawingPoint());
-            Thread.Sleep(10);
-            Mouse.MoveTo(bounding.TopLeft.ToDrawingPoint());
-            Thread.Sleep(10);
-            Mouse.MoveTo(bounding.TopRight.ToDrawingPoint());
-            Thread.Sleep(10);
+            Mouse.DragTo(MouseButton.Left, bounding.TopRight.ToDrawingPoint());
+            Mouse.DragTo(MouseButton.Left, bounding.BottomRight.ToDrawingPoint());
+            Mouse.DragTo(MouseButton.Left, bounding.BottomLeft.ToDrawingPoint());
+            Mouse.DragTo(MouseButton.Left, bounding.TopLeft.ToDrawingPoint());
+            Mouse.DragTo(MouseButton.Left, bounding.TopRight.ToDrawingPoint());
 
             Mouse.Up(MouseButton.Left);
         }
