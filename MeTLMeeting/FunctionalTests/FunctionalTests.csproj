@@ -74,6 +74,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\SearchForOwnedConversationAndJoin.cs" />
     <Compile Include="CheckVersionTests.cs" />
     <Compile Include="CollaborationTests.cs" />
     <Compile Include="Constants.cs" />

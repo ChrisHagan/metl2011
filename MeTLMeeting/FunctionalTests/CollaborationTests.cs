@@ -83,6 +83,12 @@ namespace FunctionalTests
         }
 
         [TestMethod]
+        public void JoinConversation()
+        {
+                        
+        }
+
+        [TestMethod]
         public void AddTextToOwner()
         {
 
@@ -106,10 +112,5 @@ namespace FunctionalTests
 
         }
 
-        [TestMethod]
-        public void JoinConversation()
-        {
-            
-        }
     }
 }

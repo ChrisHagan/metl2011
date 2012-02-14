@@ -37,6 +37,7 @@ namespace Functional
         public const string ID_METL_CONVERSATION_SHARE_BUTTON = "shareConversationButton";
         public const string ID_METL_CONVERSATION_BUTTON = "conversationButton";
         public const string ID_METL_CONVERSATION_DELETE_BUTTON = "deleteConversationButton";
+        public const string ID_METL_CONVERSATION_SEARCH_BOX = "ConversationSearchBox";
         public const string ID_METL_VERSION_LABEL = "VersionLabel";
         public const string ID_METL_LOGGING_IN_LABEL = "LoggingInLabel";
         public const string ID_METL_LOGIN_ERROR_LABEL = "loginErrors";

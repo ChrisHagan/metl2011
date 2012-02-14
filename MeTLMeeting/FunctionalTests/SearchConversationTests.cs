@@ -22,22 +22,8 @@ namespace Functional
         [TestMethod]
         public void SearchForOwnedAndJoin()
         {
-            var search = new ConversationSearcher(metlWindow.AutomationElement);
-
-            search.searchField(TestConstants.OWNER_CONVERSATION_TITLE);
-            search.Search();
-
-            var results = new UITestHelper(metlWindow);
-            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
-
-            results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
-
-            if (!search.ResultsContainQueried(TestConstants.OWNER_CONVERSATION_TITLE))
-            {
-                CreateAndRenameConversation();
-            }
-
-            search.JoinQueried(TestConstants.OWNER_CONVERSATION_TITLE);
+            var conversation = new FunctionalTests.Actions.SearchConversation();
+            conversation.SearchForOwnedConversationAndJoin(metlWindow, TestConstants.OWNER_CONVERSATION_TITLE);
         }
 
         [TestMethod]
@@ -70,14 +56,8 @@ namespace Functional
         [TestMethod]
         public void CreateAndRenameConversation()
         {
-            // create a new conversation with the name of the computer appended
-            new ApplicationPopup(metlWindow.AutomationElement).CreateConversation();
-
-            SwitchToSearchCurrentConversation();
-
-            var edit = new ConversationEditScreen(metlWindow.AutomationElement);
-
-            edit.Rename(TestConstants.OWNER_CONVERSATION_TITLE).Save();
+            var conversation = new FunctionalTests.Actions.SearchConversation();
+            conversation.CreateAndRenameConversation(metlWindow, TestConstants.OWNER_CONVERSATION_TITLE);
         }
 
         [TestMethod]
@@ -157,46 +137,8 @@ namespace Functional
         [TestMethod]
         public void SwitchToSearchCurrentConversation()
         {
-            var manualEvent = new ManualResetEvent(false);
-            var completedSearch = false;
-
-            var searchBox = new UITestHelper(metlWindow.AutomationElement);
-            searchBox.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "ConversationSearchBox"));
-            searchBox.Find();
-
-            Automation.AddAutomationEventHandler(AutomationElement.AsyncContentLoadedEvent, searchBox.AutomationElement, TreeScope.Element, (sender, args) => { completedSearch = true; manualEvent.Set(); });
-
-            new ApplicationPopup(metlWindow.AutomationElement).SearchMyConversation();
-
-            UITestHelper.Wait(TimeSpan.FromSeconds(5));
-            
-            manualEvent.WaitOne(5000, false);
-            Assert.IsTrue(completedSearch);
-
-            var currentConversation = new UITestHelper(metlWindow);
-            currentConversation.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_SEARCH_CURRENT_CONVERSATION_BUTTON));
-
-            currentConversation.Find();
-
-            currentConversation.AutomationElement.Select();
-
-            UITestHelper.Wait(TimeSpan.FromSeconds(5));
-
-            /*var resultsText = new UITestHelper(metlWindow, metlWindow.AutomationElement.Descendant(Constants.ID_METL_SEARCH_RESULTS_TEXT));
-            resultsText.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_SEARCH_RESULTS_TEXT));
-
-            var correct = resultsText.WaitForControlCondition((uiControl) =>
-            {
-                if (uiControl.Current.Name == "Found 1 result.")
-                {
-                    return false;
-                }
-
-                return true;
-            });
-
-            Assert.IsTrue(correct);
-             */
+            var conversation = new FunctionalTests.Actions.SearchConversation();
+            conversation.SwitchToSearchCurrentConversation(metlWindow);
         }
         
     }
