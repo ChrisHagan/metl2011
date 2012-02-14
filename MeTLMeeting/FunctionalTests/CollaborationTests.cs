@@ -13,8 +13,10 @@ namespace FunctionalTests
     public class CollaborationTests
     {
         private TestContext testContext;
-        private AutomationElement ownerWindow;
-        private AutomationElement participantWindow;
+        private static AutomationElement ownerWindow;
+        private static AutomationElement participantWindow;
+        private static AutomationElementCollection metlWindows;
+
 
         public TestContext TestContext 
         {
@@ -28,13 +30,16 @@ namespace FunctionalTests
             }
         }
 
-        [TestInitialize]
-        public void Setup()
+        [ClassInitialize]
+        public static void ClassSetup(TestContext testContext)
         {
-            var windows = MeTL.GetAllMainWindows(2, true);
-
-            ownerWindow = windows[0];
-            participantWindow = windows[1];
+            // need to do this once at the start because the window order returned back is nondeterministic
+            if (metlWindows == null)
+            {
+                metlWindows = MeTL.GetAllMainWindows(2, true);
+            }
+            ownerWindow = null;
+            participantWindow = null;
         }
 
         private void WaitForSearchScreen(AutomationElement window)
@@ -46,17 +51,35 @@ namespace FunctionalTests
             Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
         }
 
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "|DataDirectory|\\UserCredentials.csv", "UserCredentials#csv", DataAccessMethod.Sequential), DeploymentItem("FunctionalTests\\UserCredentials.csv"), TestMethod]
+        private AutomationElement DetermineCurrentWindow()
+        {
+            if (ownerWindow == null)
+            {
+                ownerWindow = metlWindows[0];
+                return ownerWindow;
+            }
+
+            if (participantWindow == null)
+            {
+                participantWindow = metlWindows[1];
+                return participantWindow;
+            }
+
+            return null;
+        }
+
+        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "|DataDirectory|\\MultipleUserCredentials.csv", "MultipleUserCredentials#csv", DataAccessMethod.Sequential), DeploymentItem("FunctionalTests\\UserCredentials.csv"), TestMethod]
         public void LoginOwnerAndParticipant()
         {
-            // owner
-            var ownerUser = testContext.DataRow["Username"].ToString();
-            var ownerPass = testContext.DataRow["Password"].ToString();
+            AutomationElement currentWindow = DetermineCurrentWindow();
+            
+            var user = testContext.DataRow["Username"].ToString();
+            var pass = testContext.DataRow["Password"].ToString();
 
-            var loginScreen = new Login(ownerWindow).username(ownerUser).password(ownerPass);
+            var loginScreen = new Login(currentWindow).username(user).password(pass);
             loginScreen.submit();
 
-            WaitForSearchScreen(ownerWindow);
+            WaitForSearchScreen(currentWindow);
         }
     }
 }

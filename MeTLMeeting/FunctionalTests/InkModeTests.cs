@@ -56,9 +56,9 @@ namespace FunctionalTests
 
             Thread.Sleep(500); // give some time for the canvas to select all the ink strokes
             DeleteInkStroke();
-            Keyboard.Press(Key.Delete);
+            //Keyboard.Press(Key.Delete);
 
-            Thread.Sleep(500); // wait a bit before checking the count
+            Thread.Sleep(5000); // wait a bit before checking the count, and let the server get the updated information first
 
             Assert.AreEqual(0, canvas.NumberOfInkStrokes());
         }
