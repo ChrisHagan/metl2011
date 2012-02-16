@@ -10,9 +10,8 @@ namespace UITestFramework
     {
         public delegate bool WaitCondition(AutomationElement element);
 
-        public static UITestHelper RootElement = new UITestHelper();
-        public static int sleepMultiplier = 1;
-        
+        private static UITestHelper rootElement = new UITestHelper();
+        private static int sleepMultiplier = 1;
         private const int sleepIncrement = 100;
         private const int defaultTimeout = 30 * 1000;
         private int? customTimeout = null;
@@ -283,7 +282,7 @@ namespace UITestFramework
             }
         }
 
-        public int SleepMultiplier
+        public static int SleepMultiplier
         {
             get
             {
@@ -295,6 +294,14 @@ namespace UITestFramework
                     throw new ArgumentOutOfRangeException();
 
                 sleepMultiplier = value;
+            }
+        }
+
+        public static UITestHelper RootElement
+        {
+            get
+            {
+                return rootElement;
             }
         }
         #endregion

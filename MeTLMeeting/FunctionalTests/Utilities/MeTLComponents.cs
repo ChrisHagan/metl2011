@@ -14,9 +14,43 @@ using UITestFramework;
 using SandRibbon.Components;
 using Microsoft.Test.Input;
 using FunctionalTests.Utilities;
+using FunctionalTests;
+using System.ComponentModel;
 
 namespace Functional
 {
+    public abstract class IScreenObject : INotifyPropertyChanged
+    {
+        private UITestHelper parent;
+        public UITestHelper Parent 
+        {
+            get
+            {
+                return parent;
+            }
+            set
+            {
+                if (parent != value)
+                {
+                    parent = value;
+                    NotifyPropertyChanged("Parent");
+                }
+            }
+        }
+
+        #region INotifyPropertyChanged members
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        #endregion
+    }
+
     public class MeTL
     {
         private static Process metlProcess;
@@ -124,6 +158,33 @@ namespace Functional
             }
 
             return metlWindow;
+        }
+    }
+
+    public class WindowScreen : IWindowScreenObject
+    {
+        private UITestHelper windowScreen;
+
+        public IWindowScreenObject WithWindow(AutomationElement window)
+        {
+            windowScreen = new UITestHelper(UITestHelper.RootElement, window);
+            return this;
+        }
+
+        public UITestHelper ParentWindow
+        {
+            get { return windowScreen; }
+        }
+
+        public IScreenAction Ensure<T>(Func<T, bool> func) where T : IScreenObject, new()
+        {
+            var element = new T();
+            element.Parent = ParentWindow;
+
+            if (func(element))
+                return new ScreenAction(ParentWindow);
+
+            return new NullScreenAction();
         }
     }
 
@@ -401,13 +462,24 @@ namespace Functional
         }
     }
 
-    public class CollapsedCanvasStack
+    public class CollapsedCanvasStack : IScreenObject
     {
         private AutomationElement canvas;
 
         public CollapsedCanvasStack(AutomationElement parent)
         {
-            canvas = parent.Descendant(typeof(SandRibbon.Components.CollapsedCanvasStack));
+            PropertyChanged += (sender, args) => { Populate(); };
+            Parent = new UITestHelper(UITestHelper.RootElement, parent);
+        }
+
+        public CollapsedCanvasStack()
+        {
+            PropertyChanged += (sender, args) => { Populate(); };
+        }
+
+        private void Populate()
+        {
+            canvas = Parent.AutomationElement.Descendant(typeof(SandRibbon.Components.CollapsedCanvasStack));
         }
 
         public Rect BoundingRectangle
@@ -427,9 +499,12 @@ namespace Functional
             }
         }
 
-        public AutomationElementCollection FindTextboxes()
+        public AutomationElementCollection ChildTextboxes
         {
-            return canvas.Descendants(typeof(SandRibbon.Components.Utility.MeTLTextBox));
+            get
+            {
+                return canvas.Descendants(typeof(SandRibbon.Components.Utility.MeTLTextBox));
+            }
         }
 
         public int NumberOfInkStrokes()
@@ -437,6 +512,34 @@ namespace Functional
             var valuePattern = canvas.GetCurrentPattern(ValuePattern.Pattern) as ValuePattern;
 
             return Convert.ToInt32(valuePattern.Current.Value);
+        }
+
+        public System.Drawing.Point RandomPointWithinMargin(int marginWidth, int marginHeight)
+        {
+            var bounds = BoundingRectangle;
+            bounds.Inflate(-40, -40);
+
+            var random = new Random();
+
+            var randX = (int)(bounds.X + random.NextDouble() * bounds.Width);
+            var randY = (int)(bounds.Y + random.NextDouble() * bounds.Height);
+
+            return new System.Drawing.Point(randX, randY);
+        }
+
+        public void InsertTextbox(System.Drawing.Point location, string text)
+        {
+            Mouse.MoveTo(location);
+            Mouse.Click(MouseButton.Left);
+
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(100));
+
+            var textbox = AutomationElement.FocusedElement;
+            textbox.Current.ClassName.ShouldEqual("MeTLTextBox");
+
+            textbox.Value(text);
+
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(100));
         }
     }
 
@@ -812,21 +915,35 @@ namespace Functional
             _sync.Invoke();
         }
     }
-    public class Login
+
+    public class Login : IScreenObject
     {
         private AutomationElement _login;
         private AutomationElement _username;
         private AutomationElement _password;
         private AutomationElement _submit;
         private AutomationElement _remember;
+
         public Login(AutomationElement parent)
         {
-            _login = parent.Descendant("login");
+            PropertyChanged += (sender, args) => { Populate(); };
+            Parent = new UITestHelper(UITestHelper.RootElement, parent);
+        }
+        
+        public Login()
+        {
+            PropertyChanged += (sender, args) => { Populate(); };
+        }
+
+        private void Populate()
+        {
+            _login = Parent.Descendant("login");
             _username = _login.Descendant("username");
             _password = _login.Descendant("password");
             _submit = _login.Descendant("submit");
             _remember = _login.Descendant("rememberMe");
         }
+
         public Login username(string value)
         {
             _username.Value("");
@@ -848,6 +965,21 @@ namespace Functional
             _remember.Toggle();
             return this;
         }
+
+        public Login SubmitAndWaitForError()
+        {
+            var submitButton = new UITestHelper(_login);
+
+            submitButton.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "submit"));
+            submitButton.WaitForControlEnabled();
+
+            submitButton.AutomationElement.Invoke();
+
+            WaitForLoginError();
+
+            return this;
+        }
+
         public Login submit()
         {
             var submitButton = new UITestHelper(_login);
@@ -856,6 +988,32 @@ namespace Functional
             submitButton.WaitForControlEnabled();
 
             submitButton.AutomationElement.Invoke();
+
+            // return when the search box is visible
+            WaitForSearchScreen();
+
+            return this;
+        }
+        
+        public Login WaitForLoginError()
+        {
+            var control = new UITestHelper(Parent);
+            control.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_LOGIN_ERROR_LABEL));
+
+            var success = control.WaitForControlVisible();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
+            return this;
+        }
+
+        public Login WaitForSearchScreen()
+        {
+            var control = new UITestHelper(Parent);
+            control.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_TEXTBOX));
+            
+            var success = control.WaitForControlEnabled();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
             return this;
         }
     }
@@ -995,34 +1153,54 @@ namespace Functional
             return this;
         }
     }
-    public class HomeTabScreen
+    public class HomeTabScreen : IScreenObject
     {
-        private AutomationElement _parent;
         private AutomationElement _inkButton;
         private AutomationElement _textButton;
         private AutomationElement _imageButton;
         private AutomationElement _extendButton;
+        private AutomationElement _tab;
+
+        public HomeTabScreen()
+        {
+            PropertyChanged += (sender, args) => { Populate(); };
+        }
 
         public HomeTabScreen(AutomationElement parent)
         {
-            _parent = parent;
+            PropertyChanged += (sender, args) => { Populate(); };
+            Parent = new UITestHelper(UITestHelper.RootElement, parent);
         }
 
         public HomeTabScreen OpenTab()
         {
-            _parent.SetFocus();
+            Parent.SetFocus();
 
             Keys.SendWait("%");
             Thread.Sleep(100);
             Keys.SendWait("H");
 
-            FindElements();
+            Populate();
+
             return this;
         }
 
+        #region Properties
+
+        public bool IsActive
+        {
+            get
+            {
+                return _tab != null ? !(bool)_tab.GetCurrentPropertyValue(AutomationElement.IsOffscreenProperty) : false;
+            }
+        }
+
+        #endregion
+
+
         public HomeTabScreen ActivatePenMode()
         {
-            var inkButton = new UITestHelper(_parent, _inkButton);
+            var inkButton = new UITestHelper(Parent, _inkButton);
             inkButton.AutomationElement.Select();
 
             Mouse.MoveTo(inkButton.AutomationElement.GetClickablePoint().ToDrawingPoint());
@@ -1039,7 +1217,7 @@ namespace Functional
 
         public HomeTabScreen ActivateTextMode()
         {
-            var textButton = new UITestHelper(_parent, _textButton);
+            var textButton = new UITestHelper(Parent, _textButton);
             textButton.AutomationElement.Select();
 
             Mouse.MoveTo(textButton.AutomationElement.GetClickablePoint().ToDrawingPoint());
@@ -1056,7 +1234,7 @@ namespace Functional
 
         public HomeTabScreen TextInsertMode()
         {
-            var textInput = new UITestHelper(_parent);
+            var textInput = new UITestHelper(Parent);
             textInput.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "type"));
             textInput.WaitForControlVisible();
 
@@ -1077,7 +1255,7 @@ namespace Functional
 
         public HomeTabScreen TextSelectMode()
         {
-            var textInput = new UITestHelper(_parent);
+            var textInput = new UITestHelper(Parent);
             textInput.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "select"));
             textInput.WaitForControlVisible();
 
@@ -1098,7 +1276,7 @@ namespace Functional
 
         public HomeTabScreen PenSelectMode()
         {
-            var penInput = new UITestHelper(_parent);
+            var penInput = new UITestHelper(Parent);
             penInput.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "selectRadio"));
             penInput.WaitForControlVisible();
 
@@ -1124,17 +1302,18 @@ namespace Functional
 
         public HomeTabScreen ExtendPage()
         {
-            _extendButton.Invoke();
+            //_extendButton.Invoke();
 
             return this;
         }
 
-        private void FindElements()
+        public void Populate()
         {
-            _inkButton = _parent.Descendant("Pen");
-            _textButton = _parent.Descendant("Text");
-            _imageButton = _parent.Descendant("Image");
-            _extendButton = _parent.Descendant("ExtendPage");
+            _inkButton = Parent.Descendant("Pen");
+            _textButton = Parent.Descendant("Text");
+            _imageButton = Parent.Descendant("Image");
+            //_extendButton = Parent.Descendant("ExtendPage");
+            _tab = Parent.AutomationElement.WalkAllElements("HomeTab");
         }
     }
 }

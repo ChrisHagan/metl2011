@@ -17,7 +17,6 @@ namespace Functional
         public void Setup()
         {
             metlWindow = MeTL.GetMainWindow();
-            homeTab = new HomeTabScreen(metlWindow.AutomationElement);
             canvas = new CollapsedCanvasStack(metlWindow.AutomationElement);
         }
 
@@ -120,7 +119,7 @@ namespace Functional
         {
             var originalSize = canvas.BoundingRectangle;
 
-            homeTab.OpenTab().ExtendPage();
+            new HomeTabScreen(metlWindow.AutomationElement).OpenTab().ExtendPage();
 
             var waitCanvas = new UITestHelper(metlWindow);
             waitCanvas.SearchProperties.Add(new PropertyExpression(AutomationElement.ClassNameProperty, typeof(SandRibbon.Components.CollapsedCanvasStack).Name));

@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UITestFramework;
 using System.Windows.Automation;
-using Functional.Utilities;
+using FunctionalTests.Utilities;
 using System.Windows;
 
 namespace Functional

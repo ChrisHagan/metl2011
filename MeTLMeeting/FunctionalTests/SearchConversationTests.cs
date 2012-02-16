@@ -23,7 +23,7 @@ namespace Functional
         public void SearchForOwnedAndJoin()
         {
             var conversation = new FunctionalTests.Actions.SearchConversation();
-            conversation.SearchForOwnedConversationAndJoin(metlWindow, TestConstants.OWNER_CONVERSATION_TITLE);
+            conversation.SearchForConversationAndJoin(metlWindow, TestConstants.OWNER_CONVERSATION_TITLE);
         }
 
         [TestMethod]

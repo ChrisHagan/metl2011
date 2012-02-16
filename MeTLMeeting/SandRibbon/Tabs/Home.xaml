@@ -3,7 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="http://schemas.divelements.co.uk/wpf/sandribbon"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
-    sr:KeyboardAccess.Keys="H" Text="Home" x:Name="Sketch">
+    sr:KeyboardAccess.Keys="H" Text="Home" x:Name="Sketch"
+    AutomationProperties.Name="HomeTab">
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">0</core:String>    
     </sr:RibbonTab.Resources>

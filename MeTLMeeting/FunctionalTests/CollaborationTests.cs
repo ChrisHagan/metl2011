@@ -6,6 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Automation;
 using Functional;
 using UITestFramework;
+using FunctionalTests.DSL;
+using Microsoft.Test.Input;
 
 namespace FunctionalTests
 {
@@ -42,15 +44,6 @@ namespace FunctionalTests
             participantWindow = null;
         }
 
-        private void WaitForSearchScreen(AutomationElement window)
-        {
-            var control = new UITestHelper(window);
-            control.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_TEXTBOX));
-            
-            var success = control.WaitForControlEnabled();
-            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
-        }
-
         private AutomationElement DetermineCurrentWindow()
         {
             if (ownerWindow == null)
@@ -78,20 +71,56 @@ namespace FunctionalTests
 
             var loginScreen = new Login(currentWindow).username(user).password(pass);
             loginScreen.submit();
-
-            WaitForSearchScreen(currentWindow);
         }
 
         [TestMethod]
         public void JoinConversation()
         {
-                        
+            var conversation = new FunctionalTests.Actions.SearchConversation();
+
+            conversation.SearchForConversationAndJoin(new UITestHelper(UITestHelper.RootElement, ownerWindow), TestConstants.OWNER_CONVERSATION_TITLE);
+            conversation.SearchForConversationAndJoin(new UITestHelper(UITestHelper.RootElement, participantWindow), TestConstants.OWNER_CONVERSATION_TITLE);
         }
 
         [TestMethod]
         public void AddTextToOwner()
         {
+            ScreenActionBuilder.Create().WithWindow(ownerWindow)
+                .Ensure<HomeTabScreen>( home => 
+                {
+                    if (!home.IsActive) home.OpenTab();
+                    home.ActivateTextMode().TextInsertMode();
 
+                    return true; 
+                })
+                .With<CollapsedCanvasStack>( canvas =>
+                {
+                    var textboxCount = canvas.ChildTextboxes.Count;
+
+                    canvas.InsertTextbox(canvas.RandomPointWithinMargin(-40, -40), "owner");
+
+                    canvas.ChildTextboxes.Count.ShouldEqual(textboxCount + 1);
+                });
+        }
+
+        [TestMethod]
+        public void AddTextToParticipant()
+        {
+            ScreenActionBuilder.Create().WithWindow(participantWindow)
+                .Ensure<HomeTabScreen>(home =>
+                {
+                    if (!home.IsActive) home.OpenTab();
+                    home.ActivateTextMode().TextInsertMode();
+                    return true;
+                })
+                .With<CollapsedCanvasStack>(canvas =>
+                {
+                    var textboxCount = canvas.ChildTextboxes.Count;
+
+                    canvas.InsertTextbox(canvas.RandomPointWithinMargin(-40, -40), "participant");
+
+                    canvas.ChildTextboxes.Count.ShouldEqual(textboxCount + 1);
+                });
         }
 
         [TestMethod]
@@ -101,16 +130,9 @@ namespace FunctionalTests
         }
 
         [TestMethod]
-        public void AddTextToParticipant()
-        {
-
-        }
-
-        [TestMethod]
         public void AddInkToParticipant()
         {
 
         }
-
     }
 }

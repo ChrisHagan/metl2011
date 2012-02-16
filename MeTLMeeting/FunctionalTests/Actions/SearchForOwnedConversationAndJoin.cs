@@ -16,7 +16,7 @@ namespace FunctionalTests.Actions
     /// </summary>
     public class SearchConversation
     {
-        public void SearchForOwnedConversationAndJoin(UITestHelper window, string conversationTitle)
+        public void SearchForConversationAndJoin(UITestHelper window, string conversationTitle)
         {
             var search = new ConversationSearcher(window.AutomationElement);
 

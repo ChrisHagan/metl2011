@@ -374,6 +374,7 @@ namespace SandRibbon
             {
                 try
                 {
+                    hideReconnectingDialog();
                     var details = Globals.conversationDetails;
                     if (details == null || details.Equals(ConversationDetails.Empty))
                     {

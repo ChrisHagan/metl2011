@@ -28,14 +28,14 @@ namespace Functional
         {
             homeTab.ActivateTextMode().TextInsertMode();
 
-            var numTextboxes = canvas.FindTextboxes().Count;
+            var numTextboxes = canvas.ChildTextboxes.Count;
 
-            Mouse.MoveTo(SelectRandomPoint(canvas));
+            Mouse.MoveTo(canvas.RandomPointWithinMargin(-40, -40));
             Mouse.Click(MouseButton.Left);
 
             Thread.Sleep(100);
 
-            var textboxes = canvas.FindTextboxes();
+            var textboxes = canvas.ChildTextboxes;
             if (textboxes.Count > 0)
             {
                 textboxes[0].Value("Lorem ipsum");
@@ -51,7 +51,7 @@ namespace Functional
         {
             homeTab.ActivateTextMode().TextSelectMode();
 
-            var textboxes = canvas.FindTextboxes();
+            var textboxes = canvas.ChildTextboxes;
             foreach (AutomationElement textbox in textboxes)
             {
                 SelectTextboxWithClick(textbox);
@@ -62,7 +62,7 @@ namespace Functional
             }
             
             Thread.Sleep(500);
-            Assert.AreEqual(0, canvas.FindTextboxes().Count);
+            Assert.AreEqual(0, canvas.ChildTextboxes.Count);
         }
 
         private void SelectTextboxWithClick(AutomationElement textbox)
@@ -101,19 +101,6 @@ namespace Functional
             Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
 
             deleteButton.AutomationElement.Invoke(); 
-        }
-
-        private System.Drawing.Point SelectRandomPoint(CollapsedCanvasStack canvas)
-        {
-            var bounds = canvas.BoundingRectangle;
-            bounds.Inflate(-40, -40);
-
-            var random = new Random();
-
-            var randX = (int)(bounds.X + random.NextDouble() * bounds.Width);
-            var randY = (int)(bounds.Y + random.NextDouble() * bounds.Height);
-
-            return new System.Drawing.Point(randX, randY);
         }
     }
 }
