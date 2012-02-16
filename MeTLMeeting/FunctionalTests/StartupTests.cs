@@ -46,8 +46,8 @@ namespace Functional
                 windowPattern.SetWindowVisualState(WindowVisualState.Normal);
 
                 var transformPattern = window.GetCurrentPattern(TransformPattern.Pattern) as TransformPattern;
-                transformPattern.Resize(desktopBounds.Width / 2, desktopBounds.Height);
-                transformPattern.Move((desktopBounds.Width / 2) * windowCount++, 0);
+                transformPattern.Resize(desktopBounds.Width, desktopBounds.Height / 2);
+                transformPattern.Move(0, (desktopBounds.Height / 2) * windowCount++);
             }
         }
     }
