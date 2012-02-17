@@ -127,9 +127,8 @@ namespace FunctionalTests
                     var randPage = new Random();
                     participantRandomPage = randPage.Next(nav.PagesCount - 1);
                     nav.ChangePage(participantRandomPage);
-                    nav.WaitForPageChange(participantRandomPage);
 
-                    nav.CurrentPage.ShouldEqual(participantRandomPage);
+                    UITestHelper.Wait(TimeSpan.FromSeconds(2));
                 });
         }
 
@@ -143,7 +142,7 @@ namespace FunctionalTests
                     if (nav.CurrentPage != participantRandomPage)
                         nav.WaitForPageChange(participantRandomPage);
 
-                    UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+                    UITestHelper.Wait(TimeSpan.FromSeconds(2));
 
                     nav.CurrentPage.ShouldEqual(participantRandomPage);
                 });

@@ -1033,12 +1033,20 @@ namespace Functional
 
         public void WaitForPageChange(int newPageIndex)
         {
+            // brute force
+            /*_slideDisplay.WaitForControlCondition((uiControl) =>
+            {
+                var range = uiControl.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
+                return range.Current.Value != newPageIndex;
+            }).ShouldBeTrue();
+            */
+
             var manualEvent = new ManualResetEvent(false);
             var pageChanged = false;
 
             Automation.AddAutomationPropertyChangedEventHandler(_slideDisplay.AutomationElement, TreeScope.Element, (sender, args) =>
             {
-                if (args.Property == RangeValuePattern.ValueProperty && (int)args.NewValue == newPageIndex)
+                if (args.Property == RangeValuePattern.ValueProperty && Convert.ToInt32(args.NewValue) == newPageIndex)
                 {
                     pageChanged = true;
                     manualEvent.Set();

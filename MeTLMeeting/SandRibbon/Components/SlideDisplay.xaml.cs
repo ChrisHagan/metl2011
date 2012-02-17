@@ -64,13 +64,8 @@ namespace SandRibbon.Components
             set { SetValue(TeachersCurrentSlideIndexProperty, value); }
         }
 
-        private static void OnTeachersCurrentSlideIndexChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        private static void AutomationSlideChanged(SlideDisplay slideDisplay, int oldValue, int newValue)
         {
-            var slideDisplay = (SlideDisplay)obj;
-
-            var oldValue = (int)args.OldValue;
-            var newValue = (int)args.NewValue;
-
             #region Automation events
             if (AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged))
             {
@@ -85,6 +80,15 @@ namespace SandRibbon.Components
                 }
             }
             #endregion
+        }
+
+        private static void OnTeachersCurrentSlideIndexChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            var slideDisplay = (SlideDisplay)obj;
+
+            var oldValue = (int)args.OldValue;
+            var newValue = (int)args.NewValue;
+
 
             var e = new RoutedPropertyChangedEventArgs<int>(oldValue, newValue, ValueChangedEvent);
             slideDisplay.OnValueChanged(e);
@@ -293,7 +297,6 @@ namespace SandRibbon.Components
 
         private void MoveToTeacher(int where)
         {
-
             if (Globals.isAuthor) return;
             TeachersCurrentSlideIndex = calculateTeacherSlideIndex(myMaxSlideIndex, where.ToString());
             Commands.RequerySuggested(Commands.MoveToNext);
@@ -436,6 +439,9 @@ namespace SandRibbon.Components
                 {
                     currentSlideId = selected.id;
                     foreach (var slide in removedItems) ((Slide)slide).refresh();
+
+                    AutomationSlideChanged(this, slides.SelectedIndex, indexOf(currentSlideId));
+
                     Commands.MoveTo.ExecuteAsync(currentSlideId);
                     SendSyncMove(currentSlideId);
                     slides.ScrollIntoView(selected);
