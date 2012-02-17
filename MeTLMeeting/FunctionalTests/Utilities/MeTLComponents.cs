@@ -16,6 +16,7 @@ using Microsoft.Test.Input;
 using FunctionalTests.Utilities;
 using FunctionalTests;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace Functional
 {
@@ -465,6 +466,7 @@ namespace Functional
     public class CollapsedCanvasStack : IScreenObject
     {
         private AutomationElement canvas;
+        Random random = new Random();
 
         public CollapsedCanvasStack(AutomationElement parent)
         {
@@ -519,12 +521,87 @@ namespace Functional
             var bounds = BoundingRectangle;
             bounds.Inflate(-40, -40);
 
-            var random = new Random();
-
             var randX = (int)(bounds.X + random.NextDouble() * bounds.Width);
             var randY = (int)(bounds.Y + random.NextDouble() * bounds.Height);
 
             return new System.Drawing.Point(randX, randY);
+        }
+
+        public System.Drawing.Point CentrePoint()
+        {
+            var bounds = BoundingRectangle;
+
+            var centreX = bounds.X + (bounds.Width / 2);
+            var centreY = bounds.Y + (bounds.Height / 2);
+
+            return new System.Drawing.Point((int)centreX, (int)centreY);
+        }
+
+        public IEnumerable<System.Drawing.Point> RandomPoints(int numberOfPoints, int marginWidth, int marginHeight)
+        {
+            foreach (var i in Enumerable.Range(0, numberOfPoints))
+            {
+                yield return RandomPointWithinMargin(marginWidth, marginHeight);
+            }
+        }
+
+        public IEnumerable<System.Drawing.Point> LogarithmicSpiral(double startR, double endR, double a, double b)
+        {
+            var centre = CentrePoint();
+
+            for (double t = startR; t < endR; t += 0.1)
+            {
+                var x = a * Math.Cos(t) * Math.Exp(b * t);
+                var y = a * Math.Sin(t) * Math.Exp(b * t);
+
+                yield return new System.Drawing.Point(centre.X + (int)x, centre.Y + (int)y);
+            }
+        }
+
+        private List<System.Drawing.Point> PopulateCoords(System.Windows.Rect bounding)
+        {
+            var coords = new List<System.Drawing.Point>();
+
+            coords.Add(bounding.TopLeft.ToDrawingPoint());
+            coords.Add(bounding.TopRight.ToDrawingPoint());
+            coords.Add(bounding.BottomRight.ToDrawingPoint());
+            coords.Add(bounding.BottomLeft.ToDrawingPoint());
+            coords.Add(bounding.TopLeft.ToDrawingPoint());
+            coords.Add(bounding.TopRight.ToDrawingPoint());
+
+            return coords;
+        }
+
+        public void SelectAllInkStrokes()
+        {
+            var bounding = BoundingRectangle;
+
+            bounding.Inflate(-5, -5);
+
+            var coords = PopulateCoords(bounding);
+
+            // move around the bounding box in a clockwise direction
+            Mouse.MoveTo(coords.First());
+            Mouse.Down(MouseButton.Left);
+
+            foreach (var coord in coords.Skip(1))
+            {
+                Mouse.MoveTo(coord);
+                Thread.Sleep(100);
+            }
+
+            Mouse.Up(MouseButton.Left);
+        }
+
+        public void DeleteSelectedContent()
+        {
+            var deleteButton = new UITestHelper(Parent);
+            deleteButton.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "deleteButton"));
+
+            var success = deleteButton.WaitForControlExist();
+            Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);
+
+            deleteButton.AutomationElement.Invoke(); 
         }
 
         public void InsertTextbox(System.Drawing.Point location, string text)
@@ -540,6 +617,15 @@ namespace Functional
             textbox.Value(text);
 
             UITestHelper.Wait(TimeSpan.FromMilliseconds(100));
+        }
+
+        public void SelectTextboxWithClick(AutomationElement textbox)
+        {
+            var bounding = textbox.Current.BoundingRectangle;
+            var centreTextbox = new System.Drawing.Point((int)(bounding.X + bounding.Width / 2), (int)(bounding.Y + bounding.Height / 2));
+
+            Mouse.MoveTo(centreTextbox);
+            Mouse.Click(MouseButton.Left);
         }
     }
 
@@ -884,34 +970,102 @@ namespace Functional
             return resultsParent != null ? resultsParent.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, "conversationButton")).Count : 0;
         }
     }
-    public class SlideNavigation 
+    public class SlideNavigation : IScreenObject
     {
         private AutomationElement _forward;
         private AutomationElement _back;
         private AutomationElement _add;
         private AutomationElement _sync;
+        private UITestHelper _slideDisplay;
+
+        public SlideNavigation()
+        {
+            PropertyChanged += (sender, args) => { Populate(); };
+        }
 
         public SlideNavigation(AutomationElement parent)
         {
-            _forward = parent.Descendant("moveToNext");
-            _back = parent.Descendant("moveToPrevious");
-            _add = parent.Descendant("addSlideButton");
-            _sync = parent.Descendant("syncButton");
+            PropertyChanged += (sender, args) => { Populate(); };
+            Parent = new UITestHelper(UITestHelper.RootElement, parent);
+        }
+
+        private void Populate()
+        {
+            _forward = Parent.Descendant("moveToNext");
+            _back = Parent.Descendant("moveToPrevious");
+
+            // can possibly not exist depending if participant or owner of a conversation
+            _add = Parent.AutomationElement.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "addSlideButton"));
+            _sync = Parent.AutomationElement.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "syncButton"));
+
+            _slideDisplay = new UITestHelper(Parent, Parent.AutomationElement.Descendant(typeof(SlideDisplay)));
+        }
+
+        public bool IsAddAvailable { get { return _add != null; } }
+        public bool IsSyncAvailable { get { return _sync != null; } }
+
+        public int PagesCount
+        {
+            get
+            {
+                _slideDisplay.ShouldNotBeNull();
+                var rangeValue = _slideDisplay.AutomationElement.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
+                return (int)rangeValue.Current.Maximum;
+            }
+        }
+
+        public int CurrentPage
+        {
+            get
+            {
+                _slideDisplay.ShouldNotBeNull();
+                var rangeValue = _slideDisplay.AutomationElement.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
+                return (int)rangeValue.Current.Value;
+            }
+        }
+
+        public void ChangePage(int pageIndex)
+        {
+            _slideDisplay.ShouldNotBeNull();
+            var rangeValue = _slideDisplay.AutomationElement.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
+            rangeValue.SetValue((double)pageIndex);
+        }
+
+        public void WaitForPageChange(int newPageIndex)
+        {
+            var manualEvent = new ManualResetEvent(false);
+            var pageChanged = false;
+
+            Automation.AddAutomationPropertyChangedEventHandler(_slideDisplay.AutomationElement, TreeScope.Element, (sender, args) =>
+            {
+                if (args.Property == RangeValuePattern.ValueProperty && (int)args.NewValue == newPageIndex)
+                {
+                    pageChanged = true;
+                    manualEvent.Set();
+                }
+            }, RangeValuePatternIdentifiers.ValueProperty); 
+
+            manualEvent.WaitOne(5000, false);
+            pageChanged.ShouldBeTrue(); 
         }
         public void Add()
         {
+            _add.ShouldNotBeNull();
             _add.Invoke();
         }
         public void Back()
         {
+            _back.ShouldNotBeNull();
             _back.Invoke();
         }
         public void Forward()
         {
+            _forward.ShouldNotBeNull();
             _forward.Invoke();
         }
         public void Sync()
         {
+            _sync.ShouldNotBeNull();
             _sync.Invoke();
         }
     }
@@ -1160,6 +1314,7 @@ namespace Functional
         private AutomationElement _imageButton;
         private AutomationElement _extendButton;
         private AutomationElement _tab;
+        private List<SelectionItemPattern> _penColors;
 
         public HomeTabScreen()
         {
@@ -1197,14 +1352,40 @@ namespace Functional
 
         #endregion
 
+        private void PopulatePenColors()
+        {
+            var listItems = Parent.AutomationElement.Descendants(typeof(ListBoxItem));
+            if (_penColors == null)
+                _penColors = new List<SelectionItemPattern>();
+
+            foreach (AutomationElement item in listItems)
+            {
+                if (item.Current.Name.Contains("PenColors"))
+                {
+                    var selection = item.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                    _penColors.Add(selection);
+                }
+            }
+        }
+
+        public HomeTabScreen SelectPen(int index)
+        {
+            Assert.IsTrue(index >= 0 && index < _penColors.Count);
+
+            if (_penColors != null && index >= 0 && index < _penColors.Count)
+            {
+                _penColors[index].Select();
+            }
+
+            return this;
+        }
 
         public HomeTabScreen ActivatePenMode()
         {
             var inkButton = new UITestHelper(Parent, _inkButton);
             inkButton.AutomationElement.Select();
 
-            Mouse.MoveTo(inkButton.AutomationElement.GetClickablePoint().ToDrawingPoint());
-            Mouse.Click(MouseButton.Left);
+            MouseExtensions.ClickAt(inkButton.AutomationElement.GetClickablePoint(), MouseButton.Left);
 
             inkButton.WaitForControlCondition((uiControl) => 
             { 
@@ -1212,8 +1393,10 @@ namespace Functional
                 return (selection != null && selection.Current.IsSelected == false);
             });
 
+            PopulatePenColors();
             return this;
         }
+
 
         public HomeTabScreen ActivateTextMode()
         {
@@ -1236,9 +1419,12 @@ namespace Functional
         {
             var textInput = new UITestHelper(Parent);
             textInput.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "type"));
-            textInput.WaitForControlVisible();
+            var foundRadio = textInput.WaitForControlVisible();
 
-            textInput.AutomationElement.Select();
+            if (foundRadio)
+                textInput.AutomationElement.Select();
+            else
+                Assert.Fail("Unable to find text insert radio button");
 
             var clickPoint = textInput.AutomationElement.GetClickablePoint();
             Mouse.MoveTo(new System.Drawing.Point((int)clickPoint.X, (int)clickPoint.Y));

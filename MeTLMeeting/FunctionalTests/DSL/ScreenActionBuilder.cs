@@ -6,15 +6,8 @@ using Functional;
 
 namespace FunctionalTests.DSL
 {
-    /*
-                var builder = ScreenActionBuilder.Create().WithWindow(ownerWindow)
-                    .Ensure<HomeTabScreen>( x => x.OpenTab(); x.InTextInsertMode(); )
-                        .With<CollapsedCanvasStack>( x =>
-     */
-
-    public class ScreenActionBuilder /*: IWindowScreenObject*/
+    public class ScreenActionBuilder 
     {
-        //private IWindowScreenObject windowObject;
         private ScreenActionBuilder()
         {
         }

@@ -97,6 +97,7 @@
     <Compile Include="TextModeTests.cs" />
     <Compile Include="UITestHelperTest.cs" />
     <Compile Include="MenuTests.cs" />
+    <Compile Include="Utilities\InputExtensions.cs" />
     <Compile Include="Utilities\ScreenAction.cs" />
     <Compile Include="Utilities\MeTLComponentHelpers.cs" />
     <Compile Include="Utilities\MeTLComponents.cs" />
@@ -154,6 +155,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="OrderedTests\Case019.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="OrderedTests\Case013.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

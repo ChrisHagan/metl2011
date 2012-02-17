@@ -109,19 +109,9 @@ namespace FunctionalTests
             Mouse.Up(MouseButton.Left);
         }
 
-        private System.Drawing.Point SelectCentrePoint(CollapsedCanvasStack canvas)
-        {
-            var bounds = canvas.BoundingRectangle;
-
-            var centreX = bounds.X + (bounds.Width / 2);
-            var centreY = bounds.Y + (bounds.Height / 2);
-
-            return new System.Drawing.Point((int)centreX, (int)centreY);
-        }
-
         private void DrawSpirographWaveOnCanvas(CollapsedCanvasStack canvas)
         {
-            var centre = SelectCentrePoint(canvas);
+            var centre = canvas.CentrePoint();
 
             var rand = new Random();
             var points = GetPointsForSpirograph(centre.X, centre.Y, rand.NextDouble() * 1.25 + 0.9, rand.NextDouble() * 5 + 3, rand.NextDouble() * 2, 0, 300);
