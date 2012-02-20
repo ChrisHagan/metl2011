@@ -572,6 +572,66 @@ namespace Functional
             return coords;
         }
 
+        public void DrawSpirographWaveOnCanvas()
+        {
+            var centre = CentrePoint();
+
+            var rand = new Random();
+            var points = GetPointsForSpirograph(centre.X, centre.Y, rand.NextDouble() * 1.25 + 0.9, rand.NextDouble() * 5 + 3, rand.NextDouble() * 2, 0, 300);
+
+            Mouse.MoveTo(points.First());
+            Mouse.Down(MouseButton.Left);
+
+            AnimateMouseThroughPoints(points);
+
+            Mouse.Up(MouseButton.Left);
+        }
+
+        private IEnumerable<System.Drawing.Point> GetPointsForSpirograph(int centerX, int centerY, double littleR, double bigR, double a, int tStart, int tEnd)
+        {
+            // Equations from http://www.mathematische-basteleien.de/spirographs.htm
+            for (double t = tStart; t < tEnd; t += 0.1)
+            {
+                var rDifference = bigR - littleR;
+                var rRatio = littleR / bigR;
+                var x = (rDifference * Math.Cos(rRatio * t) + a * Math.Cos((1 - rRatio) * t)) * 25;
+                var y = (rDifference * Math.Sin(rRatio * t) - a * Math.Sin((1 - rRatio) * t)) * 25;
+
+                yield return new System.Drawing.Point(centerX + (int)x, centerY + (int)y);
+            }
+        }
+
+        private void AnimateMouseThroughPoints(IEnumerable<System.Drawing.Point> points)
+        {
+            var window = Parent.AutomationElement;
+            var listItems = window.Descendants(typeof(ListBoxItem));
+            var list = new List<SelectionItemPattern>();
+
+            foreach (AutomationElement item in listItems)
+            {
+                if (item.Current.Name.Contains("PenColors"))
+                {
+                    var selection = item.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                    list.Add(selection);
+                }
+            }
+
+            var count = 0;
+            list[new Random().Next(list.Count - 1)].Select();
+
+            foreach (var point in points)
+            {
+                if (count % 10 == 0)
+                {
+                    Mouse.Up(MouseButton.Left);
+                    Mouse.Down(MouseButton.Left);
+                }
+                Mouse.MoveTo(point);
+                Thread.Sleep(5);
+                count++;
+            }
+        }
+
         public void SelectAllInkStrokes()
         {
             var bounding = BoundingRectangle;
@@ -1047,7 +1107,7 @@ namespace Functional
             rangeValue.SetValue((double)pageIndex);
         }
 
-        public void WaitForPageChange(int newPageIndex)
+        public bool WaitForPageChange(int newPageIndex)
         {
             // brute force
             /*_slideDisplay.WaitForControlCondition((uiControl) =>
@@ -1070,7 +1130,7 @@ namespace Functional
             }, RangeValuePatternIdentifiers.ValueProperty); 
 
             manualEvent.WaitOne(5000, false);
-            pageChanged.ShouldBeTrue(); 
+            return pageChanged; 
         }
         public void Add()
         {

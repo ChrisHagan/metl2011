@@ -125,7 +125,13 @@ namespace FunctionalTests
                 .With<SlideNavigation>(nav =>
                 {
                     var randPage = new Random();
-                    participantRandomPage = randPage.Next(nav.PagesCount - 1);
+                    var pagesToChoose = new List<int>();
+                    foreach (var i in Enumerable.Range(0, nav.PagesCount))
+                    {
+                        if (i != nav.CurrentPage)
+                            pagesToChoose.Add(i);
+                    }
+                    participantRandomPage = pagesToChoose[randPage.Next(pagesToChoose.Count - 1)];
                     nav.ChangePage(participantRandomPage);
 
                     UITestHelper.Wait(TimeSpan.FromSeconds(2));
@@ -139,12 +145,30 @@ namespace FunctionalTests
                 .Ensure<SlideNavigation>(nav => { return true; })
                 .With<SlideNavigation>(nav =>
                 {
+                    var waitSuccess = false;
                     if (nav.CurrentPage != participantRandomPage)
-                        nav.WaitForPageChange(participantRandomPage);
+                        waitSuccess = nav.WaitForPageChange(participantRandomPage);
 
-                    UITestHelper.Wait(TimeSpan.FromSeconds(2));
+                    UITestHelper.Wait(TimeSpan.FromSeconds(5));
 
                     nav.CurrentPage.ShouldEqual(participantRandomPage);
+                });
+        }
+
+        [TestMethod]
+        public void ParticipantHasNotSyncedToOwnersPage()
+        {
+            ScreenActionBuilder.Create().WithWindow(participantWindow)
+                .Ensure<SlideNavigation>(nav => { return true; })
+                .With<SlideNavigation>(nav =>
+                {
+                    var waitSuccess = false;
+                    if (nav.CurrentPage != participantRandomPage)
+                        waitSuccess = nav.WaitForPageChange(participantRandomPage);
+
+                    UITestHelper.Wait(TimeSpan.FromSeconds(5));
+
+                    nav.CurrentPage.ShouldNotEqual(participantRandomPage);
                 });
         }
 
@@ -268,6 +292,7 @@ namespace FunctionalTests
                 });
         }
 
+
         [TestMethod]
         public void DeleteInkFromOwner()
         {
@@ -339,6 +364,23 @@ namespace FunctionalTests
                     Mouse.Up(MouseButton.Left);
 
                     canvas.NumberOfInkStrokes().ShouldEqual(inkStrokeCount + 1);
+                });
+        }
+
+        [TestMethod]
+        public void AddEpicycloidInkToPartipant()
+        {
+            ScreenActionBuilder.Create().WithWindow(participantWindow)
+                .Ensure<HomeTabScreen>(home =>
+                {
+                    if (!home.IsActive) home.OpenTab();
+                    home.ActivatePenMode();
+
+                    return true;
+                })
+                .With<CollapsedCanvasStack>(canvas =>
+                {
+                    canvas.DrawSpirographWaveOnCanvas();
                 });
         }
     }

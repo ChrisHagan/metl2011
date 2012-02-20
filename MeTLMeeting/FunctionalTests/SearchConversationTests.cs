@@ -63,6 +63,16 @@ namespace Functional
             conversation.CreateAndRenameConversation(metlWindow, TestConstants.OWNER_CONVERSATION_TITLE);
         }
 
+        [TestMethod] 
+        public void DeleteSelectedConversation()
+        {
+            var search = new ConversationSearcher(metlWindow.AutomationElement);
+            search.SelectConversation(TestConstants.OWNER_CONVERSATION_TITLE);
+
+            var edit = new ConversationEditScreen(metlWindow.AutomationElement);
+            edit.Delete();
+        }
+
         [TestMethod]
         public void SearchForDeletedConversation()
         {

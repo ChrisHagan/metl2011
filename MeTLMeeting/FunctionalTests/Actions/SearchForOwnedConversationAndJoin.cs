@@ -23,11 +23,6 @@ namespace FunctionalTests.Actions
             search.searchField(conversationTitle);
             search.Search();
 
-            var results = new UITestHelper(window);
-            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
-
-            results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
-
             if (!search.ResultsContainQueried(conversationTitle))
             {
                 CreateAndRenameConversation(window, conversationTitle);
