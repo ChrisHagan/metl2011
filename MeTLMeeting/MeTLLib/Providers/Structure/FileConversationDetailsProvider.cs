@@ -70,7 +70,7 @@ namespace MeTLLib.Providers.Structure
             try
             {
                 var url = new System.Uri(string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(conversationJid), conversationJid, DETAILS));
-                result = ConversationDetails.ReadXml(XElement.Parse(secureGetString(url)));
+                result = ConversationDetails.ReadXml(XElement.Parse(secureGetBytesAsString(url)));
             }
             catch (UriFormatException e)
             {
@@ -125,7 +125,7 @@ namespace MeTLLib.Providers.Structure
         private bool DetailsAreAccurate(ConversationDetails details)
         {
             var url = string.Format("{0}/{1}/{2}/{3}/{4}", ROOT_ADDRESS, STRUCTURE, INodeFix.Stem(details.Jid), details.Jid, DETAILS);
-            var currentServerString = secureGetString(new System.Uri(url));
+            var currentServerString = secureGetBytesAsString(new System.Uri(url));
             var currentServerCD = ConversationDetails.ReadXml(XElement.Parse(currentServerString));
             if (details.ValueEquals(currentServerCD))
                 return true;
@@ -168,7 +168,7 @@ namespace MeTLLib.Providers.Structure
             try
             {
                 var uri = new Uri(Uri.EscapeUriString(string.Format("{0}{1}", searchServer.Uri.AbsoluteUri, query)), UriKind.Absolute);
-                var data = secureGetString(uri);
+                var data = secureGetBytesAsString(uri);
                 var results = XElement.Parse(data).Descendants("conversation").Select(SearchConversationDetails.ReadXML).ToList();
                 var deletedConversationJids = results.Where(c => c.isDeleted).Select(c => c.Jid);
                 var conversations = results.OrderByDescending(c => c.relevance)

@@ -184,6 +184,10 @@ namespace MeTLLib.Providers.Connection
         {
             return client().downloadString(resource);
         }
+        public string secureGetBytesAsString(System.Uri resource)
+        {
+            return System.Text.Encoding.UTF8.GetString(client().downloadData(resource));
+        }
         public string insecureGetString(System.Uri resource)
         {
             return client().downloadString(resource);
