@@ -54,11 +54,10 @@ namespace FunctionalTests
 
             SelectInkStroke(canvas.BoundingRectangle);
 
-            Thread.Sleep(500); // give some time for the canvas to select all the ink strokes
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(500)); // give some time for the canvas to select all the ink strokes
             DeleteInkStroke();
-            //Keyboard.Press(Key.Delete);
 
-            Thread.Sleep(5000); // wait a bit before checking the count, and let the server get the updated information first
+            UITestHelper.Wait(TimeSpan.FromSeconds(10)); // wait a bit before checking the count, and let the server get the updated information first
 
             Assert.AreEqual(0, canvas.NumberOfInkStrokes());
         }

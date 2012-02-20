@@ -148,6 +148,9 @@
     <None Include="OrderedTests\Case012.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="MultipleUserCredentials.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="UserCredentials.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

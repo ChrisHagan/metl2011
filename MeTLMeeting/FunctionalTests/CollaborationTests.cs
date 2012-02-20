@@ -9,6 +9,7 @@ using UITestFramework;
 using FunctionalTests.DSL;
 using Microsoft.Test.Input;
 using FunctionalTests.Utilities;
+using System.Xml.Linq;
 
 namespace FunctionalTests
 {
@@ -34,14 +35,10 @@ namespace FunctionalTests
             }
         }
 
-        [ClassInitialize]
-        public static void ClassSetup(TestContext testContext)
+        private void FindCurrentWindows()
         {
-            // need to do this once at the start because the window order returned back is nondeterministic
-            if (metlWindows == null)
-            {
-                metlWindows = MeTL.GetAllMainWindows(2, true);
-            }
+            metlWindows = MeTL.GetAllMainWindows(2, true);
+
             ownerWindow = null;
             participantWindow = null;
         }
@@ -63,16 +60,22 @@ namespace FunctionalTests
             return null;
         }
 
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "|DataDirectory|\\MultipleUserCredentials.csv", "MultipleUserCredentials#csv", DataAccessMethod.Sequential), DeploymentItem("FunctionalTests\\UserCredentials.csv"), TestMethod]
+        [TestMethod]
         public void LoginOwnerAndParticipant()
         {
-            AutomationElement currentWindow = DetermineCurrentWindow();
-            
-            var user = testContext.DataRow["Username"].ToString();
-            var pass = testContext.DataRow["Password"].ToString();
+            FindCurrentWindows();
 
-            var loginScreen = new Login(currentWindow).username(user).password(pass);
-            loginScreen.submit();
+            var credentials = XDocument.Load(@"..\..\..\FunctionalTests\MultipleUserCredentials.xml");
+            foreach (var elem in credentials.Descendants("user"))
+            {
+                AutomationElement currentWindow = DetermineCurrentWindow();
+
+                var user = elem.Attribute("username").Value;
+                var pass = elem.Attribute("password").Value;
+
+                var loginScreen = new Login(currentWindow).username(user).password(pass);
+                loginScreen.submit();
+            }
         }
 
         [TestMethod]
@@ -103,7 +106,7 @@ namespace FunctionalTests
         }
 
         [TestMethod]
-        public void ParticipantSyncToOwner()
+        public void ParticipantToggleSyncToOwner()
         {
             ScreenActionBuilder.Create().WithWindow(participantWindow)
                 .Ensure<SlideNavigation>(nav =>

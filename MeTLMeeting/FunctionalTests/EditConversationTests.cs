@@ -3,6 +3,7 @@ using UITestFramework;
 using System.Windows.Automation;
 using System.Windows;
 using SandRibbon.Components;
+using FunctionalTests.DSL;
 
 namespace Functional
 {
@@ -117,14 +118,26 @@ namespace Functional
         [TestMethod]
         public void ExtendCanvasViaButton()
         {
-            var originalSize = canvas.BoundingRectangle;
+            ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
+                .Ensure<HomeTabScreen>(home =>
+                {
+                    if (!home.IsActive) home.OpenTab();
+                    home.ExtendPage();
+                    return true;
+                })
+                .With<CollapsedCanvasStack>(canvas =>
+                {
 
-            new HomeTabScreen(metlWindow.AutomationElement).OpenTab().ExtendPage();
+                });
+
+            /*
+            var originalSize = canvas.BoundingRectangle;
 
             var waitCanvas = new UITestHelper(metlWindow);
             waitCanvas.SearchProperties.Add(new PropertyExpression(AutomationElement.ClassNameProperty, typeof(SandRibbon.Components.CollapsedCanvasStack).Name));
 
             var success = waitCanvas.WaitForControlCondition((uiControl) => { return (Rect)uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty) == originalSize; });
+            */
             
             //Assert.IsTrue(success);
         }

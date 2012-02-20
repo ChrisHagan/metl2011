@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<OrderedTest name="CreateConversation" storage="c:\specialmetl\metlmeeting\functional\orderedtests\createconversation.orderedtest" id="e8249c5e-fbfb-4cd2-a6c2-2d55e0d9d6c1" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+<OrderedTest name="createconversation" storage="c:\projects\specialmetl\metlmeeting\functionaltests\orderedtests\createconversation.orderedtest" id="e8249c5e-fbfb-4cd2-a6c2-2d55e0d9d6c1" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
   <TestLinks>
     <TestLink id="12bea1d3-3acd-b5f1-a954-24e174ad2924" name="StartOneInstance" storage="..\bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <TestLink id="db41b97b-8edf-5e73-5ac6-d41ef6fa4b54" name="LoginWithValidCredentials" storage="..\bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <TestLink id="40a9dccc-2409-eacc-27ed-a7a968586b8c" name="CreateNewConversation" storage="..\bin\debug\functional.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </TestLinks>
 </OrderedTest>
