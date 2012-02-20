@@ -34,11 +34,6 @@ namespace Functional
             search.searchField(TestConstants.OWNER_CONVERSATION_TITLE);
             search.Search();
 
-            var results = new UITestHelper(metlWindow);
-            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
-
-            results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
-
             if (!search.ResultsContainQueried(TestConstants.OWNER_CONVERSATION_TITLE))
             {
                 CreateAndRenameConversation();
@@ -50,7 +45,15 @@ namespace Functional
             var edit = new ConversationEditScreen(metlWindow.AutomationElement);
             edit.Rename(TestConstants.OWNER_CONVERSATION_TITLE + "renamed" + guid).Save();
 
+            search = new ConversationSearcher(metlWindow.AutomationElement);
+
+            search.searchField(TestConstants.OWNER_CONVERSATION_TITLE);
+            search.Search();
+
             search.SelectConversation(TestConstants.OWNER_CONVERSATION_TITLE + "renamed" + guid);
+
+            edit = new ConversationEditScreen(metlWindow.AutomationElement);
+            edit.Rename(TestConstants.OWNER_CONVERSATION_TITLE).Save();
         }
 
         [TestMethod]
@@ -107,11 +110,6 @@ namespace Functional
 
             search.searchField(TestConstants.OWNER_CONVERSATION_TITLE);
             search.Search();
-
-            var results = new UITestHelper(metlWindow);
-            results.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_RESULTS));
-
-            results.WaitForControlCondition((uiControl) => { return Rect.Empty.Equals(uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty)); });
         }
 
         [TestMethod]

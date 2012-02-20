@@ -828,9 +828,25 @@ namespace Functional
         }
         public ConversationSearcher Search()
         {
+            var manualEvent = new ManualResetEvent(false);
+            var completedSearch = false;
+
+            var searchBox = new UITestHelper(_parent);
+            searchBox.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_BOX));
+            searchBox.Find();
+
+            Automation.AddAutomationEventHandler(AutomationElement.AsyncContentLoadedEvent, searchBox.AutomationElement, TreeScope.Element, (sender, args) => { completedSearch = true; manualEvent.Set(); });
+
             _searchButton.Invoke();
+
+            UITestHelper.Wait(TimeSpan.FromSeconds(5));
+            
+            manualEvent.WaitOne(5000, false);
+            Assert.IsTrue(completedSearch);
+
             return this;
         }
+
         public ConversationSearcher JoinFirstFound()
         {
             _searchResults = _parent.Descendant("SearchResults");
@@ -1088,8 +1104,10 @@ namespace Functional
 
         public Login(AutomationElement parent)
         {
-            PropertyChanged += (sender, args) => { Populate(); };
             Parent = new UITestHelper(UITestHelper.RootElement, parent);
+            PropertyChanged += (sender, args) => { Populate(); };
+
+            Populate();
         }
         
         public Login()
