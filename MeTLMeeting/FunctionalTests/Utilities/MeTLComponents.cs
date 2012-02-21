@@ -39,6 +39,10 @@ namespace Functional
             }
         }
 
+        public void Refresh() 
+        {
+        }
+
         #region INotifyPropertyChanged members
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -484,6 +488,11 @@ namespace Functional
             canvas = Parent.AutomationElement.Descendant(typeof(SandRibbon.Components.CollapsedCanvasStack));
         }
 
+        public void Refresh()
+        {
+            Populate();
+        }
+
         public Rect BoundingRectangle
         {
             get 
@@ -664,7 +673,7 @@ namespace Functional
             deleteButton.AutomationElement.Invoke(); 
         }
 
-        public void InsertTextbox(System.Drawing.Point location, string text)
+        public AutomationElement InsertTextbox(System.Drawing.Point location, string text)
         {
             Mouse.MoveTo(location);
             Mouse.Click(MouseButton.Left);
@@ -677,15 +686,19 @@ namespace Functional
             textbox.Value(text);
 
             UITestHelper.Wait(TimeSpan.FromMilliseconds(100));
+
+            return textbox;
         }
 
-        public void SelectTextboxWithClick(AutomationElement textbox)
+        public CollapsedCanvasStack SelectTextboxWithClick(AutomationElement textbox)
         {
             var bounding = textbox.Current.BoundingRectangle;
             var centreTextbox = new System.Drawing.Point((int)(bounding.X + bounding.Width / 2), (int)(bounding.Y + bounding.Height / 2));
 
             Mouse.MoveTo(centreTextbox);
             Mouse.Click(MouseButton.Left);
+
+            return this;
         }
     }
 
@@ -902,7 +915,7 @@ namespace Functional
             UITestHelper.Wait(TimeSpan.FromSeconds(5));
             
             manualEvent.WaitOne(5000, false);
-            Assert.IsTrue(completedSearch);
+            Assert.IsTrue(completedSearch, "Waiting for search results timed out");
 
             return this;
         }
@@ -1100,7 +1113,24 @@ namespace Functional
             }
         }
 
-        public void ChangePage(int pageIndex)
+        public int ChangeToRandomPage(int excludeIndex = -1)
+        {
+            PagesCount.ShouldNotEqual(0);
+
+            var randPage = new Random();
+            var pagesToChoose = new List<int>();
+            foreach (var i in Enumerable.Range(0, PagesCount))
+            {
+                if (i != CurrentPage && i != excludeIndex)
+                    pagesToChoose.Add(i);
+            }
+            var pageIndex = pagesToChoose[randPage.Next(pagesToChoose.Count - 1)];
+            ChangeToPage(pageIndex);
+
+            return pageIndex;
+        }
+
+        public void ChangeToPage(int pageIndex)
         {
             _slideDisplay.ShouldNotBeNull();
             var rangeValue = _slideDisplay.AutomationElement.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
@@ -1399,6 +1429,7 @@ namespace Functional
         private AutomationElement _textButton;
         private AutomationElement _imageButton;
         private AutomationElement _extendButton;
+        private AutomationElement _showPageButton;
         private AutomationElement _tab;
         private List<SelectionItemPattern> _penColors;
 
@@ -1542,6 +1573,7 @@ namespace Functional
                 var selection = uiControl.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
                 return (selection != null && selection.Current.IsSelected == false);
             });
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
 
             return this;
         }
@@ -1574,8 +1606,13 @@ namespace Functional
 
         public HomeTabScreen ExtendPage()
         {
-            //_extendButton.Invoke();
+            _extendButton.Invoke();
+            return this;
+        }
 
+        public HomeTabScreen ShowPage()
+        {
+            _showPageButton.Invoke();
             return this;
         }
 
@@ -1584,7 +1621,8 @@ namespace Functional
             _inkButton = Parent.Descendant("Pen");
             _textButton = Parent.Descendant("Text");
             _imageButton = Parent.Descendant("Image");
-            //_extendButton = Parent.Descendant("ExtendPage");
+            _showPageButton = Parent.Descendant("OriginalView");
+            _extendButton = Parent.Descendant("ExtendPage");
             _tab = Parent.AutomationElement.WalkAllElements("HomeTab");
         }
     }

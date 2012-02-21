@@ -135,15 +135,20 @@ namespace FunctionalTests
                 .Ensure<SlideNavigation>(nav => { return true; })
                 .With<SlideNavigation>(nav =>
                 {
-                    var randPage = new Random();
-                    var pagesToChoose = new List<int>();
-                    foreach (var i in Enumerable.Range(0, nav.PagesCount))
-                    {
-                        if (i != nav.CurrentPage)
-                            pagesToChoose.Add(i);
-                    }
-                    participantRandomPage = pagesToChoose[randPage.Next(pagesToChoose.Count - 1)];
-                    nav.ChangePage(participantRandomPage);
+                    participantRandomPage = nav.ChangeToRandomPage();
+
+                    UITestHelper.Wait(TimeSpan.FromSeconds(2));
+                });
+        }
+
+        [TestMethod]
+        public void ParticipantChangePage()
+        {
+            ScreenActionBuilder.Create().WithWindow(participantWindow)
+                .Ensure<SlideNavigation>(nav => { return true; })
+                .With<SlideNavigation>(nav =>
+                {
+                    nav.ChangeToRandomPage(participantRandomPage);
 
                     UITestHelper.Wait(TimeSpan.FromSeconds(2));
                 });
@@ -178,6 +183,7 @@ namespace FunctionalTests
                         waitSuccess = nav.WaitForPageChange(participantRandomPage);
 
                     UITestHelper.Wait(TimeSpan.FromSeconds(5));
+
 
                     nav.CurrentPage.ShouldNotEqual(participantRandomPage);
                 });

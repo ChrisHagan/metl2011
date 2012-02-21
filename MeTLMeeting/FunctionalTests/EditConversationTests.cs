@@ -4,6 +4,8 @@ using System.Windows.Automation;
 using System.Windows;
 using SandRibbon.Components;
 using FunctionalTests.DSL;
+using FunctionalTests;
+using System;
 
 namespace Functional
 {
@@ -122,21 +124,69 @@ namespace Functional
                 .Ensure<HomeTabScreen>(home =>
                 {
                     if (!home.IsActive) home.OpenTab();
-                    home.ExtendPage();
-                    return true;
-                })
-                .With<CollapsedCanvasStack>(canvas =>
-                {
-                    var originalSize = canvas.BoundingRectangle;
+                    home.ActivateTextMode().TextInsertMode().ExtendPage().ShowPage();
 
-                    canvas.InsertTextbox(new System.Drawing.Point((int)(originalSize.Width * 0.95), (int)(originalSize.Height / 2)), "Some text to keep the extended canvas size");
+                    UITestHelper.Wait(TimeSpan.FromSeconds(1));
+
+                    var scrollBarAdorner = metlWindow.AutomationElement.Descendant("adornerScroll");
+                    var vScroll = scrollBarAdorner.Descendant("VScroll");
+                    var hScroll = scrollBarAdorner.Descendant("HScroll");
+
+                    var vPattern = vScroll.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
+                    vPattern.Current.IsReadOnly.ShouldBeFalse();
+
+                    var hPattern = hScroll.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
+                    hPattern.Current.IsReadOnly.ShouldBeFalse();
+
+                    return true; 
                 });
         }
 
         [TestMethod]
         public void ExtendCanvasViaContent()
         {
+            ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
+                .Ensure<HomeTabScreen>(home =>
+                {
+                    if (!home.IsActive) home.OpenTab();
+                    home.ActivateTextMode().TextInsertMode();
+                    return true;
+                })
+                .With<CollapsedCanvasStack>(canvas =>
+                {
+                    var slideNav = new SlideNavigation(metlWindow.AutomationElement);
 
+                    var randomPage = slideNav.ChangeToRandomPage();
+                    canvas.Refresh();
+                    var originalSize = canvas.BoundingRectangle;
+
+                    var inserted = canvas.InsertTextbox(new System.Drawing.Point((int)(originalSize.Width * 0.95), (int)(originalSize.Height / 2)), "Extend canvas size by content --------->");
+
+                    canvas.Refresh();
+                    Assert.IsFalse(originalSize.Equals(canvas.BoundingRectangle));
+
+                    var currentPage = slideNav.CurrentPage;
+
+                    randomPage = slideNav.ChangeToRandomPage(currentPage);
+                    UITestHelper.Wait(TimeSpan.FromSeconds(3));
+                    slideNav.WaitForPageChange(randomPage);
+                    slideNav.ChangeToPage(currentPage);
+                    UITestHelper.Wait(TimeSpan.FromSeconds(3));
+                    slideNav.WaitForPageChange(currentPage);
+
+                    canvas.Refresh();
+                    Assert.IsFalse(originalSize.Equals(canvas.BoundingRectangle));
+
+                    new HomeTabScreen(metlWindow.AutomationElement).ActivateTextMode().TextSelectMode();
+                    canvas.Refresh();
+                    foreach (AutomationElement textbox in canvas.ChildTextboxes)
+                    {
+                        canvas.SelectTextboxWithClick(textbox);
+                        UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+                        canvas.DeleteSelectedContent();
+                        UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+                    }
+                });
         }
     }
 }
