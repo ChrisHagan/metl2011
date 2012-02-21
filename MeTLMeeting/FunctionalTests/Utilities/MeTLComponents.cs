@@ -1429,6 +1429,7 @@ namespace Functional
         private AutomationElement _textButton;
         private AutomationElement _imageButton;
         private AutomationElement _extendButton;
+        private AutomationElement _showAllButton;
         private AutomationElement _showPageButton;
         private AutomationElement _tab;
         private List<SelectionItemPattern> _penColors;
@@ -1616,12 +1617,19 @@ namespace Functional
             return this;
         }
 
+        public HomeTabScreen ShowAllPage()
+        {
+            _showAllButton.Invoke();
+            return this;
+        }
+
         public void Populate()
         {
             _inkButton = Parent.Descendant("Pen");
             _textButton = Parent.Descendant("Text");
             _imageButton = Parent.Descendant("Image");
             _showPageButton = Parent.Descendant("OriginalView");
+            _showAllButton = Parent.Descendant("FitToView");
             _extendButton = Parent.Descendant("ExtendPage");
             _tab = Parent.AutomationElement.WalkAllElements("HomeTab");
         }

@@ -118,6 +118,48 @@ namespace Functional
         }
 
         [TestMethod]
+        public void ShowPageButtonExistsAndCanBeInvoked()
+        {
+            ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
+                .Ensure<HomeTabScreen>((home) =>
+                {
+                    if (!home.IsActive)
+                        home.OpenTab();
+
+                    home.ShowPage();
+                    return true;
+                });
+        }
+
+        [TestMethod]
+        public void ShowAllPageButtonExistsAndCanBeInvoked()
+        {
+            ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
+                .Ensure<HomeTabScreen>((home) =>
+                {
+                    if (!home.IsActive)
+                        home.OpenTab();
+
+                    home.ShowAllPage();
+                    return true;
+                });
+        }
+
+        [TestMethod]
+        public void ExtendPageButtonExistsAndCanBeInvoked()
+        {
+            ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
+                .Ensure<HomeTabScreen>((home) =>
+                {
+                    if (!home.IsActive)
+                        home.OpenTab();
+
+                    home.ExtendPage();
+                    return true;
+                });
+        }
+
+        [TestMethod]
         public void ExtendCanvasViaButton()
         {
             ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
