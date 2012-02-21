@@ -10,6 +10,7 @@ using FunctionalTests.DSL;
 using Microsoft.Test.Input;
 using FunctionalTests.Utilities;
 using System.Xml.Linq;
+using System.IO;
 
 namespace FunctionalTests
 {
@@ -60,12 +61,19 @@ namespace FunctionalTests
             return null;
         }
 
+        private string DetermineDataDirectory()
+        {
+            var baseDirectory = "MeTLMeeting";
+            var currentDirectory = Directory.GetCurrentDirectory();
+            return currentDirectory.Remove(currentDirectory.IndexOf(baseDirectory) + baseDirectory.Length) + @"\FunctionalTests\bin\Debug";
+        }
+
         [TestMethod]
         public void LoginOwnerAndParticipant()
         {
             FindCurrentWindows();
 
-            var credentials = XDocument.Load(@"..\..\..\MultipleUserCredentials.xml");
+            var credentials = XDocument.Load(DetermineDataDirectory() + @"\MultipleUserCredentials.xml");
             foreach (var elem in credentials.Descendants("user"))
             {
                 AutomationElement currentWindow = DetermineCurrentWindow();
