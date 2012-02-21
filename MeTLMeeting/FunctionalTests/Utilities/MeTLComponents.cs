@@ -1078,6 +1078,11 @@ namespace Functional
             Parent = new UITestHelper(UITestHelper.RootElement, parent);
         }
 
+        public override void Refresh()
+        {
+            Populate(); 
+        }
+        
         private void Populate()
         {
             _forward = Parent.Descendant("moveToNext");
@@ -1092,6 +1097,20 @@ namespace Functional
 
         public bool IsAddAvailable { get { return _add != null; } }
         public bool IsSyncAvailable { get { return _sync != null; } }
+
+        public void MoveForwardViaShortcut()
+        {
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+            Keys.SendWait("{PGDN}"); 
+            UITestHelper.Wait(TimeSpan.FromSeconds(4));
+        }
+
+        public void MoveBackViaShortcut()
+        {
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+            Keys.SendWait("{PGUP}");
+            UITestHelper.Wait(TimeSpan.FromSeconds(4));
+        }
 
         public int PagesCount
         {
@@ -1134,6 +1153,8 @@ namespace Functional
         {
             _slideDisplay.ShouldNotBeNull();
             var rangeValue = _slideDisplay.AutomationElement.GetCurrentPattern(RangeValuePattern.Pattern) as RangeValuePattern;
+            Assert.IsTrue(pageIndex <= rangeValue.Current.Maximum); 
+
             rangeValue.SetValue((double)pageIndex);
         }
 

@@ -87,6 +87,7 @@
     <Compile Include="InkModeTests.cs" />
     <Compile Include="IWindowScreenObject.cs" />
     <Compile Include="LoginTests.cs" />
+    <Compile Include="NavigationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchConversationTests.cs" />
     <Compile Include="ShutdownTests.cs" />
@@ -179,6 +180,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="OrderedTests\Case022.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="OrderedTests\Case023.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
