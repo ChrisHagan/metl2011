@@ -13,14 +13,11 @@ namespace Functional
     public class EditConversationTests
     {
         private UITestHelper metlWindow;
-        private HomeTabScreen homeTab;
-        private CollapsedCanvasStack canvas;
 
         [TestInitialize]
         public void Setup()
         {
             metlWindow = MeTL.GetMainWindow();
-            canvas = new CollapsedCanvasStack(metlWindow.AutomationElement);
         }
 
         [TestMethod]
@@ -216,9 +213,6 @@ namespace Functional
                     UITestHelper.Wait(TimeSpan.FromSeconds(3));
                     slideNav.WaitForPageChange(currentPage);
 
-                    canvas.Refresh();
-                    Assert.IsFalse(originalSize.Equals(canvas.BoundingRectangle));
-
                     new HomeTabScreen(metlWindow.AutomationElement).ActivateTextMode().TextSelectMode();
                     canvas.Refresh();
                     foreach (AutomationElement textbox in canvas.ChildTextboxes)
@@ -228,6 +222,29 @@ namespace Functional
                         canvas.DeleteSelectedContent();
                         UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
                     }
+                });
+        }
+
+        [TestMethod]
+        public void InsertBoldText()
+        {
+            ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
+                .Ensure<HomeTabScreen>((home) =>
+                {
+                    if (!home.IsActive) home.OpenTab();
+                    home.ActivateTextMode().TextInsertMode();
+                    return true;
+                })
+                .With<CollapsedCanvasStack>((canvas) => 
+                {
+                    var insertedText = canvas.InsertTextbox(canvas.RandomPointWithinMargin(-40, -40), "Bolded text");
+
+                    var home = new HomeTabScreen(metlWindow.AutomationElement).ActivateTextMode();
+                    canvas.SelectTextboxWithClick(insertedText);
+                    home.ToggleBoldText();
+                    var slideNav = new SlideNavigation(metlWindow.AutomationElement).Add().Back();
+
+                    home.IsBoldChecked.ShouldBeTrue();
                 });
         }
     }

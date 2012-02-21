@@ -39,7 +39,7 @@ namespace Functional
             }
         }
 
-        public void Refresh() 
+        public virtual void Refresh() 
         {
         }
 
@@ -488,7 +488,7 @@ namespace Functional
             canvas = Parent.AutomationElement.Descendant(typeof(SandRibbon.Components.CollapsedCanvasStack));
         }
 
-        public void Refresh()
+        public override void Refresh()
         {
             Populate();
         }
@@ -1162,25 +1162,33 @@ namespace Functional
             manualEvent.WaitOne(5000, false);
             return pageChanged; 
         }
-        public void Add()
+        public SlideNavigation Add()
         {
             _add.ShouldNotBeNull();
             _add.Invoke();
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+            return this;
         }
-        public void Back()
+        public SlideNavigation Back()
         {
             _back.ShouldNotBeNull();
             _back.Invoke();
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+            return this;
         }
-        public void Forward()
+        public SlideNavigation Forward()
         {
             _forward.ShouldNotBeNull();
             _forward.Invoke();
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+            return this;
         }
-        public void Sync()
+        public SlideNavigation Sync()
         {
             _sync.ShouldNotBeNull();
             _sync.Invoke();
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+            return this;
         }
     }
 
@@ -1434,6 +1442,9 @@ namespace Functional
         private AutomationElement _tab;
         private List<SelectionItemPattern> _penColors;
 
+        // active when in text mode
+        private AutomationElement _textBoldButton;
+
         public HomeTabScreen()
         {
             PropertyChanged += (sender, args) => { Populate(); };
@@ -1468,6 +1479,16 @@ namespace Functional
             }
         }
 
+        public bool IsBoldChecked
+        {
+            get
+            {
+                _textBoldButton.ShouldNotBeNull();
+                var pattern = _textBoldButton.GetCurrentPattern(TogglePattern.Pattern) as TogglePattern;
+
+                return pattern.Current.ToggleState == ToggleState.On; 
+            }
+        }
         #endregion
 
         private void PopulatePenColors()
@@ -1515,6 +1536,14 @@ namespace Functional
             return this;
         }
 
+        private void PopulateTextControls()
+        {
+            var bold = new UITestHelper(Parent);
+            bold.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "TextBoldButton"));
+            bold.WaitForControlVisible();
+
+            _textBoldButton = bold.AutomationElement;
+        }
 
         public HomeTabScreen ActivateTextMode()
         {
@@ -1530,6 +1559,7 @@ namespace Functional
                 return (selection != null && selection.Current.IsSelected == false);
             });
 
+            PopulateTextControls();
             return this;
         }
 
@@ -1576,6 +1606,13 @@ namespace Functional
             });
             UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
 
+            return this;
+        }
+
+        public HomeTabScreen ToggleBoldText()
+        {
+            _textBoldButton.ShouldNotBeNull();
+            _textBoldButton.Toggle();
             return this;
         }
 
