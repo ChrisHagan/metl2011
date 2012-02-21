@@ -65,7 +65,7 @@ namespace FunctionalTests
         {
             FindCurrentWindows();
 
-            var credentials = XDocument.Load(@"..\..\..\FunctionalTests\MultipleUserCredentials.xml");
+            var credentials = XDocument.Load(@"..\..\..\MultipleUserCredentials.xml");
             foreach (var elem in credentials.Descendants("user"))
             {
                 AutomationElement currentWindow = DetermineCurrentWindow();

@@ -127,19 +127,10 @@ namespace Functional
                 })
                 .With<CollapsedCanvasStack>(canvas =>
                 {
+                    var originalSize = canvas.BoundingRectangle;
 
+                    canvas.InsertTextbox(new System.Drawing.Point((int)(originalSize.Width * 0.95), (int)(originalSize.Height / 2)), "Some text to keep the extended canvas size");
                 });
-
-            /*
-            var originalSize = canvas.BoundingRectangle;
-
-            var waitCanvas = new UITestHelper(metlWindow);
-            waitCanvas.SearchProperties.Add(new PropertyExpression(AutomationElement.ClassNameProperty, typeof(SandRibbon.Components.CollapsedCanvasStack).Name));
-
-            var success = waitCanvas.WaitForControlCondition((uiControl) => { return (Rect)uiControl.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty) == originalSize; });
-            */
-            
-            //Assert.IsTrue(success);
         }
 
         [TestMethod]
