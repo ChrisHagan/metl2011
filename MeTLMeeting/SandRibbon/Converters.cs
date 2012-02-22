@@ -841,9 +841,15 @@ namespace SandRibbon
         {
             if (values == null || values.Length < 2)
                 throw new ArgumentException("Multiplier expects 2 double values to be passed values");
-            double numerator = (double)values[0];
-            double denominator = (double)values[1];
-            return numerator * denominator;
+            double factor1 = (double)values[0];
+            double factor2 = (double)values[1];
+            if (Double.IsInfinity(factor1) || Double.IsNaN(factor1))
+                factor1 = 0;
+
+            if (Double.IsInfinity(factor2) || Double.IsNaN(factor2))
+                factor2 = 0;
+
+            return factor1 * factor2;
         }
         public object[] ConvertBack(object value,
                                     Type[] targetTypes,

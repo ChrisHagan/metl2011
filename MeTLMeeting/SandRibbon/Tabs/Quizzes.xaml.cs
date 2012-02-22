@@ -121,16 +121,25 @@ namespace SandRibbon.Tabs
         {
             Dispatcher.adoptAsync(() =>
             {
+                int oldQuizIndex = -1;
                 if (Globals.quiz.activeQuizzes.Any(q => q.id == quiz.id))
                 {
                     QuizQuestion oldQuiz = Globals.quiz.activeQuizzes.Where(q => q.id == quiz.id).First();
-                    if(quiz.created >= oldQuiz.created || quiz.IsDeleted)
+                    if (quiz.created >= oldQuiz.created || quiz.IsDeleted)
+                    {
+                        oldQuizIndex = Globals.quiz.activeQuizzes.IndexOf(oldQuiz);
                         Globals.quiz.activeQuizzes.Remove(oldQuiz);
+                    }
                 }
                 if (!Globals.quiz.answers.ContainsKey(quiz.id))
                     Globals.quiz.answers[quiz.id] = new ObservableCollection<QuizAnswer>();
                 if (!quiz.IsDeleted)
-                    Globals.quiz.activeQuizzes.Add(quiz);
+                {
+                    if (oldQuizIndex == -1)
+                        Globals.quiz.activeQuizzes.Add(quiz);
+                    else
+                        Globals.quiz.activeQuizzes.Insert(oldQuizIndex, quiz);
+                }
                 quizzes.ScrollToEnd();
             });
         }
