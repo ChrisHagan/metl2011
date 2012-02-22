@@ -1463,6 +1463,16 @@ namespace Functional
             return this;
         }
     }
+
+    public class PenPopupScreen : IScreenObject
+    {
+        public PenPopupScreen(AutomationElement popupButton)
+        {
+            popupButton.ShouldNotBeNull();
+            popupButton.Invoke();
+        }
+    }
+
     public class HomeTabScreen : IScreenObject
     {
         private AutomationElement _inkButton;
@@ -1521,6 +1531,34 @@ namespace Functional
                 return pattern.Current.ToggleState == ToggleState.On; 
             }
         }
+
+        public bool IsInkModeActive
+        {
+            get
+            {
+                _inkButton.ShouldNotBeNull();
+                var pattern = _inkButton.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+
+                return pattern.Current.IsSelected;
+            }
+        }
+
+        public bool IsTextModeActive
+        {
+            get
+            {
+                _textButton.ShouldNotBeNull();
+                var pattern = _textButton.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+
+                return pattern.Current.IsSelected;
+            }
+        }
+
+        public int PenColourCount
+        {
+            get { return _penColors.Count; }
+        }
+
         #endregion
 
         private void PopulatePenColors()
@@ -1537,6 +1575,12 @@ namespace Functional
                     _penColors.Add(selection);
                 }
             }
+        }
+
+        public PenPopupScreen ModifyPen(int index)
+        {
+            var popupButtons = _penColors[0].Current.SelectionContainer.Descendants(AutomationElement.AutomationIdProperty, "OpenPopup");
+            return new PenPopupScreen(popupButtons[index]);
         }
 
         public HomeTabScreen SelectPen(int index)
