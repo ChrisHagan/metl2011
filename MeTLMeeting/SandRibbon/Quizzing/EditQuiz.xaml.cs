@@ -11,6 +11,7 @@ using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using SandRibbon.Components.Utility;
+using System.Collections.Specialized;
 
 namespace SandRibbon.Quizzing
 {
@@ -66,12 +67,12 @@ namespace SandRibbon.Quizzing
 
         public EditQuiz(QuizQuestion quiz)
         {
+            options.CollectionChanged += UpdateOptionError;
             EditedQuiz = quiz.DeepCopy();
             loadOptions();
             InitializeComponent();
             DataContext = this;
             QuestionError = false;
-            OptionError = false;
             ResultsExist = CheckResultsExist(quiz);
             AddNewEmptyOption();
         }
@@ -81,6 +82,15 @@ namespace SandRibbon.Quizzing
             options.Clear();
             foreach(var option in EditedQuiz.options)
                 options.Add(option);
+        }
+
+        private void UpdateOptionError(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var optionList = sender as ObservableCollection<Option>;
+            if (e.Action == NotifyCollectionChangedAction.Remove && optionList.Count == 2 )
+                OptionError = true;
+            else
+                OptionError = false;
         }
 
         private void deleteQuiz(object sender, RoutedEventArgs e)

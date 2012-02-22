@@ -3,6 +3,7 @@ using FunctionalTests.DSL;
 using System.Windows.Automation;
 using Functional;
 using UITestFramework;
+using System;
 
 namespace FunctionalTests
 {
@@ -24,12 +25,9 @@ namespace FunctionalTests
             ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
                 .Ensure<SlideNavigation>((navi) =>
                 {
+                    UITestHelper.Wait(TimeSpan.FromSeconds(2));
                     navi.PagesCount.ShouldNotEqual(1);
-
-                    var currentPage = navi.CurrentPage;
-                    navi.MoveForwardViaShortcut();
-                    navi.Refresh();
-                    navi.WaitForPageChange(currentPage + 1).ShouldBeTrue();
+                    navi.WaitForPageChange(1, () => navi.MoveForwardViaShortcut() ).ShouldBeTrue();
 
                     return true;
                 });
@@ -41,12 +39,9 @@ namespace FunctionalTests
             ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
                 .Ensure<SlideNavigation>((navi) =>
                 {
+                    UITestHelper.Wait(TimeSpan.FromSeconds(2));
                     navi.PagesCount.ShouldNotEqual(1);
-
-                    var currentPage = navi.CurrentPage;
-                    navi.MoveBackViaShortcut();
-                    navi.Refresh();
-                    navi.WaitForPageChange(currentPage - 1).ShouldBeTrue();
+                    navi.WaitForPageChange(0, () => navi.MoveBackViaShortcut()).ShouldBeTrue();
 
                     return true;
                 });

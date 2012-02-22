@@ -45,7 +45,7 @@
                         <TextBox FontWeight="Bold" Grid.Row="0" Grid.Column="1" Width="300" x:Name="quizQuestion" Text="{Binding Path=EditedQuiz.question}" TextWrapping="WrapWithOverflow"/>
                         <Label Foreground="Red" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
                         <Label Foreground="Red" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
-                        <Label Foreground="Red" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have options for this quiz"/>
+                        <Label Foreground="Red" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have more than one option for this quiz"/>
                     </Grid>
                      <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{x:Static q:EditQuiz.options}" Loaded="TextBox_GotFocus">
                         <ItemsControl.ItemTemplate>

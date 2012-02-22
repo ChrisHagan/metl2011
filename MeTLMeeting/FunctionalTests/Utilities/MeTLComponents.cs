@@ -901,6 +901,7 @@ namespace Functional
         }
         public ConversationSearcher Search()
         {
+            var oneMinute = 1000 * 60;
             var manualEvent = new ManualResetEvent(false);
             var completedSearch = false;
 
@@ -914,7 +915,7 @@ namespace Functional
 
             UITestHelper.Wait(TimeSpan.FromSeconds(5));
             
-            manualEvent.WaitOne(5000, false);
+            manualEvent.WaitOne(oneMinute, false);
             Assert.IsTrue(completedSearch, "Waiting for search results timed out");
 
             return this;
@@ -1132,7 +1133,7 @@ namespace Functional
             }
         }
 
-        public int ChangeToRandomPage(int excludeIndex = -1)
+        public int DetermineToRandomPage(int excludeIndex = -1)
         {
             PagesCount.ShouldNotEqual(0);
 
@@ -1144,7 +1145,6 @@ namespace Functional
                     pagesToChoose.Add(i);
             }
             var pageIndex = pagesToChoose[randPage.Next(pagesToChoose.Count - 1)];
-            ChangeToPage(pageIndex);
 
             return pageIndex;
         }
@@ -1158,7 +1158,7 @@ namespace Functional
             rangeValue.SetValue((double)pageIndex);
         }
 
-        public bool WaitForPageChange(int newPageIndex)
+        public bool WaitForPageChange(int expectedIndex, Action movement)
         {
             // brute force
             /*_slideDisplay.WaitForControlCondition((uiControl) =>
@@ -1170,31 +1170,41 @@ namespace Functional
 
             var manualEvent = new ManualResetEvent(false);
             var pageChanged = false;
-
-            Automation.AddAutomationPropertyChangedEventHandler(_slideDisplay.AutomationElement, TreeScope.Element, (sender, args) =>
+            AutomationPropertyChangedEventHandler onPropertyChanged = (sender, args) =>
             {
-                if (args.Property == RangeValuePattern.ValueProperty && Convert.ToInt32(args.NewValue) == newPageIndex)
+                if (args.Property == RangeValuePattern.ValueProperty && Convert.ToInt32(args.NewValue) == expectedIndex)
                 {
                     pageChanged = true;
                     manualEvent.Set();
                 }
-            }, RangeValuePatternIdentifiers.ValueProperty); 
+            };
 
-            manualEvent.WaitOne(5000, false);
+            Automation.AddAutomationPropertyChangedEventHandler(_slideDisplay.AutomationElement, TreeScope.Element, onPropertyChanged, RangeValuePatternIdentifiers.ValueProperty);
+
+            movement();            
+
+            manualEvent.WaitOne(15000, false);
+            Automation.RemoveAutomationPropertyChangedEventHandler(_slideDisplay.AutomationElement, onPropertyChanged);
+            if (!pageChanged)
+            {
+                Refresh();
+                pageChanged = expectedIndex == CurrentPage;
+            }
+
             return pageChanged; 
         }
         public SlideNavigation Add()
         {
             _add.ShouldNotBeNull();
             _add.Invoke();
-            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+            UITestHelper.Wait(TimeSpan.FromSeconds(2));
             return this;
         }
         public SlideNavigation Back()
         {
             _back.ShouldNotBeNull();
             _back.Invoke();
-            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+            UITestHelper.Wait(TimeSpan.FromSeconds(2));
             return this;
         }
         public SlideNavigation Forward()
@@ -1309,6 +1319,7 @@ namespace Functional
         {
             var control = new UITestHelper(Parent);
             control.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, Constants.ID_METL_CONVERSATION_SEARCH_TEXTBOX));
+            control.OverrideTimeout = 5 * 60 * 1000; // wait up to 5 minutes for in case of a congested network
             
             var success = control.WaitForControlEnabled();
             Assert.IsTrue(success, ErrorMessages.WAIT_FOR_CONTROL_FAILED);

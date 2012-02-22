@@ -21,8 +21,8 @@ namespace FunctionalTests
         private static AutomationElement ownerWindow;
         private static AutomationElement participantWindow;
         private static AutomationElementCollection metlWindows;
+        private static int ownerRandomPage;
         private static int participantRandomPage;
-
 
         public TestContext TestContext 
         {
@@ -135,9 +135,10 @@ namespace FunctionalTests
                 .Ensure<SlideNavigation>(nav => { return true; })
                 .With<SlideNavigation>(nav =>
                 {
-                    participantRandomPage = nav.ChangeToRandomPage();
+                    ownerRandomPage = nav.DetermineToRandomPage();
+                    nav.WaitForPageChange(ownerRandomPage, () => nav.ChangeToPage(ownerRandomPage)).ShouldBeTrue();
 
-                    UITestHelper.Wait(TimeSpan.FromSeconds(2));
+                    UITestHelper.Wait(TimeSpan.FromSeconds(5));
                 });
         }
 
@@ -148,9 +149,10 @@ namespace FunctionalTests
                 .Ensure<SlideNavigation>(nav => { return true; })
                 .With<SlideNavigation>(nav =>
                 {
-                    nav.ChangeToRandomPage(participantRandomPage);
+                    participantRandomPage = nav.DetermineToRandomPage(ownerRandomPage);
+                    nav.WaitForPageChange(participantRandomPage, () => nav.ChangeToPage(participantRandomPage)).ShouldBeTrue();
 
-                    UITestHelper.Wait(TimeSpan.FromSeconds(2));
+                    UITestHelper.Wait(TimeSpan.FromSeconds(5));
                 });
         }
 
@@ -161,13 +163,7 @@ namespace FunctionalTests
                 .Ensure<SlideNavigation>(nav => { return true; })
                 .With<SlideNavigation>(nav =>
                 {
-                    var waitSuccess = false;
-                    if (nav.CurrentPage != participantRandomPage)
-                        waitSuccess = nav.WaitForPageChange(participantRandomPage);
-
-                    UITestHelper.Wait(TimeSpan.FromSeconds(5));
-
-                    nav.CurrentPage.ShouldEqual(participantRandomPage);
+                    (ownerRandomPage == nav.CurrentPage).ShouldBeTrue();
                 });
         }
 
@@ -178,14 +174,7 @@ namespace FunctionalTests
                 .Ensure<SlideNavigation>(nav => { return true; })
                 .With<SlideNavigation>(nav =>
                 {
-                    var waitSuccess = false;
-                    if (nav.CurrentPage != participantRandomPage)
-                        waitSuccess = nav.WaitForPageChange(participantRandomPage);
-
-                    UITestHelper.Wait(TimeSpan.FromSeconds(5));
-
-
-                    nav.CurrentPage.ShouldNotEqual(participantRandomPage);
+                    (ownerRandomPage != nav.CurrentPage).ShouldBeTrue();
                 });
         }
 

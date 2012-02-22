@@ -195,7 +195,8 @@ namespace Functional
                 {
                     var slideNav = new SlideNavigation(metlWindow.AutomationElement);
 
-                    var randomPage = slideNav.ChangeToRandomPage();
+                    var randomPage = slideNav.DetermineToRandomPage();
+                    slideNav.ChangeToPage(randomPage);
                     canvas.Refresh();
                     var originalSize = canvas.BoundingRectangle;
 
@@ -206,12 +207,11 @@ namespace Functional
 
                     var currentPage = slideNav.CurrentPage;
 
-                    randomPage = slideNav.ChangeToRandomPage(currentPage);
+                    randomPage = slideNav.DetermineToRandomPage(currentPage);
                     UITestHelper.Wait(TimeSpan.FromSeconds(3));
-                    slideNav.WaitForPageChange(randomPage);
-                    slideNav.ChangeToPage(currentPage);
+                    slideNav.WaitForPageChange(randomPage, () => slideNav.ChangeToPage(randomPage));
                     UITestHelper.Wait(TimeSpan.FromSeconds(3));
-                    slideNav.WaitForPageChange(currentPage);
+                    slideNav.WaitForPageChange(currentPage, () => slideNav.ChangeToPage(currentPage));
 
                     new HomeTabScreen(metlWindow.AutomationElement).ActivateTextMode().TextSelectMode();
                     canvas.Refresh();
@@ -242,7 +242,10 @@ namespace Functional
                     var home = new HomeTabScreen(metlWindow.AutomationElement).ActivateTextMode();
                     canvas.SelectTextboxWithClick(insertedText);
                     home.ToggleBoldText();
-                    var slideNav = new SlideNavigation(metlWindow.AutomationElement).Add().Back();
+                    var slideNav = new SlideNavigation(metlWindow.AutomationElement);
+                    var currentPage = slideNav.CurrentPage;
+                    slideNav.WaitForPageChange(currentPage + 1, () => slideNav.Add()).ShouldBeTrue();
+                    slideNav.WaitForPageChange(currentPage, () => slideNav.Back()).ShouldBeTrue();
 
                     home.IsBoldChecked.ShouldBeTrue();
                 });
