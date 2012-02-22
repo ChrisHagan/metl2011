@@ -1469,7 +1469,22 @@ namespace Functional
         public PenPopupScreen(AutomationElement popupButton)
         {
             popupButton.ShouldNotBeNull();
+
+            var manualEvent = new ManualResetEvent(false);
+
+            Automation.AddAutomationEventHandler(AutomationElement.MenuOpenedEvent, popupButton, TreeScope.Descendants, (sender, args) => { manualEvent.Set(); });
             popupButton.Invoke();
+
+            manualEvent.WaitOne(2000, false);
+
+            var popupPoint = popupButton.GetClickablePoint();
+            popupPoint.Offset(0, 50);
+
+            var colourChooser = AutomationElement.FromPoint(popupPoint);
+            if (colourChooser != null)
+            {
+
+            }
         }
     }
 
