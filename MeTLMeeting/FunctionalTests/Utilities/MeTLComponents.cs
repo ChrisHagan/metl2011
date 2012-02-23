@@ -1466,25 +1466,111 @@ namespace Functional
 
     public class PenPopupScreen : IScreenObject
     {
-        public PenPopupScreen(AutomationElement popupButton)
-        {
-            popupButton.ShouldNotBeNull();
+        private List<AutomationElement> _allColours;
+        private List<AutomationElement> _allSizes;
+        private AutomationElement _resetToDefault;
+        private AutomationElement _popupButton;
 
+        public PenPopupScreen(UITestHelper parent, int index)
+        {
+            var popupButtons = parent.AutomationElement.Descendants(AutomationElement.AutomationIdProperty, "OpenPopup");
+            Parent = new UITestHelper(parent);
+            Parent.SearchProperties.Add(new PropertyExpression(AutomationElement.ClassNameProperty, "Popup"));
+
+            _allColours = new List<AutomationElement>();
+            _allSizes = new List<AutomationElement>();
+            _popupButton = popupButtons[index];
+            _popupButton.ShouldNotBeNull();
+        }
+
+        public PenPopupScreen PopupColours()
+        {
             var manualEvent = new ManualResetEvent(false);
 
-            Automation.AddAutomationEventHandler(AutomationElement.MenuOpenedEvent, popupButton, TreeScope.Descendants, (sender, args) => { manualEvent.Set(); });
-            popupButton.Invoke();
+            Automation.AddAutomationEventHandler(AutomationElement.MenuOpenedEvent, _popupButton, TreeScope.Descendants, (sender, args) => { manualEvent.Set(); });
+            _popupButton.Invoke();
 
             manualEvent.WaitOne(2000, false);
+            Refresh();
 
-            var popupPoint = popupButton.GetClickablePoint();
-            popupPoint.Offset(0, 50);
+            return this;
+        }
 
-            var colourChooser = AutomationElement.FromPoint(popupPoint);
-            if (colourChooser != null)
+        public override void Refresh()
+        {
+            Parent.Find(); 
+            FindAllColoursInPopup();
+            FindAllSizesInPopup();
+            FindResetToDefault();
+        }
+
+        public int ColourCount
+        {
+            get
             {
-
+                return _allColours == null ? 0 : _allColours.Count;
             }
+        }
+
+        public int SizeCount
+        {
+            get
+            {
+                return _allSizes == null ? 0 : _allSizes.Count;
+            }
+        }
+
+        public void SelectColour(int index)
+        {
+            if (index < 0 || index >= ColourCount)
+                throw new ArgumentOutOfRangeException(String.Format("Index[{0}] is out of range for ColourCount[{1}]", index, ColourCount));
+
+            _allColours[index].Select();
+        }
+
+        public void SelectSize(int index)
+        {
+            if (index < 0 || index >= SizeCount)
+                throw new ArgumentOutOfRangeException(String.Format("Index[{0}] is out of range for SizeCount[{1}]", index, SizeCount));
+
+            _allSizes[index].Select();
+        }
+
+        public void ResetToDefault()
+        {
+            _resetToDefault.ShouldNotBeNull();
+            _resetToDefault.Invoke();
+        }
+
+        private void FindAllColoursInPopup()
+        {
+            FindChildren("ColourChooser", _allColours);
+        }
+
+        private void FindAllSizesInPopup()
+        {
+            FindChildren("SizeChooser", _allSizes);
+        }
+        
+        private void FindChildren(string automationId, List<AutomationElement> childList)
+        {
+            var parentElement = Parent.AutomationElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.AutomationIdProperty, automationId));
+            if (parentElement != null)
+            {
+                var treeWalker = new TreeWalker(new PropertyCondition(AutomationElement.ClassNameProperty, "ListBoxItem"));
+                var nextElement = treeWalker.GetFirstChild(parentElement);
+                while (nextElement != null)
+                {
+                    childList.Add(nextElement);
+                    nextElement = TreeWalker.ControlViewWalker.GetNextSibling(nextElement);
+                }
+            }
+        }
+
+        private void FindResetToDefault()
+        {
+            _resetToDefault = Parent.AutomationElement.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, "Button"));
+            _resetToDefault.ShouldNotBeNull();
         }
     }
 
@@ -1594,8 +1680,7 @@ namespace Functional
 
         public PenPopupScreen ModifyPen(int index)
         {
-            var popupButtons = _penColors[0].Current.SelectionContainer.Descendants(AutomationElement.AutomationIdProperty, "OpenPopup");
-            return new PenPopupScreen(popupButtons[index]);
+            return new PenPopupScreen(Parent, index);
         }
 
         public HomeTabScreen SelectPen(int index)

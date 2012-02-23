@@ -46,9 +46,25 @@ namespace FunctionalTests
 
                     foreach (var i in Enumerable.Range(0, home.PenColourCount))
                     {
-                        home.ModifyPen(i);
+                        PenPopupScreen colours = home.ModifyPen(i).PopupColours();
+                        foreach (var j in Enumerable.Range(0, colours.ColourCount))
+                        {
+                            colours.SelectColour(j);
+                            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+                            colours = home.ModifyPen(i).PopupColours();
+                        }
                         UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+                        colours = home.ModifyPen(i).PopupColours();
+                        foreach (var k in Enumerable.Range(0, colours.SizeCount))
+                        {
+                            colours.SelectSize(k);
+                            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+                            colours = home.ModifyPen(i).PopupColours();
+                        }
+                        UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+                        home.ModifyPen(i).PopupColours().ResetToDefault();
                     }
+                    UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
 
                     return true;
                 });
