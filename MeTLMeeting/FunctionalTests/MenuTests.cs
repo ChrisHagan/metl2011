@@ -88,5 +88,35 @@ namespace FunctionalTests
                     return true;
                 });
         }
+
+        [TestMethod]
+        public void ActivatePrivateMode()
+        {
+            ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
+                .Ensure<HomeTabScreen>((home) =>
+                {
+                    if (!home.IsActive)
+                        home.OpenTab();
+
+                    home.PrivateMode();
+
+                    return true;
+                });
+        }
+
+        [TestMethod]
+        public void ActivatePublicMode()
+        {
+            ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
+                .Ensure<HomeTabScreen>((home) =>
+                {
+                    if (!home.IsActive)
+                        home.OpenTab();
+
+                    home.PublicMode();
+
+                    return true;
+                });
+        }
     }
 }

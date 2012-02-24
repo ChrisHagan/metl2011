@@ -1595,6 +1595,8 @@ namespace Functional
         private AutomationElement _tab;
         private List<SelectionItemPattern> _penColors;
         private AutomationElementCollection _penPopupMenuButtons;
+        private AutomationElement _privateModeButton;
+        private AutomationElement _publicModeButton;
 
         // active when in text mode
         private AutomationElement _textBoldButton;
@@ -1839,6 +1841,20 @@ namespace Functional
             return this;
         }
 
+        public HomeTabScreen PrivateMode()
+        {
+            _privateModeButton.ShouldNotBeNull();
+            _privateModeButton.Select();
+            return this;
+        }
+
+        public HomeTabScreen PublicMode()
+        {
+            _publicModeButton.ShouldNotBeNull();
+            _publicModeButton.Select();
+            return this;
+        }
+
         public HomeTabScreen ShowPage()
         {
             _showPageButton.Invoke();
@@ -1860,6 +1876,8 @@ namespace Functional
             _showAllButton = Parent.Descendant("FitToView");
             _extendButton = Parent.Descendant("ExtendPage");
             _tab = Parent.AutomationElement.WalkAllElements("HomeTab");
+            _privateModeButton = Parent.Descendant("privateMode");
+            _publicModeButton = Parent.Descendant("publicMode");
         }
     }
 }
