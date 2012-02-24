@@ -1255,16 +1255,24 @@ namespace Functional
 
         public Login username(string value)
         {
-            _username.Value("");
             _username.SetFocus();
             _username.Value(value);
+            var username = new UITestHelper(Parent, _username);
+            username.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "username"));
+
+            username.WaitForControlCondition((uiControl) => { return uiControl.Value() != value; });
+            
             return this;
         }
         public Login password(string value)
         {
-            _password.Value("");
             _password.SetFocus();
             _password.Value(value);
+
+            var password = new UITestHelper(Parent, _password);
+            password.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "password"));
+
+            password.WaitForControlCondition((uiControl) => { return uiControl.Value() != value; });
 
             Keys.SendWait("{TAB}");
             return this;

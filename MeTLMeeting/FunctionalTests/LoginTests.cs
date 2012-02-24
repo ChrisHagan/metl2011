@@ -38,8 +38,7 @@ namespace Functional
             var user = testContext.DataRow["Username"].ToString();
             var pass = testContext.DataRow["Password"].ToString();
 
-            var loginScreen = new Login(metlWindow.AutomationElement).username(user).password(pass);
-            loginScreen.submit();
+            new Login(metlWindow.AutomationElement).username(user).password(pass).submit();
         }
 
         [TestMethod]

@@ -44,6 +44,7 @@ namespace FunctionalTests
                     if (!home.IsActive)
                         home.ActivatePenMode();
 
+                    UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
                     foreach (var i in Enumerable.Range(0, home.PenColourCount))
                     {
                         PenPopupScreen colours = home.ModifyPen(i).PopupColours();
