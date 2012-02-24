@@ -48,6 +48,40 @@ namespace FunctionalTests
         }
 
         [TestMethod]
+        public void SelectAllInkOnCurrentPage()
+        {
+            homeTab.ActivatePenMode().PenSelectMode();
+
+            SelectInkStroke(canvas.BoundingRectangle);
+
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(500)); // give some time for the canvas to select all the ink strokes
+        }
+
+        [TestMethod]
+        public void MoveSelectedInkToRandomCorner()
+        {
+            Mouse.MoveTo(canvas.CentrePoint());
+            Mouse.Down(MouseButton.Left);
+
+            // drag to a random corner
+            var bounding = canvas.BoundingRectangle;
+            
+            bounding.Inflate(-5, -5);
+            var coords = new List<System.Drawing.Point>();
+            var randCorner = new Random();
+
+            coords.Add(bounding.TopLeft.ToDrawingPoint());
+            coords.Add(bounding.TopRight.ToDrawingPoint());
+            coords.Add(bounding.BottomRight.ToDrawingPoint());
+            coords.Add(bounding.BottomLeft.ToDrawingPoint());
+
+            Mouse.MoveTo(coords[randCorner.Next(3)]);
+            Mouse.Up(MouseButton.Left);
+
+            var adorner = canvas.Parent.AutomationElement.Descendant(typeof(System.Windows.Documents.AdornerLayer));
+        }
+
+        [TestMethod]
         public void DeleteAllInkStrokesOnCurrentPage()
         {
             homeTab.ActivatePenMode().PenSelectMode();

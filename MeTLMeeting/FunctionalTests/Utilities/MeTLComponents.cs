@@ -1479,20 +1479,22 @@ namespace Functional
         private AutomationElement _resetToDefault;
         private AutomationElement _popupButton;
 
-        public PenPopupScreen(UITestHelper parent, int index)
+        public PenPopupScreen(UITestHelper parent, AutomationElement popupButton)
         {
-            var popupButtons = parent.AutomationElement.Descendants(AutomationElement.AutomationIdProperty, "OpenPopup");
             Parent = new UITestHelper(parent);
             Parent.SearchProperties.Add(new PropertyExpression(AutomationElement.ClassNameProperty, "Popup"));
 
             _allColours = new List<AutomationElement>();
             _allSizes = new List<AutomationElement>();
-            _popupButton = popupButtons[index];
+            _popupButton = popupButton;
             _popupButton.ShouldNotBeNull();
         }
 
         public PenPopupScreen PopupColours()
         {
+            if (_popupButton == null)
+                return this;
+
             var manualEvent = new ManualResetEvent(false);
 
             Automation.AddAutomationEventHandler(AutomationElement.MenuOpenedEvent, _popupButton, TreeScope.Descendants, (sender, args) => { manualEvent.Set(); });
@@ -1592,6 +1594,7 @@ namespace Functional
         private AutomationElement _showPageButton;
         private AutomationElement _tab;
         private List<SelectionItemPattern> _penColors;
+        private AutomationElementCollection _penPopupMenuButtons;
 
         // active when in text mode
         private AutomationElement _textBoldButton;
@@ -1688,7 +1691,11 @@ namespace Functional
 
         public PenPopupScreen ModifyPen(int index)
         {
-            return new PenPopupScreen(Parent, index);
+            if (_penPopupMenuButtons == null)
+            {
+                _penPopupMenuButtons = Parent.AutomationElement.Descendants(AutomationElement.AutomationIdProperty, "OpenPopup");
+            }
+            return new PenPopupScreen(Parent, _penPopupMenuButtons[index]);
         }
 
         public HomeTabScreen SelectPen(int index)
