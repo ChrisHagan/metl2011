@@ -1260,7 +1260,7 @@ namespace Functional
             var username = new UITestHelper(Parent, _username);
             username.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "username"));
 
-            username.WaitForControlCondition((uiControl) => { return uiControl.Value() != value; });
+            username.WaitForControlCondition((uiControl) => { return uiControl.Value() != value; }).ShouldBeTrue();
             
             return this;
         }
@@ -1272,7 +1272,7 @@ namespace Functional
             var password = new UITestHelper(Parent, _password);
             password.SearchProperties.Add(new PropertyExpression(AutomationElement.AutomationIdProperty, "password"));
 
-            password.WaitForControlCondition((uiControl) => { return uiControl.Value() != value; });
+            password.WaitForControlEnabled().ShouldBeTrue(); 
 
             Keys.SendWait("{TAB}");
             return this;
