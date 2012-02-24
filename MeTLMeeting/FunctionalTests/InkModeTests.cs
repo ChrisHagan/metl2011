@@ -28,15 +28,33 @@ namespace FunctionalTests
             canvas = new CollapsedCanvasStack(metlWindow.AutomationElement);
         }
 
-        private void CollectRandomPoints()
+        private IEnumerable<System.Drawing.Point> CollectRandomPoints(int centreX, int centreY, int width, int height, int numPoints)
         {
-            
+            var rand = new Random();
+            foreach (var i in Enumerable.Range(0, numPoints))
+            {
+                var x = rand.Next(width);
+                var y = rand.Next(height); 
+
+                yield return new System.Drawing.Point(centreX + (int)x, centreY + (int)y);
+            }
         }
 
         [TestMethod]
         public void DrawRandomInkStrokes()
         {
-            CollectRandomPoints();
+            homeTab.ActivatePenMode();
+
+            var centre = canvas.CentrePoint();
+
+            var points = CollectRandomPoints(centre.X, centre.Y, 100, 100, 40);
+
+            Mouse.MoveTo(points.First());
+            Mouse.Down(MouseButton.Left);
+
+            AnimateMouseThroughPoints(points);
+
+            Mouse.Up(MouseButton.Left);
         }
 
         [TestMethod]
@@ -61,12 +79,10 @@ namespace FunctionalTests
         public void MoveSelectedInkToRandomCorner()
         {
             Mouse.MoveTo(canvas.CentrePoint());
-            Mouse.Down(MouseButton.Left);
-
             // drag to a random corner
             var bounding = canvas.BoundingRectangle;
             
-            bounding.Inflate(-5, -5);
+            bounding.Inflate(-100, -100);
             var coords = new List<System.Drawing.Point>();
             var randCorner = new Random();
 
@@ -75,10 +91,7 @@ namespace FunctionalTests
             coords.Add(bounding.BottomRight.ToDrawingPoint());
             coords.Add(bounding.BottomLeft.ToDrawingPoint());
 
-            Mouse.MoveTo(coords[randCorner.Next(3)]);
-            Mouse.Up(MouseButton.Left);
-
-            var adorner = canvas.Parent.AutomationElement.Descendant(typeof(System.Windows.Documents.AdornerLayer));
+            Mouse.DragTo(MouseButton.Left, coords[randCorner.Next(3)]);
         }
 
         [TestMethod]

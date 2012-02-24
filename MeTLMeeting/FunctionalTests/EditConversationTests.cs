@@ -244,8 +244,8 @@ namespace Functional
                     home.ToggleBoldText();
                     var slideNav = new SlideNavigation(metlWindow.AutomationElement);
                     var currentPage = slideNav.CurrentPage;
-                    slideNav.WaitForPageChange(currentPage + 1, () => slideNav.Add()).ShouldBeTrue();
-                    slideNav.WaitForPageChange(currentPage, () => slideNav.Back()).ShouldBeTrue();
+                    slideNav.WaitForPageChange(currentPage + 1, () => slideNav.Add());
+                    slideNav.WaitForPageChange(currentPage, () => slideNav.Back());
 
                     home.IsBoldChecked.ShouldBeTrue();
                 });
