@@ -62,10 +62,28 @@ namespace FunctionalTests
                             UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
                             colours = home.ModifyPen(i).PopupColours();
                         }
-                        UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
-                        home.ModifyPen(i).PopupColours().ResetToDefault();
                     }
                     UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+
+                    return true;
+                });
+        }
+
+        [TestMethod]
+        public void CanResetAllPensToDefault()
+        {
+            ScreenActionBuilder.Create().WithWindow(metlWindow.AutomationElement)
+                .Ensure<HomeTabScreen>((home) =>
+                {
+                    if (!home.IsActive)
+                        home.ActivatePenMode();
+
+                    UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+                    foreach (var i in Enumerable.Range(0, home.PenColourCount))
+                    {
+                        home.ModifyPen(i).PopupColours().ResetToDefault();
+                        UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+                    }
 
                     return true;
                 });
