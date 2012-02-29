@@ -457,9 +457,20 @@ namespace SandRibbon.Components
     }
     public class ConversationComparator : System.Collections.IComparer
     {
+        private SearchConversationDetails ConvertToSearchConversationDetails(object obj)
+        {
+            if (obj is MeTLLib.DataTypes.SearchConversationDetails)
+                return obj as SearchConversationDetails;
+
+            if (obj is MeTLLib.DataTypes.ConversationDetails)
+                return new SearchConversationDetails(obj as ConversationDetails);
+
+            throw new ArgumentException("obj is of invalid type: " + obj.GetType().Name);
+        }
+
         public int Compare(object x, object y) {
-            var dis = (MeTLLib.DataTypes.SearchConversationDetails)x;
-            var dat = (MeTLLib.DataTypes.SearchConversationDetails)y;
+            var dis = ConvertToSearchConversationDetails(x);
+            var dat = ConvertToSearchConversationDetails(y);
             return -1 * dis.LastModified.CompareTo(dat.LastModified);
         }
     }
