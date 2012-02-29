@@ -136,7 +136,8 @@ namespace SandRibbon.Components
                     else if (backstageNav.currentMode == "currentConversation")
                     {
                         searchResultsObserver.Clear();
-                        searchResultsObserver.Add(Globals.conversationDetails);
+                        if (!Globals.conversationDetails.IsEmpty && !Globals.conversationDetails.isDeleted)
+                            searchResultsObserver.Add(Globals.conversationDetails);
                         RefreshSortedConversationsList();
                         return;
                     }
@@ -264,10 +265,14 @@ namespace SandRibbon.Components
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
                if (details.IsEmpty) return;
-               if (details.isDeleted && !details.IsEmpty)
+
+               if (!details.isDeleted)
                    searchResultsObserver.Add(new SearchConversationDetails(details));
-               else if (details.IsJidEqual(Globals.location.activeConversation))
+               if (!details.IsJidEqual(Globals.location.activeConversation) || details.isDeleted)
+               {
                    currentConversation.Visibility = Visibility.Collapsed;
+                   Commands.BackstageModeChanged.ExecuteAsync("find");
+               }
                if ((!(shouldShowConversation(details)) && details.IsJidEqual(Globals.conversationDetails.Jid)) || details.isDeleted)
                {
                    Commands.RequerySuggested();

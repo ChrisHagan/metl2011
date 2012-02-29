@@ -205,7 +205,6 @@ namespace SandRibbon
                     else if (Projector.Window != null && screenCount > 1)
                     {
                         // Case 3.
-                        Projector.Window.Close();
                         Commands.ProxyMirrorPresentationSpace.ExecuteAsync(null);
                     }
                 }

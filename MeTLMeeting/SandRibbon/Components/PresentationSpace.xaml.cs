@@ -216,6 +216,8 @@ namespace SandRibbon.Components
             try
             {
                 var mirror = new Window { Content = new Projector { viewConstraint = parent.scroll } };
+                if (Projector.Window != null)
+                    Projector.Window.Close();
                 Projector.Window = mirror;
                 parent.Closed += (_sender, _args) => mirror.Close();
                 mirror.WindowStyle = WindowStyle.None;
