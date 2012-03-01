@@ -48,7 +48,7 @@ namespace SandRibbon.Providers
         }
         public PedagogyLevel getMeTLPedagogyLevel()
         {
-            PedagogyCode level;
+            /*PedagogyCode level;
             var type = getMeTLType();
             switch (type)
             {
@@ -67,9 +67,10 @@ namespace SandRibbon.Providers
                 default:
                     level = PedagogyCode.ResponsivePresentation;
                     break;
-            }
-            Commands.MeTLType.ExecuteAsync(type);
-            return Pedagogicometer.level(level);
+            }*/
+            // MeTLType command is only used to set the icon which is now hardcoded to "MeTL Presenter"
+            //Commands.MeTLType.ExecuteAsync(type);
+            return Pedagogicometer.level(PedagogyCode.CollaborativePresentation);
         }
         private string metlVersion = "Unknown";
         public string getMetlVersion()

@@ -676,6 +676,7 @@ namespace Functional
         public AutomationElement InsertTextbox(System.Drawing.Point location, string text)
         {
             Mouse.MoveTo(location);
+            UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
             Mouse.Click(MouseButton.Left);
 
             UITestHelper.Wait(TimeSpan.FromMilliseconds(100));
@@ -1665,6 +1666,24 @@ namespace Functional
             }
         }
 
+        public bool IsPrivateModeActive
+        {
+            get 
+            {
+                _privateModeButton.ShouldNotBeNull();
+                return _privateModeButton.IsSelected();
+            }
+        }
+
+        public bool IsPublicModeActive
+        {
+            get
+            {
+                _publicModeButton.ShouldNotBeNull();
+                return _publicModeButton.IsSelected();
+            }
+        }
+
         public bool IsInkModeActive
         {
             get
@@ -1866,6 +1885,7 @@ namespace Functional
             _privateModeButton.Select();
             return this;
         }
+
 
         public HomeTabScreen PublicMode()
         {

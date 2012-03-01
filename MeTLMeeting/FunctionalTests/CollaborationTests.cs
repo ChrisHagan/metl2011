@@ -129,6 +129,21 @@ namespace FunctionalTests
         }
 
         [TestMethod]
+        public void EnsureOwnerInPublicMode()
+        {
+            ScreenActionBuilder.Create().WithWindow(ownerWindow)
+                .Ensure<HomeTabScreen>((home) =>
+                {
+                    if (!home.IsActive)
+                        home.OpenTab();
+
+                    home.IsPublicModeActive.ShouldBeTrue();
+
+                    return true; 
+                });
+        }
+
+        [TestMethod]
         public void OwnerChangeToFirstPage()
         {
             ScreenActionBuilder.Create().WithWindow(ownerWindow)
@@ -341,6 +356,24 @@ namespace FunctionalTests
                 });
         }
 
+        [TestMethod]
+        public void SelectInkForOwner()
+        {
+            ScreenActionBuilder.Create().WithWindow(ownerWindow)
+                .Ensure<HomeTabScreen>( home => 
+                {
+                    if (!home.IsActive) home.OpenTab();
+                    home.ActivatePenMode().PenSelectMode();
+
+                    return true; 
+                })
+                .With<CollapsedCanvasStack>( canvas =>
+                {
+                    canvas.SelectAllInkStrokes();
+
+                    UITestHelper.Wait(TimeSpan.FromMilliseconds(500));
+                });
+        }
 
         [TestMethod]
         public void DeleteInkFromOwner()

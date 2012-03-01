@@ -100,6 +100,12 @@ namespace UITestFramework
             return element.FindFirst(TreeScope.Children, propertyCondition);
         }
 
+        public static bool IsSelected(this AutomationElement element)
+        {
+            var selectionItem = element.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+            return selectionItem.Current.IsSelected;
+        }
+
         public static bool IsListItemSelected(this AutomationElement element, String itemText)
         {
             AutomationElement firstMatch = FindListItem(element, itemText);

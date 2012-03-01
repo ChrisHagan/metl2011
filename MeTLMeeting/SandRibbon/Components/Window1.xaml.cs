@@ -60,7 +60,8 @@ namespace SandRibbon
             Commands.MeTLType.DefaultValue = Globals.METL;
             Title = Strings.Global_ProductName;
             try {
-                Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
+                //Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\" + Globals.MeTLType + ".ico");
+                Icon = (ImageSource)new ImageSourceConverter().ConvertFromString("resources\\MeTL Presenter.ico");
             }
             catch (Exception) {
                 Console.WriteLine("Window1 constructor couldn't find app appropriate icon");
