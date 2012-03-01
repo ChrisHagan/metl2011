@@ -129,6 +129,19 @@ namespace FunctionalTests
         }
 
         [TestMethod]
+        public void OwnerChangeToFirstPage()
+        {
+            ScreenActionBuilder.Create().WithWindow(ownerWindow)
+                .Ensure<SlideNavigation>(nav => { return true; })
+                .With<SlideNavigation>(nav =>
+                {
+                    nav.WaitForPageChange(0, () => nav.ChangeToPage(0)).ShouldBeTrue();
+
+                    UITestHelper.Wait(TimeSpan.FromSeconds(5));
+                });
+        }
+
+        [TestMethod]
         public void OwnerChangePage()
         {
             ScreenActionBuilder.Create().WithWindow(ownerWindow)
@@ -177,12 +190,26 @@ namespace FunctionalTests
                     (ownerRandomPage != nav.CurrentPage).ShouldBeTrue();
                 });
         }
+        [TestMethod]
+        public void OwnerActivatePrivateMode()
+        {
+            ScreenActionBuilder.Create().WithWindow(ownerWindow)
+                .Ensure<HomeTabScreen>((home) =>
+                {
+                    if (!home.IsActive)
+                        home.OpenTab();
 
+                    home.PrivateMode();
+
+                    return true;
+                });
+        }
+        
         [TestMethod]
         public void AddTextToOwner()
         {
             ScreenActionBuilder.Create().WithWindow(ownerWindow)
-                .Ensure<HomeTabScreen>( home => 
+                .Ensure<HomeTabScreen>( (home) => 
                 {
                     if (!home.IsActive) home.OpenTab();
                     home.ActivateTextMode().TextInsertMode();
@@ -196,6 +223,22 @@ namespace FunctionalTests
                     canvas.InsertTextbox(canvas.RandomPointWithinMargin(-40, -40), "owner");
 
                     canvas.ChildTextboxes.Count.ShouldEqual(textboxCount + 1);
+                });
+        }
+
+        [TestMethod]
+        public void ParticipantShouldDisplayOneTextbox()
+        {
+            ScreenActionBuilder.Create().WithWindow(participantWindow)
+                .Ensure<HomeTabScreen>( home =>
+                {
+                    if (!home.IsActive) 
+                        home.OpenTab();
+                    return true;
+                })
+                .With<CollapsedCanvasStack>(canvas =>
+                {
+                    canvas.ChildTextboxes.Count.ShouldEqual(1);
                 });
         }
 

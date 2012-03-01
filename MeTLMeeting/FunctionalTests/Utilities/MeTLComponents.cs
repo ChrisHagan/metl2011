@@ -1616,13 +1616,32 @@ namespace Functional
         {
             Parent.SetFocus();
 
-            Keys.SendWait("%");
+            var homeTab = FindHomeTab();
+            var bounding = homeTab.Current.BoundingRectangle;
+            Mouse.MoveTo(new System.Drawing.Point((int)(bounding.X + bounding.Width / 2), (int)(bounding.Y + bounding.Height / 2)));
+            Mouse.Click(MouseButton.Left);
+
+            /*Keys.SendWait("%");
             Thread.Sleep(100);
-            Keys.SendWait("H");
+            Keys.SendWait("H");*/
 
             Populate();
 
             return this;
+        }
+
+        private AutomationElement FindHomeTab()
+        {
+            var nextChild = TreeWalker.RawViewWalker.GetFirstChild(Parent.AutomationElement);
+            while (nextChild != null)
+            {
+                if (nextChild.Current.Name == "Home")
+                    return nextChild;
+
+                nextChild = TreeWalker.RawViewWalker.GetNextSibling(nextChild);
+            }
+
+            return null;
         }
 
         #region Properties

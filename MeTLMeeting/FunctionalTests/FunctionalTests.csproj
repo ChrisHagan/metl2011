@@ -200,6 +200,9 @@
     <None Include="OrderedTests\Case028.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="OrderedTests\Case030.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MeTLLib\MeTLLib.csproj">
