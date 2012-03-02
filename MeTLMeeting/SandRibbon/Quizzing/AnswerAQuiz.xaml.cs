@@ -51,7 +51,7 @@ namespace SandRibbon.Quizzing
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selection = ((Option)e.AddedItems[0]);
-            Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.id, Globals.me, selection.name));
+            Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.id, Globals.me, selection.name, DateTime.Now.Ticks));
             Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.id);
             
             this.Close();

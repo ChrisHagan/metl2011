@@ -1169,7 +1169,7 @@ namespace MeTLLib.DataTypes
             }
 
             public static string TAG = "quizResponse";
-            public static string ANSWER = "QuizAnswer";
+            public static string ANSWER = "answer";
             public static string ANSWERER = "answerer";
             public static string ANSWERDATE = "answerDate";
             public static string ID = "id";

@@ -185,8 +185,10 @@ namespace MeTLLib.DataTypes
     }
     public class QuizAnswer
     {
-        public QuizAnswer(long Id, string Respondent, string Response)
+        
+        public QuizAnswer(long Id, string Respondent, string Response, long answerTime)
         {
+            this.answerTime = answerTime;
             id = Id;
             answerer = Respondent;
             answer = Response;
@@ -194,5 +196,6 @@ namespace MeTLLib.DataTypes
         public string answerer { get; set; }
         public string answer { get; set; }
         public long id { get; set; }
+        public long answerTime { get; set; }
     }
 }
