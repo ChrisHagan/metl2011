@@ -1171,6 +1171,7 @@ namespace MeTLLib.DataTypes
             public static string TAG = "quizResponse";
             public static string ANSWER = "QuizAnswer";
             public static string ANSWERER = "answerer";
+            public static string ANSWERDATE = "answerDate";
             public static string ID = "id";
             public QuizResponse()
             {
@@ -1182,15 +1183,21 @@ namespace MeTLLib.DataTypes
             {
                 this.parameters = parameters;
             }
-
+            private long loadDate()
+            {
+                if (HasTag(ANSWERDATE))
+                    return long.Parse(GetTag(ANSWERDATE));
+                return 0;
+            }
             public QuizAnswer parameters
             {
                 get
                 {
-                    return new QuizAnswer(long.Parse(GetTag(ID)), GetTag(ANSWERER), GetTag(ANSWER));
+                    return new QuizAnswer(long.Parse(GetTag(ID)), GetTag(ANSWERER), GetTag(ANSWER), loadDate());
                 }
                 set
                 {
+                    SetTag(ANSWERDATE, value.answerTime.ToString());
                     SetTag(ANSWER, value.answer);
                     SetTag(ANSWERER, value.answerer);
                     SetTag(ID, value.id.ToString());
