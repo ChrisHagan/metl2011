@@ -115,7 +115,22 @@ namespace MeTLLib.DataTypes
         }
         #endregion
     }
+    public class QuizInfo
+    {
+        public QuizQuestion Question;
+        public List<QuizAnswer> Answers;
 
+        public QuizInfo(QuizQuestion question, List<QuizAnswer> answers )
+        {
+            Question = question;
+            Answers = answers;
+        }
+        
+        public void AddAnswer(QuizAnswer quizAnswer)
+        {
+            Answers.Add(quizAnswer);
+        }
+    }
     public class QuizQuestion
     {
         public QuizQuestion(long Id, long created, string Title, string Author, string Question, List<Option> Options)

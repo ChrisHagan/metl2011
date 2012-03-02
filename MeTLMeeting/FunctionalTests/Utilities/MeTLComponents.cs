@@ -790,7 +790,7 @@ namespace Functional
             {
                 if (element.Current.AutomationId.ToLower().Equals("quizanswer"))
                 {
-                    element.Value("Answer " + count.ToString());
+                    element.Value("QuizAnswer " + count.ToString());
                     count++;
                 }
             }

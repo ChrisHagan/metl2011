@@ -560,7 +560,7 @@ namespace MeTLLib.Providers.Connection
         {
             try
             {
-                Console.WriteLine("Jabberwire::JoinRoom => Joining room {0}", room);
+                Trace.Write(String.Format("Jabberwire::JoinRoom => Joining room {0}", room));
                 var alias = credentials.name + conn.Resource;
                 new MucManager(conn).JoinRoom(room, alias, true);
             }
@@ -984,9 +984,9 @@ namespace MeTLLib.Providers.Connection
         {
             receiveEvents.receiveQuiz(quiz);
         }
-        public virtual void actOnQuizAnswerReceived(QuizAnswer answer)
+        public virtual void actOnQuizAnswerReceived(QuizAnswer quizAnswer)
         {
-            receiveEvents.receiveQuizAnswer(answer);
+            receiveEvents.receiveQuizAnswer(quizAnswer);
         }
         public virtual void actOnStrokeReceived(TargettedStroke stroke)
         {
@@ -1053,5 +1053,14 @@ namespace MeTLLib.Providers.Connection
         {
             Trace.TraceWarning(string.Format("Received unknown message: {0}", message));
         }
+
+        public void LoadQuizzes(int conversationJid)
+        {
+            historyProvider.Retrieve<PreParser>(
+            onStart,
+            onProgress,
+            finishedParser => receiveEvents.receieveQuizzes(finishedParser),
+            conversationJid.ToString());
+      }
     }
 }

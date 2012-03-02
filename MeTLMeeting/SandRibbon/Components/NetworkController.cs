@@ -400,7 +400,7 @@ namespace SandRibbon.Components
         }
         private void quizAnswerAvailable(object sender, QuizAnswerAvailableEventArgs e)
         {
-            Commands.ReceiveQuizAnswer.ExecuteAsync(e.quizAnswer);
+            Commands.ReceiveQuizAnswer.ExecuteAsync(e.QuizAnswer);
         }
         private void quizQuestionAvailable(object sender, QuizQuestionAvailableEventArgs e)
         { Commands.ReceiveQuiz.ExecuteAsync(e.quizQuestion); }

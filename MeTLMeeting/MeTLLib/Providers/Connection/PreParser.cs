@@ -169,13 +169,13 @@ namespace MeTLLib.Providers.Connection
         {
             ink.Add(stroke);
         }
-        public override void actOnQuizReceived(QuizQuestion quizDetails)
+        public override void actOnQuizReceived(QuizQuestion details)
         {
-            quizzes.Add(quizDetails);
+            quizzes.Add(details);
         }
-        public override void actOnQuizAnswerReceived(QuizAnswer answer)
+        public override void actOnQuizAnswerReceived(QuizAnswer quizAnswer)
         {
-            quizAnswers.Add(answer);
+            quizAnswers.Add(quizAnswer);
         }
         public override void actOnTextReceived(TargettedTextBox box)
         {

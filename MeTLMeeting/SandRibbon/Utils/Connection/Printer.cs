@@ -81,7 +81,7 @@ namespace SandRibbon.Utils.Connection
                 canvas.Arrange(new Rect(new Point(0,0), size));
             return new[] { canvas };
         }
-        public override void actOnQuizReceived(MeTLLib.DataTypes.QuizQuestion quizDetails)
+        public override void actOnQuizReceived(MeTLLib.DataTypes.QuizQuestion details)
         {
             //Nothing.  Printer doesn't care about quiz
         }

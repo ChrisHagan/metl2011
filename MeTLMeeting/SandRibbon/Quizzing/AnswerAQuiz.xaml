@@ -7,7 +7,7 @@
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
     MaxHeight="500"
-    Title="Answer Quiz">
+    Title="QuizAnswer Quiz">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
             <StackPanel x:Name="TeacherControls" Visibility="Collapsed" DockPanel.Dock="Bottom">
