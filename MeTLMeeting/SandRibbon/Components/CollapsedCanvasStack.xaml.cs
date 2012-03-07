@@ -917,9 +917,8 @@ namespace SandRibbon.Components
         }
         private UndoHistory.HistoricalAction changeSelectedInkPrivacy(List<Stroke> selectedStrokes, string newPrivacy, string oldPrivacy)
         {
-             Action redo = () =>
+            Action redo = () =>
             {
-
                 var newStrokes = new StrokeCollection();
                 foreach (var stroke in selectedStrokes.Where(i => i != null && i.tag().privacy != newPrivacy))
                 {
@@ -1094,7 +1093,7 @@ namespace SandRibbon.Components
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target);
             Work.Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(privateAwareStroke.sum().checksum);
-            Work.Strokes.Add(privateAwareStroke);
+            AddContentToBuffer(privateAwareStroke, (st)=> Work.Strokes.Add(st));
             doMyStrokeAdded(privateAwareStroke);
             Commands.RequerySuggested(Commands.Undo);
         }
