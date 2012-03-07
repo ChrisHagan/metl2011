@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
-using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using System.Diagnostics;
 
@@ -14,6 +12,7 @@ namespace MeTLLib
     public class MeTLLibEventHandlers
     {
         public delegate void QuizzesAvailableRequestEventHandler(object sender, QuizzesAvailableEventArgs e); 
+        public delegate void QuizAvailableRequestEventHandler(object sender, QuizzesAvailableEventArgs e); 
         public delegate void TeacherStatusRequestEventHandler(object sender, TeacherStatusRequestEventArgs e);
         public delegate void TeacherStatusReceivedEventHandler(object sender, TeacherStatusRequestEventArgs e);
         public delegate void PresenceAvailableEventHandler(object sender, PresenceAvailableEventArgs e);
@@ -41,6 +40,7 @@ namespace MeTLLib
     #endregion
     #region EventArgs
     public class QuizzesAvailableEventArgs : EventArgs { public List<QuizInfo> quizzes; }
+    public class SingleQuizAvailableEventArgs : EventArgs { public QuizInfo quiz; }
     public class TeacherStatusRequestEventArgs : EventArgs { public TeacherStatus status; } 
     public class PresenceAvailableEventArgs : EventArgs { public MeTLPresence presence; }
     public class SubmissionAvailableEventArgs : EventArgs { public TargettedSubmission submission;}
@@ -95,7 +95,9 @@ namespace MeTLLib
         void teacherStatusRequest(string where, string who);
         void teacherStatusRecieved(TeacherStatus status);
         void receieveQuizzes(PreParser finishedParser);
+        void receieveQuiz(PreParser finishedParser, long id);
         event MeTLLibEventHandlers.QuizzesAvailableRequestEventHandler QuizzesAvailable;
+        event MeTLLibEventHandlers.QuizAvailableRequestEventHandler QuizAvailable;
         event MeTLLibEventHandlers.TeacherStatusReceivedEventHandler TeacherStatusReceived;
         event MeTLLibEventHandlers.TeacherStatusRequestEventHandler TeacherStatusRequest;
         event MeTLLibEventHandlers.PresenceAvailableEventHandler PresenceAvailable;
@@ -299,7 +301,15 @@ namespace MeTLLib
             QuizzesAvailable(this,  new QuizzesAvailableEventArgs{ quizzes = quizzes});
         }
 
+        public void receieveQuiz(PreParser finishedParser, long id)
+        {
+            var quiz = finishedParser.quizzes.Where(q => q.id == id).OrderByDescending(q => q.created).First();
+            var quizInfo = new QuizInfo(quiz, finishedParser.quizAnswers.Where(a => a.id == id).ToList());
+            QuizAvailable(this, new QuizzesAvailableEventArgs{ quizzes = new List<QuizInfo>{quizInfo}});
+        }
+
         public event MeTLLibEventHandlers.QuizzesAvailableRequestEventHandler QuizzesAvailable;
+        public event MeTLLibEventHandlers.QuizAvailableRequestEventHandler QuizAvailable;
         public event MeTLLibEventHandlers.TeacherStatusReceivedEventHandler TeacherStatusReceived;
 
         #region Events

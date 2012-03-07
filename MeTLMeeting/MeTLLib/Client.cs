@@ -91,8 +91,9 @@ namespace MeTLLib
         void MoveTo(int slide);
         void JoinConversation(string conversation);
         void LeaveLocation();
-        void LoadQuiz(int quizId);
+        void LoadQuiz(int conversationJid, long quizId);
         void LoadQuizzes(int conversationJid); 
+        void UploadAndSendSubmission(MeTLStanzas.LocalSubmissionInformation lii);
         ConversationDetails AppendSlide(string Jid);
         ConversationDetails AppendSlideAfter(int slide, string Jid);
         ConversationDetails AppendSlideAfter(int slide, string Jid, Slide.TYPE type);
@@ -173,8 +174,9 @@ namespace MeTLLib
             wire.location = Location.Empty;
         }
 
-        public void LoadQuiz(int quizId)
+        public void LoadQuiz(int conversationJid, long quizId)
         {
+            tryIfConnected( ()=> wire.LoadQuiz(conversationJid, quizId) );
         }
 
         public void LoadQuizzes(int conversationJid)
@@ -288,7 +290,7 @@ namespace MeTLLib
                 wire.SendStanza(where, stanza);
             });
         }
-        public void uploadAndSendSubmission(MeTLStanzas.LocalSubmissionInformation lii)
+        public void UploadAndSendSubmission(MeTLStanzas.LocalSubmissionInformation lii)
         {
             Action work = delegate
             {
@@ -300,8 +302,8 @@ namespace MeTLLib
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError("MeTLLib::ClientConnection:uploadAndSendSubmission {0}",e.Message);
-                    uploadAndSendSubmission(lii);
+                    Trace.TraceError("MeTLLib::ClientConnection:UploadAndSendSubmission {0}",e.Message);
+                    UploadAndSendSubmission(lii);
                 }
             };
             tryIfConnected(work);

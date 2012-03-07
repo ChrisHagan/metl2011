@@ -1062,5 +1062,14 @@ namespace MeTLLib.Providers.Connection
             finishedParser => receiveEvents.receieveQuizzes(finishedParser),
             conversationJid.ToString());
       }
+
+        public void LoadQuiz(int conversationJid, long quizId)
+        {
+            historyProvider.Retrieve<PreParser>(
+            onStart,
+            onProgress,
+            finishedParser => receiveEvents.receieveQuiz(finishedParser, quizId),
+            conversationJid.ToString());
+        }
     }
 }

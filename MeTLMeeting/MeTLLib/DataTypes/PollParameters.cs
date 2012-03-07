@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Media;
 using MeTLLib.Providers;
 
@@ -117,8 +118,8 @@ namespace MeTLLib.DataTypes
     }
     public class QuizInfo
     {
-        public QuizQuestion Question;
-        public List<QuizAnswer> Answers;
+        public QuizQuestion Question { get; set; }
+        public List<QuizAnswer> Answers { get; set; }
 
         public QuizInfo(QuizQuestion question, List<QuizAnswer> answers )
         {
