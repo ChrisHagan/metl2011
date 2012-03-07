@@ -141,7 +141,8 @@ namespace SandRibbon.Components
             DataContext = this;
             slides.PreviewKeyDown += new KeyEventHandler(KeyPressed);
             Commands.SyncedMoveRequested.RegisterCommandToDispatcher(new DelegateCommand<int>(MoveToTeacher));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo, slideInConversation));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, false), slideInConversation));
+            Commands.ForcePageRefresh.RegisterCommand(new DelegateCommand<int>((slideIndex) => MoveTo(slideIndex, true), slideInConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(Display));
             Commands.AddSlide.RegisterCommand(new DelegateCommand<object>(addSlide, canAddSlide));
             Commands.MoveToNext.RegisterCommand(new DelegateCommand<object>(moveToNext, isNext));
@@ -255,7 +256,7 @@ namespace SandRibbon.Components
             return thumbnailList.Select(s => s.id).ToList().IndexOf(slide);
         }
 
-        private void MoveTo(int slide)
+        private void MoveTo(int slide, bool forceRefresh)
         {
             Dispatcher.adopt(delegate
             {
@@ -263,7 +264,7 @@ namespace SandRibbon.Components
                 {
                     myMaxSlideIndex = calculateMaxIndex(myMaxSlideIndex, indexOf(slide));
                     var currentSlide = (Slide)slides.SelectedItem;
-                    if (currentSlide == null || currentSlide.id != slide)
+                    if (currentSlide == null || forceRefresh || currentSlide.id != slide)
                     {
                         currentSlideId = slide;
                         slides.SelectedIndex = indexOf(slide);

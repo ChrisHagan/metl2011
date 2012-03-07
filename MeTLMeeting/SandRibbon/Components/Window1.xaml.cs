@@ -1056,6 +1056,7 @@ namespace SandRibbon
                             RHSDrawerDefinition.Width = new GridLength(180);
                             homeGroups.Add(new ZoomControlsHost());
                             homeGroups.Add(new MiniMap());
+                            homeGroups.Add(new ContentVisibilityHost());
                             break;
                         case 3:
                             homeGroups.Add(new CollaborationControlsHost());

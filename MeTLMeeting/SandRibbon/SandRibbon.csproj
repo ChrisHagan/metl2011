@@ -213,6 +213,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Components\ContentVisibility.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Components\DrawerSplitter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -344,6 +348,10 @@
     <Page Include="Tabs\Groups\CollaborationControlsHost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Groups\ContentVisibilityHost.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -572,6 +580,9 @@
     <Compile Include="Components\CommandBridge.xaml.cs">
       <DependentUpon>CommandBridge.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ContentVisibility.xaml.cs">
+      <DependentUpon>ContentVisibility.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\EditConversation.xaml.cs">
       <DependentUpon>EditConversation.xaml</DependentUpon>
     </Compile>
@@ -580,6 +591,7 @@
       <DependentUpon>UserOptionsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Utility\CanvasExtensions.cs" />
+    <Compile Include="Components\Utility\ContentBuffer.cs" />
     <Compile Include="Components\Utility\DragDrop\DataSource.cs" />
     <Compile Include="Components\Utility\DragDrop\DragDropHelper.cs" />
     <Compile Include="Components\Utility\DragDrop\DraggedAdorner.cs" />
@@ -688,6 +700,9 @@
     </Compile>
     <Compile Include="Tabs\Groups\CollaborationControlsHost.xaml.cs">
       <DependentUpon>CollaborationControlsHost.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Groups\ContentVisibilityHost.xaml.cs">
+      <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Groups\PrivacyToolsHost.xaml.cs">
       <DependentUpon>PrivacyToolsHost.xaml</DependentUpon>

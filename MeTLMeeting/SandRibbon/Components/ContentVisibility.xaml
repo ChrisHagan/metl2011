@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="SandRibbon.Components.ContentVisibility"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
+    xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    VerticalAlignment="Top"
+    HorizontalAlignment="Right"
+    AutomationProperties.AutomationId="contentVisibility">
+    <dict:RibbonPanel>
+        <ToggleButton x:Name="ownerContent" ToolTip="{DynamicResource OwnerContentToolTip}" Content="Owner" IsChecked="True" Checked="contentVisibilityChange" Unchecked="contentVisibilityChange"></ToggleButton>
+        <ToggleButton x:Name="theirContent" ToolTip="{DynamicResource TheirContentToolTip}" Content="Theirs" IsChecked="True" Checked="contentVisibilityChange" Unchecked="contentVisibilityChange"></ToggleButton>
+        <ToggleButton x:Name="myContent" ToolTip="{DynamicResource MyContentToolTip}" Content="Mine" IsChecked="True" Checked="contentVisibilityChange" Unchecked="contentVisibilityChange"></ToggleButton>
+    </dict:RibbonPanel>
+</UserControl>
