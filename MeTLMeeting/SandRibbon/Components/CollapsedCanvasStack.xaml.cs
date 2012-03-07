@@ -386,34 +386,6 @@ namespace SandRibbon.Components
             AddAdorners();
         }
 
-        private void ClearStrokesFromBuffer(Action modifyVisibleContainer)
-        {
-            contentBuffer.ClearStrokes();
-            modifyVisibleContainer();
-        }
-        private void AddContentToBuffer(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
-        {
-            var currentContent = (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue();
-            contentBuffer.AddStrokes(strokes);
-            modifyVisibleContainer(FilterStrokes(strokes, currentContent));
-        }
-
-        private void AddContentToBuffer(Stroke stroke, Action<StrokeCollection> modifyVisibleContainer)
-        {
-            var currentContent = (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue();
-            var strokes = new StrokeCollection();
-            strokes.Add(stroke);
-
-            contentBuffer.AddStrokes(stroke);
-            modifyVisibleContainer(FilterStrokes(strokes, currentContent));
-        }
-
-        private void RemoveContentFromBuffer(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
-        {
-            var currentContent = (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue();
-            contentBuffer.RemoveStrokes(strokes);
-            modifyVisibleContainer(FilterStrokes(strokes, currentContent));
-        }
 
         private void UpdateConversationDetails(ConversationDetails details)
         {
@@ -423,8 +395,8 @@ namespace SandRibbon.Components
                   {
                       var newStrokes = new StrokeCollection( Work.Strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
 
-                      ClearStrokesFromBuffer(() => Work.Strokes.Clear());
-                      AddContentToBuffer(newStrokes, (st) => Work.Strokes.Add(st));
+                      contentBuffer.ClearStrokes(() => Work.Strokes.Clear());
+                      contentBuffer.AddStrokes(newStrokes, (st) => Work.Strokes.Add(st));
 
                       foreach (Image image in Work.ImageChildren())
                           ApplyPrivacyStylingToElement(image, image.tag().privacy);
@@ -801,67 +773,10 @@ namespace SandRibbon.Components
             }
         }
 
-        private StrokeCollection FilterStrokes(StrokeCollection strokes, ContentVisibilityEnum contentVisibility)
-        {
-            var owner = OwnerVisibility(contentVisibility);
-            var theirs = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible);
-            // for each of the children of the canvas
-            List<Func<string, string, bool>> comparer = new List<Func<string,string,bool>>();
-
-            if (owner)
-                comparer.Add((str1, str2) => str1 == str2);
-
-            if (theirs)
-                comparer.Add((str1, str2) => str1 != str2);
-
-            return new StrokeCollection(strokes.Where(s => comparer.Any((comp) => comp(s.tag().author, Globals.me))));
-        }
-
-        private bool IsVisibilityFlagSet(ContentVisibilityEnum contentVisible, ContentVisibilityEnum flag)
-        {
-            return (contentVisible & flag) != ContentVisibilityEnum.NoneVisible;
-        }
-
-        private bool OwnerVisibility(ContentVisibilityEnum contentVisibility)
-        {
-            return IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.OwnerVisible) && Globals.isAuthor || IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MineVisible);
-        }
-
         public void SetContentVisibility(ContentVisibilityEnum contentVisibility)
         {
-            var owner = OwnerVisibility(contentVisibility);
-            var theirs = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible);
-            // for each of the children of the canvas
-            List<Func<string, string, bool>> comparer = new List<Func<string,string,bool>>();
-            //var refresh = false;
-
-            if (!owner)
-                comparer.Add((str1, str2) => str1 == str2);
-            /*else
-                refresh = true;*/
-
-            if (!theirs)
-                comparer.Add((str1, str2) => str1 != str2);
-            /*else
-                refresh = true;*/
-
-            //if (refresh)
-            //   Commands.MoveTo.Execute(Globals.location.currentSlide);
-
-            //Work.Strokes.Remove(new StrokeCollection(Work.Strokes.Where(s => comparer.Any((comp) => comp(s.tag().author, Globals.me)))));
             Work.Strokes.Clear();
-            Work.Strokes.Add(FilterStrokes(contentBuffer.Strokes, contentVisibility));
-            /*foreach (var remove in Work.Children.ToList().Where(c =>
-                {
-                    if (comparer.Any((comp) => (c is Image && comp(((Image)c).tag().author, Globals.me))) ||
-                        comparer.Any((comp) => (c is MeTLTextBox && comp(((MeTLTextBox)c).tag().author, Globals.me))))
-                        return true;
-
-                    return false;
-                }))
-            {
-                Work.Children.Remove(remove);
-            }*/
+            Work.Strokes.Add(contentBuffer.FilteredStrokes(contentVisibility));
         }
 
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
@@ -883,7 +798,7 @@ namespace SandRibbon.Components
             if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() != 0)
                 return;
 
-            AddContentToBuffer(stroke, (st) => canvas.Strokes.Add(st));
+            contentBuffer.AddStrokes(stroke, (st) => canvas.Strokes.Add(st));
         }
         private void addStrokes(List<Stroke> strokes)
         {
@@ -892,16 +807,22 @@ namespace SandRibbon.Components
             {
                 doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
             }
-            AddContentToBuffer(newStrokes, (st) => Work.Strokes.Add(st));
+            contentBuffer.AddStrokes(newStrokes, (st) => Work.Strokes.Add(st));
         }
         private void removeStrokes(List<Stroke> strokes)
         {
              foreach(var stroke in strokes)
              {
                  if (stroke.tag().privacy == Globals.PUBLIC)
-                     Work.Strokes = new StrokeCollection(Work.Strokes.Where(s => s.sum().checksum != stroke.sum().checksum));
+                 {
+                     var strokesToRemove = new StrokeCollection(Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum));
+                     contentBuffer.RemoveStrokes(strokesToRemove, (st) => Work.Strokes.Remove(st));
+                 }
                  else
-                     OtherWork.Strokes = new StrokeCollection(OtherWork.Strokes.Where(s => s.sum().checksum != stroke.sum().checksum));
+                 {
+                     var strokesToRemove = new StrokeCollection(OtherWork.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum));
+                     contentBuffer.RemoveStrokes(strokesToRemove, (st) => OtherWork.Strokes.Remove(st));
+                 }
                  doMyStrokeRemovedExceptHistory(stroke);
             }
         }
@@ -1093,7 +1014,7 @@ namespace SandRibbon.Components
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target);
             Work.Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(privateAwareStroke.sum().checksum);
-            AddContentToBuffer(privateAwareStroke, (st)=> Work.Strokes.Add(st));
+            contentBuffer.AddStrokes(privateAwareStroke, (st)=> Work.Strokes.Add(st));
             doMyStrokeAdded(privateAwareStroke);
             Commands.RequerySuggested(Commands.Undo);
         }
