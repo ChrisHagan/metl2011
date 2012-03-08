@@ -136,7 +136,7 @@
                         <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://www.monash.edu/eeducation">Contact us</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="9" HorizontalAlignment="Right">
-                        <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://www.monash.edu.au/eeducation/myls2010/students/resources/software/metl/">What is MeTL?</Hyperlink>
+                        <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://www.monash.edu/eeducation/metl/what-is-metl.html">What is MeTL?</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="9" HorizontalAlignment="Right">
                         <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://www.policy.monash.edu/policy-bank/management/its/acceptable-use-of-information-technology-facilities-by-students-policy.html">Acceptable use of information technology facilities by students policy</Hyperlink>

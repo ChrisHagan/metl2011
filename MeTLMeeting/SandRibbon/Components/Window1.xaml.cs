@@ -252,7 +252,7 @@ namespace SandRibbon
         }
         private void OpenAboutMeTLBrowser(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://www.monash.edu.au/eeducation/myls2010/students/resources/software/metl/");
+            System.Diagnostics.Process.Start("http://www.monash.edu/eeducation/metl/what-is-metl.html");
         }
         #endregion
         private void changeLanguage(System.Windows.Markup.XmlLanguage lang)
@@ -314,7 +314,7 @@ namespace SandRibbon
         {
             try
             {
-                Process.Start("http://monash.edu/eeducation/myls2010/metlhelp.html");
+                Process.Start("http://monash.edu/eeducation/metl/help.html");
             }
             catch (Exception)
             {
