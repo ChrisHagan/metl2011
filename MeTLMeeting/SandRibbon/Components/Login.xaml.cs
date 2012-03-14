@@ -162,6 +162,7 @@ namespace SandRibbon.Components
                 this.Visibility = Visibility.Collapsed;
             });
             App.mark("Login knows identity");
+            MessageBox.Show("ShowConversationSearchBox called from Login::SetIdentity");
             Commands.ShowConversationSearchBox.ExecuteAsync(null);
         }
         private void LoginFailed()

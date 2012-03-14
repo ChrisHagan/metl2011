@@ -30,6 +30,7 @@ namespace SandRibbon.Components
 
             if (details.isDeleted && details.Jid == Globals.location.activeConversation)
             {
+                MessageBox.Show(string.Format("ShowConversationSearchBox called from BackStageNav::UpdateConversationDetails. DetailsJid: {0} ActiveConversation {1}", details.Jid, Globals.location.activeConversation));
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
