@@ -861,10 +861,11 @@ namespace SandRibbon.Components
                 foreach (var stroke in selectedStrokes.Where(i => i != null && i.tag().privacy != newPrivacy))
                 {
                     var oldTag = stroke.tag();
-
-                    if (Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                    // stroke exists on canvas
+                    var strokesToUpdate = Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum);
+                    if (strokesToUpdate.Count() > 0)
                     {
-                        Work.Strokes.Remove(Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
+                        contentBuffer.RemoveStrokes(strokesToUpdate.First(), (col) => Work.Strokes.Remove(col));
                         doMyStrokeRemovedExceptHistory(stroke);
                     }
                     var newStroke = stroke.Clone();
@@ -872,7 +873,7 @@ namespace SandRibbon.Components
                     if (Work.Strokes.Where(s => s.sum().checksum == newStroke.sum().checksum).Count() == 0)
                     {
                         newStrokes.Add(newStroke);
-                        Work.Strokes.Add(newStroke);
+                        contentBuffer.AddStrokes(newStroke, (col) => Work.Strokes.Add(newStroke));
                         doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
                     }
                    
@@ -1210,10 +1211,8 @@ namespace SandRibbon.Components
         {
             Dispatcher.adoptAsync(delegate
             {
-                var images = Work.Children.OfType<Image>().ToList();
-                foreach (Image image in images)
+                foreach (Image image in Work.Children.OfType<Image>())
                     ApplyPrivacyStylingToElement(image, image.tag().privacy);
-
             });
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)

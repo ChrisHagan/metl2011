@@ -46,9 +46,10 @@ namespace SandRibbon.Components.Utility
             strokeCollection.Remove(strokes);
         }
         
-        private void RemoveStrokes(Stroke stroke)
+        private void RemoveStroke(Stroke stroke)
         {
-            strokeCollection.Remove(stroke);
+            if (strokeCollection.Contains(stroke))
+                strokeCollection.Remove(stroke);
         }
 
         private void AddElements(UIElement element)
@@ -120,6 +121,14 @@ namespace SandRibbon.Components.Utility
             }
         }
 
+        public void UpdateStrokes(Action<Stroke> updateChild)
+        {
+            foreach (Stroke uiElement in strokeCollection)
+            {
+                updateChild(uiElement);
+            }
+        }
+
         public void Clear()
         {
             ClearStrokes();
@@ -154,7 +163,7 @@ namespace SandRibbon.Components.Utility
             var strokes = new StrokeCollection();
             strokes.Add(stroke);
 
-            RemoveStrokes(strokes);
+            RemoveStroke(stroke);
             modifyVisibleContainer(FilterStrokes(strokes, CurrentContentVisibility));
         }
 
