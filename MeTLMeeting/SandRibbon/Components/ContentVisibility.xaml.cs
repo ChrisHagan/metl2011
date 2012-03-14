@@ -24,9 +24,11 @@ namespace SandRibbon.Components
     {
         public ContentVisibility()
         {
+            DataContext = this;
+
             InitializeComponent();
 
-            DataContext = this;
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>((_unused) => { UpdateConversationDetails(); }));
         }
 
         private ContentVisibilityEnum GetCurrentVisibility()
@@ -38,8 +40,28 @@ namespace SandRibbon.Components
             flags |= theirContent.IsChecked ?? false ? ContentVisibilityEnum.TheirsVisible : ContentVisibilityEnum.NoneVisible;
             flags |= myContent.IsChecked ?? false ? ContentVisibilityEnum.MineVisible : ContentVisibilityEnum.NoneVisible;
 
+            // if the owner then ignore owner flag and only use mine flag
+            if (Globals.isAuthor)
+            {
+                flags &= ~ContentVisibilityEnum.OwnerVisible;
+            }
+
             return flags;
         }
+
+        private void UpdateConversationDetails()
+        {
+            IsConversationOwner = Globals.isAuthor;
+        }
+
+        public bool IsConversationOwner
+        {
+            get { return (bool)GetValue(IsConversationOwnerProperty); }
+            set { SetValue(IsConversationOwnerProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsConversationOwnerProperty =
+            DependencyProperty.Register("IsConversationOwner", typeof(bool), typeof(ContentVisibility)); 
 
         private bool IsVisibilityFlagSet(ContentVisibilityEnum contentVisible)
         {

@@ -12,18 +12,23 @@ namespace SandRibbon.Components.Utility
 {
     public class ContentBuffer
     {
-        private UIElementCollection uiCollection;
+        private List<UIElement> uiCollection;
         private StrokeCollection strokeCollection;
 
-        public ContentBuffer(UIElement visualParent, FrameworkElement logicalParent)
+        public ContentBuffer()
         {
-            uiCollection = new UIElementCollection(visualParent, logicalParent);
+            uiCollection = new List<UIElement>();
             strokeCollection = new StrokeCollection();
         }
 
         private void ClearStrokes()
         {
             strokeCollection.Clear();
+        }
+
+        private void ClearElements()
+        {
+            uiCollection.Clear();
         }
 
         private void AddStrokes(StrokeCollection strokes)
@@ -46,7 +51,25 @@ namespace SandRibbon.Components.Utility
             strokeCollection.Remove(stroke);
         }
 
-        ContentVisibilityEnum CurrentContentVisibility
+        private void AddElements(UIElement element)
+        {
+            uiCollection.Add(element);
+        }
+
+        private void AddElements(UIElementCollection elements)
+        {
+            foreach (UIElement element in elements)
+            {
+                uiCollection.Add(element);
+            }
+        }
+
+        private void RemoveElement(UIElement element)
+        {
+            uiCollection.Remove(element);
+        }
+
+        private ContentVisibilityEnum CurrentContentVisibility
         {
             get
             {
@@ -59,6 +82,8 @@ namespace SandRibbon.Components.Utility
             }
         }
 
+        #region Collections
+
         public StrokeCollection Strokes
         {
             get
@@ -67,10 +92,41 @@ namespace SandRibbon.Components.Utility
             }
         }
 
+        public List<UIElement> CanvasChildren
+        {
+            get
+            {
+                return uiCollection;
+            }
+        }
+
         public StrokeCollection FilteredStrokes(ContentVisibilityEnum contentVisibility)
         {
             return FilterStrokes(Strokes, contentVisibility);
         }
+
+        public IEnumerable<UIElement> FilteredElements(ContentVisibilityEnum contentVisibility)
+        {
+            return FilterElements(CanvasChildren, contentVisibility);
+        }
+
+        #endregion
+
+        public void UpdateChildren<TypeOfChildren>(Action<TypeOfChildren> updateChild) 
+        {
+            foreach (var uiElement in uiCollection.OfType<TypeOfChildren>())
+            {
+                updateChild(uiElement);
+            }
+        }
+
+        public void Clear()
+        {
+            ClearStrokes();
+            ClearElements();
+        }
+
+        #region Handle strokes
 
         public void ClearStrokes(Action modifyVisibleContainer)
         {
@@ -113,18 +169,82 @@ namespace SandRibbon.Components.Utility
                 comparer.Add((str1, str2) => str1 != str2);
 
             return new StrokeCollection(strokes.Where(s => comparer.Any((comp) => comp(s.tag().author, Globals.me))));
-            /*foreach (var remove in Work.Children.ToList().Where(c =>
-                {
-                    if (comparer.Any((comp) => (c is Image && comp(((Image)c).tag().author, Globals.me))) ||
-                        comparer.Any((comp) => (c is MeTLTextBox && comp(((MeTLTextBox)c).tag().author, Globals.me))))
-                        return true;
-
-                    return false;
-                }))
-            {
-                Work.Children.Remove(remove);
-            }*/
         }
+
+        #endregion
+
+        #region Handle images and text
+
+        public void ClearElements(Action modifyVisibleContainer)
+        {
+            ClearElements();
+            modifyVisibleContainer();
+        }
+
+        public void AddElement(UIElement element, Action<UIElement> modifyVisibleContainer)
+        {
+            AddElements(element);
+            var filteredElement = FilterElement(element, CurrentContentVisibility);
+            if (filteredElement != null)
+            { 
+                modifyVisibleContainer(filteredElement);
+            }
+        }
+
+        public void RemoveElement(UIElement element, Action<UIElement> modifyVisibleContainer)
+        {
+            RemoveElement(element);
+            var filteredElement = FilterElement(element, CurrentContentVisibility);
+            if (filteredElement != null)
+            { 
+                modifyVisibleContainer(filteredElement);
+            }
+        }
+
+        private UIElement FilterElement(UIElement element, ContentVisibilityEnum contentVisibility)
+        {
+            var owner = OwnerVisibility(contentVisibility);
+            var theirs = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible);
+            var comparer = new List<Func<string,string,bool>>();
+
+            if (owner)
+                comparer.Add((str1, str2) => str1 == str2);
+
+            if (theirs)
+                comparer.Add((str1, str2) => str1 != str2);
+
+            if (comparer.Any((comp) => comp(AuthorFromElementTag(element), Globals.me))) 
+                return element;
+
+            return null;
+        }
+
+        private string AuthorFromElementTag(UIElement element)
+        {
+            if (element is Image)
+                return ((Image)element).tag().author;
+
+            if (element is MeTLTextBox)
+                return ((MeTLTextBox)element).tag().author;
+
+            return string.Empty;
+        }
+
+        private IEnumerable<UIElement> FilterElements(List<UIElement> elements, ContentVisibilityEnum contentVisibility)
+        {
+            var owner = OwnerVisibility(contentVisibility);
+            var theirs = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible);
+            var comparer = new List<Func<string,string,bool>>();
+
+            if (owner)
+                comparer.Add((str1, str2) => str1 == str2);
+
+            if (theirs)
+                comparer.Add((str1, str2) => str1 != str2);
+
+            return elements.Where(elem => comparer.Any((comp) => comp(AuthorFromElementTag(elem), Globals.me)));
+        }
+        #endregion
 
         private bool IsVisibilityFlagSet(ContentVisibilityEnum contentVisible, ContentVisibilityEnum flag)
         {

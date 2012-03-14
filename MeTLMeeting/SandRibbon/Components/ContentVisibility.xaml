@@ -3,11 +3,16 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sr="clr-namespace:SandRibbon"
+    x:Name="contentVisibility"
     VerticalAlignment="Top"
     HorizontalAlignment="Right"
     AutomationProperties.AutomationId="contentVisibility">
+    <UserControl.Resources>
+        <sr:BoolToVisibilityWithHidden x:Key="BooleanToVisibilityConverter" Collapse="True" Negate="True"/>
+    </UserControl.Resources>
     <dict:RibbonPanel>
-        <ToggleButton x:Name="ownerContent" ToolTip="{DynamicResource OwnerContentToolTip}" Content="Owner" IsChecked="True" Checked="contentVisibilityChange" Unchecked="contentVisibilityChange"></ToggleButton>
+        <ToggleButton x:Name="ownerContent" Visibility="{Binding ElementName=contentVisibility, Path=IsConversationOwner, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="{DynamicResource OwnerContentToolTip}" Content="Owner" IsChecked="True" Checked="contentVisibilityChange" Unchecked="contentVisibilityChange"></ToggleButton>
         <ToggleButton x:Name="theirContent" ToolTip="{DynamicResource TheirContentToolTip}" Content="Theirs" IsChecked="True" Checked="contentVisibilityChange" Unchecked="contentVisibilityChange"></ToggleButton>
         <ToggleButton x:Name="myContent" ToolTip="{DynamicResource MyContentToolTip}" Content="Mine" IsChecked="True" Checked="contentVisibilityChange" Unchecked="contentVisibilityChange"></ToggleButton>
     </dict:RibbonPanel>

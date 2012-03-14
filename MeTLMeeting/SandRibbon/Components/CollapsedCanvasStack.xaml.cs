@@ -115,7 +115,6 @@ namespace SandRibbon.Components
             };
         }
 
-
         void MyWork_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             pos = e.GetPosition(this);
@@ -125,7 +124,7 @@ namespace SandRibbon.Components
             InitializeComponent();
             wireInPublicHandlers();
             strokes = new List<StrokeChecksum>();
-            contentBuffer = new ContentBuffer(Work, Work);
+            contentBuffer = new ContentBuffer();
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
@@ -260,14 +259,22 @@ namespace SandRibbon.Components
         }
         private void setLayerForTextFor(InkCanvas canvas)
         {
+            var curFocusable = _focusable;
+            var curMe = Globals.me;
+
             foreach (var box in canvas.Children)
             {
                 if (box.GetType() == typeof(MeTLTextBox))
                 {
                     var tag = ((MeTLTextBox)box).tag();
-                    ((MeTLTextBox)box).Focusable = _focusable && (tag.author == Globals.me);
+                    ((MeTLTextBox)box).Focusable = curFocusable && (tag.author == curMe);
                 }
             }
+            contentBuffer.UpdateChildren<MeTLTextBox>((textBox) =>
+            {
+                var tag = textBox.tag();
+                textBox.Focusable = curFocusable && (tag.author == curMe);
+            });
         }
         private UndoHistory.HistoricalAction deleteSelectedImages(List<UIElement> selectedElements)
         {
@@ -276,9 +283,12 @@ namespace SandRibbon.Components
                 {
                     foreach (var element in selectedElements)
                     {
-                       if (Work.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id).Count() == 0)
-                            Work.Children.Add(element);
-                        sendThisElement(element);
+                        // if this element hasn't already been added
+                        if (Work.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id).Count() == 0)
+                        {
+                            contentBuffer.AddElement(element, (child) => Work.Children.Add(child));
+                        }
+                       sendThisElement(element);
                     }
                     Work.Select(selectedElements);
                 };
@@ -286,8 +296,11 @@ namespace SandRibbon.Components
                 {
                     foreach (var element in selectedElements)
                     {
-                        if (Work.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id).Count() > 0)
-                            Work.Children.Remove(Work.ImageChildren().ToList().Where(i =>((Image)i).tag().id == ((Image)element).tag().id ).First());
+                        var imagesToRemove = Work.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id);
+                        if (imagesToRemove.Count() > 0)
+                        {
+                            contentBuffer.RemoveElement(imagesToRemove.First(), (image) => Work.Children.Remove(image));
+                        }
                         dirtyThisElement(element);
                     }
                 };
@@ -513,8 +526,9 @@ namespace SandRibbon.Components
                     var mySelectedElements = selectedElements.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
                     foreach (var element in mySelectedElements)
                     {
-                        if (Work.Children.ToList().Where(i => i is Image &&((Image)i).tag().id == element.tag().id).Count() > 0)
-                            Work.Children.Remove(Work.Children.ToList().Where(i => i is Image &&((Image)i).tag().id == element.tag().id).FirstOrDefault());
+                        var imagesToRemove = Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id);
+                        if (imagesToRemove.Count() > 0)
+                            contentBuffer.RemoveElement(imagesToRemove.First(), (image) => Work.Children.Remove(image));
                         if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
                             dirtyThisElement(element);
                     }
@@ -522,7 +536,7 @@ namespace SandRibbon.Components
                     {
                         selection.Add(element);
                         if (Work.Children.ToList().Where(i => i is Image &&((Image)i).tag().id == element.tag().id).Count() == 0)
-                            Work.Children.Add(element);
+                            contentBuffer.AddElement(element, (image) => Work.Children.Add(image));
                         if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
                             sendThisElement(element);
                     }
@@ -532,15 +546,16 @@ namespace SandRibbon.Components
                     var mySelectedImages = selectedElements.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
                     foreach (var element in startingElements)
                     {
-                          if (Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() > 0)
-                              Work.Children.Remove(Work.Children.ToList().Where(i =>i is Image && ((Image)i).tag().id == element.tag().id).FirstOrDefault());
+                        var imagesToRemove = Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id);
+                          if (imagesToRemove.Count() > 0)
+                              contentBuffer.RemoveElement(imagesToRemove.First(), (image) => Work.Children.Remove(image)); 
                         dirtyThisElement(element);
                     }
                     foreach (var element in mySelectedImages)
                     { 
                         if (Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
                         {
-                           Work.Children.Add(element);
+                           contentBuffer.AddElement(element, (image) => Work.Children.Add(image));
                         }
                        sendThisElement(element);
                   }
@@ -654,7 +669,6 @@ namespace SandRibbon.Components
                                  {
                                      e.SetSelectedElements(filterOnlyMine(e.GetSelectedElements()));
                                      e.SetSelectedStrokes(filterOnlyMine(e.GetSelectedStrokes()));
-
                                  });
         }
         private StrokeCollection filterOnlyMine(IEnumerable<Stroke> strokes)
@@ -777,6 +791,9 @@ namespace SandRibbon.Components
         {
             Work.Strokes.Clear();
             Work.Strokes.Add(contentBuffer.FilteredStrokes(contentVisibility));
+            Work.Children.Clear();
+            foreach (var child in contentBuffer.FilteredElements(contentVisibility))
+                Work.Children.Add(child);
         }
 
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
@@ -1160,8 +1177,12 @@ namespace SandRibbon.Components
         private void AddImage(InkCanvas canvas, Image image)
         {
             if (canvas.ImageChildren().Any(i => ((Image) i).tag().id == image.tag().id)) return;
-            Panel.SetZIndex(image, 2);
-            canvas.Children.Add(image);
+
+            contentBuffer.AddElement(image, (img) =>
+            {
+                Panel.SetZIndex(img, 2);
+                canvas.Children.Add(img);
+            });
         }
         public void ReceiveDirtyImage(TargettedDirtyElement element)
         {
@@ -1169,22 +1190,13 @@ namespace SandRibbon.Components
             if (element.slide != Globals.slide) return;
             Dispatcher.adoptAsync(() => dirtyImage(element.identifier));
         }
+
         private void dirtyImage(string imageId)
         {
-            dirtyImageOnCanvas(Work, imageId);
-           // dirtyImageOnCanvas(OtherWork, imageId);
-        
-        }
-        private void dirtyImageOnCanvas(InkCanvas canvas, string imageId)
-        {
-            for (int i = 0; i < canvas.Children.Count; i++)
+            foreach (var currentImage in Work.Children.OfType<Image>())
             {
-                if (canvas.Children[i] is Image)
-                {
-                    var currentImage = (Image)canvas.Children[i];
-                    if (imageId.Equals(currentImage.tag().id))
-                        canvas.Children.Remove(currentImage);
-                }
+                if (imageId.Equals(currentImage.tag().id))
+                    Work.Children.Remove(currentImage);
             }
         }
 
@@ -1585,7 +1597,7 @@ namespace SandRibbon.Components
         }
         private void AddTextboxToMyCanvas(MeTLTextBox box)
         {
-            Work.Children.Add(applyDefaultAttributes(box));
+            contentBuffer.AddElement(applyDefaultAttributes(box), (text) => Work.Children.Add(text));
         }
         public void DoText(TargettedTextBox targettedBox)
         {
@@ -2495,6 +2507,10 @@ namespace SandRibbon.Components
         #endregion
         private void MoveTo(int _slide)
         {
+            if (contentBuffer != null)
+            {
+                contentBuffer.Clear();
+            }
             if (myTextBox != null)
             {
                 var textBox = myTextBox;
