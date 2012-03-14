@@ -149,6 +149,15 @@ namespace SandRibbon.Components.Utility
             modifyVisibleContainer(FilterStrokes(strokes, CurrentContentVisibility));
         }
 
+        public void RemoveStrokes(Stroke stroke, Action<StrokeCollection> modifyVisibleContainer)
+        {
+            var strokes = new StrokeCollection();
+            strokes.Add(stroke);
+
+            RemoveStrokes(strokes);
+            modifyVisibleContainer(FilterStrokes(strokes, CurrentContentVisibility));
+        }
+
         public void RemoveStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
         {
             RemoveStrokes(strokes);
@@ -157,18 +166,8 @@ namespace SandRibbon.Components.Utility
 
         private StrokeCollection FilterStrokes(StrokeCollection strokes, ContentVisibilityEnum contentVisibility)
         {
-            var owner = OwnerVisibility(contentVisibility);
-            var theirs = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible);
-            // for each of the children of the canvas
-            List<Func<string, string, bool>> comparer = new List<Func<string,string,bool>>();
-
-            if (owner)
-                comparer.Add((str1, str2) => str1 == str2);
-
-            if (theirs)
-                comparer.Add((str1, str2) => str1 != str2);
-
-            return new StrokeCollection(strokes.Where(s => comparer.Any((comp) => comp(s.tag().author, Globals.me))));
+            var comparer = BuildComparer(contentVisibility);
+            return new StrokeCollection(strokes.Where(s => comparer.Any((comp) => comp(s.tag().author))));
         }
 
         #endregion
@@ -203,20 +202,10 @@ namespace SandRibbon.Components.Utility
 
         private UIElement FilterElement(UIElement element, ContentVisibilityEnum contentVisibility)
         {
-            var owner = OwnerVisibility(contentVisibility);
-            var theirs = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible);
-            var comparer = new List<Func<string,string,bool>>();
+            var tempList = new List<UIElement>();
+            tempList.Add(element);
 
-            if (owner)
-                comparer.Add((str1, str2) => str1 == str2);
-
-            if (theirs)
-                comparer.Add((str1, str2) => str1 != str2);
-
-            if (comparer.Any((comp) => comp(AuthorFromElementTag(element), Globals.me))) 
-                return element;
-
-            return null;
+            return FilterElements(tempList, contentVisibility).FirstOrDefault();
         }
 
         private string AuthorFromElementTag(UIElement element)
@@ -232,28 +221,34 @@ namespace SandRibbon.Components.Utility
 
         private IEnumerable<UIElement> FilterElements(List<UIElement> elements, ContentVisibilityEnum contentVisibility)
         {
-            var owner = OwnerVisibility(contentVisibility);
+            var comparer = BuildComparer(contentVisibility);
+            return elements.Where(elem => comparer.Any((comp) => comp(AuthorFromElementTag(elem))));
+        }
+
+        private List<Func<string, bool>> BuildComparer(ContentVisibilityEnum contentVisibility)
+        {
+            var owner = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.OwnerVisible);
             var theirs = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible);
-            var comparer = new List<Func<string,string,bool>>();
+            var mine = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MineVisible);
+            var comparer = new List<Func<string,bool>>();
 
             if (owner)
-                comparer.Add((str1, str2) => str1 == str2);
+                comparer.Add((elementAuthor) => elementAuthor == Globals.conversationDetails.Author);
 
             if (theirs)
-                comparer.Add((str1, str2) => str1 != str2);
+                comparer.Add((elementAuthor) => elementAuthor != Globals.me);
 
-            return elements.Where(elem => comparer.Any((comp) => comp(AuthorFromElementTag(elem), Globals.me)));
+            if (mine)
+                comparer.Add((elementAuthor) => elementAuthor == Globals.me);
+
+            return comparer;
         }
+
         #endregion
 
         private bool IsVisibilityFlagSet(ContentVisibilityEnum contentVisible, ContentVisibilityEnum flag)
         {
             return (contentVisible & flag) != ContentVisibilityEnum.NoneVisible;
-        }
-
-        private bool OwnerVisibility(ContentVisibilityEnum contentVisibility)
-        {
-            return IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.OwnerVisible) && Globals.isAuthor || IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MineVisible);
         }
     }
 

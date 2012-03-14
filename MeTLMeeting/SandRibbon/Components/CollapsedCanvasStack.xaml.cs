@@ -783,7 +783,7 @@ namespace SandRibbon.Components
             {
                 var stroke = presentDirtyStrokes[i];
                 strokes.Remove(stroke.sum());
-                canvas.Strokes.Remove(stroke);
+                contentBuffer.RemoveStrokes(stroke, (col) => canvas.Strokes.Remove(col));
             }
         }
 
@@ -1090,17 +1090,19 @@ namespace SandRibbon.Components
             var canvas = Work;
             var undo = new Action(() =>
                                  {
+                                     // if stroke doesn't exist on the canvas 
                                      if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
                                      {
-                                         canvas.Strokes.Add(stroke);
+                                         contentBuffer.AddStrokes(stroke, (col) => canvas.Strokes.Add(col));
                                          doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
                                      }
                                  });
             var redo = new Action(() =>
                                  {
-                                     if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                                     var strokesToRemove = canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum);
+                                     if (strokesToRemove.Count() > 0)
                                      {
-                                         canvas.Strokes.Remove(canvas.Strokes.Where(s=> s.sum().checksum == stroke.sum().checksum).First());
+                                         contentBuffer.RemoveStrokes(strokesToRemove.First(), (col) => canvas.Strokes.Remove(col)); 
                                          doMyStrokeRemovedExceptHistory(stroke);
                                      }
                                  });
@@ -1193,11 +1195,15 @@ namespace SandRibbon.Components
 
         private void dirtyImage(string imageId)
         {
+            var imagesToRemove = new List<Image>();
             foreach (var currentImage in Work.Children.OfType<Image>())
             {
                 if (imageId.Equals(currentImage.tag().id))
-                    Work.Children.Remove(currentImage);
+                    imagesToRemove.Add(currentImage);
             }
+
+            foreach (var removeImage in imagesToRemove)
+                Work.Children.Remove(removeImage);
         }
 
         private void ensureAllImagesHaveCorrectPrivacy()
