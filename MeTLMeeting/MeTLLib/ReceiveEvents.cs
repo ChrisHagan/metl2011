@@ -17,6 +17,7 @@ namespace MeTLLib
         public delegate void TeacherStatusReceivedEventHandler(object sender, TeacherStatusRequestEventArgs e);
         public delegate void PresenceAvailableEventHandler(object sender, PresenceAvailableEventArgs e);
         public delegate void SubmissionAvailableEventHandler(object sender, SubmissionAvailableEventArgs e);
+        public delegate void SubmissionsAvailableEventHandler(object sender, SubmissionsAvailableEventArgs e);
         public delegate void SlideCollectionUpdatedEventHandler(object sender, SlideCollectionUpdatedEventArgs e);
         public delegate void FileAvailableEventHandler(object sender, FileAvailableEventArgs e);
         public delegate void StatusChangedEventHandler(object sender, StatusChangedEventArgs e);
@@ -44,6 +45,7 @@ namespace MeTLLib
     public class TeacherStatusRequestEventArgs : EventArgs { public TeacherStatus status; } 
     public class PresenceAvailableEventArgs : EventArgs { public MeTLPresence presence; }
     public class SubmissionAvailableEventArgs : EventArgs { public TargettedSubmission submission;}
+    public class SubmissionsAvailableEventArgs : EventArgs { public List<TargettedSubmission> submissions;}
     public class FileAvailableEventArgs : EventArgs { public TargettedFile file;}
     public class SlideCollectionUpdatedEventArgs : EventArgs { public Int32 Conversation;}
     public class StatusChangedEventArgs : EventArgs { public bool isConnected; public Credentials credentials;}
@@ -68,6 +70,7 @@ namespace MeTLLib
     {
         void receivePresence(MeTLPresence presence);
         void receiveSubmission(TargettedSubmission ts);
+        void receivesubmissions(PreParser parser);
         void receiveQuiz(QuizQuestion qq);
         void receiveUpdatedSlideCollection(Int32 conversationJid);
         void receiveQuizAnswer(QuizAnswer qa);
@@ -102,6 +105,7 @@ namespace MeTLLib
         event MeTLLibEventHandlers.TeacherStatusRequestEventHandler TeacherStatusRequest;
         event MeTLLibEventHandlers.PresenceAvailableEventHandler PresenceAvailable;
         event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
+        event MeTLLibEventHandlers.SubmissionsAvailableEventHandler SubmissionsAvailable;
         event MeTLLibEventHandlers.SlideCollectionUpdatedEventHandler SlideCollectionUpdated;
         event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
         event MeTLLibEventHandlers.StatusChangedEventHandler StatusChanged;
@@ -170,6 +174,10 @@ namespace MeTLLib
         void IReceiveEvents.receiveSubmission(TargettedSubmission ts)
         {
             SubmissionAvailable(this, new SubmissionAvailableEventArgs { submission = ts });
+        }
+        public void receivesubmissions(PreParser parser)
+        {
+            SubmissionsAvailable(this, new SubmissionsAvailableEventArgs{submissions = parser.submissions});
         }
         void IReceiveEvents.receiveUpdatedSlideCollection(Int32 conversationJid)
         {
@@ -317,6 +325,7 @@ namespace MeTLLib
         public event MeTLLibEventHandlers.TeacherStatusRequestEventHandler TeacherStatusRequest;
         public event MeTLLibEventHandlers.PresenceAvailableEventHandler PresenceAvailable;
         public event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
+        public event MeTLLibEventHandlers.SubmissionsAvailableEventHandler SubmissionsAvailable;
         public event MeTLLibEventHandlers.SlideCollectionUpdatedEventHandler SlideCollectionUpdated;
         public event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
         public event MeTLLibEventHandlers.StatusChangedEventHandler StatusChanged;

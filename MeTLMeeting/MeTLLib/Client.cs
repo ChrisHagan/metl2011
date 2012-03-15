@@ -80,6 +80,7 @@ namespace MeTLLib
         void SendDirtyImage(TargettedDirtyElement tde);
         void SendDirtyVideo(TargettedDirtyElement tde);
         void SendSubmission(TargettedSubmission ts);
+        void GetAllSubmissionsForConversation(string conversationJid);
         void SendStanza(string where, Element stanza);
         void SendQuizAnswer(QuizAnswer qa);
         void SendQuizQuestion(QuizQuestion qq);
@@ -314,6 +315,14 @@ namespace MeTLLib
             {
                 wire.SendScreenshotSubmission(ts);
             };
+            tryIfConnected(work);
+        }
+        public void GetAllSubmissionsForConversation(string conversationJid)
+        {
+            Action work = () =>
+                              {
+                                  wire.LoadSubmissions(conversationJid);
+                              };
             tryIfConnected(work);
         }
         public void SendQuizAnswer(QuizAnswer qa)

@@ -1054,6 +1054,14 @@ namespace MeTLLib.Providers.Connection
             Trace.TraceWarning(string.Format("Received unknown message: {0}", message));
         }
 
+        public void LoadSubmissions(string conversationJid)
+        {
+             historyProvider.Retrieve<PreParser>(
+            onStart,
+            onProgress,
+            finishedParser => receiveEvents.receivesubmissions(finishedParser),
+            conversationJid.ToString());
+        }
         public void LoadQuizzes(int conversationJid)
         {
             historyProvider.Retrieve<PreParser>(
