@@ -1236,12 +1236,23 @@ namespace SandRibbon.Components
         {
             element.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
             element.Opacity = 0.7;
+            contentBuffer.UpdateChild<FrameworkElement>(element, (elem) =>
+            {
+                elem.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
+                elem.Opacity = 0.7;
+            });
             return element;
         }
         protected void RemovePrivacyStylingFromElement(FrameworkElement element)
         {
             element.Effect = null;
             element.Opacity = 1;
+
+            contentBuffer.UpdateChild<FrameworkElement>(element, (elem) =>
+            {
+                elem.Effect = null;
+                elem.Opacity = 1;
+            });
         }
         #endregion
         #region imagedrop

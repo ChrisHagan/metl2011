@@ -7,6 +7,7 @@ using System.Windows.Ink;
 using System.Windows;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
+using System.Diagnostics;
 
 namespace SandRibbon.Components.Utility
 {
