@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MeTLLib.DataTypes;
 using MeTLLib.Providers.Connection;
-using MeTLLib;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using System.Diagnostics;
 
@@ -14,10 +12,12 @@ namespace MeTLLib
     public class MeTLLibEventHandlers
     {
         public delegate void QuizzesAvailableRequestEventHandler(object sender, QuizzesAvailableEventArgs e); 
+        public delegate void QuizAvailableRequestEventHandler(object sender, QuizzesAvailableEventArgs e); 
         public delegate void TeacherStatusRequestEventHandler(object sender, TeacherStatusRequestEventArgs e);
         public delegate void TeacherStatusReceivedEventHandler(object sender, TeacherStatusRequestEventArgs e);
         public delegate void PresenceAvailableEventHandler(object sender, PresenceAvailableEventArgs e);
         public delegate void SubmissionAvailableEventHandler(object sender, SubmissionAvailableEventArgs e);
+        public delegate void SubmissionsAvailableEventHandler(object sender, SubmissionsAvailableEventArgs e);
         public delegate void SlideCollectionUpdatedEventHandler(object sender, SlideCollectionUpdatedEventArgs e);
         public delegate void FileAvailableEventHandler(object sender, FileAvailableEventArgs e);
         public delegate void StatusChangedEventHandler(object sender, StatusChangedEventArgs e);
@@ -41,9 +41,11 @@ namespace MeTLLib
     #endregion
     #region EventArgs
     public class QuizzesAvailableEventArgs : EventArgs { public List<QuizInfo> quizzes; }
+    public class SingleQuizAvailableEventArgs : EventArgs { public QuizInfo quiz; }
     public class TeacherStatusRequestEventArgs : EventArgs { public TeacherStatus status; } 
     public class PresenceAvailableEventArgs : EventArgs { public MeTLPresence presence; }
     public class SubmissionAvailableEventArgs : EventArgs { public TargettedSubmission submission;}
+    public class SubmissionsAvailableEventArgs : EventArgs { public List<TargettedSubmission> submissions;}
     public class FileAvailableEventArgs : EventArgs { public TargettedFile file;}
     public class SlideCollectionUpdatedEventArgs : EventArgs { public Int32 Conversation;}
     public class StatusChangedEventArgs : EventArgs { public bool isConnected; public Credentials credentials;}
@@ -68,6 +70,7 @@ namespace MeTLLib
     {
         void receivePresence(MeTLPresence presence);
         void receiveSubmission(TargettedSubmission ts);
+        void receivesubmissions(PreParser parser);
         void receiveQuiz(QuizQuestion qq);
         void receiveUpdatedSlideCollection(Int32 conversationJid);
         void receiveQuizAnswer(QuizAnswer qa);
@@ -95,11 +98,14 @@ namespace MeTLLib
         void teacherStatusRequest(string where, string who);
         void teacherStatusRecieved(TeacherStatus status);
         void receieveQuizzes(PreParser finishedParser);
+        void receieveQuiz(PreParser finishedParser, long id);
         event MeTLLibEventHandlers.QuizzesAvailableRequestEventHandler QuizzesAvailable;
+        event MeTLLibEventHandlers.QuizAvailableRequestEventHandler QuizAvailable;
         event MeTLLibEventHandlers.TeacherStatusReceivedEventHandler TeacherStatusReceived;
         event MeTLLibEventHandlers.TeacherStatusRequestEventHandler TeacherStatusRequest;
         event MeTLLibEventHandlers.PresenceAvailableEventHandler PresenceAvailable;
         event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
+        event MeTLLibEventHandlers.SubmissionsAvailableEventHandler SubmissionsAvailable;
         event MeTLLibEventHandlers.SlideCollectionUpdatedEventHandler SlideCollectionUpdated;
         event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
         event MeTLLibEventHandlers.StatusChangedEventHandler StatusChanged;
@@ -168,6 +174,10 @@ namespace MeTLLib
         void IReceiveEvents.receiveSubmission(TargettedSubmission ts)
         {
             SubmissionAvailable(this, new SubmissionAvailableEventArgs { submission = ts });
+        }
+        public void receivesubmissions(PreParser parser)
+        {
+            SubmissionsAvailable(this, new SubmissionsAvailableEventArgs{submissions = parser.submissions});
         }
         void IReceiveEvents.receiveUpdatedSlideCollection(Int32 conversationJid)
         {
@@ -299,7 +309,15 @@ namespace MeTLLib
             QuizzesAvailable(this,  new QuizzesAvailableEventArgs{ quizzes = quizzes});
         }
 
+        public void receieveQuiz(PreParser finishedParser, long id)
+        {
+            var quiz = finishedParser.quizzes.Where(q => q.id == id).OrderByDescending(q => q.created).First();
+            var quizInfo = new QuizInfo(quiz, finishedParser.quizAnswers.Where(a => a.id == id).ToList());
+            QuizAvailable(this, new QuizzesAvailableEventArgs{ quizzes = new List<QuizInfo>{quizInfo}});
+        }
+
         public event MeTLLibEventHandlers.QuizzesAvailableRequestEventHandler QuizzesAvailable;
+        public event MeTLLibEventHandlers.QuizAvailableRequestEventHandler QuizAvailable;
         public event MeTLLibEventHandlers.TeacherStatusReceivedEventHandler TeacherStatusReceived;
 
         #region Events
@@ -307,6 +325,7 @@ namespace MeTLLib
         public event MeTLLibEventHandlers.TeacherStatusRequestEventHandler TeacherStatusRequest;
         public event MeTLLibEventHandlers.PresenceAvailableEventHandler PresenceAvailable;
         public event MeTLLibEventHandlers.SubmissionAvailableEventHandler SubmissionAvailable;
+        public event MeTLLibEventHandlers.SubmissionsAvailableEventHandler SubmissionsAvailable;
         public event MeTLLibEventHandlers.SlideCollectionUpdatedEventHandler SlideCollectionUpdated;
         public event MeTLLibEventHandlers.FileAvailableEventHandler FileAvailable;
         public event MeTLLibEventHandlers.StatusChangedEventHandler StatusChanged;
