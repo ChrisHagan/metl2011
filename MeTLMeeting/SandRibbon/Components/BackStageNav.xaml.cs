@@ -6,6 +6,7 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using UserControl = System.Windows.Controls.UserControl;
+using System.Diagnostics;
 
 namespace SandRibbon.Components
 {
@@ -28,9 +29,9 @@ namespace SandRibbon.Components
         {
             if (details.IsEmpty) return;
 
-            if (details.isDeleted && details.Jid == Globals.location.activeConversation)
+            if (details.isDeleted && details.IsJidEqual(Globals.location.activeConversation))
             {
-                MessageBox.Show(string.Format("ShowConversationSearchBox called from BackStageNav::UpdateConversationDetails. DetailsJid: {0} ActiveConversation {1}", details.Jid, Globals.location.activeConversation));
+                Trace.TraceInformation(string.Format("BackStageNav::UpdateConversationDetails: Showing conversation search box. DetailsJid[{0}] ActiveConversation[{1}]", details.Jid, Globals.location.activeConversation));
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
@@ -41,6 +42,7 @@ namespace SandRibbon.Components
         {
             if (String.IsNullOrEmpty(Globals.location.activeConversation))
             {
+                Trace.TraceInformation(string.Format("BackStageNav::ShowConversationSearchBox: Showing conversation search box. ActiveConversation[{0}]", Globals.location.activeConversation));
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
@@ -84,8 +86,6 @@ namespace SandRibbon.Components
                 foreach (var button in elements)
                     if (button.Name == value)
                         button.IsChecked = true;
-               
-
             }
         }
         private void mode_Checked(object sender, RoutedEventArgs e) {
