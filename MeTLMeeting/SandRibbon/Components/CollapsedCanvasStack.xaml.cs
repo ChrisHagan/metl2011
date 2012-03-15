@@ -789,11 +789,13 @@ namespace SandRibbon.Components
 
         public void SetContentVisibility(ContentVisibilityEnum contentVisibility)
         {
+#if TOGGLE_CONTENT
             Work.Strokes.Clear();
             Work.Strokes.Add(contentBuffer.FilteredStrokes(contentVisibility));
             Work.Children.Clear();
             foreach (var child in contentBuffer.FilteredElements(contentVisibility))
                 Work.Children.Add(child);
+#endif
         }
 
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)

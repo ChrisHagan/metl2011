@@ -349,10 +349,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Tabs\Groups\ContentVisibilityHost.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Tabs\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -700,9 +696,6 @@
     </Compile>
     <Compile Include="Tabs\Groups\CollaborationControlsHost.xaml.cs">
       <DependentUpon>CollaborationControlsHost.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Groups\ContentVisibilityHost.xaml.cs">
-      <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Groups\PrivacyToolsHost.xaml.cs">
       <DependentUpon>PrivacyToolsHost.xaml</DependentUpon>

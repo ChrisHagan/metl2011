@@ -113,6 +113,14 @@ namespace SandRibbon.Components.Utility
 
         #endregion
 
+        public void UpdateChild<TypeOfChild>(TypeOfChild childToFind, Action<TypeOfChild> updateChild) where TypeOfChild : UIElement
+        {
+            var child = uiCollection.Find((elem) => elem == childToFind);
+            if (child != null)
+            {
+                updateChild(child as TypeOfChild);
+            }
+        }
         public void UpdateChildren<TypeOfChildren>(Action<TypeOfChildren> updateChild) 
         {
             foreach (var uiElement in uiCollection.OfType<TypeOfChildren>())
@@ -236,18 +244,15 @@ namespace SandRibbon.Components.Utility
 
         private List<Func<string, bool>> BuildComparer(ContentVisibilityEnum contentVisibility)
         {
-            var owner = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.OwnerVisible);
-            var theirs = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible);
-            var mine = IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MineVisible);
             var comparer = new List<Func<string,bool>>();
 
-            if (owner)
+            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.OwnerVisible))
                 comparer.Add((elementAuthor) => elementAuthor == Globals.conversationDetails.Author);
 
-            if (theirs)
+            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible))
                 comparer.Add((elementAuthor) => elementAuthor != Globals.me);
 
-            if (mine)
+            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MineVisible))
                 comparer.Add((elementAuthor) => elementAuthor == Globals.me);
 
             return comparer;

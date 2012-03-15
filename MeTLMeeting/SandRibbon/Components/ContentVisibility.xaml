@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <sr:BoolToVisibilityWithHidden x:Key="BooleanToVisibilityConverter" Collapse="True" Negate="True"/>
     </UserControl.Resources>
-    <dict:RibbonPanel>
+    <dict:RibbonPanel x:Name="contentToggleButtons">
         <ToggleButton x:Name="ownerContent" Visibility="{Binding ElementName=contentVisibility, Path=IsConversationOwner, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="{DynamicResource OwnerContentToolTip}" Content="Owner" IsChecked="True" Checked="contentVisibilityChange" Unchecked="contentVisibilityChange"></ToggleButton>
         <ToggleButton x:Name="theirContent" ToolTip="{DynamicResource TheirContentToolTip}" Content="Theirs" IsChecked="True" Checked="contentVisibilityChange" Unchecked="contentVisibilityChange"></ToggleButton>
         <ToggleButton x:Name="myContent" ToolTip="{DynamicResource MyContentToolTip}" Content="Mine" IsChecked="True" Checked="contentVisibilityChange" Unchecked="contentVisibilityChange"></ToggleButton>
