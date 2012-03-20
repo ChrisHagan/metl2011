@@ -1462,7 +1462,23 @@ namespace MeTLLib.DataTypes
                 this.downloader = downloader;
                 return this;
             }
-            protected static ImageSource BackupSource = new PngBitmapDecoder(new Uri("Resources\\empty.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
+
+            protected static ImageSource BackupSource
+            {
+                get
+                {
+                    try
+                    {
+                        return
+                            new PngBitmapDecoder(new Uri("Resources\\empty.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
+                    }
+                    catch(Exception e)
+                    {
+                        return new BitmapImage();
+                    }
+                }
+            }
+
             public Func<System.Windows.Controls.Image> curryEvaluation(MeTLServerAddress server) {
                 return ()=> forceEvaluation();
             }
