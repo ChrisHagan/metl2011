@@ -91,7 +91,6 @@ namespace SandRibbon.Utils
 
     class LogMessage 
     {
-        public string version;
         public string content;
         public string user;
         public string server;
@@ -136,11 +135,12 @@ namespace SandRibbon.Utils
             Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((where) => slide = where));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>((who) => privacy = who));
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>((_unused) => user = Globals.me));
+            Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>((_unused) => CleanupLogQueue()));
 
             logQueue = new LogQueue(1);
         }
 
-        ~Logger()
+        static void CleanupLogQueue()
         {
             // just to make sure the threads are cleaned up
             if (logQueue != null)

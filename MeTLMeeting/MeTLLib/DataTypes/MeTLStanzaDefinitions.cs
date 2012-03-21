@@ -1472,7 +1472,7 @@ namespace MeTLLib.DataTypes
                         return
                             new PngBitmapDecoder(new Uri("Resources\\empty.png", UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None).Frames[0];
                     }
-                    catch(Exception e)
+                    catch(Exception)
                     {
                         return new BitmapImage();
                     }
