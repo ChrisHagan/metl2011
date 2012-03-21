@@ -2440,7 +2440,7 @@ namespace SandRibbon.Components
             var listToCut = selectedStrokes.Select(stroke => new TargettedDirtyElement(Globals.slide, stroke.tag().author, _target, stroke.tag().privacy, stroke.sum().checksum.ToString())).ToList();
             foreach (var element in listToCut)
                 Commands.SendDirtyStroke.Execute(element);
-            return selectedStrokes.ToList().ToList().ToList().ToList().ToList().ToList().ToList().ToList().ToList();
+            return selectedStrokes.ToList();
         }
         protected void HandleCut(object _args)
         {
