@@ -86,11 +86,7 @@ namespace SandRibbon.Components.Utility
         {
             get
             {
-                #if TOGGLE_CONTENT
                 var currentContent = Commands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() : ContentVisibilityEnum.AllVisible;
-                #else
-                var currentContent = ContentVisibilityEnum.AllVisible;
-                #endif
                 return currentContent;
             }
         }
@@ -166,7 +162,11 @@ namespace SandRibbon.Components.Utility
         public void AddStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
         {
             AddStrokes(strokes);
+#if TOGGLE_CONTENT
             modifyVisibleContainer(FilterStrokes(strokes, CurrentContentVisibility));
+#else
+            modifyVisibleContainer(strokes);
+#endif
         }
 
         public void AddStrokes(Stroke stroke, Action<StrokeCollection> modifyVisibleContainer)
@@ -175,7 +175,11 @@ namespace SandRibbon.Components.Utility
             strokes.Add(stroke);
 
             AddStrokes(stroke);
+#if TOGGLE_CONTENT
             modifyVisibleContainer(FilterStrokes(strokes, CurrentContentVisibility));
+#else
+            modifyVisibleContainer(strokes);
+#endif
         }
 
         public void RemoveStrokes(Stroke stroke, Action<StrokeCollection> modifyVisibleContainer)
@@ -184,13 +188,21 @@ namespace SandRibbon.Components.Utility
             strokes.Add(stroke);
 
             RemoveStroke(stroke);
+#if TOGGLE_CONTENT
             modifyVisibleContainer(FilterStrokes(strokes, CurrentContentVisibility));
+#else
+            modifyVisibleContainer(strokes);
+#endif
         }
 
         public void RemoveStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
         {
             RemoveStrokes(strokes);
+#if TOGGLE_CONTENT
             modifyVisibleContainer(FilterStrokes(strokes, CurrentContentVisibility));
+#else
+            modifyVisibleContainer(strokes);
+#endif
         }
 
         private StrokeCollection FilterStrokes(StrokeCollection strokes, ContentVisibilityEnum contentVisibility)
@@ -212,21 +224,29 @@ namespace SandRibbon.Components.Utility
         public void AddElement(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
             AddElements(element);
+#if TOGGLE_CONTENT
             var filteredElement = FilterElement(element, CurrentContentVisibility);
             if (filteredElement != null)
             { 
                 modifyVisibleContainer(filteredElement);
             }
+#else
+            modifyVisibleContainer(element);
+#endif
         }
 
         public void RemoveElement(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
             RemoveElement(element);
+#if TOGGLE_CONTENT
             var filteredElement = FilterElement(element, CurrentContentVisibility);
             if (filteredElement != null)
             { 
                 modifyVisibleContainer(filteredElement);
             }
+#else
+            modifyVisibleContainer(element);
+#endif
         }
 
         private UIElement FilterElement(UIElement element, ContentVisibilityEnum contentVisibility)
