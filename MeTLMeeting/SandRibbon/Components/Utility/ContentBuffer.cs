@@ -44,13 +44,20 @@ namespace SandRibbon.Components.Utility
 
         private void RemoveStrokes(StrokeCollection strokes)
         {
-            strokeCollection.Remove(strokes);
+            try
+            {
+                strokeCollection.Remove(strokes);
+            }
+            catch (ArgumentException) { }
         }
         
         private void RemoveStroke(Stroke stroke)
         {
-            if (strokeCollection.Contains(stroke))
+            try
+            {
                 strokeCollection.Remove(stroke);
+            }
+            catch (ArgumentException) { }
         }
 
         private void AddElements(UIElement element)
@@ -68,7 +75,11 @@ namespace SandRibbon.Components.Utility
 
         private void RemoveElement(UIElement element)
         {
-            uiCollection.Remove(element);
+            try
+            {
+                uiCollection.Remove(element);
+            }
+            catch (ArgumentException) { }
         }
 
         private ContentVisibilityEnum CurrentContentVisibility

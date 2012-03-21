@@ -1,51 +1,118 @@
 ﻿using System;
-using Newtonsoft.Json;
 using SandRibbon.Providers;
 using MeTLLib;
-using Divan;
-using Newtonsoft.Json.Linq;
 using System.Linq;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using System.Collections.Specialized;
+using System.Net;
+using System.Threading;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace SandRibbon.Utils
 {
-    class LogMessage : CouchDocument
+    class LogQueue
+    {
+        public static readonly Uri LoggingServer = new Uri("https://madam.adm.monash.edu.au:1188/log_message.yaws");
+        public static readonly string LoggingServerString = LoggingServer.ToString();
+
+        readonly object lockObj = new object();
+        Thread[] workers;
+        Queue<LogMessage> logMessages = new Queue<LogMessage>();
+
+        public LogQueue(int workerCount)
+        {
+            workers = new Thread[workerCount];
+
+            for (int i = 0; i < workerCount; i++)
+            {
+                (workers[i] = new Thread(PostMessage)).Start();
+            }
+        }
+
+        public void Shutdown(bool waitForWorkers)
+        {
+            // Enqueue a null item to make each exit
+            foreach (Thread worker in workers)
+            {
+                EnqueueLog(null);
+            }
+
+            // Wait for all the workers to finish
+            if (waitForWorkers)
+            {
+                foreach (Thread worker in workers)
+                {
+                    worker.Join();
+                }
+            }
+        }
+
+        public void EnqueueLog(LogMessage log)
+        {
+            lock (lockObj)
+            {
+                logMessages.Enqueue(log);   // pulsing because we're
+                Monitor.Pulse(lockObj);     // changing a blocking condition
+            }
+        }
+
+        void PostMessage()
+        {
+            while (true)
+            {
+                LogMessage log;
+                lock (lockObj)
+                {
+                    while (logMessages.Count == 0)
+                        Monitor.Wait(lockObj);
+
+                    log = logMessages.Dequeue();
+                }
+
+                if (log == null)
+                    return;
+
+                // send off the message to the server
+                try
+                {
+                    var server = new WebClient();
+                    server.QueryString = log.BuildQueryString();
+                    server.DownloadString(LoggingServer);
+                }
+                catch (WebException)
+                {
+                    //what should we do if we cannot save to couch?
+                    //ALL IS LOST
+                }
+            }
+        }
+    }
+
+    class LogMessage 
     {
         public string version;
         public string content;
-        public long timestamp;
         public string user;
         public string server;
         public int slide;
-        public override void WriteJson(JsonWriter writer)
+
+        public NameValueCollection BuildQueryString()
         {
-            base.WriteJson(writer);
-            writer.WritePropertyName("version");
-            writer.WriteValue(ConfigurationProvider.instance.getMetlVersion());
-            writer.WritePropertyName("docType");
-            writer.WriteValue("log");
-            writer.WritePropertyName("content");
-            writer.WriteValue(content);
-            writer.WritePropertyName("timestamp");
-            writer.WriteValue(timestamp);
-            writer.WritePropertyName("user");
-            writer.WriteValue(user);
-            writer.WritePropertyName("server");
-            writer.WriteValue(server);
-            writer.WritePropertyName("slide");
-            writer.WriteValue(slide);
-        }
-        public override void ReadJson(JObject obj)
-        {
-            base.ReadJson(obj);
-            content = obj["message"].Value<string>();
-            version = obj["version"].Value<string>();
-            timestamp = obj["timestamp"].Value<long>();
-            user = obj["user"].Value<string>();
-            server = obj["server"].Value<string>();
-            slide = obj["slide"].Value<int>();
+            NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            queryString["program"] = "metl2011";
+            queryString["version"] = ConfigurationProvider.instance.getMetlVersion();
+            queryString["docType"] = "log";
+            queryString["content"] = content;
+            queryString["user"] = user;
+            queryString["collaborationLevel"] = Globals.conversationDetails != null ? Globals.conversationDetails.Permissions.studentCanPublish ? "Enabled" : "Disabled" : "None";
+            queryString["server"] = server;
+            queryString["slide"] = Convert.ToString(slide);
+
+            return queryString;
         }
     }
+
     public class Logger
     {
         public static string log = "MeTL Log\r\n";
@@ -59,62 +126,29 @@ namespace SandRibbon.Utils
                 "MeTL Presenter.exe Information: 0 :", 
                 "MeTL Staging.vshost.exe Information: 0 : ",
                 "Error loading thumbnail:"};
-        public static readonly string POST_LOG = "http://madam.adm.monash.edu.au:5984/metl_log";
-        private static readonly string DB_NAME = "metl_log";
-        private static CouchServer establishedServer = null;
-        private static ICouchDatabase establishedDB = null;
-        private static bool connectionFailed = false;
         private static int slide = -1;
         private static string privacy = "Not set";
         private static string user = "UNKNOWN";
+        private static LogQueue logQueue;
+
         static Logger()
         {
-            Commands.Reconnecting.RegisterCommand(new DelegateCommand<object>(delegate { 
-                connectionFailed = false; 
-            }));
-            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>(MoveTo));
-            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
-            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg => user = Globals.me));
+            Commands.MoveTo.RegisterCommand(new DelegateCommand<int>((where) => slide = where));
+            Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>((who) => privacy = who));
+            Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>((_unused) => user = Globals.me));
+
+            logQueue = new LogQueue(1);
         }
-        private static void MoveTo(int where){
-            slide = where;
-        }
-        private static void SetPrivacy(string what) {
-            privacy = what;
-        }
-        private static ICouchDatabase db
+
+        ~Logger()
         {
-            get
+            // just to make sure the threads are cleaned up
+            if (logQueue != null)
             {
-                if (connectionFailed)
-                    return null;
-                if (establishedDB == null)
-                {
-                    if (establishedServer == null)
-                    {
-                        try
-                        {
-                            establishedServer = new CouchServer("madam.adm.monash.edu.au", 5984);
-                        }
-                        catch (Exception) {
-                        //Can't create a server object to represent madam.  This can't be logged.
-                        }
-                    }
-                    if (establishedServer != null)
-                        try
-                        {
-                            establishedDB = establishedServer.GetDatabase(DB_NAME);
-                        }
-                        catch (Exception)
-                        {
-                            //Can't create a connection to the db on madam.  This can't be logged.
-                            connectionFailed = true;
-                        }
-                    else connectionFailed = true;
-                }
-                return establishedDB;
+                logQueue.Shutdown(true);
             }
         }
+
         public static void Crash(Exception e)
         {
             var crashMessage = string.Format("CRASH: {0} @ {1} INNER: {2}",
@@ -123,6 +157,7 @@ namespace SandRibbon.Utils
                 e.InnerException == null ? "NONE" : e.InnerException.StackTrace);
             Log(crashMessage);
         }
+
         public static void Fixed(string message)
         {
             try
@@ -134,58 +169,28 @@ namespace SandRibbon.Utils
                 Log(string.Format("CRASH: (fixed): {0} {1}", "USERNAME_NOT_SET", message));
             }
         }
+
         public static void Log(string appendThis)
-        {/*Interesting quirk about the formatting: \n is the windows line ending but ruby assumes
-          *nix endings, which are \r.  Safest to use both, I guess.*/
-            var now = SandRibbonObjects.DateTimeFactory.Now();
-            putCouch(appendThis, now);
+        {
+            logMessage(appendThis);
         }
-        private static void putCouch(string message, DateTime now)
+
+        private static void logMessage(string message)
         {
             if (String.IsNullOrEmpty(user)) return;
             if (String.IsNullOrEmpty(message)) return;
-            if (message.Contains(POST_LOG)) return;
+            if (message.Contains(LogQueue.LoggingServerString)) return;
             if (blacklist.Any(prefix => message.StartsWith(prefix))) return;
-            if (db != null)
-                WebThreadPool.QueueUserWorkItem(delegate
-                {
-                    try
-                    {
-                        string collaborationLevel;
-                        string versionNumber;
-                        try
-                        {
-                            collaborationLevel = Globals.conversationDetails.Permissions.studentCanPublish ? "Enabled" : "Disabled";
-                        }
-                        catch (Exception)
-                        {
-                            collaborationLevel = "None";
-                        }
-                        try
-                        {
-                            versionNumber = ConfigurationProvider.instance.getMetlVersion();
-                        }
-                        catch (Exception)
-                        {
-                            versionNumber = "Unknown";
-                        }
-                        var finalMessage = string.Format("{2} VERSION:{0}_CONVERSATIONCOLLABORATION:{1}", versionNumber, collaborationLevel, message);
-                        var msg = new LogMessage
-                        {
-                            content = finalMessage,
-                            timestamp = now.Ticks,
-                            user = user,
-                            slide = slide,
-                            server = ClientFactory.Connection().server.host
-                        };
-                        db.SaveArbitraryDocument<LogMessage>(msg);
-                    }
-                    catch (Exception)
-                    {
-                        //what should we do if we cannot save to couch?
-                        //ALL IS LOST
-                    }
-                });
+
+            var msg = new LogMessage
+            {
+                content = message,
+                user = user,
+                slide = slide,
+                server = ClientFactory.Connection().server.host
+            };
+
+            logQueue.EnqueueLog(msg);
         }
     }
 }

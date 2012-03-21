@@ -230,7 +230,6 @@ namespace SandRibbon.Components.Submissions
                        height += 540;
                    }
                    Commands.ImagesDropped.ExecuteAsync(imagesToDrop);
-
                });
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
             Commands.AddSlide.ExecuteAsync(null);
