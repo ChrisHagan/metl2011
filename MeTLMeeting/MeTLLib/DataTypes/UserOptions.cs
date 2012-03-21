@@ -38,7 +38,7 @@ namespace MeTLLib.DataTypes
                 return new UserOptions
                 {
                     logLevel = "ERROR",
-                    pedagogyLevel = 2,
+                    pedagogyLevel = 3, /*3 = PedagogyCode.CollaborativePresentation*/
                     powerpointImportScale = 1,
                     includePrivateNotesOnPrint = true,
                     language = "en-US"

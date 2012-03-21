@@ -26,10 +26,6 @@ namespace SandRibbon.Components.Sandpit
                 new PedagogyLevel{ code = PedagogyCode.CrowdsourcedConversation,    label= "Crowdsourced Conversation" }};
             pedagogies.ItemsSource = allPedagogies;
         }
-        public static void SetDefaultPedagogyLevel()
-        {
-            instance.pedagogies.SelectedItem = allPedagogies.ElementAt(2);
-        }
         public static void SetPedagogyLevel(PedagogyLevel level)
         {
             if (Commands.SetPedagogyLevel.CanExecute(level))

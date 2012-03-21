@@ -35,7 +35,11 @@ namespace SandRibbon.Components
         }
         private void Reset(object sender, RoutedEventArgs e)
         {
-            Commands.SetUserOptions.Execute(UserOptions.DEFAULT);
+            var defaults = UserOptions.DEFAULT;
+            var level = Pedagogicometer.level((Pedagogicometry.PedagogyCode)defaults.pedagogyLevel);
+
+            Commands.SetUserOptions.Execute(defaults);
+            Commands.SetPedagogyLevel.Execute(level);
             Close();
         }
     }
