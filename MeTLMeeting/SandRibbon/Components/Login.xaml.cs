@@ -162,7 +162,7 @@ namespace SandRibbon.Components
                 this.Visibility = Visibility.Collapsed;
             });
             App.mark("Login knows identity");
-            Trace.TraceInformation(string.Format("Login::SetIdentity: Showing conversation search box. ActiveConversation[{0}]", Globals.location.activeConversation));
+            Trace.TraceInformation(string.Format("CSB:::Login::SetIdentity: ActiveConversation[{0}]", Globals.location.activeConversation));
             Commands.ShowConversationSearchBox.ExecuteAsync(null);
         }
         private void LoginFailed()

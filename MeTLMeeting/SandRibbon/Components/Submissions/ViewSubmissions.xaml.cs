@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Windows.Data;
 using MeTLLib;
 using System.ComponentModel;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Components.Submissions
 {
@@ -225,7 +226,8 @@ namespace SandRibbon.Components.Submissions
                                Filename = image.url.ToString(),
                                Target = "presentationSpace",
                                Point = new Point(0, height),
-                               Position = 1
+                               Position = 1,
+                               OverridePoint = true
                            });
                        height += 540;
                    }
