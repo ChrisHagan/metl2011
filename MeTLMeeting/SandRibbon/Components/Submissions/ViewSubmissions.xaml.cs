@@ -202,7 +202,7 @@ namespace SandRibbon.Components.Submissions
                          Target = "presentationSpace",
                          Point = new Point(0, 0),
                          Position = 1,
-                         OverridePoint = false
+                         OverridePoint = true
                      });
                });
             Commands.PreParserAvailable.RegisterCommand(onPreparserAvailable);
