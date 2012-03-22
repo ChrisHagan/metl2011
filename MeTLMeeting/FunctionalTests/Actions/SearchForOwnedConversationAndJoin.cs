@@ -36,7 +36,11 @@ namespace FunctionalTests.Actions
             // create a new conversation with the name of the computer appended
             new ApplicationPopup(window.AutomationElement).CreateConversation();
 
+            UITestHelper.Wait(TimeSpan.FromSeconds(2));
+
             SwitchToSearchCurrentConversation(window);
+
+            UITestHelper.Wait(TimeSpan.FromSeconds(2));
 
             var edit = new ConversationEditScreen(window.AutomationElement);
 
