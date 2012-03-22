@@ -18,10 +18,12 @@ namespace SandRibbon.Utils
 
         readonly object lockObj = new object();
         Thread[] workers;
+        WebClient server; 
         Queue<LogMessage> logMessages = new Queue<LogMessage>();
 
         public LogQueue(int workerCount)
         {
+            server = new WebClient();
             workers = new Thread[workerCount];
 
             for (int i = 0; i < workerCount; i++)
@@ -46,6 +48,7 @@ namespace SandRibbon.Utils
                     worker.Join();
                 }
             }
+            server.Dispose();
         }
 
         public void EnqueueLog(LogMessage log)
@@ -76,14 +79,12 @@ namespace SandRibbon.Utils
                 // send off the message to the server
                 try
                 {
-                    var server = new WebClient();
                     server.QueryString = log.BuildQueryString();
                     server.DownloadString(LoggingServer);
                 }
                 catch (WebException)
                 {
-                    //what should we do if we cannot save to couch?
-                    //ALL IS LOST
+                    // something horrible happened with the logging server
                 }
             }
         }
