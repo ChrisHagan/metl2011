@@ -1521,8 +1521,9 @@ namespace MeTLLib.DataTypes
                                     if (oldTag.ToString().StartsWith("NOT_LOADED"))
                                         image.Tag = oldTag.ToString().Split(new[] { "::::" }, StringSplitOptions.RemoveEmptyEntries)[2];
                                     image.Source = newSource;
-                                    image.Height = newSource.Height;
-                                    image.Width = newSource.Width;
+                                    // Having next two lines causes bug #1480
+                                    //image.Height = newSource.Height;
+                                    //image.Width = newSource.Width;
                                 }
                                 catch (InvalidOperationException)
                                 {

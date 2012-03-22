@@ -124,6 +124,7 @@ namespace SandRibbon.Utils
                 "MeTL Presenter.exe Info: 0 :", 
                 "MeTL Presenter.exe Information: 0 :", 
                 "MeTL Staging.vshost.exe Information: 0 : ",
+                "MeTL Staging.exe Information: 0 : ",
                 "Error loading thumbnail:"};
         private static int slide = -1;
         private static string privacy = "Not set";
