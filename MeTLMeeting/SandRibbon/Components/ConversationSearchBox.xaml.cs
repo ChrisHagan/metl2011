@@ -273,7 +273,7 @@ namespace SandRibbon.Components
                    currentConversation.Visibility = Visibility.Collapsed;
                    Commands.BackstageModeChanged.ExecuteAsync("find");
                }
-               if ((!(shouldShowConversation(details)) && details.IsJidEqual(Globals.conversationDetails.Jid)) || details.isDeleted)
+               if (details.IsJidEqual(Globals.location.activeConversation) && (!shouldShowConversation(details) || details.isDeleted))
                {
                    Commands.RequerySuggested();
                    this.Visibility = Visibility.Visible;
