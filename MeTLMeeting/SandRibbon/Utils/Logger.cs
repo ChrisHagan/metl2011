@@ -55,8 +55,8 @@ namespace SandRibbon.Utils
         {
             lock (lockObj)
             {
-                logMessages.Enqueue(log);   // pulsing because we're
-                Monitor.Pulse(lockObj);     // changing a blocking condition
+                logMessages.Enqueue(log);   
+                Monitor.Pulse(lockObj);     // pulsing because we're changing a blocking condition
             }
         }
 
@@ -100,9 +100,11 @@ namespace SandRibbon.Utils
         public NameValueCollection BuildQueryString()
         {
             NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString(string.Empty);
-            queryString["program"] = "metl2011";
+            if (App.isStaging)
+                queryString["program"] = "metlStaging";
+            else
+                queryString["program"] = "metl2011";
             queryString["version"] = ConfigurationProvider.instance.getMetlVersion();
-            queryString["docType"] = "log";
             queryString["content"] = content;
             queryString["user"] = user;
             queryString["collaborationLevel"] = Globals.conversationDetails != null ? Globals.conversationDetails.Permissions.studentCanPublish ? "Enabled" : "Disabled" : "None";
@@ -139,7 +141,7 @@ namespace SandRibbon.Utils
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>((_unused) => user = Globals.me));
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>((_unused) => CleanupLogQueue()));
 
-            logQueue = new LogQueue(1);
+            logQueue = new LogQueue(workerCount: 1);
         }
 
         static void CleanupLogQueue()
