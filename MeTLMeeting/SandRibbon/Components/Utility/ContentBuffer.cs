@@ -16,11 +16,22 @@ namespace SandRibbon.Components.Utility
         private List<UIElement> uiCollection;
         private StrokeCollection strokeCollection;
 
+        // used to create a snapshot for undo/redo
+        private List<UIElement> uiDeltaCollection;
+        private StrokeCollection strokeDeltaCollection;
+        private List<StrokeChecksum> strokeChecksumCollection;
+
         public ContentBuffer()
         {
             uiCollection = new List<UIElement>();
             strokeCollection = new StrokeCollection();
+
+            uiDeltaCollection = new List<UIElement>();
+            strokeDeltaCollection = new StrokeCollection();
+            strokeChecksumCollection = new List<StrokeChecksum>();
         }
+
+        #region Collection helpers
 
         private void ClearStrokes()
         {
@@ -32,37 +43,107 @@ namespace SandRibbon.Components.Utility
             uiCollection.Clear();
         }
 
+        private void ClearDeltaStrokes()
+        {
+            strokeDeltaCollection.Clear();
+        }
+
+        private void ClearDeltaElements()
+        {
+            uiDeltaCollection.Clear(); 
+        }
+
+        private void ClearStrokeChecksums()
+        {
+            strokeChecksumCollection.Clear();
+        }
+
         private void AddStrokes(StrokeCollection strokes)
         {
             strokeCollection.Add(strokes);
         }
 
-        private void AddStrokes(Stroke stroke)
+        private void AddStroke(Stroke stroke)
         {
+            if (strokeCollection.Where(s => s.sum().checksum == stroke.sum().checksum).Count() != 0)
+                return;
             strokeCollection.Add(stroke);
+        }
+
+        private void AddDeltaStrokes(StrokeCollection strokes)
+        {
+            strokeDeltaCollection.Add(strokes);
+        }
+
+        private void AddDeltaStroke(Stroke stroke)
+        {
+            strokeDeltaCollection.Add(stroke);
+        }
+
+        private void AddStrokeChecksum(StrokeChecksum checksum, bool ensureUnique = false)
+        {
+            if (!ensureUnique || !strokeChecksumCollection.Contains(checksum))
+                strokeChecksumCollection.Add(checksum);
         }
 
         private void RemoveStrokes(StrokeCollection strokes)
         {
             try
             {
-                strokeCollection.Remove(strokes);
+                var strokesInBuffer = from stroke in strokes
+                    join bufStroke in strokeCollection on stroke.sum().checksum equals bufStroke.sum().checksum
+                    select bufStroke;
+
+               strokeCollection.Remove(new StrokeCollection(strokesInBuffer));
             }
             catch (ArgumentException) { }
         }
         
-        private void RemoveStroke(Stroke stroke)
+        private void RemoveDeltaStrokes(StrokeCollection strokes)
         {
             try
             {
-                strokeCollection.Remove(stroke);
+                strokeDeltaCollection.Remove(strokes);
             }
             catch (ArgumentException) { }
         }
 
-        private void AddElements(UIElement element)
+        private void RemoveStroke(Stroke stroke)
+        {
+            try
+            {
+                if (strokeCollection.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                    strokeCollection.Remove(stroke);
+            }
+            catch (ArgumentException) { }
+        }
+
+        private void RemoveDeltaStroke(Stroke stroke)
+        {
+            try
+            {
+                strokeDeltaCollection.Remove(stroke);
+            }
+            catch (ArgumentException) { }
+        }
+
+        private void RemoveStrokeChecksum(StrokeChecksum checksum)
+        {
+            try
+            {
+                strokeChecksumCollection.Remove(checksum);
+            }
+            catch (ArgumentException) { }
+        }
+
+        private void AddElement(UIElement element)
         {
             uiCollection.Add(element);
+        }
+
+        private void AddDeltaElement(UIElement element)
+        {
+            uiDeltaCollection.Add(element);
         }
 
         private void AddElements(UIElementCollection elements)
@@ -70,6 +151,14 @@ namespace SandRibbon.Components.Utility
             foreach (UIElement element in elements)
             {
                 uiCollection.Add(element);
+            }
+        }
+
+        private void AddDeltaElements(UIElementCollection elements)
+        {
+            foreach (UIElement element in elements)
+            {
+                uiDeltaCollection.Add(element);
             }
         }
 
@@ -82,6 +171,17 @@ namespace SandRibbon.Components.Utility
             catch (ArgumentException) { }
         }
 
+        private void RemoveDeltaElement(UIElement element)
+        {
+            try
+            {
+                uiDeltaCollection.Remove(element);
+            }
+            catch (ArgumentException) { }
+        }
+
+        #endregion
+
         private ContentVisibilityEnum CurrentContentVisibility
         {
             get
@@ -93,7 +193,7 @@ namespace SandRibbon.Components.Utility
 
         #region Collections
 
-        public StrokeCollection Strokes
+        StrokeCollection Strokes
         {
             get
             {
@@ -101,7 +201,7 @@ namespace SandRibbon.Components.Utility
             }
         }
 
-        public List<UIElement> CanvasChildren
+        List<UIElement> CanvasChildren
         {
             get
             {
@@ -159,6 +259,12 @@ namespace SandRibbon.Components.Utility
             modifyVisibleContainer();
         }
 
+        public void ClearDeltaStrokes(Action modifyUndoContainer)
+        {
+            ClearDeltaStrokes();
+            modifyUndoContainer();
+        }
+
         public void AddStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
         {
             AddStrokes(strokes);
@@ -169,27 +275,32 @@ namespace SandRibbon.Components.Utility
 #endif
         }
 
-        public void AddStrokes(Stroke stroke, Action<StrokeCollection> modifyVisibleContainer)
+        public void AddStroke(Stroke stroke, Action<Stroke> modifyVisibleContainer)
         {
-            var strokes = new StrokeCollection();
-            strokes.Add(stroke);
-
-            AddStrokes(stroke);
+            AddStroke(stroke);
 #if TOGGLE_CONTENT
-            modifyVisibleContainer(FilterStrokes(strokes, CurrentContentVisibility));
+            var filteredStroke = FilterStroke(stroke, CurrentContentVisibility);
+            if (filteredStroke != null)
+            {
+                modifyVisibleContainer(filteredStroke);
+            }
 #else
-            modifyVisibleContainer(strokes);
+            modifyVisibleContainer(stroke);
 #endif
         }
 
-        public void RemoveStrokes(Stroke stroke, Action<StrokeCollection> modifyVisibleContainer)
+        public void RemoveStroke(Stroke stroke, Action<Stroke> modifyVisibleContainer)
         {
             var strokes = new StrokeCollection();
             strokes.Add(stroke);
 
             RemoveStroke(stroke);
 #if TOGGLE_CONTENT
-            modifyVisibleContainer(FilterStrokes(strokes, CurrentContentVisibility));
+            var filteredStroke = FilterStroke(stroke, CurrentContentVisibility);
+            if (filteredStroke != null)
+            {
+                modifyVisibleContainer(filteredStroke);
+            }
 #else
             modifyVisibleContainer(strokes);
 #endif
@@ -205,10 +316,72 @@ namespace SandRibbon.Components.Utility
 #endif
         }
 
+        public void AddDeltaStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyUndoContainer)
+        {
+            AddDeltaStrokes(strokes);
+#if TOGGLE_CONTENT
+            modifyUndoContainer(FilterStrokes(strokes, CurrentContentVisibility));
+#else
+            modifyUndoContainer(strokes);
+#endif
+        }
+
+        public void AddDeltaStroke(Stroke stroke, Action<StrokeCollection> modifyUndoContainer)
+        {
+            var strokes = new StrokeCollection();
+            strokes.Add(stroke);
+
+            AddDeltaStroke(stroke);
+#if TOGGLE_CONTENT
+            modifyUndoContainer(FilterStrokes(strokes, CurrentContentVisibility));
+#else
+            modifyUndoContainer(strokes);
+#endif
+        }
+
+        /*public void AddStrokeChecksum(StrokeChecksum checksum, Action<StrokeChecksum> modifyChecksumContainer)
+        {
+            AddStrokeChecksum(checksum);
+#if TOGGLE_CONTENT
+            modifyChecksumContainer(Filter<StrokeChecksum>(checksum, CurrentContentVisibility));
+#else
+            modifyChecksumContainer(checksum);
+#endif
+        }*/
+
+        public void RemoveDeltaStroke(Stroke stroke, Action<StrokeCollection> modifyUndoContainer)
+        {
+            var strokes = new StrokeCollection();
+            strokes.Add(stroke);
+
+            RemoveDeltaStroke(stroke);
+#if TOGGLE_CONTENT
+            modifyUndoContainer(FilterStrokes(strokes, CurrentContentVisibility));
+#else
+            modifyUndoContainer(strokes);
+#endif
+        }
+        
+        public void RemoveDeltaStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyUndoContainer)
+        {
+            RemoveStrokes(strokes);
+#if TOGGLE_CONTENT
+            modifyUndoContainer(FilterStrokes(strokes, CurrentContentVisibility));
+#else
+            modifyUndoContainer(strokes);
+#endif
+        }
+
         private StrokeCollection FilterStrokes(StrokeCollection strokes, ContentVisibilityEnum contentVisibility)
         {
             var comparer = BuildComparer(contentVisibility);
             return new StrokeCollection(strokes.Where(s => comparer.Any((comp) => comp(s.tag().author))));
+        }
+
+        private Stroke FilterStroke(Stroke stroke, ContentVisibilityEnum contentVisibility)
+        {
+            var comparer = BuildComparer(contentVisibility);
+            return comparer.Any((comp) => comp(stroke.tag().author)) ? stroke : null;
         }
 
         #endregion
@@ -223,7 +396,7 @@ namespace SandRibbon.Components.Utility
 
         public void AddElement(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
-            AddElements(element);
+            AddElement(element);
 #if TOGGLE_CONTENT
             var filteredElement = FilterElement(element, CurrentContentVisibility);
             if (filteredElement != null)
@@ -247,6 +420,38 @@ namespace SandRibbon.Components.Utility
 #else
             modifyVisibleContainer(element);
 #endif
+        }
+
+        public void RemoveStrokesAndMatchingChecksum(IEnumerable<string> checksums, Action<IEnumerable<string>> modifyVisibleContainer)
+        {
+            // 1. find the strokes in the contentbuffer that have matching checksums 
+            // 2. remove those strokes and corresponding checksums in the content buffer
+            // 3. for the strokes that also exist in the canvas, remove them and their checksums
+            var dirtyStrokes = strokeCollection.Where(s => checksums.Contains(s.sum().checksum.ToString())).ToList();
+            foreach (var stroke in dirtyStrokes)
+            {
+                RemoveStrokeChecksum(stroke.sum());
+                RemoveStroke(stroke);
+            }
+
+            modifyVisibleContainer(checksums);
+        }
+
+        public void AddStrokeChecksum(Stroke stroke, Action<StrokeChecksum> modifyVisibleContainer)
+        {
+            var checksum = stroke.sum();
+
+            AddStrokeChecksum(checksum, true);
+
+            modifyVisibleContainer(checksum);
+        }
+
+        public void RemoveStrokeChecksum(Stroke stroke, Action<StrokeChecksum> modifyVisibleContainer)
+        {
+            var checksum = stroke.sum();
+
+            RemoveStrokeChecksum(checksum);
+            modifyVisibleContainer(checksum);
         }
 
         private UIElement FilterElement(UIElement element, ContentVisibilityEnum contentVisibility)

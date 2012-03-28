@@ -66,7 +66,6 @@ namespace SandRibbon.Components
 
     public partial class CollapsedCanvasStack : IClipboardHandler
     {
-
         List<MeTLTextBox> _boxesAtTheStart = new List<MeTLTextBox>();
         private Color _currentColor = Colors.Black;
         private const double DefaultSize = 24.0;
@@ -77,6 +76,7 @@ namespace SandRibbon.Components
         private bool _focusable = true;
         public static Timer TypingTimer;
         private string _originalText;
+        private ContentBuffer contentBuffer;
         private MeTLTextBox myTextBox;
         private string _target;
         private string _defaultPrivacy;
@@ -114,7 +114,6 @@ namespace SandRibbon.Components
             };
         }
 
-
         void MyWork_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             pos = e.GetPosition(this);
@@ -123,10 +122,12 @@ namespace SandRibbon.Components
         {
             InitializeComponent();
             wireInPublicHandlers();
-            strokes = new List<StrokeChecksum>();
+            strokeChecksums = new List<StrokeChecksum>();
+            contentBuffer = new ContentBuffer();
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
+            Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
             Commands.ReceiveStroke.RegisterCommandToDispatcher(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.ReceiveStrokes.RegisterCommandToDispatcher(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
@@ -185,7 +186,6 @@ namespace SandRibbon.Components
                 myTextBox = null;
             }
         }
-
 
         private void stylusMove(object sender, StylusEventArgs e)
         {
@@ -255,18 +255,25 @@ namespace SandRibbon.Components
             }
             _focusable = newLayer == "Text";
             setLayerForTextFor(Work);
-            
         }
         private void setLayerForTextFor(InkCanvas canvas)
         {
+            var curFocusable = _focusable;
+            var curMe = Globals.me;
+
             foreach (var box in canvas.Children)
             {
                 if (box.GetType() == typeof(MeTLTextBox))
                 {
                     var tag = ((MeTLTextBox)box).tag();
-                    ((MeTLTextBox)box).Focusable = _focusable && (tag.author == Globals.me);
+                    ((MeTLTextBox)box).Focusable = curFocusable && (tag.author == curMe);
                 }
             }
+            contentBuffer.UpdateChildren<MeTLTextBox>((textBox) =>
+            {
+                var tag = textBox.tag();
+                textBox.Focusable = curFocusable && (tag.author == curMe);
+            });
         }
         private UndoHistory.HistoricalAction deleteSelectedImages(List<UIElement> selectedElements)
         {
@@ -275,9 +282,12 @@ namespace SandRibbon.Components
                 {
                     foreach (var element in selectedElements)
                     {
-                       if (Work.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id).Count() == 0)
-                            Work.Children.Add(element);
-                        sendThisElement(element);
+                        // if this element hasn't already been added
+                        if (Work.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id).Count() == 0)
+                        {
+                            contentBuffer.AddElement(element, (child) => Work.Children.Add(child));
+                        }
+                       sendThisElement(element);
                     }
                     Work.Select(selectedElements);
                 };
@@ -285,8 +295,11 @@ namespace SandRibbon.Components
                 {
                     foreach (var element in selectedElements)
                     {
-                        if (Work.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id).Count() > 0)
-                            Work.Children.Remove(Work.ImageChildren().ToList().Where(i =>((Image)i).tag().id == ((Image)element).tag().id ).First());
+                        var imagesToRemove = Work.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id);
+                        if (imagesToRemove.Count() > 0)
+                        {
+                            contentBuffer.RemoveElement(imagesToRemove.First(), (image) => Work.Children.Remove(image));
+                        }
                         dirtyThisElement(element);
                     }
                 };
@@ -384,6 +397,8 @@ namespace SandRibbon.Components
             Work.EditingMode = currentMode;
             AddAdorners();
         }
+
+
         private void UpdateConversationDetails(ConversationDetails details)
         {
             ClearAdorners();
@@ -391,8 +406,10 @@ namespace SandRibbon.Components
             Dispatcher.adoptAsync(delegate
                   {
                       var newStrokes = new StrokeCollection( Work.Strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
-                      Work.Strokes.Clear();
-                      Work.Strokes.Add(newStrokes);
+
+                      contentBuffer.ClearStrokes(() => Work.Strokes.Clear());
+                      contentBuffer.AddStrokes(newStrokes, (st) => Work.Strokes.Add(st));
+
                       foreach (Image image in Work.ImageChildren())
                           ApplyPrivacyStylingToElement(image, image.tag().privacy);
                       foreach (var item in Work.TextChildren())
@@ -437,13 +454,13 @@ namespace SandRibbon.Components
 
         #region Events
         private List<Stroke> strokesAtTheStart = new List<Stroke>();
-        private List<StrokeChecksum> strokes;
+        private List<StrokeChecksum> strokeChecksums;
         private List<UIElement> imagesAtStartOfTheMove = new List<UIElement>();
         private void SelectionMovingOrResizing (object _sender, InkCanvasSelectionEditingEventArgs e)
         {
-            strokesAtTheStart.Clear();
-            foreach (var stroke in Work.GetSelectedStrokes())
-                strokesAtTheStart.Add(stroke.Clone());
+            contentBuffer.ClearDeltaStrokes(() => strokesAtTheStart.Clear());
+            contentBuffer.AddDeltaStrokes(Work.GetSelectedStrokes(), (st) => strokesAtTheStart.AddRange(st.Select(s => s.Clone())));
+
             imagesAtStartOfTheMove.Clear();
             imagesAtStartOfTheMove = GetSelectedClonedImages();
             _boxesAtTheStart.Clear();
@@ -508,8 +525,9 @@ namespace SandRibbon.Components
                     var mySelectedElements = selectedElements.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
                     foreach (var element in mySelectedElements)
                     {
-                        if (Work.Children.ToList().Where(i => i is Image &&((Image)i).tag().id == element.tag().id).Count() > 0)
-                            Work.Children.Remove(Work.Children.ToList().Where(i => i is Image &&((Image)i).tag().id == element.tag().id).FirstOrDefault());
+                        var imagesToRemove = Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id);
+                        if (imagesToRemove.Count() > 0)
+                            contentBuffer.RemoveElement(imagesToRemove.First(), (image) => Work.Children.Remove(image));
                         if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
                             dirtyThisElement(element);
                     }
@@ -517,7 +535,7 @@ namespace SandRibbon.Components
                     {
                         selection.Add(element);
                         if (Work.Children.ToList().Where(i => i is Image &&((Image)i).tag().id == element.tag().id).Count() == 0)
-                            Work.Children.Add(element);
+                            contentBuffer.AddElement(element, (image) => Work.Children.Add(image));
                         if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
                             sendThisElement(element);
                     }
@@ -527,15 +545,16 @@ namespace SandRibbon.Components
                     var mySelectedImages = selectedElements.Where(i => i is Image).Select(i => ((Image)i).clone()).ToList();
                     foreach (var element in startingElements)
                     {
-                          if (Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() > 0)
-                              Work.Children.Remove(Work.Children.ToList().Where(i =>i is Image && ((Image)i).tag().id == element.tag().id).FirstOrDefault());
+                        var imagesToRemove = Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id);
+                          if (imagesToRemove.Count() > 0)
+                              contentBuffer.RemoveElement(imagesToRemove.First(), (image) => Work.Children.Remove(image)); 
                         dirtyThisElement(element);
                     }
                     foreach (var element in mySelectedImages)
                     { 
                         if (Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
                         {
-                           Work.Children.Add(element);
+                           contentBuffer.AddElement(element, (image) => Work.Children.Add(image));
                         }
                        sendThisElement(element);
                   }
@@ -544,12 +563,11 @@ namespace SandRibbon.Components
         }
         private UndoHistory.HistoricalAction InkSelectionMovedOrResized(List<Stroke> selectedStrokes, List<Stroke> undoStrokes)
         {
- 
             Action undo = () =>
                 {
                     removeStrokes(selectedStrokes);
                     addStrokes(undoStrokes); 
-                    if(Work.EditingMode == InkCanvasEditingMode.Select)
+                    if (Work.EditingMode == InkCanvasEditingMode.Select)
                         Work.Select(new StrokeCollection(undoStrokes));
                 };
             Action redo = () =>
@@ -649,7 +667,6 @@ namespace SandRibbon.Components
                                  {
                                      e.SetSelectedElements(filterOnlyMine(e.GetSelectedElements()));
                                      e.SetSelectedStrokes(filterOnlyMine(e.GetSelectedStrokes()));
-
                                  });
         }
         private StrokeCollection filterOnlyMine(IEnumerable<Stroke> strokes)
@@ -759,15 +776,31 @@ namespace SandRibbon.Components
         private void dirtyStrokes(InkCanvas canvas, IEnumerable<TargettedDirtyElement> targettedDirtyStrokes)
         {
             var dirtyChecksums = targettedDirtyStrokes.Select(t => t.identifier);
-            var presentDirtyStrokes = canvas.Strokes.Where(s => dirtyChecksums.Contains(s.sum().checksum.ToString())).ToList();
-            for (int i = 0; i < presentDirtyStrokes.Count(); i++)
+            // 1. find the strokes in the contentbuffer that have matching checksums 
+            // 2. remove those strokes and corresponding checksums in the content buffer
+            // 3. for the strokes that also exist in the canvas, remove them and their checksums
+            contentBuffer.RemoveStrokesAndMatchingChecksum(dirtyChecksums, cs =>
             {
-                var stroke = presentDirtyStrokes[i];
-                strokes.Remove(stroke.sum());
-                canvas.Strokes.Remove(stroke);
-
-            }
+                var dirtyStrokes = canvas.Strokes.Where(s => cs.Contains(s.sum().checksum.ToString())).ToList();
+                foreach (var stroke in dirtyStrokes)
+                {
+                    strokeChecksums.Remove(stroke.sum());
+                    canvas.Strokes.Remove(stroke);
+                }
+            });
         }
+
+        public void SetContentVisibility(ContentVisibilityEnum contentVisibility)
+        {
+#if TOGGLE_CONTENT
+            Work.Strokes.Clear();
+            Work.Strokes.Add(contentBuffer.FilteredStrokes(contentVisibility));
+            Work.Children.Clear();
+            foreach (var child in contentBuffer.FilteredElements(contentVisibility))
+                Work.Children.Add(child);
+#endif
+        }
+
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)
         {
             if (receivedStrokes.Count() == 0) return;
@@ -783,25 +816,53 @@ namespace SandRibbon.Components
         }
         public void AddStrokeToCanvas(InkCanvas canvas, PrivateAwareStroke stroke)
         {
-            canvas.Strokes = new StrokeCollection(canvas.Strokes.Where(s => s.sum().checksum != stroke.sum().checksum));
+            // stroke already exists on the canvas, don't do anything
+            if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() != 0)
+                return;
+
+            contentBuffer.AddStroke(stroke, (st) => canvas.Strokes.Add(st));
+        }
+
+        private void AddUniqueStrokeToCanvas(InkCanvas canvas, Stroke stroke)
+        {
+            if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() != 0)
+                return;
+
             canvas.Strokes.Add(stroke);
         }
+
+        private void RemoveExistingStrokeFromCanvas(InkCanvas canvas, Stroke stroke)
+        {
+            if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
+                return;
+
+            canvas.Strokes.Remove(stroke);
+        }
+
         private void addStrokes(List<Stroke> strokes)
         {
-            foreach(var stroke in strokes)
+            var newStrokes = new StrokeCollection(strokes.Select( s => (Stroke) new PrivateAwareStroke(s, _target)));
+            foreach (var stroke in newStrokes)
             {
-                Work.Strokes.Add(new PrivateAwareStroke(stroke, _target));
                 doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
             }
+            contentBuffer.AddStrokes(newStrokes, (st) => Work.Strokes.Add(st));
         }
         private void removeStrokes(List<Stroke> strokes)
         {
              foreach(var stroke in strokes)
              {
                  if (stroke.tag().privacy == Globals.PUBLIC)
-                     Work.Strokes = new StrokeCollection(Work.Strokes.Where(s => s.sum().checksum != stroke.sum().checksum));
+                 {
+                     //var strokesToRemove = new StrokeCollection(Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum));
+                     //contentBuffer.RemoveStrokes(strokesToRemove, (st) => Work.Strokes.Remove(st));
+                     contentBuffer.RemoveStroke(stroke, (st) => RemoveExistingStrokeFromCanvas(Work, st));
+                 }
                  else
-                     OtherWork.Strokes = new StrokeCollection(OtherWork.Strokes.Where(s => s.sum().checksum != stroke.sum().checksum));
+                 {
+                     var strokesToRemove = new StrokeCollection(OtherWork.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum));
+                     contentBuffer.RemoveStrokes(strokesToRemove, (st) => OtherWork.Strokes.Remove(st));
+                 }
                  doMyStrokeRemovedExceptHistory(stroke);
             }
         }
@@ -817,17 +878,17 @@ namespace SandRibbon.Components
         }
         private UndoHistory.HistoricalAction changeSelectedInkPrivacy(List<Stroke> selectedStrokes, string newPrivacy, string oldPrivacy)
         {
-             Action redo = () =>
+            Action redo = () =>
             {
-
                 var newStrokes = new StrokeCollection();
                 foreach (var stroke in selectedStrokes.Where(i => i != null && i.tag().privacy != newPrivacy))
                 {
                     var oldTag = stroke.tag();
-
-                    if (Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                    // stroke exists on canvas
+                    var strokesToUpdate = Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum);
+                    if (strokesToUpdate.Count() > 0)
                     {
-                        Work.Strokes.Remove(Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).First());
+                        contentBuffer.RemoveStroke(strokesToUpdate.First(), (col) => Work.Strokes.Remove(col));
                         doMyStrokeRemovedExceptHistory(stroke);
                     }
                     var newStroke = stroke.Clone();
@@ -835,7 +896,7 @@ namespace SandRibbon.Components
                     if (Work.Strokes.Where(s => s.sum().checksum == newStroke.sum().checksum).Count() == 0)
                     {
                         newStrokes.Add(newStroke);
-                        Work.Strokes.Add(newStroke);
+                        contentBuffer.AddStroke(newStroke, (col) => Work.Strokes.Add(newStroke));
                         doMyStrokeAddedExceptHistory(newStroke, newPrivacy);
                     }
                    
@@ -994,7 +1055,7 @@ namespace SandRibbon.Components
             var privateAwareStroke = new PrivateAwareStroke(e.Stroke, _target);
             Work.Strokes.Remove(e.Stroke);
             privateAwareStroke.startingSum(privateAwareStroke.sum().checksum);
-            Work.Strokes.Add(privateAwareStroke);
+            contentBuffer.AddStroke(privateAwareStroke, (st)=> Work.Strokes.Add(st));
             doMyStrokeAdded(privateAwareStroke);
             Commands.RequerySuggested(Commands.Undo);
         }
@@ -1053,17 +1114,19 @@ namespace SandRibbon.Components
             var canvas = Work;
             var undo = new Action(() =>
                                  {
+                                     // if stroke doesn't exist on the canvas 
                                      if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
                                      {
-                                         canvas.Strokes.Add(stroke);
+                                         contentBuffer.AddStroke(stroke, (col) => canvas.Strokes.Add(col));
                                          doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
                                      }
                                  });
             var redo = new Action(() =>
                                  {
-                                     if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                                     var strokesToRemove = canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum);
+                                     if (strokesToRemove.Count() > 0)
                                      {
-                                         canvas.Strokes.Remove(canvas.Strokes.Where(s=> s.sum().checksum == stroke.sum().checksum).First());
+                                         contentBuffer.RemoveStroke(strokesToRemove.First(), (col) => canvas.Strokes.Remove(col)); 
                                          doMyStrokeRemovedExceptHistory(stroke);
                                      }
                                  });
@@ -1073,14 +1136,19 @@ namespace SandRibbon.Components
 
         private void doMyStrokeRemovedExceptHistory(Stroke stroke)
         {
+            contentBuffer.RemoveStrokeChecksum(stroke, (cs) => strokeChecksums.Remove(cs));
+
             var sum = stroke.sum().checksum.ToString();
-            strokes.Remove(stroke.sum());
             Commands.SendDirtyStroke.Execute(new MeTLLib.DataTypes.TargettedDirtyElement(Globals.slide, stroke.tag().author,_target,stroke.tag().privacy,sum));
         }
         private void doMyStrokeAddedExceptHistory(Stroke stroke, string thisPrivacy)
         {
-            if (!strokes.Contains(stroke.sum()))
-                strokes.Add(stroke.sum());
+            contentBuffer.AddStrokeChecksum(stroke, (cs) => 
+            {
+                if (!strokeChecksums.Contains(cs))
+                    strokeChecksums.Add(cs);
+            });
+
             stroke.tag(new StrokeTag { author = stroke.tag().author, privacy = thisPrivacy, isHighlighter = stroke.DrawingAttributes.IsHighlighter });
             SendTargettedStroke(stroke, thisPrivacy);
         }
@@ -1140,8 +1208,12 @@ namespace SandRibbon.Components
         private void AddImage(InkCanvas canvas, Image image)
         {
             if (canvas.ImageChildren().Any(i => ((Image) i).tag().id == image.tag().id)) return;
-            Panel.SetZIndex(image, 2);
-            canvas.Children.Add(image);
+
+            contentBuffer.AddElement(image, (img) =>
+            {
+                Panel.SetZIndex(img, 2);
+                canvas.Children.Add(img);
+            });
         }
         public void ReceiveDirtyImage(TargettedDirtyElement element)
         {
@@ -1149,33 +1221,26 @@ namespace SandRibbon.Components
             if (element.slide != Globals.slide) return;
             Dispatcher.adoptAsync(() => dirtyImage(element.identifier));
         }
+
         private void dirtyImage(string imageId)
         {
-            dirtyImageOnCanvas(Work, imageId);
-           // dirtyImageOnCanvas(OtherWork, imageId);
-        
-        }
-        private void dirtyImageOnCanvas(InkCanvas canvas, string imageId)
-        {
-            for (int i = 0; i < canvas.Children.Count; i++)
+            var imagesToRemove = new List<Image>();
+            foreach (var currentImage in Work.Children.OfType<Image>())
             {
-                if (canvas.Children[i] is Image)
-                {
-                    var currentImage = (Image)canvas.Children[i];
-                    if (imageId.Equals(currentImage.tag().id))
-                        canvas.Children.Remove(currentImage);
-                }
+                if (imageId.Equals(currentImage.tag().id))
+                    imagesToRemove.Add(currentImage);
             }
+
+            foreach (var removeImage in imagesToRemove)
+                Work.Children.Remove(removeImage);
         }
 
         private void ensureAllImagesHaveCorrectPrivacy()
         {
             Dispatcher.adoptAsync(delegate
             {
-                var images = Work.Children.OfType<Image>().ToList();
-                foreach (Image image in images)
+                foreach (Image image in Work.Children.OfType<Image>())
                     ApplyPrivacyStylingToElement(image, image.tag().privacy);
-
             });
         }
         protected void ApplyPrivacyStylingToElement(FrameworkElement element, string privacy)
@@ -1197,12 +1262,23 @@ namespace SandRibbon.Components
         {
             element.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
             element.Opacity = 0.7;
+            contentBuffer.UpdateChild<FrameworkElement>(element, (elem) =>
+            {
+                elem.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
+                elem.Opacity = 0.7;
+            });
             return element;
         }
         protected void RemovePrivacyStylingFromElement(FrameworkElement element)
         {
             element.Effect = null;
             element.Opacity = 1;
+
+            contentBuffer.UpdateChild<FrameworkElement>(element, (elem) =>
+            {
+                elem.Effect = null;
+                elem.Opacity = 1;
+            });
         }
         #endregion
         #region imagedrop
@@ -1565,7 +1641,7 @@ namespace SandRibbon.Components
         }
         private void AddTextboxToMyCanvas(MeTLTextBox box)
         {
-            Work.Children.Add(applyDefaultAttributes(box));
+            contentBuffer.AddElement(applyDefaultAttributes(box), (text) => Work.Children.Add(text));
         }
         public void DoText(TargettedTextBox targettedBox)
         {
@@ -2475,6 +2551,10 @@ namespace SandRibbon.Components
         #endregion
         private void MoveTo(int _slide)
         {
+            if (contentBuffer != null)
+            {
+                contentBuffer.Clear();
+            }
             if (myTextBox != null)
             {
                 var textBox = myTextBox;

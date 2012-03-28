@@ -253,6 +253,8 @@ namespace FunctionalTests
                 })
                 .With<CollapsedCanvasStack>(canvas =>
                 {
+                    UITestHelper.Wait(TimeSpan.FromSeconds(5));
+
                     canvas.ChildTextboxes.Count.ShouldEqual(1);
                 });
         }

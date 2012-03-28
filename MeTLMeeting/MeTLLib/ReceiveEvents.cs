@@ -272,7 +272,6 @@ namespace MeTLLib
         }
         public void receiveConversationDetails(ConversationDetails cd)
         {
-
             ConversationDetailsAvailable(this, new ConversationDetailsAvailableEventArgs { conversationDetails = cd });
         }
         public void statusChanged(bool isConnected, Credentials credentials)

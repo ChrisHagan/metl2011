@@ -31,7 +31,6 @@ namespace SandRibbon.Components
 
             if (details.isDeleted && details.IsJidEqual(Globals.location.activeConversation))
             {
-                Trace.TraceInformation(string.Format("CSB:::BackStageNav::UpdateConversationDetails: DetailsJid[{0}] ActiveConversation[{1}]", details.Jid, Globals.location.activeConversation));
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
@@ -42,7 +41,6 @@ namespace SandRibbon.Components
         {
             if (String.IsNullOrEmpty(Globals.location.activeConversation))
             {
-                Trace.TraceInformation(string.Format("CSB:::BackStageNav::ShowConversationSearchBox: ActiveConversation[{0}]", Globals.location.activeConversation));
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
