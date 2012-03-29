@@ -195,7 +195,7 @@ namespace SandRibbon.Components
         private void mouseMove(object sender, MouseEventArgs e)
         {
 #if DEBUG
-            foreach (var stroke in Work.Strokes)
+            /*foreach (var stroke in Work.Strokes)
             {
                 if (stroke.HitTest(e.GetPosition(Work), 10))
                 {
@@ -204,7 +204,7 @@ namespace SandRibbon.Components
 
                     Work.ToolTip = tip;
                 }
-            }
+            }*/
 #endif
             if (e.LeftButton == MouseButtonState.Pressed)
             {
