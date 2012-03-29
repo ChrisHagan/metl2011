@@ -19,6 +19,11 @@ namespace MeTLLib.Providers
             System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
             return System.DateTime.Parse(s);
         }
+        public static System.DateTime ParseFromTicks(string s)
+        {
+            System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
+            return new DateTime(Convert.ToInt64(s));
+        }
         public static System.DateTime Now()
         {
             try

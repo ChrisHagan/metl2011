@@ -194,6 +194,18 @@ namespace SandRibbon.Components
 
         private void mouseMove(object sender, MouseEventArgs e)
         {
+#if DEBUG
+            foreach (var stroke in Work.Strokes)
+            {
+                if (stroke.HitTest(e.GetPosition(Work), 10))
+                {
+                    var tip = new ToolTip();
+                    tip.Content = stroke.tag().author + " " + stroke.tag().privacy;
+
+                    Work.ToolTip = tip;
+                }
+            }
+#endif
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 GlobalTimers.resetSyncTimer();
@@ -793,11 +805,31 @@ namespace SandRibbon.Components
         public void SetContentVisibility(ContentVisibilityEnum contentVisibility)
         {
 #if TOGGLE_CONTENT
-            Work.Strokes.Clear();
-            Work.Strokes.Add(contentBuffer.FilteredStrokes(contentVisibility));
-            Work.Children.Clear();
-            foreach (var child in contentBuffer.FilteredElements(contentVisibility))
-                Work.Children.Add(child);
+            var currentVisibility = contentVisibility;
+            var lastVisibility = contentBuffer.LastContentVisibility;
+
+            Action<ContentVisibilityEnum> toggleVisibility = (visibility) =>
+            {
+                Work.Strokes.Clear();
+                Work.Strokes.Add(contentBuffer.FilteredStrokes(visibility));
+                Work.Children.Clear();
+                foreach (var child in contentBuffer.FilteredElements(visibility))
+                    Work.Children.Add(child);
+            };
+
+            Action redo = () =>
+            {
+                toggleVisibility(currentVisibility);
+            };
+            Action undo = () =>
+            {
+                toggleVisibility(lastVisibility);
+            };
+
+            redo();
+            // disable adding the state change to the undo history for now
+            //contentBuffer.LastContentVisibility = contentVisibility;
+            //UndoHistory.Queue(undo, redo);
 #endif
         }
 

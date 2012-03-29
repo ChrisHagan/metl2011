@@ -471,7 +471,7 @@ namespace SandRibbon.Components
         public int Compare(object x, object y) {
             var dis = ConvertToSearchConversationDetails(x);
             var dat = ConvertToSearchConversationDetails(y);
-            return -1 * dis.LastModified.CompareTo(dat.LastModified);
+            return -1 * dis.Created.CompareTo(dat.Created);
         }
     }
 

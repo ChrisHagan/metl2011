@@ -182,6 +182,7 @@ namespace SandRibbon.Components.Utility
 
         #endregion
 
+        public ContentVisibilityEnum LastContentVisibility { get; set; }
         private ContentVisibilityEnum CurrentContentVisibility
         {
             get
