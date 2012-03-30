@@ -105,14 +105,8 @@ namespace SandRibbon.Components
         public ConversationSearchBox()
         {
             InitializeComponent();
-            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
-            Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateAllConversations));
-            Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
-            Commands.LeaveConversation.RegisterCommand(new DelegateCommand<string>(LeaveConversation));
-            Commands.SetConversationPermissions.RegisterCommand(new DelegateCommand<object>(App.noop, canSetPermissions));
             Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(ShowConversationSearchBox));
             Commands.HideConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(HideConversationSearchBox));
-            Commands.BackstageModeChanged.RegisterCommand(new DelegateCommand<string>(BackstageModeChanged));
             Version = ConfigurationProvider.instance.getMetlVersion();
             versionNumber.DataContext = Version;
             sortedConversations = CollectionViewSource.GetDefaultView(this.searchResultsObserver) as ListCollectionView;
@@ -122,6 +116,41 @@ namespace SandRibbon.Components
             Commands.SetIdentity.RegisterCommand(new DelegateCommand<object>(_arg=> me = Globals.me));
             refreshTimer = new Timer(delegate { FillSearchResultsFromInput(); });
             App.mark("Initialized conversation search");
+        }
+
+        DelegateCommand<ConversationDetails> conversationDetailsCommand = null;
+        DelegateCommand<string> joinConversationCommand = null;
+        DelegateCommand<string> leaveConversationCommand = null;
+        DelegateCommand<object> setConversationPermissionsCommand = null;
+        DelegateCommand<string> backstageModeChangedCommand = null;
+
+        private void RegisterCommands()
+        {
+            if (conversationDetailsCommand == null)
+            {
+                conversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateAllConversations);
+                joinConversationCommand = new DelegateCommand<string>(JoinConversation);
+                leaveConversationCommand = new DelegateCommand<string>(LeaveConversation);
+                setConversationPermissionsCommand = new DelegateCommand<object>(App.noop, canSetPermissions);
+                backstageModeChangedCommand = new DelegateCommand<string>(BackstageModeChanged);
+            }
+
+            Commands.UpdateConversationDetails.RegisterCommandToDispatcher(conversationDetailsCommand);
+            Commands.UpdateForeignConversationDetails.RegisterCommandToDispatcher(conversationDetailsCommand);
+            Commands.JoinConversation.RegisterCommand(joinConversationCommand);
+            Commands.LeaveConversation.RegisterCommand(leaveConversationCommand);
+            Commands.SetConversationPermissions.RegisterCommand(setConversationPermissionsCommand);
+            Commands.BackstageModeChanged.RegisterCommand(backstageModeChangedCommand);
+        }
+
+        private void UnregisterCommands()
+        {
+            Commands.UpdateConversationDetails.UnregisterCommand(conversationDetailsCommand);
+            Commands.UpdateForeignConversationDetails.UnregisterCommand(conversationDetailsCommand);
+            Commands.JoinConversation.UnregisterCommand(joinConversationCommand);
+            Commands.LeaveConversation.UnregisterCommand(leaveConversationCommand);
+            Commands.SetConversationPermissions.UnregisterCommand(setConversationPermissionsCommand);
+            Commands.BackstageModeChanged.UnregisterCommand(backstageModeChangedCommand);
         }
         
         private void FillSearchResultsFromInput()
@@ -230,8 +259,21 @@ namespace SandRibbon.Components
             RefreshSortedConversationsList();
             SearchInput.SelectionStart = 0;
         }
+
+        private void PauseRefreshTimer()
+        {
+            refreshTimer.Change(Timeout.Infinite, Timeout.Infinite);
+        }
+
+        private void RestartRefreshTimer()
+        {
+            refreshTimer.Change(500, Timeout.Infinite);
+        }
+
         private void ShowConversationSearchBox(object o)
         {
+            RegisterCommands();
+            RestartRefreshTimer();
             activeConversation = Globals.location.activeConversation;
             me = Globals.me;
             if (String.IsNullOrEmpty(activeConversation))
@@ -245,6 +287,8 @@ namespace SandRibbon.Components
         }
         private void HideConversationSearchBox(object o)
         {
+            UnregisterCommands();
+            PauseRefreshTimer();
             editInProgress = false;
             this.Visibility = Visibility.Collapsed;
             Commands.RequerySuggested();
@@ -265,7 +309,7 @@ namespace SandRibbon.Components
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
                if (details.IsEmpty) return;
-
+                
                if (!details.isDeleted)
                    searchResultsObserver.Add(new SearchConversationDetails(details));
                if (!details.IsJidEqual(Globals.location.activeConversation) || details.isDeleted)
@@ -327,7 +371,7 @@ namespace SandRibbon.Components
         }
         private void SearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            refreshTimer.Change(500, Timeout.Infinite);
+            RestartRefreshTimer();
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
