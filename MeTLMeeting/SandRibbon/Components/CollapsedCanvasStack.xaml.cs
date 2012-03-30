@@ -124,6 +124,7 @@ namespace SandRibbon.Components
             wireInPublicHandlers();
             strokeChecksums = new List<StrokeChecksum>();
             contentBuffer = new ContentBuffer();
+            UndoHistory.ShowVisualiser(Window.GetWindow(this));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
@@ -194,18 +195,6 @@ namespace SandRibbon.Components
 
         private void mouseMove(object sender, MouseEventArgs e)
         {
-#if DEBUG
-            /*foreach (var stroke in Work.Strokes)
-            {
-                if (stroke.HitTest(e.GetPosition(Work), 10))
-                {
-                    var tip = new ToolTip();
-                    tip.Content = stroke.tag().author + " " + stroke.tag().privacy;
-
-                    Work.ToolTip = tip;
-                }
-            }*/
-#endif
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 GlobalTimers.resetSyncTimer();
@@ -289,7 +278,7 @@ namespace SandRibbon.Components
         }
         private UndoHistory.HistoricalAction deleteSelectedImages(List<UIElement> selectedElements)
         {
-            if (selectedElements.Where(i => i is Image).Count() == 0) return new UndoHistory.HistoricalAction(()=> { }, ()=> { }, 0);
+            if (selectedElements.OfType<Image>().Count() == 0) return new UndoHistory.HistoricalAction(()=> { }, ()=> { }, 0, "No images selected");
              Action undo = () =>
                 {
                     foreach (var element in selectedElements)
@@ -315,7 +304,7 @@ namespace SandRibbon.Components
                         dirtyThisElement(element);
                     }
                 };
-            return new UndoHistory.HistoricalAction(undo, redo, 0);
+            return new UndoHistory.HistoricalAction(undo, redo, 0, "Delete selected images");
          
         }
         private UndoHistory.HistoricalAction deleteSelectedInk(StrokeCollection selectedStrokes)
@@ -329,7 +318,7 @@ namespace SandRibbon.Components
                     
                 };
             Action redo = () => removeStrokes(selectedStrokes.ToList());
-            return new UndoHistory.HistoricalAction(undo, redo, 0);
+            return new UndoHistory.HistoricalAction(undo, redo, 0, "Delete selected ink");
         }
         private UndoHistory.HistoricalAction deleteSelectedText(List<UIElement> elements)
         {
@@ -358,7 +347,7 @@ namespace SandRibbon.Components
                                   Keyboard.Focus(this);
                                   ClearAdorners();
                               };
-            return new UndoHistory.HistoricalAction(undo, redo, 0);
+            return new UndoHistory.HistoricalAction(undo, redo, 0, "Delete selected text");
         }
 
         private void AddTextBoxToCanvas(MeTLTextBox box)
@@ -402,7 +391,7 @@ namespace SandRibbon.Components
                 };
          
             redo();
-            UndoHistory.Queue(undo, redo);
+            UndoHistory.Queue(undo, redo, "Delete selected items");
         }
         private void HideConversationSearchBox(object obj)
         {
@@ -571,7 +560,7 @@ namespace SandRibbon.Components
                        sendThisElement(element);
                   }
                 };           
-            return new UndoHistory.HistoricalAction(undo, redo, 0);
+            return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection moved or resized");
         }
         private UndoHistory.HistoricalAction InkSelectionMovedOrResized(List<Stroke> selectedStrokes, List<Stroke> undoStrokes)
         {
@@ -589,7 +578,7 @@ namespace SandRibbon.Components
                     if(Work.EditingMode == InkCanvasEditingMode.Select)
                         Work.Select(new StrokeCollection(selectedStrokes));
                 };           
-            return new UndoHistory.HistoricalAction(undo, redo, 0);
+            return new UndoHistory.HistoricalAction(undo, redo, 0, "Ink selection moved or resized");
         }
         private UndoHistory.HistoricalAction TextMovedOrResized(IEnumerable<UIElement> elements, List<MeTLTextBox> boxesAtTheStart)
         {
@@ -625,7 +614,7 @@ namespace SandRibbon.Components
                       sendBox(applyDefaultAttributes(box));
                   }
               };
-            return new UndoHistory.HistoricalAction(undo, redo, 0);
+            return new UndoHistory.HistoricalAction(undo, redo, 0, "Text selection moved or resized");
         }
         private void SelectionMovedOrResized(object sender, EventArgs e)
         {
@@ -656,7 +645,7 @@ namespace SandRibbon.Components
                     Work.Focus();
                 };
             redo(); 
-            UndoHistory.Queue(undo, redo);
+            UndoHistory.Queue(undo, redo, "Selection moved or resized");
         }
         private List<UIElement> GetSelectedClonedImages()
         {
@@ -828,8 +817,8 @@ namespace SandRibbon.Components
 
             redo();
             // disable adding the state change to the undo history for now
-            //contentBuffer.LastContentVisibility = contentVisibility;
-            //UndoHistory.Queue(undo, redo);
+            contentBuffer.LastContentVisibility = contentVisibility;
+            UndoHistory.Queue(undo, redo, "Changed content visibility");
 #endif
         }
 
@@ -957,7 +946,7 @@ namespace SandRibbon.Components
                     }
                 }
             };   
-            return new UndoHistory.HistoricalAction(undo, redo, 0);
+            return new UndoHistory.HistoricalAction(undo, redo, 0, "Change selected ink privacy");
         }
         private UndoHistory.HistoricalAction changeSelectedImagePrivacy(IEnumerable<UIElement> selectedElements, string newPrivacy, string oldPrivacy)
         {
@@ -996,7 +985,7 @@ namespace SandRibbon.Components
                         
                 }
             };   
-            return new UndoHistory.HistoricalAction(undo, redo, 0);
+            return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection privacy changed");
         }
         private UndoHistory.HistoricalAction changeSelectedTextPrivacy(IEnumerable<UIElement> selectedElements,string newPrivacy)
         {
@@ -1024,7 +1013,7 @@ namespace SandRibbon.Components
 
                                   }
                               };
-            return new UndoHistory.HistoricalAction(undo, redo, 0);
+            return new UndoHistory.HistoricalAction(undo, redo, 0, "Text selection changed privacy");
         }
         private void changeSelectedItemsPrivacy(string newPrivacy)
         {
@@ -1055,7 +1044,7 @@ namespace SandRibbon.Components
                                   Work.Focus();
                               };
             redo();
-            UndoHistory.Queue(undo, redo);
+            UndoHistory.Queue(undo, redo, "Selected items changed privacy");
         }
      protected static List<Stroke> absoluteizeStrokes(List<Stroke> selectedElements)
         {
@@ -1121,7 +1110,7 @@ namespace SandRibbon.Components
                     if(Work.EditingMode == InkCanvasEditingMode.Select)
                         Work.Select(new StrokeCollection(new [] {thisStroke}));
                     AddAdorners();
-                });
+                }, String.Format("Added stroke [checksum {0}]", thisStroke.sum().checksum));
         }
         private void erasingStrokes(object sender, InkCanvasStrokeErasingEventArgs e)
         {
@@ -1163,7 +1152,7 @@ namespace SandRibbon.Components
                                      }
                                  });
             redo();
-            UndoHistory.Queue(undo, redo);
+            UndoHistory.Queue(undo, redo, String.Format("Deleted stroke [checksum {0}]", stroke.sum().checksum));
         }
 
         private void doMyStrokeRemovedExceptHistory(Stroke stroke)
@@ -1614,7 +1603,7 @@ namespace SandRibbon.Components
                     Work.Select(new[] { myImage });
                     AddAdorners();
                 };
-                UndoHistory.Queue(undo, redo);
+                UndoHistory.Queue(undo, redo, "Dropped Image");
                 Work.Children.Add(image);
             });
         }
@@ -1758,8 +1747,7 @@ namespace SandRibbon.Components
                 sendTextWithoutHistory(mybox, mybox.tag().privacy);
                 mybox.TextChanged += SendNewText;
             }; 
-            UndoHistory.Queue(undo, redo);
-
+            UndoHistory.Queue(undo, redo, String.Format("Added text [{0}]", redoText));
 
             mybox.TextChanged -= SendNewText;
             mybox.Text = redoText;
@@ -1818,7 +1806,7 @@ namespace SandRibbon.Components
                                   resetText(currentTextBox);
                                   updateTools();
                               };
-            UndoHistory.Queue(undo, redo);
+            UndoHistory.Queue(undo, redo, "Restored text defaults");
             redo();
         }
         private void resetText(MeTLTextBox box)
@@ -1884,7 +1872,7 @@ namespace SandRibbon.Components
                                           activeTextbox.TextChanged += SendNewText;
 
                                       };
-                    UndoHistory.Queue(undo, redo);
+                    UndoHistory.Queue(undo, redo, "Styling of text changed");
                     redo();
                     /*
                     myTextBox.GotFocus -= textboxGotFocus;
@@ -1918,7 +1906,7 @@ namespace SandRibbon.Components
                                           }
                                           AddAdorners();
                                       };
-                    UndoHistory.Queue(undo, redo);
+                    UndoHistory.Queue(undo, redo, "Styling of texzt changed");
                     redo();
 
                 }
@@ -2391,7 +2379,7 @@ namespace SandRibbon.Components
                                       HandleTextPasteRedo(boxes, currentBox);
                                       AddAdorners();
                                   };
-                UndoHistory.Queue(undo, redo);
+                UndoHistory.Queue(undo, redo, "Pasted items");
                 redo();
             }
             else
@@ -2401,14 +2389,14 @@ namespace SandRibbon.Components
                     var boxes = createPastedBoxes(new List<string> {Clipboard.GetText()});
                     Action undo = () => HandleTextPasteUndo(boxes, currentBox);
                     Action redo = () => HandleTextPasteRedo(boxes, currentBox);
-                    UndoHistory.Queue(undo, redo);
+                    UndoHistory.Queue(undo, redo, "Pasted text");
                     redo();
                 }
                 else if(Clipboard.ContainsImage())
                 {
                     Action undo = () => HandleImagePasteUndo(createImages(new List<BitmapSource>{Clipboard.GetImage()}));
                     Action redo = () =>  HandleImagePasteRedo(createImages(new List<BitmapSource>{Clipboard.GetImage()}));
-                    UndoHistory.Queue(undo, redo);
+                    UndoHistory.Queue(undo, redo, "Pasted images");
                     redo();
                 }
             }
@@ -2447,7 +2435,7 @@ namespace SandRibbon.Components
                                   var copiedStrokes = HandleStrokeCopyRedo(selectedStrokes);
                                   Clipboard.SetData(MeTLClipboardData.Type,new MeTLClipboardData(text,images,copiedStrokes));
                               };
-            UndoHistory.Queue(undo, redo);
+            UndoHistory.Queue(undo, redo, "Copied items");
             redo();
         }
         private void HandleImageCutUndo(IEnumerable<Image> selectedImages)
@@ -2578,7 +2566,7 @@ namespace SandRibbon.Components
                 }
             };
             redo();
-            UndoHistory.Queue(undo, redo);
+            UndoHistory.Queue(undo, redo, "Cut items");
         }
         #endregion
         private void MoveTo(int _slide)

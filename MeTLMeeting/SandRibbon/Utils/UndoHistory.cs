@@ -5,23 +5,27 @@ using Microsoft.Practices.Composite.Presentation.Commands;
 
 namespace SandRibbon.Utils
 {
-    public class UndoHistory
+    public partial class UndoHistory
     {
         public class HistoricalAction
         {
             public Action undo;
             public Action redo;
             public long time;
-            public HistoricalAction(Action undo, Action redo, long time)
+            public string description;
+
+            public HistoricalAction(Action undo, Action redo, long time, string description)
             {
                 this.undo = undo;
                 this.redo = redo;
                 this.time = time;
+                this.description = description;
             }
         }
         private static Dictionary<int, Stack<HistoricalAction>> undoQueue = new Dictionary<int,Stack<HistoricalAction>>();
         private static Dictionary<int, Stack<HistoricalAction>> redoQueue = new Dictionary<int,Stack<HistoricalAction>>();
         private static int currentSlide;
+        private static UndoHistoryVisualiser visualiser; 
         static UndoHistory()
         {
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(Undo, CanUndo));
@@ -31,17 +35,22 @@ namespace SandRibbon.Utils
                 {
                     currentSlide = i;
                     RaiseQueryHistoryChanged();
+                    visualiser.ClearViews();
                 }
             ));
+
+            visualiser = new UndoHistoryVisualiser();
         }
-        public static void Queue(Action undo, Action redo)
+        public static void Queue(Action undo, Action redo, String description)
         {
             foreach(var queue in new[]{undoQueue, redoQueue})
                 if(!queue.ContainsKey(currentSlide)) 
                     queue.Add(currentSlide, new Stack<HistoricalAction>());
             
-            var newAction =(new HistoricalAction(undo,redo, DateTime.Now.Ticks)); 
+            var newAction = new HistoricalAction(undo,redo, DateTime.Now.Ticks, description); 
             undoQueue[currentSlide].Push(newAction);
+            visualiser.UpdateUndoView(undoQueue[currentSlide]);
+
             RaiseQueryHistoryChanged();
         }
         private static void RaiseQueryHistoryChanged()
@@ -58,8 +67,10 @@ namespace SandRibbon.Utils
             if (CanUndo(param))
             {
                 var head = undoQueue[currentSlide].Pop();
+                visualiser.UpdateUndoView(undoQueue[currentSlide]);
                 head.undo.Invoke();
                 redoQueue[currentSlide].Push(head);
+                visualiser.UpdateRedoView(redoQueue[currentSlide]);
                 RaiseQueryHistoryChanged();
             }
         }
@@ -72,10 +83,13 @@ namespace SandRibbon.Utils
             if (CanRedo(param))
             {
                 var head = redoQueue[currentSlide].Pop();
+                visualiser.UpdateRedoView(redoQueue[currentSlide]);
                 head.redo.Invoke();
                 undoQueue[currentSlide].Push(head);
+                visualiser.UpdateUndoView(undoQueue[currentSlide]);
                 RaiseQueryHistoryChanged();
             }
         }
+
     }
 }
