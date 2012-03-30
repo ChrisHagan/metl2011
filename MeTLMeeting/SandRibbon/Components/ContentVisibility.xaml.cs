@@ -30,6 +30,7 @@ namespace SandRibbon.Components
 
 #if TOGGLE_CONTENT
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>((_unused) => { UpdateConversationDetails(); }));
+            Commands.UpdateContentVisibility.RegisterCommandToDispatcher(new DelegateCommand<ContentVisibilityEnum>(UpdateContentVisibility));
 #else
             contentToggleButtons.Visibility = Visibility.Collapsed;
 #endif
@@ -56,6 +57,37 @@ namespace SandRibbon.Components
         private void UpdateConversationDetails()
         {
             IsConversationOwner = Globals.isAuthor;
+        }
+
+        private void UpdateContentVisibility(ContentVisibilityEnum contentVisibility)
+        {
+            RemoveEventHandlers();
+
+            // TODO: update the ui to match the contentVisibility arg
+
+            AddEventHandlers();
+        }
+
+        private void RemoveEventHandlers()
+        {
+            ownerContent.Checked -= contentVisibilityChange; 
+            theirContent.Checked -= contentVisibilityChange;
+            myContent.Checked -= contentVisibilityChange;
+
+            ownerContent.Unchecked -= contentVisibilityChange; 
+            theirContent.Unchecked -= contentVisibilityChange;
+            myContent.Unchecked -= contentVisibilityChange;
+        }
+
+        private void AddEventHandlers()
+        {
+            ownerContent.Checked += contentVisibilityChange; 
+            theirContent.Checked += contentVisibilityChange;
+            myContent.Checked += contentVisibilityChange;
+
+            ownerContent.Unchecked += contentVisibilityChange; 
+            theirContent.Unchecked += contentVisibilityChange;
+            myContent.Unchecked += contentVisibilityChange;
         }
 
         public bool IsConversationOwner
