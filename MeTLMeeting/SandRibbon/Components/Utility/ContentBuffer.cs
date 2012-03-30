@@ -138,11 +138,15 @@ namespace SandRibbon.Components.Utility
 
         private void AddElement(UIElement element)
         {
+            if (uiCollection.Contains(element))
+                return;
             uiCollection.Add(element);
         }
 
         private void AddDeltaElement(UIElement element)
         {
+            if (uiDeltaCollection.Contains(element))
+                return;
             uiDeltaCollection.Add(element);
         }
 

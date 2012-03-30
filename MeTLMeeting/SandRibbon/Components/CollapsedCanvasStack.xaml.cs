@@ -818,7 +818,9 @@ namespace SandRibbon.Components
             redo();
             // disable adding the state change to the undo history for now
             contentBuffer.LastContentVisibility = contentVisibility;
-            UndoHistory.Queue(undo, redo, "Changed content visibility");
+
+            if (me == Globals.PROJECTOR) return;
+            UndoHistory.Queue(undo, redo, String.Format("Changed content visibility [{0}]", contentVisibility.ToString()));
 #endif
         }
 
@@ -1584,11 +1586,12 @@ namespace SandRibbon.Components
                 Action undo = () =>
                                   {
                                       ClearAdorners();
-                                      if (Work.ImageChildren().Any(i => ((Image)i).tag().id == myImage.tag().id))
+                                      contentBuffer.RemoveElement(myImage, (img) => Work.Children.Remove(myImage));
+                                      /*if (Work.ImageChildren().Any(i => ((Image)i).tag().id == myImage.tag().id))
                                       {
                                           var imageToRemove = Work.ImageChildren().First(i => ((Image) (i)).tag().id == myImage.tag().id);
                                           Work.Children.Remove(imageToRemove);
-                                      }
+                                      }*/
                                       dirtyThisElement(myImage);
                                   };
                 Action redo = () =>
@@ -1596,15 +1599,18 @@ namespace SandRibbon.Components
                     ClearAdorners();
                     InkCanvas.SetLeft(myImage, pos.X);
                     InkCanvas.SetTop(myImage, pos.Y);
-                    if (!Work.Children.Contains(myImage))
-                        Work.Children.Add(myImage);
+                    contentBuffer.AddElement(myImage, (img) => 
+                    {
+                        if (!Work.Children.Contains(img))
+                            Work.Children.Add(img);
+                    });
                     sendThisElement(myImage);
 
                     Work.Select(new[] { myImage });
                     AddAdorners();
                 };
+                redo();
                 UndoHistory.Queue(undo, redo, "Dropped Image");
-                Work.Children.Add(image);
             });
         }
         public static System.Windows.Controls.Image createImageFromUri(Uri uri, bool useDefaultMargin)
