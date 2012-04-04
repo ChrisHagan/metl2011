@@ -799,6 +799,8 @@ namespace SandRibbon.Components
 
             Action<ContentVisibilityEnum> toggleVisibility = (visibility) =>
             {
+                Commands.UpdateContentVisibility.Execute(visibility);
+
                 Work.Strokes.Clear();
                 Work.Strokes.Add(contentBuffer.FilteredStrokes(visibility));
                 Work.Children.Clear();
@@ -816,7 +818,6 @@ namespace SandRibbon.Components
             };
 
             redo();
-            // disable adding the state change to the undo history for now
             contentBuffer.LastContentVisibility = contentVisibility;
 
             if (me == Globals.PROJECTOR) return;
