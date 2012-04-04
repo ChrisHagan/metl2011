@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Composite.Presentation.Commands;
+using SandRibbon.Components;
 
 namespace SandRibbon.Utils
 {
@@ -41,8 +42,17 @@ namespace SandRibbon.Utils
 
             visualiser = new UndoHistoryVisualiser();
         }
-        public static void Queue(Action undo, Action redo, String description)
+        public static void Queue(Action undo, Action redo, String description, bool changeContentVisibility = false)
         {
+#if TOGGLE_CONTENT
+            if (!changeContentVisibility)
+            {
+                var setMineVisible = (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() | ContentVisibilityEnum.MineVisible;
+                // TODO: Change this to a different command that doesn't add the visibility state to the undo queue
+                Commands.SetContentVisibility.Execute(setMineVisible);
+            }
+#endif
+
             foreach(var queue in new[]{undoQueue, redoQueue})
                 if(!queue.ContainsKey(currentSlide)) 
                     queue.Add(currentSlide, new Stack<HistoricalAction>());

@@ -821,7 +821,7 @@ namespace SandRibbon.Components
             contentBuffer.LastContentVisibility = contentVisibility;
 
             if (me == Globals.PROJECTOR) return;
-            UndoHistory.Queue(undo, redo, String.Format("Changed content visibility [{0}]", contentVisibility.ToString()));
+            UndoHistory.Queue(undo, redo, String.Format("Changed content visibility [{0}]", contentVisibility.ToString()), true);
 #endif
         }
 
