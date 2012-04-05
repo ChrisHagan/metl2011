@@ -11,10 +11,10 @@ SHIFT & SHIFT
 
 IF "%revision%"=="" GOTO ERROR
 IF "%build%"=="prod" (
-	SET buildconfig="Release"
+	SET buildconfig=Release
 )
 IF "%build%"=="staging" (
-	SET buildconfig="Debug"
+	SET buildconfig=Debug
 )
 IF "%buildconfig%"=="" GOTO ERROR
 
