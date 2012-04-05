@@ -43,8 +43,12 @@ IF NOT "%1"=="" (
 	GOTO LOOP
 )
 
+echo buildtargets=%buildtargets% skipupdate=%skipupdate% skippull=%skippull% branchname=%branchname%
+
 echo.
 echo Building Configuration=%buildconfig% with ApplicationRevision=%revision%.
+
+exit
 
 IF DEFINED %skippull% GOTO UPDATE
 
@@ -66,7 +70,7 @@ IF %errorlevel% NEQ 0 GOTO :EOF
 :BRANCH
 echo.
 echo Changing to branch %branchname%
-hg branch %branchname%
+hg update %branchname%
 
 IF %errorlevel% NEQ 0 GOTO :EOF
 
