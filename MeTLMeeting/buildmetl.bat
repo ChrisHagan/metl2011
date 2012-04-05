@@ -5,6 +5,7 @@ echo **********************************
 
 SET build=%1
 SET revision=%2
+SET branchname=MeTLOverLib
 SHIFT & SHIFT
 
 IF %revision%=="" GOTO ERROR
@@ -33,6 +34,10 @@ IF NOT "%1"=="" (
 		SET skippull=1
 		REM SHIFT
 	)
+	IF "%1"=="-branch" (
+		SET branchname=%2
+		SHIFT
+	)
 	SHIFT
 	GOTO LOOP
 )
@@ -47,12 +52,22 @@ echo.
 echo Grabbing latest from source control
 hg pull
 
-IF DEFINED %skipupdate% GOTO BUILD
+IF %errorlevel% NEQ 0 GOTO :EOF
 
 :UPDATE
+IF DEFINED %skipupdate% GOTO BRANCH
 echo.
 echo Updating to last changeset 
 hg update -C
+
+IF %errorlevel% NEQ 0 GOTO :EOF
+
+:BRANCH
+echo.
+echo Changing to branch %branchname%
+hg branch %branchname%
+
+IF %errorlevel% NEQ 0 GOTO :EOF
 
 :BUILD
 echo Building...
@@ -71,10 +86,16 @@ GOTO :EOF
 :ERROR
 echo BuildScript Help v0.3b
 echo.
-echo %0 staging|prod revision [-skippublish] [-skipupdate] [-skippull]
+echo %0 staging|prod revision [-branch <branchname>] [-skippublish] [-skipupdate] [-skippull]
 echo.
-echo The following example will build a staging version with the revision number 289: 
+echo Default branch is MeTLOverLib.
+echo.
+echo The following example will build a staging version with the revision 
+echo number 289 using the default branch: 
+echo.
 echo %0 staging 289
+echo.
+echo -branch			Update to the specified branch name.
 echo.
 echo -skippublish		Clean and build the target only.
 echo.
