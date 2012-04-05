@@ -9,14 +9,14 @@ SET branchname=MeTLOverLib
 set buildconfig=""
 SHIFT & SHIFT
 
-IF "%rev%"=="" GOTO ERROR
+IF "%rev%"=="" GOTO INVALIDPARAMS
 IF "%build%"=="prod" (
 	SET buildconfig=Release
 )
 IF "%build%"=="staging" (
 	SET buildconfig=Debug
 )
-IF "%buildconfig%"=="" GOTO ERROR
+IF "%buildconfig%"=="" GOTO INVALIDPARAMS
 
 REM Default option is to publish
 SET buildtargets=Clean;Build;Publish
@@ -53,7 +53,7 @@ echo.
 echo Grabbing latest from source control
 hg pull
 
-IF %errorlevel% NEQ 0 GOTO :EOF
+IF %errorlevel% NEQ 0 GOTO ERROR
 
 :UPDATE
 IF DEFINED skipupdate GOTO BRANCH
@@ -61,14 +61,14 @@ echo.
 echo Updating to last changeset 
 hg update -C
 
-IF %errorlevel% NEQ 0 GOTO :EOF
+IF %errorlevel% NEQ 0 GOTO ERROR
 
 :BRANCH
 echo.
 echo Changing to branch %branchname%
 hg update %branchname%
 
-IF %errorlevel% NEQ 0 GOTO :EOF
+IF %errorlevel% NEQ 0 GOTO ERROR
 
 :BUILD
 echo Building...
@@ -76,15 +76,15 @@ echo.
 
 CALL "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
 
-echo msbuild.exe MeTL.sln /l:FileLogger,Microsoft.Build.Engine;logfile=MeTLBuildLog.log /p:Configuration=%buildconfig% /p:Platform="Any CPU" /p:ApplicationRevision=%rev% /t:%buildtargets%
-GOTO SUCCESS
+msbuild.exe MeTL.sln /l:FileLogger,Microsoft.Build.Engine;logfile=MeTLBuildLog.log /p:Configuration=%buildconfig% /p:Platform="Any CPU" /p:ApplicationRevision=%rev% /t:%buildtargets%
+IF %errorlevel% NEQ 0 GOTO ERROR
 
 :SUCCESS
 echo.
 echo Done.
 GOTO :EOF
 
-:ERROR
+:INVALIDPARAMS
 echo BuildScript Help v0.3b
 echo.
 echo %0 staging OR prod rev [-branch name] [-skippublish] [-skipupdate] [-skippull]
@@ -105,3 +105,7 @@ echo.
 echo -skippull		Do not update from source control.
 echo.
 echo.
+GOTO :EOF
+
+:ERROR
+echo There was an error with the build.
