@@ -8,11 +8,11 @@ SET revision=%2
 SET branchname=MeTLOverLib
 SHIFT & SHIFT
 
-IF %revision%=="" GOTO ERROR
-IF %build%=="prod" (
+IF "%revision%"=="" GOTO ERROR
+IF "%build%"=="prod" (
 	SET buildconfig="Release"
 )
-IF %build%=="staging" (
+IF "%build%"=="staging" (
 	SET buildconfig="Debug"
 )
 IF NOT DEFINED %buildconfig% GOTO ERROR
@@ -86,7 +86,7 @@ GOTO :EOF
 :ERROR
 echo BuildScript Help v0.3b
 echo.
-echo %0 staging|prod revision [-branch <branchname>] [-skippublish] [-skipupdate] [-skippull]
+echo %0 staging OR prod rev [-branch name] [-skippublish] [-skipupdate] [-skippull]
 echo.
 echo Default branch is MeTLOverLib.
 echo.
@@ -101,6 +101,6 @@ echo -skippublish		Clean and build the target only.
 echo.
 echo -skipupdate		Build using the working directory.
 echo.
-echo -skippull			Do not update from source control.
+echo -skippull          Do not update from source control.
 echo.
 echo.
