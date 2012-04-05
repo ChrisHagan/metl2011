@@ -996,7 +996,7 @@ namespace SandRibbon.Components
             Action redo = () => Dispatcher.adopt(delegate
                                                      {
                                                          var mySelectedElements = selectedElements.Where(e => e is MeTLTextBox).Select(t => ((MeTLTextBox)t).clone());
-                                                         foreach (MeTLTextBox textBox in mySelectedElements.Where(i => i.tag(). privacy != newPrivacy))
+                                                         foreach (MeTLTextBox textBox in mySelectedElements.Where(i => i.tag().privacy != newPrivacy))
                                                          {
                                                              var oldTag = textBox.tag();
                                                              oldTag.privacy = newPrivacy;
