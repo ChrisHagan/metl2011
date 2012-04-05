@@ -43,8 +43,6 @@ IF NOT "%1"=="" (
 	GOTO LOOP
 )
 
-echo buildtargets=%buildtargets% skipupdate=%skipupdate% skippull=%skippull% branchname=%branchname%
-
 echo.
 echo Building Configuration=%buildconfig% with ApplicationRevision=%rev%.
 
