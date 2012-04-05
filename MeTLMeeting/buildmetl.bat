@@ -48,8 +48,6 @@ echo buildtargets=%buildtargets% skipupdate=%skipupdate% skippull=%skippull% bra
 echo.
 echo Building Configuration=%buildconfig% with ApplicationRevision=%revision%.
 
-GOTO :EOF
-
 IF DEFINED %skippull% GOTO UPDATE
 
 :PULL
