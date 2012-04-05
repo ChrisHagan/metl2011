@@ -1,4 +1,4 @@
-@echo off
+rem @echo off
 echo **********************************
 echo * MeTL BuildScript
 echo **********************************
@@ -6,6 +6,7 @@ echo **********************************
 SET build=%1
 SET revision=%2
 SET branchname=MeTLOverLib
+set buildconfig=""
 SHIFT & SHIFT
 
 IF "%revision%"=="" GOTO ERROR
@@ -15,7 +16,7 @@ IF "%build%"=="prod" (
 IF "%build%"=="staging" (
 	SET buildconfig="Debug"
 )
-IF NOT DEFINED %buildconfig% GOTO ERROR
+IF "%buildconfig%"=="" GOTO ERROR
 
 REM Default option is to publish
 SET buildtargets=Clean;Build;Publish
