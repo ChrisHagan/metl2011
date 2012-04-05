@@ -48,7 +48,7 @@ echo buildtargets=%buildtargets% skipupdate=%skipupdate% skippull=%skippull% bra
 echo.
 echo Building Configuration=%buildconfig% with ApplicationRevision=%revision%.
 
-IF DEFINED %skippull% GOTO UPDATE
+IF DEFINED skippull GOTO UPDATE
 
 :PULL
 echo.
@@ -58,7 +58,7 @@ hg pull
 IF %errorlevel% NEQ 0 GOTO :EOF
 
 :UPDATE
-IF DEFINED %skipupdate% GOTO BRANCH
+IF DEFINED skipupdate GOTO BRANCH
 echo.
 echo Updating to last changeset 
 hg update -C
