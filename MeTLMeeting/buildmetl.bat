@@ -106,6 +106,6 @@ echo -skippublish		Clean and build the target only.
 echo.
 echo -skipupdate		Build using the working directory.
 echo.
-echo -skippull          Do not update from source control.
+echo -skippull			Do not update from source control.
 echo.
 echo.
