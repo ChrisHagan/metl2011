@@ -4,12 +4,12 @@ echo * MeTL BuildScript
 echo **********************************
 
 SET build=%1
-SET revision=%2
+SET rev=%2
 SET branchname=MeTLOverLib
 set buildconfig=""
 SHIFT & SHIFT
 
-IF "%revision%"=="" GOTO ERROR
+IF "%rev%"=="" GOTO ERROR
 IF "%build%"=="prod" (
 	SET buildconfig=Release
 )
@@ -46,7 +46,7 @@ IF NOT "%1"=="" (
 echo buildtargets=%buildtargets% skipupdate=%skipupdate% skippull=%skippull% branchname=%branchname%
 
 echo.
-echo Building Configuration=%buildconfig% with ApplicationRevision=%revision%.
+echo Building Configuration=%buildconfig% with ApplicationRevision=%rev%.
 
 IF DEFINED skippull GOTO UPDATE
 
@@ -78,7 +78,7 @@ echo.
 
 CALL "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
 
-echo msbuild.exe MeTL.sln /l:FileLogger,Microsoft.Build.Engine;logfile=MeTLBuildLog.log /p:Configuration=%buildconfig% /p:Platform="Any CPU" /p:ApplicationRevision=%1 /t:%buildtargets%
+echo msbuild.exe MeTL.sln /l:FileLogger,Microsoft.Build.Engine;logfile=MeTLBuildLog.log /p:Configuration=%buildconfig% /p:Platform="Any CPU" /p:ApplicationRevision=%rev% /t:%buildtargets%
 GOTO SUCCESS
 
 :SUCCESS
