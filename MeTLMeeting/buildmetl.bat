@@ -2,6 +2,7 @@
 
 SET build=%1
 SET rev=%2
+REM Defaults
 SET branchname=MeTLOverLib
 set buildconfig=""
 SHIFT & SHIFT
