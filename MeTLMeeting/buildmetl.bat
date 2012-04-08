@@ -1,7 +1,4 @@
 @echo off
-echo **********************************
-echo * MeTL BuildScript
-echo **********************************
 
 SET build=%1
 SET rev=%2
