@@ -40,6 +40,7 @@ namespace SandRibbon.Components
 #if TOGGLE_CONTENT
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>((_unused) => { UpdateConversationDetails(); }));
             Commands.UpdateContentVisibility.RegisterCommandToDispatcher(new DelegateCommand<ContentVisibilityEnum>(UpdateContentVisibility));
+            Commands.SetContentVisibility.DefaultValue = ContentVisibilityEnum.AllVisible;
 #else
             contentToggleButtons.Visibility = Visibility.Collapsed;
 #endif
