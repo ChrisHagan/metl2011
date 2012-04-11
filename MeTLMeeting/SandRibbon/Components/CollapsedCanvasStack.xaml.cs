@@ -305,7 +305,6 @@ namespace SandRibbon.Components
                     }
                 };
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Delete selected images");
-         
         }
         private UndoHistory.HistoricalAction deleteSelectedInk(StrokeCollection selectedStrokes)
         {
@@ -819,6 +818,7 @@ namespace SandRibbon.Components
             contentBuffer.LastContentVisibility = contentVisibility;
 
             if (me == Globals.PROJECTOR) return;
+
             UndoHistory.Queue(undo, redo, String.Format("Changed content visibility [{0}]", contentVisibility.ToString()), true);
 #endif
         }
@@ -1254,7 +1254,9 @@ namespace SandRibbon.Components
             }
 
             foreach (var removeImage in imagesToRemove)
-                Work.Children.Remove(removeImage);
+            {
+                contentBuffer.RemoveElement(removeImage, (img) => Work.Children.Remove(removeImage));
+            }
         }
 
         private void ensureAllImagesHaveCorrectPrivacy()
