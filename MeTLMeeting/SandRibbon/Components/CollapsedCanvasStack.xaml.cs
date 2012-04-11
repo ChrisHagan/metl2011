@@ -459,8 +459,9 @@ namespace SandRibbon.Components
             contentBuffer.ClearDeltaStrokes(() => strokesAtTheStart.Clear());
             contentBuffer.AddDeltaStrokes(Work.GetSelectedStrokes(), (st) => strokesAtTheStart.AddRange(st.Select(s => s.Clone())));
 
-            imagesAtStartOfTheMove.Clear();
-            imagesAtStartOfTheMove = GetSelectedClonedImages();
+            contentBuffer.ClearDeltaImages(() => imagesAtStartOfTheMove.Clear());
+            contentBuffer.AddDeltaImages(GetSelectedClonedImages(), (img) => imagesAtStartOfTheMove.AddRange(img));
+
             _boxesAtTheStart.Clear();
             _boxesAtTheStart = Work.GetSelectedElements().Where(b=> b is MeTLTextBox).Select(tb => ((MeTLTextBox)tb).clone()).ToList();
 
@@ -555,7 +556,7 @@ namespace SandRibbon.Components
                            contentBuffer.AddElement(element, (image) => Work.Children.Add(image));
                         }
                        sendThisElement(element);
-                  }
+                    }
                 };           
             return new UndoHistory.HistoricalAction(undo, redo, 0, "Image selection moved or resized");
         }
