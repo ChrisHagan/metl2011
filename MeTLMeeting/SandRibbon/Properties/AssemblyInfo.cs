@@ -5,11 +5,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MeTL")]
-[assembly: AssemblyDescription("MeTL")]
+[assembly: AssemblyTitle("MeTL Staging")]
+[assembly: AssemblyDescription("MeTL Staging")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MeTL")]
+[assembly: AssemblyProduct("MeTL Staging")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

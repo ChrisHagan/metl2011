@@ -47,7 +47,7 @@ namespace SandRibbon.Utils
 #if TOGGLE_CONTENT
             if (!changeContentVisibility)
             {
-                var setMineVisible = (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() | ContentVisibilityEnum.MineVisible;
+                var setMineVisible = Commands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() : ContentVisibilityEnum.NoneVisible | ContentVisibilityEnum.MineVisible;
                 // TODO: Change this to a different command that doesn't add the visibility state to the undo queue
                 Commands.SetContentVisibility.Execute(setMineVisible);
             }

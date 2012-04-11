@@ -46,11 +46,11 @@
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <PublisherName>Monash University eEducation Centre</PublisherName>
-    <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationRevision>228</ApplicationRevision>
+    <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
     <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

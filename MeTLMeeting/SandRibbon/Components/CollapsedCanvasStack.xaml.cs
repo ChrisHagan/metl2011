@@ -325,11 +325,9 @@ namespace SandRibbon.Components
             var selectedElements = elements.Where(t => t is MeTLTextBox && ((MeTLTextBox)t).tag().author == Globals.me).Select(b => ((MeTLTextBox)b).clone()).ToList();
             Action undo = () =>
                               {
-                                  var selection = new List<UIElement>();
                                   foreach (var box in selectedElements)
                                   {
                                       myTextBox = box;
-                                      selection.Add(box);
                                       if(!alreadyHaveThisTextBox(box))
                                           AddTextBoxToCanvas(box);
                                       box.PreviewKeyDown += box_PreviewTextInput;
@@ -354,7 +352,6 @@ namespace SandRibbon.Components
         {
             Panel.SetZIndex(box, 3);
             AddTextboxToMyCanvas(box);
-            
         }
 
         private void deleteSelectedElements(object _sender, ExecutedRoutedEventArgs _handler)
@@ -2033,15 +2030,23 @@ namespace SandRibbon.Components
         }
         public void RemoveTextboxWithTag(string tag)
         {
-            for (var i = 0; i < Work.Children.Count; i++)
+            var toRemove = new List<TextBox>();
+            foreach (var textbox in Work.Children.OfType<TextBox>().Where(tb => tb.tag().id.ToString() == tag))
             {
-                if (Work.Children[i] is TextBox && ((TextBox)Work.Children[i]).tag().id.ToString() == tag)
-                    Work.Children.Remove(Work.Children[i]);
+                toRemove.Add(textbox);
             }
-           for (var i = 0; i < OtherWork.Children.Count; i++)
+            foreach (var textbox in toRemove)
             {
-                if (OtherWork.Children[i] is TextBox && ((TextBox)OtherWork.Children[i]).tag().id.ToString() == tag)
-                    OtherWork.Children.Remove(OtherWork.Children[i]);
+                contentBuffer.RemoveElement(textbox, (tb) => Work.Children.Remove(tb));
+            }
+            toRemove.Clear();
+            foreach (var textbox in OtherWork.Children.OfType<TextBox>().Where(tb => tb.tag().id.ToString() == tag))
+            {
+                toRemove.Add(textbox);
+            }
+            foreach (var textbox in toRemove)
+            {
+                contentBuffer.RemoveElement(textbox, (tb) => OtherWork.Children.Remove(tb));
             }
         }
         private static void requeryTextCommands()
@@ -2128,7 +2133,7 @@ namespace SandRibbon.Components
                         doomedChildren.Add((FrameworkElement)child);
             }
             foreach (var child in doomedChildren)
-                canvas.Children.Remove(child);
+                contentBuffer.RemoveElement(child, (tb) => canvas.Children.Remove(tb));
         }
         private void receiveDirtyText(TargettedDirtyElement element)
         {
