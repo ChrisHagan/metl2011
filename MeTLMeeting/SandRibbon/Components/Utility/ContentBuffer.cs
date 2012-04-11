@@ -382,7 +382,7 @@ namespace SandRibbon.Components.Utility
                 modifyVisibleContainer(filteredStroke);
             }
 #else
-            modifyVisibleContainer(strokes);
+            modifyVisibleContainer(stroke);
 #endif
         }
 
