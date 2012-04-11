@@ -1858,6 +1858,8 @@ namespace SandRibbon.Components
                                             }).FirstOrDefault());
                                           if (activeTextbox != null)
                                           {
+                                              activeTextbox.TextChanged -= SendNewText;
+                                              applyStylingTo(activeTextbox, currentInfo);
                                               Commands.TextboxFocused.ExecuteAsync(currentInfo);
                                               AddAdorners();
                                               sendTextWithoutHistory(activeTextbox, currentTextBox.tag().privacy);
