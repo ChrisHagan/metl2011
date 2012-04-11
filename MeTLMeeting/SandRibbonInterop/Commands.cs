@@ -178,6 +178,7 @@ namespace SandRibbon
         public static DefaultableCompositeCommand ReceiveDirtyStrokes = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetPrivacy = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand SetContentVisibility = new DefaultableCompositeCommand();
+        public static DefaultableCompositeCommand UpdateContentVisibility = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand ForcePageRefresh = new DefaultableCompositeCommand();
         public static DefaultableCompositeCommand OriginalView = new DefaultableCompositeCommand();
         public static RoutedCommand Flush = new RoutedCommand();

@@ -64,7 +64,7 @@ namespace MeTLLib.DataTypes
         
         public static SearchConversationDetails ReadXML(XElement doc)
         {
-            var cd = new SearchConversationDetails(doc.Element(TITLE_TAG).Value,doc.Element(AUTHOR_TAG).Value, ParseDate(doc, CREATED_TAG), Int32.Parse(doc.Element(RELEVANCE_TAG).Value),doc.Element(RESTRICTION_TAG).Value,doc.Element(JID_TAG).Value, doc.Element(LASTMODIFIED_TAG).Value);
+            var cd = new SearchConversationDetails(ConversationDetails.ReadXml(doc));
             return cd;
         }
 
@@ -263,8 +263,9 @@ namespace MeTLLib.DataTypes
             var Created = DateTimeFactory.Parse(doc.Element(CREATED_TAG).Value);
             var Tag = doc.Element(TAG_TAG).Value;
             DateTime LastAccessed = new DateTime();
-            if (doc.Element(LAST_ACCESSED_TAG) != null)
-                LastAccessed = DateTimeFactory.Parse(doc.Element(LAST_ACCESSED_TAG).Value);
+            /*if (doc.Element(LAST_ACCESSED_TAG) != null)
+                LastAccessed = DateTimeFactory.ParseFromTicks(doc.Element(LAST_ACCESSED_TAG).Value);
+             */
             var Subject = "";
             if (doc.Element(SUBJECT_TAG) != null)
                 Subject = doc.Element(SUBJECT_TAG).Value;
@@ -272,7 +273,7 @@ namespace MeTLLib.DataTypes
             var internalPermissions = Permissions.ReadXml(doc.Element(Permissions.PERMISSIONS_TAG));
             var Slides = doc.Descendants(SLIDE_TAG).Select(d => new Slide(
                 Int32.Parse(d.Element(ID_TAG).Value),
-                d.Element(AUTHOR_TAG).Value,
+                d.Element(AUTHOR_TAG) == null ? Author : d.Element(AUTHOR_TAG).Value,
                 d.Element(TYPE_TAG) == null ? Slide.TYPE.SLIDE : (Slide.TYPE)Enum.Parse(typeof(Slide.TYPE), d.Element(TYPE_TAG).Value),
                 Int32.Parse(d.Element(INDEX_TAG).Value),
                 d.Element(DEFAULT_WIDTH) != null ? float.Parse(d.Element(DEFAULT_WIDTH).Value) : 720,
@@ -281,7 +282,7 @@ namespace MeTLLib.DataTypes
             )).ToList();
             var blacklistElements = doc.Elements(BLACKLIST_TAG);
             var blacklist = new List<string>();
-            if(blacklistElements.Count() > 0)
+            if(blacklistElements != null && blacklistElements.Count() > 0)
                 blacklist = blacklistElements.Select(d => d.Value).ToList();
             return new ConversationDetails(Title, Jid, Author, Tag, Slides, internalPermissions, Subject, Created, LastAccessed, blacklist.ToList());
         }
@@ -393,7 +394,9 @@ namespace MeTLLib.DataTypes
         {
             var studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).Value);
             var studentCanOpenFriends = Boolean.Parse(doc.Element(CANFRIEND).Value);
-            var usersAreCompulsorilySynced = Boolean.Parse(doc.Element(ALLSYNC).Value);
+            var usersAreCompulsorilySynced = false;
+            if (doc.Element(ALLSYNC) != null)
+                usersAreCompulsorilySynced = Boolean.Parse(doc.Element(ALLSYNC).Value);
             var permission = new Permissions(null, studentCanOpenFriends, studentCanPublish, usersAreCompulsorilySynced);
             if (doc.Element(NAVIGATIONLOCKED) != null)
                 permission.NavigationLocked = Boolean.Parse(doc.Element(NAVIGATIONLOCKED).Value);
