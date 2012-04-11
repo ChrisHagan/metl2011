@@ -157,6 +157,7 @@ namespace SandRibbon.Components.Utility
             }
             else
             {
+                Debug.Fail("Unexpected type in the collection");
                 return uiCollection.Contains(element);
             }
         }
@@ -170,14 +171,14 @@ namespace SandRibbon.Components.Utility
 
         private void AddDeltaImage(UIElement element)
         {
-            if (imageDeltaCollection.Contains(element))
+            if (CollectionContainsElement(element))
                 return;
             imageDeltaCollection.Add(element);
         }
 
         private void AddDeltaText(UIElement element)
         {
-            if (textDeltaCollection.Contains(element))
+            if (CollectionContainsElement(element))
                 return;
             textDeltaCollection.Add(element);
         }
@@ -210,7 +211,21 @@ namespace SandRibbon.Components.Utility
         {
             try
             {
-                uiCollection.Remove(element);
+                // find by tag().id then remove the element found
+                var found = uiCollection.Find(elem =>
+                {
+                    if (elem is Image && element is Image)
+                    {
+                        return IdFromElementTag(elem) == IdFromElementTag(element); 
+                    }
+                    if (elem is TextBox && element is TextBox)
+                    {
+                        return IdFromElementTag(elem) == IdFromElementTag(element);
+                    }
+                    return false;
+                });
+
+                uiCollection.Remove(found);
             }
             catch (ArgumentException) { }
         }
@@ -542,9 +557,22 @@ namespace SandRibbon.Components.Utility
             if (element is Image)
                 return ((Image)element).tag().author;
 
-            if (element is MeTLTextBox)
-                return ((MeTLTextBox)element).tag().author;
+            if (element is TextBox)
+                return ((TextBox)element).tag().author;
 
+            Debug.Fail("Element should be either Image or TextBox");
+            return string.Empty;
+        }
+
+        private string IdFromElementTag(UIElement element)
+        {
+            if (element is Image)
+                return ((Image)element).tag().id;
+
+            if (element is TextBox)
+                return ((TextBox)element).tag().id;
+
+            Debug.Fail("Element should be either Image or TextBox");
             return string.Empty;
         }
 
