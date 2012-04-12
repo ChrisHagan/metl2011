@@ -462,7 +462,7 @@ namespace MeTLLib
             {
                 if (String.IsNullOrEmpty(conversation)) return;
                 if (conversation == wire.location.activeConversation)
-                wire.resetLocation();
+                    wire.resetLocation();
             };
             tryIfConnected(work);
         }

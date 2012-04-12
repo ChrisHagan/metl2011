@@ -2,6 +2,7 @@
 using SandRibbon.Properties;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
+using System;
 
 namespace SandRibbon.Chrome
 {
@@ -13,9 +14,6 @@ namespace SandRibbon.Chrome
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
-#if DEBUG
-            StatusLabel.Text = "You are operating against the staging server.";
-#endif
         }
         private void SetPrivacy(string _privacy)
         {
@@ -27,7 +25,8 @@ namespace SandRibbon.Chrome
         }
         private void UpdateConversationDetails(ConversationDetails details) 
         {
-            if (details.IsEmpty) return;
+            // commented out next line because we want to update the status bar if the details have changed in all cases
+            //if (details.IsEmpty) return;
             showDetails();
         }
         private void showDetails()
@@ -37,11 +36,15 @@ namespace SandRibbon.Chrome
                 Dispatcher.adopt(() =>
                 {
                     var details = Globals.conversationDetails;
-                    StatusLabel.Text = details.IsEmpty ? Strings.Global_ProductName : string.Format(
+                    var status = details.IsEmpty || String.IsNullOrEmpty(Globals.location.activeConversation) ? Strings.Global_ProductName : string.Format(
                             "{3} is working {0}ly in {1} style, in a conversation whose participants are {2}",
                             Globals.privacy,
                             MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
                             details.Subject, Globals.me);
+                    #if DEBUG
+                                status += String.Format(" | You are operating against the staging server ({0})", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me);
+                    #endif
+                    StatusLabel.Text = status;
                 });
             }
             catch(NotSetException)
