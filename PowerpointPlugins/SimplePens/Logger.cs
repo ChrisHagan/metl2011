@@ -10,10 +10,12 @@ using System.Xml.Serialization;
 using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Web;
 
 namespace PowerpointJabber
 {
-    public class CouchTraceListener : TraceListener
+public class CouchTraceListener : TraceListener
     {
         public override void Write(string message)
         {
@@ -56,19 +58,37 @@ namespace PowerpointJabber
                     + ", \"Slide\" : " + Slide +"}";
             }
         }
+        public NameValueCollection QueryString
+        {
+            get
+            {
+                var queryString = HttpUtility.ParseQueryString(string.Empty);
+
+                queryString["program"] = "simplepens";
+                queryString["version"] = Version;
+                queryString["content"] = Content;
+                queryString["timestamp"] = Convert.ToString(Timestamp);
+                queryString["user"] = User;
+                queryString["server"] = Server;
+                queryString["slide"] = Convert.ToString(Slide);
+
+                return queryString;
+            }
+        }
     }
     public class Logger
     {
         public static readonly string POST_LOG = "http://madam.adm.monash.edu.au:5984/simplepens_log";
+        static readonly Uri LoggingServer = new Uri("https://madam.adm.monash.edu.au:1188/log_message.yaws");
         private static WebClient client()
         {
             var client = new WebClient();
             client.Encoding = Encoding.UTF8;
-            client.Headers = new WebHeaderCollection();
-            client.Headers.Add("Content-Type: application/json");
+            //client.Headers = new WebHeaderCollection();
+            //client.Headers.Add("Content-Type: application/json");
             return client;
         }
-        private static Uri couchServer = new Uri(POST_LOG);
+        //private static Uri couchServer = new Uri(POST_LOG);
         private static string[] LogExceptions = new[] {
                 "powerpnt.exe Information: 0 :"};
         public static void StartLogger()
@@ -119,7 +139,9 @@ namespace PowerpointJabber
         {
             try
             {
-                client().UploadStringAsync(couchServer, message.JSON);
+                //client().UploadStringAsync(couchServer, message.JSON);
+                client().QueryString = message.QueryString;
+                client().DownloadStringAsync(LoggingServer);
             }
             catch (Exception)
             {
