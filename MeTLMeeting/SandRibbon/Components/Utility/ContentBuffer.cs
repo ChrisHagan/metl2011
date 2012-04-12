@@ -585,12 +585,13 @@ namespace SandRibbon.Components.Utility
         private List<Func<string, bool>> BuildComparer(ContentVisibilityEnum contentVisibility)
         {
             var comparer = new List<Func<string,bool>>();
+            var conversationAuthor = Globals.conversationDetails.Author;
 
             if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.OwnerVisible))
-                comparer.Add((elementAuthor) => elementAuthor == Globals.conversationDetails.Author);
+                comparer.Add((elementAuthor) => elementAuthor == conversationAuthor);
 
             if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible))
-                comparer.Add((elementAuthor) => elementAuthor != Globals.me);
+                comparer.Add((elementAuthor) => (elementAuthor != Globals.me && elementAuthor != conversationAuthor));
 
             if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MineVisible))
                 comparer.Add((elementAuthor) => elementAuthor == Globals.me);
