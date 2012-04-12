@@ -126,6 +126,8 @@ namespace SandRibbon.Components
 
         private void RegisterCommands()
         {
+            // *cries* ...
+            UnregisterCommands();
             if (conversationDetailsCommand == null)
             {
                 conversationDetailsCommand = new DelegateCommand<ConversationDetails>(UpdateAllConversations);
@@ -310,12 +312,14 @@ namespace SandRibbon.Components
         {
                if (details.IsEmpty) return;
                 
-               if (!details.isDeleted)
+               /*if (!details.isDeleted)
                    searchResultsObserver.Add(new SearchConversationDetails(details));
+                */
                if (!details.IsJidEqual(Globals.location.activeConversation) || details.isDeleted)
                {
                    currentConversation.Visibility = Visibility.Collapsed;
-                   Commands.BackstageModeChanged.ExecuteAsync("find");
+                   if (Commands.BackstageModeChanged.IsInitialised && (string)Commands.BackstageModeChanged.LastValue() != "mine")
+                       Commands.BackstageModeChanged.ExecuteAsync("find");
                }
                if (details.IsJidEqual(Globals.location.activeConversation) && (!shouldShowConversation(details) || details.isDeleted))
                {
