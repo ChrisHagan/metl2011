@@ -9,6 +9,7 @@ using SandRibbon.Quizzing;
 using SandRibbon.Providers;
 using MeTLLib.Providers.Connection;
 using ImageDrop = SandRibbon.Components.ImageDrop;
+using System.Collections.Generic;
 
 namespace SandRibbon.Tabs
 {
@@ -25,6 +26,7 @@ namespace SandRibbon.Tabs
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
             quizzes.ItemsSource = Globals.quiz.activeQuizzes;
+            //Globals.quiz.activeQuizzes.CollectionChanged += (sender, args) => { quizzes.R}
             SetupUI();
         }
         private void SetupUI()
@@ -140,6 +142,15 @@ namespace SandRibbon.Tabs
                     else
                         Globals.quiz.activeQuizzes.Insert(oldQuizIndex, quiz);
                 }
+                // force the UI to update the labels. this is horrible
+                var tempQuizzes = new List<QuizQuestion>();
+                tempQuizzes.AddRange(Globals.quiz.activeQuizzes);
+                Globals.quiz.activeQuizzes.Clear();
+                foreach (var reindexQuiz in tempQuizzes)
+                {
+                    Globals.quiz.activeQuizzes.Add(reindexQuiz);
+                }
+
                 quizzes.ScrollToEnd();
             });
         }
