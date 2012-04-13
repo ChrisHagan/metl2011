@@ -359,8 +359,6 @@ namespace SandRibbon.Components
         {
             if (Globals.conversationDetails.Jid != conversationJid.ToString()) return;
             IsNavigationLocked = calculateNavigationLocked();
-            Commands.RequerySuggested(Commands.MoveToNext);
-            Commands.RequerySuggested(Commands.MoveToPrevious);
             var details = Globals.conversationDetails;
             thumbnailList.Clear();
             foreach (var slide in details.Slides.OrderBy(s => s.index).Where(slide => slide.type == Slide.TYPE.SLIDE))
@@ -374,6 +372,9 @@ namespace SandRibbon.Components
             if (slides.SelectedIndex == -1)
                 slides.SelectedIndex = 0;
             slides.ScrollIntoView(slides.SelectedItem);
+
+            Commands.RequerySuggested(Commands.MoveToNext);
+            Commands.RequerySuggested(Commands.MoveToPrevious);
         }
         public void EditConversation(object _obj)
         {
