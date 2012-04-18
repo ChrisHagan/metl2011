@@ -310,23 +310,33 @@ namespace SandRibbon.Components
         }
         private void UpdateAllConversations(MeTLLib.DataTypes.ConversationDetails details)
         {
-               if (details.IsEmpty) return;
-                
-               /*if (!details.isDeleted)
-                   searchResultsObserver.Add(new SearchConversationDetails(details));
-                */
-               if (!details.IsJidEqual(Globals.location.activeConversation) || details.isDeleted)
+           if (details.IsEmpty) return;
+           // can I use the following test to determine if we're in a conversation?
+           if (String.IsNullOrEmpty(Globals.location.activeConversation))
+               return;
+           
+           /*if (!details.isDeleted)
+               searchResultsObserver.Add(new SearchConversationDetails(details));
+            */
+           //if (!details.IsJidEqual(Globals.location.activeConversation) || details.isDeleted)
+           // was the above line but this doesn't handle the case of bug #1492
+           // line below was copied from BackStageNav to handle its responsibilities, I believe for the same condition
+           if (details.IsJidEqual(Globals.location.activeConversation))
+           {
+               if (details.isDeleted || (!Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject) && !details.isDeleted))
                {
                    currentConversation.Visibility = Visibility.Collapsed;
+                   // really don't like the following line, but it stops the backstagemode changing if already switched to it
                    if (Commands.BackstageModeChanged.IsInitialised && (string)Commands.BackstageModeChanged.LastValue() != "mine")
-                       Commands.BackstageModeChanged.ExecuteAsync("find");
+                    Commands.BackstageModeChanged.ExecuteAsync("find");
                }
-               if (details.IsJidEqual(Globals.location.activeConversation) && (!shouldShowConversation(details) || details.isDeleted))
+               if (!shouldShowConversation(details) || details.isDeleted)
                {
                    Commands.RequerySuggested();
                    this.Visibility = Visibility.Visible;
                }
-               RefreshSortedConversationsList(); 
+           }
+           RefreshSortedConversationsList(); 
         }
         private static bool shouldShowConversation(ConversationDetails conversation)
         {
