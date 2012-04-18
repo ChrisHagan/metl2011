@@ -2262,13 +2262,11 @@ namespace SandRibbon.Components
             var images = new List<Image>();
             foreach (var imageSource in selectedImages)
             {
-                var tmpFile = "tmpImage.jpg";
+                var tmpFile = "tmpImage.png";
                 using (FileStream fileStream = new FileStream(tmpFile, FileMode.OpenOrCreate))
                 {
-                    var frame = BitmapFrame.Create(imageSource);
-                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-                    encoder.Frames.Add(frame);
-                    encoder.QualityLevel = 100;
+                    PngBitmapEncoder encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(imageSource));
                     encoder.Save(fileStream);
                 }
                 if (File.Exists(tmpFile))

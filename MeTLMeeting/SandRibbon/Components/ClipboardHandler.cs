@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
+using System.Windows.Controls;
 
 namespace SandRibbon.Components
 {
@@ -78,13 +79,11 @@ namespace SandRibbon.Components
                 var images = new List<BitmapSource>();
                 foreach(var bytes in _imagesAsBytes)
                 {
-                    var image = new BitmapImage();
                     var stream = new MemoryStream(bytes);
-                    image.BeginInit();
-                    image.StreamSource = stream;
-                    image.EndInit();
-                    image.Freeze();
-                    images.Add(image);
+                    PngBitmapDecoder decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+                    BitmapSource pngSource = decoder.Frames[0];
+
+                    images.Add(pngSource);
                 }
                 return images;
             }
@@ -94,8 +93,8 @@ namespace SandRibbon.Components
                 foreach (var image in value)
                 {
                     MemoryStream memStream = new MemoryStream();              
-                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create((BitmapSource)image));
+                    PngBitmapEncoder encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(image));
                     encoder.Save(memStream);
                     bytes.Add(memStream.GetBuffer());
                     
