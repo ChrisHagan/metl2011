@@ -260,8 +260,10 @@ namespace MeTLLib.DataTypes
         {
             var Title = doc.Element(TITLE_TAG).Value;
             var Author = doc.Element(AUTHOR_TAG).Value;
-            var Created = DateTimeFactory.Parse(doc.Element(CREATED_TAG).Value);
-            var Tag = doc.Element(TAG_TAG).Value;
+            var Created = DateTimeFactory.TryParse(doc.Element(CREATED_TAG).Value);
+            var Tag = "";
+            if (doc.Element(TAG_TAG) != null)
+                Tag = doc.Element(TAG_TAG).Value;
             DateTime LastAccessed = new DateTime();
             /*if (doc.Element(LAST_ACCESSED_TAG) != null)
                 LastAccessed = DateTimeFactory.ParseFromTicks(doc.Element(LAST_ACCESSED_TAG).Value);
@@ -270,7 +272,7 @@ namespace MeTLLib.DataTypes
             if (doc.Element(SUBJECT_TAG) != null)
                 Subject = doc.Element(SUBJECT_TAG).Value;
             var Jid = doc.Element(JID_TAG).Value;
-            var internalPermissions = Permissions.ReadXml(doc.Element(Permissions.PERMISSIONS_TAG));
+            var internalPermissions = doc.Element(Permissions.PERMISSIONS_TAG) != null ? Permissions.ReadXml(doc.Element(Permissions.PERMISSIONS_TAG)) : Permissions.Empty;
             var Slides = doc.Descendants(SLIDE_TAG).Select(d => new Slide(
                 Int32.Parse(d.Element(ID_TAG).Value),
                 d.Element(AUTHOR_TAG) == null ? Author : d.Element(AUTHOR_TAG).Value,
@@ -392,8 +394,8 @@ namespace MeTLLib.DataTypes
         private static string NAVIGATIONLOCKED = "navigationlocked";
         public static Permissions ReadXml(XElement doc)
         {
-            var studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).Value);
-            var studentCanOpenFriends = Boolean.Parse(doc.Element(CANFRIEND).Value);
+            var studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).ValueOrDefault("false"));
+            var studentCanOpenFriends = Boolean.Parse(doc.Element(CANFRIEND).ValueOrDefault("false"));
             var usersAreCompulsorilySynced = false;
             if (doc.Element(ALLSYNC) != null)
                 usersAreCompulsorilySynced = Boolean.Parse(doc.Element(ALLSYNC).Value);

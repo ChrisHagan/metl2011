@@ -19,6 +19,24 @@ namespace MeTLLib.Providers
             System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
             return System.DateTime.Parse(s);
         }
+
+        /// <summary>
+        /// Try to parse the s param as a DateTime except not throw an exception if the conversion failed.
+        /// </summary>
+        /// <param name="s">String containing a date and time to convert</param>
+        /// <returns>The successfully parsed s as a DateTime, otherwise DateTimeFactory.Now()</returns>
+        public static System.DateTime TryParse(string s)
+        {
+            System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
+            var parsedDateTime = new DateTime();
+            if (System.DateTime.TryParse(s, out parsedDateTime))
+            {
+                return parsedDateTime;
+            }
+
+            return Now();
+        }
+
         public static System.DateTime ParseFromTicks(string s)
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
