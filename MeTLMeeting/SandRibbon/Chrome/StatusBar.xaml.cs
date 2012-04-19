@@ -14,6 +14,11 @@ namespace SandRibbon.Chrome
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.JoinConversation.RegisterCommand(new DelegateCommand<string>(JoinConversation));
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>(UpdateConversationDetails));
+            Commands.SetIdentity.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => SetIdentity()));
+        }
+        private void SetIdentity()
+        {
+            showDetails();
         }
         private void SetPrivacy(string _privacy)
         {
@@ -41,9 +46,10 @@ namespace SandRibbon.Chrome
                             Globals.privacy,
                             MeTLLib.DataTypes.Permissions.InferredTypeOf(details.Permissions).Label,
                             details.Subject, Globals.me);
-                    #if DEBUG
-                                status += String.Format(" | You are operating against the staging server ({0})", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me);
-                    #endif
+#if DEBUG
+                    status += String.Format(" | You are operating against the {1}{2} server ({0})", String.IsNullOrEmpty(Globals.me) ? "Unknown" : Globals.me, 
+                        App.isExternal ? "external " : "", App.isStaging && !App.isExternal ? "staging" : "");
+#endif
                     StatusLabel.Text = status;
                 });
             }
