@@ -819,7 +819,7 @@ namespace SandRibbon.Components
 
             if (me == Globals.PROJECTOR) return;
 
-            UndoHistory.Queue(undo, redo, String.Format("Changed content visibility [{0}]", contentVisibility.ToString()), true);
+            UndoHistory.Queue(undo, redo, String.Format("Changed content visibility [{0}]", contentVisibility.ToString()));
 #endif
         }
 

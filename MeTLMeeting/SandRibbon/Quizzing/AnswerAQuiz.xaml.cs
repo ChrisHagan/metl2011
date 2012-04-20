@@ -9,6 +9,7 @@ using SandRibbon.Components;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Quizzing
 {
@@ -87,12 +88,22 @@ namespace SandRibbon.Quizzing
         }
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
+            var windowOwner = this; 
             var newQuiz = new QuizQuestion(question.id, question.created, question.title, question.author,
                                            question.question, question.options) {url = question.url};
             var editQuiz = new EditQuiz(newQuiz);
-            editQuiz.Owner = Window.GetWindow(this);
-            editQuiz.ShowDialog();
-            closeMe(null);
+            editQuiz.Owner = windowOwner;
+
+            bool? deleteQuiz = editQuiz.ShowDialog();
+            if (deleteQuiz ?? false)
+            {
+                if (MeTLMessage.Question("Really delete quiz?", windowOwner) == MessageBoxResult.Yes)
+                {
+                    newQuiz.SetDeleted(true);
+                    Commands.SendQuiz.Execute(newQuiz);
+                    closeMe(null);
+                }    
+            }
         }
     }
     public class TitleConverter : IValueConverter 

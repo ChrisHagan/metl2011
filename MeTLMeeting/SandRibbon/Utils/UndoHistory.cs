@@ -36,30 +36,21 @@ namespace SandRibbon.Utils
                 {
                     currentSlide = i;
                     RaiseQueryHistoryChanged();
-                    //visualiser.ClearViews();
+                    visualiser.ClearViews();
                 }
             ));
 
-            //visualiser = new UndoHistoryVisualiser();
+            visualiser = new UndoHistoryVisualiser();
         }
-        public static void Queue(Action undo, Action redo, String description, bool changeContentVisibility = false)
+        public static void Queue(Action undo, Action redo, String description)
         {
-#if TOGGLE_CONTENT
-            if (!changeContentVisibility)
-            {
-                var setMineVisible = (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() | ContentVisibilityEnum.MineVisible;
-                // TODO: Change this to a different command that doesn't add the visibility state to the undo queue
-                Commands.SetContentVisibility.Execute(setMineVisible);
-            }
-#endif
-
             foreach(var queue in new[]{undoQueue, redoQueue})
                 if(!queue.ContainsKey(currentSlide)) 
                     queue.Add(currentSlide, new Stack<HistoricalAction>());
             
             var newAction = new HistoricalAction(undo,redo, DateTime.Now.Ticks, description); 
             undoQueue[currentSlide].Push(newAction);
-            //visualiser.UpdateUndoView(undoQueue[currentSlide]);
+            visualiser.UpdateUndoView(undoQueue[currentSlide]);
 
             RaiseQueryHistoryChanged();
         }
@@ -77,10 +68,10 @@ namespace SandRibbon.Utils
             if (CanUndo(param))
             {
                 var head = undoQueue[currentSlide].Pop();
-                //visualiser.UpdateUndoView(undoQueue[currentSlide]);
+                visualiser.UpdateUndoView(undoQueue[currentSlide]);
                 head.undo.Invoke();
                 redoQueue[currentSlide].Push(head);
-                //visualiser.UpdateRedoView(redoQueue[currentSlide]);
+                visualiser.UpdateRedoView(redoQueue[currentSlide]);
                 RaiseQueryHistoryChanged();
             }
         }
@@ -93,10 +84,10 @@ namespace SandRibbon.Utils
             if (CanRedo(param))
             {
                 var head = redoQueue[currentSlide].Pop();
-                //visualiser.UpdateRedoView(redoQueue[currentSlide]);
+                visualiser.UpdateRedoView(redoQueue[currentSlide]);
                 head.redo.Invoke();
                 undoQueue[currentSlide].Push(head);
-                //visualiser.UpdateUndoView(undoQueue[currentSlide]);
+                visualiser.UpdateUndoView(undoQueue[currentSlide]);
                 RaiseQueryHistoryChanged();
             }
         }

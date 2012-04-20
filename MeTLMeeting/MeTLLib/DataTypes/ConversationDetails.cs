@@ -24,7 +24,7 @@ namespace MeTLLib.DataTypes
         private static readonly string RELEVANCE_TAG = "relevance";
         private static readonly string LASTMODIFIED_TAG = "modified";
 
-        public SearchConversationDetails(ConversationDetails conv) : base(conv.Title, conv.Jid, conv.Author, conv.Slides, conv.Permissions, conv.Subject)
+        public SearchConversationDetails(ConversationDetails conv) : base(conv)
         {
             Created = conv.Created;
         }
@@ -145,6 +145,19 @@ namespace MeTLLib.DataTypes
             : this(title, jid, author, slides, permissions, subject)
         {
             this.Tag = tag;
+        }
+        public ConversationDetails(ConversationDetails copyDetails)
+        {
+            this.Title = copyDetails.Title;
+            this.Author = copyDetails.Author;
+            this.Created = new DateTime(copyDetails.Created.Ticks);
+            this.LastAccessed = new DateTime(copyDetails.LastAccessed.Ticks);
+            this.Tag = copyDetails.Tag;
+            this.Subject = copyDetails.Subject;
+            this.Jid = copyDetails.Jid;
+            this.Permissions = new Permissions(copyDetails.Permissions);
+            this.Slides = new List<Slide>(copyDetails.Slides);
+            this.blacklist = new List<string>(copyDetails.blacklist);
         }
         public int NextAvailableSlideId()
         {
@@ -329,6 +342,15 @@ namespace MeTLLib.DataTypes
             usersAreCompulsorilySynced = newUsersAreCompulsorilySynced;
             conversationGroup = newConversationGroup;
         }
+        /* copy constructor */
+        public Permissions(Permissions copyPermissions)
+        {
+            this.Label = copyPermissions.Label;
+            this.studentCanOpenFriends = copyPermissions.studentCanOpenFriends;
+            this.NavigationLocked = copyPermissions.NavigationLocked;
+            this.usersAreCompulsorilySynced = copyPermissions.usersAreCompulsorilySynced;
+            this.conversationGroup = copyPermissions.conversationGroup;
+        }
         public static Permissions InferredTypeOf(Permissions permissions)
         {
             var typeOfPermissions = new[] { LECTURE_PERMISSIONS, LABORATORY_PERMISSIONS, TUTORIAL_PERMISSIONS, MEETING_PERMISSIONS }.Where(
@@ -485,7 +507,6 @@ namespace MeTLLib.DataTypes
         public int index{get;set;}
         public TYPE type;
         public bool exposed;
-
     }
     public class ApplicationLevelInformation
     {
