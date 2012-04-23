@@ -85,6 +85,7 @@ namespace MeTLLib
         void SendQuizAnswer(QuizAnswer qa);
         void SendQuizQuestion(QuizQuestion qq);
         void SendFile(TargettedFile tf);
+        void SendSyncMove(int slide);
         void UploadAndSendImage(MeTLLib.DataTypes.MeTLStanzas.LocalImageInformation lii);
         void UploadAndSendVideo(MeTLLib.DataTypes.MeTLStanzas.LocalVideoInformation videoInformation);
         void UploadAndSendFile(MeTLLib.DataTypes.MeTLStanzas.LocalFileInformation lfi);

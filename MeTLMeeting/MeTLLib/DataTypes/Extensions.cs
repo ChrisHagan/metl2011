@@ -104,8 +104,6 @@ namespace MeTLLib.DataTypes
     public static class TextExtensions
     {
         //Image and TextTags are identical, reusing imagetag
-        
-
         public static TextTag tag(this TextBox box )
         {
             var texttag = new TextTag();
