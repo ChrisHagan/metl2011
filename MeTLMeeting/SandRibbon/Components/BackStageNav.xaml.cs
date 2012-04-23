@@ -27,13 +27,21 @@ namespace SandRibbon.Components
         }
         private void UpdateConversationDetails(ConversationDetails details)
         {
-            if (details.IsEmpty) return;
-
-            if (details.isDeleted && details.IsJidEqual(Globals.location.activeConversation))
+            if (String.IsNullOrEmpty(Globals.location.activeConversation))
             {
                 current.Visibility = Visibility.Collapsed;
                 currentConversation.Visibility = Visibility.Collapsed;
                 separator2.Visibility = Visibility.Collapsed;
+            }
+            if (details.IsEmpty) return;
+
+            // if the conversation we're participating in has been deleted or we're no longer in the listed permission group 
+            if (details.isDeleted && details.IsJidEqual(Globals.location.activeConversation) || (!Globals.credentials.authorizedGroups.Select(s => s.groupKey).Contains(details.Subject) && !details.isDeleted))
+            {
+                current.Visibility = Visibility.Collapsed;
+                currentConversation.Visibility = Visibility.Collapsed;
+                separator2.Visibility = Visibility.Collapsed;
+                Commands.ShowConversationSearchBox.Execute("find");
             }
             //setMyConversationVisibility();
         }

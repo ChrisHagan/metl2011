@@ -17,7 +17,8 @@ namespace SandRibbon.Components.Utility
         private StrokeCollection strokeCollection;
 
         // used to create a snapshot for undo/redo
-        private List<UIElement> uiDeltaCollection;
+        private List<UIElement> imageDeltaCollection;
+        private List<UIElement> textDeltaCollection;
         private StrokeCollection strokeDeltaCollection;
         private List<StrokeChecksum> strokeChecksumCollection;
 
@@ -26,7 +27,8 @@ namespace SandRibbon.Components.Utility
             uiCollection = new List<UIElement>();
             strokeCollection = new StrokeCollection();
 
-            uiDeltaCollection = new List<UIElement>();
+            imageDeltaCollection = new List<UIElement>();
+            textDeltaCollection = new List<UIElement>();
             strokeDeltaCollection = new StrokeCollection();
             strokeChecksumCollection = new List<StrokeChecksum>();
         }
@@ -48,9 +50,14 @@ namespace SandRibbon.Components.Utility
             strokeDeltaCollection.Clear();
         }
 
-        private void ClearDeltaElements()
+        private void ClearDeltaImages()
         {
-            uiDeltaCollection.Clear(); 
+            imageDeltaCollection.Clear(); 
+        }
+
+        private void ClearDeltaText()
+        {
+            textDeltaCollection.Clear();
         }
 
         private void ClearStrokeChecksums()
@@ -136,18 +143,44 @@ namespace SandRibbon.Components.Utility
             catch (ArgumentException) { }
         }
 
+        private bool CollectionContainsElement(UIElement element)
+        {
+            if (element is Image)
+            {
+                var imageTag = (element as Image).tag().id;
+                return uiCollection.OfType<Image>().Where(img => img.tag().id == imageTag).Count() > 0;
+            }
+            else if (element is TextBox)
+            {
+                var textTag = (element as TextBox).tag().id;
+                return uiCollection.OfType<TextBox>().Where(txt => txt.tag().id == textTag).Count() > 0;
+            }
+            else
+            {
+                Debug.Fail("Unexpected type in the collection");
+                return uiCollection.Contains(element);
+            }
+        }
+
         private void AddElement(UIElement element)
         {
-            if (uiCollection.Contains(element))
+            if (CollectionContainsElement(element))
                 return;
             uiCollection.Add(element);
         }
 
-        private void AddDeltaElement(UIElement element)
+        private void AddDeltaImage(UIElement element)
         {
-            if (uiDeltaCollection.Contains(element))
+            if (CollectionContainsElement(element))
                 return;
-            uiDeltaCollection.Add(element);
+            imageDeltaCollection.Add(element);
+        }
+
+        private void AddDeltaText(UIElement element)
+        {
+            if (CollectionContainsElement(element))
+                return;
+            textDeltaCollection.Add(element);
         }
 
         private void AddElements(UIElementCollection elements)
@@ -158,11 +191,19 @@ namespace SandRibbon.Components.Utility
             }
         }
 
-        private void AddDeltaElements(UIElementCollection elements)
+        private void AddDeltaImage(List<UIElement> elements)
         {
             foreach (UIElement element in elements)
             {
-                uiDeltaCollection.Add(element);
+                imageDeltaCollection.Add(element);
+            }
+        }
+
+        private void AddDeltaText(List<UIElement> elements)
+        {
+            foreach (UIElement element in elements)
+            {
+                textDeltaCollection.Add(element);
             }
         }
 
@@ -170,20 +211,42 @@ namespace SandRibbon.Components.Utility
         {
             try
             {
-                uiCollection.Remove(element);
+                // find by tag().id then remove the element found
+                var found = uiCollection.Find(elem =>
+                {
+                    if (elem is Image && element is Image)
+                    {
+                        return IdFromElementTag(elem) == IdFromElementTag(element); 
+                    }
+                    if (elem is TextBox && element is TextBox)
+                    {
+                        return IdFromElementTag(elem) == IdFromElementTag(element);
+                    }
+                    return false;
+                });
+
+                uiCollection.Remove(found);
             }
             catch (ArgumentException) { }
         }
 
-        private void RemoveDeltaElement(UIElement element)
+        private void RemoveDeltaImage(UIElement element)
         {
             try
             {
-                uiDeltaCollection.Remove(element);
+                imageDeltaCollection.Remove(element);
             }
             catch (ArgumentException) { }
         }
 
+        private void RemoveDeltaText(UIElement element)
+        {
+            try
+            {
+                textDeltaCollection.Remove(element);
+            }
+            catch (ArgumentException) { }
+        }
         #endregion
 
         public ContentVisibilityEnum LastContentVisibility { get; set; }
@@ -270,6 +333,18 @@ namespace SandRibbon.Components.Utility
             modifyUndoContainer();
         }
 
+        public void ClearDeltaImages(Action modifyUndoContainer)
+        {
+            ClearDeltaImages();
+            modifyUndoContainer();
+        }
+
+        public void ClearDeltaText(Action modifyUndoContainer)
+        {
+            ClearDeltaText();
+            modifyUndoContainer();
+        }
+
         public void AddStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
         {
             AddStrokes(strokes);
@@ -307,7 +382,7 @@ namespace SandRibbon.Components.Utility
                 modifyVisibleContainer(filteredStroke);
             }
 #else
-            modifyVisibleContainer(strokes);
+            modifyVisibleContainer(stroke);
 #endif
         }
 
@@ -341,6 +416,16 @@ namespace SandRibbon.Components.Utility
             modifyUndoContainer(FilterStrokes(strokes, CurrentContentVisibility));
 #else
             modifyUndoContainer(strokes);
+#endif
+        }
+
+        public void AddDeltaImages(List<UIElement> images, Action<IEnumerable<UIElement>> modifyUndoContainer)
+        {
+            AddDeltaImage(images);
+#if TOGGLE_CONTENT
+            modifyUndoContainer(FilterElements(images, CurrentContentVisibility));
+#else
+            modifyUndoContainer(images);
 #endif
         }
 
@@ -472,9 +557,22 @@ namespace SandRibbon.Components.Utility
             if (element is Image)
                 return ((Image)element).tag().author;
 
-            if (element is MeTLTextBox)
-                return ((MeTLTextBox)element).tag().author;
+            if (element is TextBox)
+                return ((TextBox)element).tag().author;
 
+            Debug.Fail("Element should be either Image or TextBox");
+            return string.Empty;
+        }
+
+        private string IdFromElementTag(UIElement element)
+        {
+            if (element is Image)
+                return ((Image)element).tag().id;
+
+            if (element is TextBox)
+                return ((TextBox)element).tag().id;
+
+            Debug.Fail("Element should be either Image or TextBox");
             return string.Empty;
         }
 
@@ -487,12 +585,13 @@ namespace SandRibbon.Components.Utility
         private List<Func<string, bool>> BuildComparer(ContentVisibilityEnum contentVisibility)
         {
             var comparer = new List<Func<string,bool>>();
+            var conversationAuthor = Globals.conversationDetails.Author;
 
             if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.OwnerVisible))
-                comparer.Add((elementAuthor) => elementAuthor == Globals.conversationDetails.Author);
+                comparer.Add((elementAuthor) => elementAuthor == conversationAuthor);
 
             if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible))
-                comparer.Add((elementAuthor) => elementAuthor != Globals.me);
+                comparer.Add((elementAuthor) => (elementAuthor != Globals.me && elementAuthor != conversationAuthor));
 
             if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MineVisible))
                 comparer.Add((elementAuthor) => elementAuthor == Globals.me);

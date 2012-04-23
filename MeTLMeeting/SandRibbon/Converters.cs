@@ -122,7 +122,8 @@ namespace SandRibbon
             var slides = string.Format("{0} page", details.Slides.Count);
             if(details.Slides.Count > 1)
                 slides = string.Format("{0}s", slides);
-            return string.Format("Created by {0} and restricted to {1}\n({3}) Created on: {2}", details.Author, details.Subject, details.Created, slides);
+            var restriction = details.Subject;
+            return string.Format("Created by {0} and restricted to {1}\n({3}) Created on: {2}", details.Author, restriction, details.Created, slides);
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

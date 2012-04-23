@@ -60,7 +60,11 @@ namespace MeTLLib.Providers
             string encryptedPassword = Crypto.encrypt(AuthcatePassword);
             string sXML = insecureGetString(new Uri(String.Format("https://{2}:1188/authentication.yaws?username={0}&password={1}", AuthcateName, encryptedPassword, server.host),UriKind.RelativeOrAbsolute));
             var doc = new XmlDocument();
-            if (String.IsNullOrEmpty(sXML)) return token;
+            if (String.IsNullOrEmpty(sXML))
+            {
+                Trace.TraceInformation("Authentication Error: Server returned no data");
+                return token;
+            }
             doc.LoadXml(sXML);
             if (doc.GetElementsByTagName("error").Count == 0 && doc.GetElementsByTagName("eligibleConversationGroups").Count > 0)
             {
@@ -79,6 +83,10 @@ namespace MeTLLib.Providers
             else
             {
                 token.authenticated = false;
+                if (doc.GetElementsByTagName("eligibleConversationGroups").Count == 0)
+                {
+                    Trace.TraceInformation("Authentication Error: No eligibleConversationGroups");
+                }
                 foreach (XmlElement error in doc.GetElementsByTagName("error"))
                 {
                     Trace.TraceInformation("Authentication XmlError node:" + error.InnerText);

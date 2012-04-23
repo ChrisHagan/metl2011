@@ -24,7 +24,7 @@ namespace MeTLLib.DataTypes
         private static readonly string RELEVANCE_TAG = "relevance";
         private static readonly string LASTMODIFIED_TAG = "modified";
 
-        public SearchConversationDetails(ConversationDetails conv) : base(conv.Title, conv.Jid, conv.Author, conv.Slides, conv.Permissions, conv.Subject)
+        public SearchConversationDetails(ConversationDetails conv) : base(conv)
         {
             Created = conv.Created;
         }
@@ -146,6 +146,19 @@ namespace MeTLLib.DataTypes
         {
             this.Tag = tag;
         }
+        public ConversationDetails(ConversationDetails copyDetails)
+        {
+            this.Title = copyDetails.Title;
+            this.Author = copyDetails.Author;
+            this.Created = new DateTime(copyDetails.Created.Ticks);
+            this.LastAccessed = new DateTime(copyDetails.LastAccessed.Ticks);
+            this.Tag = copyDetails.Tag;
+            this.Subject = copyDetails.Subject;
+            this.Jid = copyDetails.Jid;
+            this.Permissions = new Permissions(copyDetails.Permissions);
+            this.Slides = new List<Slide>(copyDetails.Slides);
+            this.blacklist = new List<string>(copyDetails.blacklist);
+        }
         public int NextAvailableSlideId()
         {
             return Slides.Select(s => s.id).Max() + 1;
@@ -260,8 +273,10 @@ namespace MeTLLib.DataTypes
         {
             var Title = doc.Element(TITLE_TAG).Value;
             var Author = doc.Element(AUTHOR_TAG).Value;
-            var Created = DateTimeFactory.Parse(doc.Element(CREATED_TAG).Value);
-            var Tag = doc.Element(TAG_TAG).Value;
+            var Created = DateTimeFactory.TryParse(doc.Element(CREATED_TAG).Value);
+            var Tag = "";
+            if (doc.Element(TAG_TAG) != null)
+                Tag = doc.Element(TAG_TAG).Value;
             DateTime LastAccessed = new DateTime();
             /*if (doc.Element(LAST_ACCESSED_TAG) != null)
                 LastAccessed = DateTimeFactory.ParseFromTicks(doc.Element(LAST_ACCESSED_TAG).Value);
@@ -270,7 +285,7 @@ namespace MeTLLib.DataTypes
             if (doc.Element(SUBJECT_TAG) != null)
                 Subject = doc.Element(SUBJECT_TAG).Value;
             var Jid = doc.Element(JID_TAG).Value;
-            var internalPermissions = Permissions.ReadXml(doc.Element(Permissions.PERMISSIONS_TAG));
+            var internalPermissions = doc.Element(Permissions.PERMISSIONS_TAG) != null ? Permissions.ReadXml(doc.Element(Permissions.PERMISSIONS_TAG)) : Permissions.Empty;
             var Slides = doc.Descendants(SLIDE_TAG).Select(d => new Slide(
                 Int32.Parse(d.Element(ID_TAG).Value),
                 d.Element(AUTHOR_TAG) == null ? Author : d.Element(AUTHOR_TAG).Value,
@@ -326,6 +341,15 @@ namespace MeTLLib.DataTypes
             studentCanPublish = newStudentsCanPublish;
             usersAreCompulsorilySynced = newUsersAreCompulsorilySynced;
             conversationGroup = newConversationGroup;
+        }
+        /* copy constructor */
+        public Permissions(Permissions copyPermissions)
+        {
+            this.Label = copyPermissions.Label;
+            this.studentCanOpenFriends = copyPermissions.studentCanOpenFriends;
+            this.NavigationLocked = copyPermissions.NavigationLocked;
+            this.usersAreCompulsorilySynced = copyPermissions.usersAreCompulsorilySynced;
+            this.conversationGroup = copyPermissions.conversationGroup;
         }
         public static Permissions InferredTypeOf(Permissions permissions)
         {
@@ -392,8 +416,8 @@ namespace MeTLLib.DataTypes
         private static string NAVIGATIONLOCKED = "navigationlocked";
         public static Permissions ReadXml(XElement doc)
         {
-            var studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).Value);
-            var studentCanOpenFriends = Boolean.Parse(doc.Element(CANFRIEND).Value);
+            var studentCanPublish = Boolean.Parse(doc.Element(CANSHOUT).ValueOrDefault("false"));
+            var studentCanOpenFriends = Boolean.Parse(doc.Element(CANFRIEND).ValueOrDefault("false"));
             var usersAreCompulsorilySynced = false;
             if (doc.Element(ALLSYNC) != null)
                 usersAreCompulsorilySynced = Boolean.Parse(doc.Element(ALLSYNC).Value);
@@ -483,7 +507,6 @@ namespace MeTLLib.DataTypes
         public int index{get;set;}
         public TYPE type;
         public bool exposed;
-
     }
     public class ApplicationLevelInformation
     {

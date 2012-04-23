@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Diagnostics;
 
 namespace SandRibbon.Components.Utility
 {
@@ -21,7 +22,11 @@ namespace SandRibbon.Components.Utility
         private static MessageBoxResult DisplayMessage(string message, MessageBoxImage image, MessageBoxButton button, Window owner)
         {
             var dialogOwner = owner != null ? owner : GetMainWindow(); 
-            return MessageBox.Show(dialogOwner, message, "MeTL", button, image);
+            var result = MessageBoxResult.None;
+
+            Application.Current.Dispatcher.adopt( () => { result = MessageBox.Show(dialogOwner, message, "MeTL", button, image); });
+
+            return result; 
         }
 
         public static MessageBoxResult Error(string message, Window owner = null)

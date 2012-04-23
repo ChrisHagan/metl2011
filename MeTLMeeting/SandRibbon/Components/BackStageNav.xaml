@@ -22,7 +22,7 @@
             <dict:RadioButton HorizontalAlignment="Left" Text="Current conversation" ToolTip="{DynamicResource SearchCurrentConversationsToolTip}" GroupName="options" Foreground="{StaticResource ResourceKey=foreground}" x:Name="currentConversation"  Checked="mode_Checked"/>
             
             <Rectangle Fill="White" Width="Auto" Height="2" Margin="-20 5 -20 5" x:Name="separator2"/>
-            <Button HorizontalAlignment="Left" Command="{x:Static api:Commands.HideConversationSearchBox}"  ToolTip="{DynamicResource ReturnCurrentConversationsToolTip}" Content="Return to Conversation" Foreground="{StaticResource ResourceKey=foreground}" x:Name="current" />
+            <Button HorizontalAlignment="Left" Command="{x:Static api:Commands.HideConversationSearchBox}" ToolTip="{DynamicResource ReturnCurrentConversationsToolTip}" Content="Return to Conversation" Foreground="{StaticResource ResourceKey=foreground}" x:Name="current" />
         </StackPanel>
         <StackPanel VerticalAlignment="Bottom">
             <dict:Button Command="Help" Text="Help" Icon="\Resources\Help.png" ToolTip="{DynamicResource HelpToolTip}" Foreground="{StaticResource ResourceKey=foreground}" InternalButtonSize="Medium" x:Name="help" />

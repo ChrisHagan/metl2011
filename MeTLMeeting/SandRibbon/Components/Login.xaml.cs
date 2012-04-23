@@ -14,6 +14,7 @@ using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components.Sandpit;
 using SandRibbon.Providers;
+using SandRibbon.Components.Utility;
 
 namespace SandRibbon.Components
 {
@@ -31,7 +32,7 @@ namespace SandRibbon.Components
         {
             get
             {
-                string result = null; // doesn't make sense, should be initialised to an empty string but the compiler complains
+                string result = ""; 
                 if (credential == "Username")
                 {
                     if (string.IsNullOrEmpty(Username))
@@ -143,8 +144,19 @@ namespace SandRibbon.Components
             var usernameText = username.Text.ToLower();
             var passwordText = password.Password;
             worker.DoWork += (_unused1, _unused2) => App.Login(usernameText, passwordText);
+            worker.RunWorkerCompleted += LoginWorkerCompleted;
             worker.RunWorkerAsync();
         }
+
+        private void LoginWorkerCompleted(object sender, RunWorkerCompletedEventArgs args)
+        {
+            if (args.Error != null)
+            {
+                Trace.TraceInformation("Login Exception: " + args.Error.Message);
+                Commands.LoginFailed.Execute(null);
+            }
+        }
+
         private void SetIdentity(Credentials identity)
         {
             //Commands.ShowConversationSearchBox.Execute(null);

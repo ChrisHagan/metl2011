@@ -10,7 +10,6 @@ using MeTLLib;
 using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
-using SandRibbon.Components.Utility;
 using System.Collections.Specialized;
 
 namespace SandRibbon.Quizzing
@@ -95,13 +94,8 @@ namespace SandRibbon.Quizzing
 
         private void deleteQuiz(object sender, RoutedEventArgs e)
         {
-            var owner = Window.GetWindow(this);
-            if (MeTLMessage.Question("Really delete quiz?", owner) == MessageBoxResult.Yes)
-            {
-                EditedQuiz.SetDeleted(true);
-                Commands.SendQuiz.Execute(EditedQuiz);
-                this.Close();
-            }    
+            DialogResult = true;
+            Close();
         }
         public bool CheckResultsExist(QuizQuestion quizQuestion)
         {

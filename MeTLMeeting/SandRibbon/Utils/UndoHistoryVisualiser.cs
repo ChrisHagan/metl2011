@@ -12,12 +12,14 @@ namespace SandRibbon.Utils
 
         public static void ShowVisualiser(Window parent)
         {
-            visualiser.Show(parent);
+            if (visualiser != null )
+                visualiser.Show(parent);
         }
 
         public static void HideVisualiser()
         {
-            visualiser.Hide();
+            if (visualiser != null )
+                visualiser.Hide();
         }
 
         #endregion

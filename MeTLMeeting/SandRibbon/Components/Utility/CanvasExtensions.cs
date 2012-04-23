@@ -113,9 +113,11 @@ namespace SandRibbon.Components.Utility
             var newBox = new MeTLTextBox();
             newBox.Text = box.Text;
             newBox.TextAlignment = box.TextAlignment;
-            newBox.TextDecorations = box.TextDecorations;
+            newBox.TextDecorations = box.TextDecorations.Clone();
             newBox.FontFamily = box.FontFamily;
             newBox.FontSize = box.FontSize;
+            newBox.FontWeight = box.FontWeight;
+            newBox.FontStyle = box.FontStyle;
             newBox.Foreground = box.Foreground;
             newBox.Background = box.Background;
             newBox.tag(box.tag());
