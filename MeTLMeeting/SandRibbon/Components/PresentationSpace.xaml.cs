@@ -22,6 +22,7 @@ using MeTLLib.DataTypes;
 using SandRibbon.Components.Pedagogicometry;
 using Image = System.Windows.Controls.Image;
 using SandRibbon.Quizzing;
+using System.Windows.Media.Effects;
 
 namespace SandRibbon.Components
 {
@@ -542,8 +543,8 @@ namespace SandRibbon.Components
                     var fe = (FrameworkElement)child;
                     if(child is Image)
                     {
-                        var image = (Image) child;
-                        var e = viewFor((FrameworkElement)child);
+                        var image = (Image)child;
+                        var e = viewFor(image);
                         Panel.SetZIndex(e, image.tag().author == Globals.me ? 3 : 1);
                         clone.Children.Add(e);
                     }
@@ -559,11 +560,29 @@ namespace SandRibbon.Components
             clone.Arrange(new Rect(size));
             return clone;
         }
-        private FrameworkElement viewFor(FrameworkElement element) {
+
+        /*
+         * The effect size is taken into consideration when drawn 
+         */
+        private double GetEffectRadius(FrameworkElement element)
+        {
+            var dropShadow = element.Effect as DropShadowEffect;
+            if (dropShadow != null)
+            {
+                return dropShadow.BlurRadius;
+            }
+
+            return 0.0;
+        }
+
+        private FrameworkElement viewFor(FrameworkElement element) 
+        {
+            var effectDiameter = 2 * GetEffectRadius(element);
+
             var rect = new Rectangle {
-                Width = element.ActualWidth,
-                Height = element.ActualHeight,
-                Fill=new VisualBrush(element)
+                Width = element.ActualWidth + effectDiameter,
+                Height = element.ActualHeight + effectDiameter,
+                Fill = new VisualBrush(element)
             };
             /*
              * Okay, this bit is complicated.  The bounds of an image are the bounds of the element(x,y,height,width), 
@@ -575,16 +594,20 @@ namespace SandRibbon.Components
              * are so horrible.
              */
             var left = InkCanvas.GetLeft(element);
-            var top= InkCanvas.GetTop(element);
-            if(element is Image)
+            var top = InkCanvas.GetTop(element);
+            if (element is Image)
             {
                 if(!Double.IsNaN(element.Height) && element.Height != element.ActualHeight)
                   top += ((element.Height - element.ActualHeight)/2);
                 if (!Double.IsNaN(element.Width) && element.Width != element.ActualWidth)
-                    left += ((element.Width - element.ActualWidth)/2); 
+                  left += ((element.Width - element.ActualWidth)/2); 
             }
-                InkCanvas.SetTop(rect, top);
-                InkCanvas.SetLeft(rect,left);
+            left -= effectDiameter / 2;
+            top -= effectDiameter / 2;
+            
+            InkCanvas.SetTop(rect, top);
+            InkCanvas.SetLeft(rect,left);
+
             return rect;
         }
         protected override AutomationPeer OnCreateAutomationPeer()
