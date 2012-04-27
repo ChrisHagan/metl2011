@@ -46,14 +46,14 @@
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <PublisherName>Monash University eEducation Centre</PublisherName>
-    <MinimumRequiredVersion>1.0.0.295</MinimumRequiredVersion>
     <WebPage>index.html</WebPage>
     <WebPageProd>index_prod.html</WebPageProd>
     <WebPageStaging>index_staging.html</WebPageStaging>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationRevision>295</ApplicationRevision>
-    <ApplicationVersion>1.0.0.295</ApplicationVersion>
+    <MinimumRequiredVersion>1.0.0.$(ApplicationRevision)</MinimumRequiredVersion>
+    <ApplicationVersion>1.0.0.$(ApplicationRevision)</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -1155,12 +1155,12 @@
   </Target>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Debug' ">
     <MakeDir Directories="$(PublishDir)" />
-    <Copy SourceFiles="..\$(WebPageStaging)" DestinationFolder="$(PublishDir)" DestinationFiles="$(PublishDir)\$(WebPage)" />
+    <Copy SourceFiles="..\$(WebPageStaging)" DestinationFolder="$(PublishDir)" DestinationFiles="$(WebPage)" />
     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
   </Target>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release' ">
     <MakeDir Directories="$(PublishDir)" />
-    <Copy SourceFiles="..\$(WebPageProd)" DestinationFolder="$(PublishDir)" DestinationFiles="$(PublishDir)\$(WebPage)" />
+    <Copy SourceFiles="..\$(WebPageProd)" DestinationFolder="$(PublishDir)" DestinationFiles="$(WebPage)" />
     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
   </Target>
   <PropertyGroup>
