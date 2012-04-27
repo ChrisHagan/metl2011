@@ -809,17 +809,18 @@ namespace SandRibbon.Components
             {
                 toggleVisibility(currentVisibility);
             };
-            Action undo = () =>
+            /*Action undo = () =>
             {
                 toggleVisibility(lastVisibility);
-            };
+            };*/
 
             redo();
             contentBuffer.LastContentVisibility = contentVisibility;
 
             if (me == Globals.PROJECTOR) return;
 
-            UndoHistory.Queue(undo, redo, String.Format("Changed content visibility [{0}]", contentVisibility.ToString()));
+            // Spec dictates that changing the content filter doesn't add that to the undo history
+            //UndoHistory.Queue(undo, redo, String.Format("Changed content visibility [{0}]", contentVisibility.ToString()));
 #endif
         }
 
