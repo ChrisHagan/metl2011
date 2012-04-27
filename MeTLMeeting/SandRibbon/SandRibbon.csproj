@@ -1154,14 +1154,14 @@
     <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Release' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Presenter" AssemblyDescription="MeTL Presenter" AssemblyProduct="MeTL Presenter" />
   </Target>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Debug' ">
-    <Copy SourceFiles="..\$(WebPageStaging)" DestinationFolder="Publish" />
-    <Move SourceFiles="Publish\$(WebPageStaging)" DestinationFiles="Publish\$(WebPage)" />
-    <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="Publish" Files="$(WebPage)" />
+    <MakeDir Directories="$(PublishDir)" />
+    <Copy SourceFiles="..\$(WebPageStaging)" DestinationFolder="$(PublishDir)" DestinationFiles="$(PublishDir)\$(WebPage)" />
+    <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
   </Target>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release' ">
-    <Copy SourceFiles="..\$(WebPageProd)" DestinationFolder="Publish" />
-    <Move SourceFiles="Publish\$(WebPageProd)" DestinationFiles="Publish\$(WebPage)" />
-    <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="Publish" Files="$(WebPage)" />
+    <MakeDir Directories="$(PublishDir)" />
+    <Copy SourceFiles="..\$(WebPageProd)" DestinationFolder="$(PublishDir)" DestinationFiles="$(PublishDir)\$(WebPage)" />
+    <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>
