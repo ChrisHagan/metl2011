@@ -4,7 +4,8 @@ SET build=%1
 SET rev=%2
 REM Defaults
 SET branchname=MeTLOverLib
-set buildconfig=""
+SET buildconfig=""
+SET revision=
 SHIFT & SHIFT
 
 IF "%rev%"=="" GOTO INVALIDPARAMS
@@ -21,20 +22,24 @@ SET buildtargets=Clean;Build;Publish
 
 :LOOP
 IF NOT "%1"=="" (
-	IF "%1"=="-skippublish" (
+	IF "%1"=="-nopublish" (
 		SET buildtargets=Clean;Build
 		REM SHIFT
 	)
-	IF "%1"=="-skipupdate" (
+	IF "%1"=="-workingdir" (
 		SET skipupdate=1
 		REM SHIFT
 	)
-	IF "%1"=="-skippull" (
+	IF "%1"=="-noremote" (
 		SET skippull=1
 		REM SHIFT
 	)
 	IF "%1"=="-branch" (
 		SET branchname=%2
+		SHIFT
+	)
+	IF "%1"=="-rev" (
+		SET revision=-r %2
 		SHIFT
 	)
 	SHIFT
@@ -54,17 +59,10 @@ hg pull
 IF %errorlevel% NEQ 0 GOTO ERROR
 
 :UPDATE
-IF DEFINED skipupdate GOTO BRANCH
-echo.
-echo Updating to last changeset 
-hg update -C
-
-IF %errorlevel% NEQ 0 GOTO ERROR
-
-:BRANCH
+IF DEFINED skipupdate GOTO BUILD
 echo.
 echo Changing to branch %branchname%
-hg update %branchname%
+hg update %revision% -C %branchname% 
 
 IF %errorlevel% NEQ 0 GOTO ERROR
 
@@ -83,24 +81,24 @@ echo Done.
 GOTO :EOF
 
 :INVALIDPARAMS
-echo BuildScript Help v0.3b
+echo BuildScript Help v0.5
 echo.
-echo %0 staging OR prod rev [-branch name] [-skippublish] [-skipupdate] [-skippull]
+echo buildmetl staging OR prod build# [-branch name] [-nopublish] [-workingdir] [-noremote]
 echo.
 echo Default branch is MeTLOverLib.
 echo.
-echo The following example will build a staging version with the revision 
+echo The following example will build a staging version with the build 
 echo number 289 using the default branch: 
 echo.
-echo %0 staging 289
+echo buildmetl staging 289
 echo.
 echo -branch			Update to the specified branch name.
 echo.
-echo -skippublish		Clean and build the target only.
+echo -nopublish			Clean and build the target only.
 echo.
-echo -skipupdate		Build using the working directory.
+echo -workingdir		Build using the working directory.
 echo.
-echo -skippull		Do not update from source control.
+echo -noremote  		Do not update from source control.
 echo.
 echo.
 GOTO :EOF
