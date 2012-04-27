@@ -87,7 +87,7 @@ echo buildmetl staging OR prod build# [-branch name] [-nopublish] [-workingdir] 
 echo.
 echo Default branch is MeTLOverLib.
 echo.
-echo The following example will build a staging version with the build 
+echo The following example will create a staging build with the version 
 echo number 289 using the default branch: 
 echo.
 echo buildmetl staging 289
