@@ -20,5 +20,5 @@ echo Press Ctrl+C to exit this.  Any other keypress will continue
 pause
 pscp.exe -r -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\Application Files" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTLStaging/
 pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\index.html" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTLStaging/
-pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\MeTL Staging.application" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTLStaging/
+pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\MeTL Presenter.application" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTLStaging/
 pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\setup.exe" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTLStaging/
