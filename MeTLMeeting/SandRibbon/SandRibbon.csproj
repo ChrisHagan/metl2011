@@ -46,6 +46,7 @@
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <PublisherName>Monash University eEducation Centre</PublisherName>
+	<CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <WebPageProd>index_prod.html</WebPageProd>
     <WebPageStaging>index_staging.html</WebPageStaging>
