@@ -1154,11 +1154,13 @@
     <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Release' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Presenter" AssemblyDescription="MeTL Presenter" AssemblyProduct="MeTL Presenter" />
   </Target>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Debug' ">
+	<Message Text="**** Creating directory for debug build" />
     <MakeDir Directories="$(PublishDir)" />
     <Copy SourceFiles="..\$(WebPageStaging)" DestinationFolder="$(PublishDir)" DestinationFiles="$(WebPage)" />
     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
   </Target>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release' ">
+	<Message Text="**** Creating directory for release build" />
     <MakeDir Directories="$(PublishDir)" />
     <Copy SourceFiles="..\$(WebPageProd)" DestinationFolder="$(PublishDir)" DestinationFiles="$(WebPage)" />
     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
