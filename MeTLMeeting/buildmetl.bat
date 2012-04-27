@@ -104,4 +104,4 @@ echo.
 GOTO :EOF
 
 :ERROR
-echo There was an error with the build.
+echo There was an error with the build. Check history or MeTLBuildLog.log for details.
