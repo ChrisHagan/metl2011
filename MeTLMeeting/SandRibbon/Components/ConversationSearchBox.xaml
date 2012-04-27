@@ -145,7 +145,7 @@
                         <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://www.policy.monash.edu/policy-bank/management/its/it-use-policy-staff-and-authorised.html">IT Use policy for staff and other authorised users</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="9" HorizontalAlignment="Right">
-                                    Copyright © 2011
+                                    Copyright © 2012
                                     <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://monash.edu/">Monash University</Hyperlink>
                                     -
                                     <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="http://monash.edu/legals/">Caution</Hyperlink>

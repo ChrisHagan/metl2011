@@ -12,13 +12,13 @@ namespace SandRibbon.Utils
 
         public static void ShowVisualiser(Window parent)
         {
-            if (visualiser != null )
+            if (visualiser != null)
                 visualiser.Show(parent);
         }
 
         public static void HideVisualiser()
         {
-            if (visualiser != null )
+            if (visualiser != null)
                 visualiser.Hide();
         }
 
@@ -39,7 +39,10 @@ namespace SandRibbon.Utils
 
             public void ClearViews()
             {
-                window.ClearViews();
+                if (IsEnabled)
+                {
+                    window.ClearViews();
+                }
             }
 
             public void UpdateUndoView(Stack<HistoricalAction> undo)
