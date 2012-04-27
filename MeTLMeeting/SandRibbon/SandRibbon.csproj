@@ -72,6 +72,7 @@
     <ProductName>MeTL Staging</ProductName>
     <InstallUrl>http://metl.adm.monash.edu.au/MeTLStaging/</InstallUrl>
     <UpdateUrl>http://metl.adm.monash.edu.au/MeTLStaging/</UpdateUrl>
+	<WebPageSource>$(WebPageStaging)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -85,6 +86,7 @@
     <ProductName>MeTL</ProductName>
     <InstallUrl>http://metl.adm.monash.edu.au/MeTL2011/</InstallUrl>
     <UpdateUrl>http://metl.adm.monash.edu.au/MeTL2011/</UpdateUrl>
+	<WebPageSource>$(WebPageProd)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>SandRibbon.Window1</StartupObject>
@@ -1154,17 +1156,10 @@
     <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Release' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Presenter" AssemblyDescription="MeTL Presenter" AssemblyProduct="MeTL Presenter" />
   </Target>
   <Target Name="AfterBuild">
-	<Message Text="@@@@ Creating directory for debug build" />
     <MakeDir Directories="$(PublishDir)" />
-    <Copy SourceFiles="..\$(WebPageStaging)" DestinationFolder="$(PublishDir)" DestinationFiles="$(WebPage)" />
+	<Copy SourceFiles="..\$(WebPageSource)" DestinationFiles="$(PublishDir)$(WebPage)" />
     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
   </Target>
-  <!--<Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release' ">
-	<Message Text="@@@@ Creating directory for release build" />
-    <MakeDir Directories="$(PublishDir)" />
-    <Copy SourceFiles="..\$(WebPageProd)" DestinationFolder="$(PublishDir)" DestinationFiles="$(WebPage)" />
-    <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
-  </Target>-->
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
