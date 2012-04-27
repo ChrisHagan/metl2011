@@ -1159,12 +1159,12 @@
     <Copy SourceFiles="..\$(WebPageStaging)" DestinationFolder="$(PublishDir)" DestinationFiles="$(WebPage)" />
     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
   </Target>
-  <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release' ">
+  <!--<Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release' ">
 	<Message Text="@@@@ Creating directory for release build" />
     <MakeDir Directories="$(PublishDir)" />
     <Copy SourceFiles="..\$(WebPageProd)" DestinationFolder="$(PublishDir)" DestinationFiles="$(WebPage)" />
     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
-  </Target>
+  </Target>-->
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
