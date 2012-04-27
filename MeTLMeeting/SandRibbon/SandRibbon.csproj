@@ -48,8 +48,8 @@
     <PublisherName>Monash University eEducation Centre</PublisherName>
     <MinimumRequiredVersion>1.0.0.295</MinimumRequiredVersion>
     <WebPage>index.html</WebPage>
-    <WebPageRelease>index_release.html</WebPageRelease>
-    <WebPageDebug>index_debug.html</WebPageDebug>
+    <WebPageProd>index_prod.html</WebPageProd>
+    <WebPageStaging>index_staging.html</WebPageStaging>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationRevision>295</ApplicationRevision>
@@ -1154,11 +1154,11 @@
     <MSBuild.ExtensionPack.Framework.AssemblyInfo Condition=" '$(Configuration)' == 'Release' " AssemblyInfoFiles="@(AssemblyInfoFiles)" SkipVersioning="true" AssemblyTitle="MeTL Presenter" AssemblyDescription="MeTL Presenter" AssemblyProduct="MeTL Presenter" />
   </Target>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Debug' ">
-    <Copy SourceFiles="..\$(WebPageDebug)" DestinationFolder="Publish" DestinationFiles="$(WebPage)"/>
+    <Copy SourceFiles="..\$(WebPageStaging)" DestinationFolder="Publish" DestinationFiles="$(WebPage)"/>
     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="Publish" Files="$(WebPage)" />
   </Target>
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release' ">
-    <Copy SourceFiles="..\$(WebPageRelease)" DestinationFolder="Publish" DestinationFiles="$(WebPage)"/>
+    <Copy SourceFiles="..\$(WebPageProd)" DestinationFolder="Publish" DestinationFiles="$(WebPage)"/>
     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="Publish" Files="$(WebPage)" />
   </Target>
   <PropertyGroup>
