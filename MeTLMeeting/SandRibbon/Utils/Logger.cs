@@ -176,7 +176,10 @@ namespace SandRibbon.Utils
 
         public static void Log(string appendThis)
         {
-            logMessage(appendThis);
+            if (!App.isStaging)
+            {
+                logMessage(appendThis);
+            }
         }
 
         private static void logMessage(string message)
