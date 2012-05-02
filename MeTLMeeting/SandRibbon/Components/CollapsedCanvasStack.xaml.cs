@@ -124,11 +124,11 @@ namespace SandRibbon.Components
             wireInPublicHandlers();
             strokeChecksums = new List<StrokeChecksum>();
             contentBuffer = new ContentBuffer();
-            //UndoHistory.ShowVisualiser(Window.GetWindow(this));
+            UndoHistory.ShowVisualiser(Window.GetWindow(this));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
-            //Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
+            Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
             Commands.ReceiveStroke.RegisterCommandToDispatcher(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.ReceiveStrokes.RegisterCommandToDispatcher(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
@@ -791,36 +791,13 @@ namespace SandRibbon.Components
         public void SetContentVisibility(ContentVisibilityEnum contentVisibility)
         {
 #if TOGGLE_CONTENT
-            var currentVisibility = contentVisibility;
-            var lastVisibility = contentBuffer.LastContentVisibility;
+            Commands.UpdateContentVisibility.Execute(contentVisibility);
 
-            Action<ContentVisibilityEnum> toggleVisibility = (visibility) =>
-            {
-                Commands.UpdateContentVisibility.Execute(visibility);
-
-                Work.Strokes.Clear();
-                Work.Strokes.Add(contentBuffer.FilteredStrokes(visibility));
-                Work.Children.Clear();
-                foreach (var child in contentBuffer.FilteredElements(visibility))
-                    Work.Children.Add(child);
-            };
-
-            Action redo = () =>
-            {
-                toggleVisibility(currentVisibility);
-            };
-            /*Action undo = () =>
-            {
-                toggleVisibility(lastVisibility);
-            };*/
-
-            redo();
-            contentBuffer.LastContentVisibility = contentVisibility;
-
-            if (me == Globals.PROJECTOR) return;
-
-            // Spec dictates that changing the content filter doesn't add that to the undo history
-            //UndoHistory.Queue(undo, redo, String.Format("Changed content visibility [{0}]", contentVisibility.ToString()));
+            Work.Strokes.Clear();
+            Work.Strokes.Add(contentBuffer.FilteredStrokes(contentVisibility));
+            Work.Children.Clear();
+            foreach (var child in contentBuffer.FilteredElements(contentVisibility))
+                Work.Children.Add(child);
 #endif
         }
 

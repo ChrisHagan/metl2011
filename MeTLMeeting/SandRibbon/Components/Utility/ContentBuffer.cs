@@ -129,7 +129,8 @@ namespace SandRibbon.Components.Utility
         {
             try
             {
-                strokeDeltaCollection.Remove(stroke);
+                if (strokeDeltaCollection.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                    strokeDeltaCollection.Remove(stroke);
             }
             catch (ArgumentException) { }
         }
@@ -249,7 +250,6 @@ namespace SandRibbon.Components.Utility
         }
         #endregion
 
-        public ContentVisibilityEnum LastContentVisibility { get; set; }
         private ContentVisibilityEnum CurrentContentVisibility
         {
             get
