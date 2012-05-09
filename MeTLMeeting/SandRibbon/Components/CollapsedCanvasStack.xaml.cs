@@ -797,6 +797,8 @@ namespace SandRibbon.Components
 #if TOGGLE_CONTENT
             Commands.UpdateContentVisibility.Execute(contentVisibility);
 
+            ClearAdorners();
+            
             Work.Strokes.Clear();
             Work.Strokes.Add(contentBuffer.FilteredStrokes(contentVisibility));
             Work.Children.Clear();
