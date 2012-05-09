@@ -158,6 +158,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Tabs\Groups\ContentVisibilityHost.xaml.cs">
+      <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\MeTLMath.cs" />
     <Compile Include="Utils\UndoHistoryVisualiser.cs" />
     <Compile Include="Utils\UndoHistoryVisualiserWindow.xaml.cs">
@@ -356,6 +359,10 @@
     <Page Include="Tabs\Groups\CollaborationControlsHost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Groups\ContentVisibilityHost.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Groups\PrivacyToolsHost.xaml">
       <Generator>MSBuild:Compile</Generator>

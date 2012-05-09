@@ -5,26 +5,26 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sr="clr-namespace:SandRibbon"
     x:Name="contentVisibility"
-    VerticalAlignment="Top"
-    HorizontalAlignment="Right"
+    VerticalAlignment="Center"
+    HorizontalAlignment="Center"
     AutomationProperties.AutomationId="contentVisibility">
     <UserControl.Resources>
         <sr:BoolToVisibilityWithHidden x:Key="BooleanToVisibilityConverter" Collapse="True" Negate="True"/>
     </UserControl.Resources>
     <dict:RibbonPanel x:Name="contentToggleButtons">
-        <ToggleButton x:Name="ownerContent" Visibility="{Binding ElementName=contentVisibility, Path=IsConversationOwner, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="{DynamicResource OwnerContentToolTip}" Content="Owner" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
+        <ToggleButton x:Name="myContent" ToolTip="{DynamicResource MyContentToolTip}" Content="My" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
+            <ToggleButton.IsChecked>
+                <Binding ElementName="contentVisibility" Path="MineVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
+            </ToggleButton.IsChecked>
+        </ToggleButton>
+        <ToggleButton x:Name="ownerContent" Visibility="{Binding ElementName=contentVisibility, Path=IsConversationOwner, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="{DynamicResource OwnerContentToolTip}" Content="Owner's" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
             <ToggleButton.IsChecked>
                 <Binding ElementName="contentVisibility" Path="OwnerVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
             </ToggleButton.IsChecked>
         </ToggleButton>
-        <ToggleButton x:Name="theirContent" ToolTip="{DynamicResource TheirContentToolTip}" Content="Theirs" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
+        <ToggleButton x:Name="theirContent" ToolTip="{DynamicResource TheirContentToolTip}" Content="Peers'" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
             <ToggleButton.IsChecked>
                 <Binding ElementName="contentVisibility" Path="TheirsVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
-            </ToggleButton.IsChecked>
-        </ToggleButton>
-        <ToggleButton x:Name="myContent" ToolTip="{DynamicResource MyContentToolTip}" Content="Mine" TargetUpdated="OnVisibilityChanged" SourceUpdated="OnVisibilityChanged">
-            <ToggleButton.IsChecked>
-                <Binding ElementName="contentVisibility" Path="MineVisible" Mode="TwoWay" NotifyOnTargetUpdated="False" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"></Binding>
             </ToggleButton.IsChecked>
         </ToggleButton>
     </dict:RibbonPanel>

@@ -31,6 +31,5 @@
                 </Border>
             </Grid>
         </Viewbox>
-        <components:ContentVisibility x:Name="contentVisibility" Visibility="Visible"/>
     </StackPanel>
 </sr:RibbonGroup>
