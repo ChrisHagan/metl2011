@@ -8,6 +8,7 @@ using System.Windows;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
+using SandRibbon.Utils;
 
 namespace SandRibbon.Components.Utility
 {
@@ -72,7 +73,7 @@ namespace SandRibbon.Components.Utility
 
         private void AddStroke(Stroke stroke)
         {
-            if (strokeCollection.Where(s => s.sum().checksum == stroke.sum().checksum).Count() != 0)
+            if (strokeCollection.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() != 0)
                 return;
             strokeCollection.Add(stroke);
         }
@@ -106,21 +107,12 @@ namespace SandRibbon.Components.Utility
             catch (ArgumentException) { }
         }
         
-        private void RemoveDeltaStrokes(StrokeCollection strokes)
-        {
-            try
-            {
-                strokeDeltaCollection.Remove(strokes);
-            }
-            catch (ArgumentException) { }
-        }
-
         private void RemoveStroke(Stroke stroke)
         {
             try
             {
-                if (strokeCollection.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
-                    strokeCollection.Remove(stroke);
+                var deadStrokes = new StrokeCollection(strokeCollection.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)));
+                strokeCollection.Remove(deadStrokes);
             }
             catch (ArgumentException) { }
         }
@@ -129,8 +121,8 @@ namespace SandRibbon.Components.Utility
         {
             try
             {
-                if (strokeDeltaCollection.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
-                    strokeDeltaCollection.Remove(stroke);
+                var deadStrokes = new StrokeCollection(strokeDeltaCollection.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)));
+                strokeDeltaCollection.Remove(deadStrokes);
             }
             catch (ArgumentException) { }
         }

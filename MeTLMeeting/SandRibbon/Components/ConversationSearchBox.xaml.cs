@@ -276,9 +276,12 @@ namespace SandRibbon.Components
         {
             RegisterCommands();
             RestartRefreshTimer();
+
+            var currentConversationDetails = Globals.conversationDetails;
             activeConversation = Globals.location.activeConversation;
             me = Globals.me;
-            if (String.IsNullOrEmpty(activeConversation))
+
+            if (String.IsNullOrEmpty(activeConversation) || (currentConversationDetails != null && currentConversationDetails.isDeleted))
                 currentConversation.Visibility = Visibility.Collapsed;
             else {
                 currentConversation.Visibility = Visibility.Visible;

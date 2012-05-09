@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Components;
+using SandRibbon.Providers;
 
 namespace SandRibbon.Utils
 {
@@ -45,10 +46,14 @@ namespace SandRibbon.Utils
         public static void Queue(Action undo, Action redo, String description)
         {
             #if TOGGLE_CONTENT
-            // content has been modified, so make sure "my" content is visible
-            var setMineVisible = (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() | ContentVisibilityEnum.MineVisible;
-            // TODO: Change this to a different command that doesn't add the visibility state to the undo queue
-            Commands.SetContentVisibility.Execute(setMineVisible);
+            try
+            {
+                // content has been modified, so make sure "my" content is visible
+                Commands.SetContentVisibility.Execute(Globals.contentVisibility | ContentVisibilityEnum.MineVisible);
+            }
+            catch (Exception)
+            {
+            }
             #endif
 
             foreach(var queue in new[]{undoQueue, redoQueue})

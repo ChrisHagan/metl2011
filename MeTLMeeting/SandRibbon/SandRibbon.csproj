@@ -13,6 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SandRibbon</RootNamespace>
     <AssemblyName>MeTL Presenter</AssemblyName>
+    <ProductName>MeTL</ProductName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,6 +36,8 @@
     <UpgradeBackupLocation />
     <TargetFrameworkProfile />
     <PublishDir>publish\</PublishDir>
+    <WebPageProd>index_prod.html</WebPageProd>
+    <WebPageStaging>index_staging.html</WebPageStaging>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -46,10 +49,8 @@
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <PublisherName>Monash University eEducation Centre</PublisherName>
-	<CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
-    <WebPageProd>index_prod.html</WebPageProd>
-    <WebPageStaging>index_staging.html</WebPageStaging>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationRevision>295</ApplicationRevision>
@@ -70,10 +71,9 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <!-- Configuration specific settings -->
-    <ProductName>MeTL Staging</ProductName>
     <InstallUrl>http://metl.adm.monash.edu.au/MeTLStaging/</InstallUrl>
     <UpdateUrl>http://metl.adm.monash.edu.au/MeTLStaging/</UpdateUrl>
-	<WebPageSource>$(WebPageStaging)</WebPageSource>
+    <WebPageSource>$(WebPageStaging)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -84,10 +84,9 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <!-- Configuration specific settings -->
-    <ProductName>MeTL</ProductName>
     <InstallUrl>http://metl.adm.monash.edu.au/MeTL2011/</InstallUrl>
     <UpdateUrl>http://metl.adm.monash.edu.au/MeTL2011/</UpdateUrl>
-	<WebPageSource>$(WebPageProd)</WebPageSource>
+    <WebPageSource>$(WebPageProd)</WebPageSource>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>SandRibbon.Window1</StartupObject>
@@ -159,6 +158,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Utils\MeTLMath.cs" />
     <Compile Include="Utils\UndoHistoryVisualiser.cs" />
     <Compile Include="Utils\UndoHistoryVisualiserWindow.xaml.cs">
       <DependentUpon>UndoHistoryVisualiserWindow.xaml</DependentUpon>
@@ -1158,7 +1158,7 @@
   </Target>
   <Target Name="AfterBuild">
     <MakeDir Directories="$(PublishDir)" />
-	<Copy SourceFiles="..\$(WebPageSource)" DestinationFiles="$(PublishDir)$(WebPage)" />
+    <Copy SourceFiles="..\$(WebPageSource)" DestinationFiles="$(PublishDir)$(WebPage)" />
     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
   </Target>
   <PropertyGroup>

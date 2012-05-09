@@ -124,7 +124,12 @@ namespace SandRibbon.Components
             wireInPublicHandlers();
             strokeChecksums = new List<StrokeChecksum>();
             contentBuffer = new ContentBuffer();
-            UndoHistory.ShowVisualiser(Window.GetWindow(this));
+            #if DEBUG
+            if (me != Globals.PROJECTOR)
+            {
+                UndoHistory.ShowVisualiser(Window.GetWindow(this));
+            }
+            #endif
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
@@ -768,7 +773,6 @@ namespace SandRibbon.Components
             {
                 dirtyStrokes(Work, targettedDirtyStrokes);
                 //dirtyStrokes(OtherWork, targettedDirtyStrokes);
-
             });
         }
         private void dirtyStrokes(InkCanvas canvas, IEnumerable<TargettedDirtyElement> targettedDirtyStrokes)
@@ -817,26 +821,19 @@ namespace SandRibbon.Components
         public void AddStrokeToCanvas(InkCanvas canvas, PrivateAwareStroke stroke)
         {
             // stroke already exists on the canvas, don't do anything
-            if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() != 0)
+            if (canvas.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() != 0)
                 return;
 
             contentBuffer.AddStroke(stroke, (st) => canvas.Strokes.Add(st));
         }
 
-        private void AddUniqueStrokeToCanvas(InkCanvas canvas, Stroke stroke)
-        {
-            if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() != 0)
-                return;
-
-            canvas.Strokes.Add(stroke);
-        }
-
         private void RemoveExistingStrokeFromCanvas(InkCanvas canvas, Stroke stroke)
         {
-            if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
+            if (canvas.Strokes.Count == 0)
                 return;
 
-            canvas.Strokes.Remove(stroke);
+            var deadStrokes = new StrokeCollection(canvas.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)));
+            canvas.Strokes.Remove(deadStrokes);
         }
 
         private void addStrokes(List<Stroke> strokes)
@@ -860,7 +857,7 @@ namespace SandRibbon.Components
                  }
                  else
                  {
-                     var strokesToRemove = new StrokeCollection(OtherWork.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum));
+                     var strokesToRemove = new StrokeCollection(OtherWork.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)));
                      contentBuffer.RemoveStrokes(strokesToRemove, (st) => OtherWork.Strokes.Remove(st));
                  }
                  doMyStrokeRemovedExceptHistory(stroke);
@@ -885,7 +882,7 @@ namespace SandRibbon.Components
                 {
                     var oldTag = stroke.tag();
                     // stroke exists on canvas
-                    var strokesToUpdate = Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum);
+                    var strokesToUpdate = Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum));
                     if (strokesToUpdate.Count() > 0)
                     {
                         contentBuffer.RemoveStroke(strokesToUpdate.First(), (col) => Work.Strokes.Remove(col));
@@ -893,7 +890,7 @@ namespace SandRibbon.Components
                     }
                     var newStroke = stroke.Clone();
                     newStroke.tag(new StrokeTag { author = oldTag.author, privacy = newPrivacy, startingSum = oldTag.startingSum });
-                    if (Work.Strokes.Where(s => s.sum().checksum == newStroke.sum().checksum).Count() == 0)
+                    if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, newStroke.sum().checksum)).Count() == 0)
                     {
                         newStrokes.Add(newStroke);
                         contentBuffer.AddStroke(newStroke, (col) => Work.Strokes.Add(newStroke));
@@ -912,12 +909,12 @@ namespace SandRibbon.Components
                     var newStroke = stroke.Clone();
                     newStroke.tag(new StrokeTag { author = oldTag.author, privacy = newPrivacy, startingSum = oldTag.startingSum });
 
-                    if (Work.Strokes.Where(s => s.sum().checksum == newStroke.sum().checksum).Count() > 0)
+                    if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, newStroke.sum().checksum)).Count() > 0)
                     {
-                        Work.Strokes.Remove(Work.Strokes.Where(s => s.sum().checksum == newStroke.sum().checksum).First());
+                        Work.Strokes.Remove(Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, newStroke.sum().checksum)).First());
                         doMyStrokeRemovedExceptHistory(newStroke);
                     }
-                    if (Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
+                    if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() == 0)
                     {
                         newStrokes.Add(newStroke);
                         Work.Strokes.Add(stroke);
@@ -1071,7 +1068,7 @@ namespace SandRibbon.Components
                 () =>
                 {
                     ClearAdorners();
-                    var existingStroke = Work.Strokes.Where(s => s.sum().checksum == thisStroke.sum().checksum).FirstOrDefault();
+                    var existingStroke = Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, thisStroke.sum().checksum)).FirstOrDefault();
                     if (existingStroke != null)
                     {
                         Work.Strokes.Remove(existingStroke);
@@ -1081,7 +1078,7 @@ namespace SandRibbon.Components
                 () =>
                 {
                     ClearAdorners();
-                    if (Work.Strokes.Where(s => s.sum().checksum == thisStroke.sum().checksum).Count() == 0)
+                    if (Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, thisStroke.sum().checksum)).Count() == 0)
                     {
                         Work.Strokes.Add(thisStroke);
                         doMyStrokeAddedExceptHistory(thisStroke, thisStroke.tag().privacy);
@@ -1115,7 +1112,7 @@ namespace SandRibbon.Components
             var undo = new Action(() =>
                                  {
                                      // if stroke doesn't exist on the canvas 
-                                     if (canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() == 0)
+                                     if (canvas.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() == 0)
                                      {
                                          contentBuffer.AddStroke(stroke, (col) => canvas.Strokes.Add(col));
                                          doMyStrokeAddedExceptHistory(stroke, stroke.tag().privacy);
@@ -1123,7 +1120,7 @@ namespace SandRibbon.Components
                                  });
             var redo = new Action(() =>
                                  {
-                                     var strokesToRemove = canvas.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum);
+                                     var strokesToRemove = canvas.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum));
                                      if (strokesToRemove.Count() > 0)
                                      {
                                          contentBuffer.RemoveStroke(strokesToRemove.First(), (col) => canvas.Strokes.Remove(col)); 
@@ -2214,9 +2211,9 @@ namespace SandRibbon.Components
             ClearAdorners();
             foreach (var stroke in newStrokes)
             {
-                if(Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum).Count() > 0)
+                if(Work.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() > 0)
                 {
-                    selection = new StrokeCollection(selection.Where(s => s.sum().checksum != stroke.sum().checksum));
+                    selection = new StrokeCollection(selection.Where(s => !MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)));
                     doMyStrokeRemovedExceptHistory(stroke);
                 }
             }

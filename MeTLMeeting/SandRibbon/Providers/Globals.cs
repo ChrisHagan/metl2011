@@ -148,6 +148,13 @@ namespace SandRibbon.Providers
                 return Commands.UpdateConversationDetails.IsInitialised ? (ConversationDetails)Commands.UpdateConversationDetails.LastValue() : null;
             }
         }
+        public static ContentVisibilityEnum contentVisibility
+        {
+            get
+            {
+                return Commands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() : ContentVisibilityEnum.AllVisible;
+            }
+        }
         public static MeTLLib.DataTypes.QuizData quiz
         {
             get
