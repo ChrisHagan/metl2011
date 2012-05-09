@@ -45,17 +45,6 @@ namespace SandRibbon.Utils
         }
         public static void Queue(Action undo, Action redo, String description)
         {
-            #if TOGGLE_CONTENT
-            try
-            {
-                // content has been modified, so make sure "my" content is visible
-                Commands.SetContentVisibility.Execute(Globals.contentVisibility | ContentVisibilityEnum.MineVisible);
-            }
-            catch (Exception)
-            {
-            }
-            #endif
-
             foreach(var queue in new[]{undoQueue, redoQueue})
                 if(!queue.ContainsKey(currentSlide)) 
                     queue.Add(currentSlide, new Stack<HistoricalAction>());
@@ -75,6 +64,20 @@ namespace SandRibbon.Utils
             return undoQueue.ContainsKey(currentSlide) && undoQueue[currentSlide].Count() > 0; 
         }
 
+        internal static void ReenableMyContent()
+        {
+            #if TOGGLE_CONTENT
+            try
+            {
+                // content has been modified, so make sure "my" content is visible
+                Commands.SetContentVisibility.Execute(Globals.contentVisibility | ContentVisibilityEnum.MineVisible);
+            }
+            catch (Exception)
+            {
+            }
+            #endif
+        }
+
         internal static void Undo(object param)
         {
             if (CanUndo(param))
@@ -85,6 +88,8 @@ namespace SandRibbon.Utils
                 redoQueue[currentSlide].Push(head);
                 visualiser.UpdateRedoView(redoQueue[currentSlide]);
                 RaiseQueryHistoryChanged();
+
+                ReenableMyContent();
             }
         }
         private static bool CanRedo(object _param)
@@ -101,6 +106,8 @@ namespace SandRibbon.Utils
                 undoQueue[currentSlide].Push(head);
                 visualiser.UpdateUndoView(undoQueue[currentSlide]);
                 RaiseQueryHistoryChanged();
+
+                ReenableMyContent();
             }
         }
 
