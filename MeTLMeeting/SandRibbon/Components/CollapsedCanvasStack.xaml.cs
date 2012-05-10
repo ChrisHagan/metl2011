@@ -134,7 +134,9 @@ namespace SandRibbon.Components
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
+            #if TOGGLE_CONTENT
             Commands.SetContentVisibility.RegisterCommandToDispatcher<ContentVisibilityEnum>(new DelegateCommand<ContentVisibilityEnum>(SetContentVisibility));
+            #endif
             Commands.ReceiveStroke.RegisterCommandToDispatcher(new DelegateCommand<TargettedStroke>((stroke) => ReceiveStrokes(new[] { stroke })));
             Commands.ReceiveStrokes.RegisterCommandToDispatcher(new DelegateCommand<IEnumerable<TargettedStroke>>(ReceiveStrokes));
             Commands.ReceiveDirtyStrokes.RegisterCommand(new DelegateCommand<IEnumerable<TargettedDirtyElement>>(ReceiveDirtyStrokes));
@@ -795,7 +797,6 @@ namespace SandRibbon.Components
 
         public void SetContentVisibility(ContentVisibilityEnum contentVisibility)
         {
-#if TOGGLE_CONTENT
             Commands.UpdateContentVisibility.Execute(contentVisibility);
 
             ClearAdorners();
@@ -805,7 +806,6 @@ namespace SandRibbon.Components
             Work.Children.Clear();
             foreach (var child in contentBuffer.FilteredElements(contentVisibility))
                 Work.Children.Add(child);
-#endif
         }
 
         public void ReceiveStrokes(IEnumerable<TargettedStroke> receivedStrokes)

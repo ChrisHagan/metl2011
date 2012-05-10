@@ -37,13 +37,9 @@ namespace SandRibbon.Components
 
             InitializeComponent();
 
-#if TOGGLE_CONTENT
             Commands.UpdateConversationDetails.RegisterCommandToDispatcher(new DelegateCommand<ConversationDetails>((_unused) => { UpdateConversationDetails(); }));
             Commands.UpdateContentVisibility.RegisterCommandToDispatcher(new DelegateCommand<ContentVisibilityEnum>(UpdateContentVisibility));
             Commands.SetContentVisibility.DefaultValue = ContentVisibilityEnum.AllVisible;
-#else
-            contentToggleButtons.Visibility = Visibility.Collapsed;
-#endif
         }
     
         private void NotifyPropertyChanged(string info)
@@ -133,9 +129,7 @@ namespace SandRibbon.Components
 
         private void OnVisibilityChanged(object sender, DataTransferEventArgs args)
         {
-#if TOGGLE_CONTENT
             Commands.SetContentVisibility.Execute(GetCurrentVisibility());
-#endif
         }
     }
 }
