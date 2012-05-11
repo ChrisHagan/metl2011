@@ -1166,7 +1166,7 @@
   </Target>
   <Target Name="AfterBuild">
     <MakeDir Directories="$(PublishDir)" />
-    <Copy SourceFiles="..\$(WebPageSource)" DestinationFiles="$(PublishDir)$(WebPage)" Condition="Exists('%(RootDir)%(Directory)%(Filename)%(Extension)')"/>
+    <Copy SourceFiles="..\$(WebPageSource)" DestinationFiles="$(PublishDir)$(WebPage)" Condition="Exists('..\$(WebPageSource)')"/>
     <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="ApplicationRevision" Replacement="$(ApplicationRevision)" Path="$(PublishDir)" Files="$(WebPage)" />
   </Target>
   <PropertyGroup>
