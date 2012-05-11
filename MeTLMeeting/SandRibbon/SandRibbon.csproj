@@ -13,7 +13,6 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SandRibbon</RootNamespace>
     <AssemblyName>MeTL Presenter</AssemblyName>
-    <ProductName>MeTL</ProductName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -71,6 +70,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <!-- Configuration specific settings -->
+    <ProductName>MeTL Staging</ProductName>
     <InstallUrl>http://metl.adm.monash.edu.au/MeTLStaging/</InstallUrl>
     <UpdateUrl>http://metl.adm.monash.edu.au/MeTLStaging/</UpdateUrl>
     <WebPageSource>$(WebPageStaging)</WebPageSource>
@@ -84,6 +84,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <!-- Configuration specific settings -->
+    <ProductName>MeTL</ProductName>
     <InstallUrl>http://metl.adm.monash.edu.au/MeTL2011/</InstallUrl>
     <UpdateUrl>http://metl.adm.monash.edu.au/MeTL2011/</UpdateUrl>
     <WebPageSource>$(WebPageProd)</WebPageSource>
