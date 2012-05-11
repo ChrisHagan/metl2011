@@ -129,7 +129,7 @@ namespace Functional
             metlProcess.StartInfo.UseShellExecute = false;
             metlProcess.StartInfo.LoadUserProfile = true;
             metlProcess.StartInfo.WorkingDirectory = workingDirectory;
-            metlProcess.StartInfo.FileName = workingDirectory + @"\MeTL Staging.exe";
+            metlProcess.StartInfo.FileName = workingDirectory + @"\MeTL Presenter.exe";
             metlProcess.Start();
 
             int waitTime = 0;
