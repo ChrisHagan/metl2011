@@ -194,24 +194,8 @@ namespace SandRibbon.Components
             GlobalTimers.resetSyncTimer();
         }
 
-        private bool MouseWithin(Rect bounds, Point mouse)
-        {
-            if ((bounds.Left <= mouse.X && bounds.Right >= mouse.X) &&
-                (bounds.Top <= mouse.Y && bounds.Bottom >= mouse.Y))
-                return true;
-
-            return false;
-        }
-
         private void mouseMove(object sender, MouseEventArgs e)
         {
-            foreach (var stroke in Work.Strokes)
-            {
-                if (MouseWithin(stroke.GetBounds(), e.GetPosition(this)))
-                {
-                    Console.WriteLine("**** Found stroke");
-                }
-            }
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 GlobalTimers.resetSyncTimer();
