@@ -18,7 +18,15 @@ echo Don't use this command unless you're ready to overwrite
 echo the currently deployed Clickonce on the server (metl.adm) 
 echo Press Ctrl+C to exit this.  Any other keypress will continue
 pause
-pscp.exe -r -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\Application Files" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
-pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\index.html" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
-pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\MeTL Presenter.application" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
-pscp.exe -pw bananaman "C:\specialMeTL\MeTLMeeting\SandRibbon\publish\setup.exe" deploy@refer.adm.monash.edu.au:/srv/racecarDeploy/MeTL2011/
+
+set BUILDDIR=..\..\BuildMeTL
+
+rem Steps for production roll
+rem update manifest using buildmetl updatemanifest batch
+rem plink copy all files from refer ProdTesting to refer MeTL2011 making a backup on the way
+rem pscp the updated manifest to refer MeTL2011 overwriting the old ProdTesting manifest 
+
+pscp.exe -pw bananaman deploy@refer.adm.monash.edu.au:"/srv/racecarDeploy/MeTLProdTesting/MeTL\ Presenter.application" "MeTL Presenter.application"
+call %BUILDDIR%\updatemanifest.bat
+pscp.exe -pw bananaman "MeTL Presenter.application" deploy@refer.adm.monash.edu.au:"/srv/racecarDeploy/MeTLProdTesting/MeTL\ Presenter.application"
+
