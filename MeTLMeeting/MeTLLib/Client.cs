@@ -621,6 +621,8 @@ namespace MeTLLib
                 wait.Set();
                 throw e;
             }
+
+            //TODO: Find out who would release this WaitHandle. If function causes an exception, wait is set in the catch block but complete is still false.
                 if(!complete)
                 wait.WaitOne();
             return result;
