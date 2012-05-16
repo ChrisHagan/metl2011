@@ -68,7 +68,10 @@ namespace SandRibbon.Components.Utility
 
         private void AddStrokes(StrokeCollection strokes)
         {
-            strokeCollection.Add(strokes);
+            foreach (var stroke in strokes)
+            {
+                AddStroke(stroke);
+            }
         }
 
         private void AddStroke(Stroke stroke)
@@ -80,29 +83,38 @@ namespace SandRibbon.Components.Utility
 
         private void AddDeltaStrokes(StrokeCollection strokes)
         {
-            strokeDeltaCollection.Add(strokes);
+            foreach (var stroke in strokes)
+            {
+                AddDeltaStroke(stroke);
+            }
         }
 
         private void AddDeltaStroke(Stroke stroke)
         {
+            if (strokeDeltaCollection.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() != 0)
+                return;
             strokeDeltaCollection.Add(stroke);
         }
 
-        private void AddStrokeChecksum(StrokeChecksum checksum, bool ensureUnique = false)
+        private void AddStrokeChecksum(StrokeChecksum checksum)
         {
-            if (!ensureUnique || !strokeChecksumCollection.Contains(checksum))
-                strokeChecksumCollection.Add(checksum);
+            if (strokeChecksumCollection.Contains(checksum))
+                return;
+
+            strokeChecksumCollection.Add(checksum);
         }
 
         private void RemoveStrokes(StrokeCollection strokes)
         {
             try
             {
-                var strokesInBuffer = from stroke in strokes
-                    join bufStroke in strokeCollection on stroke.sum().checksum equals bufStroke.sum().checksum
-                    select bufStroke;
+                var deadStrokes = new StrokeCollection();
+                foreach (var stroke in strokes)
+                {
+                    deadStrokes.Add(new StrokeCollection(strokeCollection.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum))));
+                }
 
-               strokeCollection.Remove(new StrokeCollection(strokesInBuffer));
+               strokeCollection.Remove(deadStrokes);
             }
             catch (ArgumentException) { }
         }
@@ -421,16 +433,6 @@ namespace SandRibbon.Components.Utility
 #endif
         }
 
-        /*public void AddStrokeChecksum(StrokeChecksum checksum, Action<StrokeChecksum> modifyChecksumContainer)
-        {
-            AddStrokeChecksum(checksum);
-#if TOGGLE_CONTENT
-            modifyChecksumContainer(Filter<StrokeChecksum>(checksum, CurrentContentVisibility));
-#else
-            modifyChecksumContainer(checksum);
-#endif
-        }*/
-
         public void RemoveDeltaStroke(Stroke stroke, Action<StrokeCollection> modifyUndoContainer)
         {
             var strokes = new StrokeCollection();
@@ -523,7 +525,7 @@ namespace SandRibbon.Components.Utility
         {
             var checksum = stroke.sum();
 
-            AddStrokeChecksum(checksum, true);
+            AddStrokeChecksum(checksum);
 
             modifyVisibleContainer(checksum);
         }
