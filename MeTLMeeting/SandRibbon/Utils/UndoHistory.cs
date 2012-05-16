@@ -54,6 +54,7 @@ namespace SandRibbon.Utils
             visualiser.UpdateUndoView(undoQueue[currentSlide]);
 
             RaiseQueryHistoryChanged();
+            ReenableMyContent();
         }
         private static void RaiseQueryHistoryChanged()
         {
@@ -64,7 +65,7 @@ namespace SandRibbon.Utils
             return undoQueue.ContainsKey(currentSlide) && undoQueue[currentSlide].Count() > 0; 
         }
 
-        internal static void ReenableMyContent()
+        private static void ReenableMyContent()
         {
             #if TOGGLE_CONTENT
             try
