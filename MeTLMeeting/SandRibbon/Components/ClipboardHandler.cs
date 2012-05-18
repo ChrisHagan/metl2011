@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using MeTLLib.DataTypes;
 using SandRibbon.Providers;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace SandRibbon.Components
 {
@@ -117,6 +118,7 @@ namespace SandRibbon.Components
           get
           {
               var strokes = new List<Stroke>();
+              var offsetMatrix = new Matrix { OffsetX = 10.0, OffsetY = 10.0 };
               foreach (var xmlStrokeString in _InkAsString)
               {
                   var XmlStroke = XElement.Parse(xmlStrokeString);
@@ -129,6 +131,8 @@ namespace SandRibbon.Components
                                                Height = Double.Parse(XmlStroke.Element(metl_ns + thicknessTag).Value)
                                            }
                                    };
+                  // offset what we copied so we can paste the same ink stroke to the canvas
+                  stroke.Transform(offsetMatrix, false);
                   stroke.AddPropertyData(stroke.sumId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value ));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value));
