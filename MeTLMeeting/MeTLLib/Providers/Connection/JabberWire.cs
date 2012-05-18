@@ -381,13 +381,17 @@ namespace MeTLLib.Providers.Connection
         }
         protected virtual void ReadXml(object sender, string xml)
         {
+#if DEBUG_VERBOSE
             if (!xml.Contains("/WORM_MOVES"))
                 Trace.TraceInformation("IN:" + xml);
+#endif
         }
         protected virtual void WriteXml(object sender, string xml)
         {
+#if DEBUG_VERBOSE
             if (!xml.Contains("/WORM_MOVES"))
                 Trace.TraceInformation("OUT:" + xml);
+#endif
         }
         private void OnClose(object sender)
         {
@@ -503,16 +507,23 @@ namespace MeTLLib.Providers.Connection
                 Trace.TraceWarning(string.Format("++++: JabberWire::Reset: Called {0} times.", resetInProgress));
             }
         }
-        public void leaveRooms()
+        public void leaveRooms(bool stayInGlobal = false, bool stayInActiveConversation = false)
         {
-            var rooms = new[]{
-                metlServerAddress.global,
-                new Jid(credentials.name, metlServerAddress.muc, jid.Resource)
-            }.ToList();
+            var rooms = new List<Jid>();
+            if (!stayInGlobal)
+            {
+                rooms.Add(metlServerAddress.global);
+            }
+            rooms.Add(new Jid(credentials.name, metlServerAddress.muc, jid.Resource));
+
+            if (!stayInActiveConversation)
+            {
+                rooms.Add(new Jid(location.activeConversation, metlServerAddress.muc, jid.Resource));
+            }
+            
             if (location != null)
                 rooms.AddRange(
                     new[]{
-                        new Jid(location.activeConversation,metlServerAddress.muc,jid.Resource),
                         new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
                         new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
                     });
@@ -537,22 +548,30 @@ namespace MeTLLib.Providers.Connection
             joinRooms();
             receiveEvents.receiveConversationDetails(ConversationDetails.Empty);
         }
-        private void joinRooms()
+        private void joinRooms(bool fastJoin = false, bool alreadyInConversation = false)
         {
-            leaveRooms();
-            joinRoom(metlServerAddress.global);
+            if (!fastJoin)
+            {
+                leaveRooms();
+                joinRoom(metlServerAddress.global);
+            }
             if (isLocationValid())
             {
-                var rooms = new[]
+                var rooms = new List<Jid>();
+                rooms.AddRange(new[]
                 {
                     new Jid(credentials.name, metlServerAddress.muc, jid.Resource),
-                    new Jid(location.activeConversation,metlServerAddress.muc,jid.Resource),
                     new Jid(location.currentSlide.ToString(), metlServerAddress.muc,jid.Resource),
                     new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc,jid.Resource)
-                };
+                });
+
+                if (!alreadyInConversation)
+                {
+                    rooms.Add(new Jid(location.activeConversation,metlServerAddress.muc,jid.Resource));
+                }
                 foreach (var room in rooms.Where(r => r.User != null && r.User != "0"))
                 {
-                        joinRoom(room);
+                    joinRoom(room);
                 }
             }
         }
@@ -669,11 +688,25 @@ namespace MeTLLib.Providers.Connection
                 credentials.name,
                 where.ToString());
         }
-        public void MoveTo(int where)
+
+        public void JoinConversation()
         {
             try
             {
                 leaveRooms();
+                joinRooms();
+            }
+            catch (Exception e)
+            {
+                Trace.TraceInformation("CRASH: MeTLLib::JabberWire:JoinConversation {0}", e.Message);
+            }
+        }
+
+        public void MoveTo(int where)
+        {
+            try
+            {
+                leaveRooms(stayInGlobal: true, stayInActiveConversation: true);
                 new MucManager(conn).LeaveRoom(
                     new Jid(string.Format("{0}{1}", location.currentSlide, credentials.name), metlServerAddress.muc, jid.Resource), credentials.name);
                 var currentDetails = conversationDetailsProvider.DetailsOf(location.activeConversation);
@@ -681,7 +714,7 @@ namespace MeTLLib.Providers.Connection
                 location.currentSlide = where;
                 Globals.conversationDetails = currentDetails;
                 Globals.slide = where;
-                joinRooms();
+                joinRooms(fastJoin: true, alreadyInConversation: true);
                 historyProvider.Retrieve<PreParser>(
                     onStart,
                     onProgress,
@@ -1016,22 +1049,6 @@ namespace MeTLLib.Providers.Connection
         {
             var muc = new MucManager(conn);
             muc.LeaveRoom(new Jid(room + "@" + metlServerAddress.muc), credentials.name);
-        }
-        public void JoinConversation(string room)
-        {
-            /*
-            if (location.activeConversation != null)
-            {
-                var muc = new MucManager(conn);
-                muc.LeaveRoom(new Jid(location.activeConversation + "@" + metlServerAddress.muc), credentials.name);
-                foreach (var slide in conversationDetailsProvider.DetailsOf(location.activeConversation).Slides.Select(s => s.id))
-                    muc.LeaveRoom(new Jid(slide + "@" + metlServerAddress.muc), credentials.name);
-            }
-            location.activeConversation = room;
-            var cd = conversationDetailsProvider.DetailsOf(room);
-            location.availableSlides = cd.Slides.Select(s => s.id).ToList();
-             * */
-            joinRooms();
         }
         private void handleTeacherInConversation(string[] parts)
         {

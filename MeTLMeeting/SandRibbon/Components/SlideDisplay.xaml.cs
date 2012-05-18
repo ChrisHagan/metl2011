@@ -17,6 +17,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Automation;
 using System.Collections.Specialized;
+using System.Diagnostics;
 
 namespace SandRibbon.Components
 {
@@ -317,7 +318,7 @@ namespace SandRibbon.Components
                                                                       {
                                                                       }
                                                                   }));
-            GlobalTimers.SetSyncTimer(action, slide);
+            GlobalTimers.SetSyncTimer(action);
         }
         private bool slideInConversation(int slide)
         {
@@ -454,7 +455,9 @@ namespace SandRibbon.Components
         public static void SendSyncMove(int currentSlideId)
         {
             if (Globals.isAuthor && Globals.synched)
+            {
                 Commands.SendSyncMove.ExecuteAsync(currentSlideId);
+            }
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()

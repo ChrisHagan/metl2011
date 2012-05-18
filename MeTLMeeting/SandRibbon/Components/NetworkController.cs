@@ -4,6 +4,7 @@ using MeTLLib.DataTypes;
 using Microsoft.Practices.Composite.Presentation.Commands;
 using SandRibbon.Providers;
 using Application = System.Windows.Application;
+using System.Diagnostics;
 
 namespace SandRibbon.Components
 {

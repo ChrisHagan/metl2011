@@ -1,86 +1,108 @@
 ﻿using System;
-using System.Threading;
+using System.Timers;
 using MeTLLib.Utilities;
+using System.Collections.Generic;
+using System.Threading;
+using Microsoft.Practices.Composite.Presentation.Commands;
+using System.Diagnostics;
 
 namespace SandRibbon.Components.Utility
 {
+    class TimedAction
+    {
+        readonly object lockObj = new object();
+        const int SYNC_DELAY = 500;
+        System.Timers.Timer worker;
+        Stack<Action> timedActions = new Stack<Action>();
+
+        public TimedAction()
+        {
+            worker = new System.Timers.Timer();
+            worker.Interval = SYNC_DELAY;
+            worker.AutoReset = true;
+            worker.Elapsed += new ElapsedEventHandler(ExecuteTimedAction);
+        }
+
+        public void Shutdown()
+        {
+            worker.Stop();
+        }
+
+        public void Add(Action timedAction)
+        {
+            lock (lockObj)
+            {
+                timedActions.Push(timedAction);   
+                if (!worker.Enabled)
+                    worker.Start();
+            }
+        }
+        public void ChangeTimers(int delay)
+        {
+            worker.Interval = delay;
+        }
+
+        public void ResetTimer()
+        {
+            worker.Interval = SYNC_DELAY;
+        }
+
+        void ExecuteTimedAction(object sender, ElapsedEventArgs e)
+        {
+            Action timedAction = null;
+            lock (lockObj)
+            {
+                if (timedActions.Count == 0)
+                    return;
+                timedAction = timedActions.Pop();
+                // always want the latest, and disregard the old requests
+                timedActions.Clear();
+            }
+
+            if (timedAction == null)
+                return;
+
+            try
+            {
+                timedAction();
+            }
+            catch (Exception)
+            {
+            }
+        }
+    }
+
     public static class GlobalTimers
     {
-        public static Timer SyncTimer = null;
-        private static Action currentAction;
-        private static int currentSlide = 0;
-        private static object locker = new object();
-        public static void SetSyncTimer(Action timedAction, int slide)
+        private static TimedAction timedActions;
+
+        static GlobalTimers()
         {
-            using (DdMonitor.Lock(locker))
-            {
-                syncActive = true;
-                currentSlide = slide;
-                currentAction = timedAction;
-            }
-            if(SyncTimer == null)
-            {
-                SyncTimer = new Timer(delegate
-                                          {
-                                              try
-                                              {
-                                                  using (DdMonitor.Lock(locker))
-                                                  {
-                                                      if (currentAction != null)
-                                                          currentAction();
-                                                      syncActive = false;
-                                                      currentSlide = 0;
-                                                  }
-                                              }
-                                              catch (Exception)
-                                              {
-                                              }
-                                              finally
-                                              {
-                                                  SyncTimer = null;
-                                              }
-                                          },null, 500, Timeout.Infinite );}
+            timedActions = new TimedAction();
+            Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>((_unused) => ShutdownTimers()));
         }
-        public static void stopTimer()
+
+        static void ShutdownTimers()
         {
-            if (1 == Interlocked.Increment(ref syncTimerChangeCounter))
+            if (timedActions!= null)
             {
-                if (SyncTimer != null)
-                {
-                    SyncTimer.Dispose();
-                    SyncTimer = null;
-                }
-                Interlocked.Exchange(ref syncTimerChangeCounter, 0);
-            }
-        }
-        public static void ExecuteSync()
-        {
-            using(DdMonitor.Lock(locker))
-            {
-                if(syncActive)
-                {
-                    currentAction();
-                    syncActive = false;
-                }
-            }
-        }
-        public static int getSlide()
-        {
-            return currentSlide;
-        }
-        private static int syncTimerChangeCounter = 0;
-        private static bool syncActive;
-        public static void resetSyncTimer()
-        {
-            if (1 == Interlocked.Increment(ref syncTimerChangeCounter))
-            {
-                if (SyncTimer != null)
-                {
-                    SyncTimer.Change(500, Timeout.Infinite);
-                }
-                Interlocked.Exchange(ref syncTimerChangeCounter, 0);
+                timedActions.Shutdown();
             }
         }
 
+        public static void ExecuteSync()
+        {
+            timedActions.ChangeTimers(30);
+        }
+        
+        public static void ResetSyncTimer()
+        {
+            timedActions.ResetTimer();
+        }
+
+        public static void SetSyncTimer(Action action)
+        {
+            timedActions.Add(action);
+        }
     }
 }

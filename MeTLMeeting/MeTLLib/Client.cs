@@ -482,6 +482,7 @@ namespace MeTLLib
                 {
                     Trace.TraceError("CRASH: FIXED: I would have crashed in Client.JoinConversation due to location.AvailableSlides not having any elements");
                 }
+                wire.JoinConversation();
                 events.receiveConversationDetails(cd);
             };
             tryIfConnected(work);

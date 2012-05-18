@@ -191,14 +191,14 @@ namespace SandRibbon.Components
 
         private void stylusMove(object sender, StylusEventArgs e)
         {
-            GlobalTimers.resetSyncTimer();
+            GlobalTimers.ResetSyncTimer();
         }
 
         private void mouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                GlobalTimers.resetSyncTimer();
+                GlobalTimers.ResetSyncTimer();
             }
         }
 
@@ -1747,7 +1747,7 @@ namespace SandRibbon.Components
             }
             else
             {
-                GlobalTimers.stopTimer();
+                GlobalTimers.ResetSyncTimer();
                 TypingTimer.Change(600, Timeout.Infinite);
             }
 
