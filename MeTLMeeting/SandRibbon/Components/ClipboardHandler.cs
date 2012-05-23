@@ -117,8 +117,10 @@ namespace SandRibbon.Components
         {
           get
           {
+              // TODO: Adds a nice offset but code doesn't handle the stroke with the new checksum. Undo/redo doesn't clear appropriate buffers.
+              //const double pasteOffset = 20.0;
               var strokes = new List<Stroke>();
-              var offsetMatrix = new Matrix { OffsetX = 10.0, OffsetY = 10.0 };
+              //var offsetMatrix = new Matrix { OffsetX = pasteOffset, OffsetY = pasteOffset };
               foreach (var xmlStrokeString in _InkAsString)
               {
                   var XmlStroke = XElement.Parse(xmlStrokeString);
@@ -132,7 +134,7 @@ namespace SandRibbon.Components
                                            }
                                    };
                   // offset what we copied so we can paste the same ink stroke to the canvas
-                  stroke.Transform(offsetMatrix, false);
+                  //stroke.Transform(offsetMatrix, false);
                   stroke.AddPropertyData(stroke.sumId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value ));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + startingSumTag).Value));
                   stroke.AddPropertyData(stroke.startingId(), Double.Parse(XmlStroke.Element(metl_ns + sumTag).Value));
