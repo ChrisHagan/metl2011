@@ -123,12 +123,16 @@ namespace SandRibbon.Components
             if (p == "public")
             {
                 publicMode.IsChecked = true;
-                publicMode.Focus();
+                // unless there's a very good reason why we want to tear away from whatever element currently has focus I'm going to leave this commented out
+                // commenting out fixes bug #1386
+                //publicMode.Focus();
             }
             else
             {
                 privateMode.IsChecked = true;
-                privateMode.Focus();
+                // unless there's a very good reason why we want to tear away from whatever element currently has focus I'm going to leave this commented out
+                // commenting out fixes bug #1386
+                //privateMode.Focus();
             }
         }
 
