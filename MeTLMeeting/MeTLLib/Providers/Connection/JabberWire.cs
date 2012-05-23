@@ -579,7 +579,7 @@ namespace MeTLLib.Providers.Connection
         {
             try
             {
-                Trace.Write(String.Format("Jabberwire::JoinRoom => Joining room {0}", room));
+                Trace.WriteLine(String.Format("Jabberwire::JoinRoom => Joining room {0}", room));
                 var alias = credentials.name + conn.Resource;
                 new MucManager(conn).JoinRoom(room, alias, true);
             }

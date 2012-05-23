@@ -1746,14 +1746,20 @@ namespace SandRibbon.Components
             mybox.TextChanged -= SendNewText;
             mybox.Text = redoText;
             mybox.TextChanged += SendNewText;
+            var currentSlide = Globals.slide;
             Action typingTimedAction = () =>
             {
                 Dispatcher.adoptAsync(delegate
                 {
+                    var senderTextBox = sender as MeTLTextBox;
                     if (mybox.Text.Length == 0)
-                        dirtyTextBoxWithoutHistory((MeTLTextBox)sender);
+                    {
+                        dirtyTextBoxWithoutHistory(senderTextBox, currentSlide);
+                    }
                     else
-                        sendTextWithoutHistory((MeTLTextBox)sender, privacy);
+                    {
+                        sendTextWithoutHistory(senderTextBox, privacy, currentSlide);
+                    }
                     GlobalTimers.ExecuteSync();
                 });
             };
@@ -1766,7 +1772,6 @@ namespace SandRibbon.Components
             {
                 GlobalTimers.ResetSyncTimer();
                 TypingTimer.Add(typingTimedAction);
-                //TypingTimer.ResetTimer();
             }
 
         }
@@ -1983,10 +1988,16 @@ namespace SandRibbon.Components
         }
         private void dirtyTextBoxWithoutHistory(MeTLTextBox box)
         {
+            dirtyTextBoxWithoutHistory(box, Globals.slide);
+        }
+
+        private void dirtyTextBoxWithoutHistory(MeTLTextBox box, int slide)
+        {
             RemovePrivacyStylingFromElement(box);
             RemoveTextboxWithTag(box.tag().id);
-            Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(Globals.slide, box.tag().author, _target, box.tag().privacy, box.tag().id));
+            Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, box.tag().privacy, box.tag().id));
         }
+
         private void box_PreviewTextInput(object sender, KeyEventArgs e)
         {
             _originalText = ((MeTLTextBox)sender).Text;

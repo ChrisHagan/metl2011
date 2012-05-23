@@ -36,7 +36,9 @@ namespace SandRibbon.Components.Utility
             {
                 AddAction(timedAction);
                 if (!worker.Enabled)
+                {
                     worker.Start();
+                }
             }
         }
 
