@@ -64,6 +64,22 @@ namespace SandRibbon.Components
         NotSupported
     }
 
+    public class TypingTimedAction : TimedAction<Queue<Action>>
+    {
+        protected override void AddAction(Action timedAction)
+        {
+            timedActions.Enqueue(timedAction);
+        }
+
+        protected override Action GetTimedAction()
+        {
+            if (timedActions.Count == 0)
+                return null;
+
+            return timedActions.Dequeue();
+        }
+    }
+    
     public partial class CollapsedCanvasStack : IClipboardHandler
     {
         List<MeTLTextBox> _boxesAtTheStart = new List<MeTLTextBox>();
@@ -74,7 +90,7 @@ namespace SandRibbon.Components
         private FontFamily _currentFamily = new FontFamily("Arial");
         private const bool CanFocus = true;
         private bool _focusable = true;
-        public static Timer TypingTimer;
+        public static TypingTimedAction TypingTimer;
         private string _originalText;
         private ContentBuffer contentBuffer;
         private MeTLTextBox myTextBox;
@@ -1730,25 +1746,27 @@ namespace SandRibbon.Components
             mybox.TextChanged -= SendNewText;
             mybox.Text = redoText;
             mybox.TextChanged += SendNewText;
+            Action typingTimedAction = () =>
+            {
+                Dispatcher.adoptAsync(delegate
+                {
+                    if (mybox.Text.Length == 0)
+                        dirtyTextBoxWithoutHistory((MeTLTextBox)sender);
+                    else
+                        sendTextWithoutHistory((MeTLTextBox)sender, privacy);
+                    GlobalTimers.ExecuteSync();
+                });
+            };
             if (TypingTimer == null)
             {
-                TypingTimer = new Timer(delegate
-                {
-                    Dispatcher.adoptAsync(delegate
-                                                    {
-                                                        if(mybox.Text.Length == 0)
-                                                            dirtyTextBoxWithoutHistory((MeTLTextBox)sender);
-                                                        else
-                                                          sendTextWithoutHistory((MeTLTextBox)sender, privacy);
-                                                        TypingTimer = null;
-                                                        GlobalTimers.ExecuteSync();
-                                                    });
-                }, null, 600, Timeout.Infinite);
+                TypingTimer = new TypingTimedAction();
+                TypingTimer.Add(typingTimedAction);
             }
             else
             {
                 GlobalTimers.ResetSyncTimer();
-                TypingTimer.Change(600, Timeout.Infinite);
+                TypingTimer.Add(typingTimedAction);
+                //TypingTimer.ResetTimer();
             }
 
         }

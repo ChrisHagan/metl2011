@@ -8,77 +8,33 @@ using System.Diagnostics;
 
 namespace SandRibbon.Components.Utility
 {
-    class TimedAction
+    class ChangeSlideTimedAction : TimedAction<Stack<Action>>
     {
-        readonly object lockObj = new object();
-        const int SYNC_DELAY = 500;
-        System.Timers.Timer worker;
-        Stack<Action> timedActions = new Stack<Action>();
-
-        public TimedAction()
+        protected override void AddAction(Action timedAction)
         {
-            worker = new System.Timers.Timer();
-            worker.Interval = SYNC_DELAY;
-            worker.AutoReset = true;
-            worker.Elapsed += new ElapsedEventHandler(ExecuteTimedAction);
+            timedActions.Push(timedAction);
         }
 
-        public void Shutdown()
+        protected override Action GetTimedAction()
         {
-            worker.Stop();
-        }
+            if (timedActions.Count == 0)
+                return null;
 
-        public void Add(Action timedAction)
-        {
-            lock (lockObj)
-            {
-                timedActions.Push(timedAction);   
-                if (!worker.Enabled)
-                    worker.Start();
-            }
-        }
-        public void ChangeTimers(int delay)
-        {
-            worker.Interval = delay;
-        }
+            var timedAction = timedActions.Pop();
+            // always want the latest, and disregard the old requests
+            timedActions.Clear();
 
-        public void ResetTimer()
-        {
-            worker.Interval = SYNC_DELAY;
-        }
-
-        void ExecuteTimedAction(object sender, ElapsedEventArgs e)
-        {
-            Action timedAction = null;
-            lock (lockObj)
-            {
-                if (timedActions.Count == 0)
-                    return;
-                timedAction = timedActions.Pop();
-                // always want the latest, and disregard the old requests
-                timedActions.Clear();
-            }
-
-            if (timedAction == null)
-                return;
-
-            try
-            {
-                timedAction();
-            }
-            catch (Exception)
-            {
-            }
+            return timedAction;
         }
     }
 
     public static class GlobalTimers
     {
-        private static TimedAction timedActions;
+        private static ChangeSlideTimedAction timedActions;
 
         static GlobalTimers()
         {
-            timedActions = new TimedAction();
+            timedActions = new ChangeSlideTimedAction();
             Commands.LeaveAllRooms.RegisterCommand(new DelegateCommand<object>((_unused) => ShutdownTimers()));
         }
 
