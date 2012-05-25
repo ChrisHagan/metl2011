@@ -1,54 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows;
 using SandRibbon.Providers;
 using MeTLLib.DataTypes;
 using System.Diagnostics;
-using SandRibbon.Utils;
 
 namespace SandRibbon.Components.Utility
 {
     public class ContentBuffer
     {
         private List<UIElement> uiCollection;
-        private StrokeCollection strokeCollection;
+        private StrokeFilter strokeFilter;
 
         // used to create a snapshot for undo/redo
         private List<UIElement> imageDeltaCollection;
         private List<UIElement> textDeltaCollection;
-        private StrokeCollection strokeDeltaCollection;
         private List<StrokeChecksum> strokeChecksumCollection;
+        private StrokeFilter strokeDeltaFilter;
 
         public ContentBuffer()
         {
             uiCollection = new List<UIElement>();
-            strokeCollection = new StrokeCollection();
+            strokeFilter = new StrokeFilter();
 
             imageDeltaCollection = new List<UIElement>();
             textDeltaCollection = new List<UIElement>();
-            strokeDeltaCollection = new StrokeCollection();
+            strokeDeltaFilter = new StrokeFilter();
             strokeChecksumCollection = new List<StrokeChecksum>();
         }
 
         #region Collection helpers
 
-        private void ClearStrokes()
-        {
-            strokeCollection.Clear();
-        }
-
         private void ClearElements()
         {
             uiCollection.Clear();
-        }
-
-        private void ClearDeltaStrokes()
-        {
-            strokeDeltaCollection.Clear();
         }
 
         private void ClearDeltaImages()
@@ -66,36 +54,6 @@ namespace SandRibbon.Components.Utility
             strokeChecksumCollection.Clear();
         }
 
-        private void AddStrokes(StrokeCollection strokes)
-        {
-            foreach (var stroke in strokes)
-            {
-                AddStroke(stroke);
-            }
-        }
-
-        private void AddStroke(Stroke stroke)
-        {
-            if (strokeCollection.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() != 0)
-                return;
-            strokeCollection.Add(stroke);
-        }
-
-        private void AddDeltaStrokes(StrokeCollection strokes)
-        {
-            foreach (var stroke in strokes)
-            {
-                AddDeltaStroke(stroke);
-            }
-        }
-
-        private void AddDeltaStroke(Stroke stroke)
-        {
-            if (strokeDeltaCollection.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)).Count() != 0)
-                return;
-            strokeDeltaCollection.Add(stroke);
-        }
-
         private void AddStrokeChecksum(StrokeChecksum checksum)
         {
             if (strokeChecksumCollection.Contains(checksum))
@@ -103,42 +61,7 @@ namespace SandRibbon.Components.Utility
 
             strokeChecksumCollection.Add(checksum);
         }
-
-        private void RemoveStrokes(StrokeCollection strokes)
-        {
-            try
-            {
-                var deadStrokes = new StrokeCollection();
-                foreach (var stroke in strokes)
-                {
-                    deadStrokes.Add(new StrokeCollection(strokeCollection.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum))));
-                }
-
-               strokeCollection.Remove(deadStrokes);
-            }
-            catch (ArgumentException) { }
-        }
         
-        private void RemoveStroke(Stroke stroke)
-        {
-            try
-            {
-                var deadStrokes = new StrokeCollection(strokeCollection.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)));
-                strokeCollection.Remove(deadStrokes);
-            }
-            catch (ArgumentException) { }
-        }
-
-        private void RemoveDeltaStroke(Stroke stroke)
-        {
-            try
-            {
-                var deadStrokes = new StrokeCollection(strokeDeltaCollection.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)));
-                strokeDeltaCollection.Remove(deadStrokes);
-            }
-            catch (ArgumentException) { }
-        }
-
         private void RemoveStrokeChecksum(StrokeChecksum checksum)
         {
             try
@@ -263,35 +186,15 @@ namespace SandRibbon.Components.Utility
             }
         }
 
-        #region Collections
-
-        StrokeCollection Strokes
-        {
-            get
-            {
-                return strokeCollection;
-            }
-        }
-
-        List<UIElement> CanvasChildren
-        {
-            get
-            {
-                return uiCollection;
-            }
-        }
-
         public StrokeCollection FilteredStrokes(ContentVisibilityEnum contentVisibility)
         {
-            return FilterStrokes(Strokes, contentVisibility);
+            return strokeFilter.FilterContent(strokeFilter.Strokes, contentVisibility); 
         }
 
         public IEnumerable<UIElement> FilteredElements(ContentVisibilityEnum contentVisibility)
         {
-            return FilterElements(CanvasChildren, contentVisibility);
+            return FilterElements(uiCollection, contentVisibility);
         }
-
-        #endregion
 
         public void UpdateChild<TypeOfChild>(TypeOfChild childToFind, Action<TypeOfChild> updateChild) where TypeOfChild : UIElement
         {
@@ -309,31 +212,21 @@ namespace SandRibbon.Components.Utility
             }
         }
 
-        public void UpdateStrokes(Action<Stroke> updateChild)
-        {
-            foreach (Stroke uiElement in strokeCollection)
-            {
-                updateChild(uiElement);
-            }
-        }
-
         public void Clear()
         {
-            ClearStrokes();
+            strokeFilter.Clear();
             ClearElements();
         }
 
-        #region Handle strokes
-
         public void ClearStrokes(Action modifyVisibleContainer)
         {
-            ClearStrokes();
+            strokeFilter.Clear();
             modifyVisibleContainer();
         }
 
         public void ClearDeltaStrokes(Action modifyUndoContainer)
         {
-            ClearDeltaStrokes();
+            strokeDeltaFilter.Clear();
             modifyUndoContainer();
         }
 
@@ -351,76 +244,27 @@ namespace SandRibbon.Components.Utility
 
         public void AddStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
         {
-            AddStrokes(strokes);
-#if TOGGLE_CONTENT
-            modifyVisibleContainer(FilterStrokes(strokes, CurrentContentVisibility));
-#else
-            modifyVisibleContainer(strokes);
-#endif
+            strokeFilter.Add(strokes, modifyVisibleContainer);
         }
 
         public void AddStroke(Stroke stroke, Action<Stroke> modifyVisibleContainer)
         {
-            AddStroke(stroke);
-#if TOGGLE_CONTENT
-            var filteredStroke = FilterStroke(stroke, CurrentContentVisibility);
-            if (filteredStroke != null)
-            {
-                modifyVisibleContainer(filteredStroke);
-            }
-#else
-            modifyVisibleContainer(stroke);
-#endif
+            strokeFilter.Add(stroke, modifyVisibleContainer);
         }
 
         public void RemoveStroke(Stroke stroke, Action<Stroke> modifyVisibleContainer)
         {
-            var strokes = new StrokeCollection();
-            strokes.Add(stroke);
-
-            RemoveStroke(stroke);
-#if TOGGLE_CONTENT
-            var filteredStroke = FilterStroke(stroke, CurrentContentVisibility);
-            if (filteredStroke != null)
-            {
-                modifyVisibleContainer(filteredStroke);
-            }
-#else
-            modifyVisibleContainer(stroke);
-#endif
+            strokeFilter.Remove(stroke, modifyVisibleContainer);
         }
 
         public void RemoveStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyVisibleContainer)
         {
-            RemoveStrokes(strokes);
-#if TOGGLE_CONTENT
-            modifyVisibleContainer(FilterStrokes(strokes, CurrentContentVisibility));
-#else
-            modifyVisibleContainer(strokes);
-#endif
+            strokeFilter.Remove(strokes, modifyVisibleContainer);
         }
 
         public void AddDeltaStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyUndoContainer)
         {
-            AddDeltaStrokes(strokes);
-#if TOGGLE_CONTENT
-            modifyUndoContainer(FilterStrokes(strokes, CurrentContentVisibility));
-#else
-            modifyUndoContainer(strokes);
-#endif
-        }
-
-        public void AddDeltaStroke(Stroke stroke, Action<StrokeCollection> modifyUndoContainer)
-        {
-            var strokes = new StrokeCollection();
-            strokes.Add(stroke);
-
-            AddDeltaStroke(stroke);
-#if TOGGLE_CONTENT
-            modifyUndoContainer(FilterStrokes(strokes, CurrentContentVisibility));
-#else
-            modifyUndoContainer(strokes);
-#endif
+            strokeDeltaFilter.Add(strokes, modifyUndoContainer); 
         }
 
         public void AddDeltaImages(List<UIElement> images, Action<IEnumerable<UIElement>> modifyUndoContainer)
@@ -433,42 +277,12 @@ namespace SandRibbon.Components.Utility
 #endif
         }
 
-        public void RemoveDeltaStroke(Stroke stroke, Action<StrokeCollection> modifyUndoContainer)
-        {
-            var strokes = new StrokeCollection();
-            strokes.Add(stroke);
-
-            RemoveDeltaStroke(stroke);
-#if TOGGLE_CONTENT
-            modifyUndoContainer(FilterStrokes(strokes, CurrentContentVisibility));
-#else
-            modifyUndoContainer(strokes);
-#endif
-        }
-        
-        public void RemoveDeltaStrokes(StrokeCollection strokes, Action<StrokeCollection> modifyUndoContainer)
-        {
-            RemoveStrokes(strokes);
-#if TOGGLE_CONTENT
-            modifyUndoContainer(FilterStrokes(strokes, CurrentContentVisibility));
-#else
-            modifyUndoContainer(strokes);
-#endif
-        }
-
-        private StrokeCollection FilterStrokes(StrokeCollection strokes, ContentVisibilityEnum contentVisibility)
-        {
-            var comparer = BuildComparer(contentVisibility);
-            return new StrokeCollection(strokes.Where(s => comparer.Any((comp) => comp(s.tag().author))));
-        }
 
         private Stroke FilterStroke(Stroke stroke, ContentVisibilityEnum contentVisibility)
         {
             var comparer = BuildComparer(contentVisibility);
             return comparer.Any((comp) => comp(stroke.tag().author)) ? stroke : null;
         }
-
-        #endregion
 
         #region Handle images and text
 
@@ -511,11 +325,11 @@ namespace SandRibbon.Components.Utility
             // 1. find the strokes in the contentbuffer that have matching checksums 
             // 2. remove those strokes and corresponding checksums in the content buffer
             // 3. for the strokes that also exist in the canvas, remove them and their checksums
-            var dirtyStrokes = strokeCollection.Where(s => checksums.Contains(s.sum().checksum.ToString())).ToList();
+            var dirtyStrokes = strokeFilter.StrokesWithChecksums(checksums); 
             foreach (var stroke in dirtyStrokes)
             {
                 RemoveStrokeChecksum(stroke.sum());
-                RemoveStroke(stroke);
+                strokeFilter.Remove(stroke); 
             }
 
             modifyVisibleContainer(checksums);
