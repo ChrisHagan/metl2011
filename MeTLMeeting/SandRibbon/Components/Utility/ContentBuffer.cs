@@ -12,178 +12,24 @@ namespace SandRibbon.Components.Utility
 {
     public class ContentBuffer
     {
-        private List<UIElement> uiCollection;
         private StrokeFilter strokeFilter;
+        private ImageFilter imageFilter;
+        private TextFilter textFilter;
 
         // used to create a snapshot for undo/redo
-        private List<UIElement> imageDeltaCollection;
-        private List<UIElement> textDeltaCollection;
-        private List<StrokeChecksum> strokeChecksumCollection;
+        private ImageFilter imageDeltaCollection;
+        private StrokeChecksumFilter strokeChecksumCollection;
         private StrokeFilter strokeDeltaFilter;
 
         public ContentBuffer()
         {
-            uiCollection = new List<UIElement>();
             strokeFilter = new StrokeFilter();
+            imageFilter = new ImageFilter();
+            textFilter = new TextFilter();
 
-            imageDeltaCollection = new List<UIElement>();
-            textDeltaCollection = new List<UIElement>();
+            strokeChecksumCollection = new StrokeChecksumFilter();
             strokeDeltaFilter = new StrokeFilter();
-            strokeChecksumCollection = new List<StrokeChecksum>();
-        }
-
-        #region Collection helpers
-
-        private void ClearElements()
-        {
-            uiCollection.Clear();
-        }
-
-        private void ClearDeltaImages()
-        {
-            imageDeltaCollection.Clear(); 
-        }
-
-        private void ClearDeltaText()
-        {
-            textDeltaCollection.Clear();
-        }
-
-        private void ClearStrokeChecksums()
-        {
-            strokeChecksumCollection.Clear();
-        }
-
-        private void AddStrokeChecksum(StrokeChecksum checksum)
-        {
-            if (strokeChecksumCollection.Contains(checksum))
-                return;
-
-            strokeChecksumCollection.Add(checksum);
-        }
-        
-        private void RemoveStrokeChecksum(StrokeChecksum checksum)
-        {
-            try
-            {
-                strokeChecksumCollection.Remove(checksum);
-            }
-            catch (ArgumentException) { }
-        }
-
-        private bool CollectionContainsElement(UIElement element)
-        {
-            if (element is Image)
-            {
-                var imageTag = (element as Image).tag().id;
-                return uiCollection.OfType<Image>().Where(img => img.tag().id == imageTag).Count() > 0;
-            }
-            else if (element is TextBox)
-            {
-                var textTag = (element as TextBox).tag().id;
-                return uiCollection.OfType<TextBox>().Where(txt => txt.tag().id == textTag).Count() > 0;
-            }
-            else
-            {
-                Debug.Fail("Unexpected type in the collection");
-                return uiCollection.Contains(element);
-            }
-        }
-
-        private void AddElement(UIElement element)
-        {
-            if (CollectionContainsElement(element))
-                return;
-            uiCollection.Add(element);
-        }
-
-        private void AddDeltaImage(UIElement element)
-        {
-            if (CollectionContainsElement(element))
-                return;
-            imageDeltaCollection.Add(element);
-        }
-
-        private void AddDeltaText(UIElement element)
-        {
-            if (CollectionContainsElement(element))
-                return;
-            textDeltaCollection.Add(element);
-        }
-
-        private void AddElements(UIElementCollection elements)
-        {
-            foreach (UIElement element in elements)
-            {
-                uiCollection.Add(element);
-            }
-        }
-
-        private void AddDeltaImage(List<UIElement> elements)
-        {
-            foreach (UIElement element in elements)
-            {
-                imageDeltaCollection.Add(element);
-            }
-        }
-
-        private void AddDeltaText(List<UIElement> elements)
-        {
-            foreach (UIElement element in elements)
-            {
-                textDeltaCollection.Add(element);
-            }
-        }
-
-        private void RemoveElement(UIElement element)
-        {
-            try
-            {
-                // find by tag().id then remove the element found
-                var found = uiCollection.Find(elem =>
-                {
-                    if (elem is Image && element is Image)
-                    {
-                        return IdFromElementTag(elem) == IdFromElementTag(element); 
-                    }
-                    if (elem is TextBox && element is TextBox)
-                    {
-                        return IdFromElementTag(elem) == IdFromElementTag(element);
-                    }
-                    return false;
-                });
-
-                uiCollection.Remove(found);
-            }
-            catch (ArgumentException) { }
-        }
-
-        private void RemoveDeltaImage(UIElement element)
-        {
-            try
-            {
-                imageDeltaCollection.Remove(element);
-            }
-            catch (ArgumentException) { }
-        }
-
-        private void RemoveDeltaText(UIElement element)
-        {
-            try
-            {
-                textDeltaCollection.Remove(element);
-            }
-            catch (ArgumentException) { }
-        }
-        #endregion
-
-        private ContentVisibilityEnum CurrentContentVisibility
-        {
-            get
-            {
-                var currentContent = Commands.SetContentVisibility.IsInitialised ? (ContentVisibilityEnum)Commands.SetContentVisibility.LastValue() : ContentVisibilityEnum.AllVisible;
-                return currentContent;
-            }
+            imageDeltaCollection = new ImageFilter();
         }
 
         public StrokeCollection FilteredStrokes(ContentVisibilityEnum contentVisibility)
@@ -191,31 +37,43 @@ namespace SandRibbon.Components.Utility
             return strokeFilter.FilterContent(strokeFilter.Strokes, contentVisibility); 
         }
 
-        public IEnumerable<UIElement> FilteredElements(ContentVisibilityEnum contentVisibility)
+        public IEnumerable<UIElement> FilteredTextBoxes(ContentVisibilityEnum contentVisibility)
         {
-            return FilterElements(uiCollection, contentVisibility);
+            return textFilter.FilteredContent(contentVisibility);
         }
 
-        public void UpdateChild<TypeOfChild>(TypeOfChild childToFind, Action<TypeOfChild> updateChild) where TypeOfChild : UIElement
+        public IEnumerable<UIElement> FilteredImages(ContentVisibilityEnum contentVisibility)
         {
-            var child = uiCollection.Find((elem) => elem == childToFind);
-            if (child != null)
-            {
-                updateChild(child as TypeOfChild);
-            }
+            return imageFilter.FilteredContent(contentVisibility);
         }
-        public void UpdateChildren<TypeOfChildren>(Action<TypeOfChildren> updateChild) 
+
+        public void UpdateChild(UIElement childToFind, Action<UIElement> updateChild)
         {
-            foreach (var uiElement in uiCollection.OfType<TypeOfChildren>())
-            {
-                updateChild(uiElement);
-            }
+            if (childToFind is TextBox)
+                textFilter.UpdateChild(childToFind, updateChild);
+            if (childToFind is Image) 
+                imageFilter.UpdateChild(childToFind, updateChild);
+        }
+
+        public void UpdateAllTextBoxes(Action<TextBox> updateChild)
+        {
+            textFilter.UpdateChildren(updateChild);
+        }
+
+        public void UpdateAllImages(Action<Image> updateChild)
+        {
+            imageFilter.UpdateChildren(updateChild);
         }
 
         public void Clear()
         {
             strokeFilter.Clear();
-            ClearElements();
+            imageFilter.Clear();
+            textFilter.Clear();
+
+            imageDeltaCollection.Clear();
+            strokeDeltaFilter.Clear();
+            strokeChecksumCollection.Clear();
         }
 
         public void ClearStrokes(Action modifyVisibleContainer)
@@ -232,13 +90,7 @@ namespace SandRibbon.Components.Utility
 
         public void ClearDeltaImages(Action modifyUndoContainer)
         {
-            ClearDeltaImages();
-            modifyUndoContainer();
-        }
-
-        public void ClearDeltaText(Action modifyUndoContainer)
-        {
-            ClearDeltaText();
+            imageDeltaCollection.Clear();
             modifyUndoContainer();
         }
 
@@ -267,57 +119,40 @@ namespace SandRibbon.Components.Utility
             strokeDeltaFilter.Add(strokes, modifyUndoContainer); 
         }
 
-        public void AddDeltaImages(List<UIElement> images, Action<IEnumerable<UIElement>> modifyUndoContainer)
+        public void AddDeltaImages(List<UIElement> images, Action<List<UIElement>> modifyUndoContainer)
         {
-            AddDeltaImage(images);
-#if TOGGLE_CONTENT
-            modifyUndoContainer(FilterElements(images, CurrentContentVisibility));
-#else
-            modifyUndoContainer(images);
-#endif
+            imageDeltaCollection.Add(images, modifyUndoContainer);
         }
-
-
-        private Stroke FilterStroke(Stroke stroke, ContentVisibilityEnum contentVisibility)
-        {
-            var comparer = BuildComparer(contentVisibility);
-            return comparer.Any((comp) => comp(stroke.tag().author)) ? stroke : null;
-        }
-
-        #region Handle images and text
 
         public void ClearElements(Action modifyVisibleContainer)
         {
-            ClearElements();
+            imageFilter.Clear();
+            textFilter.Clear();
             modifyVisibleContainer();
         }
 
-        public void AddElement(UIElement element, Action<UIElement> modifyVisibleContainer)
+        public void AddImage(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
-            AddElement(element);
-#if TOGGLE_CONTENT
-            var filteredElement = FilterElement(element, CurrentContentVisibility);
-            if (filteredElement != null)
-            { 
-                modifyVisibleContainer(filteredElement);
-            }
-#else
-            modifyVisibleContainer(element);
-#endif
+            Debug.Assert((element as Image) != null);
+            imageFilter.Add(element, modifyVisibleContainer);
         }
 
-        public void RemoveElement(UIElement element, Action<UIElement> modifyVisibleContainer)
+        public void RemoveImage(UIElement element, Action<UIElement> modifyVisibleContainer)
         {
-            RemoveElement(element);
-#if TOGGLE_CONTENT
-            var filteredElement = FilterElement(element, CurrentContentVisibility);
-            if (filteredElement != null)
-            { 
-                modifyVisibleContainer(filteredElement);
-            }
-#else
-            modifyVisibleContainer(element);
-#endif
+            Debug.Assert((element as Image) != null);
+            imageFilter.Remove(element, modifyVisibleContainer);
+        }
+
+        public void AddTextBox(UIElement element, Action<UIElement> modifyVisibleContainer)
+        {
+            Debug.Assert((element as TextBox) != null);
+            textFilter.Add(element, modifyVisibleContainer);
+        }
+
+        public void RemoveTextBox(UIElement element, Action<UIElement> modifyVisibleContainer)
+        {
+            Debug.Assert((element as TextBox) != null);
+            textFilter.Remove(element, modifyVisibleContainer);
         }
 
         public void RemoveStrokesAndMatchingChecksum(IEnumerable<string> checksums, Action<IEnumerable<string>> modifyVisibleContainer)
@@ -328,7 +163,7 @@ namespace SandRibbon.Components.Utility
             var dirtyStrokes = strokeFilter.StrokesWithChecksums(checksums); 
             foreach (var stroke in dirtyStrokes)
             {
-                RemoveStrokeChecksum(stroke.sum());
+                strokeChecksumCollection.Remove(stroke.sum());
                 strokeFilter.Remove(stroke); 
             }
 
@@ -339,8 +174,7 @@ namespace SandRibbon.Components.Utility
         {
             var checksum = stroke.sum();
 
-            AddStrokeChecksum(checksum);
-
+            strokeChecksumCollection.Add(checksum);
             modifyVisibleContainer(checksum);
         }
 
@@ -348,71 +182,8 @@ namespace SandRibbon.Components.Utility
         {
             var checksum = stroke.sum();
 
-            RemoveStrokeChecksum(checksum);
+            strokeChecksumCollection.Remove(checksum);
             modifyVisibleContainer(checksum);
         }
-
-        private UIElement FilterElement(UIElement element, ContentVisibilityEnum contentVisibility)
-        {
-            var tempList = new List<UIElement>();
-            tempList.Add(element);
-
-            return FilterElements(tempList, contentVisibility).FirstOrDefault();
-        }
-
-        private string AuthorFromElementTag(UIElement element)
-        {
-            if (element is Image)
-                return ((Image)element).tag().author;
-
-            if (element is TextBox)
-                return ((TextBox)element).tag().author;
-
-            Debug.Fail("Element should be either Image or TextBox");
-            return string.Empty;
-        }
-
-        private string IdFromElementTag(UIElement element)
-        {
-            if (element is Image)
-                return ((Image)element).tag().id;
-
-            if (element is TextBox)
-                return ((TextBox)element).tag().id;
-
-            Debug.Fail("Element should be either Image or TextBox");
-            return string.Empty;
-        }
-
-        private IEnumerable<UIElement> FilterElements(List<UIElement> elements, ContentVisibilityEnum contentVisibility)
-        {
-            var comparer = BuildComparer(contentVisibility);
-            return elements.Where(elem => comparer.Any((comp) => comp(AuthorFromElementTag(elem))));
-        }
-
-        private List<Func<string, bool>> BuildComparer(ContentVisibilityEnum contentVisibility)
-        {
-            var comparer = new List<Func<string,bool>>();
-            var conversationAuthor = Globals.conversationDetails.Author;
-
-            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.OwnerVisible))
-                comparer.Add((elementAuthor) => elementAuthor == conversationAuthor);
-
-            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.TheirsVisible))
-                comparer.Add((elementAuthor) => (elementAuthor != Globals.me && elementAuthor != conversationAuthor));
-
-            if (IsVisibilityFlagSet(contentVisibility, ContentVisibilityEnum.MineVisible))
-                comparer.Add((elementAuthor) => elementAuthor == Globals.me);
-
-            return comparer;
-        }
-
-        #endregion
-
-        private bool IsVisibilityFlagSet(ContentVisibilityEnum contentVisible, ContentVisibilityEnum flag)
-        {
-            return (contentVisible & flag) != ContentVisibilityEnum.NoneVisible;
-        }
     }
-
 }

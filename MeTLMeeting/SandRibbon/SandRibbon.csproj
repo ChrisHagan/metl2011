@@ -47,8 +47,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ProductName>MeTL</ProductName>
     <PublisherName>Monash University eEducation Centre</PublisherName>
+    <ProductName>MeTL</ProductName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
@@ -161,6 +161,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Components\Utility\ContentFilter.cs" />
+    <Compile Include="Components\Utility\StrokeChecksumFilter.cs" />
     <Compile Include="Components\Utility\TextFilter.cs" />
     <Compile Include="Components\Utility\ImageFilter.cs" />
     <Compile Include="Components\Utility\StrokeFilter.cs" />

@@ -287,7 +287,7 @@ namespace SandRibbon.Components
                     ((MeTLTextBox)box).Focusable = curFocusable && (tag.author == curMe);
                 }
             }
-            contentBuffer.UpdateChildren<MeTLTextBox>((textBox) =>
+            contentBuffer.UpdateAllTextBoxes((textBox) =>
             {
                 var tag = textBox.tag();
                 textBox.Focusable = curFocusable && (tag.author == curMe);
@@ -303,7 +303,7 @@ namespace SandRibbon.Components
                         // if this element hasn't already been added
                         if (Work.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id).Count() == 0)
                         {
-                            contentBuffer.AddElement(element, (child) => Work.Children.Add(child));
+                            contentBuffer.AddImage(element, (child) => Work.Children.Add(child));
                         }
                        sendThisElement(element);
                     }
@@ -316,7 +316,7 @@ namespace SandRibbon.Components
                         var imagesToRemove = Work.ImageChildren().ToList().Where(i => ((Image)i).tag().id == ((Image)element).tag().id);
                         if (imagesToRemove.Count() > 0)
                         {
-                            contentBuffer.RemoveElement(imagesToRemove.First(), (image) => Work.Children.Remove(image));
+                            contentBuffer.RemoveImage(imagesToRemove.First(), (image) => Work.Children.Remove(image));
                         }
                         dirtyThisElement(element);
                     }
@@ -542,7 +542,7 @@ namespace SandRibbon.Components
                     {
                         var imagesToRemove = Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id);
                         if (imagesToRemove.Count() > 0)
-                            contentBuffer.RemoveElement(imagesToRemove.First(), (image) => Work.Children.Remove(image));
+                            contentBuffer.RemoveImage(imagesToRemove.First(), (image) => Work.Children.Remove(image));
                         if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
                             dirtyThisElement(element);
                     }
@@ -550,7 +550,7 @@ namespace SandRibbon.Components
                     {
                         selection.Add(element);
                         if (Work.Children.ToList().Where(i => i is Image &&((Image)i).tag().id == element.tag().id).Count() == 0)
-                            contentBuffer.AddElement(element, (image) => Work.Children.Add(image));
+                            contentBuffer.AddImage(element, (image) => Work.Children.Add(image));
                         if (!element.Tag.ToString().StartsWith("NOT_LOADED"))
                             sendThisElement(element);
                     }
@@ -562,14 +562,14 @@ namespace SandRibbon.Components
                     {
                         var imagesToRemove = Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id);
                           if (imagesToRemove.Count() > 0)
-                              contentBuffer.RemoveElement(imagesToRemove.First(), (image) => Work.Children.Remove(image)); 
+                              contentBuffer.RemoveImage(imagesToRemove.First(), (image) => Work.Children.Remove(image)); 
                         dirtyThisElement(element);
                     }
                     foreach (var element in mySelectedImages)
                     { 
                         if (Work.Children.ToList().Where(i => i is Image && ((Image)i).tag().id == element.tag().id).Count() == 0)
                         {
-                           contentBuffer.AddElement(element, (image) => Work.Children.Add(image));
+                           contentBuffer.AddImage(element, (image) => Work.Children.Add(image));
                         }
                        sendThisElement(element);
                     }
@@ -813,7 +813,9 @@ namespace SandRibbon.Components
             Work.Strokes.Clear();
             Work.Strokes.Add(contentBuffer.FilteredStrokes(contentVisibility));
             Work.Children.Clear();
-            foreach (var child in contentBuffer.FilteredElements(contentVisibility))
+            foreach (var child in contentBuffer.FilteredTextBoxes(contentVisibility))
+                Work.Children.Add(child);
+            foreach (var child in contentBuffer.FilteredImages(contentVisibility))
                 Work.Children.Add(child);
         }
 
@@ -1218,7 +1220,7 @@ namespace SandRibbon.Components
         {
             if (canvas.ImageChildren().Any(i => ((Image) i).tag().id == image.tag().id)) return;
 
-            contentBuffer.AddElement(image, (img) =>
+            contentBuffer.AddImage(image, (img) =>
             {
                 Panel.SetZIndex(img, 2);
                 canvas.Children.Add(img);
@@ -1242,7 +1244,7 @@ namespace SandRibbon.Components
 
             foreach (var removeImage in imagesToRemove)
             {
-                contentBuffer.RemoveElement(removeImage, (img) => Work.Children.Remove(removeImage));
+                contentBuffer.RemoveImage(removeImage, (img) => Work.Children.Remove(removeImage));
             }
         }
 
@@ -1273,7 +1275,7 @@ namespace SandRibbon.Components
         {
             element.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
             element.Opacity = 0.7;
-            contentBuffer.UpdateChild<FrameworkElement>(element, (elem) =>
+            contentBuffer.UpdateChild(element, (elem) =>
             {
                 elem.Effect = new DropShadowEffect { BlurRadius = 50, Color = color, ShadowDepth = 0, Opacity = 1 };
                 elem.Opacity = 0.7;
@@ -1285,7 +1287,7 @@ namespace SandRibbon.Components
             element.Effect = null;
             element.Opacity = 1;
 
-            contentBuffer.UpdateChild<FrameworkElement>(element, (elem) =>
+            contentBuffer.UpdateChild(element, (elem) =>
             {
                 elem.Effect = null;
                 elem.Opacity = 1;
@@ -1574,7 +1576,7 @@ namespace SandRibbon.Components
                 Action undo = () =>
                                   {
                                       ClearAdorners();
-                                      contentBuffer.RemoveElement(myImage, (img) => Work.Children.Remove(myImage));
+                                      contentBuffer.RemoveImage(myImage, (img) => Work.Children.Remove(myImage));
                                       /*if (Work.ImageChildren().Any(i => ((Image)i).tag().id == myImage.tag().id))
                                       {
                                           var imageToRemove = Work.ImageChildren().First(i => ((Image) (i)).tag().id == myImage.tag().id);
@@ -1587,7 +1589,7 @@ namespace SandRibbon.Components
                     ClearAdorners();
                     InkCanvas.SetLeft(myImage, pos.X);
                     InkCanvas.SetTop(myImage, pos.Y);
-                    contentBuffer.AddElement(myImage, (img) => 
+                    contentBuffer.AddImage(myImage, (img) => 
                     {
                         if (!Work.Children.Contains(img))
                             Work.Children.Add(img);
@@ -1656,7 +1658,7 @@ namespace SandRibbon.Components
         }
         private void AddTextboxToMyCanvas(MeTLTextBox box)
         {
-            contentBuffer.AddElement(applyDefaultAttributes(box), (text) => Work.Children.Add(text));
+            contentBuffer.AddTextBox(applyDefaultAttributes(box), (text) => Work.Children.Add(text));
         }
         public void DoText(TargettedTextBox targettedBox)
         {
@@ -2042,7 +2044,7 @@ namespace SandRibbon.Components
             }
             foreach (var textbox in toRemove)
             {
-                contentBuffer.RemoveElement(textbox, (tb) => Work.Children.Remove(tb));
+                contentBuffer.RemoveTextBox(textbox, (tb) => Work.Children.Remove(tb));
             }
             toRemove.Clear();
             foreach (var textbox in OtherWork.Children.OfType<TextBox>().Where(tb => tb.tag().id.ToString() == tag))
@@ -2051,7 +2053,7 @@ namespace SandRibbon.Components
             }
             foreach (var textbox in toRemove)
             {
-                contentBuffer.RemoveElement(textbox, (tb) => OtherWork.Children.Remove(tb));
+                contentBuffer.RemoveTextBox(textbox, (tb) => OtherWork.Children.Remove(tb));
             }
         }
         private static void requeryTextCommands()
@@ -2138,7 +2140,7 @@ namespace SandRibbon.Components
                         doomedChildren.Add((FrameworkElement)child);
             }
             foreach (var child in doomedChildren)
-                contentBuffer.RemoveElement(child, (tb) => canvas.Children.Remove(tb));
+                contentBuffer.RemoveTextBox(child, (tb) => canvas.Children.Remove(tb));
         }
         private void receiveDirtyText(TargettedDirtyElement element)
         {

@@ -23,9 +23,12 @@ namespace SandRibbon.Components.Utility
 
         protected abstract bool Equals(T item1, T item2);
         protected abstract bool CollectionContains(T item);
-        protected abstract string AuthorFromTag(T element);
+        protected virtual string AuthorFromTag(T element)
+        {
+            return string.Empty;
+        }
 
-        private void Add(T element)
+        public void Add(T element)
         {
             if (CollectionContains(element))
                 return;
@@ -105,7 +108,8 @@ namespace SandRibbon.Components.Utility
                 updateChild(child);
             }
         }
-        public void UpdateChildren<V>(Action<V> updateChild) 
+
+        public void UpdateChildren<V>(Action<V> updateChild) where V : UIElement
         {
             foreach (var uiElement in contentCollection.OfType<V>())
             {
@@ -175,6 +179,8 @@ namespace SandRibbon.Components.Utility
             return tempList;
         }
 
+        #region Helpers
+
         private List<Func<string, bool>> BuildComparer(ContentVisibilityEnum contentVisibility)
         {
             var comparer = new List<Func<string,bool>>();
@@ -191,8 +197,6 @@ namespace SandRibbon.Components.Utility
 
             return comparer;
         }
-
-        #region Helpers
 
         private bool IsVisibilityFlagSet(ContentVisibilityEnum contentVisible, ContentVisibilityEnum flag)
         {

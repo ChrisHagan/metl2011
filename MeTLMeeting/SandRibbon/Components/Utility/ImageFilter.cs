@@ -12,25 +12,25 @@ using SandRibbon.Utils;
 
 namespace SandRibbon.Components.Utility
 {
-    public class ImageFilter : ContentFilter<List<Image>, Image>
+    public class ImageFilter : ContentFilter<List<UIElement>, UIElement>
     {
-        protected override bool Equals(Image item1, Image item2)
+        protected override bool Equals(UIElement item1, UIElement item2)
         {
-            return item1.tag().id == item2.tag().id; 
+            return (item1 as Image).tag().id == (item2 as Image).tag().id; 
         }
 
-        protected override bool CollectionContains(Image item)
+        protected override bool CollectionContains(UIElement item)
         {
-            var imageTagId = item.tag().id;
-            return contentCollection.Where(img => img.tag().id == imageTagId).Count() > 0;
+            var imageTagId = (item as Image).tag().id;
+            return contentCollection.Where(img => (img as Image).tag().id == imageTagId).Count() > 0;
         }
 
-        protected override string AuthorFromTag(Image element)
+        protected override string AuthorFromTag(UIElement element)
         {
-            return element.tag().author;
+            return (element as Image).tag().author;
         }
 
-        List<Image> Images
+        List<UIElement> Images
         {
             get
             {
