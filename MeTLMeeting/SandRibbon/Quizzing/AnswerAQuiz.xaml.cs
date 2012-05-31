@@ -52,8 +52,8 @@ namespace SandRibbon.Quizzing
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selection = ((Option)e.AddedItems[0]);
-            Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.id, Globals.me, selection.name, DateTime.Now.Ticks));
-            Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.id);
+            Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, Globals.me, selection.name, DateTime.Now.Ticks));
+            Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
             
             this.Close();
        }
@@ -89,8 +89,8 @@ namespace SandRibbon.Quizzing
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
             var windowOwner = this; 
-            var newQuiz = new QuizQuestion(question.id, question.created, question.title, question.author,
-                                           question.question, question.options) {url = question.url};
+            var newQuiz = new QuizQuestion(question.Id, question.Created, question.Title, question.Author,
+                                           question.Question, question.Options) {Url = question.Url};
             var editQuiz = new EditQuiz(newQuiz);
             editQuiz.Owner = windowOwner;
 
@@ -99,7 +99,7 @@ namespace SandRibbon.Quizzing
             {
                 if (MeTLMessage.Question("Really delete quiz?", windowOwner) == MessageBoxResult.Yes)
                 {
-                    newQuiz.SetDeleted(true);
+                    newQuiz.IsDeleted = true;
                     Commands.SendQuiz.Execute(newQuiz);
                     closeMe(null);
                 }    

@@ -304,13 +304,13 @@ namespace MeTLLib
         public void receieveQuizzes(PreParser finishedParser)
         {
             var quizzes = new List<QuizInfo>();
-            finishedParser.quizzes.ForEach(q => quizzes.Add(new QuizInfo(q, finishedParser.quizAnswers.Where( a => a.id == q.id).ToList())));
+            finishedParser.quizzes.ForEach(q => quizzes.Add(new QuizInfo(q, finishedParser.quizAnswers.Where( a => a.id == q.Id).ToList())));
             QuizzesAvailable(this,  new QuizzesAvailableEventArgs{ quizzes = quizzes});
         }
 
         public void receieveQuiz(PreParser finishedParser, long id)
         {
-            var quiz = finishedParser.quizzes.Where(q => q.id == id).OrderByDescending(q => q.created).First();
+            var quiz = finishedParser.quizzes.Where(q => q.Id == id).OrderByDescending(q => q.Created).First();
             var quizInfo = new QuizInfo(quiz, finishedParser.quizAnswers.Where(a => a.id == id).ToList());
             QuizAvailable(this, new QuizzesAvailableEventArgs{ quizzes = new List<QuizInfo>{quizInfo}});
         }

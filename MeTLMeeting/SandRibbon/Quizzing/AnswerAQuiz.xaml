@@ -26,11 +26,11 @@
                                        FontWeight="Bold" 
                                        FontSize="14" 
                                        FontFamily="Verdana" 
-                                       Text="{Binding Path=question}"
+                                       Text="{Binding Path=Question}"
                                        HorizontalAlignment="Center" />
                             </Grid>
                             <Grid>
-                                <Image Source="{Binding Path=url}" MaxWidth="300" MaxHeight="300"/>
+                                <Image Source="{Binding Path=Url}" MaxWidth="300" MaxHeight="300"/>
                             </Grid>
                         </StackPanel>
                     </Grid>

@@ -1,0 +1,136 @@
+﻿<Window x:Class="SandRibbon.Quizzing.ViewEditAQuiz"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:datatypes="clr-namespace:MeTLLib.DataTypes;assembly=MeTLLib"
+    x:Name="answerAQuiz"
+    ResizeMode="NoResize"
+    SizeToContent="WidthAndHeight"
+    MaxHeight="500"
+    Title="Quiz">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <DataTemplate x:Key="QuizViewTemplate">
+            <StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
+                    <StackPanel Orientation="Vertical" Background="{StaticResource BackgroundBlueGradient}">
+                        <Grid Margin="10 10 10 30">
+                            <StackPanel MaxHeight="400" Width="720" MaxWidth="720">
+                                <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
+                                <Grid>
+                                    <quiz:GoldPlaque/>
+                                    <TextBlock Margin="4" 
+                                    TextWrapping="WrapWithOverflow" 
+                                           FontWeight="Bold" 
+                                           FontSize="14" 
+                                           FontFamily="Verdana" 
+                                           Text="{Binding Path=Question}"
+                                           HorizontalAlignment="Center" />
+                                </Grid>
+                                <Grid>
+                                    <Image Source="{Binding Path=Url}" MaxWidth="300" MaxHeight="300"/>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                        <ListBox x:Name="quizOptions" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                             SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=Options}" MaxWidth="720" Width="700" Margin="0 0 0 10">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" x:Name="quizAnswers">
+                                        <quiz:QuizButton />
+                                        <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}" FontSize="12" FontFamily="Verdana" FontWeight="Bold" MaxWidth="640"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </ScrollViewer>
+                <StackPanel x:Name="TeacherControls" Visibility="Visible">
+                    <Button Click="Edit_Click">Edit quiz</Button>
+                    <Button Click="DisplayQuiz">Display quiz</Button>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="QuizEditTemplate">
+            <DockPanel>
+                <Border DockPanel.Dock="Bottom" Padding="10" Background="{StaticResource BackgroundBlueGradient}" >
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Left">
+                            <Button FontWeight="Bold" Grid.Row="0" Grid.Column="2" Content="Delete Quiz" Click="deleteQuiz"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button x:Name="quizCommitButton" Content="Save Changes" Click="quizCommitButton_Click"/>
+                            <Button Click="CloseEdit" Content="Cancel"/>
+                        </StackPanel>
+                    </Grid>           
+                </Border>
+                <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Label FontWeight="Bold" Grid.Row="0" Grid.Column="0">Question</Label>
+                            <TextBox FontWeight="Bold" Grid.Row="0" Grid.Column="1" Width="300" x:Name="quizQuestion" Text="{Binding Path=EditedQuiz.Question}" TextWrapping="WrapWithOverflow"/>
+                            <Label Foreground="Red" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
+                            <Label Foreground="Red" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
+                            <Label Foreground="Red" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have more than one option for this quiz"/>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </DataTemplate>
+        <!--<DataTemplate DataType="{x:Type datatypes:QuizQuestion}">
+            <ContentControl x:Name="QuizQuestionHost" Focusable="False" Content="{Binding}" ContentTemplate="{StaticResource QuizViewTemplate}" />
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsInEditMode}" Value="True">
+                    <Setter TargetName="QuizQuestionHost" Property="ContentTemplate" Value="{StaticResource QuizEditTemplate}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>-->
+        <ItemsPanelTemplate x:Key="VerticalItemsPanel">
+            <StackPanel Orientation="Vertical" />
+        </ItemsPanelTemplate>
+        <Style x:Key="OptionContainerStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <StackPanel Orientation="Horizontal">
+                            <quiz:QuizButton Padding="2"/>
+                            <TextBlock Padding="5" TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}" FontSize="12" 
+                                       VerticalAlignment="Center" 
+                                       FontFamily="Verdana" FontWeight="Bold" MaxWidth="640"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Border Background="{StaticResource BackgroundBlueGradient}">
+        <ContentControl Content="{Binding}" x:Name="SnapshotHost">
+            <ContentControl.Style>
+                <Style>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsInEditMode}" Value="True">
+                            <Setter Property="ContentControl.ContentTemplate" Value="{StaticResource QuizEditTemplate}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=IsInEditMode}" Value="False">
+                            <Setter Property="ContentControl.ContentTemplate" Value="{StaticResource QuizViewTemplate}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+    </Border>
+</Window>

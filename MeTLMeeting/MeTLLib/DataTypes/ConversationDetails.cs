@@ -18,7 +18,7 @@ namespace MeTLLib.DataTypes
         public long LastModified { get; set; }
         private static readonly string TITLE_TAG = "title";
         private static readonly string AUTHOR_TAG = "author";
-        private static readonly string CREATED_TAG = "created";
+        private static readonly string CREATED_TAG = "Created";
         private static readonly string JID_TAG = "jid";
         private static readonly string RESTRICTION_TAG = "restriction";
         private static readonly string RELEVANCE_TAG = "relevance";

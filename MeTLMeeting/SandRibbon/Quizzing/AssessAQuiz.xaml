@@ -15,7 +15,7 @@
                         <Grid>
                             <quiz:GoldPlaque/>
                             <TextBlock Margin="4" MaxWidth="300"
-                                TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=question}"
+                                TextWrapping="WrapWithOverflow" FontWeight="Bold" FontSize="14" FontFamily="Verdana" Text="{Binding Path=Question}"
                                        HorizontalAlignment="Center" />
                         </Grid>
                         <Grid>
@@ -23,7 +23,7 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Image Grid.Column="1" Source="{Binding Path=url}" MaxWidth="300" MaxHeight="300"/>
+                            <Image Grid.Column="1" Source="{Binding Path=Url}" MaxWidth="300" MaxHeight="300"/>
                         </Grid>
                         <Label FontWeight="Bold" x:Name="responseCount" HorizontalAlignment="Center" />
                     </StackPanel>

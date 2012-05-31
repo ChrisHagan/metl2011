@@ -35,7 +35,7 @@ namespace SandRibbon.Quizzing
             if (Quizes.Count < 1) return;
             this.answers = answers;
             foreach(var answer in answers)
-                assessQuizzes.Add(answer.Key, new AssessAQuiz(answer.Value, Quizes.Where(q => q.id == answer.Key).FirstOrDefault())); 
+                assessQuizzes.Add(answer.Key, new AssessAQuiz(answer.Value, Quizes.Where(q => q.Id == answer.Key).FirstOrDefault())); 
             foreach(var quiz in Quizes)
                 activeQuizes.Add(quiz);
             quizzes.ItemsSource = activeQuizes;
@@ -49,7 +49,7 @@ namespace SandRibbon.Quizzing
                                  {
                                      var thisQuiz = (QuizQuestion) ((ListBox) sender).SelectedItem;
                                      QuizResults.Children.Clear();
-                                     QuizResults.Children.Add(assessQuizzes[thisQuiz.id]);
+                                     QuizResults.Children.Add(assessQuizzes[thisQuiz.Id]);
                                  });
         }
 

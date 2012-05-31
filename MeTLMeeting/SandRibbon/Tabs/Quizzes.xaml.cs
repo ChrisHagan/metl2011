@@ -124,17 +124,17 @@ namespace SandRibbon.Tabs
             Dispatcher.adoptAsync(() =>
             {
                 int oldQuizIndex = -1;
-                if (Globals.quiz.activeQuizzes.Any(q => q.id == quiz.id))
+                if (Globals.quiz.activeQuizzes.Any(q => q.Id == quiz.Id))
                 {
-                    QuizQuestion oldQuiz = Globals.quiz.activeQuizzes.Where(q => q.id == quiz.id).First();
-                    if (quiz.created >= oldQuiz.created || quiz.IsDeleted)
+                    QuizQuestion oldQuiz = Globals.quiz.activeQuizzes.Where(q => q.Id == quiz.Id).First();
+                    if (quiz.Created >= oldQuiz.Created || quiz.IsDeleted)
                     {
                         oldQuizIndex = Globals.quiz.activeQuizzes.IndexOf(oldQuiz);
                         Globals.quiz.activeQuizzes.Remove(oldQuiz);
                     }
                 }
-                if (!Globals.quiz.answers.ContainsKey(quiz.id))
-                    Globals.quiz.answers[quiz.id] = new ObservableCollection<QuizAnswer>();
+                if (!Globals.quiz.answers.ContainsKey(quiz.Id))
+                    Globals.quiz.answers[quiz.Id] = new ObservableCollection<QuizAnswer>();
                 if (!quiz.IsDeleted)
                 {
                     if (oldQuizIndex == -1)
@@ -168,9 +168,12 @@ namespace SandRibbon.Tabs
         {
             var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
             Commands.BlockInput.ExecuteAsync("Answering a Quiz.");
-            var answerAQuiz = new AnswerAQuiz(thisQuiz);
+            /*var answerAQuiz = new AnswerAQuiz(thisQuiz);
             answerAQuiz.Owner = Window.GetWindow(this);
-            answerAQuiz.ShowDialog();
+            answerAQuiz.ShowDialog();*/
+            var viewEditAQuiz = new ViewEditAQuiz(thisQuiz);
+            viewEditAQuiz.Owner = Window.GetWindow(this);
+            viewEditAQuiz.ShowDialog();
         }
         private void importQuizSnapshot(string filename)
         {

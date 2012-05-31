@@ -249,7 +249,7 @@ namespace SandRibbon.Components.Utility.DragDrop
             DecideDropTarget(e);
             if (draggedItem != null)
             {
-                // Dragged Adorner is created on the first enter only.
+                // Dragged Adorner is Created on the first enter only.
                 //ShowDraggedAdorner(e.GetPosition(this.topWindow));
                 CreateInsertionAdorner();
             }
@@ -263,7 +263,7 @@ namespace SandRibbon.Components.Utility.DragDrop
             DecideDropTarget(e);
             if (draggedItem != null)
             {
-                // Dragged Adorner is only updated here - it has already been created in DragEnter.
+                // Dragged Adorner is only updated here - it has already been Created in DragEnter.
                 //ShowDraggedAdorner(e.GetPosition(this.topWindow));
                 UpdateInsertionAdornerPosition();
             }
@@ -296,7 +296,7 @@ namespace SandRibbon.Components.Utility.DragDrop
 
         private void DropTarget_PreviewDragLeave(object sender, DragEventArgs e)
         {
-            // Dragged Adorner is only created once on DragEnter + every time we enter the window. 
+            // Dragged Adorner is only Created once on DragEnter + every time we enter the window. 
             // It's only removed once on the DragDrop, and every time we leave the window. (so no need to remove it here)
             object draggedItem = e.Data.GetData(this.format.Name);
 

@@ -79,7 +79,7 @@ namespace SandRibbon.Quizzing
         private void loadOptions()
         {
             options.Clear();
-            foreach(var option in EditedQuiz.options)
+            foreach(var option in EditedQuiz.Options)
                 options.Add(option);
         }
 
@@ -99,15 +99,15 @@ namespace SandRibbon.Quizzing
         }
         public bool CheckResultsExist(QuizQuestion quizQuestion)
         {
-            return Globals.quiz.answers.FirstOrDefault(answer => answer.Key == quizQuestion.id).Value.Count > 0;
+            return Globals.quiz.answers.FirstOrDefault(answer => answer.Key == quizQuestion.Id).Value.Count > 0;
         }
         
           private void quizCommitButton_Click(object sender, RoutedEventArgs e)
           {
-              EditedQuiz.options.Clear();
-              EditedQuiz.options = null;
-              EditedQuiz.options = options.Where(o => !string.IsNullOrEmpty(o.optionText)).ToList();
-              EditedQuiz.created = SandRibbonObjects.DateTimeFactory.Now().Ticks;
+              EditedQuiz.Options.Clear();
+              EditedQuiz.Options = null;
+              EditedQuiz.Options = options.Where(o => !string.IsNullOrEmpty(o.optionText)).ToList();
+              EditedQuiz.Created = SandRibbonObjects.DateTimeFactory.Now().Ticks;
               if (validateQuiz(EditedQuiz))
               {
                   Commands.SendQuiz.Execute(EditedQuiz);
@@ -118,9 +118,9 @@ namespace SandRibbon.Quizzing
           {
               QuestionError = false;
               OptionError = false;
-              if (string.IsNullOrEmpty(editedQuiz.question))
+              if (string.IsNullOrEmpty(editedQuiz.Question))
                   QuestionError = true;
-              if (editedQuiz.options.Count < 2)
+              if (editedQuiz.Options.Count < 2)
                   OptionError = true;
               return !(OptionError || QuestionError);
           }

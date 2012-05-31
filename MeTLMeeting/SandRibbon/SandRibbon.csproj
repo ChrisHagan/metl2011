@@ -166,6 +166,9 @@
     <Compile Include="Components\Utility\ImageFilter.cs" />
     <Compile Include="Components\Utility\StrokeFilter.cs" />
     <Compile Include="Components\Utility\TimedAction.cs" />
+    <Compile Include="Quizzing\ViewEditAQuiz.xaml.cs">
+      <DependentUpon>ViewEditAQuiz.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\Groups\ContentVisibilityHost.xaml.cs">
       <DependentUpon>ContentVisibilityHost.xaml</DependentUpon>
     </Compile>
@@ -325,6 +328,10 @@
     <Page Include="Quizzing\AssessAQuiz.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Quizzing\ViewEditAQuiz.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

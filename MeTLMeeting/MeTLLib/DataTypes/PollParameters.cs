@@ -132,57 +132,189 @@ namespace MeTLLib.DataTypes
             Answers.Add(quizAnswer);
         }
     }
-    public class QuizQuestion
+
+    public class QuizQuestion : IEditableObject, INotifyPropertyChanged
     {
-        public QuizQuestion(long Id, long created, string Title, string Author, string Question, List<Option> Options)
-            : this(Id, Title, Author, Question, Options)
+        public QuizQuestion(long id, long created, string title, string author, string question, List<Option> options)
+            : this(id, title, author, question, options)
         {
-            this.created = created;
+            this.Created = created;
         }
-        public QuizQuestion(long Id, string Title, string Author, string Question, List<Option> Options)
+        public QuizQuestion(long id, string title, string author, string question, List<Option> options)
         {
-            id = Id;
-            title = Title;
-            author = Author;
-            question = Question;
-            options = Options;
-            url = url == null ? String.Empty : url;
+            Id = id;
+            Title = title;
+            Author = author;
+            Question = question;
+            Options = options;
+            Url = Url == null ? String.Empty : Url;
         }
-        public QuizQuestion(long Id, string Title, string Author, string Question, List<Option> Options, string Url)
-            : this(Id, Title, Author, Question, Options)
+        public QuizQuestion(long id, string title, string author, string question, List<Option> options, string url)
+            : this(id, title, author, question, options)
         {
-            url = Url;
-        }
-        public long created;
-        public string title { get; set; }
-        public string url { get; set; }
-        public string question { get; set; }
-        public string author { get; set; }
-        public List<Option> options { get; set; }
-        public long id { get; set; }
-        public bool IsDeleted { get { return _deleted; } }
-
-        public void SetDeleted(bool deleted)
-        {
-            _deleted = deleted;
+            Url = url;
         }
 
+        #region Properties
+
+        private long _created = 0;
+        public long Created
+        {
+            get { return _created; }
+            set
+            {
+                _created = value;
+                RaisePropertyChanged("Created");
+            }
+        }
+        private string _title = string.Empty;
+        public string Title 
+        {
+            get { return _title; }
+            set
+            {
+                _title = value;
+                RaisePropertyChanged("Title");
+            }
+        }
+        private string _url = string.Empty;
+        public string Url 
+        {
+            get { return _url; }
+            set
+            {
+                _url = value;
+                RaisePropertyChanged("Url");
+            }
+        }
+        private string _question = string.Empty;
+        public string Question 
+        {
+            get { return _question; }
+            set
+            {
+                _question = value;
+                RaisePropertyChanged("Question");
+            }
+        }
+        private string _author = string.Empty;
+        public string Author 
+        {
+            get { return _author; }
+            set
+            {
+                _author = value;
+                RaisePropertyChanged("Author");
+            }
+        }
+        private List<Option> _options = null;
+        public List<Option> Options 
+        {
+            get { return _options; }
+            set
+            {
+                _options = value;
+                RaisePropertyChanged("Options");
+            }
+        }
+        private long _id = 0;
+        public long Id 
+        {
+            get { return _id; }
+            set
+            {
+                _id = value;
+                RaisePropertyChanged("Id");
+            }
+        }
         private bool _deleted = false;
-        /*public QuizQuestion(){
-            options = new List<Option>();
-        }*/
+        public bool IsDeleted 
+        { 
+            get { return _deleted; } 
+            set
+            {
+                _deleted = value;
+                RaisePropertyChanged("IsDeleted");
+            }
+        }
+
+        #endregion
+
         public QuizQuestion DeepCopy()
         {
-            var quizQuestion = new QuizQuestion(id, title, author, question, new List<Option>());
-            quizQuestion._deleted = _deleted;
-            quizQuestion.url = url;
-            foreach (var option in options)
+            var quizQuestion = new QuizQuestion(Id, Title, Author, Question, new List<Option>());
+            quizQuestion.IsDeleted = IsDeleted;
+            quizQuestion.Url = Url;
+            quizQuestion.Created = Created;
+            foreach (var option in Options)
             {
-                quizQuestion.options.Add(option.DeepCopy());
+                quizQuestion.Options.Add(option.DeepCopy());
             }
 
             return quizQuestion;
         }
+
+        #region INotifyPropertyChanged members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void RaisePropertyChanged(string name)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+        }
+
+        #endregion
+
+        #region IEditableObject members
+
+        public QuizQuestion _cachedCopy = null;
+
+        public void BeginEdit()
+        {
+            _cachedCopy = DeepCopy();
+
+            IsInEditMode = true;
+        }
+
+        public void CancelEdit()
+        {
+            if (_cachedCopy != null)
+            {
+                Id = _cachedCopy.Id;
+                Title = _cachedCopy.Title;
+                Author = _cachedCopy.Author;
+                Question = _cachedCopy.Question;
+                IsDeleted = _cachedCopy.IsDeleted;
+                Url = _cachedCopy.Url;
+                Created = _cachedCopy.Created;
+                Options.Clear();
+                foreach (var option in _cachedCopy.Options)
+                {
+                    Options.Add(option.DeepCopy());
+                }
+            }
+        }
+
+        public void EndEdit()
+        {
+            _cachedCopy = null;
+            IsInEditMode = false;
+        }
+
+        private bool _isInEditMode = false;
+        public bool IsInEditMode
+        {
+            get { return _isInEditMode; }
+            set
+            {
+                if (_isInEditMode != value)
+                {
+                    _isInEditMode = value;
+                    RaisePropertyChanged("IsInEditMode");
+                }
+            }
+        }
+        #endregion
     }
     public class QuizAnswer
     {

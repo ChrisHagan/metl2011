@@ -207,7 +207,7 @@ namespace SandRibbon.Components
                         }
                         catch (Exception)
                         {
-                            MeTLMessage.Error("Sorry, MeTL encountered a problem while trying to import your PowerPoint.  If the conversation was created, please check whether it has imported correctly.");
+                            MeTLMessage.Error("Sorry, MeTL encountered a problem while trying to import your PowerPoint.  If the conversation was Created, please check whether it has imported correctly.");
                             throw;
                         }
                         finally
