@@ -1,15 +1,20 @@
 ﻿<Window x:Class="SandRibbon.Quizzing.ViewEditAQuiz"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
+    xmlns:metl="clr-namespace:SandRibbon" 
+    xmlns:providers="clr-namespace:SandRibbon.Providers"
     xmlns:datatypes="clr-namespace:MeTLLib.DataTypes;assembly=MeTLLib"
-    x:Name="answerAQuiz"
+    x:Name="viewEditAQuiz"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
     MaxHeight="500"
     Title="Quiz">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <quiz:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter" />
+        <providers:Globals x:Key="Globals" />
         <DataTemplate x:Key="QuizViewTemplate">
             <StackPanel>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
@@ -28,7 +33,17 @@
                                            HorizontalAlignment="Center" />
                                 </Grid>
                                 <Grid>
-                                    <Image Source="{Binding Path=Url}" MaxWidth="300" MaxHeight="300"/>
+                                    <Grid.Resources>
+                                        <quiz:StringNullOrEmptyToBooleanConverter x:Key="StringNullOrEmptyToBooleanConverter" />
+                                        <Style TargetType="Image">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=Url, Converter={StaticResource StringNullOrEmptyToBooleanConverter}}" Value="False">
+                                                    <Setter Property="Source" Value="{Binding Path=Url}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Resources>
+                                    <Image MaxWidth="300" MaxHeight="300" />
                                 </Grid>
                             </StackPanel>
                         </Grid>
@@ -45,7 +60,7 @@
                         </ListBox>
                     </StackPanel>
                 </ScrollViewer>
-                <StackPanel x:Name="TeacherControls" Visibility="Visible">
+                <StackPanel x:Name="TeacherControls" Visibility="{Binding Source={StaticResource Globals}, Path=isAuthor, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button Click="Edit_Click">Edit quiz</Button>
                     <Button Click="DisplayQuiz">Display quiz</Button>
                 </StackPanel>
@@ -82,11 +97,51 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Label FontWeight="Bold" Grid.Row="0" Grid.Column="0">Question</Label>
-                            <TextBox FontWeight="Bold" Grid.Row="0" Grid.Column="1" Width="300" x:Name="quizQuestion" Text="{Binding Path=EditedQuiz.Question}" TextWrapping="WrapWithOverflow"/>
-                            <Label Foreground="Red" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
-                            <Label Foreground="Red" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
-                            <Label Foreground="Red" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have more than one option for this quiz"/>
+                            <TextBox FontWeight="Bold" Grid.Row="0" Grid.Column="1" Width="300" x:Name="quizQuestion" Text="{Binding Path=Question}" TextWrapping="WrapWithOverflow"/>
+                            <Label Foreground="Red" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding ElementName=viewEditAQuiz, Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
+                            <Label Foreground="Red" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding ElementName=viewEditAQuiz, Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
+                            <Label Foreground="Red" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding ElementName=viewEditAQuiz, Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have more than one option for this quiz"/>
                         </Grid>
+                         <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{Binding Path=Options}" Loaded="TextBox_GotFocus">
+                            <ItemsControl.Resources>
+                                <quiz:StringNullOrEmptyToBooleanConverter x:Key="StringNullOrEmptyToBooleanConverter" />
+                                <quiz:IndexOfItemToBooleanConverter x:Key="IndexOfItemToBooleanConverter" />
+                            </ItemsControl.Resources>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <quiz:GoldPlaque PreviewMouseDown="QuizButton_PreviewMouseUp" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <quiz:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" />
+                                            <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" MaxHeight="300" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextWrapping="WrapWithOverflow" AcceptsReturn="True"/>
+                                            <Button x:Name="quizAnswerDelete" Focusable="False" Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
+                                                <Image Height="20" Width="20"  Source="/Resources/Delete.png"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                    <DataTemplate.Triggers>
+                                        <Trigger SourceName="quizAnswer" Property="IsFocused" Value="True">
+                                            <Setter Property="Opacity" Value="1.0" />
+                                        </Trigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Path=optionText, Converter={StaticResource StringNullOrEmptyToBooleanConverter}}" Value="True" />
+                                                <Condition Binding="{Binding ElementName=quizAnswer, Path=IsFocused}" Value="False" />
+                                                <Condition Value="True">
+                                                    <Condition.Binding>
+                                                        <MultiBinding Converter="{StaticResource IndexOfItemToBooleanConverter}">
+                                                            <Binding ElementName="quizQuestions" Path="ItemsSource" />
+                                                            <Binding />
+                                                        </MultiBinding>
+                                                    </Condition.Binding>
+                                                </Condition> 
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Opacity" Value="0.5" />
+                                        </MultiDataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </ScrollViewer>
             </DockPanel>

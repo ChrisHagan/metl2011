@@ -104,7 +104,7 @@ namespace SandRibbon.Quizzing
         
           private void quizCommitButton_Click(object sender, RoutedEventArgs e)
           {
-              EditedQuiz.Options.Clear();
+              /*EditedQuiz.Options.Clear();
               EditedQuiz.Options = null;
               EditedQuiz.Options = options.Where(o => !string.IsNullOrEmpty(o.optionText)).ToList();
               EditedQuiz.Created = SandRibbonObjects.DateTimeFactory.Now().Ticks;
@@ -112,7 +112,7 @@ namespace SandRibbon.Quizzing
               {
                   Commands.SendQuiz.Execute(EditedQuiz);
                   this.Close();
-              }
+              }*/
           }
           private bool validateQuiz(QuizQuestion editedQuiz)
           {

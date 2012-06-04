@@ -4,10 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media;
 using MeTLLib.Providers;
+using System.Collections.ObjectModel;
 
 namespace MeTLLib.DataTypes
 {
-    public class Option : INotifyPropertyChanged
+    public class Option : IEditableObject, INotifyPropertyChanged
     {
         // change to an injected field if needed
         private static EnglishAlphabetSequence alphabetSequence = new EnglishAlphabetSequence();
@@ -40,6 +41,49 @@ namespace MeTLLib.DataTypes
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+        #endregion
+
+        #region IEditableObject members
+
+        public Option _cachedCopy = null;
+
+        public void BeginEdit()
+        {
+            _cachedCopy = DeepCopy();
+            IsInEditMode = true;
+        }
+
+        public void CancelEdit()
+        {
+            if (_cachedCopy != null)
+            {
+                _optionText = _cachedCopy.optionText;
+                _name = _cachedCopy.name;
+                _correct = _cachedCopy.correct;
+                _color = _cachedCopy.color;
+            }
+        }
+
+        public void EndEdit()
+        {
+            _cachedCopy = null;
+            IsInEditMode = false;
+        }
+
+        private bool _isInEditMode = false;
+        public bool IsInEditMode
+        {
+            get { return _isInEditMode; }
+            set
+            {
+                if (_isInEditMode != value)
+                {
+                    _isInEditMode = value;
+                    NotifyPropertyChanged("IsInEditMode");
+                }
+            }
+        }
+
         #endregion
 
         #region Properties
@@ -146,7 +190,7 @@ namespace MeTLLib.DataTypes
             Title = title;
             Author = author;
             Question = question;
-            Options = options;
+            Options = new ObservableCollection<Option>(options);
             Url = Url == null ? String.Empty : Url;
         }
         public QuizQuestion(long id, string title, string author, string question, List<Option> options, string url)
@@ -207,8 +251,8 @@ namespace MeTLLib.DataTypes
                 RaisePropertyChanged("Author");
             }
         }
-        private List<Option> _options = null;
-        public List<Option> Options 
+        private ObservableCollection<Option> _options = null;
+        public ObservableCollection<Option> Options 
         {
             get { return _options; }
             set
