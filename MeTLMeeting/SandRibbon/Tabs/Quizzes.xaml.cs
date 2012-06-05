@@ -26,7 +26,6 @@ namespace SandRibbon.Tabs
             Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(JoinConversation));
             Commands.QuizResultsSnapshotAvailable.RegisterCommand(new DelegateCommand<string>(importQuizSnapshot));
             quizzes.ItemsSource = Globals.quiz.activeQuizzes;
-            //Globals.quiz.activeQuizzes.CollectionChanged += (sender, args) => { quizzes.R}
             SetupUI();
         }
         private void SetupUI()
@@ -150,7 +149,6 @@ namespace SandRibbon.Tabs
                 {
                     Globals.quiz.activeQuizzes.Add(reindexQuiz);
                 }
-
                 quizzes.ScrollToEnd();
             });
         }
@@ -168,9 +166,7 @@ namespace SandRibbon.Tabs
         {
             var thisQuiz = (MeTLLib.DataTypes.QuizQuestion)((FrameworkElement)sender).DataContext;
             Commands.BlockInput.ExecuteAsync("Answering a Quiz.");
-            /*var answerAQuiz = new AnswerAQuiz(thisQuiz);
-            answerAQuiz.Owner = Window.GetWindow(this);
-            answerAQuiz.ShowDialog();*/
+
             var viewEditAQuiz = new ViewEditAQuiz(thisQuiz);
             viewEditAQuiz.Owner = Window.GetWindow(this);
             viewEditAQuiz.ShowDialog();

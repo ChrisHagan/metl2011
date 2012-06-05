@@ -10,43 +10,49 @@
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
     MaxHeight="500"
+    Closing="ViewEditAQuiz_Closing"
     Title="Quiz">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <quiz:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter" />
         <providers:Globals x:Key="Globals" />
         <DataTemplate x:Key="QuizViewTemplate">
-            <StackPanel>
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
-                    <StackPanel Orientation="Vertical" Background="{StaticResource BackgroundBlueGradient}">
-                        <Grid Margin="10 10 10 30">
-                            <StackPanel MaxHeight="400" Width="720" MaxWidth="720">
-                                <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
-                                <Grid>
-                                    <quiz:GoldPlaque/>
-                                    <TextBlock Margin="4" 
-                                    TextWrapping="WrapWithOverflow" 
-                                           FontWeight="Bold" 
-                                           FontSize="14" 
-                                           FontFamily="Verdana" 
-                                           Text="{Binding Path=Question}"
-                                           HorizontalAlignment="Center" />
-                                </Grid>
-                                <Grid>
-                                    <Grid.Resources>
-                                        <quiz:StringNullOrEmptyToBooleanConverter x:Key="StringNullOrEmptyToBooleanConverter" />
-                                        <Style TargetType="Image">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Path=Url, Converter={StaticResource StringNullOrEmptyToBooleanConverter}}" Value="False">
-                                                    <Setter Property="Source" Value="{Binding Path=Url}" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Grid.Resources>
-                                    <Image MaxWidth="300" MaxHeight="300" />
-                                </Grid>
-                            </StackPanel>
-                        </Grid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" MaxHeight="400" Width="720" MaxWidth="720" Orientation="Vertical" Background="{StaticResource BackgroundBlueGradient}">
+                    <Grid Margin="10 10 10 30">
+                        <StackPanel>
+                            <Rectangle Fill="White" RadiusX="3" RadiusY="3" Width="Auto" HorizontalAlignment="Stretch" Stroke="Gray" />
+                            <Grid>
+                                <quiz:GoldPlaque/>
+                                <TextBlock Margin="4" 
+                                       TextWrapping="WrapWithOverflow" 
+                                       FontWeight="Bold" 
+                                       FontSize="14" 
+                                       FontFamily="Verdana" 
+                                       Text="{Binding Path=Question}"
+                                       HorizontalAlignment="Center" />
+                            </Grid>
+                            <Grid>
+                                <Grid.Resources>
+                                    <quiz:StringNullOrEmptyToBooleanConverter x:Key="StringNullOrEmptyToBooleanConverter" />
+                                    <Style TargetType="Image">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=Url, Converter={StaticResource StringNullOrEmptyToBooleanConverter}}" Value="False">
+                                                <Setter Property="Source" Value="{Binding Path=Url}" />
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Resources>
+                                <Image Visibility="Collapsed" MaxWidth="300" MaxHeight="300" />
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
                         <ListBox x:Name="quizOptions" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" 
                              SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=Options}" MaxWidth="720" Width="700" Margin="0 0 0 10">
                             <ListBox.ItemTemplate>
@@ -58,13 +64,13 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                    </StackPanel>
-                </ScrollViewer>
-                <StackPanel x:Name="TeacherControls" Visibility="{Binding Source={StaticResource Globals}, Path=isAuthor, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    </ScrollViewer>
+                </StackPanel>
+                <StackPanel Grid.Row="1" x:Name="TeacherControls" Visibility="{Binding Source={StaticResource Globals}, Path=isAuthor, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button Click="Edit_Click">Edit quiz</Button>
                     <Button Click="DisplayQuiz">Display quiz</Button>
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </DataTemplate>
         <DataTemplate x:Key="QuizEditTemplate">
             <DockPanel>
@@ -102,7 +108,7 @@
                             <Label Foreground="Red" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding ElementName=viewEditAQuiz, Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
                             <Label Foreground="Red" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding ElementName=viewEditAQuiz, Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have more than one option for this quiz"/>
                         </Grid>
-                         <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{Binding Path=Options}" Loaded="TextBox_GotFocus">
+                         <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{Binding Path=Options}">
                             <ItemsControl.Resources>
                                 <quiz:StringNullOrEmptyToBooleanConverter x:Key="StringNullOrEmptyToBooleanConverter" />
                                 <quiz:IndexOfItemToBooleanConverter x:Key="IndexOfItemToBooleanConverter" />
@@ -113,7 +119,7 @@
                                         <quiz:GoldPlaque PreviewMouseDown="QuizButton_PreviewMouseUp" />
                                         <StackPanel Orientation="Horizontal">
                                             <quiz:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" />
-                                            <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" MaxHeight="300" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" TextWrapping="WrapWithOverflow" AcceptsReturn="True"/>
+                                            <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" MaxHeight="300" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" TextWrapping="WrapWithOverflow" AcceptsReturn="True"/>
                                             <Button x:Name="quizAnswerDelete" Focusable="False" Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
                                                 <Image Height="20" Width="20"  Source="/Resources/Delete.png"/>
                                             </Button>

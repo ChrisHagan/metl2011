@@ -191,6 +191,7 @@ namespace MeTLLib.DataTypes
             Author = author;
             Question = question;
             Options = new ObservableCollection<Option>(options);
+            Options.CollectionChanged += (sender, e) => { RaisePropertyChanged("Options"); };
             Url = Url == null ? String.Empty : Url;
         }
         public QuizQuestion(long id, string title, string author, string question, List<Option> options, string url)
@@ -360,9 +361,9 @@ namespace MeTLLib.DataTypes
         }
         #endregion
     }
+
     public class QuizAnswer
     {
-        
         public QuizAnswer(long Id, string Respondent, string Response, long answerTime)
         {
             this.answerTime = answerTime;

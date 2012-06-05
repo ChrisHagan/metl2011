@@ -13,6 +13,8 @@ using SandRibbon.Components;
 using SandRibbon.Providers;
 using System.Windows.Input;
 using System.Windows.Data;
+using SandRibbon.Components.Utility;
+using System.ComponentModel;
 
 namespace SandRibbon.Quizzing
 {
@@ -60,17 +62,10 @@ namespace SandRibbon.Quizzing
 
     public partial class ViewEditAQuiz : Window
     {
-        private Thickness quizOptionsBorderThickness;
 
         #region DependencyProperties
 
-        public static readonly DependencyProperty EditedQuizProperty = DependencyProperty.Register("EditedQuiz",
-                                                                                                   typeof (QuizQuestion),
-                                                                                                   typeof (ViewEditAQuiz));
-
-        public static readonly DependencyProperty OptionErrorProperty = DependencyProperty.Register("OptionError",
-                                                                                                    typeof (bool),
-                                                                                                    typeof (ViewEditAQuiz));
+        public static readonly DependencyProperty OptionErrorProperty = DependencyProperty.Register("OptionError", typeof (bool), typeof (ViewEditAQuiz));
 
         public bool OptionError
         {
@@ -78,9 +73,7 @@ namespace SandRibbon.Quizzing
             set { SetValue(OptionErrorProperty, value); }
         }
 
-        public static readonly DependencyProperty QuestionErrorProperty = DependencyProperty.Register("QuestionError",
-                                                                                                      typeof (bool),
-                                                                                                      typeof (ViewEditAQuiz));
+        public static readonly DependencyProperty QuestionErrorProperty = DependencyProperty.Register("QuestionError", typeof (bool), typeof (ViewEditAQuiz));
 
         public bool QuestionError
         {
@@ -88,9 +81,7 @@ namespace SandRibbon.Quizzing
             set { SetValue(QuestionErrorProperty, value); }
         }
 
-        public static readonly DependencyProperty ResultsExistProperty = DependencyProperty.Register("ResultsExist",
-                                                                                                     typeof (bool),
-                                                                                                     typeof (ViewEditAQuiz));
+        public static readonly DependencyProperty ResultsExistProperty = DependencyProperty.Register("ResultsExist", typeof (bool), typeof (ViewEditAQuiz));
 
         public bool ResultsExist
         {
@@ -100,42 +91,29 @@ namespace SandRibbon.Quizzing
 
         #endregion
 
-        public static TitleConverter TitleConverter = new TitleConverter();
-        public static QuestionConverter QuestionConverter = new QuestionConverter();
-        private MeTLLib.DataTypes.QuizQuestion question
+        private Thickness quizOptionsBorderThickness;
+        private QuizQuestion question
         {
-            get { return (MeTLLib.DataTypes.QuizQuestion)DataContext; }
+            get { return (QuizQuestion)DataContext; }
         }
 
-        public ViewEditAQuiz()
-        {
-            InitializeComponent();
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
-            Closing += AnswerAQuiz_Closing;
-
-            question.Options.CollectionChanged += UpdateOptionError;
-            QuestionError = false;
-            ResultsExist = CheckResultsExist(question);
-            AddNewEmptyOption();
-        }
-
-        public ViewEditAQuiz(MeTLLib.DataTypes.QuizQuestion thisQuiz)
+        public ViewEditAQuiz(QuizQuestion thisQuiz)
         {
             DataContext = thisQuiz;
+
             InitializeComponent();
-            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
-            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>(closeMe));
-            Closing += AnswerAQuiz_Closing;
+            Commands.JoinConversation.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
+            Commands.ShowConversationSearchBox.RegisterCommandToDispatcher(new DelegateCommand<object>((_unused) => { Close(); }));
+
+            question.Options.CollectionChanged += UpdateOptionError;
+            //QuestionError = false;
+            ResultsExist = CheckResultsExist(question);
         }
 
         private void UpdateOptionError(object sender, NotifyCollectionChangedEventArgs e)
         {
             var optionList = sender as ObservableCollection<Option>;
-            if (e.Action == NotifyCollectionChangedAction.Remove && optionList.Count == 2 )
-                OptionError = true;
-            else
-                OptionError = false;
+            OptionError = (e.Action == NotifyCollectionChangedAction.Remove && optionList.Count == 2 );
         }
 
         public bool CheckResultsExist(QuizQuestion quizQuestion)
@@ -143,14 +121,9 @@ namespace SandRibbon.Quizzing
             return Globals.quiz.answers.FirstOrDefault(answer => answer.Key == quizQuestion.Id).Value.Count > 0;
         }
 
-        void AnswerAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        void ViewEditAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Commands.UnblockInput.Execute(null);
-        }
-
-        private void closeMe(object obj)
-        {
-            Close();
         }
 
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -158,8 +131,7 @@ namespace SandRibbon.Quizzing
             var selection = ((Option)e.AddedItems[0]);
             Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, Globals.me, selection.name, DateTime.Now.Ticks));
             Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
-            
-            //this.Close();
+            Close();
        }
 
         public void DisplayQuiz(object sender, RoutedEventArgs e)
@@ -181,23 +153,12 @@ namespace SandRibbon.Quizzing
         }
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            question.IsInEditMode = true;
-            /*var windowOwner = this; 
-            var newQuiz = new QuizQuestion(question.Id, question.Created, question.Title, question.Author,
-                                           question.Question, question.Options) {Url = question.Url};
-            var editQuiz = new EditQuiz(newQuiz);
-            editQuiz.Owner = windowOwner;
-
-            bool? deleteQuiz = editQuiz.ShowDialog();
-            if (deleteQuiz ?? false)
+            AddNewEmptyOption();
+            question.BeginEdit();
+            foreach (var option in question.Options)
             {
-                if (MeTLMessage.Question("Really delete quiz?", windowOwner) == MessageBoxResult.Yes)
-                {
-                    newQuiz.IsDeleted = true;
-                    Commands.SendQuiz.Execute(newQuiz);
-                    closeMe(null);
-                }    
-            }*/
+                option.BeginEdit();
+            }
         }
 
         private void QuizButton_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -224,49 +185,63 @@ namespace SandRibbon.Quizzing
 
         private void deleteQuiz(object sender, RoutedEventArgs e)
         {
-            DialogResult = true;
-            Close();
+            var windowOwner = Window.GetWindow(this);
+            if (MeTLMessage.Question("Really delete quiz?", windowOwner) == MessageBoxResult.Yes)
+            {
+                if (question.IsInEditMode)
+                {
+                    question.CancelEdit();
+                    question.EndEdit();
+                }
+                question.IsDeleted = true;
+                Commands.SendQuiz.Execute(question);
+                Close();
+            }    
+        }
+
+        private void RemoveEmptyOptions()
+        {
+            question.Options = new ObservableCollection<Option>(question.Options.Where((op) => !String.IsNullOrEmpty(op.optionText)));
         }
 
         private void quizCommitButton_Click(object sender, RoutedEventArgs e)
         {
-        }
-
-      private void CloseEdit(object sender, RoutedEventArgs e)
-      {
-          question.IsInEditMode = false;
-      }
-
-        /*#region Helpers
-        private FrameworkElement GetQuestionContainerFromItem(object itemContainer)
-        {
-            if (itemContainer is FrameworkElement)
+            if (validateQuiz(question))
             {
-                var currentOption = (itemContainer as FrameworkElement).DataContext;    
-                return quizQuestions.ItemContainerGenerator.ContainerFromItem(currentOption) as FrameworkElement; 
+                question.EndEdit();
+                foreach (var option in question.Options)
+                {
+                    option.EndEdit();
+                }
+                RemoveEmptyOptions();
+                question.Created = SandRibbonObjects.DateTimeFactory.Now().Ticks;
+                Commands.SendQuiz.Execute(question);
+                Close();
             }
-
-            return null;
-        }
-        #endregion
-        */
-
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            /*var optionContainer = GetQuestionContainerFromItem(sender);
-            if (optionContainer != null) 
-                optionContainer.Opacity = 1;*/
         }
 
-        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        private bool validateQuiz(QuizQuestion editedQuiz)
         {
-            /*var optionContainer = GetQuestionContainerFromItem(sender);
-            if (optionContainer != null)
+            QuestionError = false;
+            OptionError = false;
+            if (string.IsNullOrEmpty(editedQuiz.Question))
+                QuestionError = true;
+            if (editedQuiz.Options.Count < 2)
+                OptionError = true;
+            return !(OptionError || QuestionError);
+        }
+
+        private void CloseEdit(object sender, RoutedEventArgs e)
+        {
+            question.CancelEdit();
+            foreach (var option in question.Options)
             {
-                var option = (optionContainer.DataContext as Option);
-                if (String.IsNullOrEmpty(option.optionText) && question.Options.IndexOf(option) > 0)
-                    optionContainer.Opacity = 0.5;
-            }*/
+                option.CancelEdit();
+                option.EndEdit();
+            }
+            question.EndEdit();
+
+            RemoveEmptyOptions();
         }
 
         private void updateOptionText(object sender, TextChangedEventArgs e)
@@ -293,18 +268,15 @@ namespace SandRibbon.Quizzing
             }
 
             AddNewEmptyOption();
-            /*foreach (var obj in question.Options)
-                if (String.IsNullOrEmpty(obj.optionText))
-                    ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(obj)).Opacity = 0.5;*/
             CommandManager.InvalidateRequerySuggested();
         }
 
         private bool shouldAddNewEmptyOption()
         {
             var emptyOptions = question.Options.Where(o => string.IsNullOrEmpty(o.optionText));
-            if (emptyOptions.Count() == 0) return true;
-            return false;
+            return emptyOptions.Count() == 0; 
         }
+
         private Color generateColor(int index)
         {
             return index%2 == 0 ? Colors.White : (Color) ColorConverter.ConvertFromString("#FF4682B4");
@@ -313,11 +285,6 @@ namespace SandRibbon.Quizzing
         private void AddNewEmptyOption()
         {
             if (!shouldAddNewEmptyOption()) return;
-            /*foreach (var option in question.Options)
-            {
-                var container = ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(option)); 
-                if (container != null) container.Opacity = 1;
-            }*/
 
             var newIndex =  1;
             var newName = Option.GetOptionNameFromIndex(0);
@@ -331,8 +298,6 @@ namespace SandRibbon.Quizzing
             if (shouldAddNewEmptyOption())
             {
                 question.Options.Add(newOption);
-                /*var container = ((FrameworkElement)quizQuestions.ItemContainerGenerator.ContainerFromItem(newOption));
-                if (container != null) container.Opacity = 0.5;*/
             }
             Commands.RequerySuggested();
         }
