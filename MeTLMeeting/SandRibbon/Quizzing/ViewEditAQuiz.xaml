@@ -74,84 +74,78 @@
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="QuizEditTemplate">
-            <DockPanel>
-                <Border DockPanel.Dock="Bottom" Padding="10" Background="{StaticResource BackgroundBlueGradient}" >
-                    <Grid>
-                        <StackPanel HorizontalAlignment="Left">
-                            <Button FontWeight="Bold" Grid.Row="0" Grid.Column="2" Content="Delete Quiz" Click="deleteQuiz"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button x:Name="quizCommitButton" Content="Save Changes" Click="quizCommitButton_Click"/>
-                            <Button Click="CloseEdit" Content="Cancel"/>
-                        </StackPanel>
-                    </Grid>           
-                </Border>
-                <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                    <StackPanel Orientation="Vertical">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="25"/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Label FontWeight="Bold" Grid.Row="0" Grid.Column="0">Question</Label>
-                            <TextBox FontWeight="Bold" Grid.Row="0" Grid.Column="1" Width="300" x:Name="quizQuestion" Text="{Binding Path=Question}" TextWrapping="WrapWithOverflow"/>
-                            <Label Foreground="Red" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding ElementName=viewEditAQuiz, Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
-                            <Label Foreground="Red" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding ElementName=viewEditAQuiz, Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
-                            <Label Foreground="Red" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Width="300" Visibility="{Binding ElementName=viewEditAQuiz, Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have more than one option for this quiz"/>
-                        </Grid>
-                         <ItemsControl Margin="10" x:Name="quizQuestions" ItemsSource="{Binding Path=Options}">
-                            <ItemsControl.Resources>
-                                <quiz:StringNullOrEmptyToBooleanConverter x:Key="StringNullOrEmptyToBooleanConverter" />
-                                <quiz:IndexOfItemToBooleanConverter x:Key="IndexOfItemToBooleanConverter" />
-                            </ItemsControl.Resources>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <quiz:GoldPlaque PreviewMouseDown="QuizButton_PreviewMouseUp" />
-                                        <StackPanel Orientation="Horizontal">
-                                            <quiz:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" />
-                                            <TextBox x:Name="quizAnswer" Margin="0 5 20 5" MinWidth="80" Width="300" MaxWidth="400" MaxHeight="300" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" TextWrapping="WrapWithOverflow" AcceptsReturn="True"/>
-                                            <Button x:Name="quizAnswerDelete" Focusable="False" Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
-                                                <Image Height="20" Width="20"  Source="/Resources/Delete.png"/>
-                                            </Button>
-                                        </StackPanel>
-                                    </Grid>
-                                    <DataTemplate.Triggers>
-                                        <Trigger SourceName="quizAnswer" Property="IsFocused" Value="True">
-                                            <Setter Property="Opacity" Value="1.0" />
-                                        </Trigger>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Path=optionText, Converter={StaticResource StringNullOrEmptyToBooleanConverter}}" Value="True" />
-                                                <Condition Binding="{Binding ElementName=quizAnswer, Path=IsFocused}" Value="False" />
-                                                <Condition Value="True">
-                                                    <Condition.Binding>
-                                                        <MultiBinding Converter="{StaticResource IndexOfItemToBooleanConverter}">
-                                                            <Binding ElementName="quizQuestions" Path="ItemsSource" />
-                                                            <Binding />
-                                                        </MultiBinding>
-                                                    </Condition.Binding>
-                                                </Condition> 
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Opacity" Value="0.5" />
-                                        </MultiDataTrigger>
-                                    </DataTemplate.Triggers>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
+            <Grid Margin="10 10 10 0" Background="{StaticResource BackgroundBlueGradient}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="0">
+                    <Label FontWeight="Bold">Question</Label>
+                    <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="quizQuestion" Text="{Binding Path=Question}" TextWrapping="WrapWithOverflow"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="1">
+                    <Label Foreground="Red" HorizontalAlignment="Left" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
+                    <Label Foreground="Red" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
+                    <Label Foreground="Red" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have more than one option for this quiz"/>
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="2" Margin="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="quizQuestions" ItemsSource="{Binding Path=Options}" MaxWidth="720" Width="700">
+                        <ItemsControl.Resources>
+                            <quiz:StringNullOrEmptyToBooleanConverter x:Key="StringNullOrEmptyToBooleanConverter" />
+                            <quiz:IndexOfItemToBooleanConverter x:Key="IndexOfItemToBooleanConverter" />
+                        </ItemsControl.Resources>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <quiz:GoldPlaque Grid.Row="0" PreviewMouseDown="QuizButton_PreviewMouseUp" />
+                                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                        <quiz:QuizButton PreviewMouseDown="QuizButton_PreviewMouseUp" />
+                                        <TextBox x:Name="quizAnswer" Margin="10 5 20 5" MinWidth="80" Width="300" MaxWidth="640" MaxHeight="300" TextChanged="updateOptionText" Text="{Binding Converter={x:Static metl:Converters.quizOptionsFromQuizQuestionConverter}, Mode=OneWay}" TextWrapping="WrapWithOverflow" AcceptsReturn="True"/>
+                                        <Button x:Name="quizAnswerDelete" Focusable="False" Click="RemoveQuizAnswer" Visibility="{Binding ElementName=quizQuestions, Path=ItemsSource.Count, Converter={x:Static metl:Converters.quizButtonsToVisibilityConverter}}">
+                                            <Image VerticalAlignment="Center" Height="20" Width="20" Source="/Resources/Delete.png"/>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <Trigger SourceName="quizAnswer" Property="IsFocused" Value="True">
+                                        <Setter Property="Opacity" Value="1.0" />
+                                    </Trigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=optionText, Converter={StaticResource StringNullOrEmptyToBooleanConverter}}" Value="True" />
+                                            <Condition Binding="{Binding ElementName=quizAnswer, Path=IsFocused}" Value="False" />
+                                            <Condition Value="True">
+                                                <Condition.Binding>
+                                                    <MultiBinding Converter="{StaticResource IndexOfItemToBooleanConverter}">
+                                                        <Binding ElementName="quizQuestions" Path="ItemsSource" />
+                                                        <Binding />
+                                                    </MultiBinding>
+                                                </Condition.Binding>
+                                            </Condition>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </MultiDataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </ScrollViewer>
-            </DockPanel>
+
+                <DockPanel Grid.Row="3" Margin="5" Background="{StaticResource BackgroundBlueGradient}">
+                    <Button DockPanel.Dock="Left" FontWeight="Bold" Content="Delete Quiz" Click="deleteQuiz"/>
+                    <Button DockPanel.Dock="Right" MaxWidth="80" Click="CloseEdit" Content="Cancel"/>
+                    <Button DockPanel.Dock="Right" HorizontalAlignment="Right" MaxWidth="120" x:Name="quizCommitButton" Content="Save Changes" Click="quizCommitButton_Click"/>
+                </DockPanel>
+            </Grid>            
+            
         </DataTemplate>
         <!--<DataTemplate DataType="{x:Type datatypes:QuizQuestion}">
             <ContentControl x:Name="QuizQuestionHost" Focusable="False" Content="{Binding}" ContentTemplate="{StaticResource QuizViewTemplate}" />
@@ -161,7 +155,7 @@
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>-->
-        <ItemsPanelTemplate x:Key="VerticalItemsPanel">
+        <!--<ItemsPanelTemplate x:Key="VerticalItemsPanel">
             <StackPanel Orientation="Vertical" />
         </ItemsPanelTemplate>
         <Style x:Key="OptionContainerStyle" TargetType="{x:Type ListBoxItem}">
@@ -177,7 +171,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
+        </Style>-->
     </Window.Resources>
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <ContentControl Content="{Binding}" x:Name="SnapshotHost">

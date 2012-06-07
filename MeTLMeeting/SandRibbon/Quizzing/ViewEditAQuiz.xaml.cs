@@ -125,6 +125,7 @@ namespace SandRibbon.Quizzing
 
         void ViewEditAQuiz_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            CloseEdit(null, null);
             Commands.UnblockInput.Execute(null);
         }
 
