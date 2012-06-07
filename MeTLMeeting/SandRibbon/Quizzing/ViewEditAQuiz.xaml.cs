@@ -18,6 +18,7 @@ using System.ComponentModel;
 
 namespace SandRibbon.Quizzing
 {
+    [ValueConversion(typeof(string), typeof(bool))]
     public class StringNullOrEmptyToBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -32,6 +33,7 @@ namespace SandRibbon.Quizzing
         }
     }
 
+    [ValueConversion(typeof(string), typeof(Visibility))]
     public class StringNullOrEmptyToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

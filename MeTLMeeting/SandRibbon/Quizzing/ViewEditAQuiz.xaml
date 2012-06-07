@@ -59,12 +59,14 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" x:Name="quizAnswers">
                                     <quiz:QuizButton />
-                                    <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}" FontSize="12" FontFamily="Verdana" FontWeight="Bold" MaxWidth="640"/>
+                                    <TextBlock TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Text="{Binding Path=optionText}" 
+                                               FontSize="12" FontFamily="Verdana" FontWeight="Bold" Margin="10,0" MaxWidth="640"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </ScrollViewer>
+
                 <StackPanel Grid.Row="3" x:Name="TeacherControls" Background="{StaticResource BackgroundBlueGradient}" Visibility="{Binding Source={StaticResource Globals}, Path=isAuthor, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button Click="Edit_Click">Edit quiz</Button>
                     <Button Click="DisplayQuiz">Display quiz</Button>
