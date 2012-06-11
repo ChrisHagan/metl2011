@@ -131,17 +131,21 @@ namespace SandRibbon.Quizzing
 
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selection = ((Option)e.AddedItems[0]);
-            Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, Globals.me, selection.name, DateTime.Now.Ticks));
-            Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
-            Close();
+            if (!question.IsInEditMode)
+            {
+                var selection = ((Option)e.AddedItems[0]);
+                Commands.SendQuizAnswer.ExecuteAsync(new QuizAnswer(question.Id, Globals.me, selection.name, DateTime.Now.Ticks));
+                Trace.TraceInformation("ChoseQuizAnswer {0} {1}", selection.name, question.Id);
+                Close();
+            }
        }
 
         public void DisplayQuiz(object sender, RoutedEventArgs e)
         {
-            //PrepareForRender();
-            var quiz = SnapshotHost;
-            quiz.UpdateLayout();
+            var quizDisplay = new DisplayAQuiz(question);
+            quizDisplay.Show();
+
+            var quiz = quizDisplay.SnapshotHost;
             var dpi = 96;
             var dimensions = ResizeHelper.ScaleMajorAxisToCanvasSize(quiz);
             var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
@@ -151,17 +155,12 @@ namespace SandRibbon.Quizzing
             bitmap.Render(dv);
             Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
 
-            //RestoreAfterRender();
-            this.Close();
+            Close();
         }
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
             AddNewEmptyOption();
             question.BeginEdit();
-            foreach (var option in question.Options)
-            {
-                option.BeginEdit();
-            }
         }
 
         private void QuizButton_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -191,60 +190,35 @@ namespace SandRibbon.Quizzing
             var windowOwner = Window.GetWindow(this);
             if (MeTLMessage.Question("Really delete quiz?", windowOwner) == MessageBoxResult.Yes)
             {
-                if (question.IsInEditMode)
-                {
-                    question.CancelEdit();
-                    question.EndEdit();
-                }
-                question.IsDeleted = true;
+                question.Delete();
                 Commands.SendQuiz.Execute(question);
                 Close();
             }    
         }
 
-        private void RemoveEmptyOptions()
-        {
-            question.Options = new ObservableCollection<Option>(question.Options.Where((op) => !String.IsNullOrEmpty(op.optionText)));
-        }
-
         private void quizCommitButton_Click(object sender, RoutedEventArgs e)
         {
-            if (validateQuiz(question))
+            if (ValidQuiz(question))
             {
-                question.EndEdit();
-                foreach (var option in question.Options)
-                {
-                    option.EndEdit();
-                }
-                RemoveEmptyOptions();
+                question.RemoveEmptyOptions();
                 question.Created = SandRibbonObjects.DateTimeFactory.Now().Ticks;
                 Commands.SendQuiz.Execute(question);
-                Close();
+                question.EndEdit();
             }
         }
 
-        private bool validateQuiz(QuizQuestion editedQuiz)
+        private bool ValidQuiz(QuizQuestion editedQuiz)
         {
-            QuestionError = false;
-            OptionError = false;
-            if (string.IsNullOrEmpty(editedQuiz.Question))
-                QuestionError = true;
-            if (editedQuiz.Options.Count < 2)
-                OptionError = true;
+            QuestionError = string.IsNullOrEmpty(editedQuiz.Question);
+            OptionError = editedQuiz.Options.Count < 2;
+
             return !(OptionError || QuestionError);
         }
 
         private void CloseEdit(object sender, RoutedEventArgs e)
         {
             question.CancelEdit();
-            foreach (var option in question.Options)
-            {
-                option.CancelEdit();
-                option.EndEdit();
-            }
-            question.EndEdit();
-
-            RemoveEmptyOptions();
+            question.RemoveEmptyOptions();
         }
 
         private void updateOptionText(object sender, TextChangedEventArgs e)

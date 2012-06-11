@@ -299,6 +299,21 @@ namespace MeTLLib.DataTypes
             return quizQuestion;
         }
 
+        public void RemoveEmptyOptions()
+        {
+            Options = new ObservableCollection<Option>(Options.Where((op) => !String.IsNullOrEmpty(op.optionText)));
+        }
+
+        public void Delete()
+        {
+            if (IsInEditMode)
+            {
+                CancelEdit();
+                EndEdit();
+            }
+            IsDeleted = true;
+        }
+
         #region INotifyPropertyChanged members
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -319,6 +334,11 @@ namespace MeTLLib.DataTypes
             _cachedCopy = DeepCopy();
 
             IsInEditMode = true;
+
+            foreach (var option in Options)
+            {
+                option.BeginEdit();
+            }
         }
 
         public void CancelEdit()
@@ -338,10 +358,22 @@ namespace MeTLLib.DataTypes
                     Options.Add(option.DeepCopy());
                 }
             }
+
+            foreach (var option in Options)
+            {
+                option.CancelEdit();
+                option.EndEdit();
+            }
+            EndEdit();
         }
 
         public void EndEdit()
         {
+            foreach (var option in Options)
+            {
+                option.EndEdit();
+            }
+
             _cachedCopy = null;
             IsInEditMode = false;
         }

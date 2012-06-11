@@ -166,6 +166,9 @@
     <Compile Include="Components\Utility\ImageFilter.cs" />
     <Compile Include="Components\Utility\StrokeFilter.cs" />
     <Compile Include="Components\Utility\TimedAction.cs" />
+    <Compile Include="Quizzing\DisplayAQuiz.xaml.cs">
+      <DependentUpon>DisplayAQuiz.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Quizzing\ViewEditAQuiz.xaml.cs">
       <DependentUpon>ViewEditAQuiz.xaml</DependentUpon>
     </Compile>
@@ -319,15 +322,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Quizzing\AnswerAQuiz.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Quizzing\AssessAQuiz.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Quizzing\DisplayAQuiz.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -340,10 +341,6 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Quizzing\EditQuiz.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Quizzing\GoldPlaque.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -694,17 +691,11 @@
     <Compile Include="Providers\StoredUIState.cs" />
     <Compile Include="Providers\ThumbnailProvider.cs" />
     <Compile Include="Providers\WorkspaceStateProvider.cs" />
-    <Compile Include="Quizzing\AnswerAQuiz.xaml.cs">
-      <DependentUpon>AnswerAQuiz.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Quizzing\AssessAQuiz.xaml.cs">
       <DependentUpon>AssessAQuiz.xaml</DependentUpon>
     </Compile>
     <Compile Include="Quizzing\CreateAQuiz.xaml.cs">
       <DependentUpon>CreateAQuiz.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Quizzing\EditQuiz.xaml.cs">
-      <DependentUpon>EditQuiz.xaml</DependentUpon>
     </Compile>
     <Compile Include="Quizzing\GoldPlaque.xaml.cs">
       <DependentUpon>GoldPlaque.xaml</DependentUpon>

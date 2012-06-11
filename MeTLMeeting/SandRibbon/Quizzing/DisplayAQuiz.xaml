@@ -1,19 +1,17 @@
-﻿<Window x:Class="SandRibbon.Quizzing.AnswerAQuiz"
+﻿<Window x:Class="SandRibbon.Quizzing.DisplayAQuiz"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:quiz="clr-namespace:SandRibbon.Quizzing"
     WindowStyle="ToolWindow"
-    x:Name="answerAQuiz"
+    x:Name="displayAQuiz"
     ResizeMode="NoResize"
+    WindowState="Minimized"
     SizeToContent="WidthAndHeight"
+    ShowInTaskbar="False"
     MaxHeight="500"
-    Title="QuizAnswer Quiz">
+    Title="Display Quiz">
     <Border Background="{StaticResource BackgroundBlueGradient}">
         <DockPanel>
-            <StackPanel x:Name="TeacherControls" Visibility="Collapsed" DockPanel.Dock="Bottom">
-                <Button Click="Edit_Click">Edit quiz</Button>
-                <Button Click="DisplayQuiz">Display quiz</Button>
-            </StackPanel>
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
                 <StackPanel DockPanel.Dock="Top" Orientation="Vertical"  Background="{StaticResource BackgroundBlueGradient}" x:Name="SnapshotHost">
                     <Grid Margin="10 10 10 30">
@@ -30,17 +28,34 @@
                                        HorizontalAlignment="Center" />
                             </Grid>
                             <Grid>
-                                <Image Source="{Binding Path=Url}" MaxWidth="300" MaxHeight="300"/>
+                                <Grid.Resources>
+                                    <quiz:StringNullOrEmptyToBooleanConverter x:Key="StringNullOrEmptyToBooleanConverter" />
+                                </Grid.Resources>
+                                <Image Margin="4" MaxWidth="300" MaxHeight="300">
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=Url, Converter={StaticResource StringNullOrEmptyToBooleanConverter}}" Value="False">
+                                                    <Setter Property="Source" Value="{Binding Path=Url}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=Url, Converter={StaticResource StringNullOrEmptyToBooleanConverter}}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
                             </Grid>
                         </StackPanel>
                     </Grid>
                     <ListBox x:Name="quizOptions" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                         SelectionChanged="ListBox_SelectionChanged" ItemsSource="{Binding Path=options}" MaxWidth="720" Width="700" Margin="0 0 0 10">
+                         ItemsSource="{Binding Path=Options}" MaxWidth="720" Width="700" Margin="0 0 0 10" BorderThickness="0">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal"  x:Name="quizAnswers">
+                                <StackPanel Orientation="Horizontal" x:Name="quizAnswers">
                                     <quiz:QuizButton />
-                                    <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}" FontSize="12" FontFamily="Verdana" FontWeight="Bold" MaxWidth="640"/>
+                                    <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding Path=optionText}" VerticalAlignment="Center"
+                                               Margin="10,0" FontSize="12" FontFamily="Verdana" FontWeight="Bold" MaxWidth="640"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
