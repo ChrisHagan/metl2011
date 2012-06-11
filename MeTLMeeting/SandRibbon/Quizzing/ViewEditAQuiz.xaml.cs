@@ -93,7 +93,6 @@ namespace SandRibbon.Quizzing
 
         #endregion
 
-        private Thickness quizOptionsBorderThickness;
         private QuizQuestion question
         {
             get { return (QuizQuestion)DataContext; }
