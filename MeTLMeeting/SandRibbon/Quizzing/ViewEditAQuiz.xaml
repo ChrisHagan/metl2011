@@ -82,10 +82,10 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Horizontal" Grid.Row="0">
-                    <Label FontWeight="Bold">Question</Label>
-                    <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="quizQuestion" Text="{Binding Path=Question}" TextWrapping="WrapWithOverflow"/>
-                </StackPanel>
+                <DockPanel Grid.Row="0" LastChildFill="True">
+                    <Label DockPanel.Dock="Left" FontWeight="Bold">Question</Label>
+                    <TextBox DockPanel.Dock="Right" VerticalAlignment="Center" x:Name="quizQuestion" Text="{Binding Path=Question}" TextWrapping="WrapWithOverflow"/>
+                </DockPanel>
 
                 <StackPanel Orientation="Vertical" Grid.Row="1">
                     <Label Foreground="Red" HorizontalAlignment="Left" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
