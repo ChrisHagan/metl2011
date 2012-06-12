@@ -152,6 +152,12 @@ namespace SandRibbon.Utils
         }
         private void UploadPowerpoint(PowerpointSpec spec)
         {
+            if (IsPowerPointRunning())
+            {
+                MeTLMessage.Information("PowerPoint seems to be running, please close the program before importing a presentation");
+                return;
+            }
+
             var app = GetPowerPointApplication();
             if (app == null)
                 return;
@@ -217,6 +223,12 @@ namespace SandRibbon.Utils
             }
 
             return null;
+        }
+
+        private bool IsPowerPointRunning()
+        {
+            var procList = Process.GetProcessesByName("POWERPNT");
+            return procList.Count() != 0;
         }
 
         public bool LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, ConversationDetails conversation, int MagnificationRating)
