@@ -451,10 +451,8 @@ namespace SandRibbon.Components
         private void setInkCanvasMode(string modeString)
         {
             if (me == Globals.PROJECTOR) return;
-            OtherWork.EditingMode = InkCanvasEditingMode.None;
             Work.EditingMode = (InkCanvasEditingMode)Enum.Parse(typeof(InkCanvasEditingMode), modeString);
             Work.UseCustomCursor = Work.EditingMode == InkCanvasEditingMode.Ink;
-
         }
         private Double zoom = 1;
         private void ZoomChanged(Double zoom)
@@ -762,7 +760,6 @@ namespace SandRibbon.Components
         {
              get { 
                 var canvasStrokes = new List<Stroke>();
-                canvasStrokes.AddRange(OtherWork.Strokes);
                 canvasStrokes.AddRange(Work.Strokes);
                 return canvasStrokes.Where(s => s.tag().privacy == Globals.PUBLIC).ToList();
             }
@@ -771,7 +768,6 @@ namespace SandRibbon.Components
         {
             get { 
                 var canvasStrokes = new List<Stroke>();
-                canvasStrokes.AddRange(OtherWork.Strokes);
                 canvasStrokes.AddRange(Work.Strokes);
                 return canvasStrokes;
 
@@ -784,7 +780,6 @@ namespace SandRibbon.Components
             Dispatcher.adopt(delegate
             {
                 dirtyStrokes(Work, targettedDirtyStrokes);
-                //dirtyStrokes(OtherWork, targettedDirtyStrokes);
             });
         }
         private void dirtyStrokes(InkCanvas canvas, IEnumerable<TargettedDirtyElement> targettedDirtyStrokes)
@@ -828,8 +823,6 @@ namespace SandRibbon.Components
             {
                 if (targettedStroke.author == me || targettedStroke.privacy == Globals.PUBLIC)
                     AddStrokeToCanvas(Work, new PrivateAwareStroke(targettedStroke.stroke, strokeTarget));
-                //else if (targettedStroke.privacy == Globals.PUBLIC)
-                //    AddStrokeToCanvas(OtherWork, new PrivateAwareStroke(targettedStroke.stroke, strokeTarget));
             }
         }
         public void AddStrokeToCanvas(InkCanvas canvas, PrivateAwareStroke stroke)
@@ -868,11 +861,6 @@ namespace SandRibbon.Components
                      //var strokesToRemove = new StrokeCollection(Work.Strokes.Where(s => s.sum().checksum == stroke.sum().checksum));
                      //contentBuffer.RemoveStrokes(strokesToRemove, (st) => Work.Strokes.Remove(st));
                      contentBuffer.RemoveStroke(stroke, (st) => RemoveExistingStrokeFromCanvas(Work, st));
-                 }
-                 else
-                 {
-                     var strokesToRemove = new StrokeCollection(OtherWork.Strokes.Where(s => MeTLMath.ApproxEqual(s.sum().checksum, stroke.sum().checksum)));
-                     contentBuffer.RemoveStrokes(strokesToRemove, (st) => OtherWork.Strokes.Remove(st));
                  }
                  doMyStrokeRemovedExceptHistory(stroke);
             }
@@ -1679,12 +1667,6 @@ namespace SandRibbon.Components
                                       });
 
         }
-        private void addBoxToOtherCanvas(MeTLTextBox box)
-        {
-            var boxToAdd = applyDefaultAttributes(box);
-            boxToAdd.Focusable = false;
-            OtherWork.Children.Add(boxToAdd);
-        }
 
         private MeTLTextBox applyDefaultAttributes(MeTLTextBox box)
         {
@@ -1996,7 +1978,7 @@ namespace SandRibbon.Components
         private void dirtyTextBoxWithoutHistory(MeTLTextBox box, int slide)
         {
             RemovePrivacyStylingFromElement(box);
-            RemoveTextboxWithTag(box.tag().id);
+            RemoveTextBoxWithId(box.tag().id);
             Commands.SendDirtyText.ExecuteAsync(new TargettedDirtyElement(slide, box.tag().author, _target, box.tag().privacy, box.tag().id));
         }
 
@@ -2024,38 +2006,17 @@ namespace SandRibbon.Components
             {
                 if(checkCanvasForBox(Work, box))
                     Work.Children.Remove(box);
-                else
-                    OtherWork.Children.Remove(box);
             }
             else
                 setAppropriatePrivacyHalo(box);
         }
+
         private void setAppropriatePrivacyHalo(MeTLTextBox box)
         {
-            if (!(Work.Children.Contains(box) && OtherWork.Children.Contains(box))) return;
+            if (!Work.Children.Contains(box)) return;
             ApplyPrivacyStylingToElement(box, privacy);
         }
-        public void RemoveTextboxWithTag(string tag)
-        {
-            var toRemove = new List<TextBox>();
-            foreach (var textbox in Work.Children.OfType<TextBox>().Where(tb => tb.tag().id.ToString() == tag))
-            {
-                toRemove.Add(textbox);
-            }
-            foreach (var textbox in toRemove)
-            {
-                contentBuffer.RemoveTextBox(textbox, (tb) => Work.Children.Remove(tb));
-            }
-            toRemove.Clear();
-            foreach (var textbox in OtherWork.Children.OfType<TextBox>().Where(tb => tb.tag().id.ToString() == tag))
-            {
-                toRemove.Add(textbox);
-            }
-            foreach (var textbox in toRemove)
-            {
-                contentBuffer.RemoveTextBox(textbox, (tb) => OtherWork.Children.Remove(tb));
-            }
-        }
+
         private static void requeryTextCommands()
         {
             Commands.RequerySuggested(new []{
@@ -2123,24 +2084,19 @@ namespace SandRibbon.Components
         }
         private bool alreadyHaveThisTextBox(MeTLTextBox box)
         {
-            return checkCanvasForBox(Work, box) || checkCanvasForBox(OtherWork, box);
+            return checkCanvasForBox(Work, box);
         }
         private void removeDoomedTextBoxes(TargettedTextBox targettedBox)
         {
-            removeTextBoxesFrom(Work, targettedBox.identity);
-            removeTextBoxesFrom(OtherWork, targettedBox.identity);
+            RemoveTextBoxWithId(targettedBox.identity);
         }
-        private void removeTextBoxesFrom(InkCanvas canvas, string id)
+        private void RemoveTextBoxWithId(string id)
         {
-            var doomedChildren = new List<FrameworkElement>();
-            foreach (var child in canvas.Children)
+            var removeTextbox = textBoxFromId(id);
+            if (removeTextbox != null)
             {
-                if (child is MeTLTextBox)
-                    if (((MeTLTextBox)child).tag().id.Equals(id))
-                        doomedChildren.Add((FrameworkElement)child);
+                contentBuffer.RemoveTextBox(removeTextbox, (tb) => Work.Children.Remove(tb));
             }
-            foreach (var child in doomedChildren)
-                contentBuffer.RemoveTextBox(child, (tb) => canvas.Children.Remove(tb));
         }
         private void receiveDirtyText(TargettedDirtyElement element)
         {
@@ -2150,8 +2106,7 @@ namespace SandRibbon.Components
             {
                 if (myTextBox != null && element.identifier == myTextBox.tag().id) return;
                 if (element.author == me) return;
-                removeTextBoxesFrom(Work, element.identifier);
-                //removeTextBoxesFrom(OtherWork, element.identifier);
+                RemoveTextBoxWithId(element.identifier);
             });
         }
         public void ReceiveTextBox(TargettedTextBox targettedBox)
@@ -2175,7 +2130,6 @@ namespace SandRibbon.Components
             MeTLTextBox result = null;
             var boxes = new List<MeTLTextBox>();
             boxes.AddRange(Work.Children.OfType<MeTLTextBox>());
-            boxes.AddRange(OtherWork.Children.OfType<MeTLTextBox>());
             Dispatcher.adopt(() =>
             {
                 result = boxes.Where(text => text.tag().id == boxId).FirstOrDefault();
@@ -2602,8 +2556,6 @@ namespace SandRibbon.Components
             ClearAdorners();
             Work.Strokes.Clear();
             Work.Children.Clear();
-            OtherWork.Children.Clear();
-            OtherWork.Strokes.Clear();
             Height = Double.NaN;
             Width = Double.NaN;
         }

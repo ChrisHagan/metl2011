@@ -41,7 +41,6 @@
         <KeyBinding Key="Next" Command="{x:Static api:Commands.MoveToNext}" />
     </UserControl.InputBindings>
     <Grid MinHeight="540" MinWidth="720"  x:Name="canvasStack" Background="White">
-        <InkCanvas x:Name="OtherWork" Background="Transparent" EditingMode="None"/>
         <Utility:MeTLInkCanvas x:Name="Work" Background="Transparent"/>
     </Grid>
 </UserControl>

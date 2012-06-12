@@ -507,8 +507,7 @@ namespace SandRibbon.Components
             clone.Width = ActualWidth;
             foreach(var stroke in stack.PublicStrokes)
                 clone.Strokes.Add(stroke.Clone());
-            foreach(var canvas in new[]{stack.Work, stack.OtherWork})
-                foreach (var child in canvas.Children)
+                foreach (var child in stack.Work.Children)
                 {
                     var fe = (FrameworkElement)child;
                     if (fe.privacy() == "public")
@@ -537,8 +536,7 @@ namespace SandRibbon.Components
             var clone = new InkCanvas();
             foreach(var stroke in stack.AllStrokes)
                 clone.Strokes.Add(stroke.Clone());
-            foreach(var canvas in new[]{stack.Work, stack.OtherWork})
-                foreach (var child in canvas.Children)
+                foreach (var child in stack.Work.Children)
                 {
                     var fe = (FrameworkElement)child;
                     if(child is Image)
