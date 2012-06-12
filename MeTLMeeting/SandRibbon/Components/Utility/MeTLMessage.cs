@@ -21,10 +21,22 @@ namespace SandRibbon.Components.Utility
 
         private static MessageBoxResult DisplayMessage(string message, MessageBoxImage image, MessageBoxButton button, Window owner)
         {
-            var dialogOwner = owner != null ? owner : GetMainWindow(); 
+            var dialogOwner = owner;
             var result = MessageBoxResult.None;
 
-            Application.Current.Dispatcher.adopt( () => { result = MessageBox.Show(dialogOwner, message, "MeTL", button, image); });
+            if (dialogOwner != null)
+            {
+                result = MessageBox.Show(dialogOwner, message, "MeTL", button, image);
+            }
+            else
+            {
+                // calling from non-ui thread
+                Application.Current.Dispatcher.adoptAsync(() =>
+                {
+                    dialogOwner = GetMainWindow();
+                    result = MessageBox.Show(dialogOwner, message, "MeTL", button, image);
+                });
+            }
 
             return result; 
         }

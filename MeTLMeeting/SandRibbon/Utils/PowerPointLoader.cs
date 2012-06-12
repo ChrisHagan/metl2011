@@ -152,6 +152,10 @@ namespace SandRibbon.Utils
         }
         private void UploadPowerpoint(PowerpointSpec spec)
         {
+            var app = GetPowerPointApplication();
+            if (app == null)
+                return;
+            
             var conversation = ClientFactory.Connection().CreateConversation(spec.Details);
             var worker = new Thread(new ParameterizedThreadStart(
                 delegate
@@ -163,17 +167,17 @@ namespace SandRibbon.Utils
                         case PowerpointImportType.HighDefImage:
                             Trace.TraceInformation("ImportingPowerpoint HighDef {0}", spec.File);
                             Logger.Log(string.Format("ImportingPowerpoint HighDef {0}", spec.File));
-                            success = LoadPowerpointAsFlatSlides(spec.File, conversation, spec.Magnification);
+                            success = LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
                             break;
                         case PowerpointImportType.Image:
                             Trace.TraceInformation("ImportingPowerpoint NormalDef {0}", spec.File);
                             Logger.Log(string.Format("ImportingPowerpoint NormalDef {0}", spec.File));
-                            success = LoadPowerpointAsFlatSlides(spec.File, conversation, spec.Magnification);
+                            success = LoadPowerpointAsFlatSlides(app, spec.File, conversation, spec.Magnification);
                             break;
                         case PowerpointImportType.Shapes:
                             Trace.TraceInformation("ImportingPowerpoint Flexible {0}", spec.File);
                             Logger.Log(string.Format("ImportingPowerpoint Flexible {0}", spec.File));
-                            success = LoadPowerpoint(spec.File, conversation);
+                            success = LoadPowerpoint(app, spec.File, conversation);
                             break;
                     }
 
@@ -215,14 +219,10 @@ namespace SandRibbon.Utils
             return null;
         }
 
-        public bool LoadPowerpointAsFlatSlides(string file, ConversationDetails conversation, int MagnificationRating)
+        public bool LoadPowerpointAsFlatSlides(PowerPoint.Application app, string file, ConversationDetails conversation, int MagnificationRating)
         {
             var success = false;
-
-            var app = GetPowerPointApplication();
-            if (app == null)
-                return success;
-
+            
             var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
             var currentWorkingDirectory = Directory.GetCurrentDirectory() + "\\tmp";
             if (!Directory.Exists(currentWorkingDirectory))
@@ -357,15 +357,11 @@ namespace SandRibbon.Utils
         {
             Commands.UpdatePowerpointProgress.Execute(new PowerpointImportProgress(action, currentSlideId, totalSlides, imageSource));
         }
-        public bool LoadPowerpoint(string file, ConversationDetails conversation)
+        public bool LoadPowerpoint(PowerPoint.Application app, string file, ConversationDetails conversation)
         {
             var success = false;
             try
             {
-                var app = GetPowerPointApplication();
-                if (app == null)
-                    return success;
-    
                 var ppt = app.Presentations.Open(file, TRUE, FALSE, FALSE);
                 var provider = ClientFactory.Connection();
                 var xml = new XElement("presentation");
