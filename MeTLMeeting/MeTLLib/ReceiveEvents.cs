@@ -12,6 +12,7 @@ namespace MeTLLib
     public class MeTLLibEventHandlers
     {
         public delegate void QuizzesAvailableRequestEventHandler(object sender, QuizzesAvailableEventArgs e); 
+        public delegate void AttachmentsAvailableRequestEventHandler(object sender, AttachmentsAvailableEventArgs e); 
         public delegate void QuizAvailableRequestEventHandler(object sender, QuizzesAvailableEventArgs e); 
         public delegate void TeacherStatusRequestEventHandler(object sender, TeacherStatusRequestEventArgs e);
         public delegate void TeacherStatusReceivedEventHandler(object sender, TeacherStatusRequestEventArgs e);
@@ -41,6 +42,7 @@ namespace MeTLLib
     #endregion
     #region EventArgs
     public class QuizzesAvailableEventArgs : EventArgs { public List<QuizInfo> quizzes; }
+    public class AttachmentsAvailableEventArgs : EventArgs { public List<TargettedFile> attachments; }
     public class SingleQuizAvailableEventArgs : EventArgs { public QuizInfo quiz; }
     public class TeacherStatusRequestEventArgs : EventArgs { public TeacherStatus status; } 
     public class PresenceAvailableEventArgs : EventArgs { public MeTLPresence presence; }
@@ -98,7 +100,9 @@ namespace MeTLLib
         void teacherStatusRequest(string where, string who);
         void teacherStatusRecieved(TeacherStatus status);
         void receieveQuizzes(PreParser finishedParser);
+        void receieveAttachments(PreParser finishedParser);
         void receieveQuiz(PreParser finishedParser, long id);
+        event MeTLLibEventHandlers.AttachmentsAvailableRequestEventHandler AttachmentsAvailable;
         event MeTLLibEventHandlers.QuizzesAvailableRequestEventHandler QuizzesAvailable;
         event MeTLLibEventHandlers.QuizAvailableRequestEventHandler QuizAvailable;
         event MeTLLibEventHandlers.TeacherStatusReceivedEventHandler TeacherStatusReceived;
@@ -307,7 +311,13 @@ namespace MeTLLib
             finishedParser.quizzes.ForEach(q => quizzes.Add(new QuizInfo(q, finishedParser.quizAnswers.Where( a => a.id == q.Id).ToList())));
             QuizzesAvailable(this,  new QuizzesAvailableEventArgs{ quizzes = quizzes});
         }
-
+        public void receieveAttachments(PreParser finishedParser)
+        {
+            var files = new List<TargettedFile>();
+            finishedParser.files.ForEach(files.Add);
+            AttachmentsAvailable(this,  new AttachmentsAvailableEventArgs{ attachments = files});
+        }
+      
         public void receieveQuiz(PreParser finishedParser, long id)
         {
             var quiz = finishedParser.quizzes.Where(q => q.Id == id).OrderByDescending(q => q.Created).First();
@@ -315,6 +325,7 @@ namespace MeTLLib
             QuizAvailable(this, new QuizzesAvailableEventArgs{ quizzes = new List<QuizInfo>{quizInfo}});
         }
 
+        public event MeTLLibEventHandlers.AttachmentsAvailableRequestEventHandler AttachmentsAvailable;
         public event MeTLLibEventHandlers.QuizzesAvailableRequestEventHandler QuizzesAvailable;
         public event MeTLLibEventHandlers.QuizAvailableRequestEventHandler QuizAvailable;
         public event MeTLLibEventHandlers.TeacherStatusReceivedEventHandler TeacherStatusReceived;
