@@ -143,17 +143,23 @@ namespace SandRibbon.Quizzing
             var quizDisplay = new DisplayAQuiz(question);
             quizDisplay.Show();
 
-            var quiz = quizDisplay.SnapshotHost;
-            var dpi = 96;
-            var dimensions = ResizeHelper.ScaleMajorAxisToCanvasSize(quiz);
-            var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
-            var dv = new DrawingVisual();
-            using (var context = dv.RenderOpen())
-                context.DrawRectangle(new VisualBrush(quiz), null, dimensions);
-            bitmap.Render(dv);
-            Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
-
-            Close();
+            try
+            {
+                var quiz = quizDisplay.SnapshotHost;
+                var dpi = 96;
+                var dimensions = ResizeHelper.ScaleMajorAxisToCanvasSize(quiz);
+                var bitmap = new RenderTargetBitmap((int)dimensions.Width, (int)dimensions.Height, dpi, dpi, PixelFormats.Default);
+                var dv = new DrawingVisual();
+                using (var context = dv.RenderOpen())
+                    context.DrawRectangle(new VisualBrush(quiz), null, dimensions);
+                bitmap.Render(dv);
+                Commands.QuizResultsAvailableForSnapshot.ExecuteAsync(new UnscaledThumbnailData{id=Globals.slide,data=bitmap});
+            }
+            finally
+            {
+                quizDisplay.Close();
+                Close();
+            }
         }
         private void Edit_Click(object sender, RoutedEventArgs e)
         {

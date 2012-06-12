@@ -2173,14 +2173,12 @@ namespace SandRibbon.Components
         private MeTLTextBox textBoxFromId(string boxId)
         {
             MeTLTextBox result = null;
-            var boxes = new List<UIElement>();
-            boxes.AddRange(Work.Children.ToList());
-            boxes.AddRange(OtherWork.Children.ToList());
+            var boxes = new List<MeTLTextBox>();
+            boxes.AddRange(Work.Children.OfType<MeTLTextBox>());
+            boxes.AddRange(OtherWork.Children.OfType<MeTLTextBox>());
             Dispatcher.adopt(() =>
             {
-                foreach (var text in boxes)
-                    if (text.GetType() == typeof(MeTLTextBox))
-                        if (((MeTLTextBox)text).tag().id == boxId) result = (MeTLTextBox)text;
+                result = boxes.Where(text => text.tag().id == boxId).FirstOrDefault();
             });
             return result;
         }
