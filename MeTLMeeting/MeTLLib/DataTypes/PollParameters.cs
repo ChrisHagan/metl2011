@@ -316,8 +316,8 @@ namespace MeTLLib.DataTypes
 
         public bool Validate(out bool questionError, out bool optionError)
         {
-            questionError = string.IsNullOrEmpty(Question);
-            optionError = Options.Where(o => o.optionText != null && !string.IsNullOrEmpty(o.optionText.Trim())).Count() < 2;
+            questionError = Question == null || String.IsNullOrEmpty(Question.Trim());
+            optionError = Options.Where(o => o.optionText != null && !String.IsNullOrEmpty(o.optionText.Trim())).Count() < 2;
 
             return !(optionError || questionError);
         }
