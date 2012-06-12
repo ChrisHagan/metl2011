@@ -88,7 +88,7 @@
                                                 <Button.ToolTip>
                                                     <dict:MeTLImageToolTip TitleText="View quiz" 
                                                                            ImageSource="\Resources\Ribbon-Quiz.png"
-                                                                           ContentText="{Binding Path=question}"/>
+                                                                           ContentText="{Binding Path=Question}"/>
                                                 </Button.ToolTip>
                                                 <StackPanel HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
                                                     <StackPanel Orientation="Horizontal">
