@@ -216,7 +216,7 @@ namespace SandRibbon.Utils
             {
                 return new PowerPoint.Application();
             }
-            catch (COMException)
+            catch (Exception)
             {
                 MeTLMessage.Error("MeTL requires Microsoft PowerPoint to be installed to import a presentation");
                 Commands.HideProgressBlocker.ExecuteAsync(null);

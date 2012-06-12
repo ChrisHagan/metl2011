@@ -1258,29 +1258,29 @@ namespace MeTLLib.DataTypes
                         created = DateTimeFactory.Now().Ticks;
                     }
                     var quiz = new QuizQuestion(long.Parse(GetTag(ID)),created, GetTag(TITLE), GetTag(AUTHOR), GetTag(QUESTION), new List<Option>());
-                    quiz.url = ProcessedUrl();
+                    quiz.Url = ProcessedUrl();
                     if (HasTag(IS_DELETED))
-                        quiz.SetDeleted(bool.Parse(GetTag(IS_DELETED)));
+                        quiz.IsDeleted = bool.Parse(GetTag(IS_DELETED));
                     
                     foreach (var node in ChildNodes)
                     {
                         if (node.GetType() == typeof(QuizOption))
-                            quiz.options.Add(((QuizOption)node).parameters);
+                            quiz.Options.Add(((QuizOption)node).parameters);
                     }
                     return quiz;
                 }
                 set
                 {
 
-                    SetTag(CREATED, value.created.ToString());
-                    SetTag(TITLE, value.title);
-                    SetTag(QUESTION, value.question);
-                    SetTag(AUTHOR, value.author);
-                    SetTag(ID, value.id.ToString());
-                    var url = INodeFix.StripServer(value.url);
+                    SetTag(CREATED, value.Created.ToString());
+                    SetTag(TITLE, value.Title);
+                    SetTag(QUESTION, value.Question);
+                    SetTag(AUTHOR, value.Author);
+                    SetTag(ID, value.Id.ToString());
+                    var url = INodeFix.StripServer(value.Url);
                     SetTag(URL, url);
                     SetTag(IS_DELETED, value.IsDeleted.ToString());
-                    foreach (var option in value.options)
+                    foreach (var option in value.Options)
                     {
                         var optionElement = new QuizOption(option);
                         AddChild(optionElement);

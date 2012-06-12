@@ -54,12 +54,12 @@ namespace SandRibbon.Quizzing
         {
             var creationTimeAndId = SandRibbonObjects.DateTimeFactory.Now().Ticks;
             var quiz = new QuizQuestion(creationTimeAndId, creationTimeAndId, "Unused", Globals.me, question.Text, new List<Option>());
-            quiz.url = url;
+            quiz.Url = url;
             foreach (object obj in quizQuestions.Items)
             {
                 var answer = (Option)obj;
                 if (!string.IsNullOrEmpty(answer.optionText))
-                    quiz.options.Add(answer);
+                    quiz.Options.Add(answer);
             }
             Commands.SendQuiz.ExecuteAsync(quiz);
             Trace.TraceInformation("CreatedQuizQuestion {0}", question.Text);
