@@ -88,9 +88,9 @@
                 </DockPanel>
 
                 <StackPanel Orientation="Vertical" Grid.Row="1">
-                    <Label Foreground="Red" HorizontalAlignment="Left" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have a question"/>
+                    <Label Foreground="Red" HorizontalAlignment="Left" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=QuestionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="A quiz must have a question"/>
                     <Label Foreground="Red" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=ResultsExist, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Answers are available for this quiz"/>
-                    <Label Foreground="Red" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="You need to have more than one option for this quiz"/>
+                    <Label Foreground="Red" Width="Auto" Visibility="{Binding ElementName=viewEditAQuiz, Path=OptionError, Converter={StaticResource BooleanToVisibilityConverter}}" Content="A quiz must have more than one option to choose from"/>
                 </StackPanel>
 
                 <ScrollViewer Grid.Row="2" Margin="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">

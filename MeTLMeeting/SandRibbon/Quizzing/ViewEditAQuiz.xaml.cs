@@ -64,7 +64,6 @@ namespace SandRibbon.Quizzing
 
     public partial class ViewEditAQuiz : Window
     {
-
         #region DependencyProperties
 
         public static readonly DependencyProperty OptionErrorProperty = DependencyProperty.Register("OptionError", typeof (bool), typeof (ViewEditAQuiz));
@@ -114,7 +113,7 @@ namespace SandRibbon.Quizzing
         private void UpdateOptionError(object sender, NotifyCollectionChangedEventArgs e)
         {
             var optionList = sender as ObservableCollection<Option>;
-            OptionError = (e.Action == NotifyCollectionChangedAction.Remove && optionList.Count == 2 );
+            OptionError = (e.Action == NotifyCollectionChangedAction.Remove && optionList.Count < 3 );
         }
 
         public bool CheckResultsExist(QuizQuestion quizQuestion)
@@ -208,10 +207,13 @@ namespace SandRibbon.Quizzing
 
         private bool ValidQuiz(QuizQuestion editedQuiz)
         {
-            QuestionError = string.IsNullOrEmpty(editedQuiz.Question);
-            OptionError = editedQuiz.Options.Count < 2;
+            var questionError = false;
+            var optionError = false;
+            var questionValid = question.Validate(out questionError, out optionError);
+            QuestionError = questionError;
+            OptionError = optionError;
 
-            return !(OptionError || QuestionError);
+            return questionValid;
         }
 
         private void CloseEdit(object sender, RoutedEventArgs e)

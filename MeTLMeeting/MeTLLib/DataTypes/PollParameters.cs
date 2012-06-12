@@ -314,6 +314,14 @@ namespace MeTLLib.DataTypes
             IsDeleted = true;
         }
 
+        public bool Validate(out bool questionError, out bool optionError)
+        {
+            questionError = string.IsNullOrEmpty(Question);
+            optionError = Options.Where(o => o.optionText != null && !string.IsNullOrEmpty(o.optionText.Trim())).Count() < 2;
+
+            return !(optionError || questionError);
+        }
+
         #region INotifyPropertyChanged members
 
         public event PropertyChangedEventHandler PropertyChanged;
