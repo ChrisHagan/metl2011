@@ -231,6 +231,7 @@ namespace SandRibbon.Providers
         {
             get { return new UserInformation(credentials, location, policy); }
         }
+
         public static bool rememberMe 
         {
             get
