@@ -5,9 +5,6 @@ using System.Text;
 using agsXMPP;
 using Ninject;
 
-// REMOVEME: Testing commit hook for MeTLLib changes
-// REMOVEME: Will email when a file has been modified in MeTLLib in a push/pull or unbundle
-
 namespace MeTLLib
 {
     partial class Constants
