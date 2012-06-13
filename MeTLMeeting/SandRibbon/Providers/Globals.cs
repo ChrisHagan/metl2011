@@ -226,6 +226,7 @@ namespace SandRibbon.Providers
         {
             get { return new Policy(isAuthor, false); }
         }
+
         public static UserInformation userInformation
         {
             get { return new UserInformation(credentials, location, policy); }
