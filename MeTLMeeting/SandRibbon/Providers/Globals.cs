@@ -215,6 +215,7 @@ namespace SandRibbon.Providers
                 return credentials.name;
             }
         }
+
         public static string privacy
         {
             get
