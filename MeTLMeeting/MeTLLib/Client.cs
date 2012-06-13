@@ -94,7 +94,8 @@ namespace MeTLLib
         void JoinConversation(string conversation);
         void LeaveLocation();
         void LoadQuiz(int conversationJid, long quizId);
-        void LoadQuizzes(int conversationJid); 
+        void LoadQuizzes(string conversationJid);
+        void LoadAttachments(string conversationJid);
         void UploadAndSendSubmission(MeTLStanzas.LocalSubmissionInformation lii);
         ConversationDetails AppendSlide(string Jid);
         ConversationDetails AppendSlideAfter(int slide, string Jid);
@@ -181,11 +182,14 @@ namespace MeTLLib
             tryIfConnected( ()=> wire.LoadQuiz(conversationJid, quizId) );
         }
 
-        public void LoadQuizzes(int conversationJid)
+        public void LoadQuizzes(string conversationJid)
         {
             tryIfConnected( ()=> wire.LoadQuizzes(conversationJid) );
         }
-
+        public void LoadAttachments(string conversationJid)
+        {
+            tryIfConnected( ()=> wire.LoadAttachments(conversationJid) );
+        }
         public void AskForTeachersStatus(string teacher, string jid)
         {
             Action work = () => wire.AskForTeacherStatus(teacher, jid);
