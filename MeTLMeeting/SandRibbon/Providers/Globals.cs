@@ -230,7 +230,8 @@ namespace SandRibbon.Providers
         {
             get { return new UserInformation(credentials, location, policy); }
         }
-        public static bool rememberMe {
+        public static bool rememberMe 
+        {
             get
             {
                 return (bool)Commands.RememberMe.LastValue();
