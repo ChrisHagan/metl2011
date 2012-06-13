@@ -5,6 +5,8 @@ using System.Text;
 using agsXMPP;
 using Ninject;
 
+// REMOVEME: Testing commit hook for MeTLLib changes
+
 namespace MeTLLib
 {
     partial class Constants
