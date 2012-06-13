@@ -222,6 +222,7 @@ namespace SandRibbon.Providers
                 return (Commands.SetPrivacy.IsInitialised ? (string)Commands.SetPrivacy.LastValue() : String.Empty);
             }
         }
+
         public static Policy policy
         {
             get { return new Policy(isAuthor, false); }
