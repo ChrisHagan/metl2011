@@ -101,7 +101,6 @@
     <Compile Include="Utilities\InputExtensions.cs" />
     <Compile Include="Utilities\ScreenAction.cs" />
     <Compile Include="Utilities\MeTLComponentHelpers.cs" />
-    <Compile Include="Utilities\MeTLComponentHelpers.cs" />
     <Compile Include="Utilities\MeTLComponents.cs" />
     <Compile Include="Utilities\UITestHelperExtensions.cs" />
     <Compile Include="Utilities\WpfExtensions.cs" />
