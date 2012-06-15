@@ -140,6 +140,7 @@ namespace SandRibbon.Components
             wireInPublicHandlers();
             strokeChecksums = new List<StrokeChecksum>();
             contentBuffer = new ContentBuffer();
+            UndoHistory.ShowVisualiser(Window.GetWindow(this));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, deleteSelectedElements, canExecute));
             Commands.SetPrivacy.RegisterCommand(new DelegateCommand<string>(SetPrivacy));
             Commands.SetInkCanvasMode.RegisterCommandToDispatcher<string>(new DelegateCommand<string>(setInkCanvasMode));
@@ -1661,9 +1662,12 @@ namespace SandRibbon.Components
                                               var box = UpdateTextBoxWithId(targettedBox);
                                               //RemoveTextBoxWithMatchingId(targettedBox.identity);
                                               //AddTextBoxToCanvas(box); 
-                                              if (!(targettedBox.author == me && _focusable))
-                                                  box.Focusable = false;
-                                              ApplyPrivacyStylingToElement(box, targettedBox.privacy);
+                                              if (box != null)
+                                              {
+                                                  if (!(targettedBox.author == me && _focusable))
+                                                      box.Focusable = false;
+                                                  ApplyPrivacyStylingToElement(box, targettedBox.privacy);
+                                              }
                                           }
                                       });
 
@@ -1694,7 +1698,11 @@ namespace SandRibbon.Components
             box.TextDecorations = oldBox.TextDecorations;
             box.FontSize = oldBox.FontSize;
             box.Foreground = oldBox.Foreground;
+            box.TextChanged -= SendNewText;
+            var caret = box.CaretIndex;
             box.Text = oldBox.Text;
+            box.CaretIndex = caret;
+            box.TextChanged += SendNewText;
             box.Width = oldBox.Width;
             //box.Height = OldBox.Height;
             InkCanvas.SetLeft(box, InkCanvas.GetLeft(oldBox));
@@ -1749,8 +1757,10 @@ namespace SandRibbon.Components
                 var myText = undoText.Clone().ToString();
                 mybox.TextChanged -= SendNewText;
                 mybox.Text = myText;
-                //dirtyTextBoxWithoutHistory(mybox);
-                sendTextWithoutHistory(mybox, mybox.tag().privacy);
+                /*if (String.IsNullOrEmpty(myText))
+                    dirtyTextBoxWithoutHistory(mybox);
+                else*/
+                    sendTextWithoutHistory(mybox, mybox.tag().privacy);
                 mybox.TextChanged += SendNewText;
             };
             Action redo = () =>
@@ -1759,8 +1769,10 @@ namespace SandRibbon.Components
                 var myText = redoText;
                 mybox.TextChanged -= SendNewText;
                 mybox.Text = myText;
-                //dirtyTextBoxWithoutHistory(mybox);
-                sendTextWithoutHistory(mybox, mybox.tag().privacy);
+                /*if (String.IsNullOrEmpty(myText))
+                    dirtyTextBoxWithoutHistory(mybox);
+                else*/
+                    sendTextWithoutHistory(mybox, mybox.tag().privacy);
                 mybox.TextChanged += SendNewText;
             }; 
             UndoHistory.Queue(undo, redo, String.Format("Added text [{0}]", redoText));
