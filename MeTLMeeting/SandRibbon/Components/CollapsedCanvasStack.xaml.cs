@@ -93,7 +93,6 @@ namespace SandRibbon.Components
         public static TypingTimedAction TypingTimer;
         private string _originalText;
         private ContentBuffer contentBuffer;
-        private MeTLTextBox myTextBox;
         private string _target;
         private string _defaultPrivacy;
         private readonly ClipboardManager clipboardManager = new ClipboardManager();
@@ -107,6 +106,18 @@ namespace SandRibbon.Components
             }
             set { _me = value; }
         }
+
+        private MeTLTextBox myTextBox
+        {
+            get
+            {
+                return Keyboard.FocusedElement as MeTLTextBox;
+            }
+            set
+            {
+            }
+        }
+
         private bool affectedByPrivacy { get { return _target == "presentationSpace"; } }
         public string privacy { get { return affectedByPrivacy ? Globals.privacy: _defaultPrivacy; } }
         private Point pos = new Point(15, 15);
@@ -2313,12 +2324,17 @@ namespace SandRibbon.Components
         {
             foreach (var textBox in selectedText)
             {
-                if (currentBox!= null )
+                if (currentBox != null )
                 {
                     var caret = currentBox.CaretIndex;
                     var redoText = currentBox.Text.Insert(currentBox.CaretIndex, textBox.Text);
                     ClearAdorners();
-                    var box = ((MeTLTextBox) Work.TextChildren().ToList().Where(c => ((MeTLTextBox) c).tag().id == currentBox.tag().id). FirstOrDefault());
+                    var box = textBoxFromId(currentBox.tag().id);
+                    if (box == null)
+                    {
+                        AddTextBoxToCanvas(currentBox);
+                        box = currentBox;
+                    }
                     box.TextChanged -= SendNewText;
                     box.Text = redoText;
                     box.CaretIndex = caret + textBox.Text.Length;
