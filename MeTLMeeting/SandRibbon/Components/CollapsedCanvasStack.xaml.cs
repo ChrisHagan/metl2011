@@ -1786,11 +1786,11 @@ namespace SandRibbon.Components
                 Dispatcher.adoptAsync(delegate
                 {
                     var senderTextBox = sender as MeTLTextBox;
-                    if (mybox.Text.Length == 0)
+                    /*if (mybox.Text.Length == 0)
                     {
                         dirtyTextBoxWithoutHistory(senderTextBox, currentSlide);
                     }
-                    else
+                    else*/
                     {
                         sendTextWithoutHistory(senderTextBox, privacy, currentSlide);
                     }
@@ -2054,8 +2054,9 @@ namespace SandRibbon.Components
             requeryTextCommands();
             if (box.Text.Length == 0)
             {
-                if(TextBoxExistsOnCanvas(box, true))
-                    Work.Children.Remove(box);
+                if (TextBoxExistsOnCanvas(box, true))
+                    dirtyTextBoxWithoutHistory(box);
+                    //Work.Children.Remove(box);
             }
             else
                 setAppropriatePrivacyHalo(box);
@@ -2161,7 +2162,7 @@ namespace SandRibbon.Components
         public void ReceiveTextBox(TargettedTextBox targettedBox)
         {
             if (targettedBox.target != _target) return;
-            if (targettedBox.box.Text.Length == 0) return;
+            //if (targettedBox.box.Text.Length == 0) return;
             if (targettedBox.author == me && alreadyHaveThisTextBox(targettedBox.box.toMeTLTextBox()) && me != Globals.PROJECTOR)
             {
                 /*var box = textBoxFromId(targettedBox.identity);
