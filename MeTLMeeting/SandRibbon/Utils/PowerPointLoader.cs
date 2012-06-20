@@ -146,7 +146,6 @@ namespace SandRibbon.Utils
                 {
                     Commands.ReceiveImage.UnregisterCommand(cancel);
                     Commands.ReceiveTextBox.UnregisterCommand(cancel);
-                    Commands.JoinConversation.Execute(conversation);
                 }
             }
         }
@@ -189,6 +188,8 @@ namespace SandRibbon.Utils
 
                     if (!success)
                         ClientFactory.Connection().DeleteConversation(conversation);
+                    else
+                        Commands.JoinConversation.Execute(conversation.Jid);
                 }));
             worker.SetApartmentState(ApartmentState.STA);
             worker.Start();
