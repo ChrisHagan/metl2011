@@ -81,7 +81,6 @@ namespace SandRibbon
             Commands.SetSync.RegisterCommand(new DelegateCommand<object>(setSync));
             Commands.EditConversation.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversationAndBeAuthor));
 
-            Commands.ChangeTab.RegisterCommand(new DelegateCommand<string>(ChangeTab));
             Commands.LogOut.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeLoggedIn));
             Commands.Redo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
             Commands.Undo.RegisterCommand(new DelegateCommand<object>(App.noop, mustBeInConversation));
@@ -507,12 +506,6 @@ namespace SandRibbon
             catch (Exception)
             {//out of range exceptions and the like 
             }
-        }
-        private void ChangeTab(string which)
-        {
-            foreach (var tab in ribbon.Tabs)
-                if (((RibbonTab)tab).Text == which)
-                    ribbon.SelectedTab = (RibbonTab)tab;
         }
         private void BroadcastZoom()
         {
@@ -1201,6 +1194,12 @@ namespace SandRibbon
         private void ApplicationPopup_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             App.AccidentallyClosing = DateTime.Now;
+        }
+
+        private void ribbon_SelectedTabChanged(object sender, EventArgs e)
+        {
+            var ribbon = sender as Ribbon;
+            Globals.IsManagementAccessible = ribbon.SelectedTab != null && ribbon.SelectedTab.Name == "conversationManagement";
         }
         /* Awesomium commented out
         private void setStackVisibility(Visibility visible)

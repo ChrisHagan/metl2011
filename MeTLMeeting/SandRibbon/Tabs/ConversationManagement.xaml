@@ -5,7 +5,7 @@
     xmlns:api="clr-namespace:SandRibbon;assembly=SandRibbonInterop"
     xmlns:core="clr-namespace:System;assembly=mscorlib"
     xmlns:dict="clr-namespace:SandRibbon.Components.ResourceDictionaries" 
-    sr:KeyboardAccess.Keys="P" Text="Conversation Management" x:Name="classroomRoot">
+    sr:KeyboardAccess.Keys="P" Text="Conversation Management" x:Name="conversationManagement">
     <sr:RibbonTab.Resources>
         <core:String x:Key="preferredDisplayIndex">8</core:String>    
     </sr:RibbonTab.Resources>

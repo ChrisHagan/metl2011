@@ -45,7 +45,8 @@
     <sr:RibbonWindow.Ribbon>
         <sr:Ribbon x:Name="ribbon" Width="Auto" HorizontalAlignment="Stretch" 
                    PreviewMouseDoubleClick="ApplicationPopup_PreviewMouseDoubleClick"
-                   ApplicationButtonImage="\Resources\MeTLNewIcon.png">
+                   ApplicationButtonImage="\Resources\MeTLNewIcon.png"
+                   SelectedTabChanged="ribbon_SelectedTabChanged">
             <sr:Ribbon.ApplicationPopup>
                 <sr:ApplicationPopup 
                     OptionsText="Options" ExitText="Quit MeTL" ShowOptions="ApplicationPopup_ShowOptions"

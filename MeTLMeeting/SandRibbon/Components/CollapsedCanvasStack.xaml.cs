@@ -689,11 +689,37 @@ namespace SandRibbon.Components
         private void selectionChanging(object sender, InkCanvasSelectionChangingEventArgs e)
         {
             Dispatcher.adopt(() =>
-                                 {
-                                     e.SetSelectedElements(filterOnlyMine(e.GetSelectedElements()));
-                                     e.SetSelectedStrokes(filterOnlyMine(e.GetSelectedStrokes()));
-                                 });
+             {
+                 if (Globals.IsManagementAccessible)
+                 {
+                    e.SetSelectedElements(filterExceptMine(e.GetSelectedElements()));
+                    e.SetSelectedStrokes(filterExceptMine(e.GetSelectedStrokes()));
+                 }
+                 else
+                 {
+                     e.SetSelectedElements(filterOnlyMine(e.GetSelectedElements()));
+                     e.SetSelectedStrokes(filterOnlyMine(e.GetSelectedStrokes()));
+                 }
+             });
         }
+
+        private StrokeCollection filterExceptMine(IEnumerable<Stroke> strokes)
+        {
+            var me = Globals.me;
+            return new StrokeCollection(strokes.Where(s => s.tag().author != me));
+        }
+
+        private IEnumerable<UIElement> filterExceptMine(ReadOnlyCollection<UIElement> elements)
+        {
+            var me = Globals.me;
+            var myText = elements.Where(e => e is MeTLTextBox && (e as MeTLTextBox).tag().author != me);
+            var myImages = elements.Where(e => e is Image && (e as Image).tag().author != me);
+            var myElements = new List<UIElement>();
+            myElements.AddRange(myText);
+            myElements.AddRange(myImages);
+            return myElements;
+        }
+
         private StrokeCollection filterOnlyMine(IEnumerable<Stroke> strokes)
         {
             return new StrokeCollection(strokes.Where(s => s.tag().author == Globals.me));
@@ -724,6 +750,7 @@ namespace SandRibbon.Components
        
         protected internal void AddAdorners()
         {
+            // TODO: configure which button adorners should be displayed depending on owner status and who owns the element selected
             ClearAdorners();
             var selectedStrokes = Work.GetSelectedStrokes();
             var selectedElements = Work.GetSelectedElements();
