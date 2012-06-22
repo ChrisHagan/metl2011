@@ -115,6 +115,7 @@ namespace SandRibbon.Components
             }
             set
             {
+                // do nothing
             }
         }
 
@@ -1209,10 +1210,17 @@ namespace SandRibbon.Components
                 {
                     TargettedImage image1 = image;
                     if (image.author == me || image.privacy == Globals.PUBLIC)
-                        Dispatcher.adoptAsync(() => AddImage(Work, image1.image));
+                    {
+                        Dispatcher.adoptAsync(() => 
+                        {
+                            var receivedImage = image1.image;
+                            AddImage(Work, receivedImage); 
+                            ApplyPrivacyStylingToElement(receivedImage, receivedImage.tag().privacy);
+                        });
+                    }
                 }
             }
-            ensureAllImagesHaveCorrectPrivacy();
+            //ensureAllImagesHaveCorrectPrivacy();
         }
 
         private void AddImage(InkCanvas canvas, Image image)
@@ -1298,9 +1306,10 @@ namespace SandRibbon.Components
         {
             addResourceFromDisk((files) =>
             {
+                var origin = new Point(0, 0);
                 int i = 0;
                 foreach (var file in files)
-                    handleDrop(file, new Point(0, 0), true, i++);
+                    handleDrop(file, origin, true, i++, (source, offset, count) => { return offset; });
             });
         }
         private void uploadFile(object _obj)
@@ -1323,7 +1332,7 @@ namespace SandRibbon.Components
             try
             {
                 if (drop.Target.Equals(_target) && me != Globals.PROJECTOR)
-                    handleDrop(drop.Filename, drop.Point, drop.OverridePoint, drop.Position);
+                    handleDrop(drop.Filename, new Point(0, 0), drop.OverridePoint, drop.Position, (source, offset, count) => { return drop.Point; });
             }
             catch (NotSetException)
             {
@@ -1448,23 +1457,35 @@ namespace SandRibbon.Components
             }
             Commands.SetLayer.ExecuteAsync("Insert");
             var pos = e.GetPosition(this);
-            
-            var origX = pos.X;
+            var origin = new Point(pos.X, pos.Y);
+            var maxHeight = 0d;
+
+            Func<Image, Point, int, Point> positionUpdate = (source, offset, count) =>
+                {
+                    if (count == 0)
+                    {
+                        pos.Offset(offset.X, offset.Y);
+                        origin.Offset(offset.X, offset.Y);
+                    }
+
+                    var curPos = new Point(pos.X, pos.Y);
+                    pos.X += source.Source.Width + source.Margin.Left * 2 + 30;
+                    if (source.Source.Height + source.Margin.Top * 2 > maxHeight) 
+                        maxHeight = source.Source.Height + source.Margin.Top * 2;
+                    if ((count + 1) % 4 == 0)
+                    {
+                        pos.X = origin.X;
+                        pos.Y += (maxHeight + 30);
+                        maxHeight = 0.0;
+                    }
+
+                    return curPos;
+                };
             //lets try for a 4xN grid
-            var height = 0.0;
             for (var i = 0; i < fileNames.Count(); i++)
             {
                 var filename = fileNames[i];
-                var image = createImageFromUri(new Uri(filename, UriKind.RelativeOrAbsolute), true);
-                handleDrop(filename, pos, true, i);
-                pos.X += image.Width + 30;
-                if (image.Height > height) height = image.Height;
-                if ((i + 1) % 4 == 0)
-                {
-                    pos.X = origX;
-                    pos.Y += (height + 30);
-                    height = 0.0;
-                }
+                handleDrop(filename, origin, true, i, positionUpdate);
             }
             e.Handled = true;
         }
@@ -1474,20 +1495,13 @@ namespace SandRibbon.Components
             e.Handled = true;
         }
 
-        public void handleDrop(string fileName, Point pos, bool overridePoint, int count)
+        public void handleDrop(string fileName, Point origin, bool overridePoint, int count, Func<Image, Point, int, Point> positionUpdate)
         {
-            if (overridePoint)
-            {
-                if (pos.X < 50)
-                    pos.X = 50;
-                if (pos.Y < 50)
-                    pos.Y = 50;
-            }
             FileType type = GetFileType(fileName);
             switch (type)
             {
                 case FileType.Image:
-                    dropImageOnCanvas(fileName, pos, count, overridePoint);
+                    dropImageOnCanvas(fileName, origin, count, overridePoint, positionUpdate);
                     break;
                 case FileType.Video:
                     break;
@@ -1537,19 +1551,30 @@ namespace SandRibbon.Components
                 return;
             }
         }
-        public void dropImageOnCanvas(string fileName, Point pos, int count, bool useDefaultMargin)
+        public void dropImageOnCanvas(string fileName, Point origin, int count, bool useDefaultMargin, Func<Image, Point, int, Point> positionUpdate)
         {
             if (!isFileLessThanXMB(fileName, fileSizeLimit))
             {
                 MeTLMessage.Warning(String.Format("Sorry, your file is too large, must be less than {0}mb", fileSizeLimit));
                 return;
             }
-            Dispatcher.adopt(() =>
+            Dispatcher.adoptAsync(() =>
             {
+                var imagePos = new Point(0, 0);
                 System.Windows.Controls.Image image = null;
                 try
                 {
                     image = createImageFromUri(new Uri(fileName, UriKind.RelativeOrAbsolute), useDefaultMargin);
+
+                    if (useDefaultMargin)
+                    {
+                        if (imagePos.X < 50)
+                            imagePos.X = 50;
+                        if (imagePos.Y < 50)
+                            imagePos.Y = 50;
+                    }
+
+                    imagePos = positionUpdate(image, imagePos, count);
                 }
                 catch (Exception e)
                 {
@@ -1561,17 +1586,14 @@ namespace SandRibbon.Components
                 // center the image horizonally if there is no margin set. this is only used for dropping quiz result images on the canvas
                 if (!useDefaultMargin)
                 {
-                    pos.X = (Globals.DefaultCanvasSize.Width / 2) - ((image.Width + (Globals.QuizMargin * 2)) / 2);
+                    imagePos.X = (Globals.DefaultCanvasSize.Width / 2) - ((image.Width + (Globals.QuizMargin * 2)) / 2);
                     //pos.Y = (Globals.DefaultCanvasSize.Height / 2) - (image.Height / 2);
                 }
-                InkCanvas.SetLeft(image, pos.X);
-                InkCanvas.SetTop(image, pos.Y);
+                InkCanvas.SetLeft(image, imagePos.X);
+                InkCanvas.SetTop(image, imagePos.Y);
                 image.tag(new ImageTag(Globals.me, privacy, generateId(), false, 0));
-                if (!fileName.StartsWith("http"))
-                    MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(Globals.slide, Globals.me, _target, privacy, image, fileName, false));
-                else
-                    MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(Globals.slide, Globals.me, _target, privacy, image));
                 var myImage = image.clone();
+                var currentSlide = Globals.slide;
                 Action undo = () =>
                                   {
                                       ClearAdorners();
@@ -1585,15 +1607,20 @@ namespace SandRibbon.Components
                                   };
                 Action redo = () =>
                 {
+                    if (!fileName.StartsWith("http"))
+                        MeTLLib.ClientFactory.Connection().UploadAndSendImage(new MeTLStanzas.LocalImageInformation(currentSlide, Globals.me, _target, privacy, myImage, fileName, false));
+                    else
+                        MeTLLib.ClientFactory.Connection().SendImage(new TargettedImage(currentSlide, Globals.me, _target, privacy, myImage));
+
                     ClearAdorners();
-                    InkCanvas.SetLeft(myImage, pos.X);
-                    InkCanvas.SetTop(myImage, pos.Y);
+                    InkCanvas.SetLeft(myImage, imagePos.X);
+                    InkCanvas.SetTop(myImage, imagePos.Y);
                     contentBuffer.AddImage(myImage, (img) => 
                     {
                         if (!Work.Children.Contains(img))
                             Work.Children.Add(img);
                     });
-                    sendThisElement(myImage);
+                    //sendThisElement(myImage);
 
                     Work.Select(new[] { myImage });
                     AddAdorners();
@@ -1602,16 +1629,26 @@ namespace SandRibbon.Components
                 UndoHistory.Queue(undo, redo, "Dropped Image");
             });
         }
-        public static System.Windows.Controls.Image createImageFromUri(Uri uri, bool useDefaultMargin)
+
+        public System.Windows.Controls.Image createImageFromUri(Uri uri, bool useDefaultMargin)
         {
             var image = new System.Windows.Controls.Image();
-            var jpgFrame = BitmapFrame.Create(uri);
-            image.Source = jpgFrame;
+
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.UriSource = uri;
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.EndInit();
+
+            image.Source = bitmapImage;
             // images with a high dpi eg 300 were being drawn relatively small compared to images of similar size with dpi ~100
             // which is correct but not what people expect.
             // image size is determined from dpi
-            image.Height = jpgFrame.Height;
-            image.Width = jpgFrame.Width;
+
+            // next two lines were used
+            //image.Height = bitmapImage.Height;
+            //image.Width = bitmapImage.Width;
+
             // image size will match reported size
             //image.Height = jpgFrame.PixelHeight;
             //image.Width = jpgFrame.PixelWidth;
@@ -1627,6 +1664,7 @@ namespace SandRibbon.Components
             }
             return image;
         }
+
         public static FileType GetFileType(string fileName)
         {
             string extension = System.IO.Path.GetExtension(fileName).ToLower();
